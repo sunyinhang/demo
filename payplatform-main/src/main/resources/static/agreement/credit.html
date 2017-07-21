@@ -1,0 +1,151 @@
+<html>
+<head>
+<title>Insert title here</title>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<script type="text/javascript" src="/appjs/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="/appjs/jquery.base64.js"></script>
+<script type="text/javascript">
+ 	$(function(){
+		<!--出参数前,对中文进行编码encodeURI()、decodeURI()或encodeURIComponent()、decodeURIComponent()  -->
+		(function ($) {
+			$.getUrlParam = function (name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+				var r = window.location.search.substr(1).match(reg);
+				if (r != null) return unescape(r[2]); return null;
+			}
+		})(jQuery);
+		var orderNo = $.getUrlParam('orderNo');  //获取url的订单编号
+		var commonCustNo = $.getUrlParam('commonCustNo'); // 获取url的共同还款人编号
+		var urlCustName = $.getUrlParam('custName');
+		var certNo = $.getUrlParam('certNo');
+
+		if(urlCustName == "" || urlCustName == null){
+			$.ajax({
+				type: "GET",
+				url: "/app/appserver/getAgreementInfo",
+				data:{"orderNo":orderNo,"commonCustNo":commonCustNo},
+				dataType: "json",
+				success: function(data) {
+					console.info("custNo="+data.body.custNo+",custName="+data.body.custName);
+					$("#custName").text(data.body.custName);
+					$("#custCode").text(data.body.idNo);
+					$("#year").text(data.body.year);
+					$("#month").text(data.body.month);
+					$("#day").text(data.body.day);
+				}
+			});
+		}else{
+			var custName=$.base64.decode(urlCustName, 'utf8');
+			var date = new Date();
+			$("#custName").text(custName);
+			$("#custCode").text(certNo);
+			$("#year").text(date.getFullYear());
+			$("#month").text(date.getMonth()+1);
+			$("#day").text(date.getDate());
+		}
+
+ });
+ </script>
+</head>
+
+<body lang=ZH-CN
+	style='tab-interval: 21.0pt; text-justify-trim: punctuation'>
+
+	<div class=WordSection1 style='layout-grid: 15.6pt'>
+
+		<p class=MsoNormal>
+			<span lang=EN-US><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p align=center
+			style='text-align: center; mso-pagination: widow-orphan'>
+			<span
+				style='font-size: 24.0pt; font-family: 黑体; mso-hansi-font-family: 宋体; mso-bidi-font-family: 黑体; color: black'>海尔消费金融有限公司</span><span
+				lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'><o:p></o:p></span>
+		</p>
+
+		<p align=center
+			style='text-align: center; mso-pagination: widow-orphan'>
+			<span
+				style='font-size: 24.0pt; font-family: 黑体; mso-hansi-font-family: 宋体; mso-bidi-font-family: 黑体; color: black'>个人信用报告查询授权书</span><span
+				lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'>&nbsp;<o:p></o:p></span>
+		</p>
+
+		<p
+			style='text-align: justify; text-justify: inter-ideograph; mso-pagination: widow-orphan'>
+			<span
+				style='font-size: 18.0pt; font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>海尔消费金融有限公司：</span><span
+				lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'><o:p></o:p></span>
+		</p>
+
+		<p
+			style='text-align: justify; text-justify: inter-ideograph; mso-pagination: widow-orphan'>
+			<span lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'>&nbsp;&nbsp;&nbsp;</span><span
+				style='font-size: 18.0pt; font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>本人因办理</span><u><span
+				lang=EN-US
+				style='font-size: 18.0pt; font-family: 宋体; mso-ascii-font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-bidi-font-family: 仿宋_GB2312; color: black'>&nbsp;</span></u><u><span
+				style='font-size: 18.0pt; font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>贷款</span></u><u><span
+				lang=EN-US style='font-size: 18.0pt; color: black'>&nbsp;<span
+					style='mso-spacerun: yes'>&nbsp; </span>&nbsp;
+			</span></u><span
+				style='font-size: 18.0pt; font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>业务需要，特授权你公司根据需要从中国人民银行个人信用信息基础数据库查询并审核本人的信用报告，以及向该数据库报送本人信用信息。</span><span
+				lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'>&nbsp;<br>
+				&nbsp;<br> &nbsp;<br> &nbsp;<br> &nbsp;<o:p></o:p></span>
+		</p>
+
+		<p
+			style='text-align: justify; text-justify: inter-ideograph; mso-pagination: widow-orphan'>
+			<span lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+				style='font-size: 18.0pt; font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>授</span><span
+				lang=EN-US style='font-size: 18.0pt; color: black'>&nbsp;&nbsp;</span><span
+				style='font-size: 18.0pt; font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>权</span><span
+				lang=EN-US style='font-size: 18.0pt; color: black'>&nbsp;&nbsp;</span><span
+				style='font-size: 18.0pt; font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>人（签章）：</span><span
+				lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'  id="custName">&nbsp;<o:p></o:p></span>
+		</p>
+
+		<p
+			style='text-align: justify; text-justify: inter-ideograph; mso-pagination: widow-orphan'>
+			<span lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+				style='font-size: 18.0pt; font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>身份证号码：</span><span
+				lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black' id="custCode"><o:p></o:p></span>
+		</p>
+
+		<p
+			style='text-align: justify; text-justify: inter-ideograph; mso-pagination: widow-orphan'>
+			<span lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+				lang=EN-US
+				style='font-size: 18.0pt; font-family: 宋体; mso-ascii-font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-bidi-font-family: 仿宋_GB2312; color: black'>&nbsp;&nbsp;</span><span
+				lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'>&nbsp;<o:p></o:p></span>
+		</p>
+
+		<p
+			style='text-align: justify; text-justify: inter-ideograph; mso-pagination: widow-orphan'>
+			<span lang=EN-US
+				style='font-size: 13.5pt; font-family: 宋体; mso-bidi-font-family: 宋体; color: black'></span><span 
+				style='font-size: 18.0pt; float:right;font-family: 仿宋_GB2312; mso-fareast-font-family: 仿宋_GB2312; mso-hansi-font-family: 宋体; mso-bidi-font-family: 仿宋_GB2312; color: black'>
+				<span style='mso-tab-count: 2' id="year">&nbsp;&nbsp;
+				</span>
+				年<span
+				lang=EN-US><span style='mso-tab-count: 2' id="month">&nbsp;&nbsp;
+				</span></span>月<span lang=EN-US><span style='mso-tab-count: 2' id="day">&nbsp;&nbsp;
+				</span></span>日
+			</span>
+		</p>
+
+	</div>
+
+</body>
+
+</html>

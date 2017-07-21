@@ -1,0 +1,1195 @@
+<html>
+<head>
+<title>Insert title here</title>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<script type="text/javascript" src="../appjs/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../appjs/jquery.base64.js"></script>
+<script type="text/javascript">
+ 	$(function(){
+		<!--出参数前,对中文进行编码encodeURI()、decodeURI()或encodeURIComponent()、decodeURIComponent()  -->
+		(function ($) {
+			$.getUrlParam = function (name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+				var r = window.location.search.substr(1).match(reg);
+				if (r != null) return unescape(r[2]); return null;
+			}
+		})(jQuery);
+		var custName = $.getUrlParam("custName");
+		if(custName && custName!="null"){
+			$("#custName").text($.base64.decode(custName,'utf8'));
+			var date = new Date();
+			$("span[name='year']").each(function() {
+				$(this).text(date.getFullYear());
+			});
+			$("span[name='month']").each(function() {
+				$(this).text(date.getMonth()+1);
+			});
+			$("span[name='day']").each(function() {
+				$(this).text(date.getDate());
+			});
+			return;
+		}
+		var orderNo = $.getUrlParam('orderNo');  //获取url的订单编号
+		
+		$.ajax({
+            	type: "GET",
+                url: "/app/appserver/getAgreementInfo",
+                data:{"orderNo":orderNo},
+                dataType: "json",
+                success: function(data) {
+                	console.info("custNo="+data.body.custNo+",custName="+data.body.custName);
+            		$("#custName").text(data.body.custName);
+//             		$("span [name=year]").text(data.body.year);
+//             		$("span [name=month]").text(data.body.month);
+//             		$("span [name=day]").text(data.body.day);
+            		$("span[name='year']").each(function() { 
+            			$(this).text(data.body.year); 
+            		}); 
+            		$("span[name='month']").each(function() { 
+            			$(this).text(data.body.month); 
+            		}); 
+            		$("span[name='day']").each(function() { 
+            			$(this).text(data.body.day); 
+            		}); 
+                }
+            });
+ });
+ </script>
+</head>
+
+<body lang=ZH-CN
+	style='tab-interval: 21.0pt; text-justify-trim: punctuation'>
+
+	<div class=WordSection1 style='layout-grid: 15.6pt'>
+
+		<p class=MsoNormalCxSpFirst align=center
+			style='text-align: center; text-indent: 30.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 15.0pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>消费信贷服务协议<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第一章
+					特别声明<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第一条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				海尔消费金融有限公司（以下简称为“我公司”）
+				将为您（以下亦可称为“用户”）提供人民币消费信贷服务，根据《中华人民共和国合同法》等法律法规的规定，我公司与您本着平等自愿的原则共同签订本协议，除非您已详细阅读并接受本协议所有条款，否则您无权使用我公司提供的人民币消费信贷服务。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				<b style='mso-bidi-font-weight: normal'>为了保障您的合法权益，我公司在此郑重提醒您务必认真阅读并充分理解本协议各条款内容及含义，特别是免除或者限制责任的条款、争议解决和法律适用条款以及其他用黑色粗体标注部分。您一旦勾选并通过线上消费信贷服务平台（线上消费信贷服务平台定义见本协议第二章第五条第<span
+					lang=EN-US>5.1</span>款）向我公司提交本协议后，即表示您已阅读完毕且完全理解本协议所有内容，您同意与我公司以数据电文的形式签订本协议并承担相应的法律责任。
+			</b><span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				如您不同意接受本协议的任何内容，请您不要签署本协议。如您无法准确理解本协议任何条款内容及含义的，您可向我公司工作人员或相关专业人士进行咨询，在您未能充分理解本协议各条款内容及含义之前，请您暂缓签署本协议并不要进行任何后续操作。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				本协议具有法律效力，由我公司与您共同签订。本协议内容包括协议正文及所有我公司已经发布的或将来可能发布的补充协议、各类规则、声明、通知及公告等法律文件，该类法律文件为协议不可分割的一部分，与协议正文具有同等法律效力。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二章
+					术语定义与解释<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第五条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				本协议中的“借款”与“贷款”为同一含义，均指您向我公司借入资金用于一般性消费或购买耐用消费品（不包括购买房屋和汽车），我公司按照有关借款合同的约定向您收回本金并收取利息或<span
+				lang=EN-US>/</span>和手续费的行为。除非本协议中明确要求另作解释，本协议中所涉及的下列名词应按如下解释理解：<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.1</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>线上消费信贷服务平台</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>：以下简称为服务平台，指由我公司独立运营或由我公司与其他第三方机构（以下简称为合作方）共同运营的网站、移动<span
+				lang=EN-US>APP</span>、微信公众号以及其他电子商务平台，您可在服务平台上向我公司提出个人消费贷款借款申请、查看信用额度以及还款计划、办理借款等操作。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.2</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>移动<span
+					lang=EN-US>APP:</span></span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>即移动应用服务程序，指针对智能手机或平板电脑（不包括笔记本电脑）等移动终端开发的应用服务程序，通过该服务程序您可以登陆服务平台执行与消费信贷有关的操作。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.3</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>微信公众号：</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>指我公司或<span
+				lang=EN-US>/</span>和我公司的合作方在微信公众平台上建立的、以用于向您提供消费信贷服务的微信账号。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.4</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>用户名：</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>指您在服务平台上注册的，用于登陆平台进行有关业务操作的账户名称。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.5</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>密码：</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>指由您在服务平台上自行设置的以及通过您所实际控制或实际使用的手机设备（含手机号码）接收的、仅应当由您本人知晓的，用于登陆服务平台以及确保您的贷款申请、合同或<span
+				lang=EN-US>/</span>和协议签订、贷款支用等操作安全性的口令，包括但不限于登陆密码、支付密码、手机短信验证码以及其他安全信息。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.6</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>交易指令：</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>指您向服务平台发出的与消费信贷相关的申请、确认、指示等意思的表示，您的用户名与密码是我公司识别您的交易指令的唯一标识。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.7</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>信用额度：</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>指我公司根据您的个人信用状况以及还款能力所授予您的可使用的消费贷款的最高限额。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.8</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>可使用信用额度：</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>是指您在向我公司申请消费贷款时，还可以使用的信用额度。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>可使用信用额度＝信用额度－额度项下您已经支取且尚未结清的贷款本金之和<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>5.9</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>数字证书：</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>是指由国家认可的，具有权威性、可信性和公正性的第三方电子认证服务机构（<span
+				lang=EN-US>Certification Authority</span>，以下简称<span lang=EN-US>
+					CA</span>机构）对包含公开密钥拥有者信息、公开密钥等在内的一些信息进行签名后形成的一个电子文件，是符合《中华人民共和国电子签名法》规定的电子签名认证证书。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三章
+					用户资格、实名认证以及用户承诺<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第六条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				您必须是年满<span lang=EN-US>18</span>周岁且不超过<span lang=EN-US>65</span>周岁，持有中华人民共和国（以下简称“中国”，为避免疑义，仅为本协议之目的，不包括中华人民共和国香港特别行政区、澳门特别行政区及台湾地区，下同）有效身份证件并具备完全民事行为能力的自然人。无民事行为能力人、限制民事行为能力人不应当在服务平台上注册并使用我公司提供的消费信贷服务。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第七条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				在您通过服务平台使用我公司提供的消费信贷服务前，您必须首先在服务平台上完成注册，成为我公司的注册用户并通过我公司的实名认证，同时您需要设置用于贷款申请、合同或<span
+				lang=EN-US>/</span>和协议签订、贷款支用等操作的密码。<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第八条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				为确保您的合法权益并保证您在我公司服务平台上的所有操作的安全，我公司有权自行或委托其他第三方机构通过各种必要手段对您的身份信息进行识别认证。身份信息识别认证包括但不限于如下方式：<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>8.1</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>确认您提交的身份信息确实存在且正确，具体方法包括：<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>8.1.1</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>采用第三方数据库中的信息，包括但不限于公安部门运营的个人身份数据库、主流的信用机构或银行业金融机构账户信息比对等可靠的信息源；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>8.1.2</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>委托我公司的合作方通过亲见本人或<span
+				lang=EN-US>/</span>和其历史业务交易记录或数据库中的信息比对来完成鉴别。<span lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>8.2</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>验证您就是您所提交的身份信息所代表的那个人，验证的方式包括：<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>8.2.1</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>验证您知晓或拥有通常只有您本人才知晓或拥有的秘密，如通对您提交的本人银行结算账户进行信息交叉验证或<span
+				lang=EN-US>/</span>和向您拥有或实际控制的手机发送短信验证码并对您提交的短信验证码进行校验以及资金转账验证；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>8.2.2</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>通过委托授权我公司的合作方通过其历史业务交易记录或数据库中的信息以及其他安全可靠的方式，如面对面的验证、确认。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>8.3</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>其他能够证明您本人身份信息的方式。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第九条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				为向我公司证明您的真实身份，您应向我公司提供包括但不限于处于有效期内的中华人民共和国居民身份证以及由我公司认可的，您本人名下的银联借记卡账号、账户名、开户银行、银行预留手机号码等信息，并同意不可撤销的授权我公司采取划扣、付款或其他方式完成您银行账户信息的识别。我公司有权根据实际情况而要求您补充或提供其他信息资料。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				您一旦勾选并通过服务平台向我公司提交本协议后，即视为您同意我公司对您的身份信息进行实名认证。您一旦通过我公司身份信息实名认证，除非经我公司书面同意，否则您将不能自行修改已通过认证的姓名以及身份证件号码等身份信息。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十一条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				您身份信息实名认证的有效期与您提供的身份证件有效期一致，但实名认证有效期最长不超过自实名认证完成之日起<span lang=EN-US>20</span>年。有效期届满后，我公司有权要求您使用最新身份信息进行再次实名认证。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十二条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				<b style='mso-bidi-font-weight: normal'>若您未满<span lang=EN-US>18</span>周岁或未满足本协议规定的条件而以不当方式注册成为我公司用户或通过我公司实名认证的，则因此产生的一切法律责任应由您及<span
+					lang=EN-US>(</span>或<span lang=EN-US>)</span>您的监护人承担；因此给我公司造成损失的，您及（或）您的监护人应向我公司进行赔偿。同时我公司有权随时停止为您提供服务。
+			</b><span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十三条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				您同意并承诺以下事项：<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>13.1</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您同意按照我公司的要求提供您真实、最新、有效及完整的资料（包括但不限于包括但不限于姓名、身份证号码、住址、联系方式和紧急联系人信息等），并有义务维持并更新您的资料，确保其为真实、最新、有效及完整。您不得使用或冒用他人信息进行注册，否则我公司有权追究实际使用人的法律责任，涉及犯罪的，依法移交司法机关追究。若您提供任何错误、虚假、过时或不完整的资料，或者我公司按照独立判断怀疑您的资料为错误、虚假、过时或不完整，我公司有权暂停或终止您的账户，并拒绝您使用我公司提供的消费信贷服务的部份或全部功能。在此情况下，我公司不承担任何责任，并且由您自行承担因此所产生的直接或间接的任何支出或损失。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>13.2</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>如因您未及时更新基本资料，导致我公司提供的消费信贷服务无法提供或提供时发生任何错误，您不得将此作为拒绝还款的理由，我公司亦不承担任何责任，所有后果应由您自行承担。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>13.3</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您同意并承诺不以任何非法目的或途径使用我公司提供的消费信贷服务，并遵守所有中华人民共和国相关法律、法规、规范性文件及一切互联网惯例。若有违反，所产生的一切法律责任和后果与我公司无关，由您自行承担，如因此给我公司造成损失，您应当承担赔偿我公司全部损失的责任。</span></b><span
+				lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十四条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				您在注册成功且通过我公司实名认证后，您有义务妥善并谨慎的保管自己的账户、密码或与登录账户相关的信息和设备（以下统称“账户信息”），不将账户信息泄露给其他任何人，亦不使用其他任何人的账户信息。<b
+				style='mso-bidi-font-weight: normal'>您已知晓并同意，确保账户信息的安全是您的责任，任何利用您的账户信息登陆服务平台并从事交易等行为均将被视为您本人的行为以及您真实意愿的表达，并由您本人承担相应的法律后果。</b><span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十五条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				<b style='mso-bidi-font-weight: normal'>您已知晓并同意：如您发现有他人冒用或盗用您的账号及密码向我公司申请消费贷款的，您应立即以有效方式通知我公司，要求我公司暂停有关消费信贷服务，否则我公司对您的用户名和密码的遗失或被盗取所产生的损失以及法律后果不承担任何责任。同时，您理解我公司对您的请求采取行动需要合理时间，在此之前，我公司对已执行的指令及<span
+					lang=EN-US>(</span>或<span lang=EN-US>)</span>所导致的您的损失不承担任何责任。
+			</b><span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四章
+					数字证书的申请和使用<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十六条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				您在通过我公司实名认证后，我公司将协助您向具备颁发符合《中华人民共和国电子签名法》要求的<span lang=EN-US>CA</span>机构申请数字证书，该数字证书将代表您的身份，您在通过我公司服务平台向我公司申请并获得相应消费贷款的过程中，有关个人借款合同等法律文件均将使用该数字证书签订，<b
+				style='mso-bidi-font-weight: normal'>我公司在此郑重提示您，您使用该数字证书与您亲笔签署具有同等法律效力。<span
+					lang=EN-US><o:p></o:p></span></b>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十七条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				代表您身份信息的数字证书将由<span lang=EN-US>CA</span>机构进行管理和维护，且该证书的使用由您自行控制，即除非特别约定，您只能使用您本人的用户名登录服务平台且通过密码校验方能使用该证书签订有关电子合同。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十八条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				代表您身份信息的数字证书的有效期为一年，自您通过我公司实名认证之日起开始计算，在您的数字证书有效期满后，您同意并全权委托我公司可根据您的实际业务需要协助您获得新的数字证书，直至您明确表示不再使用我公司提供的消费信贷服务为止。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十九条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				如您的姓名以及证件号码在数字证书有效期限内发生变更的，您应当及时书面告知我公司，并终止使用该数字证书。<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第五章
+					信用额度使用<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				您通过服务平台或其他经我公司认可的渠道向我公司提出借款申请后，我公司有权依据您的资信情况决定是否受理您的借款申请并核定您的信用额度，且在核定您的信用额度后，我公司有权根据掌握的您的信用情况或认定的风险控管因素或其他正当理由，在不事先通知且无需征得您的同意的情况下调整您的信用额度（包括但不限于调低、调高、冻结、取消）。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十一条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				<b style='mso-bidi-font-weight: normal'>您已知晓并理解：我公司为您核定的信用额度并不构成我公司对您的贷款承诺，您在信用额度项下每笔贷款的申请和使用，须由您逐笔在信用额度有效期内及可使用信用额度内通过服务平台向我公司提出申请，我公司有权根据您申请使用信用额度时的信用状况及我公司的实际信贷政策自主决定是否向您发放信用额度项下的单笔贷款。</b>、<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十二条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				<b style='mso-bidi-font-weight: normal'>您应保证在安全环境下通过互联网或其他媒介使用您的信用额度，否则您须对非安全环境下本信用额度在互联网或其它媒介上使用所导致的风险和损失自行负责。</b><span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十三条</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast; mso-bidi-font-family: 宋体; color: gray; mso-font-kerning: 0pt'>
+			</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>我公司为您提供的信用额度下的单笔贷款仅能用于购买耐用消费品或进行一般性消费，不能用于个人购买住房、车辆及进行证券投资，否则我公司有权立即停止为您提供消费信贷服务并要求您立即偿还全部贷款。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第六章
+					个人信息的使用、披露以及授权<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十四条<span
+					lang=EN-US><span style='mso-tab-count: 1'> </span></span>除法定或约定事由外，我公司不会将您的个人资料和信息恶意出售或免费共享给任何第三方，且不将此类内容用于商业目的，但以下情形除外：<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>24.1</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您授权我公司透露的相关信息；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>24.2</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>我公司按照中华人民共和国有关法律法规，向包括但不限于公安机关、检察机关、法院等司法机关、行政机关提供您的个人信息。；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>24.3</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>向我公司关联方或合作方提供；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>24.4</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>我公司关联方或合作方和我公司一起为您提供服务时，该第三方因向您提供服务所必需获知您的相关信息。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十五条
+					您同意并授权我公司在实名认证以及在向您提供消费信贷服务的过程中收集和储存您的个人资料和信息，包括但不限于您自行提供的资料和信息，以及我公司自行收集、取得的您在服务平台的浏览、交易记录和其他使用信息等，并自行或委托第三方使用人工或自动程序对您的信息、行为以及兴趣进行统计、分类、研究、分析，以使您以及其他用户在使用我公司服务平台时获得更加安全、顺畅的体验和服务。本公司可不定期对您进行回访并对您提供的用户信息进行抽查、核实以识别问题或解决争议。<span
+					lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十六条
+					您同意并授权我公司在服务平台的运营中可以访问并收集、分析您的设备中存储的信息或使用诸如“<span lang=EN-US>Cookies</span>”的资料收集装置，以协助服务平台为您提供度身订造的服务。服务平台亦提供某些只能通过使用“<span
+					lang=EN-US>Cookies</span>”才可得到的功能。服务平台还利用“<span lang=EN-US>Cookies</span>”使您能够在某段期间内减少输入密码的次数。“<span
+					lang=EN-US>Cookies</span>”还可以协助服务平台向您提供专门针对用户兴趣的资料。 <span
+					lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十七条
+					您知晓并同意我公司可自行或委托合作方向拥有合法资质的第三方（包括但不限于拥有合法资质的征信机构，电信运营商及其代理商和关联公司，公安部身份信息查询中心等）查询或核实您的资料和信息（包括但不限于用户的姓名、身份证号码、联系电话、财务信息等），并同意我公司及其他拥有合法资质的第三方将查询获取的信息进行保存、整理、加工，并用于评价您的信用情况或核实您个人信息的真实性。但法律、法规、监管政策禁止查询、保存的除外。<span
+					lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您已经知悉在信息安全保障制度不完善的情况下，对外提供个人收入、存款、有价证券、商业保险、不动产的信息和纳税数额信息可能产生信息泄漏等不良影响，在此情况下，您同意并授权我公司向拥有合法资质的第三方机构提供前述财产性信息。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十八条
+					您同意并不可撤销的授权我公司为向您提供消费信贷服务之目的，自行或委托我公司的关联方、合作方通过中国人民银行信用信息基础数据库、上海资信有限公司以及其他经国务院或国家有权部门批准合法设立的征信机构的信用数据库查询、打印、保存您的相关信息，并将有关您使用我公司消费信贷服务的信息提供给中国人民银行信用信息基础数据库、上海资信有限公司以及其他经国务院或国家有权部门批准合法设立的征信机构的信用数据库，供具有资格的机构或个人查询和使用，我公司提供的信用信息包括但不限于信贷信息及对您信用状况构成负面影响的信息。<span
+					lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第二十九条
+					您同意并不可撤销地授权我公司可将获得的您的有关信息（包括但不限于您的贷款金额、还款记录、联系方式以及其他相关信息）提供给我公司的关联方、合作方以及服务外包机构（以下统称为信息使用人）用于信息使用人向您提供后续产品和服务的推介、信用评估以及贷款的贷后管理和催收工作。我公司将要求信息使用人按照国家有关法律法规合规且谨慎使用您的信息，但我公司不对信息使用人错误使用您的信息所造成的后果承担任何责任。<span
+					lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十条
+					您同意并授权，若您未能按照与我公司签订的包括但不限于本协议的约定履行自己应尽的义务时，我公司有权将您提供的及我公司自行收集的您的资料和信息、违约事实等通过网络、报刊、电视等方式对任何第三方披露，并将此等信息记录于有资质的征信机构，且我公司有权将您提交或我公司自行收集的您的个人资料和信息与任何第三方进行数据共享，以便对您的其他申请进行审核等使用。<span
+					lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十一条
+					您同意并授权我公司可利用您的资料和信息通过邮件、短信、电话等方式与您联络并向您提供我公司及我公司的关联方、合作方的商品、服务或推广活动。您接受本协议即视为同意收取前述推广信息和资料。<span
+					lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第七章
+					消费信贷服务的中止及终止<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十二条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				发生下列情形之一时，我公司有权随时中止或终止向您提供消费信贷服务：<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>32.1</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>对网络设备进行必要的保养及施工时；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>32.2</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>出现突发性的网络设备故障时；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>32.3</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>使用的网络通信设备出现故障不能进行数据传输的；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>32.4</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>使用的网络通信设备由于不明原因停止，无法提供服务时；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>32.5</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>由于不可抗力因素致使我公司无法提供服务时；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>32.6</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>应相关政府机构的要求；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>32.7</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>其他需要中止或终止服务的情形。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十三条</span></b><span
+				lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><span
+				style='mso-tab-count: 1'> </span></span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>如发生下列任何一种情形我公司有权随时中止或终止向您提供消费信贷服务而无需通知您：<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>33.1</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您提供的资料不真实、不准确、不完整、不合法有效；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>33.2</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您使用任何第三方程序进行登录或使用服务平台；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>33.3</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您滥用所享受的权利；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>33.4</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您有损害我公司利益的行为；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>33.5</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>我公司发现异常交易、有疑义或有违法之虞时；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>33.6</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>我公司认为登录账户涉嫌洗钱、套现、传销、被冒用或其他我公司认为有风险的情形；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>33.7</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>其他我公司认为应当中止或终止提供服务的情形。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十四条</span></b><span
+				lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><span
+				style='mso-tab-count: 1'> </span></span><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>您在服务平台上的账户的暂停、中止或终止不代表您责任的终止，您仍应对使用我公司服务平台服务期间的行为承担可能的违约或损害赔偿责任，同时我公司仍可留存用户的相关资料和信息。</span></b><span
+				lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第八章
+					知识产权<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十五条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				我公司或我公司的关联方在服务平台上的所有内容，包括但不限于著作、图片、档案、资讯、资料、网站架构、网站画面的安排、网页设计，均由我公司或我公司关联方依法拥有其知识产权，包括但不限于商标权、专利权、著作权、商业秘密权利等。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十六条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				非经我公司或我公司关联方书面同意，任何人不得擅自使用、修改、复制、公开传播、改变、散布、发行或公开发表服务平台程序或内容。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十七条
+			</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>尊重知识产权是您应尽的义务，如有违反，
+				您应承担损害赔偿责任。<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第九章
+					免责条款<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十八条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				您的申请经我公司审批通过但在我公司实际发放贷款前，如因国家有关部门颁布的法律、法规、规章、规定、指引、通知（包括口头通知）、政策及其他规范性文件导致我公司不能继续向您提供消费信贷服务，我公司有权停止向您提供贷款，不视为我公司违约，我公司不承担任何责任。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第三十九条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				<b style='mso-bidi-font-weight: normal'>鉴于互联网之特殊性质，我公司不承诺向您提供的消费信贷服务不会中断，也不承诺服务平台的安全性，您对此应理解并确认。</b>若我公司软（硬）件系统出现下列任一状况而无法正常运作，致使我公司网络中断或无法继续向您提供服务的，我公司均不承担任何违约或赔偿责任，该状况包括但不限于：
+				<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>39.1</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>在服务平台维护或升级期间；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>39.2</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>电信设备出现故障不能进行数据传输的；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>39.3</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>因台风、地震、海啸、洪水、雷电、瘟疫、流行病、电力中断、战争、恐怖袭击、暴动、罢工、政府管制或其他类似不可抗力事件，造成我公司服务运行系统障碍不能执行业务的；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>39.4</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>由于黑客攻击、病毒、电信部门和其他有信息技术依赖的相关部门、企事业单位技术调整或故障、网站升级、银行方面的问题等原因而造成的服务中断或者延迟；<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>39.5</span><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>其他非我公司原因导致的网络中断故障。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=left
+			style='text-align: left; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				<b style='mso-bidi-font-weight: normal'>我公司承诺将按照国家有关法律法规以保证您的信息的安全性，包括建立相应的信息保护制度和机制、设备等，但虽然有前述承诺，您应当理解并认同受限于现有技术水平，我公司不能完全确保您的信息不会因黑客袭击或其他无法预知的途径泄露，本公司不承担因此而导致的任何损失或责任。<span
+					lang=EN-US><o:p></o:p></span></b>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第十章
+					本协议的生效、法律适用及管辖<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle align=center
+			style='text-align: center; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十一条
+					您同意使用符合《中华人民共和国电子签名法》规定标准的数字证书并以数据电文的形式完成本协议的签订。<span lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpLast
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十二条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				<b style='mso-bidi-font-weight: normal'>本协议一经您勾选并通过线上消费信贷服务平台提交给我公司即视为您已完全理解且同意本协议的全部条款，并同意在由我公司协助您完成数字证书的申请后，直接使用代表您身份信息的数字证书签订本协议。<span
+					lang=EN-US><o:p></o:p></span></b>
+			</span>
+		</p>
+
+		<p class=11
+			style='text-indent: 20.1pt; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十三条
+			</span></b><b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 10.5pt; line-height: 125%; font-family: 华文中宋; mso-bidi-font-family: "Times New Roman"; mso-bidi-theme-font: minor-bidi'>您已完全知晓并同意您在服务平台上设置的用户名（如有）和密码（包括登录密码、支付密码、短信验证码等）是我公司识别您身份及指令的唯一标志，所有使用您在服务平台的账号和密码完成的合同签订以及其他操作均视为您本人的（授权）操作行为<span
+					lang=EN-US>, </span>您应妥善保管账号及密码，防止账号及密码泄露，因账号及密码泄露所造成的损失将由您自行承担。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormalCxSpFirst
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十四条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				本协议将在您和我公司使用数字证书签订后生效。除非我公司终止本协议或者您申请终止本协议且经我公司同意<span lang=EN-US>,</span>否则本协议始终有效。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十五条
+			</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>与本协议有关的全部事宜均适用中华人民共和国法律法规。<b
+				style='mso-bidi-font-weight: normal'><span lang=EN-US><o:p></o:p></span></b></span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十六条
+					本协议签订地为中华人民共和国山东省青岛市崂山区。对于本协议的内容的任何异议，您首先应与我公司通过友好协商解决，协商不成的，交由我公司所在地人民法院诉讼解决。<span
+					lang=EN-US><o:p></o:p></span>
+			</span></b>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十七条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				若本协议的部分条款被认定为无效或者无法实施时，本协议中的其他条款仍然有效。<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='text-indent: 21.1pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>第四十八条</span></b><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'>
+				本本协议内容包括协议正文及所有我公司已经发布的或将来可能发布的补充协议、各类规则、声明、通知及公告等法律文件，该类法律文件为协议不可分割的一部分，与协议正文具有同等法律效力。<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormalCxSpMiddle
+			style='line-height: 125%; layout-grid-mode: char; mso-layout-grid-align: none'>
+			<span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 宋体; mso-ascii-theme-font: minor-fareast; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-theme-font: minor-fareast'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>&nbsp;&nbsp;&nbsp;&nbsp;
+			<span
+				style='font-size: 12.0pt; line-height: 125%; font-family: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin'>用户：</span><span id="custName"
+				lang=EN-US style='font-size: 12.0pt; line-height: 125%'><span
+				style='mso-spacerun: yes'>
+			</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+				style='font-size: 12.0pt; line-height: 125%; font-family: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin'>海尔消费金融有限公司</span><span
+				lang=EN-US style='font-size: 12.0pt; line-height: 125%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal
+			style='margin-left: 18.0pt; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span  lang=EN-US style='font-size: 12.0pt; line-height: 125%' name="year"></span>
+			<span style='font-size: 12.0pt; line-height: 125%; font-family: 宋体; mso-ascii-font-family: Calibri;
+			      mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; 
+			      mso-hansi-theme-font: minor-latin'>年</span>
+				
+			<span  lang=EN-US style='font-size: 12.0pt; line-height: 125%' name="month"></span>
+			<span style='font-size: 12.0pt; line-height: 125%; font-family: 宋体; mso-ascii-font-family: Calibri;
+			 mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; 
+			 mso-hansi-theme-font: minor-latin'>月</span>
+			 
+			 <span
+				lang=EN-US style='font-size: 12.0pt; line-height: 125%' name="day"></span><span
+				style='font-size: 12.0pt; line-height: 125%; font-family: 宋体; mso-ascii-font-family: Calibri;
+				 mso-ascii-theme-font: minor-latin; mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; 
+				 mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin'>日</span>
+				
+				
+				<span
+				lang=EN-US style='font-size: 12.0pt; line-height: 125%'><span
+				style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</span><span style='mso-spacerun: yes'>&nbsp;&nbsp;</span><span
+				style='mso-tab-count: 1'>&nbsp; </span></span>
+				<span  lang=EN-US style='font-size: 12.0pt; line-height: 125%' name="year"></span>
+				<span
+				style='font-size: 12.0pt; line-height: 125%; font-family: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin;
+				 mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin'>年</span>
+				 
+				 <span
+				lang=EN-US style='font-size: 12.0pt; line-height: 125%' name="month"></span><span
+				style='font-size: 12.0pt; line-height: 125%; font-family: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; 
+				mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin'>月</span>
+				
+				<span
+				lang=EN-US style='font-size: 12.0pt; line-height: 125%' name="day"></span><span
+				style='font-size: 12.0pt; line-height: 125%; font-family: 宋体; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin;
+				 mso-fareast-font-family: 宋体; mso-fareast-theme-font: minor-fareast; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin'>日</span><span
+				style='font-size: 12.0pt; line-height: 125%'> <span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+	</div>
+
+</body>
+
+</html>

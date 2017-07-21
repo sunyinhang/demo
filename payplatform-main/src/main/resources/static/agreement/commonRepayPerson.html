@@ -1,0 +1,404 @@
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<script type="text/javascript" src="/appjs/jquery-1.4.2.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	(function ($) {
+		$.getUrlParam = function (name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			var r = window.location.search.substr(1).match(reg);
+			if (r != null) return unescape(r[2]); return null;
+		}
+	})(jQuery);
+	var orderNo = $.getUrlParam('orderNo');  //获取url的订单号
+	var commonCustNo = $.getUrlParam('commonCustNo');//获取url的共同还款人客户编号
+	
+	$.ajax({
+        	type: "GET",
+            url: "/app/appserver/getComRepayPersonInfo",
+            data:{"orderNo":orderNo,"commonCustNo":commonCustNo},
+            dataType: "json",
+            success: function(data) {
+            	//console.info("custNo="+data.body.custNo+",custName="+data.body.custName);
+        		$("#custName").text(data.body.custName);
+        		$("#custVerifyNo").text(data.body.custVerifyNo);
+        		$("#typDesc").text(data.body.typDesc);
+        		$("#applyBigAmt").text(data.body.applyBigAmt);
+        		$("#applyTnr").text(data.body.applyTnr);
+        		$("#applCde").text(data.body.applCde);
+        		$("#commonCustVerifyNo").text(data.body.commonCustVerifyNo);
+        		$("#year").text(data.body.year);
+        		$("#month").text(data.body.month);
+        		$("#day").text(data.body.day);
+        		//$("span [name='commonCustName']").text(data.body.commonCustName);
+        		$("span[name='commonCustName']").each(function() { 
+        			$(this).text(data.body.commonCustName); 
+        		}); 
+            }
+        });
+});
+</script>
+<style>
+@font-face {
+	font-family: 宋体;
+	panose-1: 2 1 6 0 3 1 1 1 1 1;
+	mso-font-alt: SimSun;
+	mso-font-charset: 134;
+	mso-generic-font-family: auto;
+	mso-font-pitch: variable;
+	mso-font-signature: 3 680460288 22 0 262145 0;
+}
+
+@font-face {
+	font-family: "Cambria Math";
+	panose-1: 2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset: 1;
+	mso-generic-font-family: roman;
+	mso-font-format: other;
+	mso-font-pitch: variable;
+	mso-font-signature: 0 0 0 0 0 0;
+}
+
+@font-face {
+	font-family: "\@宋体";
+	panose-1: 2 1 6 0 3 1 1 1 1 1;
+	mso-font-charset: 134;
+	mso-generic-font-family: auto;
+	mso-font-pitch: variable;
+	mso-font-signature: 3 680460288 22 0 262145 0;
+}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal {
+	mso-style-unhide: no;
+	mso-style-qformat: yes;
+	mso-style-parent: "";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-align: justify;
+	text-justify: inter-ideograph;
+	mso-pagination: none;
+	font-size: 10.5pt;
+	mso-bidi-font-size: 12.0pt;
+	font-family: "Times New Roman", serif;
+	mso-fareast-font-family: 宋体;
+	mso-font-kerning: 1.0pt;
+}
+
+p.MsoHeader, li.MsoHeader, div.MsoHeader {
+	mso-style-priority: 99;
+	mso-style-link: "页眉 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-align: center;
+	mso-pagination: none;
+	tab-stops: center 207.65pt right 415.3pt;
+	layout-grid-mode: char;
+	border: none;
+	mso-border-bottom-alt: solid windowtext .75pt;
+	padding: 0cm;
+	mso-padding-alt: 0cm 0cm 1.0pt 0cm;
+	font-size: 9.0pt;
+	font-family: "Calibri", sans-serif;
+	mso-ascii-font-family: Calibri;
+	mso-ascii-theme-font: minor-latin;
+	mso-fareast-font-family: 宋体;
+	mso-fareast-theme-font: minor-fareast;
+	mso-hansi-font-family: Calibri;
+	mso-hansi-theme-font: minor-latin;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+	mso-font-kerning: 1.0pt;
+}
+
+p.MsoFooter, li.MsoFooter, div.MsoFooter {
+	mso-style-priority: 99;
+	mso-style-link: "页脚 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	mso-pagination: none;
+	tab-stops: center 207.65pt right 415.3pt;
+	layout-grid-mode: char;
+	font-size: 9.0pt;
+	font-family: "Calibri", sans-serif;
+	mso-ascii-font-family: Calibri;
+	mso-ascii-theme-font: minor-latin;
+	mso-fareast-font-family: 宋体;
+	mso-fareast-theme-font: minor-fareast;
+	mso-hansi-font-family: Calibri;
+	mso-hansi-theme-font: minor-latin;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+	mso-font-kerning: 1.0pt;
+}
+
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate {
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-link: "批注框文本 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-align: justify;
+	text-justify: inter-ideograph;
+	mso-pagination: none;
+	font-size: 9.0pt;
+	font-family: "Times New Roman", serif;
+	mso-fareast-font-family: 宋体;
+	mso-font-kerning: 1.0pt;
+}
+
+span.Char {
+	mso-style-name: "页眉 Char";
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 页眉;
+	mso-ansi-font-size: 9.0pt;
+	mso-bidi-font-size: 9.0pt;
+}
+
+span.Char0 {
+	mso-style-name: "页脚 Char";
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 页脚;
+	mso-ansi-font-size: 9.0pt;
+	mso-bidi-font-size: 9.0pt;
+}
+
+span.Char1 {
+	mso-style-name: "批注框文本 Char";
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 批注框文本;
+	mso-ansi-font-size: 9.0pt;
+	mso-bidi-font-size: 9.0pt;
+	font-family: "Times New Roman", serif;
+	mso-ascii-font-family: "Times New Roman";
+	mso-fareast-font-family: 宋体;
+	mso-hansi-font-family: "Times New Roman";
+	mso-bidi-font-family: "Times New Roman";
+}
+
+.MsoChpDefault {
+	mso-style-type: export-only;
+	mso-default-props: yes;
+	font-family: "Calibri", sans-serif;
+	mso-bidi-font-family: "Times New Roman";
+	mso-bidi-theme-font: minor-bidi;
+}
+/* Page Definitions */
+@page {
+	mso-page-border-surround-header: no;
+	mso-page-border-surround-footer: no;
+}
+
+@page WordSection1 {
+	size: 595.3pt 841.9pt;
+	margin: 59.55pt 89.85pt 72.0pt 89.85pt;
+	mso-header-margin: 42.55pt;
+	mso-footer-margin: 49.6pt;
+	mso-paper-source: 0;
+	layout-grid: 15.6pt;
+}
+
+div.WordSection1 {
+	page: WordSection1;
+}
+
+</style>
+
+</head>
+
+<body lang=ZH-CN
+	style='tab-interval: 21.0pt; text-justify-trim: punctuation'>
+
+	<div class=WordSection1 style='layout-grid: 15.6pt'>
+
+		<p class=MsoNormal align=center
+			style='text-align: center; line-height: 150%'>
+			<span
+				style='font-size: 22.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>共同还款承诺书</span><span
+				lang=EN-US style='font-size: 22.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 150%'>
+			<span lang=EN-US style='font-size: 22.0pt; line-height: 150%'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>海尔消费金融有限公司：</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>本人</span>
+				<u>&nbsp;&nbsp;<span name="commonCustName"></span>&nbsp;&nbsp;</u>
+				<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>（身份证号码：</span><u><span id="commonCustVerifyNo"
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;</span></span></u><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>）对借款人</span><u>&nbsp;&nbsp;<span id="custName"
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+					style='mso-spacerun: yes'>&nbsp;</span><span
+					style='mso-spacerun: yes'>&nbsp;</span></span>&nbsp;&nbsp;</u><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>（身份证号：</span><u><span id="custVerifyNo"
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+					style='mso-spacerun: yes'>&nbsp;</span></span></u><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>）向贵公司申请</span><u>&nbsp;&nbsp;&nbsp;&nbsp;<span id="typDesc"
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span></span>&nbsp;&nbsp;&nbsp;&nbsp;</u><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>分期贷款人民币（大写）</span><u>&nbsp;&nbsp;&nbsp;&nbsp;<span id="applyBigAmt"
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span></span>&nbsp;&nbsp;&nbsp;&nbsp;</u><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>元整，期限</span><u>&nbsp;&nbsp;<span id="applyTnr"
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'></span>&nbsp;&nbsp;</u>
+				<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>月情况了解，对贷款编号为：</span><u>&nbsp;&nbsp;<span id="applCde"
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;</span></span>&nbsp;&nbsp;</u><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>的《贷款确认书》确定的借贷关系清楚了解，自愿为该贷款承担连带共同还款责任（含贷款本金、利息、逾期罚息、违约金、损失赔偿金、实现债权的费用等），直至还清借款人所欠贵公司的全部贷款本息及其他费用为止。</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>如上述相关文件被撤销或被认定无效，给贵司造成损失的，本人承诺与借款人承担连带赔偿责任及其他民事责任。</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>本人授权：贵司在发生与本人有关的下列情形时，可以通过中国人民银行个人信用基础数据库查询本人的个人信用报告或向有关方面调查核实本人资信情况：</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>（</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'>1</span><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>）审核本人承担共同还款责任的贷款申请；</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>（</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'>2</span><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>）对本人承担共同还款责任的贷款进行贷后管理。</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>同时授权贵司：可以将本人的个人信用信息向中国人民银行个人信用信息基础数据库报送。</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>本承诺书经本人签字后生效。</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 24.0pt; mso-char-indent-count: 2.0; line-height: 150%'>
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>除非与贵司另行协商一致，本承诺书一经生效即不可撤销。</span><span
+				lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 150%'>
+			<span lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 150%'>
+			<span lang=EN-US
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%'><span
+				style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</span>
+			<o:p></o:p></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 252.0pt; mso-char-indent-count: 21.0; line-height: 150%'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体;
+				 mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>共同还款人：</span>
+				<span name="commonCustName"></span>
+		</p>
+
+		<br>
+		<p class=MsoNormal
+			style='text-indent: 252.0pt; mso-char-indent-count: 21.0; line-height: 150%'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			 <span id="year"></span> 
+			   <span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体;
+				 mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>年</span>
+				<span id="month"
+				style='mso-spacerun: yes'> </span><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体;
+				 mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>月</span><span id="day"
+				style='mso-spacerun: yes'>&nbsp; </span><span
+				style='font-size: 12.0pt; mso-bidi-font-size: 14.0pt; line-height: 150%; font-family: 宋体; 
+				mso-ascii-font-family: "Times New Roman"; mso-hansi-font-family: "Times New Roman"'>日</span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 150%'>
+			<span lang=EN-US style='font-size: 14.0pt; line-height: 150%'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 150%'>
+			<span lang=EN-US style='font-size: 14.0pt; line-height: 150%'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 150%'>
+			<span lang=EN-US><o:p>&nbsp;</o:p></span>
+		</p>
+
+	</div>
+
+</body>
+
+</html>

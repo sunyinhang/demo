@@ -1,0 +1,5 @@
+rootProject.name = 'AppServer'
+include 'payplatform-common'
+include 'payplatform-main'
+findProject(':payplatform-main')?.name = 'main'
+

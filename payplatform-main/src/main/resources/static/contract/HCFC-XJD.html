@@ -1,0 +1,886 @@
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<script type="text/javascript" src="/appjs/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="/appjs/contract.js"></script>
+<title>个人消费借款合同</title>
+
+<style>
+	/* Font Definitions */
+@font-face {
+	font-family: 宋体;
+	panose-1: 2 1 6 0 3 1 1 1 1 1;
+	mso-font-alt: SimSun;
+	mso-font-charset: 134;
+	mso-generic-font-family: auto;
+	mso-font-pitch: variable;
+	mso-font-signature: 3 680460288 22 0 262145 0;
+}
+
+@font-face {
+	font-family: "Cambria Math";
+	panose-1: 2 4 5 3 5 4 6 3 2 4;
+	mso-font-charset: 1;
+	mso-generic-font-family: roman;
+	mso-font-format: other;
+	mso-font-pitch: variable;
+	mso-font-signature: 0 0 0 0 0 0;
+}
+
+@font-face {
+	font-family: Calibri;
+	panose-1: 2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset: 0;
+	mso-generic-font-family: swiss;
+	mso-font-pitch: variable;
+	mso-font-signature: -536870145 1073786111 1 0 415 0;
+}
+
+@font-face {
+	font-family: 华文中宋;
+	panose-1: 2 1 6 0 4 1 1 1 1 1;
+	mso-font-charset: 134;
+	mso-generic-font-family: auto;
+	mso-font-pitch: variable;
+	mso-font-signature: 647 135200768 16 0 262303 0;
+}
+
+@font-face {
+	font-family: "\@华文中宋";
+	panose-1: 2 1 6 0 4 1 1 1 1 1;
+	mso-font-charset: 134;
+	mso-generic-font-family: auto;
+	mso-font-pitch: variable;
+	mso-font-signature: 647 135200768 16 0 262303 0;
+}
+
+@font-face {
+	font-family: "\@宋体";
+	panose-1: 2 1 6 0 3 1 1 1 1 1;
+	mso-font-charset: 134;
+	mso-generic-font-family: auto;
+	mso-font-pitch: variable;
+	mso-font-signature: 3 680460288 22 0 262145 0;
+}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal {
+	mso-style-unhide: no;
+	mso-style-qformat: yes;
+	mso-style-parent: "";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-align: justify;
+	text-justify: inter-ideograph;
+	mso-pagination: none;
+	font-size: 10.5pt;
+	mso-bidi-font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+	mso-fareast-font-family: 宋体;
+	mso-bidi-font-family: "Times New Roman";
+	mso-font-kerning: 1.0pt;
+}
+
+p.MsoCommentText, li.MsoCommentText, div.MsoCommentText {
+	mso-style-priority: 99;
+	mso-style-link: "批注文字 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	mso-pagination: none;
+	font-size: 10.5pt;
+	mso-bidi-font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+	mso-fareast-font-family: 宋体;
+	mso-bidi-font-family: "Times New Roman";
+	mso-font-kerning: 1.0pt;
+}
+
+p.MsoHeader, li.MsoHeader, div.MsoHeader {
+	mso-style-priority: 99;
+	mso-style-link: "页眉 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-align: center;
+	mso-pagination: none;
+	tab-stops: center 207.65pt right 415.3pt;
+	layout-grid-mode: char;
+	border: none;
+	mso-border-bottom-alt: solid windowtext .75pt;
+	padding: 0cm;
+	mso-padding-alt: 0cm 0cm 1.0pt 0cm;
+	font-size: 9.0pt;
+	font-family: "Calibri", sans-serif;
+	mso-fareast-font-family: 宋体;
+	mso-bidi-font-family: "Times New Roman";
+	mso-font-kerning: 1.0pt;
+}
+
+p.MsoFooter, li.MsoFooter, div.MsoFooter {
+	mso-style-priority: 99;
+	mso-style-link: "页脚 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	mso-pagination: none;
+	tab-stops: center 207.65pt right 415.3pt;
+	layout-grid-mode: char;
+	font-size: 9.0pt;
+	font-family: "Calibri", sans-serif;
+	mso-fareast-font-family: 宋体;
+	mso-bidi-font-family: "Times New Roman";
+	mso-font-kerning: 1.0pt;
+}
+
+span.MsoCommentReference {
+	mso-style-priority: 99;
+	mso-ansi-font-size: 10.5pt;
+	mso-bidi-font-size: 10.5pt;
+}
+
+a:link, span.MsoHyperlink {
+	mso-style-priority: 99;
+	color: blue;
+	text-decoration: underline;
+	text-underline: single;
+}
+
+a:visited, span.MsoHyperlinkFollowed {
+	mso-style-noshow: yes;
+	color: purple;
+	mso-themecolor: followedhyperlink;
+	text-decoration: underline;
+	text-underline: single;
+}
+
+p.MsoCommentSubject, li.MsoCommentSubject, div.MsoCommentSubject {
+	mso-style-priority: 99;
+	mso-style-parent: 批注文字;
+	mso-style-link: "批注主题 Char";
+	mso-style-next: 批注文字;
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	mso-pagination: none;
+	font-size: 10.5pt;
+	mso-bidi-font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+	mso-fareast-font-family: 宋体;
+	mso-bidi-font-family: "Times New Roman";
+	mso-font-kerning: 1.0pt;
+	font-weight: bold;
+}
+
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate {
+	mso-style-priority: 99;
+	mso-style-link: "批注框文本 Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-align: justify;
+	text-justify: inter-ideograph;
+	mso-pagination: none;
+	font-size: 9.0pt;
+	font-family: "Calibri", sans-serif;
+	mso-fareast-font-family: 宋体;
+	mso-bidi-font-family: "Times New Roman";
+	mso-font-kerning: 1.0pt;
+}
+
+p.11, li.11, div.11 {
+	mso-style-name: 列出段落11;
+	mso-style-unhide: no;
+	mso-style-parent: "";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	text-indent: 21.0pt;
+	mso-char-indent-count: 2.0;
+	mso-pagination: widow-orphan;
+	font-size: 10.0pt;
+	font-family: "Times New Roman", serif;
+	mso-fareast-font-family: 宋体;
+}
+
+span.Char {
+	mso-style-name: "页眉 Char";
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 页眉;
+	mso-ansi-font-size: 9.0pt;
+	mso-bidi-font-size: 9.0pt;
+}
+
+span.Char0 {
+	mso-style-name: "页脚 Char";
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 页脚;
+	mso-ansi-font-size: 9.0pt;
+	mso-bidi-font-size: 9.0pt;
+}
+
+span.Char1 {
+	mso-style-name: "批注文字 Char";
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 批注文字;
+}
+
+span.Char2 {
+	mso-style-name: "批注主题 Char";
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-parent: "批注文字 Char";
+	mso-style-link: 批注主题;
+	font-weight: bold;
+}
+
+span.Char3 {
+	mso-style-name: "批注框文本 Char";
+	mso-style-noshow: yes;
+	mso-style-priority: 99;
+	mso-style-unhide: no;
+	mso-style-locked: yes;
+	mso-style-link: 批注框文本;
+	mso-ansi-font-size: 9.0pt;
+	mso-bidi-font-size: 9.0pt;
+}
+
+.MsoChpDefault {
+	mso-style-type: export-only;
+	mso-default-props: yes;
+	font-size: 10.0pt;
+	mso-ansi-font-size: 10.0pt;
+	mso-bidi-font-size: 10.0pt;
+	mso-ascii-font-family: "Times New Roman";
+	mso-fareast-font-family: 宋体;
+	mso-hansi-font-family: "Times New Roman";
+	mso-font-kerning: 0pt;
+}
+/* Page Definitions */
+@page {
+	mso-page-border-surround-header: no;
+	mso-page-border-surround-footer: no;
+	mso-footnote-separator: url("个人消费借款合同-自主支付版本-支用时使用.files/header.htm") fs;
+	mso-footnote-continuation-separator:
+		url("个人消费借款合同-自主支付版本-支用时使用.files/header.htm") fcs;
+	mso-endnote-separator: url("个人消费借款合同-自主支付版本-支用时使用.files/header.htm") es;
+	mso-endnote-continuation-separator:
+		url("个人消费借款合同-自主支付版本-支用时使用.files/header.htm") ecs;
+}
+
+@page WordSection1 {
+	size: 595.3pt 841.9pt;
+	margin: 36.0pt 36.0pt 36.0pt 36.0pt;
+	mso-header-margin: 42.55pt;
+	mso-footer-margin: 49.6pt;
+	mso-header: url("个人消费借款合同-自主支付版本-支用时使用.files/header.htm") h1;
+	mso-paper-source: 0;
+	layout-grid: 15.6pt;
+}
+
+div.WordSection1 {
+	page: WordSection1;
+}
+</style>
+
+</head>
+
+<body lang=ZH-CN link=blue vlink=purple
+	style='tab-interval: 21.0pt; text-justify-trim: punctuation'>
+
+	<div class=WordSection1 style='layout-grid: 15.6pt'>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>签约重要提示：<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>为了维护您的权益，请您在签署本合同之前仔细阅读<span
+					lang=EN-US>,</span>检查并确认以下事宜：<span lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>1.</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>您有权签署本合同，若依法需要取得他人同意的，您已经取得充分授权；<span
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp; </span>
+					<o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>2.</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>您已经认真阅读并充分理解本合同所有条款，并特别注意了其中加黑字体部分的内容；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>3.</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>您已经确知任何欺诈、违约行为均要承担相应的法律责任；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>4.</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>您将本着诚实、信用的原则，自愿签订并依约履行本合同；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>5.</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>本合同条款在您输入正确的手机短信验证码以及交易密码后，一经您勾选并点击提交即视为您已完全理解并同意本合同全部条款（包括有关权利义务和<span
+					lang=EN-US>/</span>或责任限制、免责条款），并视为本合同已由双方签署生效。<span lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>6.</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>您在海尔消费金融有限公司注册的账号和密码是海尔消费金融有限公司识别您身份及指令的唯一标志，所有使用您账号和密码的操作均视为您的（授权）操作行为<span
+					lang=EN-US>, </span>您应妥善保管账号及密码，防止账号及密码泄露，因账号及密码泄露所造成的损失将由您自行承担。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 21.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>7.</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='mso-bidi-font-size: 10.5pt; line-height: 125%; font-family: 华文中宋'>如果您对本合同还有疑问之处，请及时提请海尔消费金融有限公司工作人员予以说明或向相关专业人士咨询。如果您对本合同中的条款仍然存有疑义，请您暂缓签署本合同。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=center
+			style='text-align: center; text-indent: 28.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 14.0pt; line-height: 125%; font-family: 华文中宋'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal align=center
+			style='text-align: center; text-indent: 28.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 14.0pt; line-height: 125%; font-family: 华文中宋'>个人消费借款合同<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 36.05pt; mso-char-indent-count: 4.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>借款人（甲方）：<u><span 	id="custName"
+						lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</span></span></u><span lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><u><o:p></o:p></u></span></span></b>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 36.05pt; mso-char-indent-count: 4.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>证件名称：</span></b><u><span 
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>
+					身份证<span lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>
+			</span></u><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'><span
+				style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><b
+				style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>证件号码：</span></b><u><span id="identifyNo"
+				lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'><span
+					style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</span>
+				<o:p></o:p></span></u>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 36.05pt; mso-char-indent-count: 4.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>贷款人（乙方）</span></b><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>：海尔消费金融有限公司<span
+				lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;
+				</span><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;</span></span><b
+				style='mso-bidi-font-weight: normal'>联系电话：</b><span lang=EN-US>4000187777<u><o:p></o:p></u></span></span>
+		</p>
+
+		<p class=MsoNormal align=left
+			style='text-align: left; text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>本合同为借款人（以下简称为甲方）与海尔消费金融有限公司（以下简称为乙方）签订的《个人消费循环额度授信合同》项下的具体业务合同并与之共同构成甲乙双方之间的债权债务关系。<u><span
+						lang=EN-US><o:p></o:p></span></u></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>第一条
+				借款业务信息<b style='mso-bidi-font-weight: normal'>（大小写数字不一致时，以大写数字为准，下同）</b>：<span
+				lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.1</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>借款金额（人民币大写）<u><span id="applyAmtBig" 
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>（￥<span lang=EN-US id="applyAmtSmall"><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>）</u>，本合同项下借款发放后，甲方剩余可用额度为（人民币大写）<u><span lang=EN-US><span id="bigCrdNorAvailAmt"
+						style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>（￥<span lang=EN-US id="crdNorAvailAmt"><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span>）</u>。<span lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.2</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>借款利率：<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>本合同项下借款利率为固定日利率，日利率为<u><span id="rate"
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span></u>，在借款期限内，该利率保持不变，按实际使用天数计算利息。<span lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.3</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>借款期限：<u><span id="applyTnr"
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span></u>，自本合同项下借款实际发放之日起开始计算。<span lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.4</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>借款用途：购买耐用消费品（不包括购买房屋与汽车）或一般用途个人消费。<span
+				lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;
+				</span><u><o:p></o:p></u></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.5</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>借款支付方式：<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>本合同项下借款采用自主支付方式支付，由甲方按照借款用途自行支配使用，乙方将借款资金发放至甲方指定的如下银行账户：<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>账户户名：<u><span id="applAcNam"
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span>
+					<o:p></o:p></span></u></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>银行账号：<u><span id="applCardNo" 
+					lang=EN-US><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span>
+					<o:p></o:p></span></u></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>开
+				户 行：<u><span lang=EN-US id="accBankName"><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</span>
+					<o:p></o:p></span></u>
+			</span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.6</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>还款方式：<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.6.1</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>本合同项下还款方式为<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>□利随本清，即甲方在借款发放之日起的第<span
+				lang=EN-US>91</span>天向乙方一次性归还所有本金及利息。<span lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>□等额本息，即甲方自借款发放日的次月起，在借款期限内每一个月的借款发放日的对应日以相等的金额向乙方偿还借款本息（如贷款发放日为<span
+				lang=EN-US>1</span>月<span lang=EN-US>1</span>日，贷款期限为<span lang=EN-US>3</span>个月，则<span
+				lang=EN-US>2</span>月<span lang=EN-US>1</span>日为第一个还款日，以此类推）。如某个月内无对应日，则该月最后一日临时调整为当月还款日（但其他月份中的对应日并不因此相应调整）。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>每月应还款额<span
+				lang=EN-US>=</span>贷款本金×<span lang=EN-US>[</span>月利率×（<span
+				lang=EN-US>1+</span>月利率）<span lang=EN-US>^</span>还款月数<span
+				lang=EN-US>]</span>÷<span lang=EN-US>[</span>（<span lang=EN-US>1+</span>月利率）<span
+				lang=EN-US>^</span>还款月数—<span lang=EN-US>1]<o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>月利率<span
+				lang=EN-US>=</span>日利率<span lang=EN-US>*30<o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.6.2</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>甲方采用委托扣款的方式向乙方偿还借款本息。<b
+				style='mso-bidi-font-weight: normal'>甲方在此不可撤销的授权乙方在不需要甲方账户密码的情况下，通过中国银联或其他依法设立的支付机构，在还款日从本合同第一条第<span
+					lang=EN-US>1.5</span>款中甲方指定的其个人银行借记卡账户中按照约定的还款方式自行扣款用于偿还本合同项下已到期债务，直至本合同项下全部债务清偿完毕为止。
+			</b><span lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>1.6.3</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>甲方应确保本合同第一条第<span
+					lang=EN-US>1.5</span>款中指定的银行借记卡在还款日当天状态正常，且应至少在还款日前一天<span
+					lang=EN-US>24:00</span>之前将应还款项足额存入账户中，如因甲方银行借记卡中<span
+					style='mso-font-kerning: 1.0pt'>金额不足的，乙方不做部分扣款，并将该期全部应还借款本金做逾期处理。</span></span></b><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>如甲方因银行卡销户、冻结、未授权、过期，或因甲方的信息、密码、验证码等信息泄露或介质保管不善等原因导致乙方扣款失败的，乙方将视为甲方逾期并追究甲方违约责任。如还款账户发生变化，甲方应至少在还款日前一天<span
+				lang=EN-US>17:00</span>之前电话通知乙方或通过乙方网站、<span lang=EN-US>APP</span>以及其他乙方提供的自助方式进行变更。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>1.7</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>提前还款<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>1.7.1</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>本合同项下甲方不得部分提前还款，但可在借款到期前向乙方申请提前结清全部剩余借款本金。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>1.7.2</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>甲方申请全部提前还款的，应在下一个还款日（或到期日）之前通过乙方官方网站、移动端<span
+				lang=EN-US>APP</span>软件或电话等方式向乙方提出申请，按照乙方要求将有关款项存入还款账户或乙方指定账户后通知乙方，乙方确认后结清本合同项下所有债务。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>1.7.3</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>本合同项下甲方申请提前还款的，应按照剩余本金的<u><span
+					lang=EN-US id="feeRate"><span style='mso-spacerun: yes'>&nbsp;&nbsp;&nbsp;&nbsp;
+					</span></span></u><span lang=EN-US></span>向乙方交纳提前还款手续费。<span lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>1.8</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>违约责任<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>1.8.1</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>甲方未按本合同约定期限偿还借款本息的，乙方对逾期借款本金从逾期之日起在本合同第一条第<span
+				lang=EN-US>1.2</span>款约定的利率基础上上浮<span lang=EN-US>50%</span>按日计收罚息，并按累计逾期本息以及罚息的总金额的<span
+				lang=EN-US>5%</span>按月计收滞纳金（最低人民币<span lang=EN-US>30</span>元），直至全部逾期债务清偿完毕为止。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>1.8.2</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>甲方未按本合同约定用途使用借款的，乙方对违约使用部分从违约使用之日起，在本合同第一条第<span
+				lang=EN-US>1.2</span>款约定的利率基础上上浮<span lang=EN-US>100%</span>按日计收罚息，直至违约使用部分本息清偿完毕为止。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=11
+			style='text-indent: 18.0pt; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>1.8.3</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋; mso-font-kerning: 1.0pt'>除上述措施外，乙方有权按照与甲方签订的《个人消费循环额度授信合同》中的约定对甲方的违约行为采取相应措施。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>第二条
+				承诺与保证<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>甲方承诺遵守在与乙方签订的《个人消费循环额度授信合同》中的有关承诺与保证的条款，对该合同中有关违约责任完全了解并遵照执行。此外，甲方还向乙方作出如下承诺与保证：<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>2.1</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>甲方拥有完全权利能力和行为能力签署及履行本合同，签署本合同是甲方真实意思表示。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>2.2</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>甲方承诺严格按照合同约定使用本合同项下借款资金，不擅自改变借款用途或将借款挪作他用。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>2.3</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>甲方承诺在借款发放后，自愿按合同约定的方式履行还款义务并配合乙方的贷后检查工作，在乙方需要时，向乙方提供相关交易文件或其他交易证明资料，并保证所提交的资料真实、完整、合法、有效。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>第三条
+				其他约定<span lang=EN-US><o:p></o:p></span>
+			</span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>3.1</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>与本合同项下及与之有关的一切争议，双方首先应协商解决；协商不成的，双方同意将争议提交至乙方所在地人民法院诉讼解决。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>3.2</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>免责条款<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>3.2.1</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>本合同项下借款发放前，如因国家有关部门颁布的法律、法规、规章、规定、指引、通知（包括口头通知）、政策及其他规范性文件导致乙方不能发放本合同项下贷款的，或乙方发现甲方存在包括但不限于欺诈、套现、未结诉讼等可能导致乙方债权损失的重大不利行为或事项的，乙方有权停止发放贷款并解除本合同，不视为乙方违约，乙方不承担任何责任。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>3<b
+				style='mso-bidi-font-weight: normal'>.2.2 </b></span><b
+				style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>若乙方软（硬）件系统出现下列任一状况而无法正常运作，致使无法向甲方提供本服务的，乙方均不承担任何违约或赔偿责任，该状况包括但不限于：<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>(1)
+			</span></b><b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>在乙方网站维护或升级期间；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>(2)
+			</span></b><b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>电信设备出现故障不能进行数据传输的；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>(3)
+			</span></b><b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>因台风、地震、海啸、洪水、停电、战争、恐怖袭击等不可抗力之因素，造成乙方服务运行系统障碍不能执行业务的；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>(4)
+			</span></b><b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>由于黑客攻击、电信部门和其他有信息技术依赖的相关部门、企事业单位技术调整或故障、网站升级、银行方面的问题等原因而造成的服务中断或者延迟；<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>(5)
+			</span></b><b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>其他非乙方原因导致的故障。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>3.3</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>本合同的任何条款或内容被依法撤销或被认定为无效时，其它条款和内容的效力不受影响，仍为有效。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>3.4</span><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>在乙方的债权尚未得到全部清偿前，甲方出现逾期等任何违约行为时，乙方在任何时间所给予的宽容、宽限或延缓行使权利，均不损害、影响或限制乙方应享的一切权利，亦不能解释为乙方对任何违约行为的许可，更不能视为乙方放弃现在或将来对上述违约行为采取行动的权利。借款人同意以上内容，并承诺按照以上约定及已签订的合同履行义务。<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>3.5</span></b><b
+				style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>乙方有权将其在本合同项下的权利义务全部或部分转让给第三方，该转让行为无需另行征得甲方同意。乙方转让权利时若需通知甲方的，通知可以书面、短信、邮件等形式通知或在乙方网站或其他公开媒体上发布公告等形式作出。合同权利义务转让后，甲方同意与债权受让人之间基于本合同权利义务转让发生的争议适用本合同第三条第<span
+					lang=EN-US>3.1</span>款约定。<span lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal style='line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>（以下无正文）<span
+				lang=EN-US><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>重要提示：<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal
+			style='text-indent: 18.0pt; mso-char-indent-count: 2.0; line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>请甲方认真阅读本合同内容，尤其是合同中有关借款金额、期限、利率、还款方式以及其他黑色字体内容，如有疑问，请及时提请乙方工作人员予以说明或向相关专业人士咨询；本合同一经甲方勾选并点击“提交”即视为甲方已完全理解并同意全部条款，并视为本合同已由双方签署生效。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal style='line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%'><o:p>&nbsp;</o:p></span></b>
+		</p>
+
+		<p class=MsoNormal style='line-height: 125%; layout-grid-mode: char'>
+			<b style='mso-bidi-font-weight: normal'><span
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>甲方同意以上内容，并承诺按照以上约定及已签订的与本合同有关的其他合同履行义务。<span
+					lang=EN-US><o:p></o:p></span></span></b>
+		</p>
+
+		<p class=MsoNormal style='line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US style='font-size: 9.0pt; line-height: 125%'><o:p>&nbsp;</o:p></span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>借款人（甲方）确认：<span id="accName"
+				lang=EN-US><span style='mso-spacerun: yes'>
+				</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				贷款人（乙方）确认：海尔消费金融有限公司<span lang=EN-US><o:p></o:p></span></span>
+		</p>
+		
+		<p class=MsoNormal style='line-height: 125%; layout-grid-mode: char'>
+			<span style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'>日期：<span name="date"
+				lang=EN-US><span style='mso-spacerun: yes'>
+				</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				日期：<span lang=EN-US name="date"><o:p></o:p></span></span>
+		</p>
+
+		<p class=MsoNormal style='line-height: 125%; layout-grid-mode: char'>
+			<span lang=EN-US
+				style='font-size: 9.0pt; line-height: 125%; font-family: 华文中宋'><o:p>&nbsp;</o:p></span>
+		</p>
+
+	</div>
+
+</body>
+
+</html>
