@@ -7,7 +7,7 @@ server:
     max-connections: 500
   connection-timeout: 5000
 logging:
-  file: AppServer.log
+  file: payplatform.log
   level:
     org.springframework.security: DEBUG
     com.haiercash: DEBUG
@@ -15,7 +15,7 @@ security:
   sessions: NEVER
 spring:
   application:
-    name: AppServer
+    name: payplatform
   redis:
     host: 10.164.194.142
     port: 6379
