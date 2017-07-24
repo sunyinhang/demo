@@ -1,0 +1,19 @@
+.bv-nav .bv-logo {
+    background: #3377BE url(images/logo.png) no-repeat;
+}
+
+.bv-theme .bv-body {
+    top: 72px;
+}
+.bv-theme .bv-body .bv-tabs {
+    top: 72px;
+}
+.bv-theme .breadcrumb .operate {
+    position: absolute;
+    right: 0;
+    top: 38px;
+}
+.bv-header .bv-toolbar {
+    height: 40px;
+    line-height: 40px;
+}

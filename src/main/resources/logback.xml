@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <property name="LOG_PATH" value="./log"/>
+    <property name="APP_NAME" value="payplatform"/>
+
+    <contextName>${APP_NAME}</contextName>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+      <appender name="VISIT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.visit.log</FileNamePattern>
+        </rollingPolicy>
+        <encoder>
+          <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+      <appender name="TASK_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.task.log</FileNamePattern>
+        </rollingPolicy>
+        <encoder>
+          <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+
+    <appender name="VISIT_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="VISIT_LOG"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+   <logger name="com.haiercash.acquirer" level="debug">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <!--
+    <logger name="com.haiercash.acquirer.task" level="debug">
+        <appender-ref ref="TASK_LOG"/>
+    </logger>
+    <logger name="com.haiercash.cmis" level="debug">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.haiercash.commons" level="debug">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.haiercash.commons.config.RestAspect" level="debug">
+        <appender-ref ref="VISIT_ASYNC"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>-->
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
