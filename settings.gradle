@@ -1,4 +1,4 @@
-rootProject.name = 'AppServer'
+rootProject.name = 'payplatform'
 include 'payplatform-common'
 include 'payplatform-main'
 findProject(':payplatform-main')?.name = 'main'
