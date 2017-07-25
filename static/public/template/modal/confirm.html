@@ -1,0 +1,77 @@
+<div data-container="confirm">
+	<component is="bv-form" key="confirmForm" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+require(['jquery', 'util', 'Const'], function ($, util, Const) {
+	if (Const.global.confirm) {
+		if (!Const.global.confirm.extra) {
+            Const.global.confirm.extra = {};
+		}
+	}
+    var vm = util.bind({
+        container: 'confirm',
+		data: {
+			config: {
+				size: 'md',
+				title: Const.global.confirm.title,
+				closeTitle: '取消',
+				columns: [
+					{
+						name: 'content',
+						// value: Const.global.confirm.content,
+						edit: {
+							type: 'static',
+							cols: 12
+						},
+						config: {
+							value: Const.global.confirm.content
+						}
+					},
+					{
+						name: 'extra',
+						// value: Const.global.confirm.content,
+						edit: {
+							type: Const.global.confirm.extra.type || 'ignore',
+							cols: 12
+						},
+						config: {
+							attr: Const.global.confirm.extra.attr
+						}
+					}
+				],
+				operates: [
+					{
+						text: Const.global.confirm.buttonText,
+						clazz: 'btn-primary',
+						icon: 'icon-confirm',
+						loading: '提交中...',
+						click: function ($element, editType, entity) {
+							var data;
+							if (!util.isEmpty(Const.global.confirm.extra)) {
+								data = {
+									describe: entity.extra,
+									keyValuesList: Const.global.confirm.data
+								};
+							} else {
+								data = Const.global.confirm.data;
+							}
+							util.post({
+								$element: $element,
+								url: Const.global.confirm.url,
+								data: data,
+								traditional: true,
+								success: function(data) {
+									if (util.type(Const.global.confirm.success) === 'function') {
+                                        Const.global.confirm.success.call(null, data);
+									}
+									util.confirm('hide');
+								}
+							});
+						}
+					}
+				]
+			}
+		}
+    });
+});
+</script>

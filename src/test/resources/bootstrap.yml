@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: acquirer
+  profiles:
+    active: default
+  cloud:
+    config:
+      uri: http://localhost:8888
+#      uri: http://10.164.194.141:8115
+#      uri: http://10.164.197.223:8888
+server:
+  port: 8090
+management:
+  context-path: /admin
+  security:
+    enabled: false
+endpoints:
+  refresh:
+    enabled: true
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
