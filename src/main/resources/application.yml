@@ -7,7 +7,7 @@ security:
   sessions: NEVER
 spring:
   application:
-    name: appmanage-lh
+    name: payplatform
   ignoreUnresolvablePlaceholders: true
   redis:
     host: 10.164.194.142
