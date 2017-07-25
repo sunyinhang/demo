@@ -1,7 +1,9 @@
 package com.haiercash.payplatform.common.utils;
 
 /**
- * Created by yinjun on 2016/9/18.
+ * reflat util.
+ * @author yinjun
+ * @since v1.0
  */
 
 import org.apache.commons.lang.StringUtils;

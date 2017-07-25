@@ -3,7 +3,7 @@ package com.haiercash.payplatform.common.enums;
 /**
  * acquirer goods and order goods relation enum.
  * @author Liu qingxiang.
- * @since v2.0.0
+ * @since v1.0
  */
 public enum AcquirerGoodsEnum {
 

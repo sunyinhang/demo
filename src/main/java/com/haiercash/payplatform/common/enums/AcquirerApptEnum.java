@@ -2,7 +2,8 @@ package com.haiercash.payplatform.common.enums;
 
 /**
  * 收单系统申请人map映射关系.
- * Created by zhouwushuang on 2017.04.19.
+ * @author zhou wushuang
+ * @since v1.0
  */
 public enum AcquirerApptEnum {
 

@@ -3,7 +3,7 @@ package com.haiercash.payplatform.common.enums;
 /**
  * acquirer enum, 映射收单与订单属性字段.
  * @author Liu qingxiang
- * @since v2.0.0
+ * @since v1.0
  */
 public enum AcquirerEnum {
 

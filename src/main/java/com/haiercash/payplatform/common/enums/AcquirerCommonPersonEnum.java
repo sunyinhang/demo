@@ -7,7 +7,9 @@ import com.haiercash.payplatform.data.CommonRepaymentPerson;
 import java.util.Map;
 
 /**
- * Created by use on 2017.04.21.
+ * enum for common person.
+ * @author Liu qingxiang
+ * @since v1.0
  */
 public enum AcquirerCommonPersonEnum {
     RELATION        ("relation",        "appt_relation"),   // 与申请人之间的关系

@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * app后台order与订单系统order映射枚举.
  * @author Liu qingxiang
- * @since v2.0.0
+ * @since v1.0
  */
 public enum OrderEnum {
     VERSION         ("version",         "version"),     // 版本
