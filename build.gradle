@@ -113,16 +113,6 @@ dependencies {
     compile("com.alibaba:druid:1.0.26")
     // compile("com.haiercash:mybatis:3.4.0.8")
 
-    if (project.hasProperty('release')) {
-        compile("com.haiercash:util:1.2.8-SNAPSHOT") {
-            exclude(module: 'mybatis')
-        }
-    } else {
-        compile("com.haiercash:util:1.2.8-SNAPSHOT") {
-            exclude(module: 'mybatis')
-        }
-    }
-
     // fastjson
     compile("com.alibaba:fastjson:1.2.12")
 //    compile("com.haiercash:util:1.1.25-SNAPSHOT")
