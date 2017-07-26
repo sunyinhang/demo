@@ -24,6 +24,7 @@ import java.util.Map;
 @Service
 public class AcquirerServiceImpl extends BaseService implements AcquirerService {
 
+
     // 映射贷款信息商品信息至apporder对象
     private AppOrder acquirerGoodMap2OrderObject(Map<String, Object> acquirer, AppOrder order) {
         if (StringUtils.isEmpty(acquirer.get("goodsList"))) {

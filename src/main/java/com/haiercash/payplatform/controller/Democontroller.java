@@ -1,10 +1,10 @@
 package com.haiercash.payplatform.controller;
 
+import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.rest.inner.InnerResponse;
 import com.haiercash.commons.rest.inner.InnerRestUtil;
 import com.haiercash.payplatform.common.annotation.RequestCheck;
 import com.haiercash.payplatform.dao.BcBankInfoDao;
-import com.haiercash.payplatform.data.BcBankInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class Democontroller extends BaseInnerController{
 
-    public Democontroller(String moduleNo) {
-        super(moduleNo);
+    public Democontroller() {
+        super("01");
     }
 
     @Autowired
@@ -29,11 +29,18 @@ public class Democontroller extends BaseInnerController{
     @Autowired
     private BcBankInfoDao bcBankInfoDao;
 
+    @Autowired
+    private Cache cache;
+
+
 
     @RequestCheck
     @RequestMapping(value = "/app/payplatform/demo", method = RequestMethod.GET)
-    public InnerResponse demo(String name, Model model) {
-        BcBankInfo bcBankInfo = bcBankInfoDao.selectById("234");
+    public InnerResponse demo(String name, Model model) throws Exception {
+        //BcBankInfo bcBankInfo = bcBankInfoDao.selectById("234");
+
+        cache.set("XYZ", "12000");
+        String value = cache.get("XYZ");
 
         return success();
     }

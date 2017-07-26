@@ -13,6 +13,19 @@ spring:
     host: 10.164.194.142
     port: 6379
   http.converters.preferred-json-mapper: fastjson
+redis:
+  single:
+    host: 10.164.194.142
+    port: 6379
+  # cluster:
+  #   address: 192.168.1.17:7001,192.168.1.17:7002,192.168.1.17:7003
+  #   timeout: 300000
+  #   maxRedirections: 6
+  pool:
+    maxWaitMillis: -1
+    maxTotal: 1000
+    maxIdle: 9
+    minIdle: 100
 datasources:
   payplatform:
     datasource:
@@ -74,10 +87,16 @@ ribbon:
   ReadTimeout: 60000
   eureka:
     enabled: true
+common:
+  redis:
+    host: 10.164.194.142
+    port: 6379
+    prefix: ":MAIN:"
 app:
   instance:
     #  错误码前缀：错误码组成为 前缀（此处定义）+模块代码（controller中定义）+错误码（super.fail中定义）
     errorPrefix: PPF
+    redisPrefix: PAYPLATFORM
   file:
     # 文件上传路径
     uploadPath: f:\file\upload
@@ -91,5 +110,3 @@ app:
   rest:
     # profiles:
       # 配置各系统版本对应关系，如： crm: beta
-
-

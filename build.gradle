@@ -26,6 +26,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
+apply plugin: "io.spring.dependency-management"
 
 group = 'com.haiercash'
 version = '1.0.0'
@@ -72,6 +73,7 @@ repositories {
     }
 }
 dependencies {
+    compile("org.springframework.boot:spring-boot-configuration-processor")
     compile("com.bestvike:bv-mybatis:3.4.0-SNAPSHOT")
     compile("com.bestvike:bv-jxls-poi:1.0.9-SNAPSHOT")
     compile("com.bestvike:bv-jxls-reader:2.0.2-SNAPSHOT")
@@ -121,8 +123,12 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
+
 processResources {
     filesMatching("**/application.properties") {
         expand(project.properties)
     }
 }
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+compileJava.dependsOn(processResources)
