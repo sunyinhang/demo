@@ -3,6 +3,8 @@ package com.haiercash.payplatform.controller;
 import com.haiercash.commons.rest.inner.InnerResponse;
 import com.haiercash.commons.rest.inner.InnerRestUtil;
 import com.haiercash.payplatform.common.annotation.RequestCheck;
+import com.haiercash.payplatform.dao.BcBankInfoDao;
+import com.haiercash.payplatform.data.BcBankInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,15 +22,16 @@ public class Democontroller extends BaseInnerController{
     }
 
     @Autowired
-    private BaseInnerController baseInnerController;
+    private InnerRestUtil innerRestUtil;
 
     @Autowired
-    private InnerRestUtil innerRestUtil;
+    private BcBankInfoDao bcBankInfoDao;
 
 
     @RequestCheck
     @RequestMapping(value = "/app/payplatform/demo", method = RequestMethod.GET)
     public InnerResponse demo(String name, Model model) {
+        BcBankInfo bcBankInfo = bcBankInfoDao.selectById("234");
 
         return success();
     }
