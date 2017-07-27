@@ -5,14 +5,16 @@
 require(['jquery', 'util', 'Const'], function ($, util, Const) {
 	util.bind({
 		container: 'commonExport',
-		tags: {
-			exportId: 'commonExportTag'
-		},
-		config: {
-			url: Const.global.modal.data.url,
-			template: Const.global.modal.data.template,
-			data: Const.global.modal.data
-		}
+		data: {
+            tags: {
+                exportId: 'commonExportTag'
+            },
+            config: {
+                url: Const.global.modal.data.url,
+                template: Const.global.modal.data.template,
+                data: Const.global.modal.data
+            }
+        }
 	});
 });
 </script>

@@ -459,7 +459,7 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                             util.login();
                         }
                     } else {
-                        if (!Const.alerted && Const.init.type !== 'alert') {
+                        if ((!Const.from || Const.from !== 'login') && !Const.alerted && Const.init.type !== 'alert') {
                             Const.alerted = true;
                             util.show({
                                 $element: param.$element,
@@ -604,6 +604,7 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                         content: param.content,
                         url: param.url,
                         data: param.data,
+                        vm: param.vm,
                         callback: param.callback
                     }
                 }
@@ -725,13 +726,18 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
         // dialog-弹窗-body
         layout: function($element) {
             if ($element) {
-                if ($element.closest('.modal').length === 1) {
+                if ($element.closest('.bv-modal').length === 1) {
+                    return 'body';
+                } else if ($element.closest('.modal').length === 1) {
                     return 'modal';
-                } else if ($element.closest('.bv-body').length === 1) {
+                } else if ($element.closest('.bv-body').length === 1 || $element.closest('.bv-simple').length === 1) {
                     return 'body';
                 }
             } else {
                 if ($('#modal').is(':visible')) {
+                    if ($('.bv-modal', $('#modal')).length === 1) {
+                        return 'body';
+                    }
                     return 'modal';
                 }
                 return 'body';
@@ -916,8 +922,8 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
             }
             return 0;
         },
-        click: function(controller, selector, callback) {
-            $('[ms-controller="' + controller + '"]').off('click', selector).on('click', selector, callback);
+        click: function(container, selector, callback) {
+            $('[data-container="' + container + '"]').off('click', selector).on('click', selector, callback);
         },
         open: function(url) {
             window.open(url);
@@ -1290,9 +1296,30 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                 return new vue(param);
             }
         },
-        vm: function(parent, ref) {
-            if (parent && ref) {
-                return parent.$refs[ref];
+        vm: function(parent, key, sub) {
+            var vm;
+            if (!parent) {
+                vm = Const.global.modal.vm;
+            }
+            if (parent && key) {
+                for (var i=0; i<parent.$children.length; i++) {
+                    if (key === (parent.$children[i].name || parent.$children[i].$vnode.key)) {
+                        vm = parent.$children[i];
+                        break;
+                    }
+                }
+            } else {
+                vm = parent;
+            }
+            if (vm) {
+                if (sub) {
+                    for (var i=0; i<vm.$children.length; i++) {
+                        if (sub === (vm.$children[i].name || vm.$children[i].$vnode.key)) {
+                            return vm.$children[i];
+                        }
+                    }
+                }
+                return vm;
             }
         },
         refresh: function(param) {
@@ -1300,9 +1327,24 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                 var tagType = param.vm.$options._componentTag;
                 if (tagType) {
                     if (tagType === 'bv-table') {
+                        if (param.checked === false) {
+                            param.vm.onHeadCheck(undefined, false, true);
+                            return;
+                        }
                         if (param.query) {
                             param.vm.innerFilterMore = true;
                             param.vm.localQuery = param.query;
+                        }
+                        if (param.initParam) {
+                            var paramList = [];
+                            for (var p in param.initParam) {
+                                paramList.push({
+                                    name: p,
+                                    operate: '=',
+                                    value: param.initParam[p]
+                                });
+                            }
+                            param.vm.innerInitParamList = paramList;
                         }
                         if (param.initParamList) {
                             param.vm.innerInitParamList = param.initParamList;
@@ -1313,10 +1355,16 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                         if (param.chooseResult) {
                             param.vm.innerChooseResult = param.chooseResult;
                         }
-                        param.vm.refresh();
+                        // type支持load-仅加载一次，空或refresh-每次都做加载
+                        if (!param.type || param.type !== 'load' || !param.vm.innerInited) {
+                            param.vm.refresh();
+                        }
                     } else if (tagType === 'bv-form') {
                         if (this.type(param.clazz) !== 'undefined') {
                             param.vm.innerClass = param.clazz;
+                        }
+                        if (param.title) {
+                            param.vm.innerTitle = param.title;
                         }
                         if (param.entity) {
                             this.clone(param.vm.innerEntity, param.entity);
@@ -1326,12 +1374,34 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                             param.vm.innerEditType = param.editType;
                         }
                         if (param.show) {
-                            if (param.name) {
-                                param.vm.showColumn(param.name);
+                            if (param.show.name) {
+                                param.vm.showColumn(param.show.name);
                             }
-                            if (param.operate) {
-                                param.vm.showOperate(param.operate);
+                            if (param.show.names) {
+                                var names = param.show.names.split(',');
+                                for (var i=0; i<names.length; i++) {
+                                    param.vm.showColumn($.trim(names[i]));
+                                }
                             }
+                            if (param.show.operate) {
+                                param.vm.showOperate(param.show.operate);
+                            }
+                        }
+                        if (param.hide) {
+                            if (param.hide.name) {
+                                param.vm.hideColumn(param.hide.name);
+                            }
+                            if (param.hide.names) {
+                                var names = param.hide.names.split(',');
+                                for (var i=0; i<names.length; i++) {
+                                    param.vm.hideColumn($.trim(names[i]));
+                                }
+                            }
+                            if (param.hide.operate) {
+                                param.vm.hideOperate(param.hide.operate);
+                            }
+                        }
+                        if (param.name) {
                             if (param.initRows) {
                                 this.refresh({
                                     id: param.id + '-' + param.name,
@@ -1363,6 +1433,10 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                             param.vm.innerDatasets = param.datasets;
                         }
                         param.vm.refresh();
+                    } else if (tagType === 'bv-textfield') {
+                        if (param.value !== undefined) {
+                            param.vm.innerEntity[param.vm.name] = param.value;
+                        }
                     }
                 } else if (param.value !== undefined) {
                     param.vm.innerEntity[param.vm.name] = param.value;
@@ -1594,6 +1668,7 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
             if (r) {
                 event.target.value = event.target.value.replace(r, '');
             }
+            return event.target.value;
         },
         // 根据字典值取对应的名称
         trans: function(value, config) {
@@ -1709,6 +1784,19 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                         }
                     }
                     return (symbol || '\u00a5') + formatNumber(amount, isFinite(fractionSize) ? fractionSize : 2);
+                case 'currencyFen':
+                    var amount = this.toNumber(v) / 100;
+                    var symbol;
+                    var fractionSize;
+                    if (params !== null) {
+                        if (params.length > 0) {
+                            symbol = params[0];
+                        }
+                        if (params.length > 1) {
+                            fractionSize = params[1];
+                        }
+                    }
+                    return (symbol || '\u00a5') + formatNumber(amount, isFinite(fractionSize) ? fractionSize : 2);
                 case 'date':
                     if (this.type(v) === 'string' && v.length >= 10) {
                         return v.substring(0, 10);
@@ -1804,6 +1892,16 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
             /*if (this.type(keys) === 'string') {
                 keys = this.vm(keys).localKeys;
             }*/
+            if (this.type(row) === 'array') {
+                var result = [];
+                for (var r=0; r<row.length; r++) {
+                    result.push(this.id(keys, row[r]));
+                }
+                return result;
+            }
+            if (this.type(keys) === 'string') {
+                return row[keys];
+            }
             var t = {};
             for (var i=0; i<keys.length; i++) {
                 t[keys[i]] = row[keys[i]];
@@ -1910,8 +2008,8 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                 }
             }
             if (!this.isEmpty(vm.validate)) {
-                /*if (!vm.$validateJson) {
-                    vm.$validateJson = [];
+                /*if (!vm.validateJson) {
+                    vm.validateJson = [];
                 }*/
                 vm.innerAttr = this.mix(vm.innerAttr, this.validateMix(vm.validate));
             }
@@ -2855,7 +2953,7 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                                     util.login();
                                 }
                             } else {
-                                if (!Const.alerted && Const.init.type !== 'alert') {
+                                if ((!from || from !== 'login') && !Const.alerted && Const.init.type !== 'alert') {
                                     Const.alerted = true;
                                     util.show({
                                         message: '登录超时，请重新登录',
@@ -2872,7 +2970,7 @@ define('util', ['vue', 'jquery', 'Const', 'moment', 'toastr', 'json'], function(
                                     // util.show(message || '登陆超时，请重新登录', undefined, 'alert', 'error');
                                 }
                             } else {
-                                if (!Const.alerted) {
+                                if ((!from || from !== 'login') && !Const.alerted) {
                                     Const.alerted = true;
                                     util.show({
                                         message: '登录超时，请重新登录',

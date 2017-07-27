@@ -30,6 +30,12 @@
 	text-align: center;
 	border-top: none;
 }
+.bv-theme .modal-full {
+	width: 95%;
+}
+.bv-theme .modal-body .col-md-6 {
+	padding: 0;
+}
 .bv-theme .bv-content #toast-container.toast-top-center {
 	top: 80px;
 }
@@ -80,7 +86,13 @@
 	width: 100%;
 	display: inline-block;
 }
-.bv-theme .bv-tabs-inline .nav-tabs {
+.bv-theme .bv-content .bv-tabs-inline .tab-content {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 40px;
+	bottom: 0;
+	overflow: auto;
 }
 
 .bv-theme .bv-tabs-overflow.bv-tabs .bv-tabs-nav {

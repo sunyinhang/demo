@@ -48,10 +48,9 @@ define([
             }
         },
         methods: {
-            // TODO: 暂不支持fix
             checkInput: function(event) {
                 if (this.fix) {
-                    util.fix(event, this.fix);
+                    this.innerEntity[this.name] = util.fix(event, this.fix);
                 }
             },
             openModal: function () {
@@ -60,6 +59,7 @@ define([
                 }
                 util.modal({
                     url: this.chooseUrl,
+                    vm: this,
                     callback: function () {
                         // TODO:
                         console.log('xxxxxx');
@@ -71,7 +71,7 @@ define([
         template: util.heredoc(function() {
             /*!
             <div :class="[{'input-group': chooseUrl}, innerClass]" :style="innerStyle">
-                <input class="form-control" v-bind="innerAttr" v-model="innerEntity[name]" />
+                <input class="form-control" v-bind="innerAttr" v-model="innerEntity[name]" v-on:input="checkInput($event)" />
                 <span class="input-group-addon bv-pointer" v-if="chooseUrl" @click="openModal($event)"><i class="iconfont icon-query"></i></span>
             </div>
             */

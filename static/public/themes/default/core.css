@@ -13,12 +13,6 @@ body.bv-theme {
     font-size: 12px !important;
     color: red;
 }
-.ms-controller {
-	display: none;
-}
-.bv-modal {
-	display: none;
-}
 #alert .modal-dialog {
     margin-top: 150px;
 }

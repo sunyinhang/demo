@@ -10,7 +10,8 @@ define([
             css: '',
             attr: '',
             entity: '',
-            param: ''
+            click: '',
+            operates: ''
         },
         data: function () {
             return {
@@ -32,14 +33,14 @@ define([
                 }
             },
             click: function(event, op, position) {
-                this.param.click.call(this.$parent, event, op, position);
+                this.click.call(this.$parent, event, op, position);
             }
         },
         /****** 模板定义 ******/
         template: util.heredoc(function() {
             /*!
             <div v-bind="innerAttr" :class="innerClass" :style="innerStyle">
-                <a href="javascript:;" v-for="op in param.operates" v-if="checkShow(op)" @click="click($event, op, 'body')">
+                <a href="javascript:;" v-for="op in operates" v-if="checkShow(op)" @click="click($event, op, 'body')">
                     <i class="iconfont" v-if="op.icon || op.type === 'sub'" :class="op.icon || op.type === 'sub' ? 'icon-more' : ''"></i>{{op.text}}
                 </a>
             </div>

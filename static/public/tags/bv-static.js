@@ -15,10 +15,14 @@ define([
             css: '',
             // 属性定义
             attr: '',
+            title: '',
+            href: '',
             // 默认值
             defaultValue: '',
             // 初始值
             value: '',
+            // 设置值
+            text: '',
             from: '',
             // 格式化
             format: '',
@@ -37,34 +41,50 @@ define([
         created: function() {
             util.initDefault(this);
 
-            if (this.show && util.type(this.show) === 'function') {
-                this.innerValue = util.format(this.show.call(null, this.innerValue), this.format);
+            this.initAttr();
+        },
+        mounted: function () {
+            if (this.from === 'table') {
+                this.innerValue = this.text;
+                this.$watch('text', function(val, oldVal) {
+                    this.initAttr();
+                    this.innerValue = val;
+                });
             } else {
-                this.innerValue = util.format(this.innerValue, this.format);
+                this.initVal(this.innerValue);
+                this.$watch('entity.' + this.name, function(val, oldVal) {
+                    this.initAttr();
+                    this.initVal(val);
+                });
             }
-
-            if (!this.innerClass) {
-                this.innerClass = '';
-            }
-            if ((this.attr['data-title'] || this.attr['title']) && !this.attr['data-href']) {
-                this.innerClass += 'abbr';
-            }
-            if (this.from) {
-                this.innerClass += ' from-' + this.from;
-            }
-
-            this.$watch('entity.' + this.name, function(val, oldVal) {
+        },
+        methods: {
+            initAttr: function () {
+                this.innerClass = this.clazz || '';
+                this.innerAttr = this.attr || {};
+                if (this.title) {
+                    this.innerAttr['data-title'] = this.title;
+                    this.innerAttr['data-original-title'] = this.title;
+                    if (!this.href) {
+                        this.innerClass += 'abbr';
+                    }
+                }
+                if (this.from) {
+                    this.innerClass += ' from-' + this.from;
+                }
+            },
+            initVal: function (val) {
                 if (this.show && util.type(this.show) === 'function') {
                     this.innerValue = util.format(this.show.call(null, val), this.format);
                 } else {
                     this.innerValue = util.format(val, this.format);
                 }
-            });
+            }
         },
         /****** 模板定义 ******/
         template: util.heredoc(function() {
             /*!
-            <div><p v-bind="innerAttr" class="form-static" :class="innerClass" :style="innerStyle"><span v-text="innerValue"></span></p></div>
+            <p v-bind="innerAttr" class="form-static" :class="innerClass" :style="innerStyle"><span v-text="innerValue"></span></p>
             */
         })
     });

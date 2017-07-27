@@ -62,6 +62,10 @@ define([
             filterColumnSource: {
                 default: 'default'
             },
+            // 可设置为'false'
+            limitFilterDefaultOption: {
+                default: '请选择限制条件'
+            },
 
             // 查询数据url
             url: '',
@@ -97,8 +101,7 @@ define([
             },
 
             chooseDesc: '',
-            chooseShow: '',
-            confirmChoose: ''
+            chooseShow: ''
         },
         data: function () {
             return {
@@ -169,8 +172,6 @@ define([
             this.localProgress = 0;
             // 模糊查询的字段定义，逗号分开
             this.localFilterColumnNames = '';
-            // 可设置为'false'
-            this.localLimitFilterDefaultOption = '请选择限制条件';
             // 当前登录用户具有权限的按钮定义
             this.localUserOperates = [];
             // 行内编辑新增时添加的行数据
@@ -180,7 +181,7 @@ define([
             this.localFilterEntity = {};
         },
         mounted: function() {
-            if (this.$vnode.key) {
+            if (!this.innerName && this.$vnode.key) {
                 this.innerName = this.$vnode.key;
             }
             if (this.filterLayout === 'filterMore') {
@@ -190,6 +191,9 @@ define([
             // TODO:
             this.localUserOperates = util.userOperates($(this.$el));
 
+            if (this.type === 'sub') {
+                this.innerLayout = 'body';
+            }
             if (!this.innerLayout) {
                 this.innerLayout = util.layout($(this.$el));
             }
@@ -277,7 +281,7 @@ define([
                     if (!column.config.choose && (column.config.entityName || column.config.url)) {
                         if (column.config.entityName) {
                             var columnNames = column.config.code;
-                            if (util.isEmpty(column.config.$trans)) {
+                            if (util.isEmpty(column.config.trans)) {
                                 if (column.config.desc) {
                                     columnNames += ',' + column.config.desc;
                                 }
@@ -317,14 +321,14 @@ define([
                         desc: column.config.desc
                     });
                     if (result && result.options) {
-                        column.config.preset = 'default';
+                        /// column.config.preset = 'default';
                         column.config.choose = result.options;
                     }
                 } else if (column.href && column.href.type === 'sub') {
                     if (!column.config) {
                         column.config = {};
                     }
-                    column.config.type = 'sub';
+                    /// column.config.type = 'a';
                 }
 
                 // 取出精确查询字段
@@ -480,7 +484,7 @@ define([
                     this.localInitRow[column.name] = null;
                 } else if (!column.type) {
                     if (column.href) {
-                        column.type = 'button';
+                        column.type = 'href';
                     } else {
                         column.type = 'static';
                     }
@@ -499,10 +503,10 @@ define([
             this.innerFilterEntity = this.localFilterEntity;
 
             if (!util.isEmpty(this.innerLimitFilterColumns)) {
-                if (this.innerLimitFilterColumns.length > 1 && !util.isEmpty(this.localLimitFilterDefaultOption) && this.localLimitFilterDefaultOption !== 'false') {
+                if (this.innerLimitFilterColumns.length > 1 && !util.isEmpty(this.limitFilterDefaultOption) && this.limitFilterDefaultOption !== 'false') {
                     this.innerLimitFilterColumns.splice(0, 0, {
                         name: '',
-                        head: this.localLimitFilterDefaultOption
+                        head: this.limitFilterDefaultOption
                     });
                 }
                 if (this.innerLimitFilterColumns.length === 1) {
@@ -550,7 +554,7 @@ define([
             if (this.loadType === 'auto' && (!this.type || this.type !== 'sub')) {
                 this.jumpTo();
                 util.tooltip($(this.$el), 'data-title');
-            } else if (this.localLimitFilterDefaultOption !== 'false' && this.loadType === 'false') {
+            } else if (this.limitFilterDefaultOption !== 'false' && this.loadType === 'false') {
                 setTimeout(function() {
                     vm.innerRowCount = 0;
                     vm.innerRows = [];
@@ -609,28 +613,28 @@ define([
                 });
             },
             calcHeight: function(from) {
-                var toolbarHeight = $('.bv-table-toolbar', this.$el).outerHeight(true);
-                var filterHeight = $('.bv-table-filter', this.$el).outerHeight(true);
-                if (this.innerFilterMore) {
-                    filterHeight += $('.bv-table-filter-more', this.$el).outerHeight(true) + 4;
-                }
-                if (this.innerLayout === 'body') {
-                    /*if (!this.tableHeight) {
-                        this.tableHeight = $(this.$el).closest('.bv-content').height() - 5;
-                    }*/
-                    var tableContainerHeight = $(this.$el).closest('.bv-content').height() - 5 - ($(this.$el).offset().top - $(this.$el).closest('.bv-content').offset().top);
-                    /// $('.bv-table-container', this.$el).css('max-height', tableContainerHeight);
-
-                    var footerHeight = 0;
-                    if (this.pagination) {
-                        footerHeight = $('.bv-table-footer', this.$el).outerHeight(true);
-                        // extraHeight += 25;
-                    }
-                    var tableBodyHeight = tableContainerHeight - toolbarHeight - filterHeight - footerHeight;
-                    $('.bv-table-body', this.$el).css('max-height', tableBodyHeight);
-                }
-
                 if (this.innerFixed) {
+                    var toolbarHeight = $('.bv-table-toolbar', this.$el).outerHeight(true);
+                    var filterHeight = $('.bv-table-filter', this.$el).outerHeight(true);
+                    if (this.innerFilterMore) {
+                        filterHeight += $('.bv-table-filter-more', this.$el).outerHeight(true) + 4;
+                    }
+                    if (this.innerLayout === 'body' && $(this.$el).closest('.bv-content').length === 1) {
+                        /*if (!this.tableHeight) {
+                         this.tableHeight = $(this.$el).closest('.bv-content').height() - 5;
+                         }*/
+                        var tableContainerHeight = $(this.$el).closest('.bv-content').height() - 5 - ($(this.$el).offset().top - $(this.$el).closest('.bv-content').offset().top);
+                        /// $('.bv-table-container', this.$el).css('max-height', tableContainerHeight);
+
+                        var footerHeight = 0;
+                        if (this.pagination) {
+                            footerHeight = $('.bv-table-footer', this.$el).outerHeight(true);
+                            // extraHeight += 25;
+                        }
+                        var tableBodyHeight = tableContainerHeight - toolbarHeight - filterHeight - footerHeight;
+                        $('.bv-table-body', this.$el).css('max-height', tableBodyHeight);
+                    }
+
                     // this.tableTop = toolbarHeight + filterHeight;
                     /// $('.bv-table-thead', this.$el).css('top', toolbarHeight + filterHeight);
                     $('.bv-table-thead', this.$el).width($('.bv-table-tbody', this.$el).width());
@@ -746,7 +750,7 @@ define([
                                 $('.progress-bar', $progress).addClass('progress-bar-danger');
                                 $('.progress', $progress).addClass('error');
                             } else {
-                                this.innerInited = true;
+                                vm.innerInited = true;
                                 $('.progress-bar', $progress).addClass('progress-bar-success');
                             }
                         }, 200);
@@ -975,47 +979,47 @@ define([
                 return '';
             },
             columnAttr: function(row, column, index) {
-                var $attr = {};
+                var result = {};
+
                 if (util.type(index) !== 'undefined') {
-                    $attr['data-index'] = index;
+                    result['data-index'] = index;
                 }
-                $attr['data-name'] = column.name;
-                $attr['data-value'] = row[column.name];
+                result['data-name'] = column.name;
+                result['data-value'] = row[column.name];
                 var title = this.columnTitle(row, column);
                 if (title) {
-                    $attr['data-title'] = title;
-                    $attr['data-original-title'] = title;
+                    result.title = title;
+                    /// result['data-title'] = title;
+                    /// result['data-original-title'] = title;
                 }
-                var $param = {
-                    /// text: this.columnFormat(row, column)
-                };
+                /*var param = {
+                };*/
                 if (!util.isEmpty(column.href)) {
-                    $param.href = column.href;
-                    $param.click = this.href;
+                    /// attr.type = 'a';
+                    result.href = column.href;
+                    result.click = this.href;
+                    /// result.parent = this;
                 } else if (column.type && column.type === 'operate') {
-                    $param.click = this.click;
-                    $param.operates = column.operates;
+                    result.click = this.click;
+                    result.operates = column.operates;
                 }
-                if (!util.isEmpty(column.sub)) {
-                    $param.sub = column.sub;
-                    $param.icon = 'icon-more';
-                }
-                /// $param.$vm = this;
+                /*if (!util.isEmpty(column.sub)) {
+                    param.sub = column.sub;
+                    param.icon = 'icon-more';
+                }*/
+                /// param.$vm = this;
 
                 if (!this.editable) {
-                    row[column.name + 'Static'] = this.columnFormat(row, column);
+                    // row[column.name + 'Static'] = this.columnFormat(row, column);
+                    result['text'] = this.columnFormat(row, column);
                 }
 
-                var result = {
-                    name: column.name,
-                    // $duplexNameStatic: !this.editable && (column.name + 'Static'),
-                    attr: $attr
-                };
-                if (!util.isEmpty($param)) {
-                    result.param = $param;
-                }
+                result.name = column.name;
+                /*if (!util.isEmpty(param)) {
+                    result.param = param;
+                }*/
                 return result;
-                // return $attr;
+                // return attr;
             },
             onHeadClick: function(column, event) {
                 var $head = $(event.target);
@@ -1131,7 +1135,8 @@ define([
             },
             href: function(event, row, column) {
                 if (!row) {
-                    var index = util.toNumber($(event.target).attr('data-index'));
+                    /// TODO: 待确认
+                    var index = util.toNumber($(event.target).closest('tr').attr('data-index'));
                     if (!util.isEmpty(index) && index >= 0) {
                         row = this.innerRows[index];
                     }
@@ -1211,7 +1216,7 @@ define([
                                 name: column.name,
                                 operate: operate,
                                 value: value,
-                                format: column.config.$format || ''
+                                format: column.config.format || ''
                             });
                         }
                     } else if (this.filterCheck(column, 'between')) {
@@ -1224,7 +1229,7 @@ define([
                                 name: column.name,
                                 operate: '>=',
                                 value: valueStart,
-                                format: column.config.$format || ''
+                                format: column.config.format || ''
                             });
                         }
                         if (this.innerFilterEntity[column.filterConfig.end]) {
@@ -1236,7 +1241,7 @@ define([
                                 name: column.name,
                                 operate: '<=',
                                 value: valueEnd,
-                                format: column.config.$format || ''
+                                format: column.config.format || ''
                             });
                         }
                     }
@@ -1451,7 +1456,7 @@ define([
                     }
                 } else if (position === 'body') {
                     // body按钮
-                    var index = util.toNumber($(event.target).closest('.operate').attr('data-index'));
+                    var index = util.toNumber($(event.target).closest('tr').attr('data-index'));
                     if (!util.isEmpty(index) && index >= 0) {
                         selected.push(this.innerRows[index]);
                     }
@@ -1527,24 +1532,22 @@ define([
             isRequired: function(validate, attr) {
                 return util.isRequired(validate, attr);
             },
-            _confirmChoose: function(event) {
-                if (util.type(this.confirmChoose) === 'function') {
-                    var codes = '';
-                    var descs = '';
-                    for (var i=0; i<this.innerChooseResult.length; i++) {
-                        if (codes) {
-                            codes += ',';
-                            descs += ',';
-                        }
-                        codes += this.innerChooseResult[i].code;
-                        descs += this.innerChooseResult[i].desc;
+            confirmChoose: function(event) {
+                var codes = '';
+                var descs = '';
+                for (var i=0; i<this.innerChooseResult.length; i++) {
+                    if (codes) {
+                        codes += ',';
+                        descs += ',';
                     }
-                    this.confirmChoose.call(null, this.name, {
-                        codes: codes,
-                        descs: descs
-                    });
-                    util.modal('hide');
+                    codes += this.innerChooseResult[i].code;
+                    descs += this.innerChooseResult[i].desc;
                 }
+                this.$emit('on-choose', this.name, {
+                    codes: codes,
+                    descs: descs
+                });
+                util.modal('hide');
             },
             _chooseCompare: function() {
                 if (this.innerRows && this.innerRows.length > 0 && this.innerChooseResult && this.innerChooseResult.length > 0) {
@@ -1645,7 +1648,7 @@ define([
                                 <div>
                                     <div v-for="(el, index) in innerFilterColumns" class="bv-filter-container" :class="el.filterLayout.containerClass">
                                         <label class="control-label" :class="el.filterLayout.labelClass" :for="el.filterLayout.for">
-                                            <i class="required iconfont icon-required" v-if="isRequired(el.config.$validate, el.config.$attr)"></i>{{el.head}}：
+                                            <i class="required iconfont icon-required" v-if="isRequired(el.config.validate, el.config.attr)"></i>{{el.head}}：
                                         </label>
                                         <div :class="el.filterLayout.tagClass">
                                             <component :is="el.filterConfig.tagName" :key="innerName + '-' + el.name + '-filter' + '-' + index" :entity="innerFilterEntity" v-bind="[el.config, el.filterConfig]"></component>
@@ -1768,7 +1771,7 @@ define([
                     </div>
                     <div class="modal-footer" v-if="type === 'choose'">
                         <div style="width: 100%; text-align: left;"><label>当前已选：</label><span v-for="(el, $index) in innerChooseResult"><span v-if="$index > 0">,</span>{{el.show}}</span></div>
-                         <button type="button" class="btn btn-primary" @click="_confirmChoose($event)" v-if="innerLayout === 'modal'">
+                         <button type="button" class="btn btn-primary" @click="confirmChoose($event)" v-if="innerLayout === 'modal'">
                             <i class="iconfont icon-ok"></i>确定选择
                          </button>
                          <button type="button" class="btn btn-default" data-dismiss="modal" v-if="innerLayout === 'modal'">
