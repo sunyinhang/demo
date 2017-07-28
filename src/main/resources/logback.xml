@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration scan="true" scanPeriod="30 seconds">
+<configuration scan="true" scanPeriod="10 seconds">
 
     <property name="LOG_PATH" value="./log"/>
     <property name="APP_NAME" value="payplatform"/>
@@ -52,25 +52,19 @@
         </encoder>
     </appender>
 
-   <logger name="com.haiercash.acquirer" level="debug">
-        <appender-ref ref="STDOUT"/>
+   <logger name="com.haiercash.payplatform" level="debug">
+        <appender-ref ref="ASYNC"/>
     </logger>
     <!--
-    <logger name="com.haiercash.acquirer.task" level="debug">
-        <appender-ref ref="TASK_LOG"/>
-    </logger>
-    <logger name="com.haiercash.cmis" level="debug">
-        <appender-ref ref="STDOUT"/>
-    </logger>
     <logger name="com.haiercash.commons" level="debug">
         <appender-ref ref="STDOUT"/>
-    </logger>
+    </logger>-->
     <logger name="com.haiercash.commons.config.RestAspect" level="debug">
         <appender-ref ref="VISIT_ASYNC"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>-->
+        <!--<appender-ref ref="STDOUT"/>-->
+    </logger>
 
-    <root level="info">
+    <root level="error">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
