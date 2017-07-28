@@ -108,5 +108,17 @@ app:
     service:
       open: true
   rest:
-    # profiles:
-      # 配置各系统版本对应关系，如： crm: beta
+    APPCA: http://APPCA-BETA
+    APPMANAGE: http://APPMANAGE
+    APPMSG: http://APPSERVER-MSG
+    APPSERVER: http://APPSERVER
+    CMISPROXY: http://CMISPROXY
+    CRM: http://CRM-BETA
+    HCPORTAL: http://HCPORTAL-BETA
+    CMISFRONTSERVER: http://CMIS-FRONT-SERVER
+    GM: http://GM-BETA
+    UAUTH: http://UAUTH-BETA
+    ACQUIRER: http://ACQUIRER
+    ORDER: http://ORDER
+  other:
+    haierDataImg_url: /testshare01/00/Data/haierData/
