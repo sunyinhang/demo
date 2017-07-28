@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.util;
+package com.haiercash.payplatform.common.utils;
 
 import com.haiercash.commons.util.DateUtil;
 import org.apache.commons.logging.Log;

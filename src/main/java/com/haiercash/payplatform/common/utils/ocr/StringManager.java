@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.util.OCR;
+package com.haiercash.payplatform.common.utils.ocr;
 
 //import net.sf.json.JSONException;
 //import net.sf.json.JSONObject;

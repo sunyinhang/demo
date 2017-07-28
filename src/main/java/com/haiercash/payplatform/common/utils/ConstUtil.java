@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.util;
+package com.haiercash.payplatform.common.utils;
 
 /**
  * Created by use on 2017/7/25.

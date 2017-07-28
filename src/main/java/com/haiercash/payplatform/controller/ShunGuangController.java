@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-import static com.haiercash.payplatform.util.RestUtil.success;
+import static com.haiercash.payplatform.common.utils.RestUtil.success;
 
 /**
  * Created by yuanli on 2017/7/24.

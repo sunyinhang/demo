@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.util.OCR;
+package com.haiercash.payplatform.common.utils.ocr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

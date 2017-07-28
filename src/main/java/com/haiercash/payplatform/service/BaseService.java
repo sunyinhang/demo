@@ -1,13 +1,12 @@
 package com.haiercash.payplatform.service;
 
 import com.haiercash.commons.service.AbstractService;
-import com.haiercash.payplatform.util.RestUtil;
-import com.haiercash.payplatform.util.ResultHead;
-import com.haiercash.payplatform.util.ConstUtil;
+import com.haiercash.payplatform.common.utils.RestUtil;
+import com.haiercash.payplatform.common.utils.ResultHead;
+import com.haiercash.payplatform.common.utils.ConstUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.util;
+package com.haiercash.payplatform.common.utils;
 
 import java.io.Serializable;
 

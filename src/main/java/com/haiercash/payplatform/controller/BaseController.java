@@ -1,8 +1,8 @@
 package com.haiercash.payplatform.controller;
 
 import com.haiercash.commons.controller.AbstractController;
-import com.haiercash.payplatform.util.ConstUtil;
-import com.haiercash.payplatform.util.RestUtil;
+import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.common.utils.RestUtil;
 
 import java.util.Map;
 //import com.haiercash.commons.util.RestUtil;
