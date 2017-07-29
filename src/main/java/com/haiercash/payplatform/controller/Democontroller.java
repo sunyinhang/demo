@@ -10,13 +10,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * demo controller.
  * @author Liu qingxiang
  * @since v1.0.0
  */
-@Controller
+@RestController
 public class Democontroller extends BaseInnerController{
 
     public Democontroller() {
