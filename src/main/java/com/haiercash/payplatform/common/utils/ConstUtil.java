@@ -17,5 +17,9 @@ public class ConstUtil {
     public static final String THREE_PARAM_VAL_Y = "1";//需要三要素验证
     public static final String THREE_PARAM_VAL_N = "-1";//不需要三要素验证
 
+    public static final String CERT_FILE_TYPE_A = "DOC53";//身份证正面type
+    public static final String CERT_FILE_NAME_A = "身份证正面";//身份证正面name
+    public static final String CERT_FILE_TYPE_B = "DOC54";//身份证反面type
+    public static final String CERT_FILE_NAME_B = "身份证反面";//身份证反面name
 
 }
