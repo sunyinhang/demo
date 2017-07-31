@@ -10,46 +10,45 @@ import java.io.UnsupportedEncodingException;
 public class Demo {
 	static
     {
-		//public Log logger = LogFactory.getLog(getClass());
-		//Logger xmllog = LogManager.getLogger("xmllog");
+		Logger xmllog = LogManager.getLogger("xmllog");
 		try{
 
-		    System.out.println("java.library.path:"+System.getProperty("java.library.path"));
-			//xmllog.info("���OCR��java.library.path:"+System.getProperty("java.library.path"));
+			System.out.println("java.library.path:"+System.getProperty("java.library.path"));
+			xmllog.info("天诚OCR：java.library.path:"+System.getProperty("java.library.path"));
 
 			System.loadLibrary("IDCARD_THR");
 
 		}catch (Throwable e){
-			//xmllog.info("����OCRDLL_THR�����쳣��"+e.getMessage());
+			xmllog.info("加载OCRDLL_THR出现异常："+e.getMessage());
 		}
 
     } 
 	public static int isBootOK = 0;
-	/**  ��ȡ��Ȩ��Ϣ*/
+	/**  ?????????*/
     public native static byte [] GetCopyrightInfo();
     
-    /** ��ȡ�汾��Ϣ*/
+    /** ????????*/
     public native static byte [] GetVersion();
     
-    /** ��ȡ�汾����ʱ��*/
+    /** ????????????*/
     public native static byte [] GetUseTimeString();
     
-    /** ��ȡ��������TIMEKEY*/
+    /** ???????????TIMEKEY*/
     public native static byte [] GetEngineTimeKey();
     
-    /** �����ʼ��? ����ֵ1������   -1��δ���豸  100��ʱ�����?    0����ʼ������ʧ��*/
+    /** ????????? ?????1??????   -1???????  100?????????    0??????????????*/
 	public native static int RECOCRBoot(String TimeKey);
 	
-	/**�����������?*/
+	/**????????????*/
 	public native static int SetParam(int param,int val);
 	
-	/**ʶ�����? ·����ʽʶ��*/
+	/**??????? ?????????*/
 	public native static byte[] RECOCROFPATH(int typeid, String path);
 	
-	/**ʶ�����? ����ʽʶ��*/
+	/**??????? ????????*/
 	public native static byte[] RECOCROFMEM(int typeid, byte [] pImagebuf, int len);
     
-	/** �ͷ������ڴ�*/
+	/** ??????????*/
 	public native static int TerminateOCRHandle();
     
 	public String Byte2String(byte[] info)
@@ -59,7 +58,7 @@ public class Demo {
 			try {
 				str = new String(info,"GBK");
 			} catch (UnsupportedEncodingException e) {
-				// TODO �Զ����ɵ� catch ��
+				// TODO ???????? catch ??
 				e.printStackTrace();
 			}
 		}

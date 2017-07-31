@@ -10,28 +10,28 @@ public class GlobalData {
 	public static int NUM   = 5;
 	public static int issue = 6;
 	public static int period = 7;
-	
+
 	public static int isfirst = 0;
 	public static int x =0;
 	public static int y =0;
 	public static int m =0;
 	public static int n =0;
-	
-	public static int T_ONLY_CARD_NUM = 0x0001;//ï¿½ï¿½ï¿½ï¿½Ö»Ê¶ï¿½ð¿¨ºï¿½
-	public static int T_SET_HEADIMG   = 0x0002;//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Òªï¿½ï¿½È¡ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½Ï¢
-	public static int T_SET_LOGPATH   = 0x0004;// ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Î»ï¿½ï¿½
-	public static int T_SET_OPENORCLOSE_LOGPATH = 0x0005;// ï¿½ò¿ª¹Ø±Õ±ï¿½ï¿½ï¿½logï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
-	public static int T_SET_HEADIMGBUFMODE = 0x0006;// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½Ä£Ê½ 0= Ô­Ê¼ï¿½ï¿½Ê½(ï¿½ï¿½ï¿½ï¿½android iosÖ±ï¿½Ó¼ï¿½ï¿½ï¿½)   1=BASE64ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½(ï¿½ï¿½ï¿½ï¿½sdkï¿½ï¿½ï¿½ç´«ï¿½ï¿½)
-	public static int T_SET_NDCORRECTION   = 0x0007; /* ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ð»ï¿½ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
-	
+
+	public static int T_ONLY_CARD_NUM = 0x0001;//ÉèÖÃÖ»Ê¶±ð¿¨ºÅ
+	public static int T_SET_HEADIMG   = 0x0002;//ÉèÖÃÊÇ·ñÒª½ØÈ¡ÈËÍ·ÏñÐÅÏ¢
+	public static int T_SET_LOGPATH   = 0x0004;// ÉèÖÃ±£´æg±£´æÎÄ¼þÎ»ÖÃ
+	public static int T_SET_OPENORCLOSE_LOGPATH = 0x0005;// ´ò¿ª¹Ø±Õ±£´ælogÎÄ¼þ¹¦ÄÜ
+	public static int T_SET_HEADIMGBUFMODE = 0x0006;// ÉèÖÃÈËÍ·ÏñÄ£Ê½ 0= Ô­Ê¼ÐÎÊ½(±ãÓÚandroid iosÖ±½Ó¼ÓÔØ)   1=BASE64¼ÓÃÜÐÎÊ½(±ãÓÚsdkÍøÂç´«Êä)
+	public static int T_SET_NDCORRECTION   = 0x0007; /* ÉèÖÃÊÇ·ñ½øÐÐ»ûÐÎ½ÃÕý¹¦ÄÜ*/
+
 	public static int TUNCERTAIN	  = 0x00; /*Î´Öª*/
-	public static int TIDCARD2      = 0x11;   /*ï¿½ï¿½ï¿½ï¿½Ö¤*/
-	public static int TIDCARDBACK   = 0x14;   /*ï¿½ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½*/
-	public static int TIDBANK       = 0x15;   /*ï¿½ï¿½ï¿½Ð¿ï¿½*/
-	public static int TIDLPR        = 0x16;   /*ï¿½ï¿½ï¿½ï¿½*/
-	public static int TIDJSZCARD    = 0x17;   /*ï¿½ï¿½ï¿½ï¿½*/
-	public static int TIDXSZCARD    = 0x18;   /*ï¿½ï¿½Ê»Ö¤*/
-	public static int TIDTICKET	  = 0x19;     /*ï¿½ï¿½Ê»Ö¤*/
-	public static int TIDBIZLIC	  = 0x23;	  /*ÓªÒµÖ´ï¿½ï¿½*/
-	
+	public static int TIDCARD2      = 0x11;   /*¶þ´úÖ¤*/
+	public static int TIDCARDBACK   = 0x14;   /*¶þ´úÖ¤±³Ãæ*/
+	public static int TIDBANK       = 0x15;   /*ÒøÐÐ¿¨*/
+	public static int TIDLPR        = 0x16;   /*³µÅÆ*/
+	public static int TIDJSZCARD    = 0x17;   /*¼ÝÕÕ*/
+	public static int TIDXSZCARD    = 0x18;   /*ÐÐÊ»Ö¤*/
+	public static int TIDTICKET	  = 0x19;     /*ÐÐÊ»Ö¤*/
+	public static int TIDBIZLIC	  = 0x23;	  /*ÓªÒµÖ´ÕÕ*/
+
 }
