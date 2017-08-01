@@ -335,4 +335,10 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
 /*installmentBill End*/
 
 
+/****** module：个人资料 ******/
+.list-group3-photo dl{ float: left; margin: 1rem 0; width: 50%; height: 5rem; text-align: center;}
+.list-group3-photo dl img{ width: 80%;}
+.list-group3-photo dl dt{ font-size: 0.7rem; line-height: 1.4rem; color: #999;}
+
+
 

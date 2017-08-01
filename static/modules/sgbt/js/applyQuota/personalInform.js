@@ -2,12 +2,18 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect','msPhot
 
 	//个人信息、单位信息和紧急联系人显示与隐藏
 	$('.tab').click(function(){
-		$(this).siblings().removeClass("tab-actvie");
-		$(this).addClass("tab-actvie");
-		$('.list-group3').hide();
-		$('.tab').find('em').css('display','none');
-		$(this).next('.list-group3').show();
-		$('.tab-actvie').find('em').css('display','block');
+		if($(this).next('.list-group3').css('display')=='block'){
+			$(this).next('.list-group3').hide();
+			$(this).removeClass("tab-actvie");
+			$('.tab').find('em').css('display','none');
+		}else{
+			$(this).siblings().removeClass("tab-actvie");
+			$(this).addClass("tab-actvie");
+			$('.list-group3').hide();
+			$('.tab').find('em').css('display','none');
+			$(this).next('.list-group3').show();
+			$('.tab-actvie').find('em').css('display','block');
+		}
 	});
 
 	//单位地址
@@ -56,21 +62,16 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect','msPhot
 		relationType1Options: [],
 		relationType2Options: [],
 		config: {
-			defaultImage: '../mobile/themes/default/imgsb/cameraWhite.png',
-			file_id: 'identityCard3',
+			//defaultImage: '../mobile/themes/default/imgsb/cameraWhite.png',
+			file_id: 'identityCard',
 			file_title: '收款确认单',
-            containerId: 'uploadPhoto3',
-			// url: 'data/GetOCRIdentityServlet.do',
+            containerId: 'uploadPhoto',
+			//url: 'data/GetOCRIdentityServlet.do',
 			path: '',
 			prompt:'必传影像不能为空'
 		},
-		config2: {
-			defaultImage: '../mobile/themes/default/imgsb/cameraWhite.png',
-			file_id: 'identityCard4',
-			file_title: '选传影像',
-            containerId: 'uploadPhoto4',
-			// url: 'data/GetOCRIdentityServlet.do',
-			path: '2'
+		uploadPhoto: function(){
+			
 		},
 		nextFn: function(event){
 			this.validate.onManual();
