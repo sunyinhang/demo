@@ -1,13 +1,8 @@
 package com.haiercash.acquirer.sync;
 
-import com.haiercash.acquirer.TestApplication;
-import com.haiercash.acquirer.service.ApplCompareService;
-import com.haiercash.acquirer.service.ApplSyncService;
-import com.haiercash.acquirer.service.LcApplService;
-import com.haiercash.cmis.service.CmisLcApplService;
-import com.haiercash.cmis.service.CmisSqlQueryService;
-import com.haiercash.cmis.service.impl.CmisSqlQueryServiceImpl;
-import com.haiercash.commons.support.ServiceException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +11,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.haiercash.acquirer.TestApplication;
+import com.haiercash.commons.support.ServiceException;
 
 /**
  * Created by Administrator on 2017/3/16.

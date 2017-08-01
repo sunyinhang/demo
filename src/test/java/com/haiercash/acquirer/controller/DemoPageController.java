@@ -1,15 +1,16 @@
 package com.haiercash.acquirer.controller;
 
-import com.haiercash.acquirer.service.LcApplService;
-import com.haiercash.commons.mybatis.QueryParam;
-import com.haiercash.commons.rest.cmis.CmisEurekaRest;
-import com.haiercash.commons.rest.cmis.CmisRestUtil;
-import com.haiercash.commons.service.CommonService;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.haiercash.commons.mybatis.QueryParam;
+import com.haiercash.commons.rest.cmis.CmisEurekaRest;
+import com.haiercash.commons.rest.cmis.CmisRestUtil;
+import com.haiercash.commons.service.CommonService;
+import com.haiercash.payplatform.common.controller.BasePageController;
 
 /**
  * Created by lihua on 2017/2/28.

@@ -1,14 +1,5 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.common.enums.OrderEnum;
-import com.haiercash.payplatform.common.utils.FormatUtil;
-import com.haiercash.payplatform.data.AppOrder;
-import com.haiercash.payplatform.data.AppOrderGoods;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.OrderService;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -18,6 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.enums.OrderEnum;
+import com.haiercash.payplatform.common.utils.FormatUtil;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.OrderService;
 
 /**
  * order service impl.

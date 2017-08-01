@@ -1,20 +1,7 @@
 package com.haiercash.acquirer.server;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.haiercash.acquirer.Application;
-import com.haiercash.acquirer.controller.AcqSyncLogController;
-import com.haiercash.acquirer.controller.LcApplController;
-import com.haiercash.acquirer.dao.*;
-import com.haiercash.acquirer.data.*;
-import com.haiercash.acquirer.mq.AcqPublisher;
-import com.haiercash.acquirer.service.ApplCompareService;
-import com.haiercash.acquirer.service.ApplSyncService;
-import com.haiercash.acquirer.service.LcApplService;
-import com.haiercash.cmis.dao.CmisAcqChannelDao;
-import com.haiercash.cmis.data.*;
-import com.haiercash.cmis.service.CmisAcqChannelService;
-import com.haiercash.commons.rest.cmis.CmisResponse;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +10,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.haiercash.commons.rest.cmis.CmisResponse;
+import com.haiercash.payplatform.Application;
 
 /**
  * Created by Administrator on 2017/3/1.

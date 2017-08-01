@@ -1,12 +1,8 @@
 package com.haiercash.acquirer.sync;
 
-import com.alibaba.fastjson.JSONObject;
-import com.haiercash.acquirer.TestApplication;
-import com.haiercash.acquirer.dao.LcApplApptDao;
-import com.haiercash.acquirer.dao.LcApplDao;
-import com.haiercash.acquirer.data.LcAppl;
-import com.haiercash.acquirer.service.ApplCompareService;
-import com.haiercash.acquirer.service.MakeApplService;
+import java.util.HashMap;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +11,9 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.HashMap;
-import java.util.List;
+import com.alibaba.fastjson.JSONObject;
+import com.haiercash.acquirer.TestApplication;
+import com.haiercash.acquirer.service.MakeApplService;
 
 /**
  * Created by Administrator on 2017/3/23.

@@ -1,14 +1,15 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.commons.rest.EurekaRest;
-import com.haiercash.payplatform.dao.BcBankInfoDao;
-import com.haiercash.payplatform.data.AppOrder;
-import com.haiercash.payplatform.data.BcBankInfo;
-import com.haiercash.payplatform.service.BcBankInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import com.haiercash.commons.rest.EurekaRest;
+import com.haiercash.payplatform.common.dao.BcBankInfoDao;
+import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.data.BcBankInfo;
+import com.haiercash.payplatform.service.BcBankInfoService;
 
 /**
  * bc bank info service impl.

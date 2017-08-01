@@ -1,11 +1,13 @@
 package com.haiercash.acquirer.controller;
 
-import com.haiercash.commons.rest.cmis.CmisEurekaRest;
-import com.haiercash.commons.rest.cmis.CmisRestUtil;
-import com.haiercash.commons.rest.inner.InnerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.haiercash.commons.rest.cmis.CmisEurekaRest;
+import com.haiercash.commons.rest.cmis.CmisRestUtil;
+import com.haiercash.commons.rest.inner.InnerResponse;
+import com.haiercash.payplatform.common.controller.BaseInnerController;
 
 /**
  * Created by lihua on 2017/2/28.

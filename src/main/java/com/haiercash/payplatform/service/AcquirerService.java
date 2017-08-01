@@ -1,9 +1,9 @@
 package com.haiercash.payplatform.service;
 
-import com.haiercash.payplatform.data.AppOrder;
-import com.haiercash.payplatform.data.AppOrderGoods;
-
 import java.util.Map;
+
+import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.data.AppOrderGoods;
 
 /**
  * acquirer service.
@@ -13,7 +13,7 @@ import java.util.Map;
 public interface AcquirerService {
 
         /**
-     * 映射商品map为商品对象.
+     * 映射商品map为商品对象.	
      * @param goodMap           商品属性map
      * @param appOrderGoods     商品对象
      * @return AppOrderGoods

@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.service;
 
-import com.haiercash.payplatform.data.BcBankInfo;
+import com.haiercash.payplatform.common.data.BcBankInfo;
 
 /**
  * bc bank info service.

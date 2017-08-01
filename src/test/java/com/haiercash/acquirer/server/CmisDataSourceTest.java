@@ -1,8 +1,7 @@
 package com.haiercash.acquirer.server;
 
-import com.haiercash.acquirer.Application;
-import com.haiercash.cmis.data.CmisLcAppl;
-import com.haiercash.cmis.service.CmisLcApplService;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.List;
-import java.util.Map;
+import com.haiercash.payplatform.Application;
 
 /**
  * Created by Administrator on 2017/2/27.

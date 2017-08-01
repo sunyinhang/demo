@@ -1,9 +1,7 @@
 package com.haiercash.acquirer.controller;
 
-import com.haiercash.acquirer.Application;
-import com.haiercash.acquirer.service.MakeApplService;
-import com.haiercash.commons.rest.cmis.CmisResponse;
-import com.haiercash.commons.rest.cmis.CmisRestUtil;
+import java.util.HashMap;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
+import com.haiercash.acquirer.service.MakeApplService;
+import com.haiercash.commons.rest.cmis.CmisResponse;
+import com.haiercash.commons.rest.cmis.CmisRestUtil;
+import com.haiercash.payplatform.Application;
+import com.haiercash.payplatform.common.controller.BaseCmisController;
 
 /**
  * Created by Administrator on 2017/3/14.

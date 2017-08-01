@@ -1,8 +1,8 @@
 package com.haiercash.payplatform.service;
 
-import com.haiercash.payplatform.data.AppOrder;
-
 import java.util.Map;
+
+import com.haiercash.payplatform.common.data.AppOrder;
 
 /**
  * order service interface.
