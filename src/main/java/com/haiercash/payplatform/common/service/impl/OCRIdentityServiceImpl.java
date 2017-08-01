@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.service.CommonPage.impl;
+package com.haiercash.payplatform.common.service.impl;
 
 import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Cache;

@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.service.CommonPage;
+package com.haiercash.payplatform.common.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
