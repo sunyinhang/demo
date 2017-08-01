@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.payplatform.service.CommonPage.FaceService;
+import com.haiercash.payplatform.common.service.FaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;

@@ -4,10 +4,10 @@ import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
+import com.haiercash.payplatform.common.service.OCRIdentityService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.ocr.OCRIdentityTC;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.CommonPage.OCRIdentityService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -227,9 +227,9 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
     }
 
     //发送短信验证码
-    public Map<String, Object> sendMessage(String token){
+    public Map<String, Object> sendMessage(String token, String channel, String channelNo){
         logger.info("发送短信验证码***************开始");
-        if(StringUtils.isEmpty(token)){
+        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
             logger.info("token:" + token);
             logger.info("前台获取请求参数有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
@@ -244,8 +244,8 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         String phone = (String) cacheMap.get("phoneNo");////得到绑定手机号
         String phoneEncrypt = EncryptUtil.simpleEncrypt(phone);
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("channel", ConstUtil.CHANNEL);
-        map.put("channelNo", ConstUtil.SG_CHANNELNO);
+        map.put("channel", channel);
+        map.put("channelNo", channelNo);
         map.put("phone", phoneEncrypt);
         map.put("token", token);
 
@@ -255,7 +255,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
     }
 
     //发送短信验证码
-    public Map<String, Object> sendMsg(String phone){
+    public Map<String, Object> sendMsg(String phone, String channel, String channelNo){
         logger.info("发送短信验证码***************开始");
         if(StringUtils.isEmpty(phone)){
             logger.info("token:" + phone);
@@ -265,8 +265,8 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
 
         String phoneEncrypt = EncryptUtil.simpleEncrypt(phone);
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("channel", ConstUtil.CHANNEL);
-        map.put("channelNo", ConstUtil.SG_CHANNELNO);
+        map.put("channel", channel);
+        map.put("channelNo", channelNo);
         map.put("phone", phoneEncrypt);
 
         Map<String, Object> resultmap = appServerService.sendMessage(null, map);

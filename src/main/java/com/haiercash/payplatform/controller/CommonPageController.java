@@ -1,8 +1,8 @@
 package com.haiercash.payplatform.controller;
 
 import com.haiercash.commons.redis.Cache;
-import com.haiercash.payplatform.service.CommonPage.FaceService;
-import com.haiercash.payplatform.service.CommonPage.OCRIdentityService;
+import com.haiercash.payplatform.common.service.FaceService;
+import com.haiercash.payplatform.common.service.OCRIdentityService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,12 @@ import java.util.Map;
  * Created by yuanli on 2017/7/24.
  */
 @RestController
-public class CommonController extends BasePageController {
+public class CommonPageController extends BasePageController {
     public Log logger = LogFactory.getLog(getClass());
     //模块编码  01
     private static String MODULE_NO = "01";
 
-    public CommonController() {
+    public CommonPageController() {
         super(MODULE_NO);
     }
 
