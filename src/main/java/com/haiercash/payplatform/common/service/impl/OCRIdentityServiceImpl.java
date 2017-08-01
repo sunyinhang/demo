@@ -283,10 +283,14 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         String cityCode = (String) map.get("cityCode");//省市区编码
         String cardnumber = (String) map.get("cardnumber");//卡号
         String mobile = (String) map.get("mobile");//手机号
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
         //2.前台参数非空判断
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(verifyNo) || StringUtils.isEmpty(cityCode) ||
-                StringUtils.isEmpty(cardnumber) || StringUtils.isEmpty(mobile) ){
-            logger.info("token:" + token + "  verifyNo:" + verifyNo + "  cityCode:" + cityCode + "  cardnumber:" + cardnumber + "  mobile:" + mobile);
+                StringUtils.isEmpty(cardnumber) || StringUtils.isEmpty(mobile) ||
+                StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
+            logger.info("token:" + token + "  verifyNo:" + verifyNo + "  cityCode:" + cityCode +
+                        "  cardnumber:" + cardnumber + "  mobile:" + mobile + "   channel:" + channel + "   channelNo:" + channelNo);
             logger.info("前台获取请求参数有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
@@ -319,8 +323,8 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         verifyNoMap.put("phone", mobile);
         verifyNoMap.put("verifyNo", verifyNo);
         verifyNoMap.put("token", token);
-        verifyNoMap.put("channel", ConstUtil.CHANNEL);
-        verifyNoMap.put("channelNo", ConstUtil.SG_CHANNELNO);
+        verifyNoMap.put("channel", channel);
+        verifyNoMap.put("channelNo", channelNo);
         Map<String, Object> verifyresultmap = appServerService.smsVerify(token, map);
         JSONObject verifyheadjson = new JSONObject((String) verifyresultmap.get("head"));
         String verifyretFlag = (String) verifyheadjson.get("retFlag");
@@ -349,8 +353,8 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         ocrMap.put("ethnic", ethnic);
         ocrMap.put("certNo", idCard);
         ocrMap.put("token", token);
-        ocrMap.put("channel", ConstUtil.CHANNEL);
-        ocrMap.put("channelNo", ConstUtil.SG_CHANNELNO);
+        ocrMap.put("channel", channel);
+        ocrMap.put("channelNo", channelNo);
         Map<String, Object> ocrresultmap = appServerService.saveCardMsg(token, map);
         JSONObject ocrheadjson = new JSONObject((String) ocrresultmap.get("head"));
         String ocrretFlag = (String) ocrheadjson.get("retFlag");
@@ -364,13 +368,13 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         String acctCity = (String) officeArea_split[1];//市代码
         Map<String, Object> identityMap = new HashMap<String, Object>();
         identityMap.put("token", token);
-        identityMap.put("channel", ConstUtil.CHANNEL);
-        identityMap.put("channelNo", ConstUtil.SG_CHANNELNO);
+        identityMap.put("channel", channel);
+        identityMap.put("channelNo", channelNo);
         identityMap.put("custName", name); //客户姓名 √
         identityMap.put("certNo", idCard); //身份证号 √
         identityMap.put("cardNo", cardnumber); //银行卡号 √
         identityMap.put("mobile", mobile); //手机号 √
-        identityMap.put("dataFrom", ConstUtil.SG_CHANNELNO); //数据来源 √
+        identityMap.put("dataFrom", channelNo); //数据来源 √
         identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
         identityMap.put("userId", userId); //客户userId
         identityMap.put("acctProvince", acctProvince); //开户行省代码
@@ -408,8 +412,8 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
         updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
         updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
-        updmobilemap.put("channel", ConstUtil.CHANNEL);
-        updmobilemap.put("channelNo", ConstUtil.SG_CHANNELNO);
+        updmobilemap.put("channel", channel);
+        updmobilemap.put("channelNo", channelNo);
         Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, identityMap);
         JSONObject updmobileheadjson = new JSONObject((String) updmobileresultmap.get("head"));
         String updmobileretflag = updmobileheadjson.getString("retFlag");

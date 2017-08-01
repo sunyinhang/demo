@@ -6,9 +6,6 @@ package com.haiercash.payplatform.common.utils;
 public class ConstUtil {
     public static String APP_CODE = "P";
 
-    public static String CHANNEL = "11";
-    public static String SG_CHANNELNO = "43";
-
     public static final String ERROR_CODE = "99";
     public static final String FAILED_INFO = "网络通讯异常";//页面数据判空
     public static final String ERROR_INFO = "网络通讯异常";//响应数据为空
