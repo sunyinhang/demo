@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.service.shunguang.impl;
+package com.haiercash.payplatform.service.CommonPage.impl;
 
 import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Cache;
@@ -7,7 +7,7 @@ import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.ocr.OCRIdentityTC;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.shunguang.OCRIdentityService;
+import com.haiercash.payplatform.service.CommonPage.OCRIdentityService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -186,9 +186,11 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         logger.info("获取省市区*****************开始");
         String token = (String) map.get("token");
         String areaCode = (String) map.get("areaCode");
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
 
-        if(StringUtils.isEmpty(token)){
-            logger.info("token:" + token);
+        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
+            logger.info("token:" + token + "   channel:" + channel + "   channelNo:" + channelNo);
             logger.info("前台获取请求参数有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
@@ -202,8 +204,8 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         Map<String, Object> reqmap = new HashMap<String, Object>();
         map.put("areaCode", areaCode);
         map.put("flag", flag);
-        map.put("channel", ConstUtil.CHANNEL);
-        map.put("channelNo", ConstUtil.SG_CHANNELNO);
+        map.put("channel", channel);
+        map.put("channelNo", channelNo);
 
         Map<String, Object> resultmap = appServerService.getAreaInfo(token, reqmap);
         logger.info("获取省市区*****************结束");
