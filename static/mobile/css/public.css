@@ -60,3 +60,19 @@ a,a:visited {background:transparent;text-decoration: none;}
 .clearfix { zoom:1; }
 .clearfix:after { content:""; display:block; clear:both; height:0;}
 body{background:#eee;}
+
+
+
+/******************************************************************/
+.flex{ 
+	display: box; /*旧版本*/
+	display: -moz-box;
+	display: -webkit-box;
+	display: flexbox; /*混合版本*/
+	display: -ms-flexbox;
+	display: flex; /*新版本*/
+	display: -webkit-flex;
+}
+.v-align{
+	box-align: center;
+}

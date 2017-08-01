@@ -70,8 +70,9 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect','msPhot
 			path: '',
 			prompt:'必传影像不能为空'
 		},
-		uploadPhoto: function(){
-			
+		uploadPhoto: function(event){
+			/*var obj=$(event.currentTarget);
+			obj.find("img").attr('src',"images/applyQuota/add_photo.png");*/
 		},
 		nextFn: function(event){
 			this.validate.onManual();
