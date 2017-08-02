@@ -1,105 +1,89 @@
 <style type="text/css">
-	.add_photo{ float: left; position: relative; width: 5.7rem; height: 6rem; }
-	.add_photoImg img { position:absolute; top:0px; left:0px; width: 5.7rem; min-height:5.85rem; }
-	.add_photoFile input{ position: absolute; top: 0px; left: 0px; width: 5.7rem; height: 6rem; opacity: 0; }
+	.add_photo{ position: relative; float: left; margin-top: 1rem; margin-bottom: 1rem; width:50%; height:5.95rem; text-align:center; }
+	.add_photoImg,.add_photoFile{ position:absolute; left:50%; margin-left:-2.875rem; width: 5.75rem; height:5.95rem;}
+	.add_photoImg img { width: 100%; height:100%;    }
+	.add_photoFile input{ width:100%; height:100%; opacity: 0; }
 
-	#div1{ float: left; margin-left: 15px; }
+	#div1{ }
+    #div1 div.list-photo{ float:left; position: relative; margin-top: 1rem; margin-bottom: 1rem; width:50%; height:5.95rem;}
+    #div1 div.list-photo-inner{ position: relative; margin:0 auto; width: 5.75rem; height:5.95rem; text-align: center;}
+	#div1 img{  width: 100%; height:100%;}
+	#div1 span{ z-index:999; cursor:pointer; position: absolute; top: 0px; right: 0; display: inline-block; width:1.1rem; height: 1.1rem; background:url(images/applyQuota/close_btn.png) no-repeat center; background-size:1.1rem;  }
 </style>
-<form enctype="multipart/form-data" id="handForm" name="handForm" ms-validate="@validate">
-	<div class="add_photo">
-	    <div class="add_photoImg">
-	        <img src="images/applyQuota/add_photo.png" />
-	    </div>
-	    <div class="add_photoFile">
-	     	<input type="file" class="upload" id="f_UploadImage">	   	    
-	    </div>
+<div class="padding16">
+	<div class="bg-bd">
+	<form enctype="multipart/form-data" id="handForm" name="handForm" ms-validate="@validate">
+		<div class="add_photo">
+			<div class="add_photoImg">
+				<img src="images/applyQuota/add_photo.png" />
+			</div>
+			<div class="add_photoFile">
+				<input type="file" class="upload" id="uploadImage">
+			</div>
+		</div>
+		<div id="div1">
+<!--             <div class='list-photo'>
+                <div class="list-photo-inner">
+                    <img src="images/applyQuota/pander.png" alt="">
+                    <span></span>
+                </div>
+            </div> -->
+            <div class="clear"></div>  
+		</div>
+	</form>
 	</div>
-	<div id="div1"></div>
-</form>
-    
+</div>
+
     <script type="text/javascript">
-        /*本地缓存操作*/
-        var envObj = {
-            SaveLocals: function (name, data) {
-                localStorage.setItem(name, data);
-            },
-            GetLocals: function (name) {
-                return localStorage.getItem(name);
-            },
-            RemoveLocals: function (name) {
-                localStorage.removeItem(name);
-            }
-        }
-    </script>
-    <script type="text/javascript">
-         var _URL = window.URL || window.webkitURL;
+        var _URL = window.URL || window.webkitURL;
         $(function () {
             var imgobj = {};
             var formData = new FormData();
-            $("#f_UploadImage").on('change', function () {
+            $("#uploadImage").on('change', function () {
+                debugger
                 var file, img, imgName, src, src2, reader;
                 if ((file = this.files[0])) {
                     //生成图片唯一名字 方便删除
                     imgName = "file" + (new Date).getTime();
-                    console.log(imgName);
                     //把图片内容放到formdata中保存，key/value形式
                     formData.append(imgName, file);//formData对象
                     //获取img的src用于展示
                     src = _URL.createObjectURL(file);//把这个url放到上面展示
-
                     img = document.createElement("img");
                     img.src = src;
-                    img.width = 100;//设置图片宽
-                    img.height = 100;//设置图片高
-                    document.getElementById("div1").appendChild(img);//把图片展示在页面上
-                    $("#div1").append("<span  class='delete_img' data-id='" + imgName + "'>删除</span>");//添加一个删除按钮
+                    //img.width = 100;//设置图片宽
+                    //img.height = 100;//设置图片高
+
+                    $("#div1").prepend('<div class="list-photo">'+
+                                            '<div class="list-photo-inner">'+
+                                                '<span class="delete_img" data-id="'+imgName+'"></span>'+
+                                            '</div>'+
+                                        '</div>');
+
+                    $("#div1 .list-photo-inner:first").append(img);
+
+                    //$("#div1").append("<span class='delete_img' data-id='" + imgName + "'>删除</span>");//添加一个删除按钮*/
 
                     var reader = new FileReader();
                     reader.onload = function (e) {
-                        console.log(this.result);
                         imgobj[imgName] = this.result;//存储图片到对象中
                     }
                     reader.readAsDataURL(file);
                 }
             });
             //点击删除按钮
-            $(document).on("click", ".delete_img", function () {
-                var _self = $(this),
-                   _selfImgName = _self.attr("data-id");
+            $(document).on("click", ".delete_img", function () {                
+                   _selfImgName = $(this).attr("data-id");
 
-                _self.prev().remove();
-                _self.remove();//移除图片自己
+                $(this).next().remove();
+                $(this).remove();//移除图片自己
 
-                console.log(imgobj);
                 delete imgobj[_selfImgName];//删除对象中的属性
-                console.log(imgobj);
 
                 // console.log(formData.get(_selfImgName)); 移除前
                 formData.delete(_selfImgName);//移除formdata中的数据
                 //console.log(formData.get(_selfImgName));  移除后
 
             });
-
-            //点击完成，跳转到其他页面展示
-            $("#btn").click(function (ev) {
-                ev.preventDefault();
-                console.log("btn");
-
-                envObj.SaveLocals("imgobj", JSON.stringify(imgobj));//保存图片的src
-                //formData  用于上传的时候传输的数据，如果不和后台交互，暂时不用
-                window.location.href = "uploadimgformdataindex.html";
-            });
-
-            function getBase64Image(img) {
-                var canvas = document.createElement("canvas");
-                canvas.width = img.width;
-                canvas.height = img.height;
-                var ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, img.width, img.height);
-                var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
-                var dataURL = canvas.toDataURL("image/" + ext);
-                return dataURL;
-            }
-
         });
     </script>

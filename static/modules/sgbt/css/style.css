@@ -70,6 +70,7 @@ select { direction: rtl; -webkit-appearance:listbox; }
 .margin16{ margin: 0.5rem;}
 .paddt15{ padding-top: 0.75rem;} 
 .padding72{ padding: 0 3.575rem;}
+.padding16{ padding:0.8rem;}
 .height7{ height: 0.375rem; background-color: #eee;}
 .height10{ height: 0.5rem; background-color: #fff;}
 .align-right{ text-align: right;}
