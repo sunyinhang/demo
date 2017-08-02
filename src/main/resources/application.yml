@@ -10,13 +10,13 @@ spring:
     name: payplatform
   ignoreUnresolvablePlaceholders: true
   redis:
-    host: 10.164.194.142
-    port: 6379
+    host: 10.164.194.123
+    port: 10001
   http.converters.preferred-json-mapper: fastjson
 redis:
   single:
-    host: 10.164.194.142
-    port: 6379
+    host: 10.164.194.123
+    port: 10001
   # cluster:
   #   address: 192.168.1.17:7001,192.168.1.17:7002,192.168.1.17:7003
   #   timeout: 300000
@@ -89,8 +89,8 @@ ribbon:
     enabled: true
 common:
   redis:
-    host: 10.164.194.142
-    port: 6379
+    host: 10.164.194.123
+    port: 10001
     prefix: ":MAIN:"
 app:
   instance:
@@ -122,3 +122,5 @@ app:
     ORDER: http://ORDER
   other:
     haierDataImg_url: /testshare01/00/Data/haierData/
+    outplatform_url: http://10.164.194.123:9080
+    face_DataImg_url: /testshare01/crm/image/

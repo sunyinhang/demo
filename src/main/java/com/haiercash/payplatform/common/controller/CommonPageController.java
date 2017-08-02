@@ -125,4 +125,21 @@ public class CommonPageController extends BasePageController {
         return faceService.uploadFacePic(faceImg, request, response);
     }
 
+    /**
+     * 上传手持身份证
+     * @param faceImg
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/attachUploadPerson", method = RequestMethod.POST)
+    public Map<String, Object> attachUploadPerson(@RequestBody MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return faceService.uploadPersonPic(faceImg, request, response);
+    }
+
+    @RequestMapping(value = "/api/payment/ifNeedDoFace", method = RequestMethod.GET)
+    public Map<String, Object> ifNeedDoFace(@RequestParam Map<String, Object> params){
+        return faceService.ifNeedDoFace(params);
+    }
 }

@@ -49,7 +49,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         //图片非空判断
         if (ocrImg.isEmpty()) {
             logger.info("图片为空");
-            return fail("01", "图片为空");
+            return fail(ConstUtil.ERROR_CODE, "图片为空");
         }
         //token非空判断
         String token = request.getParameter("token");
@@ -81,7 +81,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         logger.info("OCR返回信息：" + returnMessage.toString());
         String code = returnMessage.getCode();
         if(!"0000".equals(code)){
-            return fail("02", returnMessage.getMessage());
+            return fail(ConstUtil.ERROR_CODE, returnMessage.getMessage());
         }
 
         //获取OCR返回信息进行redis存储
@@ -437,9 +437,9 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
             }
             String filePath = entry.getValue();//文件路径
             InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
+            String md5Code = DigestUtils.md5Hex(IOUtils.toByteArray(is));
             //获取MD5码
             boolean isA = "certImagePathA".equals(entry.getKey());
-            String md5Code = DigestUtils.md5Hex(IOUtils.toByteArray(is));
             paramMap.put("token", token);
             paramMap.put("md5", md5Code);//文件md5码
             paramMap.put("custNo", custNo);

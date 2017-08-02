@@ -12,6 +12,8 @@ import java.util.Map;
 public interface FaceService {
     //人脸识别
     public Map<String, Object> uploadFacePic(MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception;
-
-
+    //上传替代影像
+    public Map<String, Object> uploadPersonPic(MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    //判断是否需要人脸识别
+    public Map<String, Object> ifNeedDoFace(Map<String, Object> params);
 }

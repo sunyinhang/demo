@@ -131,9 +131,54 @@ public class AppServerServiceImpl implements AppServerService {
     public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params){
         String url = appserverurl + "/app/appserver/attachUploadPersonByFilePath";
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求地址：" + url);
-        logger.info("影像上传-个人版（上传共享盘文件路径）口，请求数据：" + params);
+        logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，返回数据" + resultmap);
+        return resultmap;
+    }
+
+    /**
+     *通过人脸分数判断人脸是否通过
+     * @param token
+     * @param params
+     * @return
+     */
+    public Map<String, Object> faceCheckByFaceValue(String token, Map<String, Object> params){
+        String url = appserverurl + "/app/appserver/faceCheckByFaceValue";
+        logger.info("通过人脸分数判断人脸是否通过接口，请求地址：" + url);
+        logger.info("通过人脸分数判断人脸是否通过接口，请求数据：" + params);
+        Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
+        logger.info("通过人脸分数判断人脸是否通过接口，返回数据" + resultmap);
+        return resultmap;
+    }
+
+    /**
+     * 用户支付密码手势密码验证是否设置
+     * @param token
+     * @param params
+     * @return
+     */
+    public Map<String, Object> validateUserFlag(String token, Map<String, Object> params){
+        String url = appserverurl + "/app/appserver/uauth/validateUserFlag";
+        logger.info("用户支付密码手势密码验证是否设置接口，请求地址：" + url);
+        logger.info("用户支付密码手势密码验证是否设置接口，请求数据：" + params);
+        Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
+        logger.info("用户支付密码手势密码验证是否设置接口，返回数据" + resultmap);
+        return resultmap;
+    }
+
+    /**
+     * 通过贷款品种判断是否需要进行人脸识别
+     * @param token
+     * @param params
+     * @return
+     */
+    public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params){
+        String url = appserverurl + "/app/appserver/ifNeedFaceChkByTypCde";
+        logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求地址：" + url);
+        logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求数据：" + params);
+        Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
+        logger.info("通过贷款品种判断是否需要进行人脸识别接口，返回数据" + resultmap);
         return resultmap;
     }
 }

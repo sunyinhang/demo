@@ -18,5 +18,10 @@ public class ConstUtil {
     public static final String CERT_FILE_NAME_A = "身份证正面";//身份证正面name
     public static final String CERT_FILE_TYPE_B = "DOC54";//身份证反面type
     public static final String CERT_FILE_NAME_B = "身份证反面";//身份证反面name
+    public static final String ATTACHTYPE_DOC065 = "DOC065";//影像类型
+    public static final String ATTACHTYPE_DOC065_DESC = "人脸照片";
+    public static final String ATTACHTYPE_APP01 = "App01";//影像类型
+    public static final String ATTACHTYPE_APP01_DESC = "本人手持身份证与本人面部合照照片";//影像类型名称
+    public static final String ATTACHTYPE_DOC099 = "DOC012";//影像类型 其他
 
 }

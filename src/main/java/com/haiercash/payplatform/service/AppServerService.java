@@ -22,4 +22,10 @@ public interface AppServerService {
     public Map<String, Object> updateMobile(String token, Map<String, Object> params);
     //6.2.15.	(POST)影像上传-个人版（上传共享盘文件路径）
     public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params);
+    //6.1.126.	+(POST) 通过人脸分数判断人脸是否通过
+    public Map<String, Object> faceCheckByFaceValue(String token, Map<String, Object> params);
+    //3.4.1.	(GET)用户支付密码手势密码验证是否设置
+    public Map<String, Object> validateUserFlag(String token, Map<String, Object> params);
+    //6.1.125.	(GET)通过贷款品种判断是否需要进行人脸识别
+    public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params);
 }
