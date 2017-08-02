@@ -74,5 +74,7 @@ body{background:#eee;}
 	display: -webkit-flex;
 }
 .v-align{
-	box-align: center;
+	box-align: center; /*旧版本*/
+	flex-align: center; /*混合版本*/
+	align-items: center; /*新版本*/
 }
