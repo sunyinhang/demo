@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.common.controller;
 
 import com.haiercash.commons.redis.Cache;
+import com.haiercash.payplatform.common.service.CustExtInfoService;
 import com.haiercash.payplatform.common.service.FaceService;
 import com.haiercash.payplatform.common.service.OCRIdentityService;
 import org.apache.commons.logging.Log;
@@ -33,6 +34,8 @@ public class CommonPageController extends BasePageController {
     private OCRIdentityService ocrIdentityService;
     @Autowired
     private FaceService faceService;
+    @Autowired
+    private CustExtInfoService custExtInfoService;
 
     /**
      * OCR获取身份信息
@@ -142,4 +145,22 @@ public class CommonPageController extends BasePageController {
     public Map<String, Object> ifNeedDoFace(@RequestParam Map<String, Object> params){
         return faceService.ifNeedDoFace(params);
     }
+
+
+    /**
+     * 获取客户个人扩展信息
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/getAllCustExtInfo", method = RequestMethod.POST)
+    public Map<String, Object> getAllCustExtInfo(@RequestParam(value = "token") String token,
+                                                 @RequestParam(value = "channel") String channel,
+                                                 @RequestParam(value = "channelNo")  String channelNo )throws Exception {
+        return custExtInfoService.getAllCustExtInfo(token, channel, channelNo);
+    }
+
+
 }
