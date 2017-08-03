@@ -69,11 +69,11 @@ public class AppServerServiceImpl implements AppServerService {
      * @return
      */
     public Map<String, Object> saveCardMsg(String token, Map<String, Object> params){
-        String url = appserverurl + "/app/appserver/smsSendVerify";
-        logger.info("保存省份证信息接口，请求地址：" + url);
-        logger.info("保存省份证信息接口，请求数据：" + params);
+        String url = appserverurl + "/app/appserver/saveCardMsg";
+        logger.info("保存身份证信息接口，请求地址：" + url);
+        logger.info("保存身份证信息接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
-        logger.info("保存省份证信息接口，返回数据" + resultmap);
+        logger.info("保存身份证信息接口，返回数据" + resultmap);
         return resultmap;
     }
 
