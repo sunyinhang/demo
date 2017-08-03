@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.Map;
 import static com.haiercash.payplatform.common.utils.RestUtil.fail;
 import static com.haiercash.payplatform.common.utils.RestUtil.success;
 
+@Service
 public class CustExtInfoServiceImpl implements CustExtInfoService{
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
