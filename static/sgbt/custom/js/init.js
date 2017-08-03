@@ -1,4 +1,4 @@
-require(['vue', 'jquery', 'util', 'Const', 'bridge', 'weui', 'hammer'], function(vue, $, util, Const, bridge) {
+require(['vue', 'jquery', 'util', 'Const', 'bridge', 'weui', 'hammer', 'validation'], function(vue, $, util, Const, bridge) {
     if ($('.bv-main').length > 1) {
         util.redirect({
             title: '404',

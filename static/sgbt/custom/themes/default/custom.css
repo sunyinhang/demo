@@ -464,3 +464,21 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
     background-position: center center;
     background-size: auto 4.25rem;
 }
+.bv-theme .form-align-right input, .bv-theme .form-align-right p {
+    text-align: right;
+}
+.bv-theme .weui-btn-area {
+    padding-bottom: 1.2rem;
+    margin-top: 2rem;
+}
+.bv-theme .weui-btn_primary {
+    margin: 0 auto;
+    width: 80%;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    background-color: #32beff;
+}
+.bv-theme .weui-btn_primary:not(.weui-btn_disabled):active {
+    color: hsla(0,0%,100%,.6);
+    background-color: #32beff;
+}
