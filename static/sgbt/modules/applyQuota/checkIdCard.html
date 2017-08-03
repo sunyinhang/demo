@@ -1,0 +1,18 @@
+<div class="wrapper bg-bd checkIdCard" data-container="checkIdCard">
+    <component is="tab-applyQuota" class="main-01"></component>
+    <component is="bv-upload" class="main-02 paddt15" v-bind="uploadConfig"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const', 'bvUpload'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'checkIdCard',
+            data: {
+                uploadConfig: {
+                    type: 'single',
+                    clazz: 'camera cameraFace',
+                    url: '/app/file/formUpload'
+                }
+            }
+        });
+    });
+</script>
