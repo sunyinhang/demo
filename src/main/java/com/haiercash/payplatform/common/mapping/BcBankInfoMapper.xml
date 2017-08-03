@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.haiercash.payplatform.common.dao.BcBankInfoDao">
 
-    <select id="selectById" resultType="com.haiercash.payplatform.common.data.BcBankInfo">
-        select * from bc_bank_info;
+    <select id="selectById" resultType="com.haiercash.payplatform.common.data.BcBankInfo" >
+        select * from bc_bank_info where rownum=1
     </select>
 
 </mapper>

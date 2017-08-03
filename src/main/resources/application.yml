@@ -62,9 +62,9 @@ datasources:
       loginPassword: admin
     mybatis:
       dialect: org.apache.ibatis.dialect.OracleDialect
-      basePackage: com.haiercash.commons.dao,com.haiercash.payplatform.common.dao
-      aliasesPackage: com.haiercash.commons.data,com.haiercash.payplatform.common.data
-      mapperLocations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/common/mapping/*.xml
+      basePackage: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
+      aliasesPackage: com.haiercash.commons.data,com.haiercash.payplatform.**.data
+      mapperLocations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
       underscoreToCamelCase: true
 eureka:
   client:

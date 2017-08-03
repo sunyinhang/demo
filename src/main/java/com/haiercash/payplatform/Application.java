@@ -27,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableRedisHttpSession
 @ServletComponentScan
-@ComponentScan(basePackages = {"com.haiercash.commons", "com.haiercash.payplatform", "com.haiercash.payplatform.common"})
+@ComponentScan(basePackages = {"com.haiercash.commons", "com.haiercash.payplatform"})
 @EnableEurekaClient
 @EnableScheduling
 @Configuration
