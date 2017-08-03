@@ -10,7 +10,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','msPhotoUgrade'], function
 			file_id: 'identityCard',
 			file_title: '身份证正面',
 			containerId: 'uploadPhoto',
-			url: 'ocrIdentifyServlet.do?token='+tk,
+			url: 'ocrIdentity',
 			path: ''
 		},
 		onFileUploaded: function(obj) {

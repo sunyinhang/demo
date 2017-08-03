@@ -28,4 +28,6 @@ public interface AppServerService {
     public Map<String, Object> validateUserFlag(String token, Map<String, Object> params);
     //6.1.125.	(GET)通过贷款品种判断是否需要进行人脸识别
     public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params);
+    //6.1.116.	查询CRM中客户扩展信息（二）接口
+    public Map<String, Object> getAllCustExtInfo(String token, Map<String, Object> params);
 }

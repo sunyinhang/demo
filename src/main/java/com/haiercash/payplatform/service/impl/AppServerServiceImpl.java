@@ -69,11 +69,11 @@ public class AppServerServiceImpl implements AppServerService {
      * @return
      */
     public Map<String, Object> saveCardMsg(String token, Map<String, Object> params){
-        String url = appserverurl + "/app/appserver/smsSendVerify";
-        logger.info("保存省份证信息接口，请求地址：" + url);
-        logger.info("保存省份证信息接口，请求数据：" + params);
+        String url = appserverurl + "/app/appserver/saveCardMsg";
+        logger.info("保存身份证信息接口，请求地址：" + url);
+        logger.info("保存身份证信息接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
-        logger.info("保存省份证信息接口，返回数据" + resultmap);
+        logger.info("保存身份证信息接口，返回数据" + resultmap);
         return resultmap;
     }
 
@@ -179,6 +179,23 @@ public class AppServerServiceImpl implements AppServerService {
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，返回数据" + resultmap);
+        return resultmap;
+    }
+
+
+    /**
+     * 查询CRM中客户扩展信息（二）接口
+     * @param token
+     * @param params
+     * @return
+     */
+    @Override
+    public Map<String, Object> getAllCustExtInfo(String token, Map<String, Object> params) {
+        String url = appserverurl + "/app/appserver/getAllCustExtInfo";
+        logger.info("查询CRM中客户扩展信息（二）接口，请求地址：" + url);
+        logger.info("查询CRM中客户扩展信息（二）接口，请求数据：" + params);
+        Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
+        logger.info("查询CRM中客户扩展信息（二）接口，返回数据" + resultmap);
         return resultmap;
     }
 }

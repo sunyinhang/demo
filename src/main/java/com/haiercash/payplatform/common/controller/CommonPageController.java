@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.common.controller;
 
 import com.haiercash.commons.redis.Cache;
+import com.haiercash.payplatform.common.service.CustExtInfoService;
 import com.haiercash.payplatform.common.service.FaceService;
 import com.haiercash.payplatform.common.service.OCRIdentityService;
 import org.apache.commons.logging.Log;
@@ -33,6 +34,8 @@ public class CommonPageController extends BasePageController {
     private OCRIdentityService ocrIdentityService;
     @Autowired
     private FaceService faceService;
+    @Autowired
+    private CustExtInfoService custExtInfoService;
 
     /**
      * OCR获取身份信息
@@ -124,22 +127,45 @@ public class CommonPageController extends BasePageController {
     public Map<String, Object> uploadFacePic(@RequestBody MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         return faceService.uploadFacePic(faceImg, request, response);
     }
+    /**
+     * 支付密码设置
+     * @param token
+     * @param payPasswd
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/resetPayPasswd",method = RequestMethod.GET)
+    public Map<String,Object> resetPayPasswd(@RequestParam(value = "token") String token,
+                                             @RequestParam(value = "payPasswd") String payPasswd){
+        return ocrIdentityService.resetPayPasswd(token,payPasswd);
+    }
 
     /**
-     * 上传手持身份证
-     * @param faceImg
-     * @param request
-     * @param response
+     * 协议展示：(1)展示注册协议(2)个人征信(3)借款合同
+     * @param token
+     * @param flag
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/treatyShow")
+    public Map<String,Object> treatyShow(@RequestParam(value = "token") String token,
+                                         @RequestParam(value="flag") String flag)throws Exception{
+        return ocrIdentityService.treatyShowServlet(token,flag);
+    }
+
+
+    /**
+     * 获取客户个人扩展信息
+     * @param token
+     * @param channel
+     * @param channelNo
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/api/payment/attachUploadPerson", method = RequestMethod.POST)
-    public Map<String, Object> attachUploadPerson(@RequestBody MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return faceService.uploadPersonPic(faceImg, request, response);
+    @RequestMapping(value = "/api/payment/getAllCustExtInfo", method = RequestMethod.POST)
+    public Map<String, Object> getAllCustExtInfo(@RequestParam(value = "token") String token,
+                                                 @RequestParam(value = "channel") String channel,
+                                                 @RequestParam(value = "channelNo")  String channelNo )throws Exception {
+        return custExtInfoService.getAllCustExtInfo(token, channel, channelNo);
     }
 
-    @RequestMapping(value = "/api/payment/ifNeedDoFace", method = RequestMethod.GET)
-    public Map<String, Object> ifNeedDoFace(@RequestParam Map<String, Object> params){
-        return faceService.ifNeedDoFace(params);
-    }
+
 }

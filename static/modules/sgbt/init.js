@@ -5,7 +5,7 @@ function __heredoc(fn) {
 }
 var __Const = {
     rest: {
-        baseUrl: window.location.protocol + "//" + window.location.host + '/PaymentPlatform/servlet/meifenqi/'
+        baseUrl: window.location.protocol + "//" + window.location.host + '/api/payment/'
     },
     params: {
         maritalStatusMarried: '20',
