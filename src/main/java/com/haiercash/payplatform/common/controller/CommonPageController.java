@@ -127,23 +127,28 @@ public class CommonPageController extends BasePageController {
     public Map<String, Object> uploadFacePic(@RequestBody MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         return faceService.uploadFacePic(faceImg, request, response);
     }
-
     /**
-     * 上传手持身份证
-     * @param faceImg
-     * @param request
-     * @param response
+     * 支付密码设置
+     * @param token
+     * @param payPasswd
      * @return
-     * @throws Exception
      */
-    @RequestMapping(value = "/api/payment/attachUploadPerson", method = RequestMethod.POST)
-    public Map<String, Object> attachUploadPerson(@RequestBody MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return faceService.uploadPersonPic(faceImg, request, response);
+    @RequestMapping(value = "/api/payment/resetPayPasswd",method = RequestMethod.GET)
+    public Map<String,Object> resetPayPasswd(@RequestParam(value = "token") String token,
+                                             @RequestParam(value = "payPasswd") String payPasswd){
+        return ocrIdentityService.resetPayPasswd(token,payPasswd);
     }
 
-    @RequestMapping(value = "/api/payment/ifNeedDoFace", method = RequestMethod.GET)
-    public Map<String, Object> ifNeedDoFace(@RequestParam Map<String, Object> params){
-        return faceService.ifNeedDoFace(params);
+    /**
+     * 协议展示：(1)展示注册协议(2)个人征信(3)借款合同
+     * @param token
+     * @param flag
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/treatyShow")
+    public Map<String,Object> treatyShow(@RequestParam(value = "token") String token,
+                                         @RequestParam(value="flag") String flag)throws Exception{
+        return ocrIdentityService.treatyShowServlet(token,flag);
     }
 
 
