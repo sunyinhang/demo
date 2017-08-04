@@ -329,7 +329,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         verifyNoMap.put("token", token);
         verifyNoMap.put("channel", channel);
         verifyNoMap.put("channelNo", channelNo);
-        Map<String, Object> verifyresultmap = appServerService.smsVerify(token, map);
+        Map<String, Object> verifyresultmap = appServerService.smsVerify(token, verifyNoMap);
         JSONObject verifyheadjson = new JSONObject((String) verifyresultmap.get("head"));
         String verifyretFlag = (String) verifyheadjson.get("retFlag");
         if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
@@ -359,7 +359,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         ocrMap.put("token", token);
         ocrMap.put("channel", channel);
         ocrMap.put("channelNo", channelNo);
-        Map<String, Object> ocrresultmap = appServerService.saveCardMsg(token, map);
+        Map<String, Object> ocrresultmap = appServerService.saveCardMsg(token, ocrMap);
         JSONObject ocrheadjson = new JSONObject((String) ocrresultmap.get("head"));
         String ocrretFlag = (String) ocrheadjson.get("retFlag");
         if (!"00000".equals(ocrretFlag)) {//身份证信息保存失败
@@ -418,7 +418,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
         updmobilemap.put("channel", channel);
         updmobilemap.put("channelNo", channelNo);
-        Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, identityMap);
+        Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
         JSONObject updmobileheadjson = new JSONObject((String) updmobileresultmap.get("head"));
         String updmobileretflag = updmobileheadjson.getString("retFlag");
         if (!"00000".equals(updmobileretflag)) {

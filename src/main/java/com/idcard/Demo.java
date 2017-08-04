@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.common.utils.ocr;
+package com.idcard;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,16 +10,16 @@ import java.io.UnsupportedEncodingException;
 public class Demo {
 	static
     {
-		Logger xmllog = LogManager.getLogger("xmllog");
+		//Logger xmllog = LogManager.getLogger("xmllog");
 		try{
 
 			System.out.println("java.library.path:"+System.getProperty("java.library.path"));
-			xmllog.info("天诚OCR：java.library.path:"+System.getProperty("java.library.path"));
+			//xmllog.info("天诚OCR：java.library.path:"+System.getProperty("java.library.path"));
 
 			System.loadLibrary("IDCARD_THR");
-
+			System.out.println("天诚OCR：java.library.path:"+System.getProperty("java.library.path"));
 		}catch (Throwable e){
-			xmllog.info("加载OCRDLL_THR出现异常："+e.getMessage());
+			//xmllog.info("加载OCRDLL_THR出现异常："+e.getMessage());
 		}
 
     } 

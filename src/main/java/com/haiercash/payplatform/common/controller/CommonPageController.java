@@ -39,15 +39,15 @@ public class CommonPageController extends BasePageController {
 
     /**
      * OCR获取身份信息
-     * @param ocrImg
+     * @param identityCard
      * @param request
      * @param response
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/ocrIdentity", method = RequestMethod.POST)
-    public Map<String, Object> ocrIdentity(@RequestBody MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return ocrIdentityService.ocrIdentity(ocrImg, request, response);
+    public Map<String, Object> ocrIdentity(@RequestBody MultipartFile identityCard, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return ocrIdentityService.ocrIdentity(identityCard, request, response);
     }
 
     /**

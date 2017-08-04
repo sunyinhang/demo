@@ -1,5 +1,4 @@
-package com.haiercash.payplatform.common.utils.ocr;
-
+package com.idcard;
 //import net.sf.json.JSONException;
 //import net.sf.json.JSONObject;
 
