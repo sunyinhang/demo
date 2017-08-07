@@ -90,11 +90,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
 
         //获取OCR返回信息进行redis存储
         Object retObj = returnMessage.getRetObj();
-        logger.info("测试：" + retObj);
-//        Map<String, Object> m = (Map) retObj;
-//        logger.info(m);
         JSONObject cardsResJson = new JSONObject(retObj.toString());
-//        JSONObject cardsResJson = new JSONObject((new JSONObject(returnMessage.getRetObj())).get("cards"));
         cacheMap.put("name", (String) cardsResJson.get("name"));//姓名
         cacheMap.put("gender", (String) cardsResJson.get("gender"));//性别
         cacheMap.put("birthday", (String) cardsResJson.get("birthday"));//出生年月日
@@ -130,7 +126,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
 
         cache.set(token, cacheMap);
         logger.info("OCR身份信息获取*************结束");
-        return success();
+        return success(cardsResJson);
     }
 
     private String saveImage2Disk(String userId, String imageStr) throws IOException {
