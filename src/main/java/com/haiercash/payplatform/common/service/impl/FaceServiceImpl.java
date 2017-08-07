@@ -60,7 +60,7 @@ public class FaceServiceImpl implements FaceService{
         String token = request.getParameter("token");
         String channel = request.getParameter("channel");
         String channelNo = request.getParameter("channelNo");
-        String edflag = request.getParameter("edflag");//1:额度申请
+        String edflag = request.getParameter("edflag");//1:额度申请  传1
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
             logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo);
             logger.info("前台传入数据有误");
