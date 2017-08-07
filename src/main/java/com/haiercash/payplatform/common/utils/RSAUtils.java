@@ -363,8 +363,8 @@ public class RSAUtils {
 			String privateKey = getPrivateKey(map);
 //			String publicKey ="MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMsAEWQepQLdo3mhgw3mLU00n/ldDd4knbq01bH89XnE5RITn+qZBAkHow5jgwH2T5ve2KJzkrHD6JbDDQtRO0UCAwEAAQ==";
 //			String privateKey = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAywARZB6lAt2jeaGDDeYtTTSf+V0N3iSdurTVsfz1ecTlEhOf6pkECQejDmODAfZPm97YonOSscPolsMNC1E7RQIDAQABAkBdolFjQfNQ6BSgZMxDW/lnVC+54J8l6PPMC99JsukzWbjvCqCxMY2/9LIV7W1OpzTp0OcPH+8FdI+GTrQqaL59AiEA7NUfjdHVvqgjWBBLxvYmk9KSVol5eQPE2LL9h4OVMXsCIQDbbft7qRNcISk+oacS109IvS6FiR6QtCxt01ci/v3KPwIgAsWPw/ojtUKEf2BZcq+ozewV+FtNh6QKprqZiv94PIcCICVYeJ65TfQ2KKDiPl80ieflWs+bYLpcD9u5RnFMWMFdAiEAkhXiwm4ltINMTcj82/fl0BwujBb0jybXfVnKNHH43S0=";
-			System.out.println("----"+publicKey);
-			System.out.println("----"+privateKey);
+			System.out.println("公钥----"+publicKey);
+			System.out.println("私钥----"+privateKey);
 			String abc = "haiercashpay";
 			String sss ="";
 			//String sss ="vHaXHgAm+ihC6fmdLp4Ynbdyy7GOo6OAv1bvjjgBFBov4/XrB40gEIscTIaf/Yh54gecQVcAZbVfVDOiFDGBkg==";

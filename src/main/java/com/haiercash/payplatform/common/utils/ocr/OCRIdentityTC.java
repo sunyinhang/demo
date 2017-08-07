@@ -83,7 +83,7 @@ public class OCRIdentityTC {
                 reponseJson.put("cards", cards);
                 returnMessage.setCode("0000");
                 returnMessage.setMessage("处理成功");
-                returnMessage.setRetObj(reponseJson);
+                returnMessage.setRetObj(cards);
 
                 System.out.println("调用第三方(TC)OCR身份证识别，处理成功");
             }
@@ -127,7 +127,11 @@ public class OCRIdentityTC {
     public String getOCR(byte[] pImgBuff){
 
         String strResult = null;
-        int ret = engineOCR.Start(engineOCR.Byte2String(engineOCR.GetEngineTimeKey()));//初始化
+
+        String timeKey = "ed969133dd0eece08b478d9478ff3c06";
+        int ret = engineOCR.Start(timeKey);
+
+        //int ret = engineOCR.Start(engineOCR.Byte2String(engineOCR.GetEngineTimeKey()));//初始化
         if (ret == 100) {
             out.println("天诚OCR身份证识别：该版本为试用版本，时间过期，请联系技术员\n");
             logger.info("天诚OCR身份证识别：该版本为试用版本，时间过期，请联系技术员\n");
@@ -139,6 +143,9 @@ public class OCRIdentityTC {
 
         logger.info("天诚OCR身份证识别,timeKey:"+engineOCR.Byte2String(engineOCR.GetEngineTimeKey())+",Version:"+engineOCR.Byte2String(engineOCR.GetVersion())
                 +",UserTimes:" + engineOCR.Byte2String(engineOCR.GetUseTimeString()));
+
+        engineOCR.SetParam(GlobalData.T_SET_HEADIMG, 1);
+        engineOCR.SetParam(GlobalData.T_SET_HEADIMGBUFMODE, 1);
 
         byte [] jsonbuf = engineOCR.RECOCROFMEM(GlobalData.TIDCARD2,pImgBuff,pImgBuff.length);
         if(jsonbuf != null)

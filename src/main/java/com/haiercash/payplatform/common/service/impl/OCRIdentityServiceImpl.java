@@ -89,7 +89,12 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         }
 
         //获取OCR返回信息进行redis存储
-        JSONObject cardsResJson = new JSONObject((new JSONObject(returnMessage.getRetObj())).get("cards"));
+        Object retObj = returnMessage.getRetObj();
+        logger.info("测试：" + retObj);
+//        Map<String, Object> m = (Map) retObj;
+//        logger.info(m);
+        JSONObject cardsResJson = new JSONObject(retObj.toString());
+//        JSONObject cardsResJson = new JSONObject((new JSONObject(returnMessage.getRetObj())).get("cards"));
         cacheMap.put("name", (String) cardsResJson.get("name"));//姓名
         cacheMap.put("gender", (String) cardsResJson.get("gender"));//性别
         cacheMap.put("birthday", (String) cardsResJson.get("birthday"));//出生年月日

@@ -2,6 +2,7 @@ package com.idcard;
 //import net.sf.json.JSONException;
 //import net.sf.json.JSONObject;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -50,6 +51,7 @@ public class StringManager {
 	public  String TIC_SEAT				= "";/* 座位号*/
 	public  String TIC_NAME				= "";/* 姓名*/
 
+	//   营业执照
 	public  String BLIC_CODE			= "";/* 统一社会信用代码*/
 	public  String BLIC_NAME			= ""; /*名称*/
 	public  String BLIC_TYPE			= ""; /*类型*/
@@ -59,6 +61,36 @@ public class StringManager {
 	public  String BLIC_DATE			= ""; /*成立日期*/
 	public  String BLIC_PERIOD			= ""; /*营业期限*/
 	public  String BLIC_ISSUE			= ""; /*发证日期*/
+
+	/*社保卡字段*/
+	public  String SSC_NAME			= "";/*姓名*/
+	public  String SSC_NUM			= "";/*身份证号*/
+	public  String SSC_SHORTNUM		= "";/*卡号*/
+	public  String SSC_PERIOD		= "";/*有效期限*/
+	public  String SSC_BANKNUM		= "";/*银行卡号*/
+
+	/*护照字段*/
+	public  String PAS_PASNO			= "";/*护照号*/
+	public  String PAS_NAME				= "";/*姓名*/
+	public  String PAS_SEX				= "";/*性别*/
+	public  String PAS_IDCARDNUM		= "";/*身份证号码*/
+	public  String PAS_BIRTH			= "";/*生日*/
+	public  String PAS_PLACE_BIRTH		= "";/*出生地址*/
+	public  String PAS_DATE_ISSUE		= "";/*签发日期*/
+	public  String PAS_DATE_EXPIRY		= "";/*有效日期*/
+	public  String PAS_PLACE_ISSUE		= "";/*签发地址*/
+	public  String PAS_NATION_NAME		= "";/*国籍和姓名监督码*/
+	public  String PAS_MACHINE_RCODE	= "";/*护照号+国籍代码+生日代码（YYMMDD）+性别（M/F）+护照有效期（YYMMDD）+校验码 监督码*/
+
+	public  String HSL_NAME			= "";
+	public  String HSL_NUM			= "";
+	public  String HSL_DATE			= "";
+	public  String HSL_FIGURE		= "";
+	public  String HSL_FIGURE_SUM	= "";
+
+	//人民币冠字号
+	public  String RMB_NUM				= ""; /*人民币冠字号*/
+
 	/*银行卡字段*/
 	public  String TBANK_NUM			= "";//获取银行卡号
 	public  String TBANK_NAME			= "";//获取银行卡开户行
@@ -119,6 +151,30 @@ public class StringManager {
 		BLIC_DATE			= ""; /*成立日期*/
 		BLIC_PERIOD			= ""; /*营业期限*/
 		BLIC_ISSUE			= ""; /*发证日期*/
+
+	    /*社保卡字段*/
+		SSC_NAME			= "";/*姓名*/
+		SSC_NUM				= "";/*身份证号*/
+		SSC_SHORTNUM		= "";/*卡号*/
+		SSC_PERIOD			= "";/*有效期限*/
+		SSC_BANKNUM			= "";/*银行卡号*/
+
+		/*护照字段*/
+		PAS_PASNO			= "";/*护照号*/
+		PAS_NAME				= "";/*姓名*/
+		PAS_SEX				= "";/*性别*/
+		PAS_IDCARDNUM		= "";/*身份证号码*/
+		PAS_BIRTH			= "";/*生日*/
+		PAS_PLACE_BIRTH		= "";/*出生地址*/
+		PAS_DATE_ISSUE		= "";/*签发日期*/
+		PAS_DATE_EXPIRY		= "";/*有效日期*/
+		PAS_PLACE_ISSUE		= "";/*签发地址*/
+		PAS_NATION_NAME		= "";/*国籍和姓名监督码*/
+		PAS_MACHINE_RCODE	= "";/*护照号+国籍代码+生日代码（YYMMDD）+性别（M/F）+护照有效期（YYMMDD）+校验码 监督码*/
+
+
+
+		RMB_NUM				= "";/*人民币冠字号*/
 		/*银行卡字段*/
 		TBANK_NUM			= "";//获取银行卡号
 		TBANK_NAME			= "";//获取银行卡开户行
@@ -184,13 +240,35 @@ public class StringManager {
 			BLIC_DATE			= jsonObject01.getString("BLIC_DATE"); /*成立日期*/
 			BLIC_PERIOD			= jsonObject01.getString("BLIC_PERIOD"); /*营业期限*/
 			BLIC_ISSUE			= jsonObject01.getString("BLIC_ISSUE"); /*发证日期*/
+
+		    /*社保卡字段*/
+			SSC_NAME			= jsonObject01.getString("SSC_NAME");/*姓名*/
+			SSC_NUM				= jsonObject01.getString("SSC_NUM");/*身份证号*/
+			SSC_SHORTNUM		= jsonObject01.getString("SSC_SHORTNUM");/*卡号*/
+			SSC_PERIOD			= jsonObject01.getString("SSC_PERIOD");/*有效期限*/
+			SSC_BANKNUM			= jsonObject01.getString("SSC_BANKNUM");/*银行卡号*/
+
+			/*护照字段*/
+			PAS_PASNO			= jsonObject01.getString("PAS_PASNO");/*护照号*/
+			PAS_NAME			= jsonObject01.getString("PAS_NAME");/*姓名*/
+			PAS_SEX				= jsonObject01.getString("PAS_SEX");/*性别*/
+			PAS_IDCARDNUM		= jsonObject01.getString("PAS_IDCARDNUM");/*身份证号码*/
+			PAS_BIRTH			= jsonObject01.getString("PAS_BIRTH");/*生日*/
+			PAS_PLACE_BIRTH		= jsonObject01.getString("PAS_PLACE_BIRTH");/*出生地址*/
+			PAS_DATE_ISSUE		= jsonObject01.getString("PAS_DATE_ISSUE");/*签发日期*/
+			PAS_DATE_EXPIRY		= jsonObject01.getString("PAS_DATE_EXPIRY");/*有效日期*/
+			PAS_PLACE_ISSUE		= jsonObject01.getString("PAS_PLACE_ISSUE");/*签发地址*/
+			PAS_NATION_NAME		= jsonObject01.getString("PAS_NATION_NAME");/*国籍和姓名监督码*/
+			PAS_MACHINE_RCODE	= jsonObject01.getString("PAS_MACHINE_RCODE");/*护照号+国籍代码+生日代码（YYMMDD）+性别（M/F）+护照有效期（YYMMDD）+校验码 监督码*/
+
+			RMB_NUM				= jsonObject01.getString("RMB_NUM"); /*人民币冠字号*/
 			/*银行卡字段*/
 			TBANK_NUM			= jsonObject01.getString("TBANK_NUM");//获取银行卡号
 			TBANK_NAME			= jsonObject01.getString("TBANK_NAME");//获取银行卡开户行
 			TBANK_ORGCODE		= jsonObject01.getString("TBANK_ORGCODE");//获取银行机构代码
 			TBANK_CLASS			= jsonObject01.getString("TBANK_CLASS");//获取卡种
 			TBANK_CARD_NAME		= jsonObject01.getString("TBANK_CARD_NAME");//获取卡名
-		} catch (Exception e1) {
+		} catch (JSONException e1) {
 
 			// TODO Auto-generated catch block
 
