@@ -1,31 +1,34 @@
-<div class="wrapper bg-bd checkIdCard" data-container="checkIdCard">
-    <component is="tab-applyQuota" class="main-01"></component>
-    <component is="bv-form" class="main-03" v-bind="formConfig"></component>
+<div class="bv-align-center" data-container="checkIdCard">
+    <component is="tab-applyQuota"></component>
+    <component is="bv-upload" :entity="entity" v-bind="uploadConfig"></component>
+    <component is="bv-form" class="form-align-right" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         var vm = util.bind({
             container: 'checkIdCard',
             data: {
+                entity: {},
+                uploadConfig: {
+                    name: 'upload',
+                    type: 'camera',
+                    clazz: 'camera',
+                    url: '${root}/app/file/formUpload',
+                    files: [
+                        {
+                            name: 'file1',
+                            head: '身份证正面'
+                            // url: '/app/file/accd0c797d58ae8e31521c1b74b785d2'
+                        }
+                    ]
+                },
                 formConfig: {
-                    clazz: 'form-align-right',
+                    layout: 'inline',
                     columns: [
                         {
-                            name: 'upload',
-                            clazz: 'main-02 paddt15',
-                            edit: {
-                                type: 'upload'
-                            },
-                            config: {
-                                type: 'single',
-                                clazz: 'camera cameraFace',
-                                url: '/app/file/formUpload'
-                            }
-                        },
-                        {
+                            head: '姓名',
                             name: 'name',
                             config: {
-                                head: '姓名',
                                 attr: {
                                     placeholder: '请输入姓名'
                                 },
@@ -35,9 +38,9 @@
                             }
                         },
                         {
+                            head: '性别',
                             name: 'gender',
                             config: {
-                                head: '性别',
                                 attr: {
                                     readonly: 'readonly'
                                 },
@@ -47,9 +50,9 @@
                             }
                         },
                         {
+                            head: '出生年月',
                             name: 'birthday',
                             config: {
-                                head: '出生年月',
                                 attr: {
                                     readonly: 'readonly'
                                 },
@@ -59,18 +62,16 @@
                             }
                         },
                         {
+                            head: '家庭住址',
                             name: 'address',
                             edit: {
                                 type: 'static'
-                            },
-                            config: {
-                                head: '家庭住址'
                             }
                         },
                         {
+                            head: '证件号码',
                             name: 'idCard',
                             config: {
-                                head: '证件号码',
                                 attr: {
                                     readonly: 'readonly'
                                 },
@@ -86,9 +87,7 @@
                             clazz: 'primary',
                             preset: function (event, editType, entity) {
                                 if (!entity.upload) {
-                                    util.alert({
-                                        content: '请使用扫描功能上传信息'
-                                    });
+                                    util.alert('请使用扫描功能上传信息');
                                     return false;
                                 }
                                 return true;

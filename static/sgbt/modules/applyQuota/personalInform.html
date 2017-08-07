@@ -1,0 +1,144 @@
+<div data-container="personalInform">
+    <component is="tab-applyQuota" active="personal"></component>
+    <component is="bv-accordion" v-bind="config"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'personalInform',
+            data: {
+                entity: {
+                },
+                config: {
+                    items: [
+                        {
+                            title: '个人信息',
+                            type: 'form',
+                            config: {
+                                clazz: 'form-align-right',
+                                layout: 'inline',
+                                columns: [
+                                    {
+                                        head: '婚姻状况',
+                                        name: 'maritalStatus',
+                                        edit: {
+                                            type: 'select'
+                                        },
+                                        config: {
+                                            preset: 'json',
+                                            choose: '#maritalStatus',
+                                            validate: {
+                                                required: '婚姻状况不能为空'
+                                            }
+                                        }
+                                    },
+                                    {
+                                        head: '居住地址',
+                                        name: 'liveAddress',
+                                        edit: {
+                                            type: 'picker'
+                                        },
+                                        config: {
+                                            attr: {
+                                                placeholder: '请选择居住地址'
+                                            },
+                                            validate: {
+                                                required: '居住地址不能为空'
+                                            },
+                                            code: 'areaCode',
+                                            desc: 'areaName',
+                                            cache: true,
+                                            initOption: {
+                                                areaCode: '',
+                                                areaName: '请选择'
+                                            },
+                                            choose: [
+                                                {
+                                                    items: function () {
+                                                        return vm.getArea();
+                                                    },
+                                                    onChange: function (value, values) {
+                                                        if (util.isEmpty(value)) {
+                                                            this.changeItems(1, []);
+                                                        } else {
+                                                            this.changeItems(1, vm.getArea(value));
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    items: [],
+                                                    onChange: function (value, values) {
+                                                        if (util.isEmpty(value)) {
+                                                            this.changeItems(2, []);
+                                                        } else {
+                                                            this.changeItems(2, vm.getArea(value));
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    items: []
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        name: 'liveAddr',
+                                        config: {
+                                            attr: {
+                                                placeholder: '居住详细地址'
+                                            },
+                                            validate: {
+                                                required: '居住详细地址不能为空'
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            title: '单位信息',
+                            type: 'form',
+                            config: {
+                                clazz: 'form-align-right',
+                                layout: 'inline',
+                                columns: [
+                                    {
+                                        head: '工作单位',
+                                        name: 'officeName',
+                                        config: {
+                                            attr: {
+                                                maxlength: 300
+                                            },
+                                            validate: {
+                                                required: '请输入工作单位',
+                                            }
+                                        }
+                                    },
+                                    {
+                                        head: '单位电话',
+                                        name: 'officeTel'
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            methods: {
+                getArea: function (code) {
+                    var items = [];
+                    util.get({
+                        url: '/getArea',
+                        data: !util.isEmpty(code) ? {areaCode: code} : '',
+                        async: false,
+                        cache: true,
+                        success: function(res) {
+                            items = res;
+                        }
+                    });
+                    return items;
+                }
+            }
+        });
+    });
+</script>

@@ -31,11 +31,9 @@ require(['vue', 'jquery', 'util'], function(vue, $, util) {
         template: util.heredoc(function() {
             /*!
             <div class="tab-applyQuota">
-                <ul class="thumbnail">
+                <ul>
                     <li v-for="el in innerTabs" :class="[{'active': active === el.clazz}, el.clazz]" v-text="el.text"></li>
                 </ul>
-                <div class="clear height10"></div>
-                <div class="height7"></div>
             </div>
             */
         })
