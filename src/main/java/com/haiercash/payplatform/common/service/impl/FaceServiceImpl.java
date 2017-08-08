@@ -8,6 +8,7 @@ import com.haiercash.payplatform.common.utils.DataConverUtil;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.common.utils.HttpClient;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
@@ -34,7 +35,7 @@ import static com.haiercash.payplatform.common.utils.RestUtil.success;
  * Created by yuanli on 2017/8/1.
  */
 @Service
-public class FaceServiceImpl implements FaceService{
+public class FaceServiceImpl extends BaseService implements FaceService{
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
     private Cache cache;

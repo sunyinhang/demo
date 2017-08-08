@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.service;
 
 import com.haiercash.commons.service.AbstractService;
+import com.haiercash.payplatform.common.filter.RequestContext;
 import com.haiercash.payplatform.common.utils.RestUtil;
 import com.haiercash.payplatform.common.utils.ResultHead;
 import com.haiercash.payplatform.common.utils.ConstUtil;
@@ -86,4 +87,12 @@ public class BaseService extends AbstractService {
         resultMap.put("body", result);
         return resultMap;
     }
+    protected String getChannel() {
+        return RequestContext.data().getChannel();
+    }
+
+    protected String getChannelNo() {
+        return RequestContext.data().getChannelNo();
+    }
+
 }
