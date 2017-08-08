@@ -81,3 +81,6 @@
 .modal .modal-text, .modal .modal-button {
     font-size: 14px;
 }
+.bv-accordion .accordion-item-content .content-block, .bv-accordion .accordion-item-content .content-block .list-block ul {
+    background-color: #fbfbfb;
+}
