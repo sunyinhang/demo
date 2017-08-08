@@ -1,5 +1,5 @@
 <div class="bv-align-center" data-container="setPayPsd">
-    <component is="tab-applyQuota"></component>
+    <component is="tab-applyQuota" active="password"></component>
     <component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
@@ -22,8 +22,9 @@
                             name: 'payPassword',
                             config: {
                                 type: 'password',
-                                clazz: ['pull-left','red'],
-                                attr: {},
+                                attr: {
+                                    placeholder: '请输入支付密码'
+                                },
                                 validate: {
                                     required: '请输入支付密码'
                                 }
@@ -34,7 +35,9 @@
                             name: 'payPassword2',
                             config: {
                                 type: 'password',
-                                attr: {},
+                                attr: {
+                                    placeholder: '请输入确认密码'
+                                },
                                 validate: {
                                     required: '请输入确认密码',
                                     equals:{
@@ -50,17 +53,12 @@
                             text: '下一步',
                             clazz: 'primary',
                             click: function (event, editType, entity) {
-                                console.log(event+' '+editType+' '+entity);
-                                /*util.get({
-                                    url: 'resetPayPasswd',
-                                    data:{},
-                                    success: {}
-                                });*/
-
-
+                                util.cache({
+                                    payPasswd: entity.payPassword
+                                });
                                 util.redirect({
-                                    title: '个人资料',
-                                    url: '/applyQuota/personalInform.html',
+                                    title: '短信验证码',
+                                    url: '/applyQuota/payPsdValidcode.html',
                                     back: false
                                 });
                             }

@@ -7,6 +7,7 @@ import com.haiercash.payplatform.common.service.OCRIdentityService;
 import com.haiercash.payplatform.common.service.PayPasswdService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -162,7 +163,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 获取客户个人扩展信息
-
+     *
      * @return
      * @throws Exception
      */
@@ -185,7 +186,6 @@ public class CommonPageController extends BaseController {
     /**
      * 修改支付密码（记得支付密码）
      *
-
      * @param oldpassword
      * @param newpassword
      * @return
@@ -205,6 +205,16 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/updPwdByIdentity", method = RequestMethod.POST)
     public Map<String, Object> updPwdByIdentity(@RequestBody HttpServletRequest request) {
         return payPasswdService.updPwdByIdentity(request);
+    }
+
+    /**
+     * 确认支付密码（额度申请）
+     * @param payPasswd
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/paymentPwdConfirm", method = RequestMethod.GET)
+    public Map<String, Object> paymentPwdConfirm(@RequestParam(value = "payPasswd") String payPasswd) {
+        return payPasswdService.paymentPwdConfirm(super.getToken(),super.getChannel(),super.getChannelNO(),payPasswd);
     }
 
 }

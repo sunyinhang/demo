@@ -48,5 +48,7 @@ public interface AppServerService {
     public String updatePayPasswd(String token,Map<String, Object> paramMap);
     //实名认证修改密码
     public String updPwdByIdentity(String token,Map<String,Object> paramMap);
+    // 验证支付密码
+    public String  validatePayPasswd(String token,Map<String,Object> map);
 
 }

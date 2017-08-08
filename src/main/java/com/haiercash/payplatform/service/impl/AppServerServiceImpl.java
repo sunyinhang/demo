@@ -341,4 +341,15 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String result = HttpUtil.restPutMap(url, token, paramMap).toString();
         return result;
     }
+
+    //(GET)确认支付密码验证
+    public String validatePayPasswd(String token, Map<String, Object> paramMap) {
+        String url = appserverurl + "/app/appserver/uauth/validatePayPasswd";
+        logger.info("顺逛确认支付密码验证接口请求地址：" + url);
+        logger.info("顺逛确认支付密码验证接口请求参数：" + paramMap);
+        String result = HttpUtil.restGetMap(url, token, paramMap).toString();
+        return result;
+
+
+    }
 }

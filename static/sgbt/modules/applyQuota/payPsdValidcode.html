@@ -1,0 +1,45 @@
+<div class="bv-align-center" data-container="payPsdValidcode">
+    <component is="tab-applyQuota" active="password"></component>
+    <component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'payPsdValidcode',
+            data: {
+                tags: {
+                    formKey: 'payPsdValidcodeForm'
+                },
+                entity: {},
+                formConfig: {
+                    columns: [{
+                        head: '请输入手机****收到的短信校验码',
+                        name: 'verifyNo',
+                        config: {
+                            attr: {
+                                placeholder: '请输入短信验证码'
+                            },
+                            validate: {
+                                required: '请输入短信验证码'
+                            }
+                        },
+                        /*operate: {
+                            text: '发送短信验证码',
+                            click: function(){
+                                //TODO ajax请求，发送短信验证码
+                            }
+                        }*/
+                    }],
+                    operates: [
+                        {
+                            text: '下一步',
+                            clazz: 'primary',
+                            click: function (event, editType, entity) {
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
