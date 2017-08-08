@@ -82,6 +82,18 @@
     font-size: 14px;
 }
 
+.bv-accordion .accordion-item-content .content-block, .bv-accordion .accordion-item-content .content-block .list-block ul {
+    background-color: #fbfbfb;
+}
+.bv-theme .list-block .item-content {
+    border-bottom: 1px solid #ccc;
+}
+.bv-theme .list-block .item-content .item-inner {
+    border-bottom: none;
+}
+.list-block.bv-accordion .bv-form .item-content {
+    border-bottom: none;
+}
 
 /**/
 /*faceCamera*/
