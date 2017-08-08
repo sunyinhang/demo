@@ -10,7 +10,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','msPhotoUgrade'], function
 			file_id: 'identityCard',
 			file_title: '身份证正面',
 			containerId: 'uploadPhoto',
-			url: 'ocrIdentity?token=7a22536b-9096-4bf5-94c6-079d92bf48b0',
+			url: 'ocrIdentity?token=f294c5ad-1b63-4340-8ddb-7de9d0366ed7',
 			path: ''
 		},
 		onFileUploaded: function(obj) {
@@ -39,7 +39,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','msPhotoUgrade'], function
     	                util.alert('#noAddress');
     				}else{
     					util.post({
-    						url: 'savaIdentityInfoServlet.do',
+    						url: 'savaIdentityInfo',
     						data: {
     							token: tk, 
     							name: vm.cards.name
@@ -48,7 +48,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','msPhotoUgrade'], function
     							util.cache({
     								name: vm.cards.name,
     							});
-    							util.redirect('regist/reg_checkIdCardB.html', undefined, false);
+    							util.redirect('applyQuota/checkIdCardB.html', undefined, false);
     						}
     					});
                 	}

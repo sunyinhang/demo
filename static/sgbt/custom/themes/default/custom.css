@@ -7,9 +7,9 @@
 }
 .tab-applyQuota ul li {
     float: left;
-    padding-top: 2.2rem;
+    padding-top: 2.3rem;
     width: 3.5rem;
-    height: 1.3rem;
+    height: 1.2rem;
     text-align: center;
     font-size: 0.55rem;
 
@@ -65,7 +65,7 @@
 .bv-theme .bv-upload .file-preview+.item-after {
     font-size: 0.6rem;
 }
-.bv-upload.camera .file-container .default-image {
+.camera .file-container .default-image {
     background: url('images/camera.png') no-repeat center center;
     background-size: 50%;
 }
@@ -81,15 +81,18 @@
 .modal .modal-text, .modal .modal-button {
     font-size: 14px;
 }
-.bv-accordion .accordion-item-content .content-block, .bv-accordion .accordion-item-content .content-block .list-block ul {
-    background-color: #fbfbfb;
+
+
+/**/
+/*faceCamera*/
+.bv-theme .faceCamera .file-container {
+    width: 13.45rem;
+    height: 20rem;
+    background-color: #fff;
+    color: #999;
 }
-.bv-accordion .accordion-item.accordion-item-expanded .accordion-item-content {
-    border-top: 1px solid rgb(221, 221, 221);
+.faceCamera .file-container .default-image {
+    background: url('images/face.png') no-repeat center center;
+    background-size: 13.45rem;
 }
-.bv-theme .list-block li li:last-child .item-inner:after, .bv-theme .list-block li li:last-child li:last-child .item-inner:after {
-    display: none;
-}
-.bv-theme .list-block.bv-accordion.last-opened ul:after {
-    display: none;
-}
+/*faceCamera end*/

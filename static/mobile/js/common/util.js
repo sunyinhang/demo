@@ -457,7 +457,7 @@ define('util', ['avalonOrigin', 'jquery', 'Const', 'layer'], function(avalon, $,
                         content: '',
                         shadeClose: false,
                         shade: 'background-color: rgba(255,255,255,.3)', //自定义遮罩的透明度 
-                        style: 'border:0px;width:4rem;height:4rem;background:url(../mobile/themes/default/imgsb/loading.gif) center center no-repeat rgba(255, 255, 255, 0.8); background-size:1.5rem'
+                        style: 'border:0px;width:4rem;height:4rem;background:url(../images/loading.gif) center center no-repeat rgba(255, 255, 255, 0.8); background-size:1.5rem'
                     });
                 } else {
                     $global.loading++;

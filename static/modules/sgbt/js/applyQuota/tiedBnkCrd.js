@@ -11,9 +11,9 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect'], funct
 		 name: 'areaName',
 		 data: function(code) {
 			 var result = [];
-			 var data = avalon.mix({}, {token: tk}, !util.isEmpty(code) ? {areaCode: code} : '');
-			 util.post({
-				 url: 'getAreaServlet.do',
+			 var data = avalon.mix({}, {token: 'f294c5ad-1b63-4340-8ddb-7de9d0366ed7',channel:'1',channelNo:'43'}, !util.isEmpty(code) ? {areaCode: code} : '');
+			 util.get({
+				 url: 'getArea',
 				 data: data,
 				 async: false,
 				 cache: true,
@@ -44,7 +44,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect'], funct
                 util.alert('请先输入银行卡号,卡类型会自动匹配！');
 			}else{
 				util.post({
-					url: "getCardInfoServlet.do",
+					url: "sendMsg",
 					type: 'post',
 					data: {
 						cardNo: vm.bankCards.cardnumber,
@@ -67,7 +67,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect'], funct
 					userId: vm.bankCards.mobile,
 					token:tk
 				};
-				util.countDown('sendMessageServlet.do', msgMobile, 60, $(event.currentTarget));
+				util.countDown('sendMsg', msgMobile, 60, $(event.currentTarget));
 			}
 			else{
 				 util.alert('请输入预留手机号码！');

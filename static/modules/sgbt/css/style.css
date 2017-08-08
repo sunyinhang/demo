@@ -125,7 +125,7 @@ a.a-btn{ margin: 0 auto; display:block; width: 80%; height: 2.5rem; line-height:
 
 /*thumbnail start*/
 .thumbnail{ margin: 0 auto; width: 14rem; padding-top: 1rem;}
-.thumbnail li{ float: left; padding-top:2.2rem; width: 3.5rem; min-height: 2rem; text-align: center; font-size: 0.55rem;}
+.thumbnail li{ float: left; padding-top:2.5rem; width: 3.5rem; min-height: 2rem; text-align: center; font-size: 0.55rem; line-height:0.55rem;}
 .thumbnail li.realName{ background: url('../images/icon11.png') no-repeat top center; background-size: 2rem; color: #999;}
 .thumbnail li.realNameActive{ background: url('../images/icon1.png') no-repeat top center; background-size: 2rem; color: #333;}
 .thumbnail li.personal{ background: url('../images/icon22.png') no-repeat top center; background-size: 2rem; color: #999;}

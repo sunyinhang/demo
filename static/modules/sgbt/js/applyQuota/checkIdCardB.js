@@ -9,7 +9,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','msPhotoUgrade'], function
 			file_id: 'identityCard',
 			file_title: '身份证反面',
             containerId: 'uploadPhoto',
-			url: 'ocrIdentifyServlet.do?token='+tk,
+			url: 'ocrIdentity?token=7a22536b-9096-4bf5-94c6-079d92bf48b0',
 			path: ''
 		},
 		onFileUploaded: function(obj) {
@@ -34,7 +34,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','msPhotoUgrade'], function
                 if (!util.isEmpty(reasons)) {
                     util.alert(reasons[0]);
                 }else {
-                	util.redirect("regist/reg_tiedBnkCrd.html?token="+tk);
+					util.redirect('applyQuota/tiedBnkCrd.html', undefined, false);
             	}
             }
         }
