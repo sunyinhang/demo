@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
 import com.haiercash.commons.redis.Cache;
-import com.haiercash.payplatform.common.controller.BasePageController;
+import com.haiercash.payplatform.common.controller.BaseController;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by yuanli on 2017/7/24.
  */
 @RestController
-public class ShunguangController extends BasePageController {
+public class ShunguangController extends BaseController {
     public Log logger = LogFactory.getLog(getClass());
     //模块编码  02
     private static String MODULE_NO = "02";

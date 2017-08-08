@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by yuanli on 2017/7/24.
  */
 @RestController
-public class CommonPageController extends BasePageController {
+public class CommonPageController extends BaseController {
     public Log logger = LogFactory.getLog(getClass());
     //模块编码  01
     private static String MODULE_NO = "01";

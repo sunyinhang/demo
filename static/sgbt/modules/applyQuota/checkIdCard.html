@@ -111,11 +111,18 @@
                                 return true;
                             },
                             click: function (event, editType, entity) {
-                                // TODO: 调用保存接口，将下面redirect放置到ajax.success中
-                                util.redirect({
-                                    title: '个人资料',
-                                    url: '/applyQuota/personalInform.html',
-                                    back: false
+                                util.post({
+                                    url: '/savaIdentityInfo',
+                                    data: {
+                                        name: entity.name
+                                    },
+                                    success: function () {
+                                        util.redirect({
+                                            title: '个人资料',
+                                            url: '/applyQuota/personalInform.html',
+                                            back: false
+                                        });
+                                    }
                                 });
                             }
                         }

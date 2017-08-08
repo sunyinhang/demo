@@ -18,7 +18,7 @@ import com.haiercash.payplatform.common.dao.BcBankInfoDao;
  * @since v1.0.0
  */
 @RestController
-public class Democontroller extends BaseInnerController{
+public class Democontroller extends BaseController{
 
     public Democontroller() {
         super("01");
@@ -43,7 +43,7 @@ public class Democontroller extends BaseInnerController{
         cache.set("XYZ", "12000");
         String value = cache.get("XYZ");
 
-        return success();
+        return null;
     }
 
 
