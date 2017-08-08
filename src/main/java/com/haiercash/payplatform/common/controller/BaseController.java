@@ -39,6 +39,14 @@ public class BaseController extends AbstractController {
         return resultMap;
     }
 
+    protected Map<String, Object> success() {
+        return RestUtil.success();
+    }
+
+    protected Map<String, Object> success(Object result) {
+        return RestUtil.success(result);
+    }
+
     @Override
     protected String getChannel() {
         return RequestContext.data().getChannel();
@@ -46,14 +54,6 @@ public class BaseController extends AbstractController {
 
     protected String getChannelNO() {
         return RequestContext.data().getChannelNo();
-    }
-
-    protected boolean isNeedVerify() {
-        return RequestContext.data().isNeedVerify();
-    }
-
-    protected boolean isExecutedVerify() {
-        return RequestContext.data().isExecutedVerify();
     }
 
     public String getModuleNo() {
