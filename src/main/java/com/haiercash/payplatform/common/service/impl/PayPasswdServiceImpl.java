@@ -3,6 +3,7 @@ package com.haiercash.payplatform.common.service.impl;
 import com.haiercash.payplatform.common.service.PayPasswdService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.commons.util.EncryptUtil;
+import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
@@ -240,7 +241,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("userId" + userId + "  certNo" + certNo + "  cardNo" + cardNo + "  mobile" + mobile + "verifyNo" + verifyNo + "  newPassword" + newPassword);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String,Object> map = new HashMap();
+        Map<String, Object> map = new HashMap();
         map.put("userId", userId);
         map.put("certNo", certNo);
         map.put("cardNo", cardNo);
@@ -250,7 +251,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         map.put("newPassword", newPassword);
         map.put("channel", channel);
         map.put("channelNo", channelNo);
-        String result = appServerService.updPwdByIdentity(token,map);
+        String result = appServerService.updPwdByIdentity(token, map);
         if (result == null || "".equals(result)) {
             logger.info("实名认证修改密码接口，返回数据为空");
             String retMsg = "实名认证修改密码接口，返回数据为空";
@@ -266,4 +267,49 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(retFlag, retMsg);
         }
     }
+
+    //确认支付密码（额度申请）
+    public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, String payPasswd) {
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("获取前端的参数为空token：" + token + "  ,channel" + channel + "  ,channelNo" + channelNo);
+            String retMsg = "获取前端的参数为空";
+            return fail(ConstUtil.FAILED_INFO, retMsg);
+        }
+        Map<String, Object> cacheMap = cache.get(token);
+        if (cacheMap.isEmpty()) {
+            logger.info("Jedis获取获取数据为空" + cacheMap);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String userId = (String) cacheMap.get("userId");
+        logger.info("userId是" + userId);
+        HashMap<String, Object> map = new HashMap<>();
+        String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
+        String payPasswdEncrypt = EncryptUtil.simpleEncrypt(payPasswd);
+        map.put("userId",userIdEncrypt);
+        map.put("payPasswd",payPasswdEncrypt);
+        map.put("channel",channel);
+        map.put("channelNo",channelNo);
+        String resStr = appServerService.validatePayPasswd(token,map);// 验证支付密码
+        logger.info("确认支付密码（额度申请）,返回数据为：" + resStr);
+        if (resStr == null || "".equals(resStr)) {
+            logger.info("接口返回数据为空！");
+            String retMsg = "确认支付密码（额度申请）接口返回数据为空";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        JSONObject jsonObj = new JSONObject(resStr);
+        JSONObject head = jsonObj.getJSONObject("head");
+        if ("00000".equals(head.getString("retFlag"))) {
+            cacheMap.put("payPasswd", payPasswd);
+            cacheMap.put("pageFlag", "1");
+            cache.set(token, cacheMap);
+            return success();
+        } else {
+            String tetFlag = head.getString("tetFlag");
+            String retMsg=(head.getString("retMsg"));
+            logger.info("确认支付密码（额度申请）失败,返回数据为：" + retMsg);
+            return fail(tetFlag,retMsg);
+        }
+
+    }
+
 }
