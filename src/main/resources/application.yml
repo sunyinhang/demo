@@ -68,7 +68,7 @@ datasources:
       underscoreToCamelCase: true
 eureka:
   client:
-    register-with-eureka: false #是否注册自身到eureka服务器
+    register-with-eureka: true  #是否注册自身到eureka服务器
     fetch-registry: true        #是否从eureka服务器获取注册信息
     registryFetchIntervalSeconds: 5
     eurekaServiceUrlPollIntervalSeconds: 120
