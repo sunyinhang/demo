@@ -84,3 +84,12 @@
 .bv-accordion .accordion-item-content .content-block, .bv-accordion .accordion-item-content .content-block .list-block ul {
     background-color: #fbfbfb;
 }
+.bv-accordion .accordion-item.accordion-item-expanded .accordion-item-content {
+    border-top: 1px solid rgb(221, 221, 221);
+}
+.bv-theme .list-block li li:last-child .item-inner:after, .bv-theme .list-block li li:last-child li:last-child .item-inner:after {
+    display: none;
+}
+.bv-theme .list-block.bv-accordion.last-opened ul:after {
+    display: none;
+}
