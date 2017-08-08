@@ -31,10 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestInterceptor {
     public Log logger = LogFactory.getLog(this.getClass());
 
-    @Value("${common.app.checkAuth}")
-    private Boolean checkAuth;
-
-
     @Pointcut("execution(* com.haiercash..*.*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)")
     private void doRequestPointcut() {
     }

@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.common.filter;
 
-import com.haiercash.core.lang.StringUtils;
 import org.apache.catalina.Globals;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
