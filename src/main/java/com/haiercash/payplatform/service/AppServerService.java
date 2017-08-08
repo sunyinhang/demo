@@ -30,4 +30,23 @@ public interface AppServerService {
     public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params);
     //6.1.116.	查询CRM中客户扩展信息（二）接口
     public Map<String, Object> getAllCustExtInfo(String token, Map<String, Object> params);
+    //(PUT)支付密码设置接口
+    public Map<String,Object> resetPayPasswd(String token,Map<String,Object> paramMap);
+    //6.1.86.(GET) 查询是否可以提交额度申请
+    public Map<String,Object> ifEdAppl(String token,Map<String,Object> paramMap);
+    //(GET)3.1.25查询客户的准入资格
+    public Map<String,Object> getCustIsPass(String token,Map<String, Object> paramMap);
+    //(GET)额度申请
+   public Map<String,Object> getEdApplInfo(String token,Map<String,Object>edapplInfoMap);
+    //6.1.29.(POST)订单协议确认
+    public String updateOrderAgreement(String token,Map<String,Object> reqSignMap);
+    //6.1.30.(POST)订单合同确认
+    public String updateOrderContract(String token,Map<String,Object> reqConMap);
+    //6.1.14.(GET)订单提交
+    public String commitAppOrder(String token,Map<String,Object> commitmMap);
+    //3.4.15.	(PUT)支付密码修改(知道原密码)
+    public String updatePayPasswd(String token,Map<String, Object> paramMap);
+    //实名认证修改密码
+    public String updPwdByIdentity(String token,Map<String,Object> paramMap);
+
 }
