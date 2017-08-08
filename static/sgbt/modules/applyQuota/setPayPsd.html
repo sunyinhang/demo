@@ -22,7 +22,6 @@
                             name: 'payPassword',
                             config: {
                                 type: 'password',
-                                clazz: ['pull-left','red'],
                                 attr: {},
                                 validate: {
                                     required: '请输入支付密码'
@@ -50,17 +49,12 @@
                             text: '下一步',
                             clazz: 'primary',
                             click: function (event, editType, entity) {
-                                console.log(event+' '+editType+' '+entity);
-                                /*util.get({
-                                    url: 'resetPayPasswd',
-                                    data:{},
-                                    success: {}
-                                });*/
-
-
+                                util.cache({
+                                    payPasswd: entity.payPassword
+                                });
                                 util.redirect({
-                                    title: '个人资料',
-                                    url: '/applyQuota/personalInform.html',
+                                    title: '短信验证码',
+                                    url: '/applyQuota/payPsdValidcode.html',
                                     back: false
                                 });
                             }
