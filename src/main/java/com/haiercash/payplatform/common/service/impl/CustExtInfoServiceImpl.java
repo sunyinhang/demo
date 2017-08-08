@@ -4,6 +4,7 @@ import com.haiercash.commons.redis.Cache;
 import com.haiercash.payplatform.common.service.CustExtInfoService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -17,7 +18,7 @@ import static com.haiercash.payplatform.common.utils.RestUtil.fail;
 import static com.haiercash.payplatform.common.utils.RestUtil.success;
 
 @Service
-public class CustExtInfoServiceImpl implements CustExtInfoService{
+public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService{
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
     private Cache cache;
