@@ -1,5 +1,5 @@
 <div class="bv-align-center" data-container="payPsdValidcode">
-    <component is="tab-applyQuota"></component>
+    <component is="tab-applyQuota" active="password"></component>
     <component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
@@ -16,7 +16,9 @@
                         head: '请输入手机****收到的短信校验码',
                         name: 'verifyNo',
                         config: {
-                            attr: {},
+                            attr: {
+                                placeholder: '请输入短信验证码'
+                            },
                             validate: {
                                 required: '请输入短信验证码'
                             }

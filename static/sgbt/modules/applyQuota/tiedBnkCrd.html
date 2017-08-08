@@ -1,0 +1,151 @@
+<div class="bv-align-center" data-container="tiedBnkCrd">
+    <component is="tab-applyQuota"></component>
+    <component is="bv-form" class="form-align-right" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'tiedBnkCrd',
+            data: {
+                tags: {
+                    formKey: 'tiedBnkCrdForm'
+                },
+                entity: {},
+                formConfig: {
+                    layout: 'inline',
+                    columns: [
+                        {
+                            head: '持卡人',
+                            name: 'cardholder',
+                            config: {
+                                attr: {
+                                    readonly: 'readonly'
+                                },
+                                validate: {
+                                    required: '持卡人不能为空'
+                                }
+                            }
+                        },{
+                            head: '卡号',
+                            name: 'cardnumber',
+                            config: {
+                                attr: {
+                                    placeholder: '请输入卡号'
+                                },
+                                validate: {
+                                    required: '请输入银行卡卡号'
+                                }
+                            }
+                        },{
+                            head: '卡类型',
+                            name: 'cardtype',
+                            config: {
+                                attr: {
+                                    readonly: 'readonly',
+                                    placeholder: '点击获取卡类型'
+                                },
+                                validate: {
+                                    required: '卡类型不能为空'
+                                }
+                            }
+                        },{
+                            head: '开户省市',
+                            name: 'account',
+                            edit: {
+                                type: 'picker'
+                            },
+                            config: {
+                                attr: {
+                                    placeholder: '请选择开户省市'
+                                },
+                                validate: {
+                                    required: '开户省市不能为空'
+                                },
+                                code: 'areaCode',
+                                desc: 'areaName',
+                                // cache: true,
+                                initOption: {
+                                    areaCode: '',
+                                    areaName: '请选择'
+                                },
+                                choose: [
+                                    {
+                                        items: [],
+                                        onInit: function () {
+                                            var _vm = this;
+                                            app.getArea('', function (items) {
+                                                _vm.changeItems(0, items);
+                                            });
+                                        },
+                                        onChange: function (value, values) {
+                                            if (util.isEmpty(value)) {
+                                                this.changeItems(1, []);
+                                            } else {
+                                                var _vm = this;
+                                                app.getArea(value, function (items) {
+                                                    _vm.changeItems(1, items);
+                                                });
+                                            }
+                                        }
+                                    },
+                                    {
+                                        items: [],
+                                        onChange: function (value, values) {
+                                            if (util.isEmpty(value)) {
+                                                this.changeItems(2, []);
+                                            } else {
+                                                var _vm = this;
+                                                app.getArea(value, function (items) {
+                                                    _vm.changeItems(2, items);
+                                                });
+                                            }
+                                        }
+                                    },
+                                    {
+                                        items: []
+                                    }
+                                ]
+                            }
+                        },{
+                            head: '预留手机号',
+                            name: 'mobile',
+                            config: {
+                                attr: {
+                                    placeholder: '请输入银行预留手机号'
+                                },
+                                validate: {
+                                    required: '请输入银行预留手机号'
+                                }
+                            }
+                        },{
+                            head: '验证码',
+                            name: 'verifyNo',
+                            config: {
+                                attr: {
+                                    placeholder: '请输入验证码'
+                                },
+                                validate: {
+                                    required: '请输入验证码'
+                                }
+                            }
+                        }
+                    ],
+                    operates: [
+                        {
+                            text: '下一步',
+                            clazz: 'primary',
+                            click: function (event, editType, entity) {
+                                util.redirect({
+                                    title: '个人资料',
+                                    url: '/applyQuota/personalInform.html',
+                                    back: false
+                                });
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
+<!--此卡为默认放款卡和还款卡,如果想更换默认还款卡，可以在个人中心-个人资料-银行卡中绑定并设置-->
