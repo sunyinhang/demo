@@ -2,6 +2,7 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,7 @@ import java.util.Map;
  * Created by yuanli on 2017/7/26.
  */
 @Service
-public class AppServerServiceImpl implements AppServerService {
+public class AppServerServiceImpl extends BaseService implements AppServerService {
     public Log logger = LogFactory.getLog(getClass());
 
     @Value("${app.rest.APPSERVER}")

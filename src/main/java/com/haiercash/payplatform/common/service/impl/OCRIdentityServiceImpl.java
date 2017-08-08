@@ -8,6 +8,7 @@ import com.haiercash.payplatform.common.service.OCRIdentityService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.ocr.OCRIdentityTC;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.sun.jersey.core.util.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
@@ -37,7 +38,7 @@ import static com.haiercash.payplatform.common.utils.RestUtil.success;
  * Created by yuanli on 2017/7/31.
  */
 @Service
-public class OCRIdentityServiceImpl implements OCRIdentityService {
+public class OCRIdentityServiceImpl extends BaseService implements OCRIdentityService {
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
     private Cache cache;

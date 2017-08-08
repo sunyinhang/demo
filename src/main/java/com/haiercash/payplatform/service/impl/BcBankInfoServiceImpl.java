@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.payplatform.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import com.haiercash.payplatform.service.BcBankInfoService;
  * @since v1.0.0
  */
 @Service
-public class BcBankInfoServiceImpl implements BcBankInfoService{
+public class BcBankInfoServiceImpl extends BaseService implements BcBankInfoService{
 
     @Autowired
     private BcBankInfoDao bcBankInfoDao;
