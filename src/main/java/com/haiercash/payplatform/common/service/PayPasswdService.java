@@ -20,4 +20,7 @@ public interface PayPasswdService {
     //实名认证找回密码
     public Map<String, Object> updPwdByIdentity(HttpServletRequest request);
 
+    //确认支付密码（额度申请）
+    public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, String payPasswd);
+
 }
