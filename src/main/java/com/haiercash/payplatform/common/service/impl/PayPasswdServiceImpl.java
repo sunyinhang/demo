@@ -34,7 +34,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private AppServerService appServerService;
 
     public Map<String, Object> resetPayPasswd(String token, String payPasswd, String verifyNo, String channelNo, String channel) {
-        logger.info("顺逛******提交订单接口******开始");
+        logger.info("顺逛******额度提交接口******开始");
         String retflag = "";
         String retmsg = "";
 
@@ -56,6 +56,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String userId = (String) cacheMap.get("userId");
         String flag = (String) cacheMap.get("payPasswdFlag");
         String orderNo = (String) cacheMap.get("orderNo");
+        String custNo = (String) cacheMap.get("custNo");// 客户号
+        if (StringUtils.isEmpty(custNo)) {
+            logger.info("custNo:" + custNo);
+            logger.info("从前端获取的客户号为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
+
         String n = "3";// 签订注册 + 征信
         if ("0".equals(flag)) {//0  密码未设置
             logger.info("支付密码未设置，进行密码的设置");
@@ -78,82 +86,125 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 logger.info("顺逛设置支付密码失败" + retMsg);
                 return fail(retFlag, retMsg);
             }
-            // 3、签订注册 + 征信
-            HashMap<String, Object> reqSignMap = new HashMap<>();
-            reqSignMap.put("orderNo", orderNo);
-            reqSignMap.put("msgCode", verifyNo);
-            reqSignMap.put("type", n);// 1：征信协议 2：注册协议 3：征信和注册协议
-            reqSignMap.put("channel", channel);
-            reqSignMap.put("channelNo", channelNo);
-            reqSignMap.put("token", token);
-            String resData = appServerService.updateOrderAgreement(token, reqSignMap);// 订单协议确认
-            logger.info("美分期,订单协议确认接口,响应数据：" + resData);
-            if (StringUtils.isEmpty(resData)) {
-                logger.info("网络异常，app后台,订单协议确认接口,响应数据为空！");
-                String resDateMsg = "网络异常，app后台,订单协议确认接口,响应数据为空！";
-                return fail(ConstUtil.ERROR_CODE, retMsg);
+        } else if ("1".equals(flag)) {// 支付密码验证
+            n = "1";
+            HashMap<String, Object> map = new HashMap<>();
+            String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
+            String payPasswdEncrypt = EncryptUtil.simpleEncrypt(payPasswd);
+            map.put("userId", userIdEncrypt);
+            map.put("payPasswd", payPasswdEncrypt);
+            map.put("channel", channel);
+            map.put("channelNo", channelNo);
+            String result = appServerService.validatePayPasswd(token, map);// 验证支付密码
+            if (StringUtils.isEmpty(result)) {
+                logger.info("顺逛,支付密码验证失败,app后台返回为空result" + result);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
             }
-            JSONObject jsonCon = new JSONObject(resData);
-            JSONObject jsonConHead = jsonCon.getJSONObject("head");
-            retflag = jsonConHead.getString("retFlag");
-            retmsg = jsonConHead.getString("retMsg");
-            if (!"00000".equals(retflag)) {// 订单协议确认接口 失败，返回给前台
-                logger.info("美分期,校验短信验证码接口及订单提交接口,校验短信验证码失败" + retmsg);
-                return fail(retflag, retmsg);
+            JSONObject jb = new JSONObject(result);
+            retflag = jb.getString("retFlag");
+            retmsg = jb.getString("retMsg");
+            if (!"00000".equals(retflag)) {
+                logger.info("美分期,支付密码验证失败！" + retmsg);
+                return fail(ConstUtil.ERROR_CODE, retmsg);
             }
-            // 签订合同
-            Map<String, Object> reqConMap = new HashMap<>();
-            reqConMap.put("orderNo", orderNo);
-            reqConMap.put("channel", channel);
-            reqConMap.put("channelNo", channelNo);
-            reqConMap.put("token", token);
-            String retCon = appServerService.updateOrderContract(token, reqConMap);// 订单合同确认
-            logger.info("订单合同确认接口，响应数据：" + retCon);
-            if (retCon == null || "".equals(retCon)) {
-                logger.info("美分期,订单合同确认接口,订单合同确认接口,响应数据为空");
-                String retConMsg = "美分期,订单合同确认接口,订单合同确认接口,响应数据为空";
-                return fail(ConstUtil.ERROR_CODE, retConMsg);
-            }
-            JSONObject retjsonCon = new JSONObject(retCon);
-            JSONObject retjsonConHead = retjsonCon.getJSONObject("head");
-            retflag = retjsonConHead.getString("retFlag");
-            retmsg = retjsonConHead.getString("retMsg");
-            if ("00000".equals(retflag)) {
-                String opType = "1"; // 个人版订单提交给商户确认时传2，其余传1
-                Map<String, Object> commitmMap = new HashMap<String, Object>();
-                commitmMap.put("orderNo", orderNo);
-                commitmMap.put("source", channel);
-                commitmMap.put("channel", channel);
-                commitmMap.put("channelNo", channelNo);
-                commitmMap.put("opType", opType);
-                commitmMap.put("token", token);
-                commitmMap.put("msgCode", verifyNo);
-                commitmMap.put("expectCredit", "expectCredit");
-                String conData = appServerService.commitAppOrder(token, commitmMap);
-                logger.info("美分期,订单提交，响应数据：" + conData);
-                if (conData == null || "".equals(conData)) {
-                    logger.info("美分期,订单提交接口,响应数据为空");
-                    String conDataMsg = "美分期,订单提交接口,响应数据为空";
-                    return fail(ConstUtil.ERROR_CODE, conDataMsg);
-                }
-                jsonCon = new JSONObject(conData);
-                jsonConHead = jsonCon.getJSONObject("head");
-                retflag = jsonConHead.getString("retFlag");
-                retmsg = jsonConHead.getString("retMsg");
-                if (("00000").equals(retflag)) {// 订单提交 成功：00000
-                    logger.info("美分期,订单提交成功,跳转额度进度查询页面");
-                } else {
-                    logger.info("美分期,订单提交失败,跳转个人资料页面");
-                    return success(retflag);
-                }
-            } else {
-                logger.info("美分期,提交订单失败!");
-                return fail(retflag, retmsg);
-            }
+        } else {
+            logger.info("顺逛,是否设置过支付密码标志无效");
+            String retMsg = "顺逛,是否设置过支付密码标志无效";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        // 3、签订注册 + 征信
+        HashMap<String, Object> reqSignMap = new HashMap<>();
+        reqSignMap.put("orderNo", orderNo);
+        reqSignMap.put("msgCode", verifyNo);
+        reqSignMap.put("type", n);// 1：征信协议 2：注册协议 3：征信和注册协议
+        reqSignMap.put("channel", channel);
+        reqSignMap.put("channelNo", channelNo);
+        reqSignMap.put("token", token);
+        String resData = appServerService.updateOrderAgreement(token, reqSignMap);// 订单协议确认
+        logger.info("美分期,订单协议确认接口,响应数据：" + resData);
+        if (StringUtils.isEmpty(resData)) {
+            logger.info("网络异常，app后台,订单协议确认接口,响应数据为空！");
+            String resDateMsg = "网络异常，app后台,订单协议确认接口,响应数据为空！";
+            return fail(ConstUtil.ERROR_CODE, resDateMsg);
+        }
+        JSONObject jsonCon = new JSONObject(resData);
+        JSONObject jsonConHead = jsonCon.getJSONObject("head");
+        retflag = jsonConHead.getString("retFlag");
+        retmsg = jsonConHead.getString("retMsg");
+        if (!"00000".equals(retflag)) {// 订单协议确认接口 失败，返回给前台
+            logger.info("美分期,校验短信验证码接口及订单提交接口,校验短信验证码失败" + retmsg);
+            return fail(retflag, retmsg);
+        }
+        // 签订合同
+        Map<String, Object> reqConMap = new HashMap<>();
+        reqConMap.put("orderNo", orderNo);
+        reqConMap.put("channel", channel);
+        reqConMap.put("channelNo", channelNo);
+        reqConMap.put("token", token);
+        String retCon = appServerService.updateOrderContract(token, reqConMap);// 订单合同确认
+        logger.info("订单合同确认接口，响应数据：" + retCon);
+        if (retCon == null || "".equals(retCon)) {
+            logger.info("美分期,订单合同确认接口,订单合同确认接口,响应数据为空");
+            String retConMsg = "美分期,订单合同确认接口,订单合同确认接口,响应数据为空";
+            return fail(ConstUtil.ERROR_CODE, retConMsg);
+        }
+        JSONObject retjsonCon = new JSONObject(retCon);
+        JSONObject retjsonConHead = retjsonCon.getJSONObject("head");
+        retflag = retjsonConHead.getString("retFlag");
+        retmsg = retjsonConHead.getString("retMsg");
+//            if ("00000".equals(retflag)) {
+//                String opType = "1"; // 个人版订单提交给商户确认时传2，其余传1
+//                Map<String, Object> commitmMap = new HashMap<String, Object>();
+//                commitmMap.put("orderNo", orderNo);
+//                commitmMap.put("source", channel);
+//                commitmMap.put("channel", channel);
+//                commitmMap.put("channelNo", channelNo);
+//                commitmMap.put("opType", opType);
+//                commitmMap.put("token", token);
+//                commitmMap.put("msgCode", verifyNo);
+//                commitmMap.put("expectCredit", "expectCredit");
+//                String conData = appServerService.commitAppOrder(token, commitmMap);
+//                logger.info("美分期,订单提交，响应数据：" + conData);
+//                if (conData == null || "".equals(conData)) {
+//                    logger.info("美分期,订单提交接口,响应数据为空");
+//                    String conDataMsg = "美分期,订单提交接口,响应数据为空";
+//                    return fail(ConstUtil.ERROR_CODE, conDataMsg);
+//                }
+//                jsonCon = new JSONObject(conData);
+//                jsonConHead = jsonCon.getJSONObject("head");
+//                retflag = jsonConHead.getString("retFlag");
+//                retmsg = jsonConHead.getString("retMsg");
+//                if (("00000").equals(retflag)) {// 订单提交 成功：00000
+//                    logger.info("美分期,订单提交成功,跳转额度进度查询页面");
+//                } else {
+//                    logger.info("美分期,订单提交失败,跳转个人资料页面");
+//                    return success(retflag);
+//                }
+//            } else {
+//                logger.info("美分期,提交订单失败!");
+//                return fail(retflag, retmsg);
+//            }
+        Map<String, Object> mapEd = new HashMap();
+        mapEd.put("token", token);
+        mapEd.put("channel", channel);
+        mapEd.put("channelNo", channelNo);
+        mapEd.put("custNo", custNo);
+        if (StringUtils.isEmpty(crdSeq)) {//新增
+            mapEd.put("flag", "0");//额度申请
+        } else {//有在途的流水号(修改)
+            mapEd.put("flag", "2");
+            mapEd.put("applSeq", "crdSeq");//额度申请
+        }
+        String resultEd = appServerService.getEdApplInfo(token, mapEd).toString();
+        JSONObject jb = new JSONObject(resultEd);
+        JSONObject head = jb.getJSONObject("head");
+        retflag = head.getString("retFlag");
+        retmsg = head.getString("retMsg");
+        if (!"00000".equals(retflag)) {
+            logger.info("H5现金贷,额度申请出现异常！" + retmsg);
+            return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         return success();
-
-
     }
 
     //页面缓存
@@ -285,11 +336,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         HashMap<String, Object> map = new HashMap<>();
         String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
         String payPasswdEncrypt = EncryptUtil.simpleEncrypt(payPasswd);
-        map.put("userId",userIdEncrypt);
-        map.put("payPasswd",payPasswdEncrypt);
-        map.put("channel",channel);
-        map.put("channelNo",channelNo);
-        String resStr = appServerService.validatePayPasswd(token,map);// 验证支付密码
+        map.put("userId", userIdEncrypt);
+        map.put("payPasswd", payPasswdEncrypt);
+        map.put("channel", channel);
+        map.put("channelNo", channelNo);
+        String resStr = appServerService.validatePayPasswd(token, map);// 验证支付密码
         logger.info("确认支付密码（额度申请）,返回数据为：" + resStr);
         if (resStr == null || "".equals(resStr)) {
             logger.info("接口返回数据为空！");
@@ -305,11 +356,18 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return success();
         } else {
             String tetFlag = head.getString("tetFlag");
-            String retMsg=(head.getString("retMsg"));
+            String retMsg = (head.getString("retMsg"));
             logger.info("确认支付密码（额度申请）失败,返回数据为：" + retMsg);
-            return fail(tetFlag,retMsg);
+            return fail(tetFlag, retMsg);
         }
 
     }
 
+    //额度申请提交
+    public Map<String, Object> edApply(String token, String verifyNo, String payPasswd, String channel, String channelNo) {
+
+
+        return null;
+
+    }
 }
