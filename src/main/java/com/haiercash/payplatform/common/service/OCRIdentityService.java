@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by yuanli on 2017/7/27.
  */
-public interface OCRIdentityService{
+public interface OCRIdentityService {
 
     //OCR身份信息获取
     public Map<String, Object> ocrIdentity(MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception;
@@ -34,8 +34,11 @@ public interface OCRIdentityService{
     public Map<String, Object> realAuthentication(Map<String, Object> map) throws Exception;
 
     //支付密码设置
-    public Map<String ,Object> resetPayPasswd(String token,String payPasswd);
+    //public Map<String, Object> resetPayPasswd(String token, String payPasswd);
 
     //协议展示：(1)展示注册协议(2)个人征信(3)借款合同
-    public Map<String,Object> treatyShowServlet(String token,String flag) throws Exception;
+    public Map<String, Object> treatyShowServlet(String token, String flag) throws Exception;
+
+    //校验短信验证码  设置支付密码  提交订单
+    //public Map<String, Object> verifyMessage(String token, String verifyNo,String channelNo,String channel);
 }

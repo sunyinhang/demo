@@ -21,6 +21,7 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 获取省市区
+     *
      * @param token
      * @param params
      * @return
@@ -36,10 +37,11 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 获取卡信息
+     *
      * @param cardNo
      * @return
      */
-    public Map<String, Object> getBankInfo(String cardNo){
+    public Map<String, Object> getBankInfo(String cardNo) {
         String url = appserverurl + "/app/appserver/crm/cust/getBankInfo?cardNo=" + cardNo;
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url);
@@ -49,11 +51,12 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 发送短信验证码
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> sendMessage(String token, Map<String, Object> params){
+    public Map<String, Object> sendMessage(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/smsSendVerify";
         logger.info("发送短信验证码接口，请求地址：" + url);
         logger.info("发送短信验证码接口，请求数据：" + params);
@@ -64,11 +67,12 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 保存身份证信息
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> saveCardMsg(String token, Map<String, Object> params){
+    public Map<String, Object> saveCardMsg(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/saveCardMsg";
         logger.info("保存身份证信息接口，请求地址：" + url);
         logger.info("保存身份证信息接口，请求数据：" + params);
@@ -79,11 +83,12 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 校验短信验证码
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> smsVerify(String token, Map<String, Object> params){
+    public Map<String, Object> smsVerify(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/smsVerify";
         logger.info("校验短信验证码接口，请求地址：" + url);
         logger.info("校验短信验证码接口，请求数据：" + params);
@@ -94,11 +99,12 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 验证并新增实名认证信息
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> fCiCustRealThreeInfo(String token, Map<String, Object> params){
+    public Map<String, Object> fCiCustRealThreeInfo(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/crm/cust/fCiCustRealThreeInfo";
         logger.info("验证并新增实名认证信息接口，请求地址：" + url);
         logger.info("验证并新增实名认证信息接口，请求数据：" + params);
@@ -109,11 +115,12 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 修改绑定手机号
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> updateMobile(String token, Map<String, Object> params){
+    public Map<String, Object> updateMobile(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/uauth/updateMobile";
         logger.info("修改绑定手机号接口，请求地址：" + url);
         logger.info("修改绑定手机号接口，请求数据：" + params);
@@ -124,11 +131,12 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 影像上传-个人版（上传共享盘文件路径）
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params){
+    public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/attachUploadPersonByFilePath";
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求地址：" + url);
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求数据：" + params);
@@ -138,12 +146,13 @@ public class AppServerServiceImpl implements AppServerService {
     }
 
     /**
-     *通过人脸分数判断人脸是否通过
+     * 通过人脸分数判断人脸是否通过
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> faceCheckByFaceValue(String token, Map<String, Object> params){
+    public Map<String, Object> faceCheckByFaceValue(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/faceCheckByFaceValue";
         logger.info("通过人脸分数判断人脸是否通过接口，请求地址：" + url);
         logger.info("通过人脸分数判断人脸是否通过接口，请求数据：" + params);
@@ -154,11 +163,12 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 用户支付密码手势密码验证是否设置
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> validateUserFlag(String token, Map<String, Object> params){
+    public Map<String, Object> validateUserFlag(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/uauth/validateUserFlag";
         logger.info("用户支付密码手势密码验证是否设置接口，请求地址：" + url);
         logger.info("用户支付密码手势密码验证是否设置接口，请求数据：" + params);
@@ -169,11 +179,12 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 通过贷款品种判断是否需要进行人脸识别
+     *
      * @param token
      * @param params
      * @return
      */
-    public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params){
+    public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params) {
         String url = appserverurl + "/app/appserver/ifNeedFaceChkByTypCde";
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求地址：" + url);
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求数据：" + params);
@@ -185,6 +196,7 @@ public class AppServerServiceImpl implements AppServerService {
 
     /**
      * 查询CRM中客户扩展信息（二）接口
+     *
      * @param token
      * @param params
      * @return
@@ -197,5 +209,135 @@ public class AppServerServiceImpl implements AppServerService {
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
         logger.info("查询CRM中客户扩展信息（二）接口，返回数据" + resultmap);
         return resultmap;
+    }
+
+    /**
+     * (PUT)支付密码设置接口
+     *
+     * @param token
+     * @param paramMap
+     * @return
+     */
+    public Map<String, Object> resetPayPasswd(String token, Map<String, Object> paramMap) {
+        String url = appserverurl + "/app/appserver/uauth/payPasswd";
+        logger.info("支付密码设置接口的请求地址：" + url);
+        logger.info("支付密码设置接口的请求数据：" + paramMap);
+        Map<String, Object> restputmap = HttpUtil.restPutMap(url, token, paramMap);
+        logger.info("支付密码设置接口返回数据：" + restputmap);
+        return restputmap;
+    }
+
+    /**
+     * 查询是否可以提交额度申请接口
+     *
+     * @param token
+     * @param paramMap
+     * @return
+     */
+    public Map<String, Object> ifEdAppl(String token, Map<String, Object> paramMap) {
+        String url = appserverurl + "/app/appserver/cmis/ifEdAppl";
+        logger.info("查询是否可以提交额度申请接口请求地址：" + url);
+        logger.info("查询是否可以提交额度申请接口请求数据：" + paramMap);
+        Map<String, Object> ifedapplmap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("查询是否可以提交额度申请接口响应数据" + ifedapplmap);
+        return ifedapplmap;
+    }
+
+
+    /**
+     * 3.1.25查询客户的准入资格
+     *
+     * @param token
+     * @param paramMap
+     * @return
+     */
+    public Map<String, Object> getCustIsPass(String token, Map<String, Object> paramMap) {
+        String url = appserverurl + "/app/appserver/crm/cust/getCustIsPass";
+        logger.info("查询客户准入资格url:" + url);
+        logger.info("查询客户准入资格请求数据：" + paramMap);
+        Map<String, Object> custispassmap = HttpUtil.restGetMap(url, token, paramMap);
+        return custispassmap;
+    }
+
+
+    /**
+     * (GET)额度申请
+     *
+     * @param token
+     * @param edapplInfoMap
+     * @return
+     */
+    public Map<String, Object> getEdApplInfo(String token, Map<String, Object> edapplInfoMap) {
+        String url = appserverurl + "/app/appserver/customer/getEdApplInfo";
+        logger.info("额度申请接口请求地址：" + url);
+        logger.info("额度申请接口请求数据：" + edapplInfoMap);
+        Map<String, Object> edapplInfomap = HttpUtil.restGetMap(url, token, edapplInfoMap);
+        return edapplInfomap;
+    }
+
+
+    /**
+     * 6.1.29.(POST)订单协议确认
+     *
+     * @param token
+     * @param reqSignMap
+     * @return
+     */
+    public String updateOrderAgreement(String token, Map<String, Object> reqSignMap) {
+        String url = appserverurl + "/app/appserver/uauth/payPasswd";
+        logger.info("顺逛订单协议确认接口请求地址：" + url);
+        logger.info("顺逛订单协议确认接口请求数据：" + reqSignMap);
+        String result = HttpUtil.restPutMap(url, token, reqSignMap).toString();
+        return result;
+    }
+
+
+    /**
+     * 6.1.30.(POST)订单合同确认
+     *
+     * @param token
+     * @param reqConMap
+     * @return
+     */
+    public String updateOrderContract(String token, Map<String, Object> reqConMap) {
+        String url = appserverurl + "/app/appserver/apporder/updateOrderContract";
+        logger.info("顺逛订单合同确认接口请求地址：" + url);
+        logger.info("顺逛订单合同确认接口请求数据：" + reqConMap);
+        String result = HttpUtil.restPostMap(url, token, reqConMap).toString();
+        return result;
+    }
+
+
+    /**
+     * 6.1.30.(POST)订单合同确认
+     *
+     * @param token
+     * @param commitmMap
+     * @return
+     */
+    public String commitAppOrder(String token, Map<String, Object> commitmMap) {
+        String url = appserverurl + "/app/appserver/apporder/updateOrderContract";
+        logger.info("顺逛订单合同确认接口请求地址：" + url);
+        logger.info("顺逛订单合同确认接口请求数据：" + commitmMap);
+        String result = HttpUtil.restGetMap(url, token, commitmMap).toString();
+        return result;
+    }
+
+    //3.4.15.	(PUT)支付密码修改(知道原密码)
+    public String updatePayPasswd(String token, Map<String, Object> paramMap) {
+        String url = appserverurl + "/app/appserver/uauth/updatePayPasswd";
+        logger.info("顺逛支付密码修改接口请求地址：" + url);
+        logger.info("顺逛支付密码修改接口请求参数：" + paramMap);
+        String result = HttpUtil.restPutMap(url, token, paramMap).toString();
+        return result;
+    }
+
+    //实名认证修改密码
+    public String updPwdByIdentity(String token, Map paramMap) {
+        String url = appserverurl + "/app/appserver/uauth/custVerifyUpdatePwd";
+        logger.info("顺逛实名认证修改密码接口请求地址：" + url);
+        logger.info("顺逛实名认证修改密码接口请求参数：" + paramMap);
+        String result = HttpUtil.restPutMap(url, token, paramMap).toString();
+        return result;
     }
 }
