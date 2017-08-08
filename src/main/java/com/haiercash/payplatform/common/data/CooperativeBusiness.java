@@ -20,6 +20,11 @@
 
 package com.haiercash.payplatform.common.data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+
 /**
  *  DESCRIPTION:
  *
@@ -32,78 +37,105 @@ package com.haiercash.payplatform.common.data;
  * @version Revision: 1.0  Date: 2016年1月26日 下午5:34:40 
  *
  */
-
-public class CooperativeBusiness {
+@Entity
+@Table(name = "COOPERATIVEBUSINESS")
+public class CooperativeBusiness implements Serializable {
+	private static final long serialVersionUID = 1L;
+	@Id
 	private int id;
-	private String cooperationCoed;
-	private String cooperationName;
+	private String cooperationcoed;
+	private String cooperationname;
 	private String rsaprivate;
 	private String rsapublic;
 	private String activeflag;
 	private String operatorcde;
 	private String operatortel;
 	private String resourceLanguage;
-	
-	public String getResourceLanguage() {
-		return resourceLanguage;
-	}
-	public void setResourceLanguage(String resourceLanguage) {
-		this.resourceLanguage = resourceLanguage;
-	}
-	public String getOperatorcde() {
-		return operatorcde;
-	}
-	public void setOperatorcde(String operatorcde) {
-		this.operatorcde = operatorcde;
-	}
-	public String getOperatortel() {
-		return operatortel;
-	}
-	public void setOperatortel(String operatortel) {
-		this.operatortel = operatortel;
-	}
+
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getCooperationCoed() {
-		return cooperationCoed;
+
+	public String getCooperationcoed() {
+		return cooperationcoed;
 	}
-	public void setCooperationCoed(String cooperationCoed) {
-		this.cooperationCoed = cooperationCoed;
+
+	public void setCooperationcoed(String cooperationcoed) {
+		this.cooperationcoed = cooperationcoed;
 	}
-	public String getCooperationName() {
-		return cooperationName;
+
+	public String getCooperationname() {
+		return cooperationname;
 	}
-	public void setCooperationName(String cooperationName) {
-		this.cooperationName = cooperationName;
+
+	public void setCooperationname(String cooperationname) {
+		this.cooperationname = cooperationname;
 	}
+
 	public String getRsaprivate() {
 		return rsaprivate;
 	}
+
 	public void setRsaprivate(String rsaprivate) {
 		this.rsaprivate = rsaprivate;
 	}
+
 	public String getRsapublic() {
 		return rsapublic;
 	}
+
 	public void setRsapublic(String rsapublic) {
 		this.rsapublic = rsapublic;
 	}
+
 	public String getActiveflag() {
 		return activeflag;
 	}
+
 	public void setActiveflag(String activeflag) {
 		this.activeflag = activeflag;
 	}
 
+	public String getOperatorcde() {
+		return operatorcde;
+	}
+
+	public void setOperatorcde(String operatorcde) {
+		this.operatorcde = operatorcde;
+	}
+
+	public String getOperatortel() {
+		return operatortel;
+	}
+
+	public void setOperatortel(String operatortel) {
+		this.operatortel = operatortel;
+	}
+
+	public String getResourceLanguage() {
+		return resourceLanguage;
+	}
+
+	public void setResourceLanguage(String resourceLanguage) {
+		this.resourceLanguage = resourceLanguage;
+	}
+
 	@Override
 	public String toString() {
-		return "CooperativeBusiness [id=" + id + ", cooperationCoed=" + cooperationCoed + ", cooperationName="
-				+ cooperationName + ", rsaprivate=" + rsaprivate + ", rsapublic=" + rsapublic + ", activeflag="
-				+ activeflag + ", operatorcde=" + operatorcde + ", operatortel=" + operatortel + ", resourceLanguage="
-				+ resourceLanguage + "]";
+		return "CooperativeBusiness{" +
+				"id=" + id +
+				", cooperationcoed='" + cooperationcoed + '\'' +
+				", cooperationname='" + cooperationname + '\'' +
+				", rsaprivate='" + rsaprivate + '\'' +
+				", rsapublic='" + rsapublic + '\'' +
+				", activeflag='" + activeflag + '\'' +
+				", operatorcde='" + operatorcde + '\'' +
+				", operatortel='" + operatortel + '\'' +
+				", resourceLanguage='" + resourceLanguage + '\'' +
+				'}';
 	}
 }

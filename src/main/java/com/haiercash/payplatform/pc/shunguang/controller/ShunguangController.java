@@ -2,13 +2,20 @@ package com.haiercash.payplatform.pc.shunguang.controller;
 
 import com.haiercash.commons.redis.Cache;
 import com.haiercash.payplatform.common.controller.BaseController;
+import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
 import java.util.Map;
+
+import static com.haiercash.payplatform.common.utils.RestUtil.fail;
 
 
 /**
@@ -30,14 +37,35 @@ public class ShunguangController extends BaseController {
     private ShunguangService shunguangService;
 
     /**
-     * 5.	白条额度申请接口
+     * 5.	白条额度申请接口   Sg-10004
      * @param map
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/edApply", method = RequestMethod.POST)
-    public Map<String, Object> edApply(@RequestBody Map<String, Object> map){
+    public Map<String, Object> edApply(@RequestBody Map<String, Object> map) throws Exception{
+        // 参数非空校验
+        Map<String, Object> confirmMsg = confirmData(map);
+        if(confirmMsg != null){
+            return confirmMsg;
+        }
         return shunguangService.edApply(map);
+    }
+
+    public Map<String, Object> confirmData(Map<String, Object> map){
+        if (StringUtils.isEmpty(map.get("applyNo"))) {
+            return fail(ConstUtil.ERROR_CODE, "交易流水号(applyNo)不能为空");
+        }
+        if (StringUtils.isEmpty(map.get("channleNo"))) {
+            return fail(ConstUtil.ERROR_CODE, "交易渠道(channleNo)不能为空");
+        }
+        if (StringUtils.isEmpty(map.get("tradeCode"))) {
+            return fail(ConstUtil.ERROR_CODE, "交易编码(tradeCode)不能为空");
+        }
+        if (StringUtils.isEmpty(map.get("data"))) {
+            return fail(ConstUtil.ERROR_CODE, "交易信息(data)不能为空");
+        }
+        return null;
     }
 
 }
