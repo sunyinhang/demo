@@ -1,23 +1,38 @@
-require(['vue', 'jquery', 'util', 'Const', 'bridge', 'weui', 'hammer'], function(vue, $, util, Const, bridge) {
-    if ($('.bv-main').length > 1) {
+require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation'], function(vue, $, util, Const, bridge) {
+    Const.global.f = new Framework7({
+        router: false,
+        modalTitle: '',
+        modalButtonOk: '确定',
+        modalButtonCancel: '取消'
+        /*pushState: true,
+        onAjaxStart: function (xhr) {
+            Const.global.f.showIndicator();
+        },
+        onAjaxComplete: function (xhr) {
+            Const.global.f.hideIndicator();
+        }*/
+    });
+    // #!/
+
+    /*if ($('#mainDiv').length > 1) {
         util.redirect({
             title: '404',
             url: '/404.html',
             back: false
         });
         return;
-    }
+    }*/
     util.init();
 
     var path = util.path();
-    if (util.isEmpty(path) || path === '/') {
+    if (util.isEmpty(path) || path === '/' || path === '/index.html') {
         path = '/applyQuota/checkIdCard.html';
     }
     window.addEventListener("popstate", function() {
         if (!history.state || history.state.back === undefined) {
             var path = util.path();
-            if (util.isEmpty(path) || path === '/') {
-                path = '/home.html';
+            if (util.isEmpty(path) || path === '/' || path === '/index.html') {
+                path = '/applyQuota/checkIdCard.html';
             }
             util.redirect({
                 // location.href, '', undefined, true
@@ -75,10 +90,14 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'weui', 'hammer'], function
     $(document).on('click', '[data-prompt]', function() {
         util.alert($(this).attr('data-prompt'));
     });
+    $(document).on('click', 'a[href]', function (event) {
+        event.preventDefault();
+    });
 
     util.redirect({
         title: '实名绑卡',
         url: path,
         back: false
     });
+    window.util = util;
 });

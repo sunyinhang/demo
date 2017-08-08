@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.common.service;
 
+import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,12 +25,17 @@ public interface OCRIdentityService{
     public Map<String, Object> getCardInfo(String cardNo);
 
     //发送短信验证码
-    public Map<String, Object> sendMessage(String token, String channel, String channelNo);
+    public Map<String, Object> sendMessage(Map<String, Object> map);
 
     //发送短信验证码
-    public Map<String, Object> sendMsg(String phone, String channel, String channelNo);
+    public Map<String, Object> sendMsg(Map<String, Object> map);
 
     //实名认证
     public Map<String, Object> realAuthentication(Map<String, Object> map) throws Exception;
 
+    //支付密码设置
+    public Map<String ,Object> resetPayPasswd(String token,String payPasswd);
+
+    //协议展示：(1)展示注册协议(2)个人征信(3)借款合同
+    public Map<String,Object> treatyShowServlet(String token,String flag) throws Exception;
 }

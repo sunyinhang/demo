@@ -124,3 +124,4 @@ app:
     haierDataImg_url: /testshare01/00/Data/haierData/
     outplatform_url: http://10.164.194.123:9080
     face_DataImg_url: /testshare01/crm/image/
+    appServer_page_url: http://testpm.haiercash.com/

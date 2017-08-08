@@ -148,7 +148,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect','msPhot
 	});	
 	
 	//初始化个人信息
-	var url="getAllCustExtInfo.do";
+	var url="getAllCustExtInfo";
 	util.post({
 		url: url,
 		type: 'post',
