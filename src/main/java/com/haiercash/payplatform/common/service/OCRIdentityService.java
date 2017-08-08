@@ -25,10 +25,10 @@ public interface OCRIdentityService{
     public Map<String, Object> getCardInfo(String cardNo);
 
     //发送短信验证码
-    public Map<String, Object> sendMessage(String token, String channel, String channelNo);
+    public Map<String, Object> sendMessage(Map<String, Object> map);
 
     //发送短信验证码
-    public Map<String, Object> sendMsg(String phone, String channel, String channelNo);
+    public Map<String, Object> sendMsg(Map<String, Object> map);
 
     //实名认证
     public Map<String, Object> realAuthentication(Map<String, Object> map) throws Exception;

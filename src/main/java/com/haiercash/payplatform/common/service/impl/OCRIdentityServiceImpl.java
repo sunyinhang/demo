@@ -232,8 +232,11 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
     }
 
     //发送短信验证码
-    public Map<String, Object> sendMessage(String token, String channel, String channelNo) {
+    public Map<String, Object> sendMessage(Map<String, Object> params) {
         logger.info("发送短信验证码***************开始");
+        String token = (String) params.get("token");
+        String channel = (String) params.get("channel");
+        String channelNo = (String) params.get("channelNo");
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("token:" + token);
             logger.info("前台获取请求参数有误");
@@ -260,7 +263,10 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
     }
 
     //发送短信验证码
-    public Map<String, Object> sendMsg(String phone, String channel, String channelNo) {
+    public Map<String, Object> sendMsg(Map<String, Object> params) {
+        String phone = (String) params.get("phone");
+        String channel = (String) params.get("channel");
+        String channelNo = (String) params.get("channelNo");
         logger.info("发送短信验证码***************开始");
         if (StringUtils.isEmpty(phone)) {
             logger.info("token:" + phone);

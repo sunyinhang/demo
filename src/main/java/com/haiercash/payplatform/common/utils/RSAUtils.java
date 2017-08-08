@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.common.utils;
 
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -330,52 +332,24 @@ public class RSAUtils {
      * @param args
      * @return
      */
-    public static void main(String[] args) {
-    	
-//    	PaymentServiceImpl sss = new PaymentServiceImpl();
-//    	QueryLoanDetails queryLoanDetails = new QueryLoanDetails();
-//    	queryLoanDetails.setApplSeq("941846");
-//    	sss.queryLoanDetails(queryLoanDetails);
-    	
-  
-//    	MeiChuangNoticeInfo ss = new MeiChuangNoticeInfo();
-//        ss.setTransNo("1111");
-//    	ss.setOrderNo("2222");
-//    	ss.setUserId("3333");
-//    	ss.setCreditNo("4444");	
-//    	ss.setApplystatus("27");
-//    	ss.setApplyMessage("通过");
-//    	ss.setName("kevin"); 
-//    	ss.setIdnumber("370682198909783612");
-//    	ss.setPhone("18660839714");	
-//    	ss.setOrdtotalloan("8000.00");
-//    	
-//    	PaymentServiceImpl psm = new PaymentServiceImpl();
-//    	String result = psm.mcCheckNotice(ss);
-    	//mcCheckNotice
-    	
-    	
-    	//XiMuTask xm = new XiMuTask();
-    	//xm.run();
-		try {
-			Map map = genKeyPair();
-			String publicKey = getPublicKey(map);
-			String privateKey = getPrivateKey(map);
-//			String publicKey ="MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMsAEWQepQLdo3mhgw3mLU00n/ldDd4knbq01bH89XnE5RITn+qZBAkHow5jgwH2T5ve2KJzkrHD6JbDDQtRO0UCAwEAAQ==";
-//			String privateKey = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAywARZB6lAt2jeaGDDeYtTTSf+V0N3iSdurTVsfz1ecTlEhOf6pkECQejDmODAfZPm97YonOSscPolsMNC1E7RQIDAQABAkBdolFjQfNQ6BSgZMxDW/lnVC+54J8l6PPMC99JsukzWbjvCqCxMY2/9LIV7W1OpzTp0OcPH+8FdI+GTrQqaL59AiEA7NUfjdHVvqgjWBBLxvYmk9KSVol5eQPE2LL9h4OVMXsCIQDbbft7qRNcISk+oacS109IvS6FiR6QtCxt01ci/v3KPwIgAsWPw/ojtUKEf2BZcq+ozewV+FtNh6QKprqZiv94PIcCICVYeJ65TfQ2KKDiPl80ieflWs+bYLpcD9u5RnFMWMFdAiEAkhXiwm4ltINMTcj82/fl0BwujBb0jybXfVnKNHH43S0=";
-			System.out.println("公钥----"+publicKey);
-			System.out.println("私钥----"+privateKey);
-			String abc = "haiercashpay";
-			String sss ="";
-			//String sss ="vHaXHgAm+ihC6fmdLp4Ynbdyy7GOo6OAv1bvjjgBFBov4/XrB40gEIscTIaf/Yh54gecQVcAZbVfVDOiFDGBkg==";
-			abc = Base64Utils.encode(encryptByPrivateKey(abc.getBytes(), privateKey));
-			System.out.println("加密后的数据："+abc);
-			sss = new String(decryptByPublicKey(Base64Utils.decode(abc), publicKey));
-			System.out.println("解密后数据："+sss);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
+//    public static void main(String[] args) {
+//
+//		try {
+//			Map map = genKeyPair();
+//			String publicKey = getPublicKey(map);
+//			String privateKey = getPrivateKey(map);
+//			System.out.println("公钥----"+publicKey);
+//			System.out.println("私钥----"+privateKey);
+//			String abc = "haiercashpay";
+//			String sss ="";
+//			abc = Base64Utils.encode(encryptByPrivateKey(abc.getBytes(), privateKey));
+//			System.out.println("加密后的数据："+abc);
+//			sss = new String(decryptByPublicKey(Base64Utils.decode(abc), publicKey));
+//			System.out.println("解密后数据："+sss);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
   
 } 

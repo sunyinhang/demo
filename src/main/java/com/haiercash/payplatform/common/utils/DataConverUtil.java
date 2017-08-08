@@ -31,7 +31,6 @@ import de.odysseus.staxon.xml.util.PrettyXMLEventWriter;
 //import org.dom4j.DocumentHelper;
 //import org.dom4j.Element;
 
-import static sun.plugin.javascript.navig.JSType.Document;
 
 /**
  *  java转换xml、list、map和json 

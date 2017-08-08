@@ -57,9 +57,9 @@ public class FaceServiceImpl implements FaceService{
             return fail(ConstUtil.ERROR_CODE, "图片为空");
         }
         //前台参数获取
-        String token = request.getParameter("token");
-        String channel = request.getParameter("channel");
-        String channelNo = request.getParameter("channelNo");
+        String token = request.getHeader("token");
+        String channel = request.getHeader("channel");
+        String channelNo = request.getHeader("channelNo");
         String edflag = request.getParameter("edflag");//1:额度申请  传1
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
             logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo);

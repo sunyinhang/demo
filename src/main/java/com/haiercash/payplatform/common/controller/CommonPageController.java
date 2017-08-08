@@ -57,7 +57,7 @@ public class CommonPageController extends BasePageController {
      */
     @RequestMapping(value = "/api/payment/savaIdentityInfo", method = RequestMethod.POST)
     public Map<String, Object> savaIdentityInfo(@RequestBody Map<String, Object> map){
-        return ocrIdentityService.savaIdentityInfo(map);
+        return ocrIdentityService.savaIdentityInfo(super.initParam(map));
     }
 
     /**
@@ -82,26 +82,22 @@ public class CommonPageController extends BasePageController {
 
     /**
      * 发送短信验证码(1)
-     * @param token
+     * @param params
      * @return
      */
     @RequestMapping(value = "/api/payment/sendMessage", method = RequestMethod.GET)
-    public Map<String, Object> sendMessage(@RequestParam(value = "token") String token,
-                                           @RequestParam(value = "channel") String channel,
-                                           @RequestParam(value = "channelNo") String channelNo){
-        return ocrIdentityService.sendMessage(token, channel, channelNo);
+    public Map<String, Object> sendMessage(@RequestParam Map<String, Object> params){
+        return ocrIdentityService.sendMessage(super.initParam(params));
     }
 
     /**
      * 发送短信验证码（2）
-     * @param phone
+     * @param params
      * @return
      */
     @RequestMapping(value = "/api/payment/sendMsg", method = RequestMethod.GET)
-    public Map<String, Object> sendMsg(@RequestParam(value = "phone") String phone,
-                                       @RequestParam(value = "channel") String channel,
-                                       @RequestParam(value = "channelNo") String channelNo){
-        return ocrIdentityService.sendMsg(phone, channel, channelNo);
+    public Map<String, Object> sendMsg(@RequestParam Map<String, Object> params){
+        return ocrIdentityService.sendMsg(super.initParam(params));
     }
 
     /**
@@ -112,7 +108,7 @@ public class CommonPageController extends BasePageController {
      */
     @RequestMapping(value = "/api/payment/realAuthentication", method = RequestMethod.POST)
     public Map<String, Object> realAuthentication(@RequestBody Map<String, Object> map) throws Exception{
-        return ocrIdentityService.realAuthentication(map);
+        return ocrIdentityService.realAuthentication(super.initParam(map));
     }
 
     /**
