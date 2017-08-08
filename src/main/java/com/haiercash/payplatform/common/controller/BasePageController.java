@@ -13,12 +13,25 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 页面请求专用controller，异常时不返回head、body
  */
 public class BasePageController extends AbstractController {
     public BasePageController(String moduleNo) {
         super(moduleNo);
+    }
+
+    protected Map<String, Object> initParam(Map<String, Object> paramMap) {
+        if (paramMap == null) {
+            paramMap = new HashMap<>();
+        }
+        paramMap.put("token", httpServletRequest.getHeader("token"));
+        paramMap.put("channel", httpServletRequest.getHeader("channel"));
+        paramMap.put("channelNo", httpServletRequest.getHeader("channelNo"));
+        return paramMap;
     }
 
     /**

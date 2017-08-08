@@ -56,7 +56,7 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
             return fail("01", "图片为空");
         }
         //token非空判断
-        String token = request.getParameter("token");
+        String token = request.getHeader("token");
         if (StringUtils.isEmpty(token)) {
             logger.info("获取token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
@@ -207,10 +207,10 @@ public class OCRIdentityServiceImpl implements OCRIdentityService {
         }
 
         Map<String, Object> reqmap = new HashMap<String, Object>();
-        map.put("areaCode", areaCode);
-        map.put("flag", flag);
-        map.put("channel", channel);
-        map.put("channelNo", channelNo);
+        reqmap.put("areaCode", areaCode);
+        reqmap.put("flag", flag);
+        reqmap.put("channel", channel);
+        reqmap.put("channelNo", channelNo);
 
         Map<String, Object> resultmap = appServerService.getAreaInfo(token, reqmap);
         logger.info("获取省市区*****************结束");

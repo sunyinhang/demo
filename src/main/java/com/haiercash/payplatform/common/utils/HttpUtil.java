@@ -165,7 +165,13 @@ public class HttpUtil {
 
     //2.新增
     public static Map<String, Object> restGetMap(String url, String token, Map<String, Object> map, int responseCode) {
-        return restExchangeMap(HttpMethod.GET, url, token, map, Integer.valueOf(responseCode));
+        // map放入url
+        String param = map.entrySet().stream()
+                .map(p -> p.getKey() + "=" + p.getValue())
+                .reduce((p1, p2) -> p1 + "&" + p2)
+                .map(s -> "?" + s)
+                .orElse("");
+        return restExchangeMap(HttpMethod.GET, url + param, token, null, Integer.valueOf(responseCode));
     }
 
     public static Map<String, Object> restGetMap(String url) {

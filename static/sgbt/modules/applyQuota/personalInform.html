@@ -47,21 +47,28 @@
                                             },
                                             code: 'areaCode',
                                             desc: 'areaName',
-                                            cache: true,
+                                            // cache: true,
                                             initOption: {
                                                 areaCode: '',
                                                 areaName: '请选择'
                                             },
                                             choose: [
                                                 {
-                                                    items: function () {
-                                                        return vm.getArea();
+                                                    items: [],
+                                                    onInit: function () {
+                                                        var _vm = this;
+                                                        app.getArea('', function (items) {
+                                                            _vm.changeItems(0, items);
+                                                        });
                                                     },
                                                     onChange: function (value, values) {
                                                         if (util.isEmpty(value)) {
                                                             this.changeItems(1, []);
                                                         } else {
-                                                            this.changeItems(1, vm.getArea(value));
+                                                            var _vm = this;
+                                                            app.getArea(value, function (items) {
+                                                                _vm.changeItems(1, items);
+                                                            });
                                                         }
                                                     }
                                                 },
@@ -71,7 +78,10 @@
                                                         if (util.isEmpty(value)) {
                                                             this.changeItems(2, []);
                                                         } else {
-                                                            this.changeItems(2, vm.getArea(value));
+                                                            var _vm = this;
+                                                            app.getArea(value, function (items) {
+                                                                _vm.changeItems(2, items);
+                                                            });
                                                         }
                                                     }
                                                 },
@@ -122,21 +132,6 @@
                             }
                         }
                     ]
-                }
-            },
-            methods: {
-                getArea: function (code) {
-                    var items = [];
-                    util.get({
-                        url: '/getArea',
-                        data: !util.isEmpty(code) ? {areaCode: code} : '',
-                        async: false,
-                        cache: true,
-                        success: function(res) {
-                            items = res;
-                        }
-                    });
-                    return items;
                 }
             }
         });

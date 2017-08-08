@@ -72,7 +72,7 @@
 .bv-form.form-align-right .item-title {
     text-align: left;
 }
-.bv-form.form-align-right .item-input input {
+.bv-form.form-align-right .item-input input, .bv-form.form-align-right .item-tag {
     text-align: right;
 }
 .bv-form.form-align-right .item-input select {

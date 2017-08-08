@@ -77,7 +77,7 @@ dependencies {
     compile("com.bestvike:bv-mybatis:3.4.0-SNAPSHOT")
     compile("com.bestvike:bv-jxls-poi:1.0.9-SNAPSHOT")
     compile("com.bestvike:bv-jxls-reader:2.0.2-SNAPSHOT")
-    compile("com.haiercash:util:2.0.40-SNAPSHOT")
+    compile("com.haiercash:util:2.0.41-SNAPSHOT")
 
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter")

@@ -67,7 +67,7 @@ public class CommonPageController extends BasePageController {
      */
     @RequestMapping(value = "/api/payment/getArea", method = RequestMethod.GET)
     public Map<String, Object> getArea(@RequestParam Map<String, Object> params){
-        return ocrIdentityService.getArea(params);
+        return ocrIdentityService.getArea(super.initParam(params));
     }
 
     /**

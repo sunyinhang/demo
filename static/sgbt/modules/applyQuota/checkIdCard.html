@@ -1,23 +1,40 @@
 <div class="bv-align-center" data-container="checkIdCard">
     <component is="tab-applyQuota"></component>
     <component is="bv-upload" :entity="entity" v-bind="uploadConfig"></component>
-    <component is="bv-form" class="form-align-right" :entity="entity" v-bind="formConfig"></component>
+    <component is="bv-form" class="form-align-right" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         var vm = util.bind({
             container: 'checkIdCard',
             data: {
+                tags: {
+                    formKey: 'checkIdCardForm'
+                },
                 entity: {},
                 uploadConfig: {
                     name: 'upload',
                     type: 'camera',
                     clazz: 'camera',
-                    url: '${root}/app/file/formUpload',
+                    url: '/ocrIdentity',
                     files: [
                         {
-                            name: 'file1',
-                            head: '身份证正面'
+                            name: 'identityCard',
+                            head: '身份证正面',
+                            success: function (upload, entity) {
+                                if (upload) {
+                                    util.refresh({
+                                        vm: util.vm(vm, vm.tags.formKey),
+                                        entity: {
+                                            name: upload.name,
+                                            gender: upload.gender,
+                                            birthday: upload.birthday,
+                                            address: upload.address,
+                                            idCard: upload.id_card_number
+                                        }
+                                    });
+                                }
+                            }
                             // url: '/app/file/accd0c797d58ae8e31521c1b74b785d2'
                         }
                     ]
@@ -30,7 +47,8 @@
                             name: 'name',
                             config: {
                                 attr: {
-                                    placeholder: '请输入姓名'
+                                    placeholder: '请输入姓名',
+                                    maxlength: '#name'
                                 },
                                 validate: {
                                     required: '姓名不能为空'
@@ -93,7 +111,12 @@
                                 return true;
                             },
                             click: function (event, editType, entity) {
-                                console.log('clicked');
+                                // TODO: 调用保存接口，将下面redirect放置到ajax.success中
+                                util.redirect({
+                                    title: '个人资料',
+                                    url: '/applyQuota/personalInform.html',
+                                    back: false
+                                });
                             }
                         }
                     ]

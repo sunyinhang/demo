@@ -99,4 +99,5 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation'],
         url: path,
         back: false
     });
+    window.util = util;
 });
