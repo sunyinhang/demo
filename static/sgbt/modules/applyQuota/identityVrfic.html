@@ -1,0 +1,66 @@
+<div class="bv-align-center" data-container="identityVrfic">
+    <component is="tab-applyQuota"></component>
+    <component is="bv-upload" :entity="entity" v-bind="uploadConfig"></component>
+    <component is="bv-form" class="form-align-right" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'identityVrfic',
+            data: {
+                tags: {
+                    formKey: 'identityVrficForm'
+                },
+                entity: {},
+                uploadConfig: {
+                    name: 'upload',
+                    type: 'camera',
+                    clazz: ['camera','faceCamera'],
+                    url: '/uploadFacePic',
+                    files: [
+                        {
+                            name: 'identityCard',
+                            head: '请将脸部正对镜头，保持光线充足',
+                            success: function (upload, entity) {
+                                console.log(upload+'   '+entity);
+                                /*if (upload) {
+                                    util.refresh({
+                                        vm: util.vm(vm, vm.tags.formKey),
+                                        entity: {
+                                            issued_by: upload.issued_by,
+                                            valid_date: upload.valid_date
+                                        }
+                                    });
+                                }*/
+                            }
+                        }
+                    ]
+                },
+                formConfig: {
+                    layout: 'inline',
+                    columns: [],
+                    operates: [
+                        {
+                            text: '下一步',
+                            clazz: 'primary',
+                            preset: function (event, editType, entity) {
+                                if (!entity.upload) {
+                                    util.alert('请使用扫描功能上传信息');
+                                    return false;
+                                }
+                                return true;
+                            },
+                            click: function (event, editType, entity) {
+                                util.redirect({
+                                    title: '个人资料',
+                                    url: '/applyQuota/personalInform.html',
+                                    back: false
+                                });
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>

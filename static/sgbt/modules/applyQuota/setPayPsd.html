@@ -1,0 +1,73 @@
+<div class="bv-align-center" data-container="setPayPsd">
+    <component is="tab-applyQuota"></component>
+    <component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+        var vm = util.bind({
+            container: 'setPayPsd',
+            data: {
+                tags: {
+                    formKey: 'setPayPsdForm'
+                },
+                entity: {},
+                formConfig: {
+                    layout: 'inline',
+                    attr:{
+
+                    },
+                    columns: [
+                        {
+                            head: '支付密码',
+                            name: 'payPassword',
+                            config: {
+                                type: 'password',
+                                clazz: ['pull-left','red'],
+                                attr: {},
+                                validate: {
+                                    required: '请输入支付密码'
+                                }
+                            }
+                        },
+                        {
+                            head: '确认密码',
+                            name: 'payPassword2',
+                            config: {
+                                type: 'password',
+                                attr: {},
+                                validate: {
+                                    required: '请输入确认密码',
+                                    /*equals:{
+                                        code: '#prev',
+                                        desc: '两次输入密码不一致'
+                                    }*/
+                                }
+                            }
+                        }
+                    ],
+                    operates: [
+                        {
+                            text: '下一步',
+                            clazz: 'primary',
+                            click: function (event, editType, entity) {
+                                console.log(event+' '+editType+' '+entity);
+                                /*util.get({
+                                    url: 'resetPayPasswd',
+                                    data:{},
+                                    success: {}
+                                });*/
+
+
+                                util.redirect({
+                                    title: '个人资料',
+                                    url: '/applyQuota/personalInform.html',
+                                    back: false
+                                });
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
