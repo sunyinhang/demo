@@ -1,4 +1,5 @@
 package com.haiercash.payplatform.common.service;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -34,7 +35,8 @@ public interface PayPasswdService {
     //贷款详情页面:还款总额
     public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo);
 
-
+    //查询额度
+    public Map<String, Object> edCheck(String token);
 
 
 }
