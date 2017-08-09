@@ -1,9 +1,13 @@
 <div data-container="personalInform">
     <component is="tab-applyQuota" active="realName personal"></component>
-    <component is="bv-accordion" v-bind="config"></component>
+    <form>
+        <component is="bv-accordion" :entity="entity" v-bind="config"></component>
+        <component is="bv-form" :entity="entity" v-bind="operateConfig"></component>
+    </form>
 </div>
 <script type="text/javascript">
-    require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm'], function($, util, Const) {
+    require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], function($, util, Const) {
+        util.title('个人资料');
         var vm = util.bind({
             container: 'personalInform',
             data: {
@@ -17,6 +21,7 @@
                             config: {
                                 clazz: 'form-align-right',
                                 layout: 'inline',
+                                container: 'div',
                                 columns: [
                                     {
                                         head: '婚姻状况',
@@ -98,7 +103,8 @@
                                         name: 'liveAddr',
                                         config: {
                                             attr: {
-                                                placeholder: '居住详细地址'
+                                                placeholder: '居住详细地址',
+                                                maxlength: '#address'
                                             },
                                             validate: {
                                                 required: '居住详细地址不能为空'
@@ -120,18 +126,239 @@
                                         name: 'officeName',
                                         config: {
                                             attr: {
-                                                maxlength: 300
+                                                maxlength: '#officeName'
                                             },
                                             validate: {
-                                                required: '请输入工作单位',
+                                                required: '请输入工作单位'
                                             }
                                         }
                                     },
                                     {
                                         head: '单位电话',
-                                        name: 'officeTel'
+                                        name: 'officeTel',
+                                        config: {
+                                            attr: {
+                                                placeholder: '请输入11-12位单位电话',
+                                                maxlength: '#phone'
+                                            },
+                                            validate: {
+                                                required: '单位电话不能为空',
+                                                custom: {
+                                                    code: 'phone',
+                                                    desc: '请输入正确的单位电话'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        head: '单位地址',
+                                        name: 'officeAddress',
+                                        edit: {
+                                            type: 'picker'
+                                        },
+                                        config: {
+                                            attr: {
+                                                placeholder: '请选择单位地址'
+                                            },
+                                            validate: {
+                                                required: '单位地址不能为空'
+                                            },
+                                            code: 'areaCode',
+                                            desc: 'areaName',
+                                            // cache: true,
+                                            initOption: {
+                                                areaCode: '',
+                                                areaName: '请选择'
+                                            },
+                                            choose: [
+                                                {
+                                                    items: [],
+                                                    onInit: function () {
+                                                        var _vm = this;
+                                                        app.getArea('', function (items) {
+                                                            _vm.changeItems(0, items);
+                                                        });
+                                                    },
+                                                    onChange: function (value, values) {
+                                                        if (util.isEmpty(value)) {
+                                                            this.changeItems(1, []);
+                                                        } else {
+                                                            var _vm = this;
+                                                            app.getArea(value, function (items) {
+                                                                _vm.changeItems(1, items);
+                                                            });
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    items: [],
+                                                    onChange: function (value, values) {
+                                                        if (util.isEmpty(value)) {
+                                                            this.changeItems(2, []);
+                                                        } else {
+                                                            var _vm = this;
+                                                            app.getArea(value, function (items) {
+                                                                _vm.changeItems(2, items);
+                                                            });
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    items: []
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        name: 'officeAddr',
+                                        config: {
+                                            attr: {
+                                                placeholder: '单位详细地址',
+                                                maxlength: '#address'
+                                            },
+                                            validate: {
+                                                required: '单位详细地址不能为空'
+                                            }
+                                        }
                                     }
                                 ]
+                            }
+                        },
+                        {
+                            title: '紧急联系人',
+                            type: 'form',
+                            config: {
+                                clazz: 'form-align-right',
+                                layout: 'inline',
+                                container: 'div',
+                                columns: [
+                                    {
+                                        head: '联系人关系一',
+                                        name: 'relationType1',
+                                        edit: {
+                                            type: 'select'
+                                        },
+                                        config: {
+                                            attr: {
+                                                placeholder: '请选择'
+                                            },
+                                            preset: 'json',
+                                            choose: '#relationType',
+                                            validate: {
+                                                required: '请选择紧急联系人关系'
+                                            }
+                                        }
+                                    },
+                                    {
+                                        head: '姓名',
+                                        name: 'contactName1',
+                                        config: {
+                                            attr: {
+                                                placeholder: '请输入联系人姓名',
+                                                maxlength: '#name'
+                                            },
+                                            validate: {
+                                                required: '紧急联系人姓名不能为空'
+                                            }
+                                        }
+                                    },
+                                    {
+                                        head: '联系电话',
+                                        name: 'contactMobile1',
+                                        config: {
+                                            attr: {
+                                                placeholder: '请输入联系电话',
+                                                maxlength: '#phone'
+                                            },
+                                            validate: {
+                                                required: '紧急联系人不能为空',
+                                                custom: {
+                                                    code: 'phone',
+                                                    desc: '请输入正确的紧急联系人联系方式'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        head: '联系人关系二',
+                                        name: 'relationType2',
+                                        edit: {
+                                            type: 'select'
+                                        },
+                                        config: {
+                                            attr: {
+                                                placeholder: '请选择'
+                                            },
+                                            preset: 'json',
+                                            choose: '#relationType',
+                                            validate: {
+                                                required: '请选择紧急联系人关系'
+                                            }
+                                        }
+                                    },
+                                    {
+                                        head: '姓名',
+                                        name: 'contactName2',
+                                        config: {
+                                            attr: {
+                                                placeholder: '请输入联系人姓名',
+                                                maxlength: '#name'
+                                            },
+                                            validate: {
+                                                required: '紧急联系人姓名不能为空'
+                                            }
+                                        }
+                                    },
+                                    {
+                                        head: '联系电话',
+                                        name: 'contactMobile2',
+                                        config: {
+                                            attr: {
+                                                placeholder: '请输入联系电话',
+                                                maxlength: '#phone'
+                                            },
+                                            validate: {
+                                                required: '紧急联系人不能为空',
+                                                custom: {
+                                                    code: 'phone',
+                                                    desc: '请输入正确的紧急联系人联系方式'
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            title: '选传影像',
+                            type: 'form',
+                            config: {
+                                columns: [
+                                    {
+                                        head: '选传影像1',
+                                        name: 'xxxxx',
+                                        edit: {
+                                            type: 'upload'
+                                        },
+                                        config: {
+                                            clazz: 'upload-multiple',
+                                            files: [{}, {}]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                operateConfig: {
+                    type: 'form',
+                    container: 'div',
+                    operates: [
+                        {
+                            text: '下一步',
+                            clazz: 'primary',
+                            click: function (event, editType, entity) {
+                                console.log(entity)
                             }
                         }
                     ]
