@@ -43,7 +43,7 @@ require(['vue', 'jquery', 'util'], function(vue, $, util) {
             /*!
              <div class="amtSituTopPrnt">
                 <div class="btmBg"><img v-bind:src="imgSrc"/></div>
-                 <div class="cvgCont">
+                <div class="cvgCont">
                      <div class="amtNotTitle"><span>{{title}}</span></div>
                      <div class="amtNotSubTitle" v-if="whether">{{subTitle}}</div>
                      <div :class="amtNum"><span class="rmb" v-if="numUnit">&yen;</span>{{num}}</div>
