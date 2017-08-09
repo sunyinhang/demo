@@ -266,12 +266,12 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         String typCde = (String) cacheMap.get("typCde");// 贷款品种
         String idNumber = cacheMap.get("idCard").toString();// 身份证号
         String name = cacheMap.get("name").toString();// 姓名
-        String mobile = cacheMap.get("phoneNo").toString();// 手机号
+        //String mobile = cacheMap.get("phoneNo").toString();// 手机号
         String custNo = cacheMap.get("custNo").toString();
         String userId = cacheMap.get("userId").toString();
-        if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
+        if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name)
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)){
-            logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
+            logger.info("idNumber:" + idNumber + "  name:" + name + "   custNo:" + custNo + "    userId:" + userId);
             logger.info("redis获取数据为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }

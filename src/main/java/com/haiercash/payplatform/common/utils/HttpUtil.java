@@ -38,7 +38,7 @@ public class HttpUtil {
         headers.setContentType(type);
         if(!StringUtils.isEmpty(token)) {
             headers.add("access_token", token);
-            headers.add("Authorization", "Bearer " + token);
+            //headers.add("Authorization", "Bearer " + token);
         }
 
         return headers;
@@ -50,7 +50,7 @@ public class HttpUtil {
         headers.setContentType(type);
         if(!StringUtils.isEmpty(token)) {
             headers.add("access_token", token);
-            headers.add("Authorization", "Bearer " + token);
+            //headers.add("Authorization", "Bearer " + token);
         }
 
         if(!StringUtils.isEmpty(map) && map.size() > 0) {
