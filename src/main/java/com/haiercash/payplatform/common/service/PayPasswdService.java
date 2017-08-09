@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.common.service;
 
+import org.apache.commons.codec.language.MatchRatingApproachEncoder;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -23,4 +25,6 @@ public interface PayPasswdService {
     //确认支付密码（额度申请）
     public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, String payPasswd);
 
+    //额度申请提交
+    public Map<String, Object> edApply(String token, String verifyNo, String payPasswd, String channel, String channelNo);
 }

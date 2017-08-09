@@ -70,8 +70,8 @@ public final class RequestContextData {
     //endregion
 
     public void initChannel(String channel, String channelNo) {
-        Assert.notNull(channel, "channel can not be null");
-        Assert.notNull(channelNo, "channelNo can not be null");
+//        Assert.notNull(channel, "channel can not be null");
+//        Assert.notNull(channelNo, "channelNo can not be null");
         this.channel = channel;
         this.channelNo = channelNo;
     }
