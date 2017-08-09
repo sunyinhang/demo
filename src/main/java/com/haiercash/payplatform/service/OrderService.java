@@ -18,5 +18,22 @@ public interface OrderService {
      */
     Map<String, Object> order2OrderMap(AppOrder appOrder, Map<String, Object> map);
 
+    /**
+     * 取消订单.
+     * 只适用于订单状态暂存且为申请流水号时调用.
+     * @param formId 订单id
+     * @return
+     */
+    Map<String,  Object> cancelOrder(String formId);
+
+
+    /**
+     * 查询订单商品列表.
+     * @param formId   订单id
+     * @return Map
+     */
+    Map<String, Object> getGoodsList(String formId);
+
+
 }
 

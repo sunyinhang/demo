@@ -2,15 +2,13 @@ package com.haiercash.payplatform.common.service.impl;
 
 import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Cache;
+import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.FaceService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
-import com.haiercash.payplatform.common.utils.DataConverUtil;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.common.utils.HttpClient;
-import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -26,10 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.*;
-
-import static com.haiercash.payplatform.common.utils.RestUtil.fail;
-import static com.haiercash.payplatform.common.utils.RestUtil.success;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by yuanli on 2017/8/1.
@@ -266,12 +263,12 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         String typCde = (String) cacheMap.get("typCde");// 贷款品种
         String idNumber = cacheMap.get("idCard").toString();// 身份证号
         String name = cacheMap.get("name").toString();// 姓名
-        String mobile = cacheMap.get("phoneNo").toString();// 手机号
+        //String mobile = cacheMap.get("phoneNo").toString();// 手机号
         String custNo = cacheMap.get("custNo").toString();
         String userId = cacheMap.get("userId").toString();
-        if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
+        if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name)
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)){
-            logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
+            logger.info("idNumber:" + idNumber + "  name:" + name + "   custNo:" + custNo + "    userId:" + userId);
             logger.info("redis获取数据为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }

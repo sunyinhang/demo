@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.haiercash.payplatform.common.config.EurekaServer;
+import com.haiercash.payplatform.common.utils.HttpUtil;
+import com.haiercash.payplatform.common.utils.RestUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -100,6 +103,30 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         map.put("version", "1");
 
         return map;
+    }
+
+    @Override
+    public Map<String, Object> cancelOrder(String formId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("formId", formId);
+        Map<String, Object> result = HttpUtil.restPostMap(EurekaServer.ORDER + "/api/order/cancel", params);
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getGoodsList(String formId) {
+        String url = EurekaServer.ORDER + "/api/order/goods/list?formId=" + formId;
+        logger.info("==> ORDER 获取商品列表：" + url);
+        Map<String, Object> goodsMap = HttpUtil
+                .restGetMap(url);
+        logger.info("<== ORDER 获取商品列表：" + goodsMap);
+        if (StringUtils.isEmpty(goodsMap)) {
+            return fail(RestUtil.ERROR_INTERNAL_CODE, "订单系统系统通信失败");
+        }
+        if (!HttpUtil.isSuccess(goodsMap)) {
+            logger.info("订单系统获取商品列表失败, formId:" + formId);
+        }
+        return goodsMap;
     }
 
 }

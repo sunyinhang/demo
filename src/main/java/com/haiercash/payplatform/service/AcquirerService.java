@@ -29,4 +29,15 @@ public interface AcquirerService {
     AppOrder acquirerMap2OrderObject(Map<String, Object> acquirer, AppOrder order);
 
 
+    /**
+     * 将订单中数据影射为收单系统渠道进件格式map.
+     * 不包括list(联系人、申请人信息、商品信息)相关数据.
+     *
+     * @param order 订单信息
+     * @param map   映射结果
+     * @return Map
+     */
+    Map<String, Object> order2AcquirerMap(AppOrder order, Map<String, Object> map);
+
+
 }

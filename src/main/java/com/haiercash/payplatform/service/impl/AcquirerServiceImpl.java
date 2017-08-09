@@ -1,6 +1,12 @@
 package com.haiercash.payplatform.service.impl;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -102,5 +108,47 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         logger.info("收单映射appOrder结果：" + order);
         return order;
     }
+
+
+    @Override
+    public Map<String, Object> order2AcquirerMap(AppOrder order, Map<String, Object> map) {
+        if (order == null) {
+            return null;
+        }
+
+        if (map == null) {
+            map = new HashMap();
+        }
+
+        try {
+            Class clazz = order.getClass();
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field field : fields) {
+                PropertyDescriptor pd = new PropertyDescriptor(field.getName(), clazz);
+                Method method = pd.getReadMethod();
+                Object value = method.invoke(order);
+                String key = AcquirerEnum.getAcquirerAttr(field.getName());
+                if (!StringUtils.isEmpty(key)) {
+                    // 当order的值不为null获取map中不存在该字段时，替换map中的值.
+                    if (value != null || map.get(key) == null) {
+                        map.put(key, value);
+                    }
+                }
+            }
+        } catch (IntrospectionException e) {
+            logger.error(e);
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            logger.error(e);
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            logger.error(e);
+            throw new RuntimeException(e);
+        }
+
+        return map;
+    }
+
+
 
 }

@@ -115,12 +115,20 @@ function cacheArea(code, items) {
         }
     }
 }
+var __loading = false;
 function getArea (code, callback) {
     var items = cacheArea(code);
     if (items) {
         callback.call(null, items);
         return;
     }
+    if (__loading) {
+        setTimeout(function () {
+            getArea(code, callback);
+        }, 500);
+        return;
+    }
+    __loading = true;
     // var items = [];
     util.get({
         url: '/getArea',
@@ -129,8 +137,12 @@ function getArea (code, callback) {
         cache: true,
         success: function(res) {
             cacheArea(code, util.data(res));
+            __loading = false;
             callback.call(null, util.data(res));
             // items = util.data(res);
+        },
+        error: function () {
+            __loading = false;
         }
     });
     // return items;

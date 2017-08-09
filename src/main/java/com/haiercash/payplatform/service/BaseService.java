@@ -8,6 +8,7 @@ import com.haiercash.payplatform.common.utils.ConstUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -17,6 +18,9 @@ public class BaseService extends AbstractService {
 
     @Autowired
     protected RestTemplate restTemplate;
+
+    @Value("${app.other.outplatform_url}")
+    protected String outplatUrl;
 
     private String moduleNo;
 

@@ -244,4 +244,16 @@ public class CommonPageController extends BaseController {
     }
 
 
+    /**
+     * 贷款详情页面:按贷款申请查询分期账单
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryApplListBySeq", method = RequestMethod.GET)
+    public Map<String, Object> queryApplListBySeq() {
+        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNO());
+
+    }
+
+
 }

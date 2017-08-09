@@ -227,3 +227,6 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 .agree-popup p#title a {
     float: right;
 }
+.bv-theme .bv-upload.upload-multiple .file-container {
+    width: 50%;
+}
