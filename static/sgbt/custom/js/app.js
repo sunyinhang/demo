@@ -46,14 +46,14 @@ require(['vue', 'jquery', 'util'], function(vue, $, util) {
                  <div class="cvgCont">
                      <div class="amtNotTitle"><span>{{title}}</span></div>
                      <div class="amtNotSubTitle" v-if="whether">{{subTitle}}</div>
-                     <div :class="amtNum">{{num}}</div>
+                     <div :class="amtNum"><span class="rmb" v-if="numUnit">&yen;</span>{{num}}</div>
                      <div class="amtReson" v-if="whetherDesc">您暂不符合申请条件，请稍后再试</div>
                      <div class="amtActivBtn" v-if="whetherBtn"><a href="javascript:void(0);" :class="activBtn" v-on:click='btnClickFn'>{{btnText}}</a></div>
                  </div>
              </div>
              */
         }),
-        props:['imgSrc','title','whether','subTitle','amtNum','num','whetherBtn','activBtn','btnText','whetherDesc'],
+        props:['imgSrc','title','whether','subTitle','amtNum','numUnit','num','whetherBtn','activBtn','btnText','whetherDesc'],
         data: function(){
             return{
             }
