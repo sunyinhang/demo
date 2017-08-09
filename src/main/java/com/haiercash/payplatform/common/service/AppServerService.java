@@ -52,6 +52,14 @@ public interface AppServerService {
     public String  validatePayPasswd(String token,Map<String,Object> map);
     //(GET)查询贷款详情（根据申请流水号）
     public Map<String,Object> queryApplLoanDetail(String token,Map<String, Object> paramMap);
-    //(GET)查询贷款详情（根据申请流水号）
+    //(GET)按贷款申请查询分期账单
     public Map<String,Object> queryApplListBySeq(String token,Map<String,Object> queryApplListMap);
+    //7.1.(POST) 欠款查询(参照核算接口5.1)
+    public String getQFCheck(String token,Map<String,Object> qfmap);
+    //(GET)全部还款试算（含息费、手续费、本金）
+    public Map<String,Object> refundTrialAll(String token,Map<String, Object> paramMap);
+    //7.4.(POST)主动还款金额查询
+    public String checkZdhkMoney(String token,Map<String, Object> paramMap);
+
+
 }

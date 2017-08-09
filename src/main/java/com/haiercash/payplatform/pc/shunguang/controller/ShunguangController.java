@@ -37,6 +37,20 @@ public class ShunguangController extends BaseController {
     private ShunguangService shunguangService;
 
     /**
+     * 微店主客户信息推送 Sg-10001.
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/shunguang/store/info", method = RequestMethod.POST)
+    public Map<String, Object> storeInfo(@RequestBody Map<String, Object> map) {
+        Map<String, Object> checkMap= this.confirmData(map);
+        if (!HttpUtil.isSuccess(checkMap)) {
+            return checkMap;
+        }
+        return shunguangService.saveStoreInfo(map);
+    }
+
+    /**
      * 5.	白条额度申请接口   Sg-10004
      * @param map
      * @return
@@ -46,7 +60,7 @@ public class ShunguangController extends BaseController {
     public Map<String, Object> edApply(@RequestBody Map<String, Object> map) throws Exception{
         // 参数非空校验
         Map<String, Object> confirmMsg = confirmData(map);
-        if(confirmMsg != null){
+        if(!HttpUtil.isSuccess(confirmMsg)) {
             return confirmMsg;
         }
         return shunguangService.edApply(map);
@@ -65,7 +79,7 @@ public class ShunguangController extends BaseController {
         if (StringUtils.isEmpty(map.get("data"))) {
             return fail(ConstUtil.ERROR_CODE, "交易信息(data)不能为空");
         }
-        return null;
+        return success();
     }
 
 }
