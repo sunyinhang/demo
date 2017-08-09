@@ -362,4 +362,14 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> queryApplLoanDetailMap = HttpUtil.restGetMap(url, token, paramMap);
         return queryApplLoanDetailMap;
     }
+
+    //(GET)查询贷款详情（根据申请流水号）
+    public Map<String, Object> queryApplListBySeq(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/queryApplListBySeq";
+        logger.info("顺逛查询贷款详情（根据申请流水号）接口请求地址：" + url);
+        logger.info("顺逛查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
+        Map<String, Object> queryApplListBySeqMap = HttpUtil.restGetMap(url, token, paramMap);
+        return queryApplListBySeqMap;
+    }
+
 }
