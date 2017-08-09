@@ -4,6 +4,7 @@ import org.apache.commons.codec.language.MatchRatingApproachEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Administrator on 2017/8/7.
@@ -30,5 +31,10 @@ public interface PayPasswdService {
 
     //贷款详情查询
     public Map<String, Object> queryLoanDetailInfo(String token);
+
+    //贷款详情页面:按贷款申请查询分期账单
+    public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo);
+
+
 }
 
