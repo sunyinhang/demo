@@ -35,6 +35,7 @@ var __Const = {
         }
     },
     messages: {
+        agree: '请先同意相关协议'
     },
     lengths: {
         userId: 11,
