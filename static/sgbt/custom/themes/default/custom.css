@@ -109,6 +109,14 @@
 }
 
 /**/
+.fullPage{ height: 100%;}
+.gray{ background-color: #eee;}
+.clear{  clear: both; }
+.margt24{ margin-top:1.2rem;}
+/*::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}*/
 /*faceCamera*/
 .bv-theme .faceCamera .file-container {
     width: 100%;
@@ -121,6 +129,55 @@
     background-size: 13.45rem;
 }
 /*faceCamera end*/
+/**/
+@media only screen and (max-width:320px){html{font-size:18px !important}}
+a{cursor:pointer;}
+body{margin:0 auto;max-width:750px;}
+.amtSituTopPrnt{position: relative;margin:0 auto;width:100%;height:auto;}
+.amtNotBg{position:relative;margin:0px;padding:0px;width:100%;height:100%;background:#EDEEEE;}
+.btmBg{position: relative;margin:0 auto;width:100%;padding:0px;}
+.btmBg img{width:100%;}
+.cvgCont{position: absolute;top:0px;left:0px;width:100%;height:100%;z-index:99;}
+.amtNotTitle{width:100%;height:17%;display:table;color:#fff;text-align:center;font-size:.9rem;}
+.amtNotTitle span{display:table-cell; vertical-align:middle;}
+
+.amtNotSubTitle{margin:0 auto;margin-top:.5rem;width:78.8%;color:#fff;font-size:.7rem;line-height:.7rem;text-align:left;}
+.amtNum{margin:0 auto;margin-top:1rem;width:77.13%;color:#fff;font-size:3.2rem;height:3.2rem;line-height:3.2rem;text-align:left;}
+.amtNum span{display:inline-block;float:left;}
+.amtNum .rmb{display:inline-block;margin-top:1.6rem;font-size:1.3rem;height:1.3rem;line-height:1.3rem;}
+.amtActivBtn{margin:0 auto;margin-top:.5rem;width:78%;height:1.6rem;text-align:right;}
+.amtgoBtn{margin:0 auto;margin-top:.5rem;width:78%;height:1.6rem;text-align:right;}
+a.activAmuntBtn:link,a.activAmuntBtn:visited,a.activAmuntBtn:hover{display: block;float:right;margin:0 auto;padding:0px;width:4.5rem;height:1.6rem;line-height:1.6rem;color:#fff;-webkit-border-radius:.8rem;border-radius:.8rem;font-size:.7rem;background:#FDA253;text-align:center;border:0px;}
+a.goGrayBtn:link,a.goGrayBtn:visited,a.goGrayBtn:hover{display: block;float:right;margin:0 auto;padding:0px;width:4.5rem;height:1.6rem;line-height:1.6rem;color:#D2D2D2;-webkit-border-radius:.8rem;border-radius:.8rem;font-size:.7rem;background:#9F9F9F;text-align:center;border:0px;}
+
+.amtSitu{margin:0 auto;margin-top:2.9rem;width:81%;color:#fff;font-size:2.3rem;line-height:2.3rem;text-align:left;}
+.amtz{margin:0 auto;margin-top:1.2rem;width:80%;color:#fff;font-size:.7rem;line-height:.7rem;text-align:left;}
+
+.b-downloadTips{ padding: 0 0.8rem;}
+.downloadTips2{position: relative; margin:0 auto;margin-top:.2rem;width:84%;font-size:.7rem;line-height:1rem;text-align:left;}
+.mrto24{margin-top:1.2rem;}
+.downloadTips .blueCircle{float:left; margin-top:.1rem;width:.5rem;height:.5rem;-webkit-border-radius:3rem;border-radius:3rem;background:#32BEFF;}
+.downloadTips .ft{float:left;margin-left:.2rem;}
+.bluefont{color:#32BEFF;}
+.grayfont{color:#999;}
+.amtReson{margin:0 auto;margin-top:.8rem;width:80%;color:#d3d3d3;font-size:.7rem;line-height:.7rem;text-align:left;}
+.amtAppyModi{position:relative;margin:0 auto;margin-top:1.25rem;width:100%;}
+a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: block;margin:0 auto;padding:0px;width:84.5%;height:2.5rem;line-height:2.5rem;color:#fff;-webkit-border-radius:1.2rem;border-radius:1.2rem;font-size:.8rem;background:#32BEFF;text-align:center;border:0px;}
+
+
+.amountTop{position:relative;margin:0 auto;width:100%;height:11rem;background:url(../images/amtTopBg.png) left top no-repeat;background-size:100%;}
+.cusContent{position:relative;margin:0 auto;width:100%;}
+.amountInfo{position:relative;margin:0 auto;padding-top:1.1rem;padding-bottom:1.1rem;width:100%;background:#fff;}
+.verLine{position:relative;float:left;width:50%;height:3.8rem;}
+.verLinebg{background:url(../images/amtSutiPoint.png) top right repeat-y;}
+.bill{position:relative;float:left;margin:0px;margin-left:2.2rem;cursor:pointer}
+.bill li{text-align:left;}
+.bill li.li1{height:1.4rem;line-height:1.4rem;font-size:.85rem;color:#333;}
+.bill li.li2{height:1.1rem;line-height:1.1rem;font-size:.7rem;color:#999;}
+.bill li.li3{height:1.3rem;line-height:1.3rem;font-size:.85rem;}
+.bill li.liorg{color:#FDA253;}
+.bill li.liblue{color:#29A9FC;}
+/**/
 .form-sms.bv-form.list-block {
     margin-top: 1rem;
     margin-left: 2rem;

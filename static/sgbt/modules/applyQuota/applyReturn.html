@@ -1,0 +1,58 @@
+<div class="bv-align-center" data-container="applyReturn">
+	<quota-state v-bind="config" @on-click="getReasonsFn"></quota-state>
+	<component is="bv-form" v-bind="formConfig"></component>
+</div>
+<script type="text/javascript">
+	require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
+		var vm = util.bind({
+			container: 'applyReturn',
+			data: {
+				config:{
+					imgSrc: 'custom/themes/default/images/amtNotTopBg.png',
+					title: '海尔白条',
+					whether: false ,
+					subTitle: '可用总额度',
+					amtNum: 'amtSitu',
+					num: '申请被退回',
+					whetherBtn: true,
+					activBtn: 'goGrayBtn',
+					btnText: '查看原因'
+				},formConfig:{
+					operates: [
+						{
+							text: '修改',
+							clazz: 'primary',
+							click: function (event, editType, entity) {
+								//TODO 修改接口
+								console.log(123);
+							}
+						}
+					]
+				}
+			},
+			methods: {
+				getReasonsFn: function(param){
+					//TODO
+					console.log(123);
+				}
+			}
+		});
+	});
+</script>
+
+
+
+
+<!--
+<div class="amtNotBg" ms-controller="amountNot">
+    <div class="amtSituTopPrnt">
+	    <div class="btmBg"><img src="images/amtNotTopBg.png"/></div> 
+	    <div class="cvgCont">
+		    <div class="amtNotTitle"><span>海尔白条</span></div>
+		    <div class="amtSitu">申请被退回</div>  
+		    <div class="amtgoBtn"><a href="javascript:void(0);"  class="goGrayBtn" ms-click=''>查看原因</a></div>
+		</div>
+	</div>
+	<div class="amtAppyModi"><a href="javascript:void(0);"  class="amtAppyModiBtn" ms-click=''>修改</a></div>
+</div>
+<script type="text/javascript" src="js/applyQuota/amountNot.js"></script>-->
