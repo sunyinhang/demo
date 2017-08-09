@@ -20,24 +20,24 @@
                     files: [
                         {
                             name: 'identityCard',
-                            head: '身份证正面',
-                            success: function (upload, entity) {
-                                if (upload) {
-                                    util.refresh({
-                                        vm: util.vm(vm, vm.tags.formKey),
-                                        entity: {
-                                            name: upload.name,
-                                            gender: upload.gender,
-                                            birthday: upload.birthday,
-                                            address: upload.address,
-                                            idCard: upload.id_card_number
-                                        }
-                                    });
-                                }
-                            }
+                            head: '身份证正面'
                             // url: '/app/file/accd0c797d58ae8e31521c1b74b785d2'
                         }
-                    ]
+                    ],
+                    success: function (file, upload, uploads, entity) {
+                        if (upload) {
+                            util.refresh({
+                                vm: util.vm(vm, vm.tags.formKey),
+                                entity: {
+                                    name: upload.name,
+                                    gender: upload.gender,
+                                    birthday: upload.birthday,
+                                    address: upload.address,
+                                    idCard: upload.id_card_number
+                                }
+                            });
+                        }
+                    }
                 },
                 formConfig: {
                     layout: 'inline',

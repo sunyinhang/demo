@@ -20,21 +20,21 @@
                     files: [
                         {
                             name: 'identityCard',
-                            head: '身份证反面',
-                            success: function (upload, entity) {
-                                if (upload) {
-                                    util.refresh({
-                                        vm: util.vm(vm, vm.tags.formKey),
-                                        entity: {
-                                            issued_by: upload.issued_by,
-                                            valid_date: upload.valid_date
-                                        }
-                                    });
-                                }
-                            }
+                            head: '身份证反面'
                             // url: '/app/file/accd0c797d58ae8e31521c1b74b785d2'
                         }
-                    ]
+                    ],
+                    success: function (file, upload, uploads, entity) {
+                        if (upload) {
+                            util.refresh({
+                                vm: util.vm(vm, vm.tags.formKey),
+                                entity: {
+                                    issued_by: upload.issued_by,
+                                    valid_date: upload.valid_date
+                                }
+                            });
+                        }
+                    }
                 },
                 formConfig: {
                     layout: 'inline',

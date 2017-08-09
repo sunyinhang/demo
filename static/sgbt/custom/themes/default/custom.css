@@ -171,5 +171,9 @@
     float: right;
 }
 .bv-theme .bv-upload.upload-multiple .file-container {
-    width: 50%;
+    width: 48%;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    margin-left: 0;
+    margin-right: 0;
 }

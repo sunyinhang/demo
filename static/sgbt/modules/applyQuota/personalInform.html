@@ -336,13 +336,28 @@
                                 columns: [
                                     {
                                         head: '选传影像1',
-                                        name: 'xxxxx',
+                                        name: 'p1',
                                         edit: {
                                             type: 'upload'
                                         },
                                         config: {
                                             clazz: 'upload-multiple',
-                                            files: [{}, {}]
+                                            files: [{}, {}],
+                                            autoIncrease: true,
+                                            autoUpload: false
+                                        }
+                                    },
+                                    {
+                                        head: '选传影像2',
+                                        name: 'p2',
+                                        edit: {
+                                            type: 'upload'
+                                        },
+                                        config: {
+                                            clazz: 'upload-multiple',
+                                            files: [{}, {}],
+                                            autoIncrease: true,
+                                            autoUpload: false
                                         }
                                     }
                                 ]
