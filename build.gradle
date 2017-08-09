@@ -29,7 +29,7 @@ apply plugin: 'spring-boot'
 apply plugin: "io.spring.dependency-management"
 
 group = 'com.haiercash'
-version = '1.0.0'
+version = '1.0.1'
 
 springBoot {
     classifier = 'exec'
