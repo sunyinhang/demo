@@ -349,7 +349,14 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("顺逛确认支付密码验证接口请求参数：" + paramMap);
         String result = HttpUtil.restGetMap(url, token, paramMap).toString();
         return result;
+    }
 
-
+    //(GET)查询贷款详情（根据申请流水号）
+    public Map<String, Object> queryApplLoanDetail(String token, Map<String, Object> paramMap) {
+        String url = appserverurl + "/app/appserver/apporder/queryAppLoanAndGoods";
+        logger.info("顺逛查询贷款详情（根据申请流水号）接口请求地址：" + url);
+        logger.info("顺逛查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
+        Map<String, Object> queryApplLoanDetailMap = HttpUtil.restGetMap(url, token, paramMap);
+        return queryApplLoanDetailMap;
     }
 }

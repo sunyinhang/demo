@@ -93,6 +93,21 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation'],
     $(document).on('click', 'a[href]', function (event) {
         event.preventDefault();
     });
+    $('.agree-popup iframe').height($(window).height() - 66);
+    $(document).on('open', '.agree-popup', function () {
+        util.loading();
+        $('#title span', this).text( $(this).attr('data-title'));
+        $('iframe', this).attr('src', $(this).attr('data-url'));
+    });
+    /*$(document).on('opened', '.agree-popup', function () {
+    });*/
+    $('.agree-popup iframe').on('load', function () {
+        util.loading('hide');
+    });
+    $(document).on('closed', '.agree-popup', function () {
+        $(this).removeAttr('data-title').removeAttr('data-url');
+        $('iframe', this).attr('src', 'about:blank');
+    });
 
     util.redirect({
         title: '实名绑卡',

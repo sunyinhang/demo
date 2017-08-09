@@ -85,6 +85,28 @@
     font-size: 14px;
 }
 
+.bv-accordion .accordion-item-content .content-block, .bv-accordion .accordion-item-content .content-block .list-block ul {
+    background-color: #fbfbfb;
+}
+.bv-theme .list-block .item-content {
+    border-bottom: 1px solid #ccc;
+}
+.bv-theme .list-block .item-content .item-inner {
+    border-bottom: none;
+}
+.list-block.bv-accordion .bv-form .item-content {
+    border-bottom: none;
+}
+.accordion-item.accordion-item-expanded>.item-content:after {
+    content: ' ';
+    height: 10px;
+    width: 15px;
+    position: absolute;
+    z-index: 2;
+    top: 41px;
+    left: 42px;
+    background: url(images/arrow.png) no-repeat center center;
+}
 
 /**/
 /*faceCamera*/
@@ -99,3 +121,52 @@
     background-size: 13.45rem;
 }
 /*faceCamera end*/
+.form-sms.bv-form.list-block {
+    margin-top: 1rem;
+    margin-left: 2rem;
+    margin-right: 1rem;
+}
+.bv-theme .form-sms.list-block .item-content {
+    border-bottom: none;
+}
+.form-sms .content-block-title {
+    height: 30px;
+}
+.form-sms #verifyNo {
+    border-radius: 1.25rem;
+    background: #eee url(images/icon_v.png) no-repeat 0.8rem center;
+    background-size: 1rem;
+    padding-left: 2.2rem;
+    width: 7.97rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    font-size: 0.7rem;
+}
+.form-sms #sendSms {
+    border-radius: 1.25rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    margin-left: 0.7rem;
+    font-size: 0.7rem;
+}
+.form-sms #sendSms[disabled] {
+    border-color: #dddddd;
+    background: #eee;
+    color: #999;
+}
+
+.agree-popup .content-block {
+    position: absolute;
+    left: 0.5rem;
+    right: 0.5rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    margin: 0;
+    padding: 0;
+}
+.agree-popup .content-block p {
+    margin: 0.5rem;
+}
+.agree-popup p#title a {
+    float: right;
+}

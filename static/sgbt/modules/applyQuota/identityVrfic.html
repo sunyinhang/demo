@@ -1,5 +1,5 @@
 <div class="bv-align-center" data-container="identityVrfic">
-    <component is="tab-applyQuota" active="face"></component>
+    <component is="tab-applyQuota" active="realName personal face"></component>
     <component is="bv-upload" :entity="entity" v-bind="uploadConfig"></component>
     <component is="bv-form" class="form-align-right" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
@@ -15,8 +15,8 @@
                 uploadConfig: {
                     name: 'upload',
                     type: 'camera',
-                    clazz: ['faceCamera'],
-                    autoUpload: false,      //TODO 不自动上传
+                    clazz: 'faceCamera',
+                    autoUpload: false,
                     url: '/uploadFacePic',
                     files: [
                         {
@@ -32,47 +32,47 @@
                         {
                             text: '下一步',
                             clazz: 'primary',
-                            preset: function (event, editType, entity) {
-                                if (!entity.upload) {
-                                    util.alert('请使用扫描功能上传信息');
-                                    return false;
+                            validate: {
+                                before: function (event, editType, entity) {
+                                    if (!entity.upload) {
+                                        util.alert('请使用扫描功能上传信息');
+                                        return false;
+                                    }
+                                    return true;
                                 }
-                                return true;
                             },
                             click: function (event, editType, entity) {
-                                //TODO   upload方法现在并没有，需要增加，功能是实现上传图片信息
                                 util.upload({
-                                    url: 'uploadFacePic',
-                                    data: {
+                                    url: util.mix('/uploadFacePic', {
                                         edflag: 1
-                                    },
+                                    }),
+                                    data: util.form('faceImg', entity.upload),
                                     success: function (res) {
-                                        if(res.retObj.faceFlag === '0'){
+                                        if (res.retObj.faceFlag === '0') {
                                             //未设置支付密码
                                             util.redirect({
                                                 title: '设置支付密码',
                                                 url: '/applyQuota/setPayPsd.html',
                                                 back: false
                                             });
-                                        }else if (res.retObj.faceFlag === '1') {
+                                        } else if (res.retObj.faceFlag === '1') {
                                             //已设置支付密码
                                             util.redirect({
                                                 title: '输入短信验证码',
                                                 url: '/applyQuota/payPsdValidcode.html',
                                                 back: false
                                             });
-                                        }else if (res.retObj.faceFlag === '2') {
+                                        } else if (res.retObj.faceFlag === '2') {
                                             //人脸识别失败，跳转手持身份证
                                             util.redirect({
                                                 title: '手持身份证',
                                                 url: '/applyQuota/handholdIdCard.html',
                                                 back: false
                                             });
-                                        }
-                                        else if (res.retObj.faceFlag === '3') {
+                                        } else if (res.retObj.faceFlag === '3') {
                                             //人脸识别失败，再拍摄一遍
                                             util.alert('人脸识别失败，请再使用摄像头拍摄一张人脸照片');
-                                        }else{
+                                        } else {
                                             return;
                                         }
                                     }

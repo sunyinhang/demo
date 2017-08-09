@@ -1,5 +1,6 @@
 server:
   port: 8030
+  version:
 logging:
   level:
     org.springframework: WARN
@@ -108,10 +109,11 @@ app:
     service:
       open: true
   rest:
-    APPCA: http://APPCA-BETA
+    APPCA: http://APPCA
     APPMANAGE: http://APPMANAGE
     APPMSG: http://APPSERVER-MSG
-    APPSERVER: http://APPSERVERNOAUTHNEW
+    APPSERVER: http://APPSERVER
+    APPSERVERNOAUTH: http://APPSERVERNOAUTH
     CMISPROXY: http://CMISPROXY
     CRM: http://CRM-BETA
     HCPORTAL: http://HCPORTAL-BETA

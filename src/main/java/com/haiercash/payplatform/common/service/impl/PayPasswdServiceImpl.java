@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import com.haiercash.commons.redis.Cache;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -365,9 +366,139 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
     //额度申请提交
     public Map<String, Object> edApply(String token, String verifyNo, String payPasswd, String channel, String channelNo) {
-
-
         return null;
+    }
+
+    //贷款详情查询
+    public Map<String, Object> queryLoanDetailInfo(String token) {
+        BigDecimal psNormIntAmt = new BigDecimal(0);
+        BigDecimal feeAmt = new BigDecimal(0);
+        BigDecimal apprvAmt = new BigDecimal(0);
+        if (StringUtils.isEmpty(token)) {
+            logger.info("获取的token为空" + token);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String channel = super.getChannel();//系统标识
+        logger.info("系统标识：channel" + channel);
+        String channelNo = super.getChannelNo();//渠道编码
+        logger.info("渠道编码channelNo" + channelNo);
+        Map<String, Object> cacheMap = cache.get(token);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Jedis获取缓存失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String applSeq = (String) cacheMap.get("applSeq");//申请流水号
+        String outSts = (String) cacheMap.get("outSts");//审批状态
+        if (StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(outSts)) {
+            logger.info("获取数据为空申请流水号：" + applSeq + "审批状态：" + outSts);
+            String retMsg = "从jedis获取的数据为空";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+
+        Map<String, Object> req = new HashMap<>();
+        req.put("channelNo", channelNo);
+        req.put("channel", channel);
+        req.put("applSeq", applSeq);
+        logger.info("查询贷款详情接口，请求数据：" + req.toString());
+        String res = appServerService.queryApplLoanDetail(token,req).toString();//查询贷款详情
+        logger.info("查询贷款详情接口，响应数据：" + res);
+        if (res == null || "".equals(res)) {
+            logger.info("网络异常,查询贷款详情接口,响应数据为空！" + res);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        JSONObject jsonObject = new JSONObject(res);
+        JSONObject head = jsonObject.getJSONObject("head");
+        String code = head.getString("retFlag");
+        String message = head.getString("retMsg");
+        if ("0000".equals(code)) {//查询贷款详情成功
+            logger.info("查询贷款详情接口，响应数据：" + jsonObject.getJSONObject("body").toString());
+            JSONObject json = jsonObject.getJSONObject("body");
+            String applyTnrTyp = json.get("applyTnrTyp").toString();
+            String totfee = "";
+            String apprvTotal = "";
+            if (!applyTnrTyp.equals("D") && !applyTnrTyp.equals("d") && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
+                String psNormIntAmtStr = String.valueOf(json.get("psNormIntAmt"));//总利息金额
+                if (psNormIntAmtStr.equals("null")) {
+                    psNormIntAmt = new BigDecimal(0);
+                } else {
+                    psNormIntAmt = new BigDecimal(psNormIntAmtStr);
+                }
+                String feeAmtStr = String.valueOf(json.get("feeAmt"));//费用总额
+                if (feeAmtStr.equals("null")) {
+                    feeAmt = new BigDecimal(0);
+                } else {
+                    feeAmt = new BigDecimal(feeAmtStr);
+                }
+                String apprvAmtStr = String.valueOf(json.get("apprvAmt"));//贷款审批金额
+                if (apprvAmtStr.equals("null")) {
+                    apprvAmt = new BigDecimal(0);
+                } else {
+                    apprvAmt = new BigDecimal(apprvAmtStr);
+                }
+
+                BigDecimal tot = new BigDecimal(0);
+                tot = psNormIntAmt.add(feeAmt);//总利息+总费用
+                totfee = tot.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
+                json.put("totfee", totfee);
+                BigDecimal total = new BigDecimal(0);
+                total = tot.add(apprvAmt);//总利息+总费用+贷款审批金额
+                apprvTotal = total.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
+                json.put("apprvTotal", apprvTotal);
+
+            }
+            String outStsNew = json.getString("outSts");
+            if (!"WS".equals(outStsNew)) {
+                if (outStsNew.equals("1")) {
+                    json.put("outSts", "待提交");
+                } else if (outStsNew.equals("2")) {
+                    json.put("outSts", "待确认");
+                } else if (outStsNew.equals("3")) {
+                    json.put("outSts", "商户退回");
+                } else if (outStsNew.equals("01")) {
+                    json.put("outSts", "审批中");
+                } else if (outStsNew.equals("02")) {
+                    json.put("outSts", "贷款被拒绝");
+                } else if (outStsNew.equals("03")) {
+                    json.put("outSts", "贷款已取消");
+                } else if (outStsNew.equals("04")) {
+                    json.put("outSts", "等待放款");
+                } else if (outStsNew.equals("05")) {
+                    json.put("outSts", "审批通过，等待放款");
+                } else if (outStsNew.equals("06")) {
+                    json.put("outSts", "已放款");
+                } else if (outStsNew.equals("20")) {
+                    json.put("outSts", "待放款");
+                } else if (outStsNew.equals("22")) {
+                    json.put("outSts", "审批退回");
+                } else if (outStsNew.equals("23")) {
+                    json.put("outSts", "等待放款");
+                } else if (outStsNew.equals("24")) {
+                    json.put("outSts", "放款审核中");
+                } else if (outStsNew.equals("25")) {
+                    json.put("outSts", "额度申请被拒");
+                } else if (outStsNew.equals("26")) {
+                    json.put("outSts", "额度申请已取消");
+                } else if (outStsNew.equals("27")) {
+                    json.put("outSts", "已通过");
+                } else if (outStsNew.equals("AA")) {
+                    json.put("outSts", "取消放款");
+                } else if (outStsNew.equals("0D")) {
+                    json.put("outSts", "已逾期");
+                }
+            }
+                /*if(outSts.equals("待还款")||outSts.equals("已放款")||outSts.equals("已逾期")){
+                    String loanNo = json.getString("loanNo");
+					if(loanNo == null || "".equals(loanNo)){
+						retflag = "100003";
+						throw new CommonException("借据号为空");
+					}
+					resultMap.put("loanNo", loanNo);
+					redisBaseDAO.saveObject(token, resultMap);
+				}*/
+            return success(json);
+        } else {
+            return fail(code, message);
+        }
 
     }
 }

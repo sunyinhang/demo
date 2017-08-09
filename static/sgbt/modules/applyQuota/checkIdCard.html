@@ -103,12 +103,14 @@
                         {
                             text: '下一步',
                             clazz: 'primary',
-                            preset: function (event, editType, entity) {
-                                if (!entity.upload) {
-                                    util.alert('请使用扫描功能上传信息');
-                                    return false;
+                            validate: {
+                                before: function (event, editType, entity) {
+                                    if (!entity.upload) {
+                                        util.alert('请使用扫描功能上传信息');
+                                        return false;
+                                    }
+                                    return true;
                                 }
-                                return true;
                             },
                             click: function (event, editType, entity) {
                                 util.post({
