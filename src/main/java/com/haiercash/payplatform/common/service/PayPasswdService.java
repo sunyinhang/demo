@@ -1,10 +1,6 @@
 package com.haiercash.payplatform.common.service;
-
-import org.apache.commons.codec.language.MatchRatingApproachEncoder;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by Administrator on 2017/8/7.
@@ -34,6 +30,11 @@ public interface PayPasswdService {
 
     //贷款详情页面:按贷款申请查询分期账单
     public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo);
+
+    //贷款详情页面:还款总额
+    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo);
+
+
 
 
 }

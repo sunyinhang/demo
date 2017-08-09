@@ -333,15 +333,17 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("顺逛支付密码修改接口请求地址：" + url);
         logger.info("顺逛支付密码修改接口请求参数：" + paramMap);
         String result = HttpUtil.restPutMap(url, token, paramMap).toString();
+        logger.info("顺逛支付密码修改接口请求参数：" + result);
         return result;
     }
 
-    //实名认证修改密码
+    //(PUT)实名认证修改密码
     public String updPwdByIdentity(String token, Map paramMap) {
         String url = appservernoauth + "/app/appserver/uauth/custVerifyUpdatePwd";
         logger.info("顺逛实名认证修改密码接口请求地址：" + url);
         logger.info("顺逛实名认证修改密码接口请求参数：" + paramMap);
         String result = HttpUtil.restPutMap(url, token, paramMap).toString();
+        logger.info("顺逛实名认证修改密码接口请求参数：" + result);
         return result;
     }
 
@@ -351,6 +353,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("顺逛确认支付密码验证接口请求地址：" + url);
         logger.info("顺逛确认支付密码验证接口请求参数：" + paramMap);
         String result = HttpUtil.restGetMap(url, token, paramMap).toString();
+        logger.info("顺逛确认支付密码验证接口请求参数：" + result);
         return result;
     }
 
@@ -360,16 +363,48 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("顺逛查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("顺逛查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
         Map<String, Object> queryApplLoanDetailMap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("顺逛查询贷款详情（根据申请流水号）接口返回数据" + queryApplLoanDetailMap);
         return queryApplLoanDetailMap;
     }
 
-    //(GET)查询贷款详情（根据申请流水号）
+    //(GET)按贷款申请查询分期账单
     public Map<String, Object> queryApplListBySeq(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/queryApplListBySeq";
         logger.info("顺逛查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("顺逛查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
         Map<String, Object> queryApplListBySeqMap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("顺逛查询贷款详情（根据申请流水号）接口返回数据：" + queryApplListBySeqMap);
         return queryApplListBySeqMap;
+    }
+
+    //7.1.(POST) 欠款查询(参照核算接口5.1)
+    public String getQFCheck(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/customer/getQFCheck";
+        logger.info("顺逛欠款查询接口请求地址：" + url);
+        logger.info("顺逛欠款查询接口请求参数：" + paramMap);
+        String qfMap = HttpUtil.restPostMap(url, token, paramMap).toString();
+        logger.info("顺逛欠款查询接口返回数据：" + qfMap);
+        return qfMap;
+    }
+
+    //(GET)全部还款试算（含息费、手续费、本金）
+    public Map<String, Object> refundTrialAll(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/newZdhkMoney";
+        logger.info("顺逛全部还款试算接口请求地址：" + url);
+        logger.info("顺逛全部还款试算接口请求参数：" + paramMap);
+        Map<String, Object> refundTrialmap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("顺逛全部还款试算接口返回数据：" + refundTrialmap);
+        return refundTrialmap;
+    }
+
+    //7.4.(POST)主动还款金额查询
+    public String checkZdhkMoney(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/customer/checkZdhkMoney";
+        logger.info("顺逛主动还款金额查询接口请求地址：" + url);
+        logger.info("顺逛主动还款金额查询接口请求参数：" + paramMap);
+        String checkZdhkMoneymap = HttpUtil.restPostMap(url, token, paramMap).toString();
+        logger.info("顺逛主动还款金额查询接口返回数据：" + checkZdhkMoneymap);
+        return checkZdhkMoneymap;
     }
 
 }

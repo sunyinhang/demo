@@ -1,9 +1,11 @@
 package com.haiercash.payplatform.common.service.impl;
 
 import com.haiercash.commons.redis.Cache;
-import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CustExtInfoService;
+import com.haiercash.payplatform.common.utils.AcqUtil;
 import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.common.utils.HttpUtil;
+import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.haiercash.payplatform.common.utils.RestUtil.fail;
+import static com.haiercash.payplatform.common.utils.RestUtil.success;
 
 @Service
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService{
