@@ -17,8 +17,11 @@ import java.util.Map;
 public class AppServerServiceImpl extends BaseService implements AppServerService {
     public Log logger = LogFactory.getLog(getClass());
 
-    @Value("${app.rest.APPSERVER}")
-    protected String appserverurl;
+//    @Value("${app.rest.APPSERVER}")
+//    protected String appserverurl;
+
+    @Value("${app.rest.APPSERVERNOAUTH}")
+    protected String appservernoauth;
 
     /**
      * 获取省市区
@@ -28,7 +31,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getAreaInfo(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/pub/crm/findDmAreaInfo";
+        String url = appservernoauth + "/app/appserver/pub/crm/findDmAreaInfo";
         logger.info("获取省市区接口，请求地址：" + url);
         logger.info("获取省市区接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
@@ -43,7 +46,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getBankInfo(String cardNo) {
-        String url = appserverurl + "/app/appserver/crm/cust/getBankInfo?cardNo=" + cardNo;
+        String url = appservernoauth + "/app/appserver/crm/cust/getBankInfo?cardNo=" + cardNo;
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url);
         logger.info("获取卡信息接口，返回数据：" + map);
@@ -58,7 +61,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> sendMessage(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/smsSendVerify";
+        String url = appservernoauth + "/app/appserver/smsSendVerify";
         logger.info("发送短信验证码接口，请求地址：" + url);
         logger.info("发送短信验证码接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
@@ -74,7 +77,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> saveCardMsg(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/saveCardMsg";
+        String url = appservernoauth + "/app/appserver/saveCardMsg";
         logger.info("保存身份证信息接口，请求地址：" + url);
         logger.info("保存身份证信息接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -90,7 +93,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> smsVerify(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/smsVerify";
+        String url = appservernoauth + "/app/appserver/smsVerify";
         logger.info("校验短信验证码接口，请求地址：" + url);
         logger.info("校验短信验证码接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -106,7 +109,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> fCiCustRealThreeInfo(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/crm/cust/fCiCustRealThreeInfo";
+        String url = appservernoauth + "/app/appserver/crm/cust/fCiCustRealThreeInfo";
         logger.info("验证并新增实名认证信息接口，请求地址：" + url);
         logger.info("验证并新增实名认证信息接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -122,7 +125,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> updateMobile(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/uauth/updateMobile";
+        String url = appservernoauth + "/app/appserver/uauth/updateMobile";
         logger.info("修改绑定手机号接口，请求地址：" + url);
         logger.info("修改绑定手机号接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPutMap(url, token, params);
@@ -138,7 +141,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/attachUploadPersonByFilePath";
+        String url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath";
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求地址：" + url);
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -154,7 +157,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> faceCheckByFaceValue(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/faceCheckByFaceValue";
+        String url = appservernoauth + "/app/appserver/faceCheckByFaceValue";
         logger.info("通过人脸分数判断人脸是否通过接口，请求地址：" + url);
         logger.info("通过人脸分数判断人脸是否通过接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -170,7 +173,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> validateUserFlag(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/uauth/validateUserFlag";
+        String url = appservernoauth + "/app/appserver/uauth/validateUserFlag";
         logger.info("用户支付密码手势密码验证是否设置接口，请求地址：" + url);
         logger.info("用户支付密码手势密码验证是否设置接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -186,7 +189,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/ifNeedFaceChkByTypCde";
+        String url = appservernoauth + "/app/appserver/ifNeedFaceChkByTypCde";
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求地址：" + url);
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -204,7 +207,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      */
     @Override
     public Map<String, Object> getAllCustExtInfo(String token, Map<String, Object> params) {
-        String url = appserverurl + "/app/appserver/getAllCustExtInfo";
+        String url = appservernoauth + "/app/appserver/getAllCustExtInfo";
         logger.info("查询CRM中客户扩展信息（二）接口，请求地址：" + url);
         logger.info("查询CRM中客户扩展信息（二）接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -220,7 +223,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> resetPayPasswd(String token, Map<String, Object> paramMap) {
-        String url = appserverurl + "/app/appserver/uauth/payPasswd";
+        String url = appservernoauth + "/app/appserver/uauth/payPasswd";
         logger.info("支付密码设置接口的请求地址：" + url);
         logger.info("支付密码设置接口的请求数据：" + paramMap);
         Map<String, Object> restputmap = HttpUtil.restPutMap(url, token, paramMap);
@@ -236,7 +239,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> ifEdAppl(String token, Map<String, Object> paramMap) {
-        String url = appserverurl + "/app/appserver/cmis/ifEdAppl";
+        String url = appservernoauth + "/app/appserver/cmis/ifEdAppl";
         logger.info("查询是否可以提交额度申请接口请求地址：" + url);
         logger.info("查询是否可以提交额度申请接口请求数据：" + paramMap);
         Map<String, Object> ifedapplmap = HttpUtil.restGetMap(url, token, paramMap);
@@ -253,7 +256,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getCustIsPass(String token, Map<String, Object> paramMap) {
-        String url = appserverurl + "/app/appserver/crm/cust/getCustIsPass";
+        String url = appservernoauth + "/app/appserver/crm/cust/getCustIsPass";
         logger.info("查询客户准入资格url:" + url);
         logger.info("查询客户准入资格请求数据：" + paramMap);
         Map<String, Object> custispassmap = HttpUtil.restGetMap(url, token, paramMap);
@@ -269,7 +272,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getEdApplInfo(String token, Map<String, Object> edapplInfoMap) {
-        String url = appserverurl + "/app/appserver/customer/getEdApplInfo";
+        String url = appservernoauth + "/app/appserver/customer/getEdApplInfo";
         logger.info("额度申请接口请求地址：" + url);
         logger.info("额度申请接口请求数据：" + edapplInfoMap);
         Map<String, Object> edapplInfomap = HttpUtil.restGetMap(url, token, edapplInfoMap);
@@ -285,7 +288,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public String updateOrderAgreement(String token, Map<String, Object> reqSignMap) {
-        String url = appserverurl + "/app/appserver/uauth/payPasswd";
+        String url = appservernoauth + "/app/appserver/uauth/payPasswd";
         logger.info("顺逛订单协议确认接口请求地址：" + url);
         logger.info("顺逛订单协议确认接口请求数据：" + reqSignMap);
         String result = HttpUtil.restPutMap(url, token, reqSignMap).toString();
@@ -301,7 +304,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public String updateOrderContract(String token, Map<String, Object> reqConMap) {
-        String url = appserverurl + "/app/appserver/apporder/updateOrderContract";
+        String url = appservernoauth + "/app/appserver/apporder/updateOrderContract";
         logger.info("顺逛订单合同确认接口请求地址：" + url);
         logger.info("顺逛订单合同确认接口请求数据：" + reqConMap);
         String result = HttpUtil.restPostMap(url, token, reqConMap).toString();
@@ -317,7 +320,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public String commitAppOrder(String token, Map<String, Object> commitmMap) {
-        String url = appserverurl + "/app/appserver/apporder/updateOrderContract";
+        String url = appservernoauth + "/app/appserver/apporder/updateOrderContract";
         logger.info("顺逛订单合同确认接口请求地址：" + url);
         logger.info("顺逛订单合同确认接口请求数据：" + commitmMap);
         String result = HttpUtil.restGetMap(url, token, commitmMap).toString();
@@ -326,7 +329,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //3.4.15.	(PUT)支付密码修改(知道原密码)
     public String updatePayPasswd(String token, Map<String, Object> paramMap) {
-        String url = appserverurl + "/app/appserver/uauth/updatePayPasswd";
+        String url = appservernoauth + "/app/appserver/uauth/updatePayPasswd";
         logger.info("顺逛支付密码修改接口请求地址：" + url);
         logger.info("顺逛支付密码修改接口请求参数：" + paramMap);
         String result = HttpUtil.restPutMap(url, token, paramMap).toString();
@@ -335,7 +338,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //实名认证修改密码
     public String updPwdByIdentity(String token, Map paramMap) {
-        String url = appserverurl + "/app/appserver/uauth/custVerifyUpdatePwd";
+        String url = appservernoauth + "/app/appserver/uauth/custVerifyUpdatePwd";
         logger.info("顺逛实名认证修改密码接口请求地址：" + url);
         logger.info("顺逛实名认证修改密码接口请求参数：" + paramMap);
         String result = HttpUtil.restPutMap(url, token, paramMap).toString();
@@ -344,7 +347,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)确认支付密码验证
     public String validatePayPasswd(String token, Map<String, Object> paramMap) {
-        String url = appserverurl + "/app/appserver/uauth/validatePayPasswd";
+        String url = appservernoauth + "/app/appserver/uauth/validatePayPasswd";
         logger.info("顺逛确认支付密码验证接口请求地址：" + url);
         logger.info("顺逛确认支付密码验证接口请求参数：" + paramMap);
         String result = HttpUtil.restGetMap(url, token, paramMap).toString();
@@ -353,7 +356,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)查询贷款详情（根据申请流水号）
     public Map<String, Object> queryApplLoanDetail(String token, Map<String, Object> paramMap) {
-        String url = appserverurl + "/app/appserver/apporder/queryAppLoanAndGoods";
+        String url = appservernoauth + "/app/appserver/apporder/queryAppLoanAndGoods";
         logger.info("顺逛查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("顺逛查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
         Map<String, Object> queryApplLoanDetailMap = HttpUtil.restGetMap(url, token, paramMap);
