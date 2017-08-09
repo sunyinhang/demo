@@ -32,7 +32,7 @@ require(['vue', 'jquery', 'util'], function(vue, $, util) {
             /*!
             <div class="tab-applyQuota">
                 <ul>
-                    <li v-for="el in innerTabs" :class="[{'active': active === el.clazz}, el.clazz]" v-text="el.text"></li>
+                    <li v-for="el in innerTabs" :class="[{'active': active.indexOf(el.clazz) >= 0}, el.clazz]" v-text="el.text"></li>
                 </ul>
             </div>
             */
