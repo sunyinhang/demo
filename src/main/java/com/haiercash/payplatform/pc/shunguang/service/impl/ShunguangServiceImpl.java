@@ -1,13 +1,16 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
+import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.Base64Utils;
 import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.common.utils.RSAUtils;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.BaseService;
+import com.netflix.ribbon.proxy.annotation.Http;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -68,6 +71,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         String user_id = userjson.get("user_id").toString();
         //TODO!!!!
+
+        String result = HttpUtil.restGet(EurekaServer.APPSERVERNOAUTH + "/app/appserver/face");
+        if (HttpUtil.isSuccess(result) ) {
+           Map<String, Object>  resultMap = HttpUtil.json2Map(result);
+        }
 
 
         return success();

@@ -28,6 +28,7 @@ public class EurekaServer {
     public static String ORDER;
     public static String APPSERVER;
     public static String APPSERVERNOAUTH;
+    public static String APPSERVERNOAUTHNEW;
 
     public static String getAPPCA() {
         return APPCA;
@@ -133,5 +134,12 @@ public class EurekaServer {
         EurekaServer.APPSERVERNOAUTH = APPSERVERNOAUTH;
     }
 
+    public static String getAPPSERVERNOAUTHNEW() {
+        return APPSERVERNOAUTHNEW;
+    }
+
+    public static void setAPPSERVERNOAUTHNEW(String APPSERVERNOAUTHNEW) {
+        EurekaServer.APPSERVERNOAUTHNEW = APPSERVERNOAUTHNEW;
+    }
 }
 
