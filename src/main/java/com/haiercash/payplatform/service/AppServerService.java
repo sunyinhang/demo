@@ -50,5 +50,7 @@ public interface AppServerService {
     public String updPwdByIdentity(String token,Map<String,Object> paramMap);
     // 验证支付密码
     public String  validatePayPasswd(String token,Map<String,Object> map);
+    //(GET)查询贷款详情（根据申请流水号）
+    public Map<String,Object> queryApplLoanDetail(String token,Map<String, Object> paramMap);
 
 }
