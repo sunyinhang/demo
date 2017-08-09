@@ -3,27 +3,24 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.service.HaierDataService;
-import com.haiercash.payplatform.common.utils.ConstUtil;
-import org.json.JSONObject;
 import com.haiercash.payplatform.common.utils.Base64Utils;
+import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.RSAUtils;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
+import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-import static com.haiercash.payplatform.common.utils.RSAUtils.decryptByPublicKey;
-import static com.haiercash.payplatform.common.utils.RestUtil.fail;
-import static com.haiercash.payplatform.common.utils.RestUtil.success;
-
 /**
  * Created by yuanli on 2017/8/7.
  */
 @Service
-public class ShunguangServiceImpl implements ShunguangService{
+public class ShunguangServiceImpl extends BaseService implements ShunguangService{
     public Log logger = LogFactory.getLog(getClass());
 
     @Autowired
