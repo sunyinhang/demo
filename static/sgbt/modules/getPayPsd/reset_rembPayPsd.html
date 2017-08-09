@@ -1,32 +1,28 @@
-<div class="bv-align-center" data-container="setPayPsd">
-    <component is="tab-applyQuota" active="password"></component>
+<div class="bv-align-center" data-container="reset_rembPayPsd">
     <component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         var vm = util.bind({
-            container: 'setPayPsd',
+            container: 'reset_rembPayPsd',
             data: {
                 tags: {
-                    formKey: 'setPayPsdForm'
+                    formKey: 'reset_rembPayPsdForm'
                 },
                 entity: {},
                 formConfig: {
                     layout: 'inline',
-                    attr:{
-
-                    },
                     columns: [
                         {
-                            head: '支付密码',
+                            head: '输入新密码',
                             name: 'payPassword',
                             config: {
                                 type: 'password',
                                 attr: {
-                                    placeholder: '请输入支付密码'
+                                    placeholder: '6-20位字母，数字，符号组合'
                                 },
                                 validate: {
-                                    required: '请输入支付密码'
+                                    required: '密码不能为空'
                                 }
                             }
                         },{
@@ -52,14 +48,8 @@
                             text: '下一步',
                             clazz: 'primary',
                             click: function (event, editType, entity) {
-                                util.cache({
-                                    payPasswd: entity.payPassword
-                                });
-                                util.redirect({
-                                    title: '短信验证码',
-                                    url: '/applyQuota/payPsdValidcode.html',
-                                    back: false
-                                });
+                                util.alert('重置成功');
+                                //TODO   跳转到输入支付密码页面
                             }
                         }
                     ]
@@ -68,3 +58,4 @@
         });
     });
 </script>
+
