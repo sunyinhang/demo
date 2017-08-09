@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
+import com.haiercash.commons.util.StringUtil;
 import com.haiercash.payplatform.common.service.PayPasswdService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.commons.util.EncryptUtil;
@@ -8,8 +9,10 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import com.haiercash.commons.redis.Cache;
@@ -374,6 +377,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         BigDecimal psNormIntAmt = new BigDecimal(0);
         BigDecimal feeAmt = new BigDecimal(0);
         BigDecimal apprvAmt = new BigDecimal(0);
+
         if (StringUtils.isEmpty(token)) {
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -400,7 +404,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         req.put("channel", channel);
         req.put("applSeq", applSeq);
         logger.info("查询贷款详情接口，请求数据：" + req.toString());
-        String res = appServerService.queryApplLoanDetail(token,req).toString();//查询贷款详情
+        String res = appServerService.queryApplLoanDetail(token, req).toString();//查询贷款详情
         logger.info("查询贷款详情接口，响应数据：" + res);
         if (res == null || "".equals(res)) {
             logger.info("网络异常,查询贷款详情接口,响应数据为空！" + res);
@@ -499,6 +503,82 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         } else {
             return fail(code, message);
         }
-
     }
+
+    //贷款详情页面:按贷款申请查询分期账单
+    public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo) {
+        String loanNo = "";
+        String retflag = "";
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("获取的参数为空：token：" + token + "  ,channel" + channel + "  ," + channelNo);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cacheMap = cache.get(token);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Jedi获取的数据weikong");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        String applSeq = (String) cacheMap.get("applSeq");//申请流水号
+        String outSts = (String) cacheMap.get("outSts");//审批状态
+        if (StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(outSts)) {
+            logger.info("从jedis获取数据失败applSeq:" + applSeq + "  ,outSts" + outSts);
+            String retMsg = "从jedis获取数据失败";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map<String, Object> req = new HashMap<>();
+        req.put("channelNo", channelNo);
+        req.put("channel", channel);
+        req.put("applSeq", applSeq);
+        logger.info("查询贷款详情接口，请求数据：" + req.toString());
+        String resData = appServerService.queryApplLoanDetail(token, req).toString();//查询贷款详情
+        logger.info("查询贷款详情接口，响应数据：" + resData);
+        if (resData == null || "".equals(resData)) {
+            logger.info("网络异常,查询贷款详情接口,响应数据为空！");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        JSONObject jsonObject = new JSONObject(resData);
+        JSONObject head = jsonObject.getJSONObject("head");
+        String code = head.getString("retFlag");
+        String message = head.getString("retMsg");
+        if ("0000".equals(code)) {//查询贷款详情成功
+            logger.info("查询贷款详情接口，响应数据：" + jsonObject.getJSONObject("body").toString());
+            JSONObject jsonData = jsonObject.getJSONObject("body");
+            if (outSts.equals("待还款") || outSts.equals("已放款") || outSts.equals("已逾期")) {
+                loanNo = jsonData.getString("loanNo");
+                if (loanNo == null || "".equals(loanNo)) {
+                    logger.info("借据号为空");
+                    String retMsg = "借据号为空";
+                    return fail(ConstUtil.ERROR_CODE, retMsg);
+                }
+            }
+            HashMap<String, Object> queryApplListMap = new HashMap<>();
+            queryApplListMap.put("channelNo",channelNo);
+            queryApplListMap.put("channel",channel);
+            queryApplListMap.put("applSeq",applSeq);
+
+            String resOne = appServerService.queryApplListBySeq(token,queryApplListMap).toString();//按贷款申请查询分期账单接口
+            logger.info("按贷款申请查询分期账单接口，响应数据：" + resOne);
+            if (resOne == null || "".equals(resOne)) {
+                logger.info("网络异常，app后台,按贷款申请查询分期账单接口,响应数据为空！");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+
+            }
+            JSONObject jsonOne = new JSONObject(resOne);
+            JSONObject jsonOneHead = jsonOne.getJSONObject("head");
+            String retOneFlag = jsonOneHead.getString("retFlag");
+            String retOneMsg = jsonOneHead.getString("retMsg");
+            if (retOneFlag.equals("00000")) {
+                JSONArray body = jsonOne.getJSONArray("body");
+                return success(body);
+            } else {
+                retflag = retOneFlag;
+                return fail(retflag, retOneMsg);
+            }
+        } else {
+            retflag = code;
+            return fail(retflag, message);
+        }
+    }
+
+
 }

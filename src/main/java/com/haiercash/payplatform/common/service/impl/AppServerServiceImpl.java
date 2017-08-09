@@ -1,7 +1,7 @@
-package com.haiercash.payplatform.service.impl;
+package com.haiercash.payplatform.common.service.impl;
 
 import com.haiercash.payplatform.common.utils.HttpUtil;
-import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -362,4 +362,14 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> queryApplLoanDetailMap = HttpUtil.restGetMap(url, token, paramMap);
         return queryApplLoanDetailMap;
     }
+
+    //(GET)查询贷款详情（根据申请流水号）
+    public Map<String, Object> queryApplListBySeq(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/queryApplListBySeq";
+        logger.info("顺逛查询贷款详情（根据申请流水号）接口请求地址：" + url);
+        logger.info("顺逛查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
+        Map<String, Object> queryApplListBySeqMap = HttpUtil.restGetMap(url, token, paramMap);
+        return queryApplListBySeqMap;
+    }
+
 }

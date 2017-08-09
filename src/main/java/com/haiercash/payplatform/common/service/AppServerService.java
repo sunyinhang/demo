@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.service;
+package com.haiercash.payplatform.common.service;
 
 import java.util.Map;
 
@@ -52,5 +52,6 @@ public interface AppServerService {
     public String  validatePayPasswd(String token,Map<String,Object> map);
     //(GET)查询贷款详情（根据申请流水号）
     public Map<String,Object> queryApplLoanDetail(String token,Map<String, Object> paramMap);
-
+    //(GET)查询贷款详情（根据申请流水号）
+    public Map<String,Object> queryApplListBySeq(String token,Map<String,Object> queryApplListMap);
 }
