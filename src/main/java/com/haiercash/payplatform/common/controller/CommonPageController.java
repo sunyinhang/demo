@@ -209,12 +209,39 @@ public class CommonPageController extends BaseController {
 
     /**
      * 确认支付密码（额度申请）
+     *
      * @param payPasswd
      * @return
      */
     @RequestMapping(value = "/api/payment/paymentPwdConfirm", method = RequestMethod.GET)
     public Map<String, Object> paymentPwdConfirm(@RequestParam(value = "payPasswd") String payPasswd) {
-        return payPasswdService.paymentPwdConfirm(super.getToken(),super.getChannel(),super.getChannelNO(),payPasswd);
+        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNO(), payPasswd);
     }
+
+
+    /**
+     * 额度申请提交
+     *
+     * @param verifyNo
+     * @param payPasswd
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/edApply", method = RequestMethod.GET)
+    public Map<String, Object> edApply(@RequestParam(value = "verifyNo") String verifyNo,
+                                       @RequestParam(value = "password") String payPasswd) {
+        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNO());
+    }
+
+
+    /**
+     * 查询贷款详情
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryLoanDetailInfo", method = RequestMethod.GET)
+    public Map<String, Object> queryLoanDetailInfo() {
+        return payPasswdService.queryLoanDetailInfo(super.getToken());
+    }
+
 
 }

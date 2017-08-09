@@ -18,9 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * request interceptor.
  * <p>
- * 拦截所有带有@RequestCheck注解的方法，获取请求参数中的userId，
- * 根据userId获取用户token，与请求中的token进行比较，如果不相同，
- * 则认定为非法请求，返回错误。
+ *     统一处理请求方channel与channel_no，便于控制层与service层获取使用.
  * </p>
  *
  * @author liu qingxiang
@@ -49,7 +47,6 @@ public class RequestInterceptor {
         BaseController controller = (BaseController) target;
         //初始化数据,如果扩展 rcData 数据,在此添加
         if (!rcData.isInited()) {
-            HttpServletRequest request = rc.getRequest();
             this.initChannel(rc);
             rcData.completeInit();//完成初始化
         }
@@ -68,9 +65,9 @@ public class RequestInterceptor {
         String channel = request.getHeader("channel");
         String channelNo = request.getHeader("channel_no");
         if (StringUtils.isEmpty(channel))
-            channel = "04";
-        if (StringUtils.isEmpty(channelNo))
-            channelNo = "05";
+            channel = "11";
+        /*if (StringUtils.isEmpty(channelNo))
+            channelNo = "05";*/
         rc.getData().initChannel(channel, channelNo);
     }
 

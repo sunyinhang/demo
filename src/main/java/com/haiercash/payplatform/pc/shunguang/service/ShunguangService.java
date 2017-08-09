@@ -1,12 +1,20 @@
 package com.haiercash.payplatform.pc.shunguang.service;
 
-import org.springframework.web.bind.annotation.RequestBody;
-
 import java.util.Map;
 
 /**
- * Created by yuanli on 2017/8/7.
+ * shunguang service interface.
+ * @author yuan li
+ * @since v1.0.1
  */
 public interface ShunguangService {
-    public Map<String, Object> edApply(Map<String, Object> map) throws Exception;
+
+    // todo 对接口功能以及参数进行注解
+    /**
+     * 额度申请.
+     * @param map
+     * @return Map
+     * @throws Exception
+     */
+    Map<String, Object> edApply(Map<String, Object> map) throws Exception;
 }

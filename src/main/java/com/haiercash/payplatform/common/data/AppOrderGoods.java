@@ -1,15 +1,9 @@
 package com.haiercash.payplatform.common.data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Arrays;
 
-@Entity
-@Table(name = "APP_ORDER_GOODS")
 public class AppOrderGoods {
-	@Id
 	private String seqNo;// 商品流水号
 	private String orderNo;// 订单号
 	private String goodsCode;// 商品代码
