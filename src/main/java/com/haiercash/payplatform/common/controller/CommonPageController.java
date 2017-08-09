@@ -230,6 +230,18 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> edApply(@RequestParam(value = "verifyNo") String verifyNo,
                                        @RequestParam(value = "password") String payPasswd) {
         return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNO());
-
     }
+
+
+    /**
+     * 查询贷款详情
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryLoanDetailInfo", method = RequestMethod.GET)
+    public Map<String, Object> queryLoanDetailInfo() {
+        return payPasswdService.queryLoanDetailInfo(super.getToken());
+    }
+
+
 }
