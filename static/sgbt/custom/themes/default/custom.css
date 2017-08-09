@@ -69,6 +69,9 @@
     background: url('images/camera.png') no-repeat center center;
     background-size: 50%;
 }
+.bv-form.form-align-left .item-title {
+    text-align: left;
+}
 .bv-form.form-align-right .item-title {
     text-align: left;
 }

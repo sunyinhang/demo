@@ -1,0 +1,50 @@
+<div class="bv-align-center" data-container="byRembPayPsd">
+	<component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</div>
+<script type="text/javascript">
+	require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+		var vm = util.bind({
+			container: 'byRembPayPsd',
+			data: {
+				tags: {
+					formKey: 'byRembPayPsdForm'
+				},
+				entity: {},
+				formConfig: {
+					layout: 'inline',
+					columns: [
+						{
+							head: '输入原密码',
+							name: 'payPassword',
+							config: {
+								type: 'password',
+								attr: {
+									placeholder: '6-20位字母，数字，符号组合'
+								},
+								validate: {
+									required: '密码不能为空'
+								}
+							}
+						}
+					],
+					operates: [
+						{
+							text: '下一步',
+							clazz: 'primary',
+							click: function (event, editType, entity) {
+								util.cache({
+									payPasswd: entity.payPassword
+								});
+								util.redirect({
+									title: '设置支付密码',
+									url: '/getPayPsd/reset_rembPayPsd.html',
+									back: false
+								});
+							}
+						}
+					]
+				}
+			}
+		});
+	});
+</script>
