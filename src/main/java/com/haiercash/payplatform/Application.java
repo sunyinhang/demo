@@ -1,6 +1,7 @@
 package com.haiercash.payplatform;
 
 import com.haiercash.commons.properties.RestProfileProperties;
+import com.haiercash.payplatform.common.config.EurekaServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,7 +33,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 @Configuration
 @EnableAutoConfiguration
-@EnableConfigurationProperties({RestProfileProperties.class})
+@EnableConfigurationProperties({RestProfileProperties.class, EurekaServer.class})
 public class Application extends SpringBootServletInitializer {
     @LoadBalanced
     @Bean

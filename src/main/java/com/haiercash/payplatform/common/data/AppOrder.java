@@ -3,19 +3,11 @@ package com.haiercash.payplatform.common.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Entity
-@Table(name = "APP_ORDER")
-@Cacheable(false)
 public class AppOrder {
-	@Id
 	private String orderNo;// 订单1号
 	private String applseq;// 申请流水号（为防混淆废弃，但不能删）
 	private String idTyp;// 客户证件类型
