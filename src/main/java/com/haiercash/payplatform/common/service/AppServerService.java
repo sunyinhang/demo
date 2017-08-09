@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.service;
+package com.haiercash.payplatform.common.service;
 
 import java.util.Map;
 

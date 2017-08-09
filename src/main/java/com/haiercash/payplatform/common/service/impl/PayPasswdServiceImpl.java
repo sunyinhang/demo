@@ -1,29 +1,23 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.commons.util.StringUtil;
+import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.util.EncryptUtil;
+import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.PayPasswdService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
-import com.haiercash.commons.util.EncryptUtil;
-import com.haiercash.payplatform.common.utils.HttpUtil;
-import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import com.haiercash.commons.redis.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.haiercash.payplatform.common.utils.RestUtil.fail;
-import static com.haiercash.payplatform.common.utils.RestUtil.success;
 
 
 /**

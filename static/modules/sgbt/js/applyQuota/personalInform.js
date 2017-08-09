@@ -23,7 +23,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect','msPhot
 		data: function(code) {
 			var result = [];
 			util.post({
-				url: 'getAreaServlet.do',
+				url: 'getAreaServlet',
 				data: !util.isEmpty(code) ? {areaCode: code} : '',
 				async: false,
 				cache: true,
@@ -42,7 +42,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect','msPhot
 		data: function(code) {
 			var result = [];
 			util.post({
-				url: 'getAreaServlet.do',
+				url: 'getAreaServlet',
 				data: !util.isEmpty(code) ? {areaCode: code} : '',
 				async: false,
 				cache: true,
