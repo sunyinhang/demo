@@ -9,6 +9,13 @@ import java.util.Map;
  */
 public interface ShunguangService {
 
+    /**
+     * 保存微店主信息.
+     * @param storeInfo
+     * @return Map
+     */
+    Map<String, Object> saveStoreInfo (Map<String, Object> storeInfo);
+
     // todo 对接口功能以及参数进行注解
     /**
      * 额度申请.
@@ -17,4 +24,5 @@ public interface ShunguangService {
      * @throws Exception
      */
     Map<String, Object> edApply(Map<String, Object> map) throws Exception;
+
 }
