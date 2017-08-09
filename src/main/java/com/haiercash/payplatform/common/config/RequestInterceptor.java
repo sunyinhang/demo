@@ -64,9 +64,9 @@ public class RequestInterceptor {
         HttpServletRequest request = rc.getRequest();
         String channel = request.getHeader("channel");
         String channelNo = request.getHeader("channel_no");
-        /*if (StringUtils.isEmpty(channel))
-            channel = "04";
-        if (StringUtils.isEmpty(channelNo))
+        if (StringUtils.isEmpty(channel))
+            channel = "11";
+        /*if (StringUtils.isEmpty(channelNo))
             channelNo = "05";*/
         rc.getData().initChannel(channel, channelNo);
     }
