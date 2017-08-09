@@ -1,7 +1,7 @@
-package com.haiercash.payplatform.service.impl;
+package com.haiercash.payplatform.common.service.impl;
 
 import com.haiercash.payplatform.common.utils.HttpUtil;
-import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
