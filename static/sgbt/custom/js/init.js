@@ -23,10 +23,16 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation'],
         return;
     }*/
     util.init();
+    Const.global.root = util.bind({
+        container: 'root',
+        data: {}
+    });
 
     var path = util.path();
+    var isDefault = false;
     if (util.isEmpty(path) || path === '/' || path === '/index.html') {
         path = '/applyQuota/checkIdCard.html';
+        isDefault = true;
     }
     window.addEventListener("popstate", function() {
         if (!history.state || history.state.back === undefined) {
@@ -110,7 +116,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation'],
     });
 
     util.redirect({
-        title: '实名绑卡',
+        title: isDefault ? '实名绑卡' : '',
         url: path,
         back: false
     });
