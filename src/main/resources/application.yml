@@ -13,6 +13,10 @@ spring:
   redis:
     host: 10.164.194.123
     port: 10001
+    pool:
+      max-idle: 100
+      min-idle: 10
+      max-active: 1000
   http.converters.preferred-json-mapper: fastjson
 redis:
   single:
@@ -25,8 +29,8 @@ redis:
   pool:
     maxWaitMillis: -1
     maxTotal: 1000
-    maxIdle: 9
-    minIdle: 100
+    maxIdle: 100
+    minIdle: 10
 datasources:
   payplatform:
     datasource:

@@ -88,7 +88,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> custBody = (Map<String, Object>) custInfo.get("body");
 
         Map<String, Object> requestParams = new HashMap<>();
-        requestParams.put("channelno", super.getChannelNo());
+        requestParams.put("channelno", info.get("channelNo"));
         requestParams.put("applseq", null);
         requestParams.put("cardnumber", custBody.get("certNo"));
         requestParams.put("data", new JSONObject(params));
