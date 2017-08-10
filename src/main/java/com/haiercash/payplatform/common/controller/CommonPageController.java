@@ -142,8 +142,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/resetPayPasswd", method = RequestMethod.POST)
-    public Map<String, Object> resetPayPasswd(@RequestBody Map<String,Object> map) {
-        return payPasswdService.resetPayPasswd(super.getToken(), super.getChannelNo(), super.getChannel(),map);
+    public Map<String, Object> resetPayPasswd(@RequestBody Map<String, Object> map) {
+        return payPasswdService.resetPayPasswd(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
     /**
@@ -153,7 +153,7 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/treatyShow", method = RequestMethod.POST)
-    public Map<String, Object> treatyShow(@RequestBody Map<String,Object> params) throws Exception {
+    public Map<String, Object> treatyShow(@RequestBody Map<String, Object> params) throws Exception {
         return ocrIdentityService.treatyShowServlet(super.getToken(), params);
     }
 
@@ -183,14 +183,12 @@ public class CommonPageController extends BaseController {
     /**
      * 修改支付密码（记得支付密码）
      *
-     * @param oldpassword
-     * @param newpassword
+     * @param params
      * @return
      */
-    @RequestMapping(value = "/api/payment/updatePayPasswd", method = RequestMethod.GET)
-    public Map<String, Object> updatePayPasswd(@RequestParam(value = "oldpassword") String oldpassword,
-                                               @RequestParam(value = "newpassword") String newpassword) {
-        return payPasswdService.updatePayPasswd(super.getToken(), oldpassword, newpassword, super.getChannel(), super.getChannelNo());
+    @RequestMapping(value = "/api/payment/updatePayPasswd", method = RequestMethod.POST)
+    public Map<String, Object> updatePayPasswd(@RequestBody Map<String, Object> params) {
+        return payPasswdService.updatePayPasswd(super.getToken(), params, super.getChannel(), super.getChannelNo());
     }
 
     /**
@@ -212,7 +210,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/paymentPwdConfirm", method = RequestMethod.GET)
     public Map<String, Object> paymentPwdConfirm(@RequestParam(value = "payPasswd") String payPasswd) {
-        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNO(), payPasswd);
+        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNo(), payPasswd);
     }
 
 
@@ -226,7 +224,7 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/edApply", method = RequestMethod.GET)
     public Map<String, Object> edApply(@RequestParam(value = "verifyNo") String verifyNo,
                                        @RequestParam(value = "password") String payPasswd) {
-        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNO());
+        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNo());
     }
 
 
@@ -248,7 +246,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApplListBySeq", method = RequestMethod.GET)
     public Map<String, Object> queryApplListBySeq() {
-        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNO());
+        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
 
@@ -279,7 +277,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApprovalProcessInfo", method = RequestMethod.GET)
     public Map<String, Object> queryApprProcessByCust() {
-        return payPasswdService.approvalProcessInfo(super.getToken(),super.getChannel(),super.getChannelNO());
+        return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
 }
