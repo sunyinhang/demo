@@ -64,7 +64,16 @@ public interface AppServerService {
     public String getEdCheck(String token,Map<String, Object> paramMap);
     //(GET)根据流水号查询额度审批进度
     public String approvalProcessInfo(String token, Map<String, Object> paramMap);
-
-
-
+    //3.4.20.	(GET) 根据集团用户ID查询用户信息
+    public String queryHaierUserInfo(String params);
+    //3.4.21.	(POST)集团用户注册统一认证账户
+    public Map<String,Object> saveUauthUsersByHaier(Map<String,Object> params);
+    //6.1.124.	(POST)保存第三方系统token
+    public Map<String,Object> saveThirdPartToken(Map<String,Object> params);
+    //3.1.29.	(GET)查询客户实名认证信息（根据USERID）(APP_PERSON)(CRM17)
+    public Map<String,Object> queryPerCustInfo(String token,Map<String, Object> paramMap);
+    //6.1.102.	(GET)额度申请校验
+    public Map<String,Object> checkEdAppl(String token,Map<String, Object> paramMap);
+    //3.4.22.	(POST) 验证并绑定集团用户（已绑定的不可用）
+    public Map<String,Object> validateAndBindHaierUser(String token,Map<String, Object> paramMap);
 }
