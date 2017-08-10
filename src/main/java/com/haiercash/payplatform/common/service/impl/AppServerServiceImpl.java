@@ -406,14 +406,86 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("主动还款金额查询接口返回数据：" + checkZdhkMoneymap);
         return checkZdhkMoneymap;
     }
+
     // 3.1.16.(GET)额度查询
-    public String getEdCheck(String token,Map<String, Object> paramMap){
+    public String getEdCheck(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/getEdCheck";
         logger.info("额度查询接口请求地址：" + url);
         logger.info("额度查询接口请求参数：" + paramMap);
         String edCheckmap = HttpUtil.restGetMap(url, token, paramMap).toString();
         logger.info("额度查询接口返回数据：" + edCheckmap);
         return edCheckmap;
+    }
+
+    //(GET)根据流水号查询额度审批进度
+    public String approvalProcessInfo(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/cmis/approvalProcessBySeq";
+        logger.info("根据流水号查询额度审批进度接口请求地址：" + url);
+        logger.info("根据流水号查询额度审批进度接口请求参数：" + paramMap);
+        String approvalProcessInfomap = HttpUtil.restGetMap(url, token, paramMap).toString();
+        logger.info("根据流水号查询额度审批进度接口返回数据：" + approvalProcessInfomap);
+        return approvalProcessInfomap;
+
+    }
+
+    //根据集团用户ID查询用户信息
+    public String queryHaierUserInfo(String params) {
+        String url = appservernoauth + "/app/appserver/uauth/queryHaierUserInfo?externUid=" + params;
+        logger.info("根据集团用户ID查询用户信息接口，请求地址：" + url);
+        logger.info("根据集团用户ID查询用户信息接口，请求数据：" + params);
+        String result = HttpUtil.restGet(url);
+        logger.info("根据集团用户ID查询用户信息接口，返回数据" + result);
+        return result;
+    }
+
+    //3.4.21.	(POST)集团用户注册统一认证账户
+    public Map<String, Object> saveUauthUsersByHaier(Map<String, Object> params) {
+        String url = appservernoauth + "/app/appserver/uauth/saveUauthUsersByHaier";
+        logger.info("集团用户注册统一认证账户接口, 请求地址：" + url);
+        logger.info("集团用户注册统一认证账户接口, 请求数据：" + params);
+        Map<String, Object> result = HttpUtil.restPostMap(url, params);
+        logger.info("集团用户注册统一认证账户接口, 返回数据：" + result);
+        return result;
+    }
+
+    //6.1.124.	(POST)保存第三方系统token
+    public Map<String, Object> saveThirdPartToken(Map<String, Object> params) {
+        String url = appservernoauth + "/app/appserver/saveThirdPartToken";
+        logger.info("保存第三方系统token接口, 请求地址：" + url);
+        logger.info("保存第三方系统token接口, 请求数据：" + params);
+        Map<String, Object> result = HttpUtil.restPostMap(url, params);
+        logger.info("保存第三方系统token接口, 返回数据：" + result);
+        return result;
+    }
+
+    //3.1.29.	(GET)查询客户实名认证信息（根据USERID）(APP_PERSON)(CRM17)
+    public Map<String, Object> queryPerCustInfo(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/crm/cust/queryPerCustInfo";
+        logger.info("查询客户实名认证信息（根据USERID）接口，请求地址：" + url);
+        logger.info("查询客户实名认证信息（根据USERID）接口，请求数据：" + paramMap);
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("查询客户实名认证信息（根据USERID）接口，返回数据" + resultmap);
+        return resultmap;
+    }
+
+    //6.1.102.	(GET)额度申请校验
+    public Map<String, Object> checkEdAppl(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/validate/checkEdAppl";
+        logger.info("额度申请校验接口，请求地址：" + url);
+        logger.info("额度申请校验接口，请求数据：" + paramMap);
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("额度申请校验接口，返回数据" + resultmap);
+        return resultmap;
+    }
+
+    //3.4.22.	(POST) 验证并绑定集团用户（已绑定的不可用）
+    public Map<String, Object> validateAndBindHaierUser(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "app/appserver/uauth/validateAndBindHaierUser";
+        logger.info(" 验证并绑定集团用户接口, 请求地址：" + url);
+        logger.info(" 验证并绑定集团用户接口, 请求数据：" + paramMap);
+        Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
+        logger.info(" 验证并绑定集团用户接口, 返回数据：" + result);
+        return result;
     }
 
 }

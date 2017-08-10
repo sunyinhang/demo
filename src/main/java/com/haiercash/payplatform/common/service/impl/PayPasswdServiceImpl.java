@@ -207,27 +207,33 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //页面缓存
-    public Map<String, Object> cache(HttpServletRequest request) {
+    public Map<String, Object> cache(Map<String, Object> params, HttpServletRequest request) {
         String token = request.getHeader("token");
         if (token == null || "".equals(token)) {
             logger.info("token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         Map<String, Object> retMap = null;
-        String params = request.getParameter("params");
-        if (params != null) {
-            String[] paramArr = params.split(",");
-            String type = request.getParameter("type");
+        String paramNames = (String) params.get("params");
+        if (paramNames != null) {
+            String[] paramArr = paramNames.split(",");
+            String type = (String) params.get("type");
             if (type == null || type.equals("get")) {
                 retMap = new HashMap<String, Object>();
                 Map<String, Object> sessionMap = (Map<String, Object>) cache.get(token);
+                if (sessionMap == null) {
+                    return success();
+                }
                 for (String param : paramArr) {
                     retMap.put(param, sessionMap.get(param));
                 }
             } else if (type.equals("set")) {
                 retMap = (Map<String, Object>) cache.get(token);
+                if (retMap == null) {
+                    retMap = new HashMap<>();
+                }
                 for (String param : paramArr) {
-                    retMap.put(param, request.getParameter(param));
+                    retMap.put(param, (String) params.get(param));
                 }
                 cache.set(token, retMap);
                 return success();
@@ -852,6 +858,45 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return success(jb);
         } else {
             return success(limit);
+        }
+    }
+
+    //根据流水号查询额度审批进度
+    public Map<String, Object> approvalProcessInfo(String token, String channel, String channelNo) {
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cacheMap = cache.get(token);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Jedis为空：" + cacheMap);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String applSeq = (String) cacheMap.get("applSeq");//申请流水号
+        if (StringUtils.isEmpty(applSeq)) {
+            logger.info("从Jedis中获取的数据为空：applSeq=" + applSeq);
+            String retmsg = "从Jedis中获取的数据为空";
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("applSeq", applSeq);
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        logger.info("根据流水号查询额度审批进度,请求参数：" + paramMap);
+        String result = appServerService.approvalProcessInfo(token, paramMap);
+        if (StringUtils.isEmpty(result)) {
+            logger.info("根据流水号查询额度审批进度返回参数为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        JSONObject jsonObject = new JSONObject(result);
+        JSONObject head = jsonObject.getJSONObject("head");
+        String flag = (String) head.get("retFlag");
+        String retMsg = (String) head.get("retMsg");
+        if (!"0000".equals(flag)) {
+            return fail(flag, retMsg);
+        } else {
+            JSONObject body = jsonObject.getJSONObject("body");
+            return success(body);
         }
     }
 }

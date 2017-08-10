@@ -16,9 +16,8 @@ public interface ShunguangService {
      */
     Map<String, Object> saveStoreInfo (Map<String, Object> storeInfo);
 
-    // todo 对接口功能以及参数进行注解
     /**
-     * 额度申请.
+     * 白条额度申请接口
      * @param map
      * @return Map
      * @throws Exception

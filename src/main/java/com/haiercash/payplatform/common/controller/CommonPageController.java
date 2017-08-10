@@ -179,8 +179,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/cache", method = RequestMethod.POST)
-    public Map<String, Object> cache(@RequestBody HttpServletRequest request) {
-        return payPasswdService.cache(request);
+    public Map<String, Object> cache(@RequestBody Map<String, Object> params, HttpServletRequest request) {
+        return payPasswdService.cache(params, request);
     }
 
     /**
@@ -275,5 +275,14 @@ public class CommonPageController extends BaseController {
         return payPasswdService.edCheck(super.getToken());
     }
 
+    /**
+     * 根据流水号查询额度审批进度
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryApprovalProcessInfo", method = RequestMethod.GET)
+    public Map<String, Object> queryApprProcessByCust() {
+        return payPasswdService.approvalProcessInfo(super.getToken(),super.getChannel(),super.getChannelNO());
+    }
 
 }
