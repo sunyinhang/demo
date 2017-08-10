@@ -406,14 +406,26 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("主动还款金额查询接口返回数据：" + checkZdhkMoneymap);
         return checkZdhkMoneymap;
     }
+
     // 3.1.16.(GET)额度查询
-    public String getEdCheck(String token,Map<String, Object> paramMap){
+    public String getEdCheck(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/getEdCheck";
         logger.info("额度查询接口请求地址：" + url);
         logger.info("额度查询接口请求参数：" + paramMap);
         String edCheckmap = HttpUtil.restGetMap(url, token, paramMap).toString();
         logger.info("额度查询接口返回数据：" + edCheckmap);
         return edCheckmap;
+    }
+
+    //(GET)根据流水号查询额度审批进度
+    public String approvalProcessInfo(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/cmis/approvalProcessBySeq";
+        logger.info("根据流水号查询额度审批进度接口请求地址：" + url);
+        logger.info("根据流水号查询额度审批进度接口请求参数：" + paramMap);
+        String approvalProcessInfomap = HttpUtil.restGetMap(url, token, paramMap).toString();
+        logger.info("根据流水号查询额度审批进度接口返回数据：" + approvalProcessInfomap);
+        return approvalProcessInfomap;
+
     }
 
 }

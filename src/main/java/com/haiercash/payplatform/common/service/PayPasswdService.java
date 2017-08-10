@@ -38,6 +38,9 @@ public interface PayPasswdService {
     //查询额度
     public Map<String, Object> edCheck(String token);
 
+    //根据流水号查询额度审批进度
+   public Map<String,Object> approvalProcessInfo(String token, String channel, String channelNo);
+
 
 }
 
