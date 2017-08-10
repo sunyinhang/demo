@@ -15,6 +15,7 @@ public final class RequestContextData {
     private boolean inited;
     private String channel;
     private String channelNo;
+    private String token;
     private boolean needVerify;
     private boolean executedVerify;
     private Stack<BaseController> controllerStack = new Stack<>();
@@ -36,6 +37,8 @@ public final class RequestContextData {
     public String getChannelNo() {
         return channelNo;
     }
+
+    public String getToken() {return token;}
 
     public boolean isNeedVerify() {
         return needVerify;
@@ -74,6 +77,10 @@ public final class RequestContextData {
 //        Assert.notNull(channelNo, "channelNo can not be null");
         this.channel = channel;
         this.channelNo = channelNo;
+    }
+
+    public void initToken(String token) {
+        this.token = token;
     }
 
     public void completeInit() {

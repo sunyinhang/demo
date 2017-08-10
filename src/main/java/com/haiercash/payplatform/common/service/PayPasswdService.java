@@ -15,7 +15,7 @@ public interface PayPasswdService {
     public Map<String, Object> cache(Map<String, Object> params, HttpServletRequest request);
 
     //修改支付密码（记得支付密码）
-    public Map<String, Object> updatePayPasswd(String token, String oldpassword, String newpassword, String channel, String channelNO);
+    public Map<String, Object> updatePayPasswd(String token, Map<String,Object> params, String channel, String channelNo);
 
     //实名认证找回密码
     public Map<String, Object> updPwdByIdentity(HttpServletRequest request);

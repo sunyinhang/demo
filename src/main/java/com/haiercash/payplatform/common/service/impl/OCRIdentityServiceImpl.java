@@ -521,11 +521,12 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
      * 协议展示：(1)展示注册协议(2)个人征信(3)借款合同
      *
      * @param token
-     * @param flag
+     * @param params
      * @return
      */
-    public Map<String, Object> treatyShowServlet(String token, String flag) throws Exception {
+    public Map<String, Object> treatyShowServlet(String token, Map<String,Object> params) throws Exception {
         String realmName = null;
+        String flag = (String) params.get("flag");
         HashMap<String, Object> map = new HashMap<>();
         if (StringUtils.isEmpty(token)) {
             logger.info("从前端获取的token：" + token);

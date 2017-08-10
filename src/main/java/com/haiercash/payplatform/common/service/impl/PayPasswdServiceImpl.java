@@ -70,7 +70,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             Map<String, Object> paramsMap = new HashMap<String, Object>();
             paramsMap.put("userId", EncryptUtil.simpleEncrypt(userId));
             paramsMap.put("payPasswd", EncryptUtil.simpleEncrypt(payPasswd));
-            paramsMap.put("token", token);
+            paramsMap.put("channel", channel);
+            paramsMap.put("channelNo", channelNo);
             paramsMap.put("access_token", token);
             String result = appServerService.resetPayPasswd(token, paramsMap).toString();
             if (StringUtils.isEmpty(result)) {
@@ -244,7 +245,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //修改支付密码（记得支付密码）
-    public Map<String, Object> updatePayPasswd(String token, String oldpassword, String newpassword, String channel, String channelNo) {
+    public Map<String, Object> updatePayPasswd(String token, Map<String,Object> params, String channel, String channelNo) {
+        String oldpassword = (String) params.get("oldpassword");//旧密码
+        String newpassword = (String) params.get("newpassword");//新密码
         if (token == null || "".equals(token)) {
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
