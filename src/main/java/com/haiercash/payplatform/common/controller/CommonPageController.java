@@ -212,7 +212,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/paymentPwdConfirm", method = RequestMethod.GET)
     public Map<String, Object> paymentPwdConfirm(@RequestParam(value = "payPasswd") String payPasswd) {
-        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNO(), payPasswd);
+        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNo(), payPasswd);
     }
 
 
@@ -226,7 +226,7 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/edApply", method = RequestMethod.GET)
     public Map<String, Object> edApply(@RequestParam(value = "verifyNo") String verifyNo,
                                        @RequestParam(value = "password") String payPasswd) {
-        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNO());
+        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNo());
     }
 
 
@@ -248,7 +248,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApplListBySeq", method = RequestMethod.GET)
     public Map<String, Object> queryApplListBySeq() {
-        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNO());
+        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
 
@@ -279,7 +279,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApprovalProcessInfo", method = RequestMethod.GET)
     public Map<String, Object> queryApprProcessByCust() {
-        return payPasswdService.approvalProcessInfo(super.getToken(),super.getChannel(),super.getChannelNO());
+        return payPasswdService.approvalProcessInfo(super.getToken(),super.getChannel(),super.getChannelNo());
     }
 
 }
