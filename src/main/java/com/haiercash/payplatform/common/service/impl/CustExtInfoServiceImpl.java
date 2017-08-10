@@ -95,10 +95,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             resultJson.put("docCde",docCde);//影像代码
             resultJson.put("docDesc",docDesc);//影像名称
             resultJson.put("urlList",resultList_);//地址List
+            resultList.add(resultJson);
         }
-        pLoanTypImagesMap.get("body");
-
-        return null;
+        resultMap.put("CustExtInfoMap",allCustExtInfo);
+        resultMap.put("docList",resultList);
+        return resultMap;
     }
 
     private  boolean ifError(JSONObject jsonObject){
