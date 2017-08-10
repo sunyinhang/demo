@@ -70,9 +70,6 @@ public class ShunguangController extends BaseController {
         if (StringUtils.isEmpty(map.get("applyNo"))) {
             return fail(ConstUtil.ERROR_CODE, "交易流水号(applyNo)不能为空");
         }
-        if (StringUtils.isEmpty(map.get("channleNo"))) {
-            return fail(ConstUtil.ERROR_CODE, "交易渠道(channleNo)不能为空");
-        }
         if (StringUtils.isEmpty(map.get("tradeCode"))) {
             return fail(ConstUtil.ERROR_CODE, "交易编码(tradeCode)不能为空");
         }
