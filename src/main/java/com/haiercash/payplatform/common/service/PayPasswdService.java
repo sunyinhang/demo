@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface PayPasswdService {
     //支付密码设置
-    public Map<String, Object> resetPayPasswd(String token, String payPasswd, String verifyNo, String channelNo, String channel);
+    public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel,Map<String,Object> map);
 
     //页面缓存
     public Map<String, Object> cache(Map<String, Object> params, HttpServletRequest request);

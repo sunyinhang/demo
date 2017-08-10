@@ -139,14 +139,11 @@ public class CommonPageController extends BaseController {
     /**
      * 支付密码设置
      *
-     * @param payPasswd
-     * @param verifyNo
      * @return
      */
-    @RequestMapping(value = "/api/payment/resetPayPasswd", method = RequestMethod.GET)
-    public Map<String, Object> resetPayPasswd(@RequestParam(value = "payPasswd") String payPasswd,
-                                              @RequestParam(value = "verifyNo") String verifyNo) {
-        return payPasswdService.resetPayPasswd(super.getToken(), payPasswd, verifyNo, super.getChannelNo(), super.getChannel());
+    @RequestMapping(value = "/api/payment/resetPayPasswd", method = RequestMethod.POST)
+    public Map<String, Object> resetPayPasswd(@RequestBody Map<String,Object> map) {
+        return payPasswdService.resetPayPasswd(super.getToken(), super.getChannelNo(), super.getChannel(),map);
     }
 
     /**
