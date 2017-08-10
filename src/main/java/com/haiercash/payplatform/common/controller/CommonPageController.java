@@ -255,14 +255,24 @@ public class CommonPageController extends BaseController {
     }
 
 
-
     /**
      * 贷款详情页面:还款总额
+     *
      * @return
      */
-    @RequestMapping(value = "/api/payment/queryApplAmtBySeqAndOrederNo",method = RequestMethod.GET)
+    @RequestMapping(value = "/api/payment/queryApplAmtBySeqAndOrederNo", method = RequestMethod.GET)
     public Map<String, Object> queryApplAmtBySeqAndOrederNo() {
-        return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(),super.getChannel(),super.getChannelNo());
+        return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
+
+
+    /**
+     * 查询额度
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/edCheck",method = RequestMethod.GET)
+    public Map<String, Object> edCheck() {
+        return payPasswdService.edCheck(super.getToken());
+    }
 }

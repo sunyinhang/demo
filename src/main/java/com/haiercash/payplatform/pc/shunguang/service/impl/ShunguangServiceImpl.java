@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.Base64Utils;
 import com.haiercash.payplatform.common.utils.ConstUtil;
@@ -10,6 +11,7 @@ import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.common.utils.RSAUtils;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.BaseService;
+import com.netflix.ribbon.proxy.annotation.Http;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -33,10 +35,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private HaierDataService haierDataService;
+    @Autowired
+    private CrmService crmService;
 
     @Override
     public Map<String, Object> saveStoreInfo(Map<String, Object> storeInfo) {
-        String storeId = (String) storeInfo.get("storeId");
+        String userId = (String) storeInfo.get("userId");
         String data = (String) storeInfo.get("data");
 
         String params;
@@ -47,10 +51,19 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail("01", "请求数据校验失败");
         }
 
+        // 获取实名认证信息
+        Map<String, Object> custInfo = crmService.queryPerCustInfoByUserId(userId);
+        if (!HttpUtil.isSuccess(custInfo)) {
+            return custInfo;
+        }
+        logger.info("用户" + userId + "实名信息:" + custInfo);
+
+        Map<String, Object> custBody = (Map<String, Object>) custInfo.get("body");
+
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("channelno", super.getChannelNo());
         requestParams.put("applseq", null);
-        requestParams.put("cardnumber", null);
+        requestParams.put("cardnumber", custBody.get("certNo"));
         requestParams.put("data", new JSONObject(params));
         Map<String, Object> result = HttpUtil
                 .restPostMap(this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData", requestParams);

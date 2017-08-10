@@ -751,7 +751,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                                 checkZdhkMoney.put("LOAN_NO", loanNo);
                                 checkZdhkMoney.put("PAYM_MODE", PAYM_MODE);
                                 checkZdhkMoney.put("ACTV_PAY_AMT", ACTV_PAY_AMT);
-                                String resTwo = appServerService.checkZdhkMoney(token,checkZdhkMoney);// 主动还款金额查询
+                                String resTwo = appServerService.checkZdhkMoney(token, checkZdhkMoney);// 主动还款金额查询
                                 logger.info("主动还款金额查询接口，响应数据：" + resTwo);
                                 if (StringUtils.isEmpty(resTwo)) {
                                     logger.info("网络异常，app后台,主动还款金额查询接口,响应数据为空！" + resTwo);
@@ -765,8 +765,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                                     JSONObject jsonTwoBody = jsonTwo.getJSONObject("body");
                                     String zdhkFee = jsonTwoBody.getString("zdhkFee");
                                     if (zdhkFee == null || "".equals(zdhkFee)) {
-                                        logger.info("网络异常，app后台,主动还款金额查询接口,主动还款金额为空！"+zdhkFee);
-                                        return fail(ConstUtil.ERROR_CODE,ConstUtil.FAILED_INFO);
+                                        logger.info("网络异常，app后台,主动还款金额查询接口,主动还款金额为空！" + zdhkFee);
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
                                     }
                                     Map<String, Object> resTwoMap = new HashMap<String, Object>();
                                     resTwoMap.put("ze", zdhkFee);
@@ -799,6 +799,59 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             }
         } else {
             return fail(retflag, message);
+        }
+    }
+
+    //查询额度
+    public Map<String, Object> edCheck(String token) {
+        if (StringUtils.isEmpty(token)) {
+            logger.info("获取token失败token:" + token);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cacheMap = cache.get(token);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Jedis获取缓存失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String idNo = (String) cacheMap.get("idNo");
+        String channel = super.getChannel();//系统标识
+        String channelNo = super.getChannelNo();//渠道编码
+        String idTyp = "20";//证件类型  身份证：20
+        if (StringUtils.isEmpty(idNo) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("获取的数据为空：idNo=" + idNo + "  ,channel=" + channel + "  ,channelNO" + channelNo);
+            String retMsg = "获取的数据为空";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        HashMap<String, Object> edCheckmap = new HashMap<>();
+        edCheckmap.put("idNo", idNo);
+        edCheckmap.put("channel", channel);
+        edCheckmap.put("channelNo", channelNo);
+        edCheckmap.put("idTyp", idTyp);
+        String limit = appServerService.getEdCheck(token, edCheckmap);// 获取额度剩余额度=crdComAvailAnt+crdNorAvailAmt
+        if (StringUtils.isEmpty(limit)) {
+            logger.info("调用接口返回的数据为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        JSONObject jsonObject = new JSONObject(limit);
+        JSONObject head = jsonObject.getJSONObject("head");
+        String retFlag = (String) head.get("retFlag");
+        String retMsg = (String) head.get("retMsg");
+        if ("0000".equals(retFlag)) {
+            JSONObject limitRes = jsonObject.getJSONObject("body");
+            double crdComAvailAnt = limitRes.getDouble("crdComAvailAnt");// 剩余额度（受托支付可用额度金额）
+            double crdNorAvailAmt = limitRes.getDouble("crdNorAvailAmt");// 自主支付可用额度金额(现金)
+            double crdAmt = limitRes.getDouble("crdAmt");// 总额度
+            double crdComAmt = limitRes.getDouble("crdComAmt");
+            // crdComAvailAntSum = crdComAvailAnt+crdNorAvailAmt;可用额度
+            JSONObject jb = new JSONObject();
+            jb.put("crdComAvailAnt", crdComAvailAnt);
+            jb.put("crdNorAvailAmt", crdNorAvailAmt);
+            jb.put("crdAmt", crdAmt);
+            jb.put("crdComAmt", crdComAmt);
+            // jb.put("crdComAvailAntSum", crdComAvailAntSum);
+            return success(jb);
+        } else {
+            return success(limit);
         }
     }
 }

@@ -6,6 +6,8 @@ package com.haiercash.payplatform.common.utils;
 public class ConstUtil {
     public static String APP_CODE = "P";
 
+    public static String ERROR_PARAM_INVALID_CODE = "91";
+    public static String ERROR_PARAM_INVALID_MSG = "参数无效";
     public static final String ERROR_CODE = "99";
     public static final String FAILED_INFO = "网络通讯异常";//页面数据判空
     public static final String ERROR_INFO = "网络通讯异常";//响应数据为空

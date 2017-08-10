@@ -142,8 +142,8 @@ a{cursor:pointer;}
 body{margin:0 auto;max-width:750px;}
 .amtSituTopPrnt{position: relative;margin:0 auto;width:100%;height:auto;}
 .amtNotBg{position:relative;margin:0px;padding:0px;width:100%;height:100%;background:#EDEEEE;}
-.btmBg{position: relative;margin:0 auto;width:100%;padding:0px;}
-.btmBg img{width:100%;}
+.btmBg{position: relative;margin:0 auto;width:100%;padding:0px; line-height:0;}
+.btmBg img{width:100%;border:none;}
 .cvgCont{position: absolute;top:0px;left:0px;width:100%;height:100%;z-index:99;}
 .amtNotTitle{width:100%;height:17%;display:table;color:#fff;text-align:center;font-size:.9rem;}
 .amtNotTitle span{display:table-cell; vertical-align:middle;}
@@ -176,8 +176,8 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 .cusContent{position:relative;margin:0 auto;width:100%;}
 .amountInfo{position:relative;margin:0 auto;padding-top:1.1rem;padding-bottom:1.1rem;width:100%;background:#fff;}
 .verLine{position:relative;float:left;width:50%;height:3.8rem;}
-.verLinebg{background:url(../images/amtSutiPoint.png) top right repeat-y;}
-.bill{position:relative;float:left;margin:0px;margin-left:2.2rem;cursor:pointer}
+.verLinebg{ background:url(images/amtSutiPoint.png) top right repeat-y;}
+.bill{position:relative;float:left;margin:0px; cursor:pointer}
 .bill li{text-align:left;}
 .bill li.li1{height:1.4rem;line-height:1.4rem;font-size:.85rem;color:#333;}
 .bill li.li2{height:1.1rem;line-height:1.1rem;font-size:.7rem;color:#999;}
@@ -210,7 +210,7 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     border-radius: 1.25rem;
     height: 2.5rem;
     line-height: 2.5rem;
-    margin-left: 0.7rem;
+    margin-left: 0.5rem;
     font-size: 0.7rem;
 }
 .form-sms.list-block .item-input.item-input-operate {

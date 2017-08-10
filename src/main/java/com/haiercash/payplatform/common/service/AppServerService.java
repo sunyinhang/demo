@@ -60,6 +60,8 @@ public interface AppServerService {
     public Map<String,Object> refundTrialAll(String token,Map<String, Object> paramMap);
     //7.4.(POST)主动还款金额查询
     public String checkZdhkMoney(String token,Map<String, Object> paramMap);
+   // 3.1.16.(GET)额度查询
+   public String getEdCheck(String token,Map<String, Object> paramMap);
 
 
 }
