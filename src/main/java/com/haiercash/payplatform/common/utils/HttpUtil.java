@@ -59,7 +59,7 @@ public class HttpUtil {
             }
 
             if(!StringUtils.isEmpty(map.get("channelNo"))) {
-                headers.add("channelNo", map.get("channelNo").toString());
+                headers.add("channel_no", map.get("channelNo").toString());
             }
 
             if(!StringUtils.isEmpty(map.get("source"))) {
