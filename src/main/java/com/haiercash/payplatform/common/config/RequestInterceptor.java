@@ -47,7 +47,7 @@ public class RequestInterceptor {
         BaseController controller = (BaseController) target;
         //初始化数据,如果扩展 rcData 数据,在此添加
         if (!rcData.isInited()) {
-            this.initChannel(rc);
+            this.initChannelAndToken(rc);
             rcData.completeInit();//完成初始化
         }
         //进入 controller
@@ -60,7 +60,7 @@ public class RequestInterceptor {
     }
 
     //初始化渠道
-    private void initChannel(RequestContext rc) {
+    private void initChannelAndToken(RequestContext rc) {
         HttpServletRequest request = rc.getRequest();
         String channel = request.getHeader("channel");
         String channelNo = request.getHeader("channelNo");

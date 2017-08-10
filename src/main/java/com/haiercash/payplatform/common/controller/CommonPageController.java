@@ -139,25 +139,22 @@ public class CommonPageController extends BaseController {
     /**
      * 支付密码设置
      *
-     * @param payPasswd
-     * @param verifyNo
      * @return
      */
-    @RequestMapping(value = "/api/payment/resetPayPasswd", method = RequestMethod.GET)
-    public Map<String, Object> resetPayPasswd(@RequestParam(value = "payPasswd") String payPasswd,
-                                              @RequestParam(value = "verifyNo") String verifyNo) {
-        return payPasswdService.resetPayPasswd(super.getToken(), payPasswd, verifyNo, super.getChannelNo(), super.getChannel());
+    @RequestMapping(value = "/api/payment/resetPayPasswd", method = RequestMethod.POST)
+    public Map<String, Object> resetPayPasswd(@RequestBody Map<String,Object> map) {
+        return payPasswdService.resetPayPasswd(super.getToken(), super.getChannelNo(), super.getChannel(),map);
     }
 
     /**
      * 协议展示：(1)展示注册协议(2)个人征信(3)借款合同
      *
-     * @param flag
+     * @param params
      * @return
      */
-    @RequestMapping(value = "/api/payment/treatyShow", method = RequestMethod.GET)
-    public Map<String, Object> treatyShow(@RequestParam(value = "flag") String flag) throws Exception {
-        return ocrIdentityService.treatyShowServlet(super.getToken(), flag);
+    @RequestMapping(value = "/api/payment/treatyShow", method = RequestMethod.POST)
+    public Map<String, Object> treatyShow(@RequestBody Map<String,Object> params) throws Exception {
+        return ocrIdentityService.treatyShowServlet(super.getToken(), params);
     }
 
 

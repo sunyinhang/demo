@@ -32,19 +32,20 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     @Autowired
     private AppServerService appServerService;
 
-    public Map<String, Object> resetPayPasswd(String token, String payPasswd, String verifyNo, String channelNo, String channel) {
+    public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("顺逛******额度提交接口******开始");
         String retflag = "";
         String retmsg = "";
-
+        String payPasswd = (String) param.get("payPasswd");//密码
+        String verifyNo = (String) param.get("verifyNo");//验证码
         if (StringUtils.isEmpty(token)) {
             logger.info("token:" + token);
             logger.info("从前端获取的的token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        if (StringUtils.isEmpty(payPasswd)) {
-            logger.info("payPasswd:" + payPasswd);
-            logger.info("从前端获取的支付密码为空");
+        if (StringUtils.isEmpty(payPasswd) || StringUtils.isEmpty(verifyNo)) {
+            logger.info("payPasswd:" + payPasswd+"verifyNo"+verifyNo);
+            logger.info("从前端获取的参数为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> cacheMap = cache.get(token);
@@ -69,7 +70,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             Map<String, Object> paramsMap = new HashMap<String, Object>();
             paramsMap.put("userId", EncryptUtil.simpleEncrypt(userId));
             paramsMap.put("payPasswd", EncryptUtil.simpleEncrypt(payPasswd));
-            paramsMap.put("token", token);
+            paramsMap.put("channel", channel);
+            paramsMap.put("channelNo", channelNo);
             paramsMap.put("access_token", token);
             String result = appServerService.resetPayPasswd(token, paramsMap).toString();
             if (StringUtils.isEmpty(result)) {
