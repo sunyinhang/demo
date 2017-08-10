@@ -21,7 +21,7 @@ public interface PayPasswdService {
     public Map<String, Object> updPwdByIdentity(HttpServletRequest request);
 
     //确认支付密码（额度申请）
-    public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, String payPasswd);
+    public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, Map<String,Object> map);
 
     //额度申请提交
     public Map<String, Object> edApply(String token, String verifyNo, String payPasswd, String channel, String channelNo);

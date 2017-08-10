@@ -54,8 +54,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String userId = (String) cacheMap.get("userId");
-        String flag = (String) cacheMap.get("payPasswdFlag");
-        String orderNo = (String) cacheMap.get("orderNo");
+        String flag = (String) cacheMap.get("payPasswdFlag");//空
+        String orderNo = (String) cacheMap.get("orderNo");//空
         String custNo = (String) cacheMap.get("custNo");// 客户号
         if (StringUtils.isEmpty(custNo)) {
             logger.info("custNo:" + custNo);
@@ -63,7 +63,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
-
         String n = "3";// 签订注册 + 征信
         if ("0".equals(flag)) {//0  密码未设置
             logger.info("支付密码未设置，进行密码的设置");
@@ -105,7 +104,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             retflag = jb.getString("retFlag");
             retmsg = jb.getString("retMsg");
             if (!"00000".equals(retflag)) {
-                logger.info("美分期,支付密码验证失败！" + retmsg);
+                logger.info("顺逛,支付密码验证失败！" + retmsg);
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             }
         } else {
@@ -122,7 +121,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         reqSignMap.put("channelNo", channelNo);
         reqSignMap.put("token", token);
         String resData = appServerService.updateOrderAgreement(token, reqSignMap);// 订单协议确认
-        logger.info("美分期,订单协议确认接口,响应数据：" + resData);
+        logger.info("顺逛,订单协议确认接口,响应数据：" + resData);
         if (StringUtils.isEmpty(resData)) {
             logger.info("网络异常，app后台,订单协议确认接口,响应数据为空！");
             String resDateMsg = "网络异常，app后台,订单协议确认接口,响应数据为空！";
@@ -202,7 +201,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         retflag = head.getString("retFlag");
         retmsg = head.getString("retMsg");
         if (!"00000".equals(retflag)) {
-            logger.info("H5现金贷,额度申请出现异常！" + retmsg);
+            logger.info("顺逛,额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         return success();
@@ -245,7 +244,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //修改支付密码（记得支付密码）
-    public Map<String, Object> updatePayPasswd(String token, Map<String,Object> params, String channel, String channelNo) {
+    public Map<String, Object> updatePayPasswd(String token, Map<String, Object> params, String channel, String channelNo) {
         String oldpassword = (String) params.get("oldpassword");//旧密码
         String newpassword = (String) params.get("newpassword");//新密码
         if (token == null || "".equals(token)) {
@@ -329,9 +328,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //确认支付密码（额度申请）
-    public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, String payPasswd) {
-        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
-            logger.info("获取前端的参数为空token：" + token + "  ,channel" + channel + "  ,channelNo" + channelNo);
+    public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, Map<String, Object> params) {
+        String payPasswd = (String) params.get("payPasswd");
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(payPasswd)) {
+            logger.info("获取前端的参数为空token：" + token + "  ,channel" + channel + "  ,channelNo" + channelNo + "  ,payPasswd" + payPasswd);
             String retMsg = "获取前端的参数为空";
             return fail(ConstUtil.FAILED_INFO, retMsg);
         }

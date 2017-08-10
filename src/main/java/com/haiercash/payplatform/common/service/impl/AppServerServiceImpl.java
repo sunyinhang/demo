@@ -301,7 +301,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public String updateOrderAgreement(String token, Map<String, Object> reqSignMap) {
-        String url = appservernoauth + "/app/appserver/uauth/payPasswd";
+        String url = appservernoauth + "/app/appserver/apporder/updateOrderAgreement";
         logger.info("顺逛订单协议确认接口请求地址：" + url);
         logger.info("顺逛订单协议确认接口请求数据：" + reqSignMap);
         String result = HttpUtil.restPutMap(url, token, reqSignMap).toString();
