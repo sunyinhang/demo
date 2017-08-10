@@ -149,12 +149,12 @@ public class CommonPageController extends BaseController {
     /**
      * 协议展示：(1)展示注册协议(2)个人征信(3)借款合同
      *
-     * @param flag
+     * @param params
      * @return
      */
-    @RequestMapping(value = "/api/payment/treatyShow", method = RequestMethod.GET)
-    public Map<String, Object> treatyShow(@RequestParam(value = "flag") String flag) throws Exception {
-        return ocrIdentityService.treatyShowServlet(super.getToken(), flag);
+    @RequestMapping(value = "/api/payment/treatyShow", method = RequestMethod.POST)
+    public Map<String, Object> treatyShow(@RequestBody Map<String,Object> params) throws Exception {
+        return ocrIdentityService.treatyShowServlet(super.getToken(), params);
     }
 
 
