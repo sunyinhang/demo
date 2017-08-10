@@ -23,7 +23,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation'],
         return;
     }*/
     util.init();
-    Const.global.root = util.bind({
+    Const.vm.root = util.bind({
         container: 'root',
         data: {}
     });
