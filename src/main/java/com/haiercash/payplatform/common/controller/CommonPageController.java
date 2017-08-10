@@ -204,12 +204,12 @@ public class CommonPageController extends BaseController {
     /**
      * 确认支付密码（额度申请）
      *
-     * @param payPasswd
+     * @param map
      * @return
      */
-    @RequestMapping(value = "/api/payment/paymentPwdConfirm", method = RequestMethod.GET)
-    public Map<String, Object> paymentPwdConfirm(@RequestParam(value = "payPasswd") String payPasswd) {
-        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNo(), payPasswd);
+    @RequestMapping(value = "/api/payment/paymentPwdConfirm", method = RequestMethod.POST)
+    public Map<String, Object> paymentPwdConfirm(@RequestBody Map<String,Object> map) {
+        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNo(), map);
     }
 
 
