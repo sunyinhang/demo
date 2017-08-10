@@ -488,4 +488,31 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return result;
     }
 
+    //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
+    public Map<String, Object> pLoanTypImages(String token,Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/cmis/pLoanTypImages";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
+        return map;
+    }
+
+    //(GET)影像列表按类型查询-个人版
+    public Map<String, Object> attachTypeSearchPerson(String token,Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/attachTypeSearchPerson";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
+        return map;
+    }
+
+    //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
+    public Map<String, Object> getFilePathByFileId(String token,Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/getFilePathByFileId";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
+        return map;
+    }
+
 }

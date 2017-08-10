@@ -76,4 +76,10 @@ public interface AppServerService {
     public Map<String,Object> checkEdAppl(String token,Map<String, Object> paramMap);
     //3.4.22.	(POST) 验证并绑定集团用户（已绑定的不可用）
     public Map<String,Object> validateAndBindHaierUser(String token,Map<String, Object> paramMap);
+    //6.1.24.	(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
+    public Map<String, Object> pLoanTypImages(String token,Map<String, Object> paramMap);
+    //6.2.5.	(GET)影像列表按类型查询-个人版
+    public Map<String, Object> attachTypeSearchPerson(String token,Map<String, Object> paramMap);
+    //6.1.127.	(GET)根据影像文件ID查询影像文件的路径
+    public Map<String, Object> getFilePathByFileId(String token,Map<String, Object> paramMap);
 }
