@@ -63,12 +63,14 @@ public class RequestInterceptor {
     private void initChannel(RequestContext rc) {
         HttpServletRequest request = rc.getRequest();
         String channel = request.getHeader("channel");
-        String channelNo = request.getHeader("channel_no");
+        String channelNo = request.getHeader("channelNo");
+        String token = request.getHeader("token");
         if (StringUtils.isEmpty(channel))
             channel = "11";
         /*if (StringUtils.isEmpty(channelNo))
             channelNo = "05";*/
         rc.getData().initChannel(channel, channelNo);
+        rc.getData().initToken(token);
     }
 
 }

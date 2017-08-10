@@ -43,11 +43,7 @@ public class BaseService extends AbstractService {
     }
 
     protected String getToken() {
-        return "";
-        /*if (this.httpServletRequest != null) {
-	      return this.httpServletRequest.getHeader("access_token");
-	    }
-	    return null;*/
+        return RequestContext.data().getToken();
     }
 
     protected String getGateUrl() {

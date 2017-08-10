@@ -17,6 +17,14 @@ public interface ShunguangService {
     Map<String, Object> saveStoreInfo (Map<String, Object> storeInfo);
 
     /**
+     * 保存微店主信息.
+     * @param  ordinaryInfo
+     * @return Map
+     */
+    Map<String, Object> saveOrdinaryUserInfo (Map<String, Object> ordinaryInfo);
+
+
+    /**
      * 白条额度申请接口
      * @param map
      * @return Map

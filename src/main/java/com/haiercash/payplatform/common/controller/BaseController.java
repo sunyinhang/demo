@@ -52,8 +52,13 @@ public class BaseController extends AbstractController {
         return RequestContext.data().getChannel();
     }
 
-    protected String getChannelNO() {
+    @Override
+    protected String getChannelNo() {
         return RequestContext.data().getChannelNo();
+    }
+
+    protected String getToken(){
+        return RequestContext.data().getToken();
     }
 
     public String getModuleNo() {

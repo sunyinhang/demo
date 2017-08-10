@@ -44,8 +44,31 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
     @Override
     public Map<String, Object> saveStoreInfo(Map<String, Object> storeInfo) {
-        String userId = (String) storeInfo.get("userId");
-        String data = (String) storeInfo.get("data");
+
+        Map<String, Object> result = this.savePeopleInfo(storeInfo);
+        if (!HttpUtil.isSuccess(result)) {
+            logger.error("保存微店主客户信息失败,处理结果:" + result);
+        }
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> saveOrdinaryUserInfo(Map<String, Object> ordinaryInfo) {
+        Map<String, Object> result = this.savePeopleInfo(ordinaryInfo);
+        if (!HttpUtil.isSuccess(result)) {
+            logger.error("保存普通用户信息失败,处理结果:" + result);
+        }
+        return result;
+    }
+
+    /**
+     * 通用保存用户信息方法.
+     * @param info 用户信息
+     * @return 处理结果Map
+     */
+    private Map<String, Object> savePeopleInfo(Map<String, Object> info) {
+            String userId = (String) info.get("userId");
+        String data = (String) info.get("data");
 
         String params;
         try {
@@ -77,6 +100,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         return success();
     }
+
 
     @Override
     public Map<String, Object> edApply(Map<String, Object> map) throws Exception {
