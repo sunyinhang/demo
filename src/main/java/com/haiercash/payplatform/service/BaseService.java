@@ -42,10 +42,12 @@ public class BaseService extends AbstractService {
         this.moduleNo = moduleNo;
     }
 
+    @Override
     protected String getToken() {
         return RequestContext.data().getToken();
     }
 
+    @Override
     protected String getGateUrl() {
         return this.gateUrl;
     }
@@ -87,10 +89,13 @@ public class BaseService extends AbstractService {
         resultMap.put("body", result);
         return resultMap;
     }
+
+    @Override
     protected String getChannel() {
         return RequestContext.data().getChannel();
     }
 
+    @Override
     protected String getChannelNo() {
         return RequestContext.data().getChannelNo();
     }
