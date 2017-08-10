@@ -265,14 +265,15 @@ public class CommonPageController extends BaseController {
         return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
-
-
     /**
      * 查询额度
+     *
      * @return
      */
-    @RequestMapping(value = "/api/payment/edCheck",method = RequestMethod.GET)
+    @RequestMapping(value = "/api/payment/edCheck", method = RequestMethod.GET)
     public Map<String, Object> edCheck() {
         return payPasswdService.edCheck(super.getToken());
     }
+
+
 }
