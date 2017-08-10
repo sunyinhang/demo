@@ -113,45 +113,45 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         // 3、签订注册 + 征信
-        HashMap<String, Object> reqSignMap = new HashMap<>();
-        reqSignMap.put("orderNo", orderNo);
-        reqSignMap.put("msgCode", verifyNo);
-        reqSignMap.put("type", n);// 1：征信协议 2：注册协议 3：征信和注册协议
-        reqSignMap.put("channel", channel);
-        reqSignMap.put("channelNo", channelNo);
-        reqSignMap.put("token", token);
-        String resData = appServerService.updateOrderAgreement(token, reqSignMap);// 订单协议确认
-        logger.info("顺逛,订单协议确认接口,响应数据：" + resData);
-        if (StringUtils.isEmpty(resData)) {
-            logger.info("网络异常，app后台,订单协议确认接口,响应数据为空！");
-            String resDateMsg = "网络异常，app后台,订单协议确认接口,响应数据为空！";
-            return fail(ConstUtil.ERROR_CODE, resDateMsg);
-        }
-        JSONObject jsonCon = new JSONObject(resData);
-        JSONObject jsonConHead = jsonCon.getJSONObject("head");
-        retflag = jsonConHead.getString("retFlag");
-        retmsg = jsonConHead.getString("retMsg");
-        if (!"00000".equals(retflag)) {// 订单协议确认接口 失败，返回给前台
-            logger.info("美分期,校验短信验证码接口及订单提交接口,校验短信验证码失败" + retmsg);
-            return fail(retflag, retmsg);
-        }
-        // 签订合同
-        Map<String, Object> reqConMap = new HashMap<>();
-        reqConMap.put("orderNo", orderNo);
-        reqConMap.put("channel", channel);
-        reqConMap.put("channelNo", channelNo);
-        reqConMap.put("token", token);
-        String retCon = appServerService.updateOrderContract(token, reqConMap);// 订单合同确认
-        logger.info("订单合同确认接口，响应数据：" + retCon);
-        if (retCon == null || "".equals(retCon)) {
-            logger.info("美分期,订单合同确认接口,订单合同确认接口,响应数据为空");
-            String retConMsg = "美分期,订单合同确认接口,订单合同确认接口,响应数据为空";
-            return fail(ConstUtil.ERROR_CODE, retConMsg);
-        }
-        JSONObject retjsonCon = new JSONObject(retCon);
-        JSONObject retjsonConHead = retjsonCon.getJSONObject("head");
-        retflag = retjsonConHead.getString("retFlag");
-        retmsg = retjsonConHead.getString("retMsg");
+//        HashMap<String, Object> reqSignMap = new HashMap<>();
+//        reqSignMap.put("orderNo", orderNo);
+//        reqSignMap.put("msgCode", verifyNo);
+//        reqSignMap.put("type", n);// 1：征信协议 2：注册协议 3：征信和注册协议
+//        reqSignMap.put("channel", channel);
+//        reqSignMap.put("channelNo", channelNo);
+//        reqSignMap.put("token", token);
+//        String resData = appServerService.updateOrderAgreement(token, reqSignMap);// 订单协议确认
+//        logger.info("顺逛,订单协议确认接口,响应数据：" + resData);
+//        if (StringUtils.isEmpty(resData)) {
+//            logger.info("网络异常，app后台,订单协议确认接口,响应数据为空！");
+//            String resDateMsg = "网络异常，app后台,订单协议确认接口,响应数据为空！";
+//            return fail(ConstUtil.ERROR_CODE, resDateMsg);
+//        }
+//        JSONObject jsonCon = new JSONObject(resData);
+//        JSONObject jsonConHead = jsonCon.getJSONObject("head");
+//        retflag = jsonConHead.getString("retFlag");
+//        retmsg = jsonConHead.getString("retMsg");
+//        if (!"00000".equals(retflag)) {// 订单协议确认接口 失败，返回给前台
+//            logger.info("美分期,校验短信验证码接口及订单提交接口,校验短信验证码失败" + retmsg);
+//            return fail(retflag, retmsg);
+//        }
+//        // 签订合同
+//        Map<String, Object> reqConMap = new HashMap<>();
+//        reqConMap.put("orderNo", orderNo);
+//        reqConMap.put("channel", channel);
+//        reqConMap.put("channelNo", channelNo);
+//        reqConMap.put("token", token);
+//        String retCon = appServerService.updateOrderContract(token, reqConMap);// 订单合同确认
+//        logger.info("订单合同确认接口，响应数据：" + retCon);
+//        if (retCon == null || "".equals(retCon)) {
+//            logger.info("美分期,订单合同确认接口,订单合同确认接口,响应数据为空");
+//            String retConMsg = "美分期,订单合同确认接口,订单合同确认接口,响应数据为空";
+//            return fail(ConstUtil.ERROR_CODE, retConMsg);
+//        }
+//        JSONObject retjsonCon = new JSONObject(retCon);
+//        JSONObject retjsonConHead = retjsonCon.getJSONObject("head");
+//        retflag = retjsonConHead.getString("retFlag");
+//        retmsg = retjsonConHead.getString("retMsg");
 //            if ("00000".equals(retflag)) {
 //                String opType = "1"; // 个人版订单提交给商户确认时传2，其余传1
 //                Map<String, Object> commitmMap = new HashMap<String, Object>();
