@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
+import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -141,7 +142,19 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath";
+        String channel = (String) params.get("channel");
+        String channelNo = (String) params.get("channelNo");
+        String custNo = (String) params.get("custNo");// 客户编号
+        String attachType = (String) params.get("attachType");// 影像类型
+        String attachName = (String) params.get("attachName");// 人脸照片
+        String md5 = (String) params.get("md5");//文件md5码
+        String filePath = (String) params.get("filePath");//路径
+        String id = (String) params.get("id");
+        String applSeq = (String) params.get("applSeq");
+        String idNo = (String) params.get("idNo");
+
+        String url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id + "&applSeq=" + applSeq + "&idNo=" + idNo;
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求地址：" + url);
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -486,6 +499,33 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
         logger.info(" 验证并绑定集团用户接口, 返回数据：" + result);
         return result;
+    }
+
+    //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
+    public Map<String, Object> pLoanTypImages(String token,Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/cmis/pLoanTypImages";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
+        return map;
+    }
+
+    //(GET)影像列表按类型查询-个人版
+    public Map<String, Object> attachTypeSearchPerson(String token,Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/attachTypeSearchPerson";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
+        return map;
+    }
+
+    //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
+    public Map<String, Object> getFilePathByFileId(String token,Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/getFilePathByFileId";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
+        return map;
     }
 
 }

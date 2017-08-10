@@ -245,7 +245,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //修改支付密码（记得支付密码）
-    public Map<String, Object> updatePayPasswd(String token, String oldpassword, String newpassword, String channel, String channelNo) {
+    public Map<String, Object> updatePayPasswd(String token, Map<String,Object> params, String channel, String channelNo) {
+        String oldpassword = (String) params.get("oldpassword");//旧密码
+        String newpassword = (String) params.get("newpassword");//新密码
         if (token == null || "".equals(token)) {
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

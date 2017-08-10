@@ -4,13 +4,18 @@
 </div>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+        //获取持卡人姓名
+        var param = util.cache();
+
         var vm = util.bind({
             container: 'tiedBnkCrd',
             data: {
                 tags: {
                     formKey: 'tiedBnkCrdForm'
                 },
-                entity: {},
+                entity: {
+                    cardholder: param.name
+                },
                 formConfig: {
                     layout: 'inline',
                     columns: [
@@ -18,11 +23,18 @@
                             head: '持卡人',
                             name: 'cardholder',
                             config: {
+                                value: param && param.name,
                                 attr: {
                                     readonly: 'readonly'
                                 },
                                 validate: {
                                     required: '持卡人不能为空'
+                                }
+                            },
+                            operate: {
+                                type: 'hint',
+                                click: function () {
+                                    util.alert('为了您的账户安全，请您绑定本人银行卡');
                                 }
                             }
                         },{
@@ -36,7 +48,23 @@
                                     required: '请输入银行卡卡号'
                                 },
                                 blur: function (event, val, entity) {
-                                    // TODO:
+                                    if (util.isEmpty(entity.cardnumber)) {
+                                        util.alert('请先输入银行卡号');
+                                    }else{
+                                        util.get({
+                                            url: util.mix("/getCardInfo", {
+                                                cardNo: entity.cardnumber
+                                            }),
+                                            success:function(res){
+                                                util.refresh({
+                                                    vm: util.vm(vm, vm.tags.formKey),
+                                                    entity: {
+                                                        cardtype: res.body.bankName+res.body.cardType
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         },{
@@ -45,16 +73,21 @@
                             config: {
                                 attr: {
                                     readonly: 'readonly',
-                                    placeholder: '点击获取卡类型'
                                 },
                                 validate: {
                                     required: '卡类型不能为空'
+                                },operate: {
+                                    click: function (event,entity) {
+                                        if (util.isEmpty(entity.cardnumber)) {
+                                            util.alert('请先输入银行卡号');
+                                        }
+                                    }
                                 }
                             },
                             operate: {
                                 type: 'hint',
                                 click: function () {
-                                    util.alert('xxxxx');
+                                    util.alert('由于银行扣款要求，现已支持中国工商银行，中国邮政储蓄银行，中国农业银行，中国银行，中国建设银行，广东发展银行，兴业银行， 招商银行，交通银行，中信银行，中国光大银行，华夏银行，中国民生银行，平安银行，上海浦东发展银行，北京银行，上海银行，青岛银行');
                                 }
                             }
                         },{
@@ -139,11 +172,15 @@
                             },
                             operate: {
                                 text: '获取验证码',
-                                click: function (event) {
-                                    //TODO ajax请求，发送短信验证码
+                                click: function (event,entity) {
                                     util.countdown($(event.target), {
                                         text: '获取验证码',
                                         second: 60
+                                    });
+                                    util.get({
+                                        url: util.mix('/sendMsg',{
+                                            phone: entity.mobile
+                                        })
                                     });
                                 }
                             },
@@ -155,10 +192,24 @@
                             text: '下一步',
                             clazz: 'primary',
                             click: function (event, editType, entity) {
-                                util.redirect({
-                                    title: '个人资料',
-                                    url: '/applyQuota/personalInform.html',
-                                    back: false
+                                util.post({
+                                    url: '/realAuthentication',
+                                    data:{
+                                        cityCode: entity.account,
+                                        cardnumber: entity.cardnumber,
+                                        mobile: entity.mobile,
+                                        verifyNo: entity.verifyNo,
+                                    },
+                                    success:function(res){
+                                        util.cache({
+                                            mobile: entity.mobile
+                                        });
+                                        util.redirect({
+                                            title: '个人资料',
+                                            url: '/applyQuota/personalInform.html',
+                                            back: false
+                                        });
+                                    }
                                 });
                             }
                         }

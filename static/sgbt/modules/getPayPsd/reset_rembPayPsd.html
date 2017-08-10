@@ -1,4 +1,5 @@
-<div class="bv-align-center" data-container="reset_rembPayPsd">
+<div class="bv-align-center fullPage gray" data-container="reset_rembPayPsd">
+    <div class="height10"></div>
     <component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
@@ -19,10 +20,14 @@
                             config: {
                                 type: 'password',
                                 attr: {
-                                    placeholder: '6-20位字母，数字，符号组合'
+                                    placeholder: '6-20位字母和数字组成'
                                 },
                                 validate: {
-                                    required: '密码不能为空'
+                                    required: '密码不能为空',
+                                    custom: {
+                                        code: 'password',
+                                        desc: '密码由6-20位字母和数字组成'
+                                    }
                                 }
                             }
                         },{

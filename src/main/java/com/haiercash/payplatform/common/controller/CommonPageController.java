@@ -1,13 +1,9 @@
 package com.haiercash.payplatform.common.controller;
 
 import com.haiercash.commons.redis.Cache;
-import com.haiercash.payplatform.common.service.CustExtInfoService;
-import com.haiercash.payplatform.common.service.FaceService;
-import com.haiercash.payplatform.common.service.OCRIdentityService;
-import com.haiercash.payplatform.common.service.PayPasswdService;
+import com.haiercash.payplatform.common.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +36,9 @@ public class CommonPageController extends BaseController {
     private CustExtInfoService custExtInfoService;
     @Autowired
     private PayPasswdService payPasswdService;
+    @Autowired
+    private AppServerService appServerService;
+
 
     /**
      * OCR获取身份信息
@@ -142,8 +141,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/resetPayPasswd", method = RequestMethod.POST)
-    public Map<String, Object> resetPayPasswd(@RequestBody Map<String,Object> map) {
-        return payPasswdService.resetPayPasswd(super.getToken(), super.getChannelNo(), super.getChannel(),map);
+    public Map<String, Object> resetPayPasswd(@RequestBody Map<String, Object> map) {
+        return payPasswdService.resetPayPasswd(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
     /**
@@ -153,7 +152,7 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/treatyShow", method = RequestMethod.POST)
-    public Map<String, Object> treatyShow(@RequestBody Map<String,Object> params) throws Exception {
+    public Map<String, Object> treatyShow(@RequestBody Map<String, Object> params) throws Exception {
         return ocrIdentityService.treatyShowServlet(super.getToken(), params);
     }
 
@@ -166,7 +165,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/getAllCustExtInfo", method = RequestMethod.POST)
     public Map<String, Object> getAllCustExtInfo() throws Exception {
-        return custExtInfoService.getAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo());
+        return custExtInfoService.getAllCustExtInfoAndDocCde(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
     /**
@@ -183,14 +182,12 @@ public class CommonPageController extends BaseController {
     /**
      * 修改支付密码（记得支付密码）
      *
-     * @param oldpassword
-     * @param newpassword
+     * @param params
      * @return
      */
-    @RequestMapping(value = "/api/payment/updatePayPasswd", method = RequestMethod.GET)
-    public Map<String, Object> updatePayPasswd(@RequestParam(value = "oldpassword") String oldpassword,
-                                               @RequestParam(value = "newpassword") String newpassword) {
-        return payPasswdService.updatePayPasswd(super.getToken(), oldpassword, newpassword, super.getChannel(), super.getChannelNo());
+    @RequestMapping(value = "/api/payment/updatePayPasswd", method = RequestMethod.POST)
+    public Map<String, Object> updatePayPasswd(@RequestBody Map<String, Object> params) {
+        return payPasswdService.updatePayPasswd(super.getToken(), params, super.getChannel(), super.getChannelNo());
     }
 
     /**
@@ -279,7 +276,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApprovalProcessInfo", method = RequestMethod.GET)
     public Map<String, Object> queryApprProcessByCust() {
-        return payPasswdService.approvalProcessInfo(super.getToken(),super.getChannel(),super.getChannelNo());
+        return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
 }
