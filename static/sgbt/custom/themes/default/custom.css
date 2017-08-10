@@ -78,6 +78,9 @@
 .bv-form.form-align-right .item-input input, .bv-form.form-align-right .item-tag {
     text-align: right;
 }
+.bv-accordion .bv-form .item-input input, .bv-accordion .bv-form .item-tag, .bv-accordion .bv-form .item-input select {
+    font-size: 0.7rem;
+}
 .bv-form.form-align-right .item-input select {
     direction: rtl;
 }
@@ -96,6 +99,10 @@
 }
 .list-block.bv-accordion .bv-form .item-content {
     border-bottom: none;
+    font-size: 0.7rem;
+}
+.list-block.bv-accordion .bv-form .item-content {
+
 }
 .accordion-item.accordion-item-expanded>.item-content:after {
     content: ' ';
@@ -206,10 +213,17 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     margin-left: 0.7rem;
     font-size: 0.7rem;
 }
-.form-sms #sendSms[disabled] {
-    border-color: #dddddd;
-    background: #eee;
-    color: #999;
+.form-sms.list-block .item-input.item-input-operate {
+    padding-left: 0;
+    width: 100%;
+}
+.list-block .item-input.item-input-operate.item-input-hint {
+    padding-left: 0.2rem;
+}
+.list-block .item-input.item-input-operate.item-input-hint a {
+    background: url(images/prompt.png) no-repeat center center;
+    width: 0.7rem;
+    background-size: 0.7rem;
 }
 
 .agree-popup .content-block {
