@@ -179,8 +179,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/cache", method = RequestMethod.POST)
-    public Map<String, Object> cache(@RequestBody HttpServletRequest request) {
-        return payPasswdService.cache(request);
+    public Map<String, Object> cache(@RequestBody Map<String, Object> params, HttpServletRequest request) {
+        return payPasswdService.cache(params, request);
     }
 
     /**

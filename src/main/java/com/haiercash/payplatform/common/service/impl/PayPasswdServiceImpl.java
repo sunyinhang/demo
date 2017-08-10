@@ -207,27 +207,33 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //页面缓存
-    public Map<String, Object> cache(HttpServletRequest request) {
+    public Map<String, Object> cache(Map<String, Object> params, HttpServletRequest request) {
         String token = request.getHeader("token");
         if (token == null || "".equals(token)) {
             logger.info("token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         Map<String, Object> retMap = null;
-        String params = request.getParameter("params");
-        if (params != null) {
-            String[] paramArr = params.split(",");
-            String type = request.getParameter("type");
+        String paramNames = (String) params.get("params");
+        if (paramNames != null) {
+            String[] paramArr = paramNames.split(",");
+            String type = (String) params.get("type");
             if (type == null || type.equals("get")) {
                 retMap = new HashMap<String, Object>();
                 Map<String, Object> sessionMap = (Map<String, Object>) cache.get(token);
+                if (sessionMap == null) {
+                    return success();
+                }
                 for (String param : paramArr) {
                     retMap.put(param, sessionMap.get(param));
                 }
             } else if (type.equals("set")) {
                 retMap = (Map<String, Object>) cache.get(token);
+                if (retMap == null) {
+                    retMap = new HashMap<>();
+                }
                 for (String param : paramArr) {
-                    retMap.put(param, request.getParameter(param));
+                    retMap.put(param, (String) params.get(param));
                 }
                 cache.set(token, retMap);
                 return success();

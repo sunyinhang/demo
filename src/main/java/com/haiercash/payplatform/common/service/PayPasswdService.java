@@ -12,7 +12,7 @@ public interface PayPasswdService {
     public Map<String, Object> resetPayPasswd(String token, String payPasswd, String verifyNo, String channelNo, String channel);
 
     //页面缓存
-    public Map<String, Object> cache(HttpServletRequest request);
+    public Map<String, Object> cache(Map<String, Object> params, HttpServletRequest request);
 
     //修改支付密码（记得支付密码）
     public Map<String, Object> updatePayPasswd(String token, String oldpassword, String newpassword, String channel, String channelNO);
