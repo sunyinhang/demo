@@ -1,4 +1,5 @@
 <div class="bv-align-center fullPage gray" data-container="byRembPayPsd">
+	<div class="height10"></div>
 	<component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
@@ -16,6 +17,7 @@
 						{
 							head: '输入原密码',
 							name: 'payPassword',
+							clazz: '',
 							config: {
 								type: 'password',
 								attr: {

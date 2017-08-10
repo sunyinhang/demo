@@ -119,6 +119,9 @@
                                         name: entity.name
                                     },
                                     success: function () {
+                                        util.cache({
+                                            name: entity.name
+                                        });
                                         util.redirect({
                                             title: '实名绑卡',
                                             url: '/applyQuota/checkIdCardB.html',
