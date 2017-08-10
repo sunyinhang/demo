@@ -46,7 +46,7 @@
                                     url: util.mix('/uploadFacePic', {
                                         edflag: 1
                                     }),
-                                    data: util.form('faceImg', entity.upload.identityCard),
+                                    data: util.form('faceImg', entity.upload.faceImg),
                                     success: function (res) {
                                         if (res.retObj.faceFlag === '0') {
                                             //未设置支付密码
