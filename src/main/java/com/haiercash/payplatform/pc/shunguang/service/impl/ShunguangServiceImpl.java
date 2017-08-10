@@ -112,7 +112,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
         }
         //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
-        Object uid = userjson.get("user_id");
+        Object uid = userjson.get("user_id");//会员id
         if(StringUtils.isEmpty(uid)){
             String error = userjson.get("error").toString();
             return fail(ConstUtil.ERROR_CODE, error);
@@ -120,6 +120,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String uidHaier = uid.toString();
         String custPhoneNo = (String) userjson.get("phone_number");
         String userName = (String) userjson.get("username");
+        cachemap.put("token", token);
+        cachemap.put("uidHaier", uidHaier);//会员id
 
         //2.查看是否绑定手机号
         if(custPhoneNo.isEmpty()){
@@ -156,6 +158,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             }else if("U0160".equals(userretFlag)){
                 //U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录
+                cache.set(token, cachemap);
                 String backurl = "login.html?token="+token;//TODO!!!!!!
                 map.put("backurl", backurl);
                 return success(map);
@@ -168,7 +171,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //集团uid已在统一认证做过绑定
         uidLocal = (new JSONObject(resultMap.get("body"))).getString("userId").toString();//统一认证内userId
         phoneNo = (new JSONObject(resultMap.get("body"))).getString("mobile").toString();//统一认绑定手机号
-
+        cachemap.put("userId", uidLocal);//统一认证userId
+        cachemap.put("phoneNo", phoneNo);//绑定手机号
         //4.token绑定
         Map<String, Object> bindMap = new HashMap<String, Object>();
         bindMap.put("userId", uidLocal);//内部userId
@@ -188,6 +192,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, custretflag);
         }
         if("C1120".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
+            cache.set(token, cachemap);
             String backurl = "login.html?token="+token;//TODO!!!!!!
             map.put("backurl", backurl);
             return success(map);
@@ -199,6 +204,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String cardNo = (new JSONObject(custresult.get("body"))).getString("cardNo").toString();//银行卡号
         String bankNo = (new JSONObject(custresult.get("body"))).getString("acctBankNo").toString();//银行代码
         String bankName = (new JSONObject(custresult.get("body"))).getString("acctBankName").toString();//银行名称
+
+        cachemap.put("custNo", custNo);//客户编号
+        cachemap.put("custName", custName);//客户姓名
+        cachemap.put("cardNo", cardNo);//银行卡号
+        cachemap.put("bankCode", bankNo);//银行代码
+        cachemap.put("bankName", bankName);//银行名称
+        cachemap.put("idNo", certNo);//身份证号
+        cachemap.put("idType", certType);
 
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();

@@ -74,11 +74,11 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String typCde = (String) cacheMap.get("typCde");// 贷款品种
-        String idNumber = cacheMap.get("idCard").toString();// 身份证号
-        String name = cacheMap.get("name").toString();// 姓名
-        String mobile = cacheMap.get("phoneNo").toString();// 手机号
-        String custNo = cacheMap.get("custNo").toString();
-        String userId = cacheMap.get("userId").toString();
+        String idNumber = (String) cacheMap.get("idCard");// 身份证号
+        String name = (String) cacheMap.get("name");// 姓名
+        String mobile = (String) cacheMap.get("phoneNo");// 手机号
+        String custNo = (String) cacheMap.get("custNo");
+        String userId = (String) cacheMap.get("userId");
         if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)){
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
