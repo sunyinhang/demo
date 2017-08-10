@@ -4,6 +4,9 @@
 </div>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+        //获取手机号和密码
+        var param=util.cache();
+
         var vm = util.bind({
             container: 'payPsdValidcode',
             data: {
@@ -14,7 +17,7 @@
                 },
                 formConfig: {
                     columns: [{
-                        head: '请输入手机****收到的短信校验码',
+                        head: '请输入手机收到的短信校验码',//+ param && param.mobile+
                         name: 'verifyNo',
                         clazz: 'bv-align-left',
                         config: {
@@ -29,10 +32,15 @@
                             id: 'sendSms',
                             text: '发送验证码',
                             click: function(event) {
-                                //TODO ajax请求，发送短信验证码
                                 util.countdown($(event.target), {
                                     text: '发送验证码',
                                     second: 60
+                                });
+                                util.get({
+                                    url: '/sendMsg',
+                                    data: {
+                                        phone: '18325423979'
+                                    }
                                 });
                             }
                         },
@@ -80,6 +88,23 @@
                                 }
                             },
                             click: function (event, editType, entity) {
+                                util.post({
+                                    url: '/resetPayPasswd',
+                                    data:{
+                                        payPasswd: param && param.payPasswd,
+                                        verifyNo: entity.verifyNo,
+                                    },
+                                    success:function(res){
+                                        util.cache({
+                                            mobile: entity.mobile
+                                        });
+                                        util.redirect({
+                                            title: '个人资料',
+                                            url: '/applyQuota/personalInform.html',
+                                            back: false
+                                        });
+                                    }
+                                });
                             }
                         }
                     ]

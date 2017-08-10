@@ -19,7 +19,9 @@ import static com.haiercash.payplatform.common.utils.RestUtil.fail;
 
 
 /**
- * Created by yuanli on 2017/7/24.
+ * shunguang controller.
+ * @author yuan li
+ * @since v1.0.1
  */
 @RestController
 public class ShunguangController extends BaseController {
@@ -48,6 +50,20 @@ public class ShunguangController extends BaseController {
             return checkMap;
         }
         return shunguangService.saveStoreInfo(map);
+    }
+
+    /**
+     * 普通用户信息推送 Sg-10002.
+     * @param map 请求报文
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/shunguang/ordinary/info", method = RequestMethod.POST)
+    public Map<String, Object> ordinaryUserInfo(@RequestBody Map<String, Object> map) {
+        Map<String, Object> checkMap= this.confirmData(map);
+        if (!HttpUtil.isSuccess(checkMap)) {
+            return checkMap;
+        }
+        return shunguangService.saveOrdinaryUserInfo(map);
     }
 
     /**

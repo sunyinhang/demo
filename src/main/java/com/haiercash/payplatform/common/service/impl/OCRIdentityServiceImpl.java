@@ -94,15 +94,33 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         //获取OCR返回信息进行redis存储
         Object retObj = returnMessage.getRetObj();
         JSONObject cardsResJson = new JSONObject(retObj.toString());
-        cacheMap.put("name", (String) cardsResJson.get("name"));//姓名
-        cacheMap.put("gender", (String) cardsResJson.get("gender"));//性别
-        cacheMap.put("birthday", (String) cardsResJson.get("birthday"));//出生年月日
-        cacheMap.put("race", (String) cardsResJson.get("race"));//民族
-        cacheMap.put("address", (String) cardsResJson.get("address"));//地址
-        cacheMap.put("idCard", (String) cardsResJson.get("id_card_number"));//身份证号
-        cacheMap.put("issued", (String) cardsResJson.get("issued_by"));//签发机关
-        cacheMap.put("validDate", (String) cardsResJson.get("valid_date"));//有效期
+        if(!StringUtils.isEmpty(cardsResJson.get("name"))){
+            cacheMap.put("name", (String) cardsResJson.get("name"));//姓名
+        }
+        if(!StringUtils.isEmpty(cardsResJson.get("gender"))){
+            cacheMap.put("gender", (String) cardsResJson.get("gender"));//性别
+        }
+        if(!StringUtils.isEmpty(cardsResJson.get("birthday"))){
+            cacheMap.put("birthday", (String) cardsResJson.get("birthday"));//出生年月日
+        }
+        if(!StringUtils.isEmpty(cardsResJson.get("race"))){
+            cacheMap.put("race", (String) cardsResJson.get("race"));//民族
+        }
+        if(!StringUtils.isEmpty(cardsResJson.get("address"))){
+            cacheMap.put("address", (String) cardsResJson.get("address"));//地址
+        }
+        if(!StringUtils.isEmpty(cardsResJson.get("id_card_number"))){
+            cacheMap.put("idCard", (String) cardsResJson.get("id_card_number"));//身份证号
+        }
+        if(!StringUtils.isEmpty(cardsResJson.get("issued_by"))){
+            cacheMap.put("issued", (String) cardsResJson.get("issued_by"));//签发机关
+        }
+        if(!StringUtils.isEmpty(cardsResJson.get("valid_date"))){
+            cacheMap.put("validDate", (String) cardsResJson.get("valid_date"));//有效期
+        }
+
         String cardSide = (String) cardsResJson.get("side");
+
         //OCR调用成功，进行图片本地上传
         byte[] data = null;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -340,7 +358,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         verifyNoMap.put("channel", channel);
         verifyNoMap.put("channelNo", channelNo);
         Map<String, Object> verifyresultmap = appServerService.smsVerify(token, verifyNoMap);
-        JSONObject verifyheadjson = new JSONObject((String) verifyresultmap.get("head"));
+        JSONObject verifyheadjson = new JSONObject(verifyresultmap.get("head").toString());
         String verifyretFlag = (String) verifyheadjson.get("retFlag");
         if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
             String retMsg = (String) verifyheadjson.get("retMsg");
@@ -370,7 +388,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         ocrMap.put("channel", channel);
         ocrMap.put("channelNo", channelNo);
         Map<String, Object> ocrresultmap = appServerService.saveCardMsg(token, ocrMap);
-        JSONObject ocrheadjson = new JSONObject((String) ocrresultmap.get("head"));
+        JSONObject ocrheadjson = new JSONObject(ocrresultmap.get("head").toString());
         String ocrretFlag = (String) ocrheadjson.get("retFlag");
         if (!"00000".equals(ocrretFlag)) {//身份证信息保存失败
             String retMsg = (String) ocrheadjson.get("retMsg");
@@ -394,13 +412,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         identityMap.put("acctProvince", acctProvince); //开户行省代码
         identityMap.put("acctCity", acctCity); //开户行市代码
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
-        JSONObject identityheadjson = new JSONObject((String) identityresultmap.get("head"));
+        JSONObject identityheadjson = new JSONObject(identityresultmap.get("head").toString());
         String identityretFlag = identityheadjson.getString("retFlag");
         if (!"00000".equals(identityretFlag)) {
             String retMsg = identityheadjson.getString("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        JSONObject identitybodyjson = new JSONObject((String) identityresultmap.get("body"));
+        JSONObject identitybodyjson = new JSONObject(identityresultmap.get("body").toString());
         //信息保存
         String custNo = identitybodyjson.getString("custNo");
         String cardNo = identitybodyjson.getString("cardNo");
@@ -429,7 +447,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         updmobilemap.put("channel", channel);
         updmobilemap.put("channelNo", channelNo);
         Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
-        JSONObject updmobileheadjson = new JSONObject((String) updmobileresultmap.get("head"));
+        JSONObject updmobileheadjson = new JSONObject(updmobileresultmap.get("head").toString());
         String updmobileretflag = updmobileheadjson.getString("retFlag");
         if (!"00000".equals(updmobileretflag)) {
             String retMsg = updmobileheadjson.getString("retMsg");
@@ -462,7 +480,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             paramMap.put("commonCustNo", null);//共同还款人编号，传null
             logger.info("实名绑卡，上传身份证" + (isA ? "正" : "反") + "面，请求参数：" + paramMap);
             Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
-            JSONObject uploadheadjson = new JSONObject(uploadresultmap.get("head"));
+            JSONObject uploadheadjson = new JSONObject(uploadresultmap.get("head").toString());
             String uploadretFlag = uploadheadjson.getString("retFlag");
             if (!"00000".equals(uploadretFlag)) {
                 String retMsg = uploadheadjson.getString("retMsg");
@@ -503,11 +521,12 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
      * 协议展示：(1)展示注册协议(2)个人征信(3)借款合同
      *
      * @param token
-     * @param flag
+     * @param params
      * @return
      */
-    public Map<String, Object> treatyShowServlet(String token, String flag) throws Exception {
+    public Map<String, Object> treatyShowServlet(String token, Map<String,Object> params) throws Exception {
         String realmName = null;
+        String flag = (String) params.get("flag");
         HashMap<String, Object> map = new HashMap<>();
         if (StringUtils.isEmpty(token)) {
             logger.info("从前端获取的token：" + token);

@@ -92,7 +92,7 @@ common:
   redis:
     host: 10.164.194.123
     port: 10001
-    prefix: ":MAIN:"
+    prefix: "PAYPLATFORM:"
 app:
   instance:
     #  错误码前缀：错误码组成为 前缀（此处定义）+模块代码（controller中定义）+错误码（super.fail中定义）
@@ -128,3 +128,5 @@ app:
     face_DataImg_url: /testshare01/crm/image/
     appServer_page_url: http://testpm.haiercash.com/
     haierData_url: http://taccount.haier.com
+  rediskey:
+    rediskey: ${common.redis.prefix}__DEMO__

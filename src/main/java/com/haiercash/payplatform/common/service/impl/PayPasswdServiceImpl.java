@@ -32,19 +32,20 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     @Autowired
     private AppServerService appServerService;
 
-    public Map<String, Object> resetPayPasswd(String token, String payPasswd, String verifyNo, String channelNo, String channel) {
+    public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("顺逛******额度提交接口******开始");
         String retflag = "";
         String retmsg = "";
-
+        String payPasswd = (String) param.get("payPasswd");//密码
+        String verifyNo = (String) param.get("verifyNo");//验证码
         if (StringUtils.isEmpty(token)) {
             logger.info("token:" + token);
             logger.info("从前端获取的的token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        if (StringUtils.isEmpty(payPasswd)) {
-            logger.info("payPasswd:" + payPasswd);
-            logger.info("从前端获取的支付密码为空");
+        if (StringUtils.isEmpty(payPasswd) || StringUtils.isEmpty(verifyNo)) {
+            logger.info("payPasswd:" + payPasswd+"verifyNo"+verifyNo);
+            logger.info("从前端获取的参数为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> cacheMap = cache.get(token);
@@ -69,7 +70,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             Map<String, Object> paramsMap = new HashMap<String, Object>();
             paramsMap.put("userId", EncryptUtil.simpleEncrypt(userId));
             paramsMap.put("payPasswd", EncryptUtil.simpleEncrypt(payPasswd));
-            paramsMap.put("token", token);
+            paramsMap.put("channel", channel);
+            paramsMap.put("channelNo", channelNo);
             paramsMap.put("access_token", token);
             String result = appServerService.resetPayPasswd(token, paramsMap).toString();
             if (StringUtils.isEmpty(result)) {
@@ -207,27 +209,33 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //页面缓存
-    public Map<String, Object> cache(HttpServletRequest request) {
+    public Map<String, Object> cache(Map<String, Object> params, HttpServletRequest request) {
         String token = request.getHeader("token");
         if (token == null || "".equals(token)) {
             logger.info("token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         Map<String, Object> retMap = null;
-        String params = request.getParameter("params");
-        if (params != null) {
-            String[] paramArr = params.split(",");
-            String type = request.getParameter("type");
+        String paramNames = (String) params.get("params");
+        if (paramNames != null) {
+            String[] paramArr = paramNames.split(",");
+            String type = (String) params.get("type");
             if (type == null || type.equals("get")) {
                 retMap = new HashMap<String, Object>();
                 Map<String, Object> sessionMap = (Map<String, Object>) cache.get(token);
+                if (sessionMap == null) {
+                    return success();
+                }
                 for (String param : paramArr) {
                     retMap.put(param, sessionMap.get(param));
                 }
             } else if (type.equals("set")) {
                 retMap = (Map<String, Object>) cache.get(token);
+                if (retMap == null) {
+                    retMap = new HashMap<>();
+                }
                 for (String param : paramArr) {
-                    retMap.put(param, request.getParameter(param));
+                    retMap.put(param, (String) params.get(param));
                 }
                 cache.set(token, retMap);
                 return success();
@@ -237,7 +245,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //修改支付密码（记得支付密码）
-    public Map<String, Object> updatePayPasswd(String token, String oldpassword, String newpassword, String channel, String channelNo) {
+    public Map<String, Object> updatePayPasswd(String token, Map<String,Object> params, String channel, String channelNo) {
+        String oldpassword = (String) params.get("oldpassword");//旧密码
+        String newpassword = (String) params.get("newpassword");//新密码
         if (token == null || "".equals(token)) {
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

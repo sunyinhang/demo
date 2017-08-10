@@ -1,9 +1,12 @@
 <div class="bv-align-center" data-container="setPayPsd">
     <component is="tab-applyQuota" active="realName personal face password"></component>
-    <component is="bv-form" class="form-align-left" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+    <component is="bv-form" class="form-align-left form-sms" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+        //获取手机号
+        var param=util.cache();
+
         var vm = util.bind({
             container: 'setPayPsd',
             data: {
@@ -22,11 +25,16 @@
                             name: 'payPassword',
                             config: {
                                 type: 'password',
+                                clazz: 'test',
                                 attr: {
                                     placeholder: '请输入支付密码'
                                 },
                                 validate: {
-                                    required: '请输入支付密码'
+                                    required: '请输入支付密码',
+                                    custom: {
+                                        code: 'password',
+                                        desc: '密码由6-20位字母和数字组成'
+                                    }
                                 }
                             }
                         },{
@@ -53,6 +61,7 @@
                             clazz: 'primary',
                             click: function (event, editType, entity) {
                                 util.cache({
+                                    mobile: param && param.mobile,
                                     payPasswd: entity.payPassword
                                 });
                                 util.redirect({

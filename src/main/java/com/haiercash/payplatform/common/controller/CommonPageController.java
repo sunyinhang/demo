@@ -138,25 +138,22 @@ public class CommonPageController extends BaseController {
     /**
      * 支付密码设置
      *
-     * @param payPasswd
-     * @param verifyNo
      * @return
      */
-    @RequestMapping(value = "/api/payment/resetPayPasswd", method = RequestMethod.GET)
-    public Map<String, Object> resetPayPasswd(@RequestParam(value = "payPasswd") String payPasswd,
-                                              @RequestParam(value = "verifyNo") String verifyNo) {
-        return payPasswdService.resetPayPasswd(super.getToken(), payPasswd, verifyNo, super.getChannelNo(), super.getChannel());
+    @RequestMapping(value = "/api/payment/resetPayPasswd", method = RequestMethod.POST)
+    public Map<String, Object> resetPayPasswd(@RequestBody Map<String, Object> map) {
+        return payPasswdService.resetPayPasswd(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
     /**
      * 协议展示：(1)展示注册协议(2)个人征信(3)借款合同
      *
-     * @param flag
+     * @param params
      * @return
      */
-    @RequestMapping(value = "/api/payment/treatyShow", method = RequestMethod.GET)
-    public Map<String, Object> treatyShow(@RequestParam(value = "flag") String flag) throws Exception {
-        return ocrIdentityService.treatyShowServlet(super.getToken(), flag);
+    @RequestMapping(value = "/api/payment/treatyShow", method = RequestMethod.POST)
+    public Map<String, Object> treatyShow(@RequestBody Map<String, Object> params) throws Exception {
+        return ocrIdentityService.treatyShowServlet(super.getToken(), params);
     }
 
 
@@ -178,21 +175,19 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/cache", method = RequestMethod.POST)
-    public Map<String, Object> cache(@RequestBody HttpServletRequest request) {
-        return payPasswdService.cache(request);
+    public Map<String, Object> cache(@RequestBody Map<String, Object> params, HttpServletRequest request) {
+        return payPasswdService.cache(params, request);
     }
 
     /**
      * 修改支付密码（记得支付密码）
      *
-     * @param oldpassword
-     * @param newpassword
+     * @param params
      * @return
      */
-    @RequestMapping(value = "/api/payment/updatePayPasswd", method = RequestMethod.GET)
-    public Map<String, Object> updatePayPasswd(@RequestParam(value = "oldpassword") String oldpassword,
-                                               @RequestParam(value = "newpassword") String newpassword) {
-        return payPasswdService.updatePayPasswd(super.getToken(), oldpassword, newpassword, super.getChannel(), super.getChannelNo());
+    @RequestMapping(value = "/api/payment/updatePayPasswd", method = RequestMethod.POST)
+    public Map<String, Object> updatePayPasswd(@RequestBody Map<String, Object> params) {
+        return payPasswdService.updatePayPasswd(super.getToken(), params, super.getChannel(), super.getChannelNo());
     }
 
     /**
@@ -214,7 +209,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/paymentPwdConfirm", method = RequestMethod.GET)
     public Map<String, Object> paymentPwdConfirm(@RequestParam(value = "payPasswd") String payPasswd) {
-        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNO(), payPasswd);
+        return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNo(), payPasswd);
     }
 
 
@@ -228,7 +223,7 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/edApply", method = RequestMethod.GET)
     public Map<String, Object> edApply(@RequestParam(value = "verifyNo") String verifyNo,
                                        @RequestParam(value = "password") String payPasswd) {
-        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNO());
+        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNo());
     }
 
 
@@ -250,7 +245,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApplListBySeq", method = RequestMethod.GET)
     public Map<String, Object> queryApplListBySeq() {
-        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNO());
+        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
 
@@ -281,7 +276,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApprovalProcessInfo", method = RequestMethod.GET)
     public Map<String, Object> queryApprProcessByCust() {
-        return payPasswdService.approvalProcessInfo(super.getToken(),super.getChannel(),super.getChannelNO());
+        return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
 }

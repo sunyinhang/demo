@@ -42,14 +42,12 @@ public class BaseService extends AbstractService {
         this.moduleNo = moduleNo;
     }
 
+    @Override
     protected String getToken() {
-        return "";
-        /*if (this.httpServletRequest != null) {
-	      return this.httpServletRequest.getHeader("access_token");
-	    }
-	    return null;*/
+        return RequestContext.data().getToken();
     }
 
+    @Override
     protected String getGateUrl() {
         return this.gateUrl;
     }
@@ -91,10 +89,13 @@ public class BaseService extends AbstractService {
         resultMap.put("body", result);
         return resultMap;
     }
+
+    @Override
     protected String getChannel() {
         return RequestContext.data().getChannel();
     }
 
+    @Override
     protected String getChannelNo() {
         return RequestContext.data().getChannelNo();
     }

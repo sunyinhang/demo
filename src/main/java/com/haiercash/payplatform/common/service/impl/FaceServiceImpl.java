@@ -74,11 +74,11 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String typCde = (String) cacheMap.get("typCde");// 贷款品种
-        String idNumber = cacheMap.get("idCard").toString();// 身份证号
-        String name = cacheMap.get("name").toString();// 姓名
-        String mobile = cacheMap.get("phoneNo").toString();// 手机号
-        String custNo = cacheMap.get("custNo").toString();
-        String userId = cacheMap.get("userId").toString();
+        String idNumber = (String) cacheMap.get("idCard");// 身份证号
+        String name = (String) cacheMap.get("name");// 姓名
+        String mobile = (String) cacheMap.get("phoneNo");// 手机号
+        String custNo = (String) cacheMap.get("custNo");
+        String userId = (String) cacheMap.get("userId");
         if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)){
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
@@ -116,8 +116,8 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         json.put("organization", "02");//机构号(国政通)
         //xmllog.info("调用外联人脸识别接口，请求数据：" + json.toString());
         String resData = HttpClient.sendJson(url, json.toString());
-        HttpClient.sendGetToken(url);
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
+        //{"code":"0000","data":[],"message":"{\"msg\":\"账号密码不匹配\",\"code\":\"-1\"}"}
         //{"code":"0000","data":[],"message":"{\"msg\":\"未检测到脸\",\"code\":\"-2\"}"}
         //{"code":"0000","message":"{\"msg\":\"请求参数错误，缺少必要的参数\",\"code\":\"9990\"}","data":null}
         //{"code":"0000","message":"{\"user_check_result\":\"3\",\"msg\":\"比对服务处理成功\",\"requestId\":\"61a9af6a6f19316f33809cf90235740b\",\"code\":\"1001\",\"entity\":{\"score\":\"57.24\",\"desc\":\"不是同一个人\"}}","data":null}

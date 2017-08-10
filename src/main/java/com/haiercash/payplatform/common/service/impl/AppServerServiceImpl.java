@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
+import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -141,7 +142,19 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath";
+        String channel = (String) params.get("channel");
+        String channelNo = (String) params.get("channelNo");
+        String custNo = (String) params.get("custNo");// 客户编号
+        String attachType = (String) params.get("attachType");// 影像类型
+        String attachName = (String) params.get("attachName");// 人脸照片
+        String md5 = (String) params.get("md5");//文件md5码
+        String filePath = (String) params.get("filePath");//路径
+        String id = (String) params.get("id");
+        String applSeq = (String) params.get("applSeq");
+        String idNo = (String) params.get("idNo");
+
+        String url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id + "&applSeq=" + applSeq + "&idNo=" + idNo;
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求地址：" + url);
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
