@@ -82,4 +82,8 @@ public interface AppServerService {
     public Map<String, Object> attachTypeSearchPerson(String token,Map<String, Object> paramMap);
     //6.1.127.	(GET)根据影像文件ID查询影像文件的路径
     public Map<String, Object> getFilePathByFileId(String token,Map<String, Object> paramMap);
+    //3.1.1(POST)修改保存客户所有扩展信息(CRM85)
+    public Map<String, Object> saveAllCustExtInfo(String token,Map<String, Object> paramMap);
+    //3.1.3. (POST)新增/修改 联系人(CRM6)
+    public Map<String, Object> saveCustFCiCustContact(String token,Map<String, Object> paramMap);
 }
