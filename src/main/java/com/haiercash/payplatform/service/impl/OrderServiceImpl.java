@@ -11,8 +11,10 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import com.haiercash.payplatform.common.config.EurekaServer;
+import com.haiercash.payplatform.common.service.GmService;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.common.utils.RestUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -29,6 +31,9 @@ import com.haiercash.payplatform.service.OrderService;
  */
 @Service
 public class OrderServiceImpl extends BaseService implements OrderService {
+
+    @Autowired
+    private GmService gmService;
 
     @Override
     public Map<String, Object> order2OrderMap(AppOrder order, Map<String, Object> map) {
@@ -104,6 +109,51 @@ public class OrderServiceImpl extends BaseService implements OrderService {
 
         return map;
     }
+
+    @Override
+    public Map<String, Object> submitOrder(String formId, String type) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("formId", formId);
+
+        // 获取商品详情，校验是否需要商户校验
+        Map<String, Object> goodList = this.getGoodsList(formId);
+        if (!HttpUtil.isSuccess(goodList)) {
+            logger.info("订单系统获取商品(formId:" + formId + ")信息失败, 返回结果:" + goodList);
+            return fail("05", "获取商品信息失败");
+        }
+        Map<String, Object> body = (Map<String, Object>) goodList.get("body");
+        String goodCode;
+        List<Map<String, Object>> orderGoodsMapList = (List<Map<String, Object>>) body.get("orderGoodsMapList");
+        if (orderGoodsMapList.size() > 0) {
+            goodCode = (String) orderGoodsMapList.get(0).get("goodsCode");
+        } else {
+            return fail("05", "获取商品信息失败");
+        }
+        // 商品编号为空时，默认提交给商户
+        if (goodCode == null) {
+            type = "1";
+        }
+        String isConfirm = "Y";
+        if (goodCode != null) {
+            Map<String, Object> needAndConfirm = gmService.getIsNeedSendAndIsConfirm(goodCode);
+            if (!HttpUtil.isSuccess(needAndConfirm)) {
+                return needAndConfirm;
+            }
+            Map<String, Object> needAndConfirmBody = (Map<String, Object>) needAndConfirm.get("body");
+            isConfirm = needAndConfirmBody.get("isConfirm").toString();
+        }
+        // 默认提交商户.
+        if (StringUtils.isEmpty(type)) {
+            params.put("type", "1");
+        } else if ("N".equals(isConfirm)) {
+            params.put("type", "0");
+        } else {
+            params.put("type", type);
+        }
+        Map<String, Object> result = HttpUtil.restPostMap(EurekaServer.ORDER + "/api/order/submit", params);
+        return result;
+    }
+
 
     @Override
     public Map<String, Object> cancelOrder(String formId) {
