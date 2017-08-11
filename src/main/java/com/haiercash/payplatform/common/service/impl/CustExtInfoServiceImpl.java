@@ -29,64 +29,68 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         Map<String, Object> resultMap = new HashMap<String, Object>();
         List<JSONObject> resultList =  new ArrayList<JSONObject>();
         JSONObject resultJson = new JSONObject();
-        String typCde = "" ;//影像类型
+        String typCde = "" ;//贷款品种
         List<JSONObject> resultList_ =  new ArrayList<JSONObject>();
         Map<String, Object> allCustExtInfo = getAllCustExtInfo(token, channel, channelNo);
-        //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
-        String custNo = (String)cacheMap.get("custNo");
-        JSONObject allCustExtInfojson = new JSONObject(allCustExtInfo.get("head"));
-        String allCustExtInfotMsg = allCustExtInfojson.getString("retMsg");
-        if(!ifError(allCustExtInfojson)){
+        Map<String, Object> allCustExtInfoHeadMap = (HashMap<String, Object>) allCustExtInfo.get("head");
+        String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
+        if(!ifError(allCustExtInfoHeadMap)){
             return fail(ConstUtil.ERROR_CODE, allCustExtInfotMsg);
         }
-        if("45".equals(channelNo)){
-            typCde = "";
+        if("46".equals(channelNo)){
+            typCde = "17044a";//贷款品种
         }else{
-            //TODO 查询贷款品种类型
+            //查询贷款品种类型
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         paramMap.put("typCde",typCde);
         Map<String, Object> pLoanTypImagesMap = appServerService.pLoanTypImages(token,paramMap);
-        JSONObject pLoanTypImagesHeadjson = new JSONObject(pLoanTypImagesMap.get("head"));
-        String pLoanTypImagesretMsg = pLoanTypImagesHeadjson.getString("retMsg");
-        if(!ifError(pLoanTypImagesHeadjson)){
+        Map pLoanTypImagesHeadMap = (HashMap<String, Object>) pLoanTypImagesMap.get("head");
+        String resultmapFlag = (String) pLoanTypImagesHeadMap.get("retFlag");
+        String pLoanTypImagesretMsg = (String) pLoanTypImagesHeadMap.get("retMsg");
+        if(!ifError(pLoanTypImagesHeadMap)){
             return fail(ConstUtil.ERROR_CODE, pLoanTypImagesretMsg);
         }
+        //缓存数据获取
+        Map<String, Object> cacheMap = cache.get(token);
+//        String custNo = (String)cacheMap.get("custNo");
+        String custNo = "C201607151029101937960";
         Map<String, Object> paramYXMap = new HashMap<String, Object>();
         //获取贷款类型查询客户所有影像ID
-        JSONObject pLoanTypImagesBodyjson = new JSONObject(pLoanTypImagesMap.get("body"));
-        ArrayList<JSONObject> list = (ArrayList<JSONObject>)pLoanTypImagesMap.get("body");
+//        JSONObject pLoanTypImagesBodyjson = new JSONObject(pLoanTypImagesMap.get("body"));
+        ArrayList<Map<String,String>> list = (ArrayList<Map<String,String>>)pLoanTypImagesMap.get("body");
         for (int i = 0; i < list.size(); i++) {
-            String docCde = list.get(i).getString("docCde");//影像代码
-            String docDesc = list.get(i).getString("docDesc");//影像名称
+            String docCde = list.get(i).get("docCde");//影像代码
+            String docDesc = list.get(i).get("docDesc");//影像名称
             paramYXMap.put("attachType",docCde);
             paramYXMap.put("custNo",custNo);
             paramYXMap.put("channel", channel);
             paramYXMap.put("channelNo", channelNo);
             Map<String, Object> stringObjectMap = appServerService.attachTypeSearchPerson(token, paramYXMap);
-            JSONObject stringObjectMapjson = new JSONObject(stringObjectMap.get("head"));
-            String stringObjectMapMsg = stringObjectMapjson.getString("retMsg");
-            if(!ifError(stringObjectMapjson)){
+            Map<String, Object> stringObjectMapHeadMap = (HashMap<String, Object>) stringObjectMap.get("head");
+            String stringObjectMapMsg = (String) stringObjectMapHeadMap.get("retMsg");
+            if(!ifError(stringObjectMapHeadMap)){
                 return fail(ConstUtil.ERROR_CODE, stringObjectMapMsg);
             }
-            ArrayList<JSONObject> list_ = (ArrayList<JSONObject>)stringObjectMap.get("body");
+            ArrayList<Map<String,Object>> list_ = (ArrayList<Map<String,Object>>)stringObjectMap.get("body");
             for (int j = 0; j < list_.size(); j++) {
-                String id = (String) list_.get(j).get("id");
+                String id =  Integer.toString((int)list_.get(j).get("id")) ;
                 Map<String, Object> paramYXbyIDMap = new HashMap<String, Object>();
                 paramYXbyIDMap.put("id",id);
                 paramYXbyIDMap.put("channel", channel);
                 paramYXbyIDMap.put("channelNo", channelNo);
                 Map<String, Object> filePathByFileId = appServerService.getFilePathByFileId(token, paramYXbyIDMap);
-                JSONObject filePathByFileIdjson = new JSONObject(filePathByFileId.get("head"));
-                String filePathByFileIdMsg = filePathByFileIdjson.getString("retMsg");
-                if(!ifError(filePathByFileIdjson)){
+                Map<String, Object> filePathByFileIdHeadMap = (HashMap<String, Object>) filePathByFileId.get("head");
+                String filePathByFileIdMsg = (String) filePathByFileIdHeadMap.get("retMsg");
+
+                if(!ifError(filePathByFileIdHeadMap)){
                     return fail(ConstUtil.ERROR_CODE, filePathByFileIdMsg);
                 }
-                JSONObject bodyJSONObject = new JSONObject(filePathByFileId.get("body"));
-                String filePath = bodyJSONObject.getString("filePath");
+                Map<String, Object> bodyJSONObjectMap = (HashMap<String, Object>) filePathByFileId.get("body");
+//                JSONObject bodyJSONObject = new JSONObject(filePathByFileId.get("body"));
+                String filePath = (String) bodyJSONObjectMap.get("filePath");
                 JSONObject resultJson_ = new JSONObject();
                 resultJson_.put("id",id);//影像ID
                 resultJson_.put("filePath",filePath);//图片地址
@@ -102,14 +106,23 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         return resultMap;
     }
 
-    private  boolean ifError(JSONObject jsonObject){
+    private  boolean ifError(Map<String, Object> map){
         boolean ifError = true;
-        String retFlag = jsonObject.getString("retFlag");
+        String retFlag = (String) map.get("retFlag");
         if(!"00000".equals(retFlag)){
             ifError = false;
         }
         return ifError;
     }
+//
+//    private  boolean ifError_(ResultHead data){
+//        boolean ifError = true;
+//        String retFlag =  data.getRetFlag();
+//        if(!"00000".equals(retFlag)){
+//            ifError = false;
+//        }
+//        return ifError;
+//    }
 
 
     @Override
@@ -132,25 +145,32 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
-        if(cacheMap.isEmpty()){
-            logger.info("Jedis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
+//        if(cacheMap.isEmpty()){
+//            logger.info("Jedis数据获取失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+//        }
         //TODO 总入口需查询客户信息数据
-        String custNo = (String)cacheMap.get("custNo");
+//        String custNo = (String)cacheMap.get("custNo");
+        String custNo = "B201706011214031809670";
         paramMap.put("custNo", custNo);
         paramMap.put("flag", "Y");
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", channel);
         Map<String, Object> resultmap = appServerService.getAllCustExtInfo(token, paramMap);
-        JSONObject resultmapjson = new JSONObject((String) resultmap.get("head"));
-        String resultmapFlag = resultmapjson.getString("retFlag");
+        if (resultmap == null){
+            String retMsg = ConstUtil.ERROR_INFO;
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+//        JSONObject resultmapjson = new JSONObject(resultmap.get("head").toString());
+        Map resultmapjsonMap = (HashMap<String, Object>) resultmap.get("head");
+        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
+//        String resultmapFlag = resultmapjson.getString("retFlag");
         if(!"00000".equals(resultmapFlag)){
-            String retMsg = resultmapjson.getString("retMsg");
+            String retMsg = (String) resultmapjsonMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         logger.info("查询个人扩展信息***********************结束");
-        return success(resultmap);
+        return resultmap;
     }
 
 
