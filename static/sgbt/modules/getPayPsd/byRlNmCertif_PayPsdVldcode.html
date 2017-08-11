@@ -4,8 +4,8 @@
 </div>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
-        //获取手机号和密码
-        var param = util.cache('payPasswd');
+        //获取手机号
+        var param = util.cache('mobile');
 
         var vm = util.bind({
             container: 'byRlNmCertif_PayPsdVldcode',
@@ -17,7 +17,7 @@
                 },
                 formConfig: {
                     columns: [{
-                        head: '请输入手机收到的短信校验码',//+ param && param.mobile+
+                        head: '请输入'+ param && param.mobile + '手机收到的短信校验码',
                         name: 'verifyNo',
                         clazz: 'bv-align-left',
                         config: {
@@ -32,20 +32,16 @@
                             id: 'sendSms',
                             text: '发送验证码',
                             click: function(event) {
-                                if (util.isEmpty(entity.cardnumber)) {
-                                    util.alert('请先输入手机号');
-                                }else {
-                                    util.countdown($(event.target), {
-                                        text: '发送验证码',
-                                        second: 60
-                                    });
-                                    util.get({
-                                        url: '/sendMsg',
-                                        data: {
-                                            phone: '18325423979'
-                                        }
-                                    });
-                                }
+                                util.countdown($(event.target), {
+                                    text: '发送验证码',
+                                    second: 60
+                                });
+                                util.get({
+                                    url: '/sendMsg',
+                                    data: {
+                                        phone: param && param.mobile
+                                    }
+                                });
                             }
                         },
                         agree: {
@@ -92,17 +88,13 @@
                                 }
                             },
                             click: function (event, editType, entity) {
-                                util.post({
-                                    url: '/',
-                                    data:{
-                                        payPasswd: param && param.payPasswd,
-                                        verifyNo: entity.verifyNo
-                                    },
-                                    success:function(res){
-                                        util.alert('重置成功');
-                                        //TODO   跳转到输入支付密码页面
-
-                                    }
+                                util.cache({
+                                    verifyNo: entity.verifyNo
+                                });
+                                util.redirect({
+                                    title: '实名认证找回密码',
+                                    url: '/getPayPsd/reset_rlNmPayPsd.html',
+                                    back: false
                                 });
                             }
                         }

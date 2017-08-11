@@ -15,4 +15,12 @@ public interface CrmService {
      * @return Map
      */
     Map<String, Object>  queryPerCustInfoByUserId(String userId);
+
+    /**
+     * 查询用户准入资格
+     *
+     * @param params custName certNo
+     * @return
+     */
+    Map<String, Object> getCustIsPass(Map<String, Object> params);
 }

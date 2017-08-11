@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao">
+
+    <select id="selectByOrderNo" resultType="com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation" >
+        select * from bc_bank_info where order_no = #{orderNo, jdbcType=VARCHAR}
+    </select>
+
+</mapper>

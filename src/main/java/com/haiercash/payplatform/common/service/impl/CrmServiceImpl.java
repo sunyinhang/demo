@@ -3,6 +3,7 @@ package com.haiercash.payplatform.common.service.impl;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.common.utils.FormatUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.springframework.http.HttpStatus;
@@ -27,4 +28,18 @@ public class CrmServiceImpl extends BaseService implements CrmService{
 
         return HttpUtil.restGetMap(EurekaServer.CRM + "/app/crm/cust/queryPerCustInfo?userId=" + userId, HttpStatus.OK.value());
     }
+
+
+    @Override
+    public Map<String, Object> getCustIsPass(Map<String, Object> params) {
+        String url = EurekaServer.CRM + "/app/crm/cust/getCustIsPass";
+        String paramUrl = FormatUtil.putParam2Url(url, params);
+        logger.debug("CRM28 getCustIsPass ==> " + paramUrl);
+        String resultJson = HttpUtil.restGet(paramUrl);
+        logger.debug("CRM28 getCustIsPass <== " + resultJson);
+        return HttpUtil.json2DeepMap(resultJson);
+    }
+
+
+
 }
