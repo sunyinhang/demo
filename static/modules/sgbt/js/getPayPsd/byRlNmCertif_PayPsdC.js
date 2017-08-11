@@ -1,6 +1,6 @@
 require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util, Const) {
 	//获取卡号
-	var param = util.cache();
+	var param = util.cache('cardNo');
 	
 	//获取卡类型
 	util.post({

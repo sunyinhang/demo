@@ -1,7 +1,7 @@
 require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util, Const) {
 
 	//获取手机号码和支付密码
-	var param = util.cache();
+	var param = util.cache('phone,password');
 
     vm = avalon.redefine({
         $id: "payPsdValidcode",

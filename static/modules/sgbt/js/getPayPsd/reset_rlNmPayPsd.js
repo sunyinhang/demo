@@ -1,5 +1,5 @@
 require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util, Const) {
-	var param = util.cache();
+	var param = util.cache('cardNo,bankCode,mobile,verifyNo');
 
     var vm = avalon.redefine({
         $id: "reset_rlNmPayPsd",

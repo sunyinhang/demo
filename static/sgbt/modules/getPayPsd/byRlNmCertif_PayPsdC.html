@@ -6,7 +6,7 @@
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
 
         //获取银行卡号
-        var param=util.cache();
+        var param=util.cache('cardnumber');
 
         var vm = util.bind({
             container: 'byRlNmCertif_PayPsdC',
@@ -72,7 +72,7 @@
         });
         util.get({
             url: util.mix("/getCardInfo", {
-                cardNo: param && cardnumber.cardnumber
+                cardNo: param && param.cardnumber
             }),
             success:function(res){
                 util.refresh({

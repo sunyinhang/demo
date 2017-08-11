@@ -1,6 +1,6 @@
 require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util, Const) {
 	//获取姓名和身份证 
-	var param = util.cache();
+	// var param = util.cache('');
 	
 	var vm=avalon.redefine({
 		$id: "byRlNmCertif_PayPsd",

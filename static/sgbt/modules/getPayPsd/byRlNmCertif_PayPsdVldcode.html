@@ -5,7 +5,7 @@
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         //获取手机号和密码
-        var param=util.cache();
+        var param = util.cache('payPasswd');
 
         var vm = util.bind({
             container: 'byRlNmCertif_PayPsdVldcode',
@@ -96,7 +96,7 @@
                                     url: '/',
                                     data:{
                                         payPasswd: param && param.payPasswd,
-                                        verifyNo: entity.verifyNo,
+                                        verifyNo: entity.verifyNo
                                     },
                                     success:function(res){
                                         util.alert('重置成功');

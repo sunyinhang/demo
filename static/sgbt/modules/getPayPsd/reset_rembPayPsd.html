@@ -6,7 +6,7 @@
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
 
         //获取旧密码
-        var param=util.cache();
+        var param=util.cache('payPasswd');
 
         var vm = util.bind({
             container: 'reset_rembPayPsd',
@@ -63,7 +63,7 @@
                                         oldpassword: param && param.payPasswd,
                                         newpassword: entity.payPassword
                                      },
-                                    success(res){
+                                    success: function (res){
                                         util.alert('重置成功');
                                         //TODO   跳转到输入支付密码页面
                                     }

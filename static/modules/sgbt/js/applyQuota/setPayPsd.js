@@ -1,7 +1,7 @@
 require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util, Const) {
 	
 	//获取手机号码
-	var param = util.cache();
+	var param = util.cache('phone');
 
     var vm = avalon.redefine({
         $id: "setPayPsd",

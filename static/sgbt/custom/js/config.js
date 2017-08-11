@@ -7,6 +7,12 @@ var __Const = {
             channelNo: '46'
         }
     },
+    url: {
+        cache: {
+            get: '/cache',
+            set: '/cache'
+        }
+    },
     route: {
         baseUrl: window.location.protocol + "//" + window.location.host,
         baseLocation: '/sgbt',
@@ -59,5 +65,8 @@ var __Const = {
         idCard: 60,
         // 发证机关
         issue: 90
+    },
+    cache: {
+        type: 'both'
     }
 }

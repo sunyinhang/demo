@@ -1,6 +1,6 @@
 require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util, Const) {
 	//获取手机号
-	var param = util.cache();
+	var param = util.cache('mobile,cardNo,bankCode');
 
 	var vm=avalon.redefine({
 		$id: "byRlNmCertif_PayPsdVldcode",
