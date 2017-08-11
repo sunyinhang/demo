@@ -1,0 +1,112 @@
+<div class="bv-align-center fullPage gray" data-container="byRlNmCertif_PayPsdC">
+    <div class="height10"></div>
+    <component is="bv-form" class="form-align-left getPayppPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+
+        //获取银行卡号
+        var param=util.cache();
+
+        var vm = util.bind({
+            container: 'byRlNmCertif_PayPsdC',
+            data: {
+                tags: {
+                    formKey: 'byRlNmCertif_PayPsdCForm'
+                },
+                entity: {},
+                formConfig: {
+                    layout: 'inline',
+                    columns: [
+                        {
+                            head: '卡类型',
+                            name: 'cardType',
+                            clazz: '',
+                            config: {
+                                attr: {
+                                    readonly: 'readonly'
+                                },
+                                validate: {
+                                    required: '银行卡类型不能为空'
+                                }
+                            }
+                        },{
+                            head: '手机号',
+                            name: 'mobile',
+                            clazz: '',
+                            config: {
+                                attr: {
+                                    placeholder: '请输入银行卡绑定手机号'
+                                },
+                                validate: {
+                                    required: '手机号不能为空'
+                                }
+                            },
+                            operate: {
+                                type: 'hint',
+                                click: function () {
+                                    util.alert('银行预留手机号码是办理该银行卡是所填写的手机号码。没有预留、手机号码忘记或者已停用，请联系银行客服进行处理。');
+                                }
+                            }
+                        }
+                    ],
+                    operates: [
+                        {
+                            text: '下一步',
+                            clazz: 'primary',
+                            click: function (event, editType, entity) {
+                                util.cache({
+                                    cardnumber: param && param.cardnumber,
+                                    mobile: entity.mobile
+                                });
+                                util.redirect({
+                                    title: '实名认证找回密码',
+                                    url: '/getPayPsd/byRlNmCertif_PayPsdVldcode.html',
+                                    back: false
+                                });
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+        util.get({
+            url: util.mix("/getCardInfo", {
+                cardNo: param && cardnumber.cardnumber
+            }),
+            success:function(res){
+                util.refresh({
+                    vm: util.vm(vm, vm.tags.formKey),
+                    entity: {
+                        cardtype: res.body.bankName+res.body.cardType
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
+
+<div class="wrapper" ms-controller="byRlNmCertif_PayPsdC">
+<form ms-validate="@validate">
+    <div class="margt10"></div>
+    <div class="list-group">
+          <ul>
+            <li class="padding-inner border-bottom">
+                <span class="txt">卡类型</span>
+                <div><input type="text" ms-duplex="@cardType" unselectable="on" readonly="true"></div>
+            </li>
+            <li class="padding-inner border-bottom">
+                <span class="txt">手机号</span>
+                <div><input type="text" placeholder="请输入银行预留手机号" ms-attr="{maxlength: @lengths.mobile}" ms-duplex="@mobile" ms-rules="{required:true,mobile: true}" data-required-message="请输入手机号码"></div>
+                <span class="prompt" data-prompt="#cardHolderBind"></span>
+            </li>
+          </ul>
+    </div>
+    <div class="main-btn margt28">
+		<a href="javascript:void(0);" class="a-btn" ms-click="@nextFn($event)">确定</a>
+	</div>
+</form>
+</div>
+<script type="text/javascript" src="js/getPayPsd/byRlNmCertif_PayPsdC.js"></script>

@@ -1,0 +1,110 @@
+<div class="bv-align-center" data-container="byRlNmCertif_PayPsdVldcode">
+    <div class="height10 gray"></div>
+    <component is="bv-form" class="form-align-left form-sms" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+        //获取手机号和密码
+        var param=util.cache();
+
+        var vm = util.bind({
+            container: 'byRlNmCertif_PayPsdVldcode',
+            data: {
+                tags: {
+                    formKey: 'byRlNmCertif_PayPsdVldcodeForm'
+                },
+                entity: {
+                },
+                formConfig: {
+                    columns: [{
+                        head: '请输入手机收到的短信校验码',//+ param && param.mobile+
+                        name: 'verifyNo',
+                        clazz: 'bv-align-left',
+                        config: {
+                            attr: {
+                                placeholder: '请输入验证码'
+                            },
+                            validate: {
+                                required: '请输入短信验证码'
+                            }
+                        },
+                        operate: {
+                            id: 'sendSms',
+                            text: '发送验证码',
+                            click: function(event) {
+                                util.countdown($(event.target), {
+                                    text: '发送验证码',
+                                    second: 60
+                                });
+                                util.get({
+                                    url: '/sendMsg',
+                                    data: {
+                                        phone: '18325423979'
+                                    }
+                                });
+                            }
+                        },
+                        agree: {
+                            name: 'agree',
+                            text: '海尔消费金融账户开通相关协议',
+                            click: function () {
+                                // 多个协议
+                                util.actions([
+                                    {
+                                        text: '协议1',
+                                        click: function () {
+                                            util.popup({
+                                                $element: $('.agree-popup'),
+                                                title: '协议1',
+                                                url: 'https://www.baidu.com'
+                                            });
+                                        }
+                                    }, {
+                                        text: '协议2',
+                                        click: function () {
+                                            console.log('协议2');
+                                        }
+                                    }, {
+                                        text: '协议3',
+                                        click: function () {
+                                            console.log('协议3');
+                                        }
+                                    }
+                                ]);
+                            }
+                        }
+                    }],
+                    operates: [
+                        {
+                            text: '下一步',
+                            clazz: 'primary',
+                            validate: {
+                                after: function (event, editType, entity) {
+                                    if (!entity.agree) {
+                                        util.alert('#agree');
+                                        return false;
+                                    }
+                                    return true;
+                                }
+                            },
+                            click: function (event, editType, entity) {
+                                util.post({
+                                    url: '/',
+                                    data:{
+                                        payPasswd: param && param.payPasswd,
+                                        verifyNo: entity.verifyNo,
+                                    },
+                                    success:function(res){
+                                        util.alert('重置成功');
+                                        //TODO   跳转到输入支付密码页面
+
+                                    }
+                                });
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+    });
+</script>
