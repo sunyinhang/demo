@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.common.utils;
 
-import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.StringUtils;
+import com.haiercash.payplatform.common.utils.Convert;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 渠道类型

@@ -5,6 +5,7 @@ import com.haiercash.payplatform.common.service.CmisService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.BaseService;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @author Liu qingxiang
  * @since v1.0.1
  */
+@Service
 public class CmisServiceImpl extends BaseService implements CmisService{
 
 
