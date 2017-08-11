@@ -169,16 +169,16 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         paramMap.put("attachType", ConstUtil.ATTACHTYPE_DOC065);// 影像类型
         paramMap.put("attachName", ConstUtil.ATTACHTYPE_DOC065_DESC);// 人脸照片
         paramMap.put("md5", MD5);//文件md5码
-        paramMap.put("filePath", face_DataImg_url);
+        paramMap.put("filePath", filePath.toString());
         //paramMap.put("fileStream", inputStream1);
         String applSeq = (String) cacheMap.get("applSeq");
         //paramMap.put("applSeq", applSeq);
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
-        JSONObject uploadheadjson = new JSONObject(uploadresultmap.get("head"));
-        String uploadretFlag = uploadheadjson.getString("retFlag");
+        Map uploadheadjson = (HashMap<String, Object>) uploadresultmap.get("head");
+        String uploadretFlag = (String) uploadheadjson.get("retFlag");
         if(!"00000".equals(uploadretFlag)){
-            String retMsg = uploadheadjson.getString("retMsg");
+            String retMsg = (String) uploadheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         //通过人脸分数判断人脸识别是否通过
@@ -202,19 +202,19 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         checkMap.put("channel", channel);
         checkMap.put("channelNo", channelNo);
         Map<String, Object> checkresultmap = appServerService.faceCheckByFaceValue(token, checkMap);
-        JSONObject checkheadjson = new JSONObject(checkresultmap.get("head"));
-        String checkretFlag = checkheadjson.getString("retFlag");
-        String checkretMsg = checkheadjson.getString("retMsg");
+        Map checkheadjson = (HashMap<String, Object>)checkresultmap.get("head");
+        String checkretFlag = (String) checkheadjson.get("retFlag");
+        String checkretMsg = (String) checkheadjson.get("retMsg");
         if("00000".equals(checkretFlag)){
             //人脸识别成功
             //判断是否已经设置过支付密码
             validateUserFlag(userId, token, channel, channelNo, cacheMap);
             return success();
         }else{
-            JSONObject checkbodyjson = new JSONObject(checkresultmap.get("body"));
-            if("N".equals(checkbodyjson.getString("isRetry")) &&
-                    "N".equals(checkbodyjson.getString("isOK")) &&
-                    "N".equals(checkbodyjson.getString("isResend"))){
+            Map checkbodyjson = (HashMap<String, Object>) checkresultmap.get("body");
+            if("N".equals(checkbodyjson.get("isRetry")) &&
+                    "N".equals(checkbodyjson.get("isOK")) &&
+                    "N".equals(checkbodyjson.get("isResend"))){
 //                List<String> str = new ArrayList<String>();
 //                Map<String, Object> bodyMap = DataConverUtil.jsonToMap(String.valueOf(checkbodyjson));
 //                List<Map<String, Object>> attachList = (List<Map<String, Object>>) bodyMap.get("attachList");
