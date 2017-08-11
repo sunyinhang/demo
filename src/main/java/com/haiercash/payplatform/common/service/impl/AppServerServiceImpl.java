@@ -1,9 +1,7 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.commons.util.StringUtil;
-import com.haiercash.payplatform.common.utils.ConstUtil;
-import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -238,7 +236,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = appservernoauth + "/app/appserver/getAllCustExtInfo";
         logger.info("查询CRM中客户扩展信息（二）接口，请求地址：" + url);
         logger.info("查询CRM中客户扩展信息（二）接口，请求数据：" + params);
-        Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
         logger.info("查询CRM中客户扩展信息（二）接口，返回数据" + resultmap);
         return resultmap;
     }
