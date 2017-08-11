@@ -32,16 +32,20 @@
                             id: 'sendSms',
                             text: '发送验证码',
                             click: function(event) {
-                                util.countdown($(event.target), {
-                                    text: '发送验证码',
-                                    second: 60
-                                });
-                                util.get({
-                                    url: '/sendMsg',
-                                    data: {
-                                        phone: '18325423979'
-                                    }
-                                });
+                                if (util.isEmpty(entity.cardnumber)) {
+                                    util.alert('请先输入手机号');
+                                }else {
+                                    util.countdown($(event.target), {
+                                        text: '发送验证码',
+                                        second: 60
+                                    });
+                                    util.get({
+                                        url: '/sendMsg',
+                                        data: {
+                                            phone: '18325423979'
+                                        }
+                                    });
+                                }
                             }
                         },
                         agree: {
