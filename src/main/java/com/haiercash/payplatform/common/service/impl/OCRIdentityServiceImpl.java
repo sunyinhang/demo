@@ -66,7 +66,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -197,7 +197,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
 
         Map<String, Object> cacheMap = cache.get(token);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -265,7 +265,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
 
         Map<String, Object> cacheMap = cache.get(token);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -328,7 +328,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         //3.jedis缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -507,7 +507,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> cacheMap = cache.get(token);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -540,7 +540,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> cacheMap = cache.get(token);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }

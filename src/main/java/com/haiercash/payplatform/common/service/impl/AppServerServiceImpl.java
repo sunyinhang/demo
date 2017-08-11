@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
+import com.haiercash.commons.util.StringUtil;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.common.service.AppServerService;
@@ -8,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
@@ -150,11 +152,24 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String md5 = (String) params.get("md5");//文件md5码
         String filePath = (String) params.get("filePath");//路径
         String id = (String) params.get("id");
-        String applSeq = (String) params.get("applSeq");
+        //String applSeq = (String) params.get("applSeq");
         String idNo = (String) params.get("idNo");
 
-        String url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
-                + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id + "&applSeq=" + applSeq + "&idNo=" + idNo;
+        String url ;
+        if(StringUtils.isEmpty(id) && StringUtils.isEmpty(idNo)){
+            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath ;
+        }else if(StringUtils.isEmpty(id)){
+            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&idNo=" + idNo;
+        }else if(StringUtils.isEmpty(idNo)){
+            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id ;
+        }else{
+            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id + "&idNo=" + idNo;
+        }
+
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求地址：" + url);
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
