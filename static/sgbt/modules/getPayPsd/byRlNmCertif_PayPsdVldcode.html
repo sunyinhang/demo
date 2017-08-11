@@ -1,5 +1,5 @@
-<div class="bv-align-center" data-container="payPsdValidcode">
-    <component is="tab-applyQuota" active="realName personal face password"></component>
+<div class="bv-align-center" data-container="byRlNmCertif_PayPsdVldcode">
+    <div class="height10 gray"></div>
     <component is="bv-form" class="form-align-left form-sms" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
@@ -8,10 +8,10 @@
         var param=util.cache();
 
         var vm = util.bind({
-            container: 'payPsdValidcode',
+            container: 'byRlNmCertif_PayPsdVldcode',
             data: {
                 tags: {
-                    formKey: 'payPsdValidcodeForm'
+                    formKey: 'byRlNmCertif_PayPsdVldcodeForm'
                 },
                 entity: {
                 },
@@ -93,20 +93,15 @@
                             },
                             click: function (event, editType, entity) {
                                 util.post({
-                                    url: '/resetPayPasswd',
+                                    url: '/',
                                     data:{
                                         payPasswd: param && param.payPasswd,
                                         verifyNo: entity.verifyNo,
                                     },
                                     success:function(res){
-                                        util.cache({
-                                            mobile: entity.mobile
-                                        });
-                                        util.redirect({
-                                            title: '个人资料',
-                                            url: '/applyQuota/personalInform.html',
-                                            back: false
-                                        });
+                                        util.alert('重置成功');
+                                        //TODO   跳转到输入支付密码页面
+
                                     }
                                 });
                             }

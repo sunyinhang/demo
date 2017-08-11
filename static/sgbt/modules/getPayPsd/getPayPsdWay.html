@@ -1,19 +1,25 @@
-<div class="wrapper" ms-controller="getPayPsdWay">
-	<div class="margt10"></div>
-    <div class="list-group">
-	      <ul>
-	        <li class="padding-inner border-bottom">
-	        	<a href="javascript:void(0)" class="arrow"  data-redirect="getPayPsd/byRembPayPsd.html">
-	          		我记得支付密码
-	          	</a>
-	        </li>
-	        <li class="padding-inner">
-	          	<a href="javascript:void(0)" class="arrow"  data-redirect="getPayPsd/byRlNmCertif_PayPsd.html">
-	            	我忘记支付密码了
-	         	</a>
-	        </li>
-	      </ul>
-    </div>
+<div class="bv-align-center fullPage gray" data-container="getPayPsdWay">
+	<div class="height10"></div>
+	<component is="bv-list" v-bind="config"></component>
 </div>
-
-
+<script type="text/javascript">
+	require(['jquery', 'util', 'Const', 'bvList'], function($, util, Const) {
+		var vm = util.bind({
+			container: 'getPayPsdWay',
+			data: {
+				config: {
+					items: [
+						{
+							title: '我记得支付密码',
+							href: 'byRembPayPsd.html'
+						},
+						{
+							title: '我忘记支付密码了',
+							href: 'byRlNmCertif_PayPsd.html'
+						}
+					]
+				}
+			}
+		});
+	});
+</script>

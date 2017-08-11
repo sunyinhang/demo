@@ -1,12 +1,15 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.commons.util.StringUtil;
+import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
+import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
@@ -149,11 +152,24 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String md5 = (String) params.get("md5");//文件md5码
         String filePath = (String) params.get("filePath");//路径
         String id = (String) params.get("id");
-        String applSeq = (String) params.get("applSeq");
+        //String applSeq = (String) params.get("applSeq");
         String idNo = (String) params.get("idNo");
 
-        String url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
-                + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id + "&applSeq=" + applSeq + "&idNo=" + idNo;
+        String url ;
+        if(StringUtils.isEmpty(id) && StringUtils.isEmpty(idNo)){
+            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath ;
+        }else if(StringUtils.isEmpty(id)){
+            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&idNo=" + idNo;
+        }else if(StringUtils.isEmpty(idNo)){
+            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id ;
+        }else{
+            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id + "&idNo=" + idNo;
+        }
+
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求地址：" + url);
         logger.info("影像上传-个人版（上传共享盘文件路径）接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -222,7 +238,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = appservernoauth + "/app/appserver/getAllCustExtInfo";
         logger.info("查询CRM中客户扩展信息（二）接口，请求地址：" + url);
         logger.info("查询CRM中客户扩展信息（二）接口，请求数据：" + params);
-        Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
+        Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
         logger.info("查询CRM中客户扩展信息（二）接口，返回数据" + resultmap);
         return resultmap;
     }
@@ -504,7 +520,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> pLoanTypImages(String token,Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/cmis/pLoanTypImages";
         logger.info("获取卡信息接口，请求地址：" + url);
-        Map<String, Object> map = HttpUtil.restGetMap(url, token , paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("获取卡信息接口，返回数据：" + map);
         return map;
     }

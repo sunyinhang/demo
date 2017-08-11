@@ -129,9 +129,10 @@ app:
     ORDER: http://ORDER
   other:
     haierDataImg_url: /testshare01/00/Data/haierData/
-    outplatform_url: http://10.164.194.123:9080
+    outplatform_url: http://10.164.194.120:9080
     face_DataImg_url: /testshare01/crm/image/
     appServer_page_url: http://testpm.haiercash.com/
     haierData_url: http://taccount.haier.com
   rediskey:
     rediskey: ${common.redis.prefix}__DEMO__
+    redistimeout: 300

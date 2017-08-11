@@ -232,7 +232,7 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     width: 0.7rem;
     background-size: 0.7rem;
 }
-
+/*协议*/
 .agree-popup .content-block {
     position: absolute;
     left: 0.5rem;
@@ -247,4 +247,11 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 }
 .agree-popup p#title a {
     float: right;
+}
+/*找回密码*/
+.bv-theme .getPayppPwd li{
+    border-bottom: 1px solid #ccc;
+}
+.bv-theme .getPayppPwd li:last-child,.bv-theme .getPayppPwd  .item-content {
+    border-bottom: none;
 }
