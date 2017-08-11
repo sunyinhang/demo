@@ -358,7 +358,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         verifyNoMap.put("channel", channel);
         verifyNoMap.put("channelNo", channelNo);
         Map<String, Object> verifyresultmap = appServerService.smsVerify(token, verifyNoMap);
-        JSONObject verifyheadjson = new JSONObject(verifyresultmap.get("head").toString());
+        Map verifyheadjson = (HashMap<String, Object>) verifyresultmap.get("head");
         String verifyretFlag = (String) verifyheadjson.get("retFlag");
         if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
             String retMsg = (String) verifyheadjson.get("retMsg");
@@ -388,7 +388,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         ocrMap.put("channel", channel);
         ocrMap.put("channelNo", channelNo);
         Map<String, Object> ocrresultmap = appServerService.saveCardMsg(token, ocrMap);
-        JSONObject ocrheadjson = new JSONObject(ocrresultmap.get("head").toString());
+        Map ocrheadjson = (HashMap<String, Object>) ocrresultmap.get("head");
         String ocrretFlag = (String) ocrheadjson.get("retFlag");
         if (!"00000".equals(ocrretFlag)) {//身份证信息保存失败
             String retMsg = (String) ocrheadjson.get("retMsg");
@@ -412,21 +412,21 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         identityMap.put("acctProvince", acctProvince); //开户行省代码
         identityMap.put("acctCity", acctCity); //开户行市代码
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
-        JSONObject identityheadjson = new JSONObject(identityresultmap.get("head").toString());
-        String identityretFlag = identityheadjson.getString("retFlag");
+        Map identityheadjson = (HashMap<String, Object>) identityresultmap.get("head");
+        String identityretFlag = (String) identityheadjson.get("retFlag");
         if (!"00000".equals(identityretFlag)) {
-            String retMsg = identityheadjson.getString("retMsg");
+            String retMsg = (String) identityheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        JSONObject identitybodyjson = new JSONObject(identityresultmap.get("body").toString());
+        Map identitybodyjson = (HashMap<String, Object>) identityresultmap.get("body");
         //信息保存
-        String custNo = identitybodyjson.getString("custNo");
-        String cardNo = identitybodyjson.getString("cardNo");
-        String bankCode = identitybodyjson.getString("acctBankNo");
-        String bankName = identitybodyjson.getString("acctBankName");
-        String idNo = identitybodyjson.getString("certNo");
-        String idType = identitybodyjson.getString("certType");
-        String cardPhone = identitybodyjson.getString(mobile);
+        String custNo = (String) identitybodyjson.get("custNo");
+        String cardNo = (String) identitybodyjson.get("cardNo");
+        String bankCode = (String) identitybodyjson.get("acctBankNo");
+        String bankName = (String) identitybodyjson.get("acctBankName");
+        String idNo = (String) identitybodyjson.get("certNo");
+        String idType = (String) identitybodyjson.get("certType");
+        String cardPhone = (String) identitybodyjson.get(mobile);
 
         cacheMap.put("custNo", custNo);
         cacheMap.put("cardNo", cardNo);
@@ -447,10 +447,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         updmobilemap.put("channel", channel);
         updmobilemap.put("channelNo", channelNo);
         Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
-        JSONObject updmobileheadjson = new JSONObject(updmobileresultmap.get("head").toString());
-        String updmobileretflag = updmobileheadjson.getString("retFlag");
+        Map updmobileheadjson = (HashMap<String, Object>)updmobileresultmap.get("head");
+        String updmobileretflag = (String) updmobileheadjson.get("retFlag");
         if (!"00000".equals(updmobileretflag)) {
-            String retMsg = updmobileheadjson.getString("retMsg");
+            String retMsg = (String) updmobileheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
@@ -480,12 +480,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             paramMap.put("commonCustNo", null);//共同还款人编号，传null
             logger.info("实名绑卡，上传身份证" + (isA ? "正" : "反") + "面，请求参数：" + paramMap);
             Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
-            JSONObject uploadheadjson = new JSONObject(uploadresultmap.get("head").toString());
-            String uploadretFlag = uploadheadjson.getString("retFlag");
-            if (!"00000".equals(uploadretFlag)) {
-                String retMsg = uploadheadjson.getString("retMsg");
-                return fail(ConstUtil.ERROR_CODE, retMsg);
-            }
+//            JSONObject uploadheadjson = new JSONObject(uploadresultmap.get("head").toString());
+//            String uploadretFlag = uploadheadjson.getString("retFlag");
+//            if (!"00000".equals(uploadretFlag)) {
+//                String retMsg = uploadheadjson.getString("retMsg");
+//                return fail(ConstUtil.ERROR_CODE, retMsg);
+//            }
+            return uploadresultmap;
         }
 
         logger.info("实名认证***********************结束");
