@@ -19,6 +19,14 @@ public interface OrderService {
     Map<String, Object> order2OrderMap(AppOrder appOrder, Map<String, Object> map);
 
     /**
+     * 保存或修改appOrder
+     * @param appOrder
+     * @param src 部分数据，appOrder若对应有值则覆盖，不需要可传null
+     * @return
+     */
+    Map<String, Object> saveOrUpdateAppOrder(AppOrder appOrder, Map<String, Object> src);
+
+    /**
      * 提交订单接口.
      *  订单状态	    系统编号	    贷款类型	    操作内容	提交后订单状态
      * 00-待提交	13-商户版APP	01-耐用消费品	贷款流水号+状态	10-已提交
@@ -50,5 +58,11 @@ public interface OrderService {
     Map<String, Object> getGoodsList(String formId);
 
 
+    /**
+     * 检查订单map中的默认值
+     * @param appOrder  订单
+     * @param orderMap  请求订单系统map
+     */
+    void checkOrderDefaultValue(AppOrder appOrder, Map<String, Object> orderMap);
 }
 

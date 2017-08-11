@@ -9,7 +9,6 @@ import java.util.Map;
  * @author Liu qingxiang
  * @since v2.0.0
  */
-@Service
 public interface GmService {
 
     /**

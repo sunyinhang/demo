@@ -19,8 +19,6 @@ import java.util.Map;
  */
 @Service
 public class GmServiceImpl extends BaseService implements GmService{
-
-
     /**
      * log .
      */
