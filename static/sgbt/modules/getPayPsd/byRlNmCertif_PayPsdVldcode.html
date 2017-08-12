@@ -5,7 +5,7 @@
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         //获取手机号
-        var param = util.cache('mobile');
+        var param = util.cache('cardnumber','mobile','bankNo');
 
         var vm = util.bind({
             container: 'byRlNmCertif_PayPsdVldcode',
@@ -89,7 +89,10 @@
                             },
                             click: function (event, editType, entity) {
                                 util.cache({
-                                    verifyNo: entity.verifyNo
+                                    verifyNo: entity.verifyNo,
+                                    mobile: param && param.mobile,
+                                    cardnumber: param && param.cardnumber,
+                                    bankNo: param && param.bankNo
                                 });
                                 util.redirect({
                                     title: '实名认证找回密码',

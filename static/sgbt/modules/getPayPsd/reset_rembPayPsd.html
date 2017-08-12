@@ -3,7 +3,7 @@
     <component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
-    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+    require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
 
         //获取旧密码
         var param=util.cache('payPasswd');

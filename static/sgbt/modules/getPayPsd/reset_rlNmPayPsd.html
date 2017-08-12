@@ -3,16 +3,16 @@
     <component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
-    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+    require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
 
         //获取卡号、手机号、验证码
         var param=util.cache('cardnumber','mobile','verifyNo');
 
         var vm = util.bind({
-            container: 'reset_rembPayPsd',
+            container: 'reset_rlNmPayPsd',
             data: {
                 tags: {
-                    formKey: 'reset_rlNmPayPsdForm'
+                    formKey: 'reset_rembPayPsdForm'
                 },
                 entity: {},
                 formConfig: {
@@ -62,7 +62,7 @@
                                     data: {
                                         mobile: param && param.mobile,
                                         verifyNo: param && param.verifyNo,
-                                        cardNo: param && param.cardNo,
+                                        cardNo: param && param.cardnumber,
                                         newPassword: entity.payPassword
                                     },
                                     success(res){
@@ -77,3 +77,5 @@
         });
     });
 </script>
+
+

@@ -380,5 +380,16 @@
                 }
             }
         });
+        util.post({
+            url: "/getAllCustExtInfo",
+            success:function(res){
+                util.refresh({
+                    vm: util.vm(vm, vm.tags.formKey),
+                    entity: {
+                        liveAddr: res.body.liveAddr
+                    }
+                });
+            }
+        });
     });
 </script>
