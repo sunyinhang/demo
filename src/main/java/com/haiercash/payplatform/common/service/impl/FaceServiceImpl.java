@@ -248,9 +248,9 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             return fail(ConstUtil.ERROR_CODE, "图片为空");
         }
         //前台参数获取
-        String token = request.getParameter("token");
-        String channel = request.getParameter("channel");
-        String channelNo = request.getParameter("channelNo");
+        String token = request.getHeader("token");
+        String channel = request.getHeader("channel");
+        String channelNo = request.getHeader("channelNo");
         String edflag = request.getParameter("edflag");//1:额度申请
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
             logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo);
@@ -303,15 +303,15 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         paramMap.put("attachType", ConstUtil.ATTACHTYPE_APP01);// 影像类型
         paramMap.put("attachName", ConstUtil.ATTACHTYPE_APP01_DESC);
         paramMap.put("md5",MD5);
-        paramMap.put("filePath", haierDataImg_url);
+        paramMap.put("filePath", filePath);
         String applSeq = (String) cacheMap.get("applSeq");
         //paramMap.put("applSeq", applSeq);
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
-        JSONObject uploadheadjson = new JSONObject(uploadresultmap.get("head"));
-        String uploadretFlag = uploadheadjson.getString("retFlag");
+        Map uploadheadjson = (HashMap<String, Object>)(uploadresultmap.get("head"));
+        String uploadretFlag = (String) uploadheadjson.get("retFlag");
         if(!"00000".equals(uploadretFlag)){
-            String retMsg = uploadheadjson.getString("retMsg");
+            String retMsg = (String) uploadheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
 

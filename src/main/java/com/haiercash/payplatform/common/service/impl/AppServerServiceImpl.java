@@ -541,4 +541,21 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
 
+    //(POST)修改保存客户所有扩展信息(CRM85)
+    public Map<String, Object> saveAllCustExtInfo(String token,Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/crm/cust/saveAllCustExtInfo";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
+        return map;
+    }
+
+    //(POST)新增/修改 联系人(CRM6)
+    public Map<String, Object> saveCustFCiCustContact(String token,Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/crm/saveCustFCiCustContact";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
+        return map;
+    }
 }

@@ -23,6 +23,13 @@ public interface ShunguangService {
      */
     Map<String, Object> saveOrdinaryUserInfo (Map<String, Object> ordinaryInfo);
 
+    /**
+     * 白条支付申请接口
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> payApply(Map<String, Object> map) throws Exception;
 
     /**
      * 白条额度申请接口

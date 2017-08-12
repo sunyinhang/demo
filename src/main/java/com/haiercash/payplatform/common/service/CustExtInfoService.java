@@ -12,4 +12,6 @@ public interface CustExtInfoService {
     public Map<String, Object> getAllCustExtInfoAndDocCde(String token,String channel,String channelNo) throws Exception;
     //获取客户个人扩展信息
     public Map<String, Object> getAllCustExtInfo(String token,String channel,String channelNo) throws Exception;
+    //保存客户个人扩展信息
+    public Map<String, Object> saveAllCustExtInfo(String token,String channel,String channelNo,Map<String, Object> params) throws Exception;
 }
