@@ -14,12 +14,14 @@ import com.haiercash.payplatform.service.BaseService;
 import com.netflix.ribbon.proxy.annotation.Http;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -101,6 +103,51 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         return success();
     }
 
+    @Override
+    public Map<String, Object> payApply(Map<String, Object> map) throws Exception {
+        logger.info("白条支付申请接口*******************开始");
+        Map cachemap = new HashMap<String, Object>();
+        String applyNo = (String) map.get("applyNo");//交易流水号
+        String channelNo = map.get("channelNo").toString();
+        String tradeCode = (String) map.get("tradeCode");//交易编码
+        String data = (String) map.get("data");//交易信息
+
+        String params;
+        try {
+            params = this.decryptData(data, channelNo);
+        } catch (Exception e) {
+            logger.error(e);
+            return fail("01", "请求数据校验失败");
+        }
+        logger.info("支付申请接口请求数据：" + params);
+        JSONObject json = new JSONObject(params);
+        String token = (String) json.get("token");
+        String userType = (String) json.get("userType");
+        String body = json.get("body").toString();//本比订单信息
+        //String URL = (String) json.get("URL");
+        JSONObject bodyjson = new JSONObject(body);
+        String orderSn = bodyjson.getString("orderSn");//订单号
+        String loanType = bodyjson.getString("loanType");//贷款品种编码
+        String payAmt = bodyjson.getString("payAmt");//订单实付金额
+        String province = bodyjson.getString("province");//省
+        String city = bodyjson.getString("city");//市
+        String country = bodyjson.getString("country");//区
+        String detailAddress = bodyjson.getString("detailAddress");//详细地址
+        String orderDate = bodyjson.getString("orderDate");//下单时间
+        String ordermessage = bodyjson.get("ordermessage").toString();//网单信息
+        JSONArray jsonArray = new JSONArray(ordermessage);
+        for (int j = 0; j < jsonArray.length(); j++) {
+            Object object = jsonArray.get(j);
+            Map verifyheadjson = (HashMap<String, Object>) object;
+            String cOrderSn = (String) verifyheadjson.get("cOrderSn");
+            String topLevel = (String) verifyheadjson.get("topLevel");
+            String model = (String) verifyheadjson.get("model");
+        }
+
+        logger.info("测试");
+
+        return success();
+    }
 
     @Override
     public Map<String, Object> edApply(Map<String, Object> map) throws Exception {

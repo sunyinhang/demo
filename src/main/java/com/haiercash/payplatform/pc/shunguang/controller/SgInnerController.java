@@ -37,7 +37,7 @@ public class SgInnerController extends BaseController {
 
     @RequestMapping(value = "/api/payment/shunguang/userlogin", method = RequestMethod.POST)
     public Map<String, Object> userlogin(@RequestBody Map<String, Object> map) throws Exception{
-        return sgInnerService.userlogin(map);
+        return sgInnerService.userlogin(super.initParam(map));
     }
 
 

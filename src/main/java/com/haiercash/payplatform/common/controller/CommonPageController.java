@@ -136,6 +136,19 @@ public class CommonPageController extends BaseController {
     }
 
     /**
+     * 上传替代影像
+     * @param faceImg
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/uploadPersonPic", method = RequestMethod.POST)
+    public Map<String, Object> uploadPersonPic(@RequestBody MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return faceService.uploadPersonPic(faceImg, request, response);
+    }
+
+    /**
      * 支付密码设置
      *
      * @return

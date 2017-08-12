@@ -67,6 +67,22 @@ public class ShunguangController extends BaseController {
     }
 
     /**
+     * 4.	 白条支付申请接口
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/shunguang/payApply", method = RequestMethod.POST)
+    public Map<String, Object> payApply(@RequestBody Map<String, Object> map) throws Exception{
+        // 参数非空校验
+        Map<String, Object> confirmMsg = confirmData(map);
+        if(!HttpUtil.isSuccess(confirmMsg)) {
+            return confirmMsg;
+        }
+        return shunguangService.payApply(map);
+    }
+
+    /**
      * 5.	白条额度申请接口   Sg-10004
      * @param map
      * @return
