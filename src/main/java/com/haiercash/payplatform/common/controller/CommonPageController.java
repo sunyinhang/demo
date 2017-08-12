@@ -292,4 +292,15 @@ public class CommonPageController extends BaseController {
         return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
+    /**
+     * 保存客户个人扩展信息
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/saveAllCustExtInfo", method = RequestMethod.POST)
+    public Map<String, Object> saveAllCustExtInfo(@RequestBody Map<String, Object> params) throws Exception {
+        return custExtInfoService.saveAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+    }
+
 }

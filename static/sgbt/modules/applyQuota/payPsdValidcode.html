@@ -32,20 +32,16 @@
                             id: 'sendSms',
                             text: '发送验证码',
                             click: function(event) {
-                                if (util.isEmpty(entity.cardnumber)) {
-                                    util.alert('请先输入手机号');
-                                }else {
-                                    util.countdown($(event.target), {
-                                        text: '发送验证码',
-                                        second: 60
-                                    });
-                                    util.get({
-                                        url: '/sendMsg',
-                                        data: {
-                                            phone: '18325423979'
-                                        }
-                                    });
-                                }
+                                util.countdown($(event.target), {
+                                    text: '发送验证码',
+                                    second: 60
+                                });
+                                util.get({
+                                    url: '/sendMsg',
+                                    data: {
+                                        phone: '18325423979'
+                                    }
+                                });
                             }
                         },
                         agree: {
@@ -99,12 +95,9 @@
                                         verifyNo: entity.verifyNo
                                     },
                                     success:function(res){
-                                        util.cache({
-                                            mobile: entity.mobile
-                                        });
                                         util.redirect({
-                                            title: '个人资料',
-                                            url: '/applyQuota/personalInform.html',
+                                            title: '额度输出中',
+                                            url: '/applyQuota/applyIn.html',
                                             back: false
                                         });
                                     }

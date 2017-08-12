@@ -1,18 +1,18 @@
-<div class="bv-align-center fullPage gray" data-container="reset_rembPayPsd">
+<div class="bv-align-center fullPage gray" data-container="reset_rlNmPayPsd">
     <div class="height10"></div>
     <component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
 
-        //获取旧密码
-        var param=util.cache('payPasswd');
+        //获取卡号、手机号、验证码
+        var param=util.cache('cardnumber','mobile','verifyNo');
 
         var vm = util.bind({
             container: 'reset_rembPayPsd',
             data: {
                 tags: {
-                    formKey: 'reset_rembPayPsdForm'
+                    formKey: 'reset_rlNmPayPsdForm'
                 },
                 entity: {},
                 formConfig: {
@@ -58,14 +58,15 @@
                             clazz: 'primary',
                             click: function (event, editType, entity) {
                                 util.post({
-                                    url: '/updatePayPasswd',
+                                    url: '/updPwdByIdentity',
                                     data: {
-                                        oldpassword: param && param.payPasswd,
-                                        newpassword: entity.payPassword
-                                     },
-                                    success: function (res){
+                                        mobile: param && param.mobile,
+                                        verifyNo: param && param.verifyNo,
+                                        cardNo: param && param.cardNo,
+                                        newPassword: entity.payPassword
+                                    },
+                                    success(res){
                                         util.alert('重置成功');
-                                        //TODO   跳转到输入支付密码页面
                                     }
                                 });
                             }
@@ -76,4 +77,3 @@
         });
     });
 </script>
-

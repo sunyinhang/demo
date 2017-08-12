@@ -149,14 +149,14 @@ a.goGrayBtn:link,a.goGrayBtn:visited,a.goGrayBtn:hover{display: block;float:righ
 .downloadTips2{position: relative; margin:0 auto;margin-top:.2rem;width:84%;font-size:.7rem;line-height:1rem;text-align:left;}
 .mrto24{margin-top:1.2rem;}
 .downloadTips .blueCircle{float:left; margin-top:.1rem;width:.5rem;height:.5rem;-webkit-border-radius:3rem;border-radius:3rem;background:#32BEFF;}
-.downloadTips .ft{float:left;margin-left:.2rem;}
+.downloadTips .ft{float:left;margin-left:.2rem; font-size: 0.8rem;}
 .bluefont{color:#32BEFF;}
 .grayfont{color:#999;}
 .amtReson{margin:0 auto;margin-top:.8rem;width:80%;color:#d3d3d3;font-size:.7rem;line-height:.7rem;text-align:left;}
 .amtAppyModi{position:relative;margin:0 auto;margin-top:1.25rem;width:100%;}
 a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: block;margin:0 auto;padding:0px;width:84.5%;height:2.5rem;line-height:2.5rem;color:#fff;-webkit-border-radius:1.2rem;border-radius:1.2rem;font-size:.8rem;background:#32BEFF;text-align:center;border:0px;}
 
-.amountTop{position:relative;margin:0 auto;width:100%;height:11rem;background:url(../images/amtTopBg.png) left top no-repeat;background-size:100%;}
+.amountTop{position:relative;margin:0 auto;width:100%;height:11rem;background:url(./images/amtTopBg.png) left top no-repeat;background-size:100%;}
 .cusContent{position:relative;margin:0 auto;width:100%;}
 .amountInfo{position:relative;margin:0 auto;padding-top:1.1rem;padding-bottom:1.1rem;width:100%;background:#fff;}
 .verLine{position:relative;float:left;width:50%;height:3.8rem;}
@@ -172,7 +172,7 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 /* 设置支付密码和短信验证码*/
 .list-circle li{
     padding-left: 2.5rem; height: 2.5rem; font-size: 0.7rem; color: #999;
-    background: #eee url('../images/pwd.png') no-repeat 24px center;
+    background: #eee url('./images/pwd.png') no-repeat 24px center;
     background-size: 0.8rem; border:1px solid #ddd; border-radius: 25px; -webkit-border-radius: 25px;
     display: box; display: -webkit-box; display: flexbox;
     display: flex; display: -webkit-flex; box-align:center; -webkit-box-align:center; flex-align:center; align-items:center;
@@ -217,7 +217,7 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     border-radius: 1.25rem;
     height: 2.5rem;
     line-height: 2.5rem;
-    margin-left: 0.5rem;
+    margin-left: 0.35rem;
     font-size: 0.7rem;
 }
 .form-sms.list-block .item-input.item-input-operate {
@@ -249,9 +249,24 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     float: right;
 }
 /*找回密码*/
-.bv-theme .getPayppPwd li{
+.bv-theme .getPayPwd li{
     border-bottom: 1px solid #ccc;
 }
-.bv-theme .getPayppPwd li:last-child,.bv-theme .getPayppPwd  .item-content {
+.bv-theme .getPayPwd li:last-child,.bv-theme .getPayPwd  .item-content {
     border-bottom: none;
 }
+/****** module：审批进度 ******/
+.approvalNode{ width: 100%; padding: 1.5rem 0; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; background: url(./images/nodeBg.png) no-repeat top center; background-size: cover;}
+.approvalNode img{ padding-left: 2rem; padding-right:1.5rem; height: 3.5rem;}
+.approvalNode .nodeStatus{ width: 100%; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1;}
+.approvalNode .nodeStatus b{ font-size: 0.85rem; line-height: 0.85rem; color: #fff; font-weight: normal;}
+.approvalNode .nodeStatus p{ margin-top: 0.5rem; font-size: 0.7rem; line-height: 0.7rem; color:#dcecff;}
+.nodeList ul{ display: block; margin-top:1.5rem;}
+.nodeList li{ position: relative; padding-left: 2rem; padding-bottom:1rem; border-left:1px solid #ddd;}
+.nodeList li:last-child{ padding-bottom:3px;}
+.nodeList li em{ display: block; width: 0.7rem; height: 0.7rem; position: absolute; top:0px; left:-7px; background:url('./images/c1.png') no-repeat top left; background-size:0.7rem; }
+.nodeList li span {font-size: 0.85rem; line-height: 0.85rem; color: #333}
+.nodeList li span b{ margin-left: 1.5rem; font-weight: normal;}
+.nodeList li p{ font-size: 0.6rem; line-height: 0.6rem; color: #999;}
+.nodeList li.selected em{ background:url('./images/c2.png') no-repeat top left; background-size:0.7rem; }
+.nodeList li.selected span,.nodeList li.selected p { color: #32beff}
