@@ -29,7 +29,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     public Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         List<JSONObject> resultList =  new ArrayList<JSONObject>();
-        JSONObject resultJson = new JSONObject();
+
         String typCde = "" ;//贷款品种
         List<JSONObject> resultList_ =  new ArrayList<JSONObject>();
         Map<String, Object> allCustExtInfo = getAllCustExtInfo(token, channel, channelNo);
@@ -97,6 +97,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 resultJson_.put("filePath",filePath);//图片地址
                 resultList_.add(resultJson_);
             }
+            JSONObject resultJson = new JSONObject();
             resultJson.put("docCde",docCde);//影像代码
             resultJson.put("docDesc",docDesc);//影像名称
             resultJson.put("urlList",resultList_);//地址List
