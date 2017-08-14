@@ -1,18 +1,18 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.payplatform.common.service.PayPasswdService;
-import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.payplatform.common.service.PayPasswdService;
+import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import com.haiercash.commons.redis.Cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -33,9 +33,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private AppServerService appServerService;
 
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
-        logger.info("顺逛******额度提交接口******开始");
+        logger.info("查询******额度提交接口******开始");
         String retflag = "";
         String retmsg = "";
+
         String payPasswd = (String) param.get("payPasswd");//密码
         String verifyNo = (String) param.get("verifyNo");//验证码
         if (StringUtils.isEmpty(token)) {
@@ -44,7 +45,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         if (StringUtils.isEmpty(payPasswd) || StringUtils.isEmpty(verifyNo)) {
-            logger.info("payPasswd:" + payPasswd+"verifyNo"+verifyNo);
+            logger.info("payPasswd:" + payPasswd + "verifyNo" + verifyNo);
             logger.info("从前端获取的参数为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
@@ -54,16 +55,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String userId = (String) cacheMap.get("userId");
+        //String userId = "18325423979";
         String flag = (String) cacheMap.get("payPasswdFlag");//空
-        String orderNo = (String) cacheMap.get("orderNo");//空
+        //String orderNo = (String) cacheMap.get("orderNo");//空
         String custNo = (String) cacheMap.get("custNo");// 客户号
-        if (StringUtils.isEmpty(custNo)) {
-            logger.info("custNo:" + custNo);
-            logger.info("从前端获取的客户号为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
-        }
-        String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
-        String n = "3";// 签订注册 + 征信
+        //String custNo = "A0001";
+
+        //String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
+       // String n = "3";// 签订注册 + 征信
+        //String flag = "0";
         if ("0".equals(flag)) {//0  密码未设置
             logger.info("支付密码未设置，进行密码的设置");
             Map<String, Object> paramsMap = new HashMap<String, Object>();
@@ -71,23 +71,25 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             paramsMap.put("payPasswd", EncryptUtil.simpleEncrypt(payPasswd));
             paramsMap.put("channel", channel);
             paramsMap.put("channelNo", channelNo);
-            paramsMap.put("access_token", token);
-            String result = appServerService.resetPayPasswd(token, paramsMap).toString();
-            if (StringUtils.isEmpty(result)) {
-                logger.info("顺逛设置支付密码失败，app后台返回数据为空");
-                String resultMsg = "顺逛设置支付密码失败，app后台返回数据为空";
+            //paramsMap.put("access_token", token);
+            Map<String, Object> map = appServerService.resetPayPasswd(token, paramsMap);
+            if (StringUtils.isEmpty(map)) {
+                logger.info("设置支付密码失败，app后台返回数据为空");
+                String resultMsg = "设置支付密码失败，app后台返回数据为空";
                 return fail(ConstUtil.ERROR_CODE, resultMsg);
             }
-            JSONObject jsonObject = new JSONObject(result);
+            String result = JSONObject.toJSONString(map);
+            JSONObject jsonObject = JSONObject.parseObject(result);
             JSONObject resultHead = jsonObject.getJSONObject("head");
             String retFlag = resultHead.getString("retFlag");
             String retMsg = resultHead.getString("retMsg");
-            if ("00000".equals(retFlag)) {
-                logger.info("顺逛设置支付密码失败" + retMsg);
+            retFlag = "00000";
+            if (!"00000".equals(retFlag)) {
+                logger.info("设置支付密码失败" + retMsg);
                 return fail(retFlag, retMsg);
             }
         } else if ("1".equals(flag)) {// 支付密码验证
-            n = "1";
+            //n = "1";
             HashMap<String, Object> map = new HashMap<>();
             String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
             String payPasswdEncrypt = EncryptUtil.simpleEncrypt(payPasswd);
@@ -95,22 +97,23 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             map.put("payPasswd", payPasswdEncrypt);
             map.put("channel", channel);
             map.put("channelNo", channelNo);
-            String result = appServerService.validatePayPasswd(token, map);// 验证支付密码
-            if (StringUtils.isEmpty(result)) {
-                logger.info("顺逛,支付密码验证失败,app后台返回为空result" + result);
+            Map<String, Object> validatamap = appServerService.validatePayPasswd(token, map);// 验证支付密码
+            if (StringUtils.isEmpty(validatamap)) {
+                logger.info("支付密码验证失败,app后台返回为空result" + validatamap);
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
             }
-            JSONObject jb = new JSONObject(result);
+            String result = JSONObject.toJSONString(validatamap);
+            //JSONObject jb = new JSONObject(result);
+            JSONObject jb = JSONObject.parseObject(result);
             retflag = jb.getString("retFlag");
             retmsg = jb.getString("retMsg");
             if (!"00000".equals(retflag)) {
-                logger.info("顺逛,支付密码验证失败！" + retmsg);
+                logger.info("支付密码验证失败！" + retmsg);
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             }
         } else {
-            logger.info("顺逛,是否设置过支付密码标志无效");
-            String retMsg = "顺逛,是否设置过支付密码标志无效";
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            logger.info("是否设置过支付密码标志无效");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_PARAM_INVALID_MSG);
         }
         // 3、签订注册 + 征信
 //        HashMap<String, Object> reqSignMap = new HashMap<>();
@@ -189,19 +192,27 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         mapEd.put("channel", channel);
         mapEd.put("channelNo", channelNo);
         mapEd.put("custNo", custNo);
+        String crdSeq = "";
         if (StringUtils.isEmpty(crdSeq)) {//新增
             mapEd.put("flag", "0");//额度申请
         } else {//有在途的流水号(修改)
             mapEd.put("flag", "2");
-            mapEd.put("applSeq", "crdSeq");//额度申请
+            mapEd.put("applSeq", "crdSeq");//额度申请必输项：indivEdu(最高学历)不能为空！
         }
-        String resultEd = appServerService.getEdApplInfo(token, mapEd).toString();
-        JSONObject jb = new JSONObject(resultEd);
+        Map<String, Object> edApplInfo = appServerService.getEdApplInfo(token, mapEd);
+        if (StringUtils.isEmpty(edApplInfo)) {
+            logger.info("额度申请,app后台返回为空result" + edApplInfo);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        String resultEd = JSONObject.toJSONString(edApplInfo);
+        //JSONObject jb = new JSONObject(resultEd);
+        JSONObject jb = JSONObject.parseObject(resultEd);
         JSONObject head = jb.getJSONObject("head");
         retflag = head.getString("retFlag");
         retmsg = head.getString("retMsg");
+        retflag = "00000";
         if (!"00000".equals(retflag)) {
-            logger.info("顺逛,额度申请出现异常！" + retmsg);
+            logger.info("额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         return success();
@@ -258,6 +269,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         }
         Map<String, Object> cacheMap = cache.get(token);
         String userId = (String) cacheMap.get("userId");
+        //userId="18325423979";
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("token", token);
         map.put("channel", channel);
@@ -265,35 +277,49 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         map.put("userId", EncryptUtil.simpleEncrypt(userId));
         map.put("payPasswd", EncryptUtil.simpleEncrypt(oldpassword));
         map.put("newPayPasswd", EncryptUtil.simpleEncrypt(newpassword));
-        String verifyresult = appServerService.updatePayPasswd(token, map);
-        JSONObject jb0 = new JSONObject(verifyresult);
+        Map<String, Object> verifyresultmap = appServerService.updatePayPasswd(token, map);
+        if (verifyresultmap.isEmpty()) {
+            logger.info("修改支付密码（记得支付密码）verifyresultmap" + verifyresultmap);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        String verifyresult = JSONObject.toJSONString(verifyresultmap);
+        //JSONObject jb0 = new JSONObject(verifyresult);
+        JSONObject jb0 = JSONObject.parseObject(verifyresult);
         JSONObject head = jb0.getJSONObject("head");
         String retflag0 = head.getString("retFlag");
         String retmsg0 = head.getString("retMsg");
         if (!"00000".equals(retflag0)) {
-            logger.info("H5现金贷,修改支付密码异常！" + retmsg0);
+            logger.info("修改支付密码异常！" + retmsg0);
             return fail(retflag0, retmsg0);
         }
         return success();
     }
 
     //实名认证找回密码
-    public Map<String, Object> updPwdByIdentity(HttpServletRequest request) {
-        String token = request.getHeader("token");
+    public Map<String, Object> updPwdByIdentity(Map<String, Object> params) {
+        String token = super.getToken();
         if (token == null || "".equals(token)) {
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String userId = (String) request.getParameter("userId");//账号
-        String certNo = (String) request.getParameter("certNo");//身份证号
-        String cardNo = (String) request.getParameter("cardNo");//银行卡号
-        String custName = (String) request.getParameter("custName");//客户姓名
-        String mobile = (String) request.getParameter("mobile");//预留手机号
-        String verifyNo = (String) request.getParameter("verifyNo");//验证码
-        String newPassword = (String) request.getParameter("newPassword");//密码
-        String channel = request.getHeader("channel");//
-        String channelNo = request.getHeader("channelNo");//
-        String bankCode = "";
+        Map<String, Object> cacheMap = cache.get(token);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Jedi获取的数据weikong");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        String userId = (String) cacheMap.get("userId");//账号
+        //userId = "18325423979";
+        String certNo = (String) cacheMap.get("certNo");//身份证号
+        //certNo = "372926198911178630";
+        String custName = (String) cacheMap.get("custName");//客户姓名
+        String cardNo = (String) params.get("cardNo");//银行卡号
+        String bankCode = (String) params.get("bankCode");//银行号
+        String mobile = (String) params.get("mobile");//预留手机号
+        String verifyNo = (String) params.get("verifyNo");//验证码
+        String newPassword = (String) params.get("newPassword");//密码
+        String channel = super.getChannel();//系统标识
+        String channelNo = super.getChannelNo();//渠道编码
+
         if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(cardNo) ||
                 StringUtils.isEmpty(custName) || StringUtils.isEmpty(mobile) || StringUtils.isEmpty(verifyNo) ||
                 StringUtils.isEmpty(newPassword)) {
@@ -301,25 +327,27 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> map = new HashMap();
-        map.put("userId", userId);
+        map.put("userId", EncryptUtil.simpleEncrypt(userId));//用户账号
         map.put("certNo", certNo);
         map.put("cardNo", cardNo);
         map.put("custName", custName);
         map.put("mobile", mobile);
         map.put("verifyNo", verifyNo);
-        map.put("newPassword", newPassword);
+        map.put("newPassword", EncryptUtil.simpleEncrypt(newPassword));//新支付密码
         map.put("channel", channel);
         map.put("channelNo", channelNo);
-        String result = appServerService.updPwdByIdentity(token, map);
-        if (result == null || "".equals(result)) {
-            logger.info("实名认证修改密码接口，返回数据为空");
-            String retMsg = "实名认证修改密码接口，返回数据为空";
-            return fail(ConstUtil.FAILED_INFO, retMsg);
+        Map<String, Object> resultmap = appServerService.updPwdByIdentity(token, map);
+        if (resultmap == null || "".equals(resultmap)) {
+            logger.info("实名认证修改密码接口，返回数据为空" + resultmap.toString());
+            return fail(ConstUtil.FAILED_INFO, ConstUtil.ERROR_INFO);
         }
-        JSONObject jb = new JSONObject(result);
+        String result = JSONObject.toJSONString(resultmap);
+        JSONObject jb = JSONObject.parseObject(result);
         JSONObject head = jb.getJSONObject("head");
         String retFlag = head.getString("retFlag");
         String retMsg = head.getString("retMsg");
+        retFlag = "00000";
+
         if ("00000".equals(retFlag)) {
             return success();
         } else {
@@ -349,14 +377,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         map.put("payPasswd", payPasswdEncrypt);
         map.put("channel", channel);
         map.put("channelNo", channelNo);
-        String resStr = appServerService.validatePayPasswd(token, map);// 验证支付密码
-        logger.info("确认支付密码（额度申请）,返回数据为：" + resStr);
-        if (resStr == null || "".equals(resStr)) {
-            logger.info("接口返回数据为空！");
-            String retMsg = "确认支付密码（额度申请）接口返回数据为空";
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+        Map<String, Object> resStrmap = appServerService.validatePayPasswd(token, map);// 验证支付密码
+        logger.info("确认支付密码（额度申请）,返回数据为：" + resStrmap);
+        if (resStrmap == null || "".equals(resStrmap)) {
+            logger.info("接口返回数据为空！" + resStrmap);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        JSONObject jsonObj = new JSONObject(resStr);
+        String resStr = JSONObject.toJSONString(resStrmap);
+        //JSONObject jsonObj = new JSONObject(resStr);
+        JSONObject jsonObj = JSONObject.parseObject(resStr);
         JSONObject head = jsonObj.getJSONObject("head");
         if ("00000".equals(head.getString("retFlag"))) {
             cacheMap.put("payPasswd", payPasswd);
@@ -409,13 +438,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         req.put("channel", channel);
         req.put("applSeq", applSeq);
         logger.info("查询贷款详情接口，请求数据：" + req.toString());
-        String res = appServerService.queryApplLoanDetail(token, req).toString();//查询贷款详情
-        logger.info("查询贷款详情接口，响应数据：" + res);
-        if (res == null || "".equals(res)) {
-            logger.info("网络异常,查询贷款详情接口,响应数据为空！" + res);
+        Map<String, Object> map = appServerService.queryApplLoanDetail(token, req);//查询贷款详情
+        logger.info("查询贷款详情接口，响应数据：" + map);
+        if (map == null || "".equals(map)) {
+            logger.info("网络异常,查询贷款详情接口,响应数据为空！" + map);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        JSONObject jsonObject = new JSONObject(res);
+        String res = JSONObject.toJSONString(map);
+        //JSONObject jsonObject = new JSONObject(res);
+        JSONObject jsonObject = JSONObject.parseObject(res);
         JSONObject head = jsonObject.getJSONObject("head");
         String code = head.getString("retFlag");
         String message = head.getString("retMsg");
@@ -535,13 +566,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         req.put("channel", channel);
         req.put("applSeq", applSeq);
         logger.info("查询贷款详情接口，请求数据：" + req.toString());
-        String resData = appServerService.queryApplLoanDetail(token, req).toString();//查询贷款详情
-        logger.info("查询贷款详情接口，响应数据：" + resData);
-        if (resData == null || "".equals(resData)) {
+        Map<String, Object> map = appServerService.queryApplLoanDetail(token, req);//查询贷款详情
+        logger.info("查询贷款详情接口，响应数据：" + map);
+        if (map == null || "".equals(map)) {
             logger.info("网络异常,查询贷款详情接口,响应数据为空！");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        JSONObject jsonObject = new JSONObject(resData);
+        String resData = JSONObject.toJSONString(map);
+        ///JSONObject jsonObject = new JSONObject(resData);
+        JSONObject jsonObject = JSONObject.parseObject(resData);
         JSONObject head = jsonObject.getJSONObject("head");
         String code = head.getString("retFlag");
         String message = head.getString("retMsg");
@@ -560,20 +593,21 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             queryApplListMap.put("channelNo", channelNo);
             queryApplListMap.put("channel", channel);
             queryApplListMap.put("applSeq", applSeq);
-
-            String resOne = appServerService.queryApplListBySeq(token, queryApplListMap).toString();//按贷款申请查询分期账单接口
-            logger.info("按贷款申请查询分期账单接口，响应数据：" + resOne);
-            if (resOne == null || "".equals(resOne)) {
+            Map<String, Object> mapOne = appServerService.queryApplListBySeq(token, queryApplListMap);//按贷款申请查询分期账单接口
+            logger.info("按贷款申请查询分期账单接口，响应数据：" + mapOne);
+            if (mapOne == null || "".equals(mapOne)) {
                 logger.info("网络异常，app后台,按贷款申请查询分期账单接口,响应数据为空！");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-
             }
-            JSONObject jsonOne = new JSONObject(resOne);
+            String resOne = JSONObject.toJSONString(mapOne);
+            //JSONObject jsonOne = new JSONObject(resOne);
+            JSONObject jsonOne = JSONObject.parseObject(resOne);
             JSONObject jsonOneHead = jsonOne.getJSONObject("head");
             String retOneFlag = jsonOneHead.getString("retFlag");
             String retOneMsg = jsonOneHead.getString("retMsg");
             if (retOneFlag.equals("00000")) {
-                JSONArray body = jsonOne.getJSONArray("body");
+                //JSONArray body = jsonOne.getJSONArray("body");
+                com.alibaba.fastjson.JSONArray body = jsonOne.getJSONArray("body");
                 return success(body);
             } else {
                 retflag = retOneFlag;
@@ -622,13 +656,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         req.put("channel", channel);
         req.put("applSeq", applSeq);
         logger.info("查询贷款详情接口，请求数据：" + req.toString());
-        String resData = appServerService.queryApplLoanDetail(token, req).toString();//查询贷款详情
-        logger.info("查询贷款详情接口，响应数据：" + resData);
-        if (StringUtils.isEmpty(resData)) {
+        Map<String, Object> map = appServerService.queryApplLoanDetail(token, req);//查询贷款详情
+        logger.info("查询贷款详情接口，响应数据：" + map);
+        if (StringUtils.isEmpty(map)) {
             logger.info("网络异常,查询贷款详情接口,响应数据为空！");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        JSONObject jsonObject = new JSONObject(resData);
+        String resData = JSONObject.toJSONString(map);
+        //JSONObject jsonObject = new JSONObject(resData);
+        JSONObject jsonObject = JSONObject.parseObject(resData);
         JSONObject head = jsonObject.getJSONObject("head");
         String code = (String) head.get("retFlag");
         String message = (String) head.get("retMsg");
@@ -653,13 +689,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 qfmap.put("channel", channel);
                 qfmap.put("channelNo", channelNo);
                 logger.info("欠款查询接口，请求数据：" + qfmap);
-                String res = appServerService.getQFCheck(token, qfmap);// 欠款查询
-                logger.info("欠款查询接口，响应数据：" + res);
-                if (res == null || "".equals(res)) {
-                    logger.info("网络异常，app后台,欠款查询接口,响应数据为空！" + res);
+                Map<String, Object> qfCheck = appServerService.getQFCheck(token, qfmap);// 欠款查询
+                logger.info("欠款查询接口，响应数据：" + qfCheck);
+                if (qfCheck == null || "".equals(qfCheck)) {
+                    logger.info("网络异常，app后台,欠款查询接口,响应数据为空！" + qfCheck);
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                 }
-                JSONObject json = new JSONObject(res);
+                String res = JSONObject.toJSONString(qfCheck);
+                //JSONObject json = new JSONObject(res);
+                JSONObject json = JSONObject.parseObject(res);
                 JSONObject jsonRes = json.getJSONObject("msgall");
                 String retFlag = jsonRes.getString("errorCode");
                 String retMsg = jsonRes.getString("errorMsg");
@@ -679,13 +717,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     queryApplListmap.put("channelNo", channelNo);
                     queryApplListmap.put("channel", channel);
                     queryApplListmap.put("applSeq", applSeq);
-                    String resOne = appServerService.queryApplListBySeq(token, queryApplListmap).toString();// 按贷款申请查询分期账单接口
-                    logger.info("按贷款申请查询分期账单接口，响应数据：" + resOne);
-                    if (resOne == null || "".equals(resOne)) {
-                        logger.info("网络异常，app后台,按贷款申请查询分期账单接口,响应数据为空！" + resOne);
+                    Map<String, Object> queryApplListBySeqmap = appServerService.queryApplListBySeq(token, queryApplListmap);// 按贷款申请查询分期账单接口
+                    logger.info("按贷款申请查询分期账单接口，响应数据：" + queryApplListBySeqmap);
+                    if (queryApplListBySeqmap == null || "".equals(queryApplListBySeqmap)) {
+                        logger.info("网络异常，app后台,按贷款申请查询分期账单接口,响应数据为空！" + queryApplListBySeqmap);
                         return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                     }
-                    JSONObject jsonOne = new JSONObject(resOne);
+                    //JSONObject jsonOne = new JSONObject(resOne);
+                    String resOne = jsonObject.toJSONString(queryApplListBySeqmap);
+                    JSONObject jsonOne = JSONObject.parseObject(resOne);
                     JSONObject jsonOneHead = jsonOne.getJSONObject("head");
                     String retOneFlag = jsonOneHead.getString("retFlag");
                     String retOneMsg = jsonOneHead.getString("retMsg");
@@ -716,13 +756,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                                 reqTwoMap.put("actvPayAmt", ACTV_PAY_AMT);
                                 reqTwoMap.put("channel", channel);
                                 reqTwoMap.put("channelNo", channelNo);
-                                String resThree = appServerService.refundTrialAll(token, reqTwoMap).toString();// 全部还款试算
-                                logger.info("全部还款试算接口，响应数据：" + resThree);
-                                if (StringUtils.isEmpty(resThree)) {
+                                Map<String, Object> resThreemap = appServerService.refundTrialAll(token, reqTwoMap);// 全部还款试算
+                                logger.info("全部还款试算接口，响应数据：" + resThreemap);
+                                if (StringUtils.isEmpty(resThreemap)) {
                                     logger.info("网络异常,全部还款试算接口,响应数据为空！");
                                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                                 }
-                                JSONObject jsonObjectresThree = new JSONObject(resThree);
+                                String resThree = jsonObject.toJSONString(resThreemap);
+                                //JSONObject jsonObjectresThree = new JSONObject(resThree);
+                                JSONObject jsonObjectresThree = JSONObject.parseObject(resThree);
                                 String codeOne = jsonObjectresThree.getString("retMsg");
                                 String messageOne = jsonObjectresThree.getString("retMsg");
                                 if (codeOne.equals("0000")) {// 全部还款试算成功
@@ -761,13 +803,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                                 checkZdhkMoney.put("LOAN_NO", loanNo);
                                 checkZdhkMoney.put("PAYM_MODE", PAYM_MODE);
                                 checkZdhkMoney.put("ACTV_PAY_AMT", ACTV_PAY_AMT);
-                                String resTwo = appServerService.checkZdhkMoney(token, checkZdhkMoney);// 主动还款金额查询
-                                logger.info("主动还款金额查询接口，响应数据：" + resTwo);
-                                if (StringUtils.isEmpty(resTwo)) {
-                                    logger.info("网络异常，app后台,主动还款金额查询接口,响应数据为空！" + resTwo);
+                                Map<String, Object> resTwomap = appServerService.checkZdhkMoney(token, checkZdhkMoney);// 主动还款金额查询
+                                logger.info("主动还款金额查询接口，响应数据：" + resTwomap);
+                                if (StringUtils.isEmpty(resTwomap)) {
+                                    logger.info("网络异常，app后台,主动还款金额查询接口,响应数据为空！" + resTwomap);
                                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                                 }
-                                JSONObject jsonTwo = new JSONObject(resTwo);
+                                //JSONObject jsonTwo = new JSONObject(resTwo);
+                                String resTwo = JSONObject.toJSONString(resTwomap);
+                                JSONObject jsonTwo = JSONObject.parseObject(resTwo);
                                 JSONObject jsonTwoRes = jsonTwo.getJSONObject("msgall");
                                 String retFlagTwo = jsonTwoRes.getString("errorCode");
                                 String retMsgTwo = jsonTwoRes.getString("errorMsg");
@@ -823,7 +867,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("Jedis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String idNo = (String) cacheMap.get("idNo");
+        String idNo = (String) cacheMap.get("idNo");//客户证件号码
         String channel = super.getChannel();//系统标识
         String channelNo = super.getChannelNo();//渠道编码
         String idTyp = "20";//证件类型  身份证：20
@@ -837,12 +881,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         edCheckmap.put("channel", channel);
         edCheckmap.put("channelNo", channelNo);
         edCheckmap.put("idTyp", idTyp);
-        String limit = appServerService.getEdCheck(token, edCheckmap);// 获取额度剩余额度=crdComAvailAnt+crdNorAvailAmt
-        if (StringUtils.isEmpty(limit)) {
+        Map<String, Object> edCheck = appServerService.getEdCheck(token, edCheckmap);// 获取额度剩余额度=crdComAvailAnt+crdNorAvailAmt
+        if (StringUtils.isEmpty(edCheck)) {
             logger.info("调用接口返回的数据为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        JSONObject jsonObject = new JSONObject(limit);
+        String limit = JSONObject.toJSONString(edCheck);
+        //JSONObject jsonObject = new JSONObject(limit);
+        JSONObject jsonObject = JSONObject.parseObject(limit);
         JSONObject head = jsonObject.getJSONObject("head");
         String retFlag = (String) head.get("retFlag");
         String retMsg = (String) head.get("retMsg");
@@ -877,6 +923,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String applSeq = (String) cacheMap.get("applSeq");//申请流水号
+        applSeq="1097515";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("从Jedis中获取的数据为空：applSeq=" + applSeq);
             String retmsg = "从Jedis中获取的数据为空";
@@ -887,12 +934,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         logger.info("根据流水号查询额度审批进度,请求参数：" + paramMap);
-        String result = appServerService.approvalProcessInfo(token, paramMap);
-        if (StringUtils.isEmpty(result)) {
+        Map<String, Object> map = appServerService.approvalProcessInfo(token, paramMap);
+        if (StringUtils.isEmpty(map)) {
             logger.info("根据流水号查询额度审批进度返回参数为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        JSONObject jsonObject = new JSONObject(result);
+        //JSONObject jsonObject = new JSONObject(result);
+        String result = JSONObject.toJSONString(map);
+        JSONObject jsonObject = JSONObject.parseObject(result);
         JSONObject head = jsonObject.getJSONObject("head");
         String flag = (String) head.get("retFlag");
         String retMsg = (String) head.get("retMsg");

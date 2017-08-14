@@ -354,31 +354,31 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //3.4.15.	(PUT)支付密码修改(知道原密码)
-    public String updatePayPasswd(String token, Map<String, Object> paramMap) {
+    public Map<String,Object> updatePayPasswd(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/uauth/updatePayPasswd";
         logger.info("支付密码修改接口请求地址：" + url);
         logger.info("支付密码修改接口请求参数：" + paramMap);
-        String result = HttpUtil.restPutMap(url, token, paramMap).toString();
-        logger.info("支付密码修改接口请求参数：" + result);
-        return result;
+        Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
+        logger.info("支付密码修改接口请求参数：" + map);
+        return map;
     }
 
     //(PUT)实名认证修改密码
-    public String updPwdByIdentity(String token, Map paramMap) {
-        String url = appservernoauth + "/app/appserver/uauth/custVerifyUpdatePwd";
+    public Map<String,Object> updPwdByIdentity(String token, Map paramMap) {
+        String url = appservernoauth + "/app/appserver/uauth/custVerifyUpdatePayPwd";
         logger.info("实名认证修改密码接口请求地址：" + url);
         logger.info("实名认证修改密码接口请求参数：" + paramMap);
-        String result = HttpUtil.restPutMap(url, token, paramMap).toString();
-        logger.info("实名认证修改密码接口请求参数：" + result);
-        return result;
+        Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
+        logger.info("实名认证修改密码接口请求参数：" + map);
+        return map;
     }
 
     //(GET)确认支付密码验证
-    public String validatePayPasswd(String token, Map<String, Object> paramMap) {
+    public Map<String,Object> validatePayPasswd(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/uauth/validatePayPasswd";
         logger.info("确认支付密码验证接口请求地址：" + url);
         logger.info("确认支付密码验证接口请求参数：" + paramMap);
-        String result = HttpUtil.restGetMap(url, token, paramMap).toString();
+        Map<String, Object> result = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("确认支付密码验证接口请求参数：" + result);
         return result;
     }
@@ -404,11 +404,11 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //7.1.(POST) 欠款查询(参照核算接口5.1)
-    public String getQFCheck(String token, Map<String, Object> paramMap) {
+    public Map<String, Object> getQFCheck(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/customer/getQFCheck";
         logger.info("欠款查询接口请求地址：" + url);
         logger.info("欠款查询接口请求参数：" + paramMap);
-        String qfMap = HttpUtil.restPostMap(url, token, paramMap).toString();
+        Map<String, Object> qfMap = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("欠款查询接口返回数据：" + qfMap);
         return qfMap;
     }
@@ -424,31 +424,31 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //7.4.(POST)主动还款金额查询
-    public String checkZdhkMoney(String token, Map<String, Object> paramMap) {
+    public Map<String, Object> checkZdhkMoney(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/customer/checkZdhkMoney";
         logger.info("主动还款金额查询接口请求地址：" + url);
         logger.info("主动还款金额查询接口请求参数：" + paramMap);
-        String checkZdhkMoneymap = HttpUtil.restPostMap(url, token, paramMap).toString();
+        Map<String, Object> checkZdhkMoneymap = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("主动还款金额查询接口返回数据：" + checkZdhkMoneymap);
         return checkZdhkMoneymap;
     }
 
     // 3.1.16.(GET)额度查询
-    public String getEdCheck(String token, Map<String, Object> paramMap) {
+    public Map<String, Object> getEdCheck(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/getEdCheck";
         logger.info("额度查询接口请求地址：" + url);
         logger.info("额度查询接口请求参数：" + paramMap);
-        String edCheckmap = HttpUtil.restGetMap(url, token, paramMap).toString();
+        Map<String, Object> edCheckmap = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("额度查询接口返回数据：" + edCheckmap);
         return edCheckmap;
     }
 
     //(GET)根据流水号查询额度审批进度
-    public String approvalProcessInfo(String token, Map<String, Object> paramMap) {
+    public Map<String, Object> approvalProcessInfo(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/cmis/approvalProcessBySeq";
         logger.info("根据流水号查询额度审批进度接口请求地址：" + url);
         logger.info("根据流水号查询额度审批进度接口请求参数：" + paramMap);
-        String approvalProcessInfomap = HttpUtil.restGetMap(url, token, paramMap).toString();
+        Map<String, Object> approvalProcessInfomap = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("根据流水号查询额度审批进度接口返回数据：" + approvalProcessInfomap);
         return approvalProcessInfomap;
 

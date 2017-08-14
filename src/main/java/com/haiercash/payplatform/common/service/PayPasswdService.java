@@ -18,7 +18,7 @@ public interface PayPasswdService {
     public Map<String, Object> updatePayPasswd(String token, Map<String,Object> params, String channel, String channelNo);
 
     //实名认证找回密码
-    public Map<String, Object> updPwdByIdentity(HttpServletRequest request);
+    public Map<String, Object> updPwdByIdentity(Map<String, Object> params);
 
     //确认支付密码（额度申请）
     public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, Map<String,Object> map);

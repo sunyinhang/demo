@@ -206,12 +206,12 @@ public class CommonPageController extends BaseController {
     /**
      * 实名认证找回密码
      *
-     * @param request
+     * @param params
      * @return
      */
     @RequestMapping(value = "/api/payment/updPwdByIdentity", method = RequestMethod.POST)
-    public Map<String, Object> updPwdByIdentity(@RequestBody HttpServletRequest request) {
-        return payPasswdService.updPwdByIdentity(request);
+    public Map<String, Object> updPwdByIdentity(@RequestBody Map<String, Object> params) {
+        return payPasswdService.updPwdByIdentity(params);
     }
 
     /**

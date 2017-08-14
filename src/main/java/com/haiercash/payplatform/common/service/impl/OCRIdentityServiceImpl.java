@@ -290,7 +290,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String channelNo = (String) params.get("channelNo");
         logger.info("发送短信验证码***************开始");
         if (StringUtils.isEmpty(phone)) {
-            logger.info("token:" + phone);
+            logger.info("phone:" + phone);
             logger.info("前台获取请求参数有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }

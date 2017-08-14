@@ -45,25 +45,25 @@ public interface AppServerService {
     //6.1.14.(GET)订单提交
     public String commitAppOrder(String token,Map<String,Object> commitmMap);
     //3.4.15.	(PUT)支付密码修改(知道原密码)
-    public String updatePayPasswd(String token,Map<String, Object> paramMap);
+    public Map<String,Object> updatePayPasswd(String token,Map<String, Object> paramMap);
     //实名认证修改密码
-    public String updPwdByIdentity(String token,Map<String,Object> paramMap);
+    public  Map<String,Object> updPwdByIdentity(String token,Map<String,Object> paramMap);
     // 验证支付密码
-    public String  validatePayPasswd(String token,Map<String,Object> map);
+    public  Map<String,Object>  validatePayPasswd(String token,Map<String,Object> map);
     //(GET)查询贷款详情（根据申请流水号）
     public Map<String,Object> queryApplLoanDetail(String token,Map<String, Object> paramMap);
     //(GET)按贷款申请查询分期账单
     public Map<String,Object> queryApplListBySeq(String token,Map<String,Object> queryApplListMap);
     //7.1.(POST) 欠款查询(参照核算接口5.1)
-    public String getQFCheck(String token,Map<String,Object> qfmap);
+    public Map<String, Object> getQFCheck(String token,Map<String,Object> qfmap);
     //(GET)全部还款试算（含息费、手续费、本金）
     public Map<String,Object> refundTrialAll(String token,Map<String, Object> paramMap);
     //7.4.(POST)主动还款金额查询
-    public String checkZdhkMoney(String token,Map<String, Object> paramMap);
+    public Map<String, Object> checkZdhkMoney(String token,Map<String, Object> paramMap);
     // 3.1.16.(GET)额度查询
-    public String getEdCheck(String token,Map<String, Object> paramMap);
+    public Map<String,Object> getEdCheck(String token,Map<String, Object> paramMap);
     //(GET)根据流水号查询额度审批进度
-    public String approvalProcessInfo(String token, Map<String, Object> paramMap);
+    public Map<String,Object> approvalProcessInfo(String token, Map<String, Object> paramMap);
     //3.4.20.	(GET) 根据集团用户ID查询用户信息
     public String queryHaierUserInfo(String params);
     //3.4.21.	(POST)集团用户注册统一认证账户
