@@ -143,23 +143,23 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //        }
         //TODO 总入口需查询客户信息数据
 //        String custNo = (String)cacheMap.get("custNo");
-        String custNo = "B201706011214031809670";
+        String custNo = "C201708010722561X68720";
         paramMap.put("custNo", custNo);
         paramMap.put("flag", "Y");
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", channel);
         Map<String, Object> resultmap = appServerService.getAllCustExtInfo(token, paramMap);
-        if (resultmap == null){
-            String retMsg = ConstUtil.ERROR_INFO;
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
-        Map resultmapjsonMap = (HashMap<String, Object>) resultmap.get("head");
-        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
-        if(!"00000".equals(resultmapFlag)){
-            String retMsg = (String) resultmapjsonMap.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
-        logger.info("查询个人扩展信息***********************结束");
+//        if (resultmap == null){
+//            String retMsg = ConstUtil.ERROR_INFO;
+//            return fail(ConstUtil.ERROR_CODE, retMsg);
+//        }
+//        Map resultmapjsonMap = (HashMap<String, Object>) resultmap.get("head");
+//        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
+//        if(!"00000".equals(resultmapFlag)){
+//            String retMsg = (String) resultmapjsonMap.get("retMsg");
+//            return fail(ConstUtil.ERROR_CODE, retMsg);
+//        }
+//        logger.info("查询个人扩展信息***********************结束");
         return resultmap;
     }
 
@@ -237,7 +237,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存个人扩展信息**************结束");
         logger.info("*********保存联系人一**************开始");
-        String id_one = (String) params.get("id_one");
+        String id_one =  Integer.toString((int) params.get("id_one"));
         if(id_one != null && !"".equals(id_one)){
             custparamMap_one.put("id", id_one);// 联系人ID
         }
@@ -259,7 +259,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
-        String id_two = (String) params.get("id_two");
+//        String id_two = (String) params.get("id_two");
+        String id_two = Integer.toString((int) params.get("id_two"));
         if(id_two != null && !"".equals(id_two)){
             custparamMap_two.put("id", id_two);// 联系人ID
         }
