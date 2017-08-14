@@ -287,9 +287,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
         ifNeedFaceChkByTypCdeMap.put("source",channel);
-        ifNeedFaceChkByTypCdeMap.put("custNo",custNo);
-        ifNeedFaceChkByTypCdeMap.put("name",name);
-        ifNeedFaceChkByTypCdeMap.put("idNumber",idNumber);
+        ifNeedFaceChkByTypCdeMap.put("custNo","C201708010722561X68720");
+        ifNeedFaceChkByTypCdeMap.put("name","李甲团");
+        ifNeedFaceChkByTypCdeMap.put("idNumber","37040319910722561X");
         ifNeedFaceChkByTypCdeMap.put("isEdAppl","");
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
         if(saveCustFCiCustContactMap == null){
@@ -309,7 +309,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //                resultparamMap.put("faceFlag", "1");
                 validateUserFlagMap.put("channelNo", channelNo);// 渠道
                 validateUserFlagMap.put("channel", channel);
-                validateUserFlagMap.put("userId",EncryptUtil.simpleEncrypt(userid));//客户编号
+                validateUserFlagMap.put("userId",EncryptUtil.simpleEncrypt("18254561920"));//客户编号
                 Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
                 if(alidateUserMap == null){
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -339,6 +339,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             }
 
         }
-        return resultparamMap;
+        return success(resultparamMap) ;
     }
 }

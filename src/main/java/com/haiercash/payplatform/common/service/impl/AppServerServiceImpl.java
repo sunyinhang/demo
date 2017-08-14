@@ -202,7 +202,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = appservernoauth + "/app/appserver/uauth/validateUserFlag";
         logger.info("用户支付密码手势密码验证是否设置接口，请求地址：" + url);
         logger.info("用户支付密码手势密码验证是否设置接口，请求数据：" + params);
-        Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
         logger.info("用户支付密码手势密码验证是否设置接口，返回数据" + resultmap);
         return resultmap;
     }
