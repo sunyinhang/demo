@@ -1,4 +1,4 @@
-<div class="bv-align-center" data-container="setPayPsd">
+<div class="bv-align-center" data-container="confirmPayPsd">
     <component is="tab-applyQuota" active="realName personal face password"></component>
     <component is="bv-form" class="form-align-left form-pwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </div>
@@ -8,10 +8,10 @@
         var param=util.cache('mobile');
 
         var vm = util.bind({
-            container: 'setPayPsd',
+            container: 'confirmPayPsd',
             data: {
                 tags: {
-                    formKey: 'setPayPsdForm'
+                    formKey: 'confirmPayPsdForm'
                 },
                 entity: {},
                 formConfig: {
@@ -36,24 +36,7 @@
                                     }
                                 }
                             }
-                        },{
-                            head: '确认密码',
-                            name: 'payPassword2',
-                            config: {
-                                type: 'password',
-                                attr: {
-                                    placeholder: '请输入确认密码'
-                                },
-                                validate: {
-                                    required: '请输入确认密码',
-                                    equals:{
-                                        code: 'payPassword',
-                                        desc: '两次输入密码不一致'
-                                    }
-                                }
-                            }
-                        }
-                    ],
+                        }],
                     operates: [
                         {
                             text: '下一步',
@@ -61,8 +44,9 @@
                             click: function (event, editType, entity) {
                                 util.cache({
                                     mobile: param && param.mobile,
-                                    payPasswd: entity.payPassword
-                                });
+                                    payPasswd: entity.payPassword,
+                                    edxgflag: '1'
+                            });
                                 util.redirect({
                                     title: '短信验证码',
                                     url: '/applyQuota/payPsdValidcode.html',

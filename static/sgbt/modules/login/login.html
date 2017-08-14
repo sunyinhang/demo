@@ -22,7 +22,7 @@
 		<div class="clear"></div>
 	</div>
 	<div class="remPsd">
-	<p><a href="javascript:void(0)"  class="button loginBtn" :click="loginFn">登录</a></p>
+	<p><a href="javascript:void(0)"  class="button loginBtn" @click="loginFn">登录</a></p>
 	<div class="forgetPsdD"><a href="javascript:void(0);" class="forgetPsd">忘记密码？</a></div>
 </div>
 
@@ -36,7 +36,16 @@
 			},
 			methods: {
 				loginFn: function(){
-					alert(0);
+					util.post({
+						url: "/shunguang/userlogin",
+						data: {
+							userId: this.accountname,
+							password: this.loginpassword
+						},
+						success: function (res) {
+							console.log(res);
+						}
+					});
 				}
 			}
 

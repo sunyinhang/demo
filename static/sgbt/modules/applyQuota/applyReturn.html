@@ -23,8 +23,11 @@
 							text: '修改',
 							clazz: 'primary',
 							click: function (event, editType, entity) {
-								//TODO 修改接口
-								console.log(123);
+								util.redirect({
+									title: '个人资料',
+									url: '/applyQuota/personalInform.html',
+									back: false
+								});
 							}
 						}
 					]

@@ -5,7 +5,7 @@
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         //获取手机号和密码
-        var param=util.cache('payPasswd');
+        var param=util.cache('mobile','payPasswd','edxgflag');
 
         var vm = util.bind({
             container: 'payPsdValidcode',
@@ -92,7 +92,8 @@
                                     url: '/resetPayPasswd',
                                     data:{
                                         payPasswd: param && param.payPasswd,
-                                        verifyNo: entity.verifyNo
+                                        verifyNo: entity.verifyNo,
+                                        edxgflag: param && param.edxgflag,
                                     },
                                     success:function(res){
                                         util.redirect({
