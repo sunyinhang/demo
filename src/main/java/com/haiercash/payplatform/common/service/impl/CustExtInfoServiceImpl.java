@@ -326,16 +326,16 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                 }
                 if("1".equals(payPasswdFlag)){//1.已设置支付密码
-                    resultparamMap.put("faceFlag", "1");
+                    resultparamMap.put("flag", "1");
                 }else{//没有设置支付密码
-                    resultparamMap.put("faceFlag", "2");
+                    resultparamMap.put("flag", "2");
                 }
             }else if("01".equals(code)){// 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                resultparamMap.put("faceFlag", "3");
+                resultparamMap.put("flag", "3");
             }else if("02".equals(code)){// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                resultparamMap.put("faceFlag", "4");
+                resultparamMap.put("flag", "4");
             }else{//跳转人脸识别
-                resultparamMap.put("faceFlag", "5");
+                resultparamMap.put("flag", "5");
             }
 
         }
