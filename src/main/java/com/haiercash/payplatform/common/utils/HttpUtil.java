@@ -335,6 +335,37 @@ public class HttpUtil {
         }
     }
 
+    public static Map<String, Object> getHeadMap(Map<String, Object> resultMap) {
+        if (resultMap != null && !resultMap.isEmpty()) {
+            if (resultMap.get("response") != null) {
+                resultMap = (Map)resultMap.get("response");
+            }
+
+            if (resultMap.get("head") instanceof Map) {
+                return (Map)resultMap.get("head");
+            } else if (resultMap.get("head") instanceof ResultHead) {
+                Map<String, Object> map = new HashMap();
+                map.put("retFlag", ((ResultHead)resultMap.get("head")).getRetFlag());
+                map.put("retMsg", ((ResultHead)resultMap.get("head")).getRetMsg());
+                return map;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+
+    public static String getRetMsg(Map<String, Object> resultMap) {
+        Map<String, Object> headMap = getHeadMap(resultMap);
+        if (headMap == null) {
+            return null;
+        } else {
+            return StringUtils.isEmpty(headMap.get("retMsg")) ? "" : headMap.get("retMsg").toString();
+        }
+    }
+
     public static boolean isSuccess(String json) {
         return getReturnCode(json).equals("00000");
     }

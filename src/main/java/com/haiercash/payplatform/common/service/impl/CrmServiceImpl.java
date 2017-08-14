@@ -5,6 +5,7 @@ import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.FormatUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
+import com.haiercash.payplatform.common.utils.RestUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,32 @@ public class CrmServiceImpl extends BaseService implements CrmService{
         return HttpUtil.json2DeepMap(resultJson);
     }
 
+    /**
+     * 获取销售代表
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public Map<String, Object> getStoreSaleByUserId(String userId) {
+        if (StringUtils.isEmpty(userId))
+            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户编码不能为空");
+        String checkSalerUrl = EurekaServer.CRM + "/app/crm/cust/getStoreSaleByUserId?userId=" + userId;
+        logger.debug("CRM getStoreSaleByUserId  userId:" + userId);
+        return HttpUtil.restGetMap(checkSalerUrl);
+    }
 
+
+    @Override
+    public Map<String, Object> queryMerchCustInfo(String custName, String certNo) {
+        String url = EurekaServer.CRM + "/app/crm/cust/queryMerchCustInfo?custName=" + custName + "&certNo=" + certNo;
+        String jsonStr = HttpUtil.restGet(url);
+        logger.debug("CRM13 queryMerchCustInfo:" + jsonStr);
+        if (StringUtils.isEmpty(jsonStr)) {
+            logger.error("CRM13 查询实名认证客户信息失败！");
+            return fail("52", RestUtil.ERROR_INTERNAL_MSG);
+        }
+        return HttpUtil.json2DeepMap(jsonStr);
+    }
 
 }

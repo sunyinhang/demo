@@ -23,4 +23,21 @@ public interface CrmService {
      * @return
      */
     Map<String, Object> getCustIsPass(Map<String, Object> params);
+
+    /**
+     * 获取销售代表
+     *
+     * @param userId
+     * @return
+     */
+    Map<String, Object> getStoreSaleByUserId(String userId);
+
+    /**
+     * 整合crm13接口  查询实名认证客户信息
+     *
+     * @param custName
+     * @param certNo
+     * @return
+     */
+    Map<String, Object> queryMerchCustInfo(String custName, String certNo);
 }

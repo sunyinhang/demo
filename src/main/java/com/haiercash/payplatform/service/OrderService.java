@@ -64,5 +64,8 @@ public interface OrderService {
      * @param orderMap  请求订单系统map
      */
     void checkOrderDefaultValue(AppOrder appOrder, Map<String, Object> orderMap);
+
+
+    Map<String, Object> getSysFlagAndChannelNo(AppOrder appOrder);
 }
 
