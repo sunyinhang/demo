@@ -173,6 +173,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         Map<String, Object> custparamMap_two = new HashMap<String, Object>();
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
+        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -194,8 +195,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //        }
         //TODO 总入口需查询客户信息数据
 //        String custNo = (String)cacheMap.get("custNo");
-        String userid = (String)cacheMap.get("userid");
+//        String userid = (String)cacheMap.get("userid");
+//        String name = (String)cacheMap.get("name");//姓名
+        //        String idNumber = (String)cacheMap.get("idNumber"); //身份证
+        String userid = "1231231";
         String custNo = "B201706011214031809670";
+        String name = "张三丰";
+        String idNumber = "232302198201012540";
         if(custNo == null || "".equals(custNo)){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -217,6 +223,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("officeCity", officeAddress_split[1]);// 单位地址（市）
         paramMap.put("officeArea", officeAddress_split[2]);// 单位地址（区）
         paramMap.put("officeAddr", params.get("officeAddr"));// 单位详细地址
+        paramMap.put("dataFrom", params.get("dataFrom"));// 数据来源
         Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
         if(stringObjectMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -229,6 +236,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存个人扩展信息**************结束");
         logger.info("*********保存联系人一**************开始");
+        String id_one = (String) params.get("id_one");
+        if(id_one != null && !"".equals(id_one)){
+            custparamMap_one.put("id", id_one);// 联系人ID
+        }
         custparamMap_one.put("channelNo", channelNo);// 渠道
         custparamMap_one.put("channel", channel);
         custparamMap_one.put("custNo", custNo);//客户编号
@@ -247,6 +258,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
+        String id_two = (String) params.get("id_two");
+        if(id_two != null && !"".equals(id_two)){
+            custparamMap_two.put("id", id_two);// 联系人ID
+        }
         custparamMap_two.put("channelNo", channelNo);// 渠道
         custparamMap_two.put("channel", channel);
         custparamMap_two.put("custNo",custNo);//客户编号
@@ -270,7 +285,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }else{
             //查询贷款品种类型
         }
-        Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, custparamMap_one);
+        ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
+        ifNeedFaceChkByTypCdeMap.put("source",channel);
+        ifNeedFaceChkByTypCdeMap.put("custNo",custNo);
+        ifNeedFaceChkByTypCdeMap.put("name",name);
+        ifNeedFaceChkByTypCdeMap.put("idNumber",idNumber);
+        ifNeedFaceChkByTypCdeMap.put("isEdAppl","");
+        Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
         if(saveCustFCiCustContactMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }

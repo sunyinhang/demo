@@ -218,7 +218,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = appservernoauth + "/app/appserver/ifNeedFaceChkByTypCde";
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求地址：" + url);
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求数据：" + params);
-        Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，返回数据" + resultmap);
         return resultmap;
     }
