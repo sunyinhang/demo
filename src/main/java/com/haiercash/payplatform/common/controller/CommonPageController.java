@@ -303,4 +303,18 @@ public class CommonPageController extends BaseController {
         return custExtInfoService.saveAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
     }
 
+    /**
+     * 扩展信息上传影像
+     *
+     * @param iconImg
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/upIconPic", method = RequestMethod.POST)
+    public Map<String, Object> upIconPic(@RequestBody MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return custExtInfoService.upIconPic(iconImg, request, response);
+    }
+
 }

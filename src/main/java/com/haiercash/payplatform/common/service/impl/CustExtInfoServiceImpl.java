@@ -1,21 +1,30 @@
 package com.haiercash.payplatform.common.service.impl;
 
+import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Cache;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CustExtInfoService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.service.BaseService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.*;
 
 @Service
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService{
@@ -24,6 +33,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     private Cache cache;
     @Autowired
     private AppServerService appServerService;
+    @Value("${app.other.face_DataImg_url}")
+    protected String face_DataImg_url;
 
     @Override
     public Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) throws Exception {
@@ -343,4 +354,91 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         return success(resultparamMap) ;
     }
+
+    @Override
+    public Map<String, Object> upIconPic(MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("上传影像*****************开始");
+        if(iconImg.isEmpty()){
+            logger.info("图片为空");
+            return fail(ConstUtil.ERROR_CODE, "图片为空");
+        }
+        //前台参数获取
+        String token = request.getHeader("token");
+        String channel = request.getHeader("channel");
+        String channelNo = request.getHeader("channelNo");
+        String docCde = request.getParameter("docCde");//影像代码
+        String docDesc = request.getParameter("docDesc");//影像名称
+        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
+            logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo+ "    docCde:" + docCde+ "    docDesc:" + docDesc);
+            logger.info("前台传入数据有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = cache.get(token);
+        if(cacheMap.isEmpty()){
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String typCde = (String) cacheMap.get("typCde");// 贷款品种
+        String idNumber = (String) cacheMap.get("idCard");// 身份证号
+        String name = (String) cacheMap.get("name");// 姓名
+        String mobile = (String) cacheMap.get("phoneNo");// 手机号
+        String custNo = (String) cacheMap.get("custNo");
+        String userId = (String) cacheMap.get("userId");
+        if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
+                || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)){
+            logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
+            logger.info("redis获取数据为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        InputStream inputStream = iconImg.getInputStream();
+        StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(docCde).append(File.separator);
+        createDir(String.valueOf(filePath));
+        String filestreamname = custNo + ".jpg";
+        String fileName = UUID.randomUUID().toString().replaceAll("-", "");
+        filePath = filePath.append(fileName).append(".jpg"); // 测试打开
+        FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
+        byte[] bufferOut = new byte[1024];
+        int bytes = 0;
+        while ((bytes = inputStream.read(bufferOut)) != -1) {
+            outImag.write(bufferOut, 0, bytes);
+        }
+        outImag.close();
+        inputStream.close();
+        InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
+        String MD5 = DigestUtils.md5Hex(IOUtils.toByteArray(is));
+        is.close();
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("custNo", custNo);// 客户编号
+        paramMap.put("attachType", docCde);// 影像类型
+        paramMap.put("attachName", docDesc);//影像名称
+        paramMap.put("md5", MD5);//文件md5码
+        paramMap.put("filePath", filePath.toString());
+        //影像上传
+        Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
+        Map uploadheadjson = (HashMap<String, Object>) uploadresultmap.get("head");
+        String uploadretFlag = (String) uploadheadjson.get("retFlag");
+        if(!"00000".equals(uploadretFlag)){
+            String retMsg = (String) uploadheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        logger.info("上传影像*****************结束");
+        return uploadresultmap;
+    }
+    public static void createDir(String destDirName) {
+        File dir = new File(destDirName);
+        if (dir.exists()) {
+            return;
+        }
+        if (!destDirName.endsWith(File.separator)) {
+            destDirName = destDirName + File.separator;
+        }
+        // 创建目录
+        if (dir.mkdirs()) {
+            return;
+        }
+    }
+
 }
