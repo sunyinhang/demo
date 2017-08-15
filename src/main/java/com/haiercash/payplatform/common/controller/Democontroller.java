@@ -42,6 +42,6 @@ public class Democontroller extends BaseController{
     }
     @RequestMapping(value = "/api/demo/get", method = RequestMethod.GET)
     public String getCache() {
-        return cache.get("demo");
+        return "login.html";
     }
 }
