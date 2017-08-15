@@ -2,30 +2,18 @@
     <div class="approvalNode">
         <img src="./custom/themes/default/images/refuse.png" alt="">
         <div class="nodeStatus">
-            <b>审批节点：一级审批中</b>
-            <p>审批状态：拒绝</p>
-            <p>拒绝原因：综合评分不足</p>
+            <b>审批节点：{{lastItem.wfiNodeName}}</b>
+            <p>审批状态：{{lastItem.appConclusionDesc}}</p>
+            <p>拒绝原因：{{lastItem.operateTime}}</p>
         </div>
     </div>
     <div class="height10 gray"></div>
     <div class="nodeList">
         <ul>
-            <li class="selected">
+            <li v-for="item in items" >
                 <em></em>
-                <span>预审批<b>通过</b></span>
-                <p>2017-4-24 07:12:08</p>
-                <div class="kong30"></div>
-            </li>
-            <li>
-                <em></em>
-                <span>预审批<b>通过</b></span>
-                <p>2017-4-24 07:12:08</p>
-                <div class="kong30"></div>
-            </li>
-            <li>
-                <em></em>
-                <span>预审批<b>通过</b></span>
-                <p>2017-4-24 07:12:08</p>
+                <span>{{item.wfiNodeName}}</span><!--<b>{{item.appConclusionDesc}}</b>-->
+                <p>{{item.operateTime}}</p>
             </li>
         </ul>
     </div>
@@ -33,33 +21,23 @@
 <script type="text/javascript">
     require(['jquery', 'util', 'Const'], function($, util, Const) {
         var vm = util.bind({
-            container: 'reset_rembPayPsd',
-            data: {}
-        });
-        util.get({
-            url: "/queryApprovalProcessInfo",
-            success:function(res){
-                console.log(res)
-                /*util.refresh({
-                    vm: util.vm(vm, vm.tags.formKey),
-                    entity: {
-                        maritalStatus: res.CustExtInfoMap.body.maritalStatus,
-                        liveAddress: res.CustExtInfoMap.body.liveProvinceName+ res.CustExtInfoMap.body.liveCityName+res.CustExtInfoMap.body.liveAreaName,
-                        liveAddr: res.CustExtInfoMap.body.liveAddr,
-                        officeName: res.CustExtInfoMap.body.officeName,
-                        officeTel: res.CustExtInfoMap.body.officeTel,
-                        officeAddr: res.CustExtInfoMap.body.officeAddr,
-                        officeAddress: res.CustExtInfoMap.body.liveProvinceName+ res.CustExtInfoMap.body.liveCityName+res.CustExtInfoMap.body.liveAreaName,
-                        relationType1: res.CustExtInfoMap.body.lxrList[0].relationType,
-                        contactName1: res.CustExtInfoMap.body.lxrList[0].contactName,
-                        contactMobile1: res.CustExtInfoMap.body.lxrList[0].contactMobile,
-                        relationType2: res.CustExtInfoMap.body.lxrList[1].relationType,
-                        contactName2: res.CustExtInfoMap.body.lxrList[1].contactName,
-                        contactMobile2: res.CustExtInfoMap.body.lxrList[1].contactMobile
-
-
+            container: 'applyProgress',
+            data: {
+                lastItem:{
+                    wfiNodeName: '',
+                    appConclusionDesc: '',
+                    operateTime: ''
+                },
+                items: []
+            },
+            mounted: function(){
+                util.get({
+                    url: "/queryApprovalProcessInfo",
+                    success:function(res){
+                        vm.items=util.data(res).reverse();
+                        vm.lastItem=vm.items[0];
                     }
-                });*/
+                });
             }
         });
     });
