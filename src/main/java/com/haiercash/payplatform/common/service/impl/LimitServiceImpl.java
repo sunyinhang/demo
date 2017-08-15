@@ -63,9 +63,11 @@ public class LimitServiceImpl extends BaseService implements LimitService{
 //        String custNo = (String)cacheMap.get("custNo");
 //        String userId = (String)cacheMap.get("userId");
 //        String custName = (String)cacheMap.get("custName");
+//        String idNumber = (String)cacheMap.get("idNumber"); //身份证
         String custNo = "C201708010722561X68720";
         String userId = "15264826872";
         String custName = "李甲团";
+        String idNumber = "37040319910722561X";
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channelNo",channelNo);
@@ -80,6 +82,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         paramMap.put("typCde",typCde);//贷款品种代码
         paramMap.put("custName",custName);//用户名称
         paramMap.put("noEduLocal","NO");//是否校验最高学历与户口性质
+        paramMap.put("idNo",idNumber);
         Map<String, Object> stringObjectMap = appServerService.checkIfMsgComplete(token, paramMap);
         if(stringObjectMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -96,19 +99,20 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         String DWXX = (String) resultmapbodyMap.get("DWXX");//单位信息
         String JZXX = (String) resultmapbodyMap.get("JZXX");//居住信息
         String LXRXX = (String) resultmapbodyMap.get("LXRXX");//联系人信息
-        String BCYX = (String) resultmapbodyMap.get("BCYX");//必传影像信息
+        Map BCYXMap =   (HashMap<String, Object>) resultmapbodyMap.get("BCYX");//必传影像信息
+        String BCYX =  (String) BCYXMap.get("BCYX");
         if("N".equals(SMRZ)){
         //没有做过实名认证，跳转实名认证页面
             resultparamMap.put("flag", "6");//转实名认证页面
         }else{
-            if ("Y".equals(GRJBXX) && "Y".equals(DWXX) && "Y".equals(JZXX) && "Y".equals(LXRXX) && "Y".equals(BCYX) ){
+            if ("Y".equals(GRJBXX) && "Y".equals(DWXX) && "Y".equals(JZXX) && "Y".equals(LXRXX) && "Y".equals(BCYX)){//
                 //如个人信息完整，则判断是否做过人脸识别
                 ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
                 ifNeedFaceChkByTypCdeMap.put("source",channel);
                 ifNeedFaceChkByTypCdeMap.put("custNo","C201708010722561X68720");
                 ifNeedFaceChkByTypCdeMap.put("name","李甲团");
                 ifNeedFaceChkByTypCdeMap.put("idNumber","37040319910722561X");
-                ifNeedFaceChkByTypCdeMap.put("isEdAppl","");
+                ifNeedFaceChkByTypCdeMap.put("isEdAppl","Y");
                 Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
                 if(saveCustFCiCustContactMap == null){
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -162,6 +166,6 @@ public class LimitServiceImpl extends BaseService implements LimitService{
                 resultparamMap.put("flag", "7");//跳转完善个人扩展信息页面
             }
         }
-        return null;
+        return success(resultparamMap);
     }
 }
