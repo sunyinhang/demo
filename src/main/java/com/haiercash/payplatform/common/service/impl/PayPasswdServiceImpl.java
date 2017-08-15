@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.EncryptUtil;
@@ -9,7 +10,6 @@ import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -39,6 +39,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
         String payPasswd = (String) param.get("payPasswd");//密码
         String verifyNo = (String) param.get("verifyNo");//验证码
+        String edxgflag = (String) param.get("edxgflag");//修改申请提交标识
         if (StringUtils.isEmpty(token)) {
             logger.info("token:" + token);
             logger.info("从前端获取的的token为空");
@@ -62,7 +63,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         //String custNo = "A0001";
 
         //String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
-       // String n = "3";// 签订注册 + 征信
+        // String n = "3";// 签订注册 + 征信
         //String flag = "0";
         if ("0".equals(flag)) {//0  密码未设置
             logger.info("支付密码未设置，进行密码的设置");
@@ -192,12 +193,12 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         mapEd.put("channel", channel);
         mapEd.put("channelNo", channelNo);
         mapEd.put("custNo", custNo);
-        String crdSeq = "";
-        if (StringUtils.isEmpty(crdSeq)) {//新增
-            mapEd.put("flag", "0");//额度申请
-        } else {//有在途的流水号(修改)
+        //String crdSeq = "";
+        if ("1".equals(edxgflag)) {//有在途的流水号(修改)
             mapEd.put("flag", "2");
-            mapEd.put("applSeq", "crdSeq");//额度申请必输项：indivEdu(最高学历)不能为空！
+            mapEd.put("applSeq", "crdSeq");
+        } else {//新增
+            mapEd.put("flag", "0");//额度申请
         }
         Map<String, Object> edApplInfo = appServerService.getEdApplInfo(token, mapEd);
         if (StringUtils.isEmpty(edApplInfo)) {
@@ -731,7 +732,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     String retOneMsg = jsonOneHead.getString("retMsg");
                     if (retOneFlag.equals("00000")) {// 按贷款申请查询分期账单接口成功
                         //retflag = "0000";
-                        JSONArray resArr = new JSONArray();
+//                        JSONArray resArr = new JSONArray();
                         List array = (List) jsonOne.get("body");
                         if (array != null && array.size() > 0) {
                             for (int i = 0; i < array.size(); i++) {
@@ -923,7 +924,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String applSeq = (String) cacheMap.get("applSeq");//申请流水号
-        applSeq="1097515";
+        //applSeq = "1097515";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("从Jedis中获取的数据为空：applSeq=" + applSeq);
             String retmsg = "从Jedis中获取的数据为空";
@@ -945,10 +946,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         JSONObject head = jsonObject.getJSONObject("head");
         String flag = (String) head.get("retFlag");
         String retMsg = (String) head.get("retMsg");
-        if (!"0000".equals(flag)) {
+        if (!"00000".equals(flag)) {
             return fail(flag, retMsg);
         } else {
-            JSONObject body = jsonObject.getJSONObject("body");
+            //JSONObject body = jsonObject.getJSONObject("body");
+            JSONArray body = jsonObject.getJSONArray("body");
             return success(body);
         }
     }
