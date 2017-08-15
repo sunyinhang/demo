@@ -114,9 +114,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             resultJson.put("urlList",resultList_);//地址List
             resultList.add(resultJson);
         }
-        resultMap.put("CustExtInfoMap",allCustExtInfo);
+        resultMap.put("CustExtInfoMap",(HashMap<String, Object>) allCustExtInfo.get("body"));
         resultMap.put("docList",resultList);
-        return resultMap;
+        return success(resultMap);
     }
 
     private  boolean ifError(Map<String, Object> map){
