@@ -439,19 +439,21 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
         //绑定手机号修改为实名认证手机号
         String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)
-        Map<String, Object> updmobilemap = new HashMap<String, Object>();
-        updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
-        updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
-        updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
-        updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
-        updmobilemap.put("channel", channel);
-        updmobilemap.put("channelNo", channelNo);
-        Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
-        Map updmobileheadjson = (HashMap<String, Object>)updmobileresultmap.get("head");
-        String updmobileretflag = (String) updmobileheadjson.get("retFlag");
-        if (!"00000".equals(updmobileretflag)) {
-            String retMsg = (String) updmobileheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+        if(!phone.equals(mobile)){//旧手机号与新手机号不同则修改
+            Map<String, Object> updmobilemap = new HashMap<String, Object>();
+            updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
+            updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
+            updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
+            updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
+            updmobilemap.put("channel", channel);
+            updmobilemap.put("channelNo", channelNo);
+            Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
+            Map updmobileheadjson = (HashMap<String, Object>)updmobileresultmap.get("head");
+            String updmobileretflag = (String) updmobileheadjson.get("retFlag");
+            if (!"00000".equals(updmobileretflag)) {
+                String retMsg = (String) updmobileheadjson.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
         }
 
         //OCR图片路径上送

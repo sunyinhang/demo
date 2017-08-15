@@ -12,8 +12,28 @@ public interface AppOrdernoTypgrpRelationDao extends BaseMapper<AppOrdernoTypgrp
 
     /**
      * 根据orderNo获取关联关系.
-     * @param noderNo  订单号
+     * @param orderNo  订单号
      * @return
      */
-    AppOrdernoTypgrpRelation selectByOrderNo(String noderNo);
+    AppOrdernoTypgrpRelation selectByOrderNo(String orderNo);
+
+    /**
+     * 根据applSeq获取关联关系
+     * @param applSeq  申请流水号
+     * @return
+     */
+    AppOrdernoTypgrpRelation selectByApplSeq(String applSeq);
+
+    /**
+     * 根据订单号删除关联关系
+     * @param orderNo  订单号
+     */
+    void deleteByOrderNo(String orderNo);
+
+    /**
+     * 保存关联关系
+     * @param appOrdernoTypgrpRelation
+     * @return
+     */
+    int saveAppOrdernoTypgrpRelation(AppOrdernoTypgrpRelation appOrdernoTypgrpRelation);
 }

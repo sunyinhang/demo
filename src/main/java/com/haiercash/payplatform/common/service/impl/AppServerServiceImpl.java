@@ -148,7 +148,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String attachType = (String) params.get("attachType");// 影像类型
         String attachName = (String) params.get("attachName");// 人脸照片
         String md5 = (String) params.get("md5");//文件md5码
-        String filePath = (String) params.get("filePath");//路径
+        String filePath = params.get("filePath").toString();//路径
         String id = (String) params.get("id");
         //String applSeq = (String) params.get("applSeq");
         String idNo = (String) params.get("idNo");
@@ -506,7 +506,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //3.4.22.	(POST) 验证并绑定集团用户（已绑定的不可用）
     public Map<String, Object> validateAndBindHaierUser(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "app/appserver/uauth/validateAndBindHaierUser";
+        String url = appservernoauth + "/app/appserver/uauth/validateAndBindHaierUser";
         logger.info(" 验证并绑定集团用户接口, 请求地址：" + url);
         logger.info(" 验证并绑定集团用户接口, 请求数据：" + paramMap);
         Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
