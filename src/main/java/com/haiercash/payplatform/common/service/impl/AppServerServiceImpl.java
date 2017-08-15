@@ -558,4 +558,19 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("获取卡信息接口，返回数据：" + map);
         return map;
     }
+
+    //post)信息完整查询接口
+    @Override
+    public Map<String, Object> checkIfMsgComplete(String token, Map<String, Object> paramMap) {
+        String tag = (String) paramMap.get("tag");
+        String businessType = (String) paramMap.get("businessType");
+        if(StringUtils.isEmpty(tag) && StringUtils.isEmpty(businessType)){
+            return null;
+        }
+        String url = appservernoauth + "/app/appserver/"+tag+"/"+businessType+"/checkIfMsgComplete";
+        logger.info("信息完整查询接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("信息完整查询接口，返回数据：" + map);
+        return map;
+    }
 }

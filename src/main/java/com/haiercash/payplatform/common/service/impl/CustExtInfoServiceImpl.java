@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
 
+
 @Service
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService{
     public Log logger = LogFactory.getLog(getClass());
@@ -35,6 +36,12 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     private AppServerService appServerService;
     @Value("${app.other.face_DataImg_url}")
     protected String face_DataImg_url;
+
+    //模块编码  03
+    private static String MODULE_NO = "03";
+    public CustExtInfoServiceImpl() {
+        super(MODULE_NO);
+    }
 
     @Override
     public Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) throws Exception {

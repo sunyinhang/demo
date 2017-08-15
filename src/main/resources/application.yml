@@ -93,6 +93,9 @@ ribbon:
   ReadTimeout: 60000
   eureka:
     enabled: true
+rabbitmq:
+  queue:
+    cmis:
 common:
   redis:
     host: 10.164.194.123
