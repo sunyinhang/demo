@@ -110,6 +110,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 Map<String, Object> bodyJSONObjectMap = (HashMap<String, Object>) filePathByFileId.get("body");
 //                JSONObject bodyJSONObject = new JSONObject(filePathByFileId.get("body"));
                 String filePath = (String) bodyJSONObjectMap.get("filePath");
+                if (filePath == null || "".equals(filePath)){
+                    return fail(ConstUtil.ERROR_CODE, "图片路径为空");
+                }
+                String[] imagearr =  filePath.split("testshare01");
+                filePath = imagearr[1];
                 JSONObject resultJson_ = new JSONObject();
                 resultJson_.put("id",id);//影像ID
                 resultJson_.put("filePath",filePath);//图片地址
@@ -423,6 +428,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("attachName", docDesc);//影像名称
         paramMap.put("md5", MD5);//文件md5码
         paramMap.put("filePath", filePath.toString());
+        paramMap.put("commonCustNo", null);
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
         Map uploadheadjson = (HashMap<String, Object>) uploadresultmap.get("head");
