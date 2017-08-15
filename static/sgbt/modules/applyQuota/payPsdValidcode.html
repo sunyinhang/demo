@@ -17,7 +17,7 @@
                 },
                 formConfig: {
                     columns: [{
-                        head: '请输入手机收到的短信校验码',//+ param && param.mobile+
+                        head: '请输入'+(param && (param.mobile || ''))+'手机收到的短信校验码',//+ param && param.mobile+
                         name: 'verifyNo',
                         clazz: 'bv-align-left',
                         config: {
