@@ -38,6 +38,8 @@ public class CommonPageController extends BaseController {
     private PayPasswdService payPasswdService;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private LimitService limitService;
 
 
     /**
@@ -315,6 +317,17 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/upIconPic", method = RequestMethod.POST)
     public Map<String, Object> upIconPic(@RequestBody MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         return custExtInfoService.upIconPic(iconImg, request, response);
+    }
+
+    /**
+     * 额度激活（判断跳转哪个页面）
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/CreditLineApply", method = RequestMethod.POST)
+    public Map<String, Object> CreditLineApply(@RequestBody Map<String, Object> params) throws Exception {
+        return limitService.CreditLineApply(super.getToken(), super.getChannel(), super.getChannelNo(),params);
     }
 
 }

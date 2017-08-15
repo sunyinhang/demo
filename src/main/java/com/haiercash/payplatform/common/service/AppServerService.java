@@ -86,4 +86,6 @@ public interface AppServerService {
     public Map<String, Object> saveAllCustExtInfo(String token,Map<String, Object> paramMap);
     //3.1.3. (POST)新增/修改 联系人(CRM6)
     public Map<String, Object> saveCustFCiCustContact(String token,Map<String, Object> paramMap);
+    //6.1.108.	(post)信息完整查询接口
+    public Map<String, Object> checkIfMsgComplete(String token,Map<String, Object> paramMap);
 }
