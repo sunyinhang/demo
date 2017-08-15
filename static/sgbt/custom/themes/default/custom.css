@@ -111,13 +111,15 @@
 
 /* reset public*/
 *{ padding:0px; margin:0px;}
-.fullPage{ height: 100%;}
+.fullPage{ min-height: 100%;}
 .gray{ background-color: #eee;}
 .clear{  clear: both; }
 .align-left{ text-align:left;}
+.margt8{ margin-top: 0.4rem;}
 .margt24{ margin-top:1.2rem;}
 .margt32{ margin-top: 1.6rem;}
 .height10{ height: 0.5rem;}
+.border-bottom{ border-bottom: 1px solid #ddd; }
 
 /*faceCamera*/
 .bv-theme .faceCamera .file-container{width: 100%; height: 20rem; background-color: #fff; color: #999;}
@@ -364,3 +366,71 @@ a.a-btn{ margin: 0 auto; display:block; width: 80%; height: 2.5rem; line-height:
 .btInstalment .main02-4 li.active .b-img{ background: url('images/payByBt/li_active.png') no-repeat center; background-size: 1rem;}
 .btInstalment .main02-4 li.active .fq{ color: #32beff}
 .btInstalment .main02-4 li.active .lx{ color: #32beff}
+
+/****** module：订单详情 ******/
+.loanDetails .main-01{ padding:0.65rem 0.8rem; background: url('images/payByBt/status_bg.png') no-repeat top center; background-size: cover; }
+.loanDetails .main-01 .tit{ display: inline-block; padding-left: 1.5rem; height: 1.2rem; background: url('images/payByBt/icon_status.png') no-repeat left center; background-size: 1.2rem; font-size: 0.8rem; line-height: 1.2rem; color: #fff;}
+.loanDetails .main-01 .stat{ float:right;  margin-top:5px; font-size: 0.8rem; line-height: 0.8rem; color: #fff;}
+.loanDetails .main-02{ padding:0 0.8rem; height: 2.5rem; line-height: 2.5rem; background-color: #fff;}
+.loanDetails .main-02 .crd{  font-size: 0.8rem; line-height: 0.8rem; color: #333;}
+.loanDetails .main-02 .crd em{ padding-left: 20px; font-style: normal; font-size: 0.7rem; line-height: 0.7rem; color: #999;}
+.loanDetails .main-02 .crdNo{ float:right; margin-top:0.95rem; padding-right: 0.75rem; font-size: 0.7rem; line-height: 0.7rem; color: #999; background: url('images/right_arrow.png') no-repeat right center; background-size: 0.65rem;}
+.loanDetails .main-03{ background-color: #fff;}
+.loanDetails .main-03-01{ height: 1.5rem; font-size: 0.7rem; line-height: 1.5rem; color: #999; padding:0 0.8rem; border-bottom: 1px solid #ddd;}
+.loanDetails .main-03-01 span{ float: right;}
+.loanDetails .main-03-02{ height:5rem; padding:0rem 0.8rem; border-bottom: 1px solid #ddd; font-size: 0.7rem; line-height: 0.7rem; color: #999; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; box-align:center; -webkit-box-align:center; flex-align:center; align-items:center;}
+.loanDetails .main-03-02-a{ width: 4rem;}
+.loanDetails .main-03-02-a img{ width: 4rem; height: 3.6rem; background-color: #FDA253;}
+.loanDetails .main-03-02-b{ padding-left: 1rem; width: 100%; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1;}
+.loanDetails .main-03-02-b b{ font-weight: normal; font-size:0.8rem; line-height: 1.5rem; color: #333;}
+.loanDetails .main-03-02-b span{ font-size:1rem; line-height:1rem; color: #f15a4a;}
+.loanDetails .main-03-02-c{ width: 4rem; font-size: 0.65rem; color: #5d5d5d; text-align: center;}
+.loanDetails .main-03-03{ padding:0.7rem 0.8rem; border-bottom: 1px solid #ddd; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; font-size: 0.65rem; line-height: 0.65rem; color: #999;}
+.loanDetails .main-03-03 b{ display: block; font-weight: normal; color: #fda253; font-size: 0.9rem; line-height: 1.8rem;}
+.loanDetails .main-03-03-a{ width: 5rem;}
+.loanDetails .main-03-03-b{ padding-left: 1rem; width: 100%; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1;}
+.loanDetails .main-03-03-c{ width: 5rem;}
+.loanDetails .main-04{ padding:0 0.8rem; background-color:#fff; height: 50px; line-height: 50px; font-size: 0.8rem; color: #333;}
+.loanDetails .main-04 span{ float: right; font-size: 0.7rem; color: #999;}
+.loanDetails .main-05{background-color:#fff;}
+.loanDetails .main-05 li{ padding: 0 0.8rem; height: 3.55rem; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; box-align:center; -webkit-box-align:center; flex-align:center; align-items:center;}
+.loanDetails .main-03-02-a{ width: 4rem;}
+.loanDetails .main-05 li em{ display: block; width: 1rem; height: 1rem; margin-right: 0.65rem; background: url('images/payByBt/orderNormal.png') no-repeat top center; background-size: 1rem; }
+.loanDetails .main-05 li.selected em{ background: url('images/payByBt/orderActive.png') no-repeat top center; background-size: 1rem; }
+.loanDetails .main-05 li div{ width: 100%; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1; font-size: 0.65rem; color: #333;}
+.loanDetails .main-05 li div b{ font-weight: normal; color:#fda253; font-size: 0.8rem; line-height: 1.2rem;}
+.loanDetails .main-05 li div p{ margin:0;}
+.loanDetails .main-05 li span{ width: 3rem; font-size: 0.7rem; line-height: 0.7rem; color: #999;}
+.loanDetails .main-bottom .bottom-l{ float: left; width: 70%; height: 2.65rem; line-height: 2.65rem; background:#fff url('images/payByBt/orderActive.png') no-repeat 0.8rem center; background-size: 1rem; font-size: 0.8rem;}
+.loanDetails .main-bottom .bottom-l span{ padding-left:2.5rem;}
+.loanDetails .main-bottom .bottom-l b{ color: #f15a4a;}
+.loanDetails .main-bottom .bottom-r{ float: right; width: 30%; height: 2.65rem; line-height: 2.65rem;}
+.loanDetails .main-bottom .bottom-r a{ display: block; width: 100%; height: 100%; background-color:#32beff; color: #fff; font-size: 0.8rem; color:#fff; text-align: center; }
+
+/*installmentBill Start*/
+.buttons-tab{ display:-webkit-box; display:flexbox; display:-webkit-flex; display:flex;}
+.buttons-tab .tab-link.active {color: #028ce5;border:0px;}
+.buttons-tab .tab-link { -webkit-box-flex:1; flex:1; color: #666666; font-size: .7rem; width: 100%;height: 1.8rem;line-height: 1.8rem; text-align:center;}
+.buttons-tab .tab-link span{ display:inline-block;height:1.7rem;}
+.buttons-tab .tab-link.active  span{border-bottom:2px solid #028ce5;}
+.content-block{margin:0px;padding:0px;}
+.billListD{position:relative;margin:0 auto;margin-bottom:.5rem;width:100%;background:#fff;}
+.timeTag{position:relative;margin:0 auto;width:100%;height:1.95rem;line-height:1.95rem}
+.timeTag .time{position:relative;float:left;margin-left:4%;font-size:.55rem;color:#666666;}
+.timeTag .tag{position:relative;float:right;margin-right:4%;font-size:.55rem;color:#ff5500;}
+.billInfoD{position:relative;margin:0 auto;width:100%;padding:.3rem 0;background:#f2f2f2;}
+.billInfoD .div92{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;margin-left:4%;width:92%;word-break: break-all;word-wrap: break-word;background:url(imgs/right_arrow.png)  right center no-repeat;background-size:.45rem;}
+.billInfoD .div92 .img{width:3.5rem;height:3.5rem;}
+.billInfoD .div92 img{width:100%;height:100%;border:0px;}
+.billInfoD .div92 .div92title{-webkit-box-flex:1;box-flex:1;-webkit-flex:1;flex:1;margin-left:2.4%;margin-right:20%;font-size:.6rem;color:#333;text-align:left;word-break: break-all;word-wrap:break-word;line-height:1rem;}
+.installmentheji{position:relative;margin:0 auto;width:100%;margin-top:.5rem;height:1.4rem;line-height:1.4rem;font-size:0.6rem;text-align:right;padding-right:4%;}
+.botmLine{position:relative;margin:0 auto;width:100%;height:1px;background: #e1e1e1;-webkit-transform:scaleY(.5);-webkit-transform-origin:0 0;transform:scaleY(.5);transform-origin:0 0;}
+.botmLine2{margin:.2rem 0;width:100%;height:1px;background: #d6d6d6;-webkit-transform:scaleY(.5);-webkit-transform-origin:0 0;transform:scaleY(.5);transform-origin:0 0;}
+.payBtnD{position:relative;margin:0 auto;width:92%;}
+a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0px;margin-top:.4rem;margin-bottom:.4rem;margin-left:.4rem;width:3.3rem;height:1.2rem;line-height:1.2rem;color:#fff;-webkit-border-radius:0px;border-radius:0px;font-size:.6rem;background:#028ce5;text-align:center;border:0px;}
+.itemList{position:relative;margin:0 auto;height:1.4rem;line-height:1.4rem;font-size:.55rem;color:#666;text-indent:.8rem}
+.marginTop10{padding-top:.5rem}
+.blank10{position:relative;margin:0 auto;width:100%;height:.5rem;}
+.mfqOrDeLink{display:inline-block;width:100%;background:url(imgs/right_arrow.png) no-repeat 95% center;background-size: 0.43rem;;}
+.installPayInfo{position:relative;margin:.5rem auto;padding:.5rem 0;width:100%;background:#fff;}
+.mfqdownloadTips{position:relative;margin:0 auto;width:100%;height:2rem;line-height:2rem;text-align:center;color: #999;font-size: .6rem;}
