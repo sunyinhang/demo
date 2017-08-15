@@ -34,6 +34,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     private Cache cache;
     @Autowired
     private AppServerService appServerService;
+    @Value("${app.other.baseSharePath:}")
+    protected String baseSharePath;
     @Value("${app.other.face_DataImg_url}")
     protected String face_DataImg_url;
 
@@ -113,8 +115,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 if (filePath == null || "".equals(filePath)){
                     return fail(ConstUtil.ERROR_CODE, "图片路径为空");
                 }
-                String[] imagearr =  filePath.split("testshare01");
-                filePath = imagearr[1];
+                filePath = filePath.replace(baseSharePath, "");
                 JSONObject resultJson_ = new JSONObject();
                 resultJson_.put("id",id);//影像ID
                 resultJson_.put("filePath",filePath);//图片地址
@@ -387,7 +388,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
-        if(cacheMap.isEmpty()){
+        if(cacheMap == null){
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }

@@ -1,7 +1,7 @@
 <div data-container="personalInform">
     <component is="tab-applyQuota" active="realName personal"></component>
     <form>
-        <component is="bv-accordion" :entity="entity" v-bind="config"></component>
+        <component is="bv-accordion" :entity="entity" :key="tags.accordionKey" v-bind="config"></component>
         <component is="bv-form" :entity="entity" :key="tags.formKey" v-bind="operateConfig"></component>
     </form>
 </div>
@@ -12,6 +12,7 @@
             container: 'personalInform',
             data: {
                 tags: {
+                    accordionKey: 'personalInformAccordion',
                     formKey: 'personalInformForm'
                 },
                 entity: {
@@ -231,6 +232,7 @@
                             title: '紧急联系人',
                             type: 'form',
                             config: {
+                                name: 'relation',
                                 clazz: 'form-align-right',
                                 layout: 'inline',
                                 container: 'div',
@@ -294,6 +296,7 @@
                                             },
                                             preset: 'json',
                                             choose: '#relationType',
+                                            excludes: [Const.params.relationTypeCouple],
                                             validate: {
                                                 //required: '请选择紧急联系人关系'
                                             }
@@ -336,33 +339,8 @@
                             title: '选传影像',
                             type: 'form',
                             config: {
+                                name: 'files',
                                 columns: [
-                                    {
-                                        head: '选传影像1',
-                                        name: 'p1',
-                                        edit: {
-                                            type: 'upload'
-                                        },
-                                        config: {
-                                            clazz: 'upload-multiple',
-                                            files: [{}, {}],
-                                            autoIncrease: true,
-                                            autoUpload: false
-                                        }
-                                    },
-                                    {
-                                        head: '选传影像2',
-                                        name: 'p2',
-                                        edit: {
-                                            type: 'upload'
-                                        },
-                                        config: {
-                                            clazz: 'upload-multiple',
-                                            files: [{}, {}],
-                                            autoIncrease: true,
-                                            autoUpload: false
-                                        }
-                                    }
                                 ]
                             }
                         }
@@ -436,37 +414,125 @@
                         }
                     ]
                 }
-            }
-        });
-        util.post({
-            url: "/getAllCustExtInfo",
-            success: function(res) {
-                var data = util.data(res);
-                util.refresh({
-                    vm: util.vm(vm, vm.tags.formKey),
-                    entity: {
-                        maritalStatus: data.CustExtInfoMap.maritalStatus,
-                        liveAddress: data.CustExtInfoMap.liveProvince+ ','+data.CustExtInfoMap.liveCity+','+data.CustExtInfoMap.liveArea,
-                        /// liveAddress: data.CustExtInfoMap.liveProvinceName+ data.CustExtInfoMap.liveCityName+data.CustExtInfoMap.liveAreaName,
-                        liveAddr: data.CustExtInfoMap.liveAddr,
-                        officeName: data.CustExtInfoMap.officeName,
-                        officeTel: data.CustExtInfoMap.officeTel,
-                        officeAddr: data.CustExtInfoMap.officeAddr,
-                        officeAddress: data.CustExtInfoMap.officeProvince+','+ data.CustExtInfoMap.officeCity+','+data.CustExtInfoMap.officeArea
-                        /// officeAddress: data.CustExtInfoMap.officeProvinceName+ data.CustExtInfoMap.officeCity+data.CustExtInfoMap.officeAreaName
+            },
+            watch: {
+                'entity.maritalStatus': function (val, oldVal) {
+                    var relationType1Vm = util.vm(vm, vm.tags.accordionKey, 'relation.relationType1');
+                    if (relationType1Vm) {
+                        if (!val || val === Const.params.maritalStatusUnknown) {
+                            util.refresh({
+                                vm: relationType1Vm,
+                                excludes: []
+                            });
+                        } else if (val === Const.params.maritalStatusMarried) {
+                            util.refresh({
+                                vm: relationType1Vm,
+                                includes: [Const.params.relationTypeCouple]
+                            });
+                        } else {
+                            util.refresh({
+                                vm: relationType1Vm,
+                                excludes: [Const.params.relationTypeCouple]
+                            });
+                        }
+                    }
+                }
+            },
+            mounted: function () {
+                util.post({
+                    url: "/getAllCustExtInfo",
+                    success: function(res) {
+                        var data = util.data(res);
+                        util.refresh({
+                            vm: util.vm(vm, vm.tags.formKey),
+                            entity: {
+                                maritalStatus: data.CustExtInfoMap.maritalStatus,
+                                liveAddress: data.CustExtInfoMap.liveProvince+ ','+data.CustExtInfoMap.liveCity+','+data.CustExtInfoMap.liveArea,
+                                /// liveAddress: data.CustExtInfoMap.liveProvinceName+ data.CustExtInfoMap.liveCityName+data.CustExtInfoMap.liveAreaName,
+                                liveAddr: data.CustExtInfoMap.liveAddr,
+                                officeName: data.CustExtInfoMap.officeName,
+                                officeTel: data.CustExtInfoMap.officeTel,
+                                officeAddr: data.CustExtInfoMap.officeAddr,
+                                officeAddress: data.CustExtInfoMap.officeProvince+','+ data.CustExtInfoMap.officeCity+','+data.CustExtInfoMap.officeArea
+                                /// officeAddress: data.CustExtInfoMap.officeProvinceName+ data.CustExtInfoMap.officeCity+data.CustExtInfoMap.officeAreaName
+                            }
+                        });
+                        for (var i=0; i<data.CustExtInfoMap.lxrList.length; i++) {
+                            var lxr = {};
+                            lxr['id' + (i + 1)] = data.CustExtInfoMap.lxrList[i].id;
+                            lxr['relationType' + (i + 1)] = data.CustExtInfoMap.lxrList[i].relationType;
+                            lxr['contactName' + (i + 1)] = data.CustExtInfoMap.lxrList[i].contactName;
+                            lxr['contactMobile' + (i + 1)] = data.CustExtInfoMap.lxrList[i].contactMobile;
+                            util.refresh({
+                                vm: util.vm(vm, vm.tags.formKey),
+                                entity: lxr
+                            });
+                            if (i === 1) {
+                                break;
+                            }
+                        }
+                        for (var i=data.CustExtInfoMap.lxrList.length; i<2; i++) {
+                            var lxr = {};
+                            lxr['id' + (i + 1)] = null;
+                            lxr['relationType' + (i + 1)] = null;
+                            lxr['contactName' + (i + 1)] = null;
+                            lxr['contactMobile' + (i + 1)] = null;
+                            util.refresh({
+                                vm: util.vm(vm, vm.tags.formKey),
+                                entity: lxr
+                            });
+                            if (i === 1) {
+                                break;
+                            }
+                        }
+
+                        // 选传影像
+                        if (data.docList && data.docList.length > 0) {
+                            var filesVm = util.vm(vm, vm.tags.accordionKey, 'files');
+                            if (filesVm != null) {
+                                for (var i=0; i<data.docList.length; i++) {
+                                    var files = [];
+                                    if (data.docList[i].urlList && data.docList[i].urlList.length > 0) {
+                                        for (var fileIndex=0; fileIndex<data.docList[i].urlList.length; fileIndex++) {
+                                            files.push({
+                                                id: data.docList[i].urlList[fileIndex].id,
+                                                url: Const.route.imageLocation + data.docList[i].urlList[fileIndex].filePath
+                                            });
+                                        }
+                                    } else {
+                                        files.push({});
+                                    }
+                                    util.refresh({
+                                        vm: filesVm,
+                                        columns: [
+                                            {
+                                                head: data.docList[i].docDesc,
+                                                name: data.docList[i].docCde,
+                                                edit: {
+                                                    type: 'upload'
+                                                },
+                                                config: {
+                                                    clazz: 'upload-multiple',
+                                                    url: util.mix('/upIconPic', {
+                                                        docCde: data.docList[i].docCde,
+                                                        docDesc: data.docList[i].docDesc
+                                                    }),
+                                                    formName: 'iconImg',
+                                                    files: files,
+                                                    autoIncrease: true,
+                                                    // autoUpload: false,
+                                                    delete: function (file) {
+                                                        console.log(file);
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    });
+                                }
+                            }
+                        }
                     }
                 });
-                for (var i=0; i<data.CustExtInfoMap.lxrList.length; i++) {
-                    var lxr = {};
-                    lxr['id' + (i + 1)] = data.CustExtInfoMap.lxrList[i].id;
-                    lxr['relationType' + (i + 1)] = data.CustExtInfoMap.lxrList[i].relationType;
-                    lxr['contactName' + (i + 1)] = data.CustExtInfoMap.lxrList[i].contactName;
-                    lxr['contactMobile' + (i + 1)] = data.CustExtInfoMap.lxrList[i].contactMobile;
-                    util.refresh({
-                        vm: util.vm(vm, vm.tags.formKey),
-                        entity: lxr
-                    });
-                }
             }
         });
     });
