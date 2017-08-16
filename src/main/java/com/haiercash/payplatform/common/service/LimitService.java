@@ -9,5 +9,5 @@ import java.util.Map;
  */
 public interface LimitService {
     //额度激活（判断跳转哪个页面）
-    public Map<String, Object> CreditLineApply(String token, String channel, String channelNo,Map<String, Object> params) throws Exception;
+    public Map<String, Object> CreditLineApply(String token, String channel, String channelNo) throws Exception;
 }

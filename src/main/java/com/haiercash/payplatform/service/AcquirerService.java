@@ -64,4 +64,11 @@ public interface AcquirerService {
      */
     Map<String, Object> cashLoan(AppOrder order, AppOrdernoTypgrpRelation relation);
 
+    /**
+     * 去收单查apporder
+     * @param applSeq       流水号
+     * @param channelNo     渠道号
+     * @return  Map
+     */
+    public AppOrder getAppOrderFromAcquirer(String applSeq, String channelNo);
 }

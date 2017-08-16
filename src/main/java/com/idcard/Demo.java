@@ -11,7 +11,8 @@ public class Demo {
 	static
     {
 
-		System.loadLibrary("OCRDLL_THR");
+		System.loadLibrary("IDCARD_THR");
+		//System.loadLibrary("OCRDLL_THR");本地测试
 //			System.out.println("java.library.path:"+System.getProperty("java.library.path"));
 //
 //			System.loadLibrary("IDCARD_THR");

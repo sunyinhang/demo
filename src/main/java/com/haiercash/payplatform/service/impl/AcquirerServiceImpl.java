@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.common.config.EurekaServer;
+import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
@@ -12,15 +13,7 @@ import com.haiercash.payplatform.common.service.AppManageService;
 import com.haiercash.payplatform.common.service.CmisService;
 import com.haiercash.payplatform.common.service.CommonRepaymentPersonService;
 import com.haiercash.payplatform.common.service.CrmService;
-import com.haiercash.payplatform.common.utils.AcqTradeCode;
-import com.haiercash.payplatform.common.utils.AcqUtil;
-import com.haiercash.payplatform.common.utils.ChannelType;
-import com.haiercash.payplatform.common.utils.FormatUtil;
-import com.haiercash.payplatform.common.utils.HttpUtil;
-import com.haiercash.payplatform.common.utils.IdCardUtils;
-import com.haiercash.payplatform.common.utils.ReflactUtils;
-import com.haiercash.payplatform.common.utils.RestUtil;
-import com.haiercash.payplatform.common.utils.ResultHead;
+import com.haiercash.payplatform.common.utils.*;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.OrderService;
@@ -60,6 +53,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     private CmisService cmisService;
     @Autowired
     private CommonRepaymentPersonService commonRepaymentPersonService;
+    @Autowired
+    private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
 
     @Override
     public Map<String, Object> getOrderFromAcquirer(String applSeq, String channel, String channelNo, String cooprCde,
@@ -684,5 +679,35 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     }
 
 
+    @Override
+    public AppOrder getAppOrderFromAcquirer(String applSeq, String channelNo) {
+        if (StringUtils.isEmpty(channelNo)) {
+            channelNo = super.getChannelNo();
+        }
+        String url = EurekaServer.ACQUIRER + "/api/appl/selectApplInfoApp";
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("applSeq", applSeq);
+        logger.info("获取贷款详情请求参数:applSeq:" + applSeq + ",channelNo:" + channelNo);
+        Map<String, Object> acqResponse = AcqUtil
+                .getAcqResponse(url, AcqTradeCode.SELECT_APP_APPL_INFO, super.getChannel(), channelNo, "", "",
+                        paramMap);
+        if (acqResponse == null || acqResponse.isEmpty()) {
+            return null;
+        }
+        if (!CmisUtil.getIsSucceed(acqResponse)) {
+            return null;
+        }
+        Map<String, Object> acqBody = (Map<String, Object>) ((Map<String, Object>) acqResponse.get("response"))
+                .get("body");
+        AppOrder appOrder = this.acquirerMap2OrderObject(acqBody, new AppOrder());
+        AppOrdernoTypgrpRelation relation = appOrdernoTypgrpRelationDao.selectByApplSeq(applSeq);
+        if (relation == null) {
+            throw new BusinessException("22", "订单不存在");
+        }
+        appOrder.setCustNo(relation.getCustNo());
+
+        return appOrder;
+    }
 
 }
