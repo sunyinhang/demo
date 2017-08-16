@@ -130,7 +130,6 @@ app:
     service:
       open: true
   rest:
-
     APPCA: http://APPCA
     APPMANAGE: http://APPMANAGE
     APPMSG: http://APPSERVER-MSG
