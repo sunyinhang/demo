@@ -576,9 +576,9 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     //1.27(GET) 根据集团用户id查询用户信息
     public Map<String, Object> getUserId(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/uauth/queryHaierUserInfo";
-        logger.info("获取卡信息接口，请求地址：" + url);
+        logger.info("根据集团用户id查询用户信息：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
-        logger.info("获取卡信息接口，返回数据：" + map);
+        logger.info("根据集团用户id查询用户信息：" + map);
         return map;
     }
 
