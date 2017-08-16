@@ -35,7 +35,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util
                 		bankCode: vm.bankCode,
                 		mobile: vm.mobile
                 	});
-                	util.redirect("getPayPsd/byRlNmCertif_PayPsdVldcode.html");
+                	util.redirect("getPayPsd/byRlNmCertif_loginPsdVldcode.html");
                 }
             }
         }

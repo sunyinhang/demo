@@ -1,4 +1,4 @@
-<component is="bv-layout" class="bv-align-center" data-container="byRlNmCertif_PayPsdVldcode">
+<component is="bv-layout" class="bv-align-center" data-container="byRlNmCertif_loginPsdVldcode">
     <div class="height10 gray"></div>
     <component is="bv-form" class="form-align-left form-sms" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </component>
@@ -9,10 +9,10 @@
         var param = util.cache('cardnumber','mobile','bankNo');
 
         var vm = util.bind({
-            container: 'byRlNmCertif_PayPsdVldcode',
+            container: 'byRlNmCertif_loginPsdVldcode',
             data: {
                 tags: {
-                    formKey: 'byRlNmCertif_PayPsdVldcodeForm'
+                    formKey: 'byRlNmCertif_loginPsdVldcodeForm'
                 },
                 entity: {
                 },
@@ -102,7 +102,7 @@
                                 });
                                 util.redirect({
                                     title: '实名认证找回密码',
-                                    url: '/getPayPsd/reset_rlNmPayPsd.html',
+                                    url: '/login/reset_rlNmLoginPsd.html',
                                     back: false
                                 });
                             }

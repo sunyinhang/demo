@@ -21,9 +21,6 @@
 				activeAmountFn: function(param){
 					util.post({
 						url: "/CreditLineApply",
-						data:{
-							tag: 'SHH '
-						},
 						success: function (res) {
 							//1：通过人脸识别，并已设置支付密码
 							//2：通过人脸识别，但没有设置支付密码

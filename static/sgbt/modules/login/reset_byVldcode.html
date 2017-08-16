@@ -1,18 +1,18 @@
-<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="reset_rlNmPayPsd">
+<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="reset_byVldcode">
     <div class="height10"></div>
     <component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </component>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
-        util.title('重置密码');
-        //获取卡号、手机号、验证码
-        var param=util.cache('cardnumber','mobile','verifyNo');
+        util.title('密码设置');
+        //获取旧密码
+        var param=util.cache('payPasswd');
 
         var vm = util.bind({
-            container: 'reset_rlNmPayPsd',
+            container: 'reset_byVldcode',
             data: {
                 tags: {
-                    formKey: 'reset_rembPayPsdForm'
+                    formKey: 'reset_byVldcodeForm'
                 },
                 entity: {},
                 formConfig: {
@@ -24,7 +24,8 @@
                             config: {
                                 type: 'password',
                                 attr: {
-                                    placeholder: '6-20位字母和数字组成'
+                                    placeholder: '6-20位字母和数字组成',
+                                    maxlength: '#password'
                                 },
                                 validate: {
                                     required: '密码不能为空',
@@ -58,15 +59,14 @@
                             layout: 'primary',
                             click: function (event, editType, entity) {
                                 util.post({
-                                    url: '/updPwdByIdentity',
+                                    url: '/updatePayPasswd',
                                     data: {
-                                        mobile: param && param.mobile,
-                                        verifyNo: param && param.verifyNo,
-                                        cardNo: param && param.cardnumber,
-                                        newPassword: entity.payPassword
-                                    },
-                                    success(res){
+                                        oldpassword: param && param.payPasswd,
+                                        newpassword: entity.payPassword
+                                     },
+                                    success: function (res){
                                         util.alert('重置成功');
+                                        //TODO   跳转到输入支付密码页面
                                     }
                                 });
                             }
@@ -77,5 +77,4 @@
         });
     });
 </script>
-
 

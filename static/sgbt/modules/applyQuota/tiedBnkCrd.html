@@ -47,11 +47,16 @@
                                     placeholder: '请输入卡号'
                                 },
                                 validate: {
-                                    required: '请输入银行卡卡号'
+                                    required: '请输入银行卡卡号',
+                                    custom: {
+                                        code: 'cardNo',
+                                        desc: '请输入16位或19位卡号'
+                                    }
                                 },
                                 blur: function (event, val, entity) {
-                                    if (util.isEmpty(entity.cardnumber)) {
-                                        util.alert('请先输入银行卡号');
+                                    var cardNumReg=/^([0-9]{16}|[0-9]{19})$/;//卡号正则
+                                    if(cardNumReg.exec(entity.cardnumber)==null){
+                                        util.alert('请输入16位或19位卡号');
                                     }else{
                                         util.get({
                                             url: util.mix("/getCardInfo", {
@@ -166,7 +171,8 @@
                             name: 'verifyNo',
                             config: {
                                 attr: {
-                                    placeholder: '请输入验证码'
+                                    placeholder: '请输入验证码',
+                                    maxlength: '#verifyNo'
                                 },
                                 validate: {
                                     required: '请输入验证码'

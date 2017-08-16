@@ -20,7 +20,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util
                 	util.cache({
                 		cardNo: vm.cardnumber
                 	});
-                    util.redirect('getPayPsd/byRlNmCertif_PayPsdC.html');
+                    util.redirect('getPayPsd/byRlNmCertif_loginPsdC.html');
                 }
             }
 		}
