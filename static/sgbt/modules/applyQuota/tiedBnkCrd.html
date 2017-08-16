@@ -44,7 +44,8 @@
                             name: 'cardnumber',
                             config: {
                                 attr: {
-                                    placeholder: '请输入卡号'
+                                    placeholder: '请输入卡号',
+                                    maxlength: '#bankCard'
                                 },
                                 validate: {
                                     required: '请输入银行卡卡号',
@@ -160,10 +161,15 @@
                             name: 'mobile',
                             config: {
                                 attr: {
-                                    placeholder: '请输入银行预留手机号'
+                                    placeholder: '请输入银行预留手机号',
+                                    maxlength: '#mobile'
                                 },
                                 validate: {
-                                    required: '请输入银行预留手机号'
+                                    required: '请输入银行预留手机号',
+                                    custom: {
+                                        code: 'mobile',
+                                        desc: '请输入正确的手机号码'
+                                    }
                                 }
                             }
                         },{
@@ -175,15 +181,19 @@
                                     maxlength: '#verifyNo'
                                 },
                                 validate: {
-                                    required: '请输入验证码'
+                                    required: '请输入验证码',
+                                    minSize: {
+                                        code: 6,
+                                        desc: '请输入正确格式的验证码'
+                                    }
                                 }
                             },
                             operate: {
                                 text: '获取验证码',
                                 click: function (event,entity) {
-                                    if (util.isEmpty(entity.mobile)) {
-                                        util.alert('请先填写手机号');
-                                        return;
+                                    var cardNumReg=/^(1[0-9])\d{9}$/;
+                                    if(cardNumReg.exec(entity.cardnumber)==null){
+                                        util.alert('请输入16位或19位卡号');
                                     }
                                     util.countdown($(event.target), {
                                         text: '获取验证码',

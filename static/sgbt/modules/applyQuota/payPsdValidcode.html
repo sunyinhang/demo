@@ -28,6 +28,10 @@
                             },
                             validate: {
                                 required: '请输入短信验证码',
+                                minSize: {
+                                    code: 6,
+                                    desc: '请输入正确格式验证码'
+                                }
                             }
                         },
                         operate: {
