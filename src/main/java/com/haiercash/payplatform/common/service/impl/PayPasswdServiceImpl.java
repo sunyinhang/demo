@@ -64,7 +64,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
         //String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
         // String n = "3";// 签订注册 + 征信
-        //String flag = "0";
+        //flag = "0";
         if ("0".equals(flag)) {//0  密码未设置
             logger.info("支付密码未设置，进行密码的设置");
             Map<String, Object> paramsMap = new HashMap<String, Object>();
@@ -451,7 +451,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         JSONObject head = jsonObject.getJSONObject("head");
         String code = head.getString("retFlag");
         String message = head.getString("retMsg");
-        if ("0000".equals(code)) {//查询贷款详情成功
+        if ("00000".equals(code)) {//查询贷款详情成功
             logger.info("查询贷款详情接口，响应数据：" + jsonObject.getJSONObject("body").toString());
             JSONObject json = jsonObject.getJSONObject("body");
             String applyTnrTyp = json.get("applyTnrTyp").toString();
@@ -893,13 +893,13 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         JSONObject head = jsonObject.getJSONObject("head");
         String retFlag = (String) head.get("retFlag");
         String retMsg = (String) head.get("retMsg");
-        if ("0000".equals(retFlag)) {
+        if ("00000".equals(retFlag)) {
             JSONObject limitRes = jsonObject.getJSONObject("body");
             double crdComAvailAnt = limitRes.getDouble("crdComAvailAnt");// 剩余额度（受托支付可用额度金额）
             double crdNorAvailAmt = limitRes.getDouble("crdNorAvailAmt");// 自主支付可用额度金额(现金)
             double crdAmt = limitRes.getDouble("crdAmt");// 总额度
             double crdComAmt = limitRes.getDouble("crdComAmt");
-            // crdComAvailAntSum = crdComAvailAnt+crdNorAvailAmt;可用额度
+            //crdComAvailAntSum = crdComAvailAnt+crdNorAvailAmt;可用额度
             JSONObject jb = new JSONObject();
             jb.put("crdComAvailAnt", crdComAvailAnt);
             jb.put("crdNorAvailAmt", crdNorAvailAmt);
@@ -908,7 +908,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             // jb.put("crdComAvailAntSum", crdComAvailAntSum);
             return success(jb);
         } else {
-            return success(limit);
+            return fail(ConstUtil.ERROR_CODE,retMsg);
         }
     }
 
@@ -924,7 +924,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String applSeq = (String) cacheMap.get("applSeq");//申请流水号
-        //applSeq = "1097515";
+        //String   applSeq = "1097515";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("从Jedis中获取的数据为空：applSeq=" + applSeq);
             String retmsg = "从Jedis中获取的数据为空";

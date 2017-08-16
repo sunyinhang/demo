@@ -88,4 +88,6 @@ public interface AppServerService {
     public Map<String, Object> saveCustFCiCustContact(String token,Map<String, Object> paramMap);
     //6.1.108.	(post)信息完整查询接口
     public Map<String, Object> checkIfMsgComplete(String token,Map<String, Object> paramMap);
+    //1.27(GET) 根据集团用户id查询用户信息
+    public Map<String, Object>  getUserId(String token,Map<String, Object> paramMap);
 }
