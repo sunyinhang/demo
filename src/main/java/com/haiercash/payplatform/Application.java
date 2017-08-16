@@ -57,17 +57,4 @@ public class Application extends SpringBootServletInitializer {
         return application.sources(Application.class);
     }
 
-    @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer() {
-
-        return (x -> {
-            ErrorPage error401Page = new ErrorPage(HttpStatus.FORBIDDEN, "/403.html");
-            ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/404.html");
-            ErrorPage error500Page = new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/500.html");
-            x.addErrorPages(error401Page, error404Page, error500Page);
-
-        });
-    }
-
-
 }
