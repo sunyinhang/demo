@@ -111,8 +111,7 @@
 
 /* reset public*/
 *{ padding:0px; margin:0px;}
-.fullPage{ min-height: 100%;}
-.gray{ background-color: #eee;}
+.fullPage-gray .page{ background-color: #eee;}
 .clear{  clear: both; }
 .align-left{ text-align:left;}
 .margt8{ margin-top: 0.4rem;}

@@ -1,6 +1,6 @@
-<div class="bv-align-center fullPage gray" data-container="amountActive">
+<component is="bv-layout" class="bv-align-center fullPage gray" data-container="amountActive">
 	<quota-state v-bind="stateConfig" @on-click="activeAmountFn"></quota-state>
-</div>
+</component>
 <script type="text/javascript">
 	require(['jquery', 'util', 'Const'], function($, util, Const) {
 		util.title('额度激活');
@@ -21,9 +21,6 @@
 				activeAmountFn: function(param){
 					util.post({
 						url: "/CreditLineApply",
-						data:{
-							tag: 'SHH '
-						},
 						success: function (res) {
 							//1：通过人脸识别，并已设置支付密码
 							//2：通过人脸识别，但没有设置支付密码

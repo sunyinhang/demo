@@ -1,4 +1,4 @@
-<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="byRlNmCertif_PayPsd">
+<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="byRlNmCertif_loginPsd">
     <div class="height10"></div>
     <component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </component>
@@ -6,10 +6,10 @@
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         util.title('添加银行卡');
         var vm = util.bind({
-            container: 'byRlNmCertif_PayPsd',
+            container: 'byRlNmCertif_loginPsd',
             data: {
                 tags: {
-                    formKey: 'byRlNmCertif_PayPsdForm'
+                    formKey: 'byRlNmCertif_loginPsdForm'
                 },
                 entity: {},
                 formConfig: {
@@ -21,10 +21,11 @@
                             clazz: '',
                             config: {
                                 attr: {
-                                    readonly: 'readonly'
+                                    placeholder: '请输入姓名',
+                                    maxlength: '#name'
                                 },
                                 validate: {
-                                    //required: '姓名不能为空'
+                                    required: '姓名不能为空',
                                 }
                             }
                         },{
@@ -32,10 +33,15 @@
                             name: 'cardID',
                             config: {
                                 attr: {
-                                    readonly: 'readonly'
+                                    placeholder: '请输入身份证',
+                                    maxlength: '#idCardNo'
                                 },
                                 validate: {
-                                    //required: '身份证号不能为空'
+                                    required: '身份证号不能为空',
+                                    custom: {
+                                        code: 'idCardNumber',
+                                        desc: '请输入正确的身份证号'
+                                    }
                                 }
                             }
                         },{
@@ -73,7 +79,7 @@
                                 });
                                 util.redirect({
                                     title: '实名认证找回密码',
-                                    url: '/getPayPsd/byRlNmCertif_PayPsdC.html',
+                                    url: '/login/byRlNmCertif_loginPsdC.html',
                                     back: false
                                 });
                             }

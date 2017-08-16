@@ -1,8 +1,8 @@
-<div class="bv-align-center" data-container="identityVrfic">
+<component is="bv-layout" class="bv-align-center" data-container="identityVrfic">
     <component is="tab-applyQuota" active="realName personal face"></component>
     <component is="bv-upload" :entity="entity" v-bind="uploadConfig"></component>
     <component is="bv-form" class="form-align-right" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
-</div>
+</component>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         util.title('人脸识别');
@@ -17,6 +17,7 @@
                     name: 'upload',
                     type: 'camera',
                     clazz: 'faceCamera',
+                    formName: 'faceImg',
                     autoUpload: false,
                     url: '/uploadFacePic',
                     files: [
@@ -32,7 +33,7 @@
                     operates: [
                         {
                             text: '下一步',
-                            clazz: 'primary',
+                            layout: 'primary',
                             validate: {
                                 before: function (event, editType, entity) {
                                     if (!entity.upload || !entity.upload.faceImg) {

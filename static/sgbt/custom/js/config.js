@@ -99,7 +99,9 @@ var __Const = {
         bankCard: 19,
         idCard: 60,
         // 发证机关
-        issue: 90
+        issue: 90,
+        //身份证
+        idCardNo: 18
     },
     cache: {
         type: 'both'

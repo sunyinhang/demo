@@ -1,7 +1,7 @@
-<div class="bv-align-center" data-container="payPsdValidcode">
+<component is="bv-layout" class="bv-align-center" data-container="payPsdValidcode">
     <component is="tab-applyQuota" active="realName personal face password"></component>
     <component is="bv-form" class="form-align-left form-sms" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
-</div>
+</component>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         util.title('发送短信验证码');
@@ -18,15 +18,20 @@
                 },
                 formConfig: {
                     columns: [{
-                        head: '请输入'+(param && (param.mobile || ''))+'手机收到的短信校验码',//+ param && param.mobile+
+                        head: '请输入'+(param && (util.format(param.mobile || '', 'phone4')))+'手机收到的短信校验码',//+ param && param.mobile+
                         name: 'verifyNo',
                         clazz: 'bv-align-left',
                         config: {
                             attr: {
-                                placeholder: '请输入验证码'
+                                placeholder: '请输入验证码',
+                                maxlength: '#verifyNo'
                             },
                             validate: {
-                                required: '请输入短信验证码'
+                                required: '请输入短信验证码',
+                                minSize: {
+                                    code: 6,
+                                    desc: '请输入正确格式验证码'
+                                }
                             }
                         },
                         operate: {
@@ -78,7 +83,7 @@
                     operates: [
                         {
                             text: '下一步',
-                            clazz: 'primary',
+                            layout: 'primary',
                             validate: {
                                 after: function (event, editType, entity) {
                                     if (!entity.agree) {

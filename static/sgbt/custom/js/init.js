@@ -1,4 +1,6 @@
-require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation'], function(vue, $, util, Const, bridge) {
+require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 'bvLayout'], function(vue, $, util, Const, bridge) {
+    util.init();
+
     Const.global.f = new Framework7({
         router: false,
         modalTitle: '',
@@ -22,11 +24,6 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation'],
         });
         return;
     }*/
-    util.init();
-    Const.vm.root = util.bind({
-        container: 'root',
-        data: {}
-    });
 
     var path = util.path();
     var isDefault = false;

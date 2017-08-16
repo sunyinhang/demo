@@ -15,9 +15,8 @@ import org.springframework.stereotype.Component;
  * @since v1.0.1
  */
 @Component
-@RabbitListener(queues = "${rabbitmq.queue.cmis}")
+@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
 public class CmisMseeageHandler {
-    private static final int MAX_TRY_COUNT = 10;
     private Log logger = LogFactory.getLog(CmisMseeageHandler.class);
 
     @Autowired

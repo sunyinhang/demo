@@ -1,10 +1,11 @@
-<div class="bv-align-center fullPage gray" data-container="byRembPayPsd">
+<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="byRembPayPsd">
 	<div class="height10"></div>
 	<component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
-</div>
+</component>
 <script type="text/javascript">
 	require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
 		util.title('重置支付密码');
+
 		var vm = util.bind({
 			container: 'byRembPayPsd',
 			data: {
@@ -22,10 +23,15 @@
 							config: {
 								type: 'password',
 								attr: {
-									placeholder: '6-20位字母，数字，符号组合'
+									placeholder: '6-20位字母，数字，符号组合',
+									maxlength: 'payPassword'
 								},
 								validate: {
-									required: '密码不能为空'
+									required: '密码不能为空',
+									custom: {
+										code: 'password',
+										desc: '密码由6-20位字母和数字组成'
+									}
 								}
 							}
 						}
@@ -33,7 +39,7 @@
 					operates: [
 						{
 							text: '下一步',
-							clazz: 'primary',
+                            layout: 'primary',
 							click: function (event, editType, entity) {
 								util.cache({
 									payPasswd: entity.payPassword

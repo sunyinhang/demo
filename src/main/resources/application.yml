@@ -6,9 +6,12 @@ logging:
     org.springframework: WARN
 security:
   sessions: NEVER
+info:
+  name: ${spring.application.name}
+  version: ${application.version}
 spring:
   application:
-    name: payplatform
+    name: payplatform_test
   ignoreUnresolvablePlaceholders: true
   redis:
     host: 10.164.194.123
@@ -18,6 +21,19 @@ spring:
       min-idle: 10
       max-active: 1000
   http.converters.preferred-json-mapper: fastjson
+  rabbitmq:
+    addresses: 10.164.197.208:5672, 10.164.197.228:5672
+    username: admin
+    password: admin123
+    virtual-host: /
+    publisher-confirms: true
+    listener:
+      acknowledge-mode: AUTO  # 消费者开启ack
+      concurrency: 1  # Listener并行处理的消息数量，可以通过增加此数量提高消息处理效率
+    requestedHeartbeat: 60
+    exchange: APPMSG_TOPIC_EXCHANGE_DEV
+    queue:
+      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE
 redis:
   single:
     host: 10.164.194.123
@@ -93,9 +109,6 @@ ribbon:
   ReadTimeout: 60000
   eureka:
     enabled: true
-rabbitmq:
-  queue:
-    cmis:
 common:
   redis:
     host: 10.164.194.123

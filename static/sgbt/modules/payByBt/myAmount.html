@@ -1,4 +1,4 @@
-<div class="bv-align-center fullPage gray" data-container="myAmount">
+<component is="bv-layout" class="bv-align-center fullPage gray" data-container="myAmount">
     <quota-state v-bind="config" @on-click="goShopFn"></quota-state>
     <div class="amountInfo">
         <div class="verLine verLinebg">
@@ -17,7 +17,7 @@
         </div>
         <div class="clear"></div>
     </div>
-</div>
+</component>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const'], function($, util, Const) {
         var vm = util.bind({

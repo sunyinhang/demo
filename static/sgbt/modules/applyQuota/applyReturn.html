@@ -1,7 +1,7 @@
-<div class="bv-align-center fullPage gray" data-container="applyReturn">
+<component is="bv-layout" class="bv-align-center fullPage gray" data-container="applyReturn">
 	<quota-state v-bind="config" @on-click="getReasonsFn"></quota-state>
 	<component is="bv-form" v-bind="formConfig"></component>
-</div>
+</component>
 <script type="text/javascript">
 	require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
 		util.title('额度被退回');
@@ -22,7 +22,7 @@
 					operates: [
 						{
 							text: '修改',
-							clazz: 'primary',
+                            layout: 'primary',
 							click: function (event, editType, entity) {
 								util.redirect({
 									title: '个人资料',

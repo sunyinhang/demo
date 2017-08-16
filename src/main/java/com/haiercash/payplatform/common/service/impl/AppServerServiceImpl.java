@@ -153,17 +153,17 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         //String applSeq = (String) params.get("applSeq");
         String idNo = (String) params.get("idNo");
 
-        String url ;
-        if(StringUtils.isEmpty(id) && StringUtils.isEmpty(idNo)){
+        String url;
+        if (StringUtils.isEmpty(id) && StringUtils.isEmpty(idNo)) {
             url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
-                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath ;
-        }else if(StringUtils.isEmpty(id)){
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath;
+        } else if (StringUtils.isEmpty(id)) {
             url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
                     + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&idNo=" + idNo;
-        }else if(StringUtils.isEmpty(idNo)){
+        } else if (StringUtils.isEmpty(idNo)) {
             url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
-                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id ;
-        }else{
+                    + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id;
+        } else {
             url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
                     + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id + "&idNo=" + idNo;
         }
@@ -354,7 +354,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //3.4.15.	(PUT)支付密码修改(知道原密码)
-    public Map<String,Object> updatePayPasswd(String token, Map<String, Object> paramMap) {
+    public Map<String, Object> updatePayPasswd(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/uauth/updatePayPasswd";
         logger.info("支付密码修改接口请求地址：" + url);
         logger.info("支付密码修改接口请求参数：" + paramMap);
@@ -364,7 +364,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(PUT)实名认证修改密码
-    public Map<String,Object> updPwdByIdentity(String token, Map paramMap) {
+    public Map<String, Object> updPwdByIdentity(String token, Map paramMap) {
         String url = appservernoauth + "/app/appserver/uauth/custVerifyUpdatePayPwd";
         logger.info("实名认证修改密码接口请求地址：" + url);
         logger.info("实名认证修改密码接口请求参数：" + paramMap);
@@ -374,7 +374,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)确认支付密码验证
-    public Map<String,Object> validatePayPasswd(String token, Map<String, Object> paramMap) {
+    public Map<String, Object> validatePayPasswd(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/uauth/validatePayPasswd";
         logger.info("确认支付密码验证接口请求地址：" + url);
         logger.info("确认支付密码验证接口请求参数：" + paramMap);
@@ -451,7 +451,6 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> approvalProcessInfomap = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("根据流水号查询额度审批进度接口返回数据：" + approvalProcessInfomap);
         return approvalProcessInfomap;
-
     }
 
     //根据集团用户ID查询用户信息
@@ -515,7 +514,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
-    public Map<String, Object> pLoanTypImages(String token,Map<String, Object> paramMap) {
+    public Map<String, Object> pLoanTypImages(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/cmis/pLoanTypImages";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
@@ -524,7 +523,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)影像列表按类型查询-个人版
-    public Map<String, Object> attachTypeSearchPerson(String token,Map<String, Object> paramMap) {
+    public Map<String, Object> attachTypeSearchPerson(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/attachTypeSearchPerson";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
@@ -533,7 +532,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
-    public Map<String, Object> getFilePathByFileId(String token,Map<String, Object> paramMap) {
+    public Map<String, Object> getFilePathByFileId(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/getFilePathByFileId";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
@@ -542,7 +541,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(POST)修改保存客户所有扩展信息(CRM85)
-    public Map<String, Object> saveAllCustExtInfo(String token,Map<String, Object> paramMap) {
+    public Map<String, Object> saveAllCustExtInfo(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/crm/cust/saveAllCustExtInfo";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
@@ -551,7 +550,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(POST)新增/修改 联系人(CRM6)
-    public Map<String, Object> saveCustFCiCustContact(String token,Map<String, Object> paramMap) {
+    public Map<String, Object> saveCustFCiCustContact(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/crm/saveCustFCiCustContact";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
@@ -564,13 +563,22 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> checkIfMsgComplete(String token, Map<String, Object> paramMap) {
         String tag = (String) paramMap.get("tag");
         String businessType = (String) paramMap.get("businessType");
-        if(StringUtils.isEmpty(tag) && StringUtils.isEmpty(businessType)){
+        if (StringUtils.isEmpty(tag) && StringUtils.isEmpty(businessType)) {
             return null;
         }
-        String url = appservernoauth + "/app/appserver/"+tag+"/"+businessType+"/checkIfMsgComplete";
+        String url = appservernoauth + "/app/appserver/" + tag + "/" + businessType + "/checkIfMsgComplete";
         logger.info("信息完整查询接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("信息完整查询接口，返回数据：" + map);
+        return map;
+    }
+
+    //1.27(GET) 根据集团用户id查询用户信息
+    public Map<String, Object> getUserId(String token, Map<String, Object> paramMap) {
+        String url = appservernoauth + "/app/appserver/uauth/queryHaierUserInfo";
+        logger.info("获取卡信息接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("获取卡信息接口，返回数据：" + map);
         return map;
     }
 

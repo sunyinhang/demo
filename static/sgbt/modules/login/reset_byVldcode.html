@@ -1,38 +1,34 @@
-<component is="bv-layout" class="bv-align-center" data-container="setPayPsd">
-    <component is="tab-applyQuota" active="realName personal face password"></component>
-    <component is="bv-form" class="form-align-left form-pwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="reset_byVldcode">
+    <div class="height10"></div>
+    <component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
 </component>
 <script type="text/javascript">
-    require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
-        util.title('设置支付密码');
-
-        //获取手机号
-        var param=util.cache('mobile');
+    require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
+        util.title('密码设置');
+        //获取旧密码
+        var param=util.cache('payPasswd');
 
         var vm = util.bind({
-            container: 'setPayPsd',
+            container: 'reset_byVldcode',
             data: {
                 tags: {
-                    formKey: 'setPayPsdForm'
+                    formKey: 'reset_byVldcodeForm'
                 },
                 entity: {},
                 formConfig: {
                     layout: 'inline',
-                    attr:{
-
-                    },
                     columns: [
                         {
-                            head: '支付密码',
+                            head: '输入新密码',
                             name: 'payPassword',
                             config: {
                                 type: 'password',
                                 attr: {
                                     placeholder: '6-20位字母和数字组成',
-                                    maxlength: '#payPassword'
+                                    maxlength: '#password'
                                 },
                                 validate: {
-                                    required: '请输入支付密码',
+                                    required: '密码不能为空',
                                     custom: {
                                         code: 'password',
                                         desc: '密码由6-20位字母和数字组成'
@@ -59,17 +55,19 @@
                     ],
                     operates: [
                         {
-                            text: '下一步',
+                            text: '确定',
                             layout: 'primary',
                             click: function (event, editType, entity) {
-                                util.cache({
-                                    mobile: param && param.mobile,
-                                    payPasswd: entity.payPassword
-                                });
-                                util.redirect({
-                                    title: '短信验证码',
-                                    url: '/applyQuota/payPsdValidcode.html',
-                                    back: false
+                                util.post({
+                                    url: '/updatePayPasswd',
+                                    data: {
+                                        oldpassword: param && param.payPasswd,
+                                        newpassword: entity.payPassword
+                                     },
+                                    success: function (res){
+                                        util.alert('重置成功');
+                                        //TODO   跳转到输入支付密码页面
+                                    }
                                 });
                             }
                         }
@@ -79,3 +77,4 @@
         });
     });
 </script>
+

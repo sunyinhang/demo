@@ -1,4 +1,4 @@
-<div class="bv-align-center gray fullPage" data-container="handholdIdCard">
+<component is="bv-layout" class="bv-align-center gray fullPage" data-container="handholdIdCard">
 	<div class="height10"></div>
 	<div class="b-holder">
 		<div class="id-l">
@@ -12,8 +12,7 @@
 	</div>
 	<p class="h-inform">请确保头像正面角度面向镜头</p>
 	<component is="bv-form" class="form-align-right" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
-
-</div>
+</component>
 <script type="text/javascript">
 	require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
 		util.title('人脸识别');
@@ -28,6 +27,7 @@
 					name: 'upload',
 					type: 'camera',
 					clazz: 'handheldIdCamera',
+                    formName: 'faceImg',
 					autoUpload: false,
 					url: '/uploadFacePic',
 					files: [
@@ -43,7 +43,7 @@
 					operates: [
 						{
 							text: '下一步',
-							clazz: 'primary',
+                            layout: 'primary',
 							validate: {
 								before: function (event, editType, entity) {
 									if (!entity.upload || !entity.upload.faceImg) {
