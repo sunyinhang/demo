@@ -98,10 +98,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             }
             ArrayList<Map<String,Object>> list_ = (ArrayList<Map<String,Object>>)stringObjectMap.get("body");
             for (int j = 0; j < list_.size(); j++) {
-                String id =  Integer.toString((int)list_.get(j).get("id")) ;
+                int id =  (int)list_.get(j).get("id") ;
                 Map<String, Object> paramYXbyIDMap = new HashMap<String, Object>();
                 //TODO
-                paramYXbyIDMap.put("id","13887");
+                paramYXbyIDMap.put("id",13887);
                 paramYXbyIDMap.put("channel", channel);
                 paramYXbyIDMap.put("channelNo", channelNo);
                 Map<String, Object> filePathByFileId = appServerService.getFilePathByFileId(token, paramYXbyIDMap);

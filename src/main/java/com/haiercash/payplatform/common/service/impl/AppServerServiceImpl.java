@@ -543,9 +543,9 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     //(POST)修改保存客户所有扩展信息(CRM85)
     public Map<String, Object> saveAllCustExtInfo(String token, Map<String, Object> paramMap) {
         String url = appservernoauth + "/app/appserver/crm/cust/saveAllCustExtInfo";
-        logger.info("获取卡信息接口，请求地址：" + url);
+        logger.info("修改保存客户所有扩展信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
-        logger.info("获取卡信息接口，返回数据：" + map);
+        logger.info("修改保存客户所有扩展信息接口，返回数据：" + map);
         return map;
     }
 
