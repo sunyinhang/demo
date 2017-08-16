@@ -20,6 +20,7 @@ import static com.haiercash.payplatform.common.utils.RestUtil.fail;
 
 /**
  * shunguang controller.
+ *
  * @author yuan li
  * @since v1.0.1
  */
@@ -40,12 +41,13 @@ public class ShunguangController extends BaseController {
 
     /**
      * 微店主客户信息推送 Sg-10001.
+     *
      * @param map
      * @return
      */
     @RequestMapping(value = "/api/payment/shunguang/store/info", method = RequestMethod.POST)
     public Map<String, Object> storeInfo(@RequestBody Map<String, Object> map) {
-        Map<String, Object> checkMap= this.confirmData(map);
+        Map<String, Object> checkMap = this.confirmData(map);
         if (!HttpUtil.isSuccess(checkMap)) {
             return checkMap;
         }
@@ -54,12 +56,13 @@ public class ShunguangController extends BaseController {
 
     /**
      * 普通用户信息推送 Sg-10002.
+     *
      * @param map 请求报文
      * @return
      */
     @RequestMapping(value = "/api/payment/shunguang/ordinary/info", method = RequestMethod.POST)
     public Map<String, Object> ordinaryUserInfo(@RequestBody Map<String, Object> map) {
-        Map<String, Object> checkMap= this.confirmData(map);
+        Map<String, Object> checkMap = this.confirmData(map);
         if (!HttpUtil.isSuccess(checkMap)) {
             return checkMap;
         }
@@ -68,15 +71,16 @@ public class ShunguangController extends BaseController {
 
     /**
      * 4.	 白条支付申请接口
+     *
      * @param map
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/payApply", method = RequestMethod.POST)
-    public Map<String, Object> payApply(@RequestBody Map<String, Object> map) throws Exception{
+    public Map<String, Object> payApply(@RequestBody Map<String, Object> map) throws Exception {
         // 参数非空校验
         Map<String, Object> confirmMsg = confirmData(map);
-        if(!HttpUtil.isSuccess(confirmMsg)) {
+        if (!HttpUtil.isSuccess(confirmMsg)) {
             return confirmMsg;
         }
         return shunguangService.payApply(map);
@@ -84,21 +88,87 @@ public class ShunguangController extends BaseController {
 
     /**
      * 5.	白条额度申请接口   Sg-10004
+     *
      * @param map
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/edApply", method = RequestMethod.POST)
-    public Map<String, Object> edApply(@RequestBody Map<String, Object> map) throws Exception{
+    public Map<String, Object> edApply(@RequestBody Map<String, Object> map) throws Exception {
         // 参数非空校验
         Map<String, Object> confirmMsg = confirmData(map);
-        if(!HttpUtil.isSuccess(confirmMsg)) {
+        if (!HttpUtil.isSuccess(confirmMsg)) {
             return confirmMsg;
         }
         return shunguangService.edApply(map);
     }
 
-    public Map<String, Object> confirmData(Map<String, Object> map){
+    /**
+     * 7.白条额度申请状态查询    Sg-10006
+     *
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/shunguang/checkEdAppl", method = RequestMethod.POST)
+    public Map<String, Object> checkEdAppl(@RequestBody Map<String, Object> map) throws Exception {
+        Map<String, Object> queryAppmap = confirmData(map);
+        if (!HttpUtil.isSuccess(queryAppmap)) {
+            return queryAppmap;
+        }
+        return shunguangService.checkEdAppl(map);
+    }
+
+    /**
+     * 9.  白条额度进行贷款支付结果主动查询接口    Sg-10008
+     *
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/shunguang/queryAppLoanAndGoods", method = RequestMethod.POST)
+    public Map<String, Object> queryAppLoanAndGoods(@RequestBody Map<String, Object> map) throws Exception {
+        Map<String, Object> queryAppmap = confirmData(map);
+        if (!HttpUtil.isSuccess(queryAppmap)) {
+            return queryAppmap;
+        }
+        return shunguangService.queryAppLoanAndGoods(map);
+    }
+
+    /**
+     * 10.  白条额度进行贷款支付结果主动查询接口    Sg-10009
+     *
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/shunguang/queryAppLoanAndGoodsOne", method = RequestMethod.POST)
+    public Map<String, Object> queryAppLoanAndGoodsOne(@RequestBody Map<String, Object> map) throws Exception {
+        Map<String, Object> queryAppmap = confirmData(map);
+        if (!HttpUtil.isSuccess(queryAppmap)) {
+            return queryAppmap;
+        }
+        return shunguangService.queryAppLoanAndGoodsOne(map);
+    }
+
+    /**
+     * 11.  白条额度进行主动查询接口    Sg-10010
+     *
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/shunguang/edcheck", method = RequestMethod.POST)
+    public Map<String, Object> edcheck(@RequestBody Map<String, Object> map) throws Exception {
+        Map<String, Object> queryAppmap = confirmData(map);
+        if (!HttpUtil.isSuccess(queryAppmap)) {
+            return queryAppmap;
+        }
+        return shunguangService.edcheck(map);
+    }
+
+
+    public Map<String, Object> confirmData(Map<String, Object> map) {
         if (StringUtils.isEmpty(map.get("applyNo"))) {
             return fail(ConstUtil.ERROR_CODE, "交易流水号(applyNo)不能为空");
         }
@@ -113,5 +183,4 @@ public class ShunguangController extends BaseController {
         }
         return success();
     }
-
 }
