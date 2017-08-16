@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
+import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.BaseService;
@@ -21,9 +22,6 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 //    @Value("${app.rest.APPSERVER}")
 //    protected String appserverurl;
 
-    @Value("${app.rest.APPSERVERNOAUTH}")
-    protected String appservernoauth;
-
     /**
      * 获取省市区
      *
@@ -32,7 +30,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getAreaInfo(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/pub/crm/findDmAreaInfo";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/pub/crm/findDmAreaInfo";
         logger.info("获取省市区接口，请求地址：" + url);
         logger.info("获取省市区接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
@@ -47,7 +45,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getBankInfo(String cardNo) {
-        String url = appservernoauth + "/app/appserver/crm/cust/getBankInfo?cardNo=" + cardNo;
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/getBankInfo?cardNo=" + cardNo;
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url);
         logger.info("获取卡信息接口，返回数据：" + map);
@@ -62,7 +60,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> sendMessage(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/smsSendVerify";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/smsSendVerify";
         logger.info("发送短信验证码接口，请求地址：" + url);
         logger.info("发送短信验证码接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
@@ -78,7 +76,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> saveCardMsg(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/saveCardMsg";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/saveCardMsg";
         logger.info("保存身份证信息接口，请求地址：" + url);
         logger.info("保存身份证信息接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -94,7 +92,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> smsVerify(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/smsVerify";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/smsVerify";
         logger.info("校验短信验证码接口，请求地址：" + url);
         logger.info("校验短信验证码接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -110,7 +108,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> fCiCustRealThreeInfo(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/crm/cust/fCiCustRealThreeInfo";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/fCiCustRealThreeInfo";
         logger.info("验证并新增实名认证信息接口，请求地址：" + url);
         logger.info("验证并新增实名认证信息接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -126,7 +124,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> updateMobile(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/uauth/updateMobile";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/updateMobile";
         logger.info("修改绑定手机号接口，请求地址：" + url);
         logger.info("修改绑定手机号接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPutMap(url, token, params);
@@ -155,16 +153,16 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
         String url;
         if (StringUtils.isEmpty(id) && StringUtils.isEmpty(idNo)) {
-            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+            url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
                     + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath;
         } else if (StringUtils.isEmpty(id)) {
-            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+            url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
                     + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&idNo=" + idNo;
         } else if (StringUtils.isEmpty(idNo)) {
-            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+            url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
                     + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id;
         } else {
-            url = appservernoauth + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
+            url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachUploadPersonByFilePath?custNo=" + custNo + "&attachType=" + attachType
                     + "&attachName=" + attachName + "&md5=" + md5 + "&filePath=" + filePath + "&id=" + id + "&idNo=" + idNo;
         }
 
@@ -183,7 +181,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> faceCheckByFaceValue(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/faceCheckByFaceValue";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/faceCheckByFaceValue";
         logger.info("通过人脸分数判断人脸是否通过接口，请求地址：" + url);
         logger.info("通过人脸分数判断人脸是否通过接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restPostMap(url, token, params);
@@ -199,7 +197,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> validateUserFlag(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/uauth/validateUserFlag";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/validateUserFlag";
         logger.info("用户支付密码手势密码验证是否设置接口，请求地址：" + url);
         logger.info("用户支付密码手势密码验证是否设置接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
@@ -215,7 +213,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/ifNeedFaceChkByTypCde";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/ifNeedFaceChkByTypCde";
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求地址：" + url);
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
@@ -233,7 +231,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      */
     @Override
     public Map<String, Object> getAllCustExtInfo(String token, Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/getAllCustExtInfo";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/getAllCustExtInfo";
         logger.info("查询CRM中客户扩展信息（二）接口，请求地址：" + url);
         logger.info("查询CRM中客户扩展信息（二）接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
@@ -249,7 +247,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> resetPayPasswd(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/uauth/payPasswd";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/payPasswd";
         logger.info("支付密码设置接口的请求地址：" + url);
         logger.info("支付密码设置接口的请求数据：" + paramMap);
         Map<String, Object> restputmap = HttpUtil.restPutMap(url, token, paramMap);
@@ -265,7 +263,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> ifEdAppl(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/cmis/ifEdAppl";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/cmis/ifEdAppl";
         logger.info("查询是否可以提交额度申请接口请求地址：" + url);
         logger.info("查询是否可以提交额度申请接口请求数据：" + paramMap);
         Map<String, Object> ifedapplmap = HttpUtil.restGetMap(url, token, paramMap);
@@ -282,7 +280,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getCustIsPass(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/crm/cust/getCustIsPass";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/getCustIsPass";
         logger.info("查询客户准入资格url:" + url);
         logger.info("查询客户准入资格请求数据：" + paramMap);
         Map<String, Object> custispassmap = HttpUtil.restGetMap(url, token, paramMap);
@@ -298,7 +296,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getEdApplInfo(String token, Map<String, Object> edapplInfoMap) {
-        String url = appservernoauth + "/app/appserver/customer/getEdApplInfo";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/customer/getEdApplInfo";
         logger.info("额度申请接口请求地址：" + url);
         logger.info("额度申请接口请求数据：" + edapplInfoMap);
         Map<String, Object> edapplInfomap = HttpUtil.restGetMap(url, token, edapplInfoMap);
@@ -314,7 +312,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public String updateOrderAgreement(String token, Map<String, Object> reqSignMap) {
-        String url = appservernoauth + "/app/appserver/apporder/updateOrderAgreement";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/updateOrderAgreement";
         logger.info("顺逛订单协议确认接口请求地址：" + url);
         logger.info("顺逛订单协议确认接口请求数据：" + reqSignMap);
         String result = HttpUtil.restPutMap(url, token, reqSignMap).toString();
@@ -330,7 +328,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public String updateOrderContract(String token, Map<String, Object> reqConMap) {
-        String url = appservernoauth + "/app/appserver/apporder/updateOrderContract";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/updateOrderContract";
         logger.info("顺逛订单合同确认接口请求地址：" + url);
         logger.info("顺逛订单合同确认接口请求数据：" + reqConMap);
         String result = HttpUtil.restPostMap(url, token, reqConMap).toString();
@@ -346,7 +344,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public String commitAppOrder(String token, Map<String, Object> commitmMap) {
-        String url = appservernoauth + "/app/appserver/apporder/updateOrderContract";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/updateOrderContract";
         logger.info("顺逛订单合同确认接口请求地址：" + url);
         logger.info("顺逛订单合同确认接口请求数据：" + commitmMap);
         String result = HttpUtil.restGetMap(url, token, commitmMap).toString();
@@ -355,7 +353,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //3.4.15.	(PUT)支付密码修改(知道原密码)
     public Map<String, Object> updatePayPasswd(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/uauth/updatePayPasswd";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/updatePayPasswd";
         logger.info("支付密码修改接口请求地址：" + url);
         logger.info("支付密码修改接口请求参数：" + paramMap);
         Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
@@ -365,7 +363,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(PUT)实名认证修改密码
     public Map<String, Object> updPwdByIdentity(String token, Map paramMap) {
-        String url = appservernoauth + "/app/appserver/uauth/custVerifyUpdatePayPwd";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/custVerifyUpdatePayPwd";
         logger.info("实名认证修改密码接口请求地址：" + url);
         logger.info("实名认证修改密码接口请求参数：" + paramMap);
         Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
@@ -375,7 +373,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)确认支付密码验证
     public Map<String, Object> validatePayPasswd(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/uauth/validatePayPasswd";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/validatePayPasswd";
         logger.info("确认支付密码验证接口请求地址：" + url);
         logger.info("确认支付密码验证接口请求参数：" + paramMap);
         Map<String, Object> result = HttpUtil.restGetMap(url, token, paramMap);
@@ -385,7 +383,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)查询贷款详情（根据申请流水号）
     public Map<String, Object> queryApplLoanDetail(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/apporder/queryAppLoanAndGoods";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/queryAppLoanAndGoods";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
         Map<String, Object> queryApplLoanDetailMap = HttpUtil.restGetMap(url, token, paramMap);
@@ -395,7 +393,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)按贷款申请查询分期账单
     public Map<String, Object> queryApplListBySeq(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/queryApplListBySeq";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/queryApplListBySeq";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
         Map<String, Object> queryApplListBySeqMap = HttpUtil.restGetMap(url, token, paramMap);
@@ -405,7 +403,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //7.1.(POST) 欠款查询(参照核算接口5.1)
     public Map<String, Object> getQFCheck(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/customer/getQFCheck";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/customer/getQFCheck";
         logger.info("欠款查询接口请求地址：" + url);
         logger.info("欠款查询接口请求参数：" + paramMap);
         Map<String, Object> qfMap = HttpUtil.restPostMap(url, token, paramMap);
@@ -415,7 +413,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)全部还款试算（含息费、手续费、本金）
     public Map<String, Object> refundTrialAll(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/newZdhkMoney";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/newZdhkMoney";
         logger.info("全部还款试算接口请求地址：" + url);
         logger.info("全部还款试算接口请求参数：" + paramMap);
         Map<String, Object> refundTrialmap = HttpUtil.restGetMap(url, token, paramMap);
@@ -425,7 +423,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //7.4.(POST)主动还款金额查询
     public Map<String, Object> checkZdhkMoney(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/customer/checkZdhkMoney";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/customer/checkZdhkMoney";
         logger.info("主动还款金额查询接口请求地址：" + url);
         logger.info("主动还款金额查询接口请求参数：" + paramMap);
         Map<String, Object> checkZdhkMoneymap = HttpUtil.restPostMap(url, token, paramMap);
@@ -435,7 +433,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     // 3.1.16.(GET)额度查询
     public Map<String, Object> getEdCheck(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/getEdCheck";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/getEdCheck";
         logger.info("额度查询接口请求地址：" + url);
         logger.info("额度查询接口请求参数：" + paramMap);
         Map<String, Object> edCheckmap = HttpUtil.restGetMap(url, token, paramMap);
@@ -445,7 +443,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)根据流水号查询额度审批进度
     public Map<String, Object> approvalProcessInfo(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/cmis/approvalProcessBySeq";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/cmis/approvalProcessBySeq";
         logger.info("根据流水号查询额度审批进度接口请求地址：" + url);
         logger.info("根据流水号查询额度审批进度接口请求参数：" + paramMap);
         Map<String, Object> approvalProcessInfomap = HttpUtil.restGetMap(url, token, paramMap);
@@ -455,7 +453,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //根据集团用户ID查询用户信息
     public String queryHaierUserInfo(String params) {
-        String url = appservernoauth + "/app/appserver/uauth/queryHaierUserInfo?externUid=" + params;
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/queryHaierUserInfo?externUid=" + params;
         logger.info("根据集团用户ID查询用户信息接口，请求地址：" + url);
         logger.info("根据集团用户ID查询用户信息接口，请求数据：" + params);
         String result = HttpUtil.restGet(url);
@@ -465,7 +463,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //3.4.21.	(POST)集团用户注册统一认证账户
     public Map<String, Object> saveUauthUsersByHaier(Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/uauth/saveUauthUsersByHaier";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/saveUauthUsersByHaier";
         logger.info("集团用户注册统一认证账户接口, 请求地址：" + url);
         logger.info("集团用户注册统一认证账户接口, 请求数据：" + params);
         Map<String, Object> result = HttpUtil.restPostMap(url, params);
@@ -475,7 +473,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //6.1.124.	(POST)保存第三方系统token
     public Map<String, Object> saveThirdPartToken(Map<String, Object> params) {
-        String url = appservernoauth + "/app/appserver/saveThirdPartToken";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/saveThirdPartToken";
         logger.info("保存第三方系统token接口, 请求地址：" + url);
         logger.info("保存第三方系统token接口, 请求数据：" + params);
         Map<String, Object> result = HttpUtil.restPostMap(url, params);
@@ -485,7 +483,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //3.1.29.	(GET)查询客户实名认证信息（根据USERID）(APP_PERSON)(CRM17)
     public Map<String, Object> queryPerCustInfo(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/crm/cust/queryPerCustInfo";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/queryPerCustInfo";
         logger.info("查询客户实名认证信息（根据USERID）接口，请求地址：" + url);
         logger.info("查询客户实名认证信息（根据USERID）接口，请求数据：" + paramMap);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, paramMap);
@@ -495,7 +493,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //6.1.102.	(GET)额度申请校验
     public Map<String, Object> checkEdAppl(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/validate/checkEdAppl";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/validate/checkEdAppl";
         logger.info("额度申请校验接口，请求地址：" + url);
         logger.info("额度申请校验接口，请求数据：" + paramMap);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, paramMap);
@@ -505,7 +503,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //3.4.22.	(POST) 验证并绑定集团用户（已绑定的不可用）
     public Map<String, Object> validateAndBindHaierUser(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/uauth/validateAndBindHaierUser";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/validateAndBindHaierUser";
         logger.info(" 验证并绑定集团用户接口, 请求地址：" + url);
         logger.info(" 验证并绑定集团用户接口, 请求数据：" + paramMap);
         Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
@@ -515,7 +513,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
     public Map<String, Object> pLoanTypImages(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/cmis/pLoanTypImages";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/cmis/pLoanTypImages";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("获取卡信息接口，返回数据：" + map);
@@ -524,7 +522,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)影像列表按类型查询-个人版
     public Map<String, Object> attachTypeSearchPerson(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/attachTypeSearchPerson";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachTypeSearchPerson";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("获取卡信息接口，返回数据：" + map);
@@ -533,7 +531,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
     public Map<String, Object> getFilePathByFileId(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/getFilePathByFileId";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/getFilePathByFileId";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("获取卡信息接口，返回数据：" + map);
@@ -542,7 +540,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(POST)修改保存客户所有扩展信息(CRM85)
     public Map<String, Object> saveAllCustExtInfo(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/crm/cust/saveAllCustExtInfo";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/saveAllCustExtInfo";
         logger.info("修改保存客户所有扩展信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("修改保存客户所有扩展信息接口，返回数据：" + map);
@@ -551,7 +549,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(POST)新增/修改 联系人(CRM6)
     public Map<String, Object> saveCustFCiCustContact(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/crm/saveCustFCiCustContact";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/saveCustFCiCustContact";
         logger.info("获取卡信息接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("获取卡信息接口，返回数据：" + map);
@@ -566,7 +564,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         if (StringUtils.isEmpty(tag) && StringUtils.isEmpty(businessType)) {
             return null;
         }
-        String url = appservernoauth + "/app/appserver/" + tag + "/" + businessType + "/checkIfMsgComplete";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/" + tag + "/" + businessType + "/checkIfMsgComplete";
         logger.info("信息完整查询接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("信息完整查询接口，返回数据：" + map);
@@ -575,7 +573,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //1.27(GET) 根据集团用户id查询用户信息
     public Map<String, Object> getUserId(String token, Map<String, Object> paramMap) {
-        String url = appservernoauth + "/app/appserver/uauth/queryHaierUserInfo";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/queryHaierUserInfo";
         logger.info("根据集团用户id查询用户信息：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("根据集团用户id查询用户信息：" + map);
@@ -589,7 +587,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         if(StringUtils.isEmpty(id)){
             return null;
         }
-        String url = appservernoauth + "/app/appserver/attachDeletePerson?id="+id;
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachDeletePerson?id="+id;
         logger.info("影像删除接口，请求地址：" + url);
         String param = HttpUtil.restDelete(url, null,200);
         Map<String, Object> stringObjectMap = HttpUtil.json2Map(param);
