@@ -320,13 +320,27 @@ public class CommonPageController extends BaseController {
     }
 
     /**
+     * 扩展信息删除影像
+     *
+     * @param iconImg
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/attachDelete", method = RequestMethod.POST)
+    public Map<String, Object> attachDelete(@RequestBody Map<String, Object> params) throws Exception {
+        return custExtInfoService.attachDelete(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+    }
+
+    /**
      * 额度激活（判断跳转哪个页面）
      *
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/CreditLineApply", method = RequestMethod.POST)
-    public Map<String, Object> CreditLineApply(@RequestBody Map<String, Object> params) throws Exception {
+    public Map<String, Object> CreditLineApply() throws Exception {
         return limitService.CreditLineApply(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 

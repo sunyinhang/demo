@@ -6,6 +6,7 @@ import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CustExtInfoService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
+import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
@@ -99,7 +100,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             for (int j = 0; j < list_.size(); j++) {
                 String id =  Integer.toString((int)list_.get(j).get("id")) ;
                 Map<String, Object> paramYXbyIDMap = new HashMap<String, Object>();
-                paramYXbyIDMap.put("id",id);
+                //TODO
+                paramYXbyIDMap.put("id","13887");
                 paramYXbyIDMap.put("channel", channel);
                 paramYXbyIDMap.put("channelNo", channelNo);
                 Map<String, Object> filePathByFileId = appServerService.getFilePathByFileId(token, paramYXbyIDMap);
@@ -120,6 +122,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 resultJson_.put("id",id);//影像ID
                 resultJson_.put("filePath",filePath);//图片地址
                 resultList_.add(resultJson_);
+                //TODO
+                j= list_.size()-1;
             }
             JSONObject resultJson = new JSONObject();
             resultJson.put("docCde",docCde);//影像代码
@@ -147,7 +151,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         Map<String, Object> redisMap = null;
         Map<String, Object> paramMap = new HashMap<String, Object>();
         //参数非空判断
-        if (token.isEmpty()) {
+         if (token.isEmpty()) {
             logger.info("token为空");
             return fail(ConstUtil.ERROR_CODE, "参数token为空!");
         }
@@ -167,7 +171,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //        }
         //TODO 总入口需查询客户信息数据
 //        String custNo = (String)cacheMap.get("custNo");
-        String custNo = "C201708010722561X68720";
+        String custNo = "C201506300921381093450";
         paramMap.put("custNo", custNo);
         paramMap.put("flag", "Y");
         paramMap.put("channelNo", channelNo);
@@ -261,10 +265,16 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存个人扩展信息**************结束");
         logger.info("*********保存联系人一**************开始");
-        String id_one =  Integer.toString((int) params.get("id_one"));
-        if(id_one != null && !"".equals(id_one)){
+        Integer id_one = (Integer) params.get("id_one");
+        if ( id_one !=null   && !"null".equals(id_one)) {
             custparamMap_one.put("id", id_one);// 联系人ID
         }
+     /*   String id_one =  Integer.toString((int) params.get("id_one"));
+
+
+        if(id_one != null && !"".equals(id_one)){
+            custparamMap_one.put("id", id_one);// 联系人ID
+        }*/
         custparamMap_one.put("channelNo", channelNo);// 渠道
         custparamMap_one.put("channel", channel);
         custparamMap_one.put("custNo", custNo);//客户编号
@@ -284,10 +294,14 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
 //        String id_two = (String) params.get("id_two");
-        String id_two = Integer.toString((int) params.get("id_two"));
-        if(id_two != null && !"".equals(id_two)){
-            custparamMap_two.put("id", id_two);// 联系人ID
+//        String id_two = Integer.toString((int) params.get("id_two"));
+        Integer id_two = (Integer) params.get("id_two");
+        if ( id_two !=null   && !"null".equals(id_two)) {
+            custparamMap_one.put("id", id_two);// 联系人ID
         }
+//        if(id_two != null && !"".equals(id_two)){
+//            custparamMap_two.put("id", id_two);// 联系人ID
+//        }
         custparamMap_two.put("channelNo", channelNo);// 渠道
         custparamMap_two.put("channel", channel);
         custparamMap_two.put("custNo",custNo);//客户编号
@@ -388,7 +402,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
-        if(cacheMap == null){
+/*        if(cacheMap == null){
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -397,7 +411,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String name = (String) cacheMap.get("name");// 姓名
         String mobile = (String) cacheMap.get("phoneNo");// 手机号
         String custNo = (String) cacheMap.get("custNo");
-        String userId = (String) cacheMap.get("userId");
+        String userId = (String) cacheMap.get("userId");*/
+        String typCde = "17044a";// 贷款品种
+        String idNumber = "37040319910722561X";// 身份证号
+        String name = "李甲团";// 姓名
+        String mobile = "15264826872";// 手机号
+        String custNo = "C201708010722561X68720";
+        String userId = "18678282831";
         if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)){
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
@@ -405,10 +425,14 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         InputStream inputStream = iconImg.getInputStream();
-        StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(docCde).append(File.separator);
+        //TODO
+        //StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(docCde).append(File.separator);//        D:/JavaProjects/PayPlatform/payplatform/static/sgbt/images/crm/image/C201708010722561X68720\DOC001\a1f4d50d8b6743e58a3c3fdc206fb184.jpg;
+        StringBuffer filePath = new StringBuffer(face_DataImg_url);
         createDir(String.valueOf(filePath));
         String filestreamname = custNo + ".jpg";
         String fileName = UUID.randomUUID().toString().replaceAll("-", "");
+        //TODO
+        fileName = "1111";
         filePath = filePath.append(fileName).append(".jpg"); // 测试打开
         FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
         byte[] bufferOut = new byte[1024];
@@ -430,6 +454,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("md5", MD5);//文件md5码
         paramMap.put("filePath", filePath.toString());
         paramMap.put("commonCustNo", null);
+        paramMap.put("id", request.getParameter("id"));//删除的id
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
         Map uploadheadjson = (HashMap<String, Object>) uploadresultmap.get("head");
@@ -441,6 +466,38 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("上传影像*****************结束");
         return uploadresultmap;
     }
+
+    @Override
+    public Map<String, Object> attachDelete(String token, String channel, String channelNo, Map<String, Object> params) {
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        params.put("channel", channel);
+        params.put("channelNo", channelNo);
+        //影像上传
+        Map<String, Object> uploadresultmap = appServerService.attachDelete(token, params);
+        Map uploadheadjson = HttpUtil.json2Map( uploadresultmap.get("head").toString());
+//        HttpUtil.json2DeepMap(uploadresultmap.get("head"));
+//        Map uploadheadjson = (HashMap<String, Object>) uploadresultmap.get("head");
+        String uploadretFlag = (String) uploadheadjson.get("retFlag");
+        if(!"00000".equals(uploadretFlag)){
+            String retMsg = (String) uploadheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        logger.info("删除影像*****************结束");
+        return uploadheadjson;
+    }
+
     public static void createDir(String destDirName) {
         File dir = new File(destDirName);
         if (dir.exists()) {

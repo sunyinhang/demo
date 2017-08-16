@@ -573,4 +573,18 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("信息完整查询接口，返回数据：" + map);
         return map;
     }
+
+    //(DELETE)影像删除
+    @Override
+    public Map<String, Object> attachDelete(String token, Map<String, Object> paramMap) {
+        int id = (int) paramMap.get("id");
+        if(StringUtils.isEmpty(id)){
+            return null;
+        }
+        String url = appservernoauth + "/app/appserver/attachDeletePerson?id="+id;
+        logger.info("影像删除接口，请求地址：" + url);
+        String param = HttpUtil.restDelete(url, null,200);
+        Map<String, Object> stringObjectMap = HttpUtil.json2Map(param);
+        return stringObjectMap;
+    }
 }

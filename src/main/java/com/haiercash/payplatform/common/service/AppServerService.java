@@ -88,4 +88,6 @@ public interface AppServerService {
     public Map<String, Object> saveCustFCiCustContact(String token,Map<String, Object> paramMap);
     //6.1.108.	(post)信息完整查询接口
     public Map<String, Object> checkIfMsgComplete(String token,Map<String, Object> paramMap);
+    //6.1.28.	 (DELETE)影像删除
+    public Map<String, Object> attachDelete(String token,Map<String, Object> paramMap);
 }

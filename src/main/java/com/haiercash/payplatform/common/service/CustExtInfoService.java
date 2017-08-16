@@ -20,5 +20,6 @@ public interface CustExtInfoService {
     public Map<String, Object> saveAllCustExtInfo(String token,String channel,String channelNo,Map<String, Object> params) throws Exception;
     //个人扩展信息上传影像
     public Map<String, Object> upIconPic(MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception;
-
+    //个人扩展信息删除影像
+    public Map<String,Object> attachDelete(String token, String channel, String channelNo, Map<String, Object> params);
 }
