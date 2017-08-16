@@ -29,12 +29,13 @@ public class LimitServiceImpl extends BaseService implements LimitService{
     }
 
     @Override
-    public Map<String, Object> CreditLineApply(String token, String channel, String channelNo,Map<String, Object> params) throws Exception {
+    public Map<String, Object> CreditLineApply(String token, String channel, String channelNo) throws Exception {
         logger.info("*********点击额度激活判断跳转页面**************开始");
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
         String typCde = "" ;//贷款品种
+        String tag = "";//标签
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -56,6 +57,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
 //        }
         if("46".equals(channelNo)){
             typCde = "17044a";//贷款品种
+            tag = "SHH";
         }else{
             //查询贷款品种类型
         }
@@ -71,7 +73,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channelNo",channelNo);
-        paramMap.put("tag",params.get("tag"));//标签
+        paramMap.put("tag",tag);//标签
         paramMap.put("businessType","EDJH");//业务类型 现金贷：XJD   商品分期：SPFQ      额度激活：EDJH    提额：TE   额度申请：EDSQ   个人信息维护：GRXX
         paramMap.put("channel",channel);//渠道号
         paramMap.put("isOrder","N");//是否为订单

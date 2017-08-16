@@ -327,7 +327,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/CreditLineApply", method = RequestMethod.POST)
     public Map<String, Object> CreditLineApply(@RequestBody Map<String, Object> params) throws Exception {
-        return limitService.CreditLineApply(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+        return limitService.CreditLineApply(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
 }
