@@ -6,9 +6,12 @@ logging:
     org.springframework: WARN
 security:
   sessions: NEVER
+info:
+  name: ${spring.application.name}
+  version: ${application.version}
 spring:
   application:
-    name: payplatform
+    name: payplatform_test
   ignoreUnresolvablePlaceholders: true
   redis:
     host: 10.164.194.123
