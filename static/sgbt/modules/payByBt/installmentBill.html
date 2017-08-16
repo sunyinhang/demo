@@ -5,6 +5,39 @@
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const) {
         var count = 0;
+        var items = [];
+        for (var i=0; i<8; i++) {
+            items.push(
+                    {
+                        title: '<span class="bv-left">日期</span><span class="bv-right">状态</span>',
+                        image: 'custom/themes/default/images/active.png',
+                        content: '内容',
+                        extra: '<span class="bv-align-right">合计：</span>',
+                        data: 'xxxx',
+                        operates: [
+                            {
+                                text: '按钮1',
+                                layout: 'primary',
+                                show: function (item) {
+                                    return true;
+                                },
+                                click: function (event, item) {
+                                    console.log('clicked' + item.data);
+                                }
+                            },
+                            {
+                                text: '按钮2',
+                                show: function (item) {
+                                    return true;
+                                },
+                                click: function (event, item) {
+                                    console.log('clicked');
+                                }
+                            }
+                        ]
+                    }
+            );
+        }
         var vm = util.bind({
             container: 'installmentBill',
             data: {
@@ -61,52 +94,14 @@
                     util.refresh({
                         vm: util.vm(vm, vm.tags.listKey),
                         title: '第' + (index + 1) + '个',
-                        items: [
-                            {
-                                title: '标题' + (index + 1),
-                                content: '内容'
-                            }
-                        ]
+                        items: util.clone(items)
                     });
                 }
             },
             mounted: function () {
-                var items = [];
-                for (var i=0; i<8; i++) {
-                    items.push(
-                        {
-                            title: '<span class="bv-left">日期</span><span class="bv-right">状态</span>',
-                            image: 'custom/themes/default/images/active.png',
-                            content: '内容',
-                            extra: '<span class="bv-align-right">合计：</span>',
-                            data: 'xxxx',
-                            operates: [
-                                {
-                                    text: '按钮1',
-                                    layout: 'primary',
-                                    show: function (item) {
-                                        return true;
-                                    },
-                                    click: function (event, item) {
-                                        console.log('clicked' + item.data);
-                                    }
-                                },
-                                {
-                                    text: '按钮2',
-                                    show: function (item) {
-                                        return true;
-                                    },
-                                    click: function (event, item) {
-                                        console.log('clicked');
-                                    }
-                                }
-                            ]
-                        }
-                    );
-                }
                 util.refresh({
                     vm: util.vm(this, this.tags.listKey),
-                    items: items
+                    items: util.clone(items)
                 });
             }
         });
