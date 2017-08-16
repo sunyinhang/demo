@@ -1,6 +1,6 @@
-<div class="bv-align-center fullPage gray" data-container="amountNot">
+<component is="bv-layout" class="bv-align-center fullPage gray" data-container="amountNot">
 	<quota-state v-bind="stateConfig" @on-click="activeAmountFn"></quota-state>
-</div>
+</component>
 <script type="text/javascript">
 	require(['jquery', 'util', 'Const'], function($, util, Const) {
 		var vm = util.bind({

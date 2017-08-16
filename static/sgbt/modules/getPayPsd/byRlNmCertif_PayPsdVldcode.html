@@ -1,7 +1,7 @@
-<div class="bv-align-center" data-container="byRlNmCertif_PayPsdVldcode">
+<component is="bv-layout" class="bv-align-center" data-container="byRlNmCertif_PayPsdVldcode">
     <div class="height10 gray"></div>
     <component is="bv-form" class="form-align-left form-sms" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
-</div>
+</component>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         //获取手机号
@@ -77,7 +77,7 @@
                     operates: [
                         {
                             text: '下一步',
-                            clazz: 'primary',
+                            layout: 'primary',
                             validate: {
                                 after: function (event, editType, entity) {
                                     if (!entity.agree) {

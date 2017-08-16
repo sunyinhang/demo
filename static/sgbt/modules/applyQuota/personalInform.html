@@ -1,10 +1,10 @@
-<div data-container="personalInform">
+<component is="bv-layout" data-container="personalInform">
     <component is="tab-applyQuota" active="realName personal"></component>
     <form>
         <component is="bv-accordion" :entity="entity" :key="tags.accordionKey" v-bind="config"></component>
         <component is="bv-form" :entity="entity" :key="tags.formKey" v-bind="operateConfig"></component>
     </form>
-</div>
+</component>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], function($, util, Const) {
         util.title('个人资料');
@@ -352,7 +352,7 @@
                     operates: [
                         {
                             text: '下一步',
-                            clazz: 'primary',
+                            layout: 'primary',
                             click: function (event, editType, entity) {
                                 util.post({
                                     url: "/saveAllCustExtInfo",

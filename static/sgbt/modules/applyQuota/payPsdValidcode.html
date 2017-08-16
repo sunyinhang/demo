@@ -1,7 +1,7 @@
-<div class="bv-align-center" data-container="payPsdValidcode">
+<component is="bv-layout" class="bv-align-center" data-container="payPsdValidcode">
     <component is="tab-applyQuota" active="realName personal face password"></component>
     <component is="bv-form" class="form-align-left form-sms" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
-</div>
+</component>
 <script type="text/javascript">
     require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
         //获取手机号和密码
@@ -17,7 +17,7 @@
                 },
                 formConfig: {
                     columns: [{
-                        head: '请输入'+(param && (param.mobile || ''))+'手机收到的短信校验码',//+ param && param.mobile+
+                        head: '请输入'+(param && (util.format(param.mobile || '', 'phone4')))+'手机收到的短信校验码',//+ param && param.mobile+
                         name: 'verifyNo',
                         clazz: 'bv-align-left',
                         config: {
@@ -77,7 +77,7 @@
                     operates: [
                         {
                             text: '下一步',
-                            clazz: 'primary',
+                            layout: 'primary',
                             validate: {
                                 after: function (event, editType, entity) {
                                     if (!entity.agree) {

@@ -1,6 +1,6 @@
-<div data-container="demoCache">
+<component is="bv-layout" data-container="demoCache">
     <component is="bv-form" :key="tags.formKey" v-bind="formConfig"></component>
-</div>
+</component>
 <script type="text/javascript">
 require(['jquery', 'util', 'Const', 'bvForm'], function($, util, Const) {
     var vm = util.bind({
@@ -69,7 +69,7 @@ require(['jquery', 'util', 'Const', 'bvForm'], function($, util, Const) {
                 operates: [
                     {
                         text: '保存',
-                        clazz: 'primary',
+                        layout: 'primary',
                         click: function (event, editType, entity) {
                             util.post({
                                 url: '/cache',
