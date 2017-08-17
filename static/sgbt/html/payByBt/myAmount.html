@@ -1,0 +1,63 @@
+<component is="bv-layout" class="bv-align-center fullPage gray" data-container="myAmount">
+    <quota-state v-bind="config" @on-click="goShopFn"></quota-state>
+    <div class="amountInfo">
+        <div class="verLine verLinebg">
+            <ul class="bill"  data-redirect="installmentBill1.html">
+                <li class="li1">我的账单</li>
+                <li class="li2">本月应还：</li>
+                <li class="li3 liorg">&yen;528.00</li>
+            </ul>
+        </div>
+        <div class="verLine">
+            <ul class="bill" data-redirect="myAmountView.html">
+                <li class="li1">我的额度</li>
+                <li class="li2">可用额度：</li>
+                <li class="li3 liblue">&yen;100,000.00</li>
+            </ul>
+        </div>
+        <div class="clear"></div>
+    </div>
+</component>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        // util.title('');
+        util.script({
+            url: '/payByBt/myAmount.js'
+        });
+    });
+</script>
+
+
+
+
+
+<!--
+<div class="cusContent ms-controller" ms-controller="myAmount">
+    <div class="amtSituTopPrnt">
+	    <div class="btmBg"><img src="images/amtTopBg.png"/></div>
+	    <div class="cvgCont" id="cvgCont">
+	        <div class="amtNotTitle"><span>海尔白条</span></div>
+	        <div class="amtNotSubTitle">可用总额度</div>
+	        <div class="amtNum"><span class="rmb">&yen;</span><span>15000</span></div>
+	        <div class="amtActivBtn"><a href="javascript:void(0);"  class="activAmuntBtn" ms-click='@activAmuntFn'>去购物</a></div>
+	    </div>
+    </div>
+    <div class="amountInfo">
+        <div class="verLine verLinebg">
+          <ul class="bill"  data-redirect="installmentBill1.html">
+              <li class="li1">我的账单</li>
+              <li class="li2">本月应还：</li>
+              <li class="li3 liorg">&yen;528.00</li>
+          </ul>
+        </div>
+        <div class="verLine">
+          <ul class="bill" data-redirect="myAmountView.html">
+            <li class="li1">我的额度</li>
+            <li class="li2">可用额度：</li>
+            <li class="li3 liblue">&yen;100,000.00</li>
+          </ul>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<script type="text/javascript" src="js/applyQuota/myAmount.js"></script>-->

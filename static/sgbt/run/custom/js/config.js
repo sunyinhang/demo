@@ -18,7 +18,7 @@ var __Const = {
         baseLocation: '/sgbt',
         imageLocation: '/sgbt/images',
         versionLocation: '',
-        htmlLocation: '/html',
+        htmlLocation: '/modules',
         scriptLocation: '/js'
     },
     params: {

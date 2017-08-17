@@ -229,6 +229,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         Map<String, Object> retMap = null;
         String paramNames = (String) params.get("params");
         if (paramNames != null) {
+            paramNames = EncryptUtil.simpleDecrypt(paramNames);
             String[] paramArr = paramNames.split(",");
             String type = (String) params.get("type");
             if (type == null || type.equals("get")) {
@@ -238,7 +239,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     return success();
                 }
                 for (String param : paramArr) {
-                    retMap.put(param, sessionMap.get(param));
+                    retMap.put(EncryptUtil.simpleEncrypt(param), EncryptUtil.simpleEncrypt(JSONObject.toJSON(sessionMap.get(param)).toString()));
                 }
             } else if (type.equals("set")) {
                 retMap = (Map<String, Object>) cache.get(token);
@@ -246,7 +247,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     retMap = new HashMap<>();
                 }
                 for (String param : paramArr) {
-                    retMap.put(param, (String) params.get(param));
+                    retMap.put(param, EncryptUtil.simpleDecrypt(JSONObject.toJSON(params.get(EncryptUtil.simpleEncrypt(param))).toString()));
                 }
                 cache.set(token, retMap);
                 return success();

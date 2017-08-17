@@ -1,0 +1,12 @@
+<component is="bv-layout" class="bv-align-center" data-container="byRlNmCertif_PayPsdVldcode">
+    <div class="height10 gray"></div>
+    <component is="bv-form" class="form-align-left form-sms" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</component>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        util.title('填写校验码');
+        util.script({
+            url: '/getPayPsd/byRlNmCertif_PayPsdVldcode.js'
+        });
+    });
+</script>

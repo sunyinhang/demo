@@ -1,0 +1,13 @@
+<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="byRlNmCertif_loginPsd">
+    <div class="height10"></div>
+    <component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</component>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        util.title('添加银行卡');
+        util.script({
+            url: '/login/byRlNmCertif_loginPsd.js'
+        });
+    });
+</script>
+

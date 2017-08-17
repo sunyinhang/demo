@@ -1,0 +1,84 @@
+<component is="bv-layout" class='wrapper btInstalment fullPage gray' data-container='btInstalment'>
+	<div class="main01">
+		<div class="t">向顺逛商城支付</div>
+		<div class="m">￥ 5000</div>
+	</div> 
+	<div class="main02">
+		<div class="main02-1">
+			<span class='i'><img src="custom/themes/default/images/payByBt/sglogo.png" alt=""></span>
+			<span class='t'>轻松打白条，生活更轻松</span>
+			<a href="javascript:void(0)" class="ti" ms-click='@definitionFn'><em>什么是顺逛白条</em></a>
+		</div>
+		<div class="main02-2">
+			<span class='t'>优惠方式</span>
+			<a href="javascript:;" class="q" @click="chooseCoupon"><span>3张免息券可用</span></a>
+			<a href="javascript:;" class="t2">暂不使用</a>
+		</div>
+		<div class="main02-3">
+			<span class='t'>分期方式</span>
+			<a class='z'>应还款总额 <font>5000</font>(含手续费)</a>
+		</div>
+		<div class="main02-4">
+			<ul>
+				<li class="active fenqi">
+					<div class="b-img"></div>
+					<div class="b-text">
+						<span class="fq">30天免息</span>
+						<span class="lx">0手续费</span>
+					</div>
+				</li>
+				<li class="fenqi even">
+					<div class="b-img"></div>
+					<div class="b-text">
+						<span class="fq">30天免息</span>
+						<span class="lx">0手续费</span>
+					</div>
+				</li>
+				<li class="fenqi">
+					<div class="b-img"></div>
+					<div class="b-text">
+						<span class="fq">30天免息</span>
+						<span class="lx">0手续费</span>
+					</div>
+				</li>
+				<li class="fenqi even">
+					<div class="b-img"></div>
+					<div class="b-text">
+						<span class="fq">30天免息</span>
+						<span class="lx">0手续费</span>
+					</div>
+				</li>
+				<div class="clear"></div>
+			</ul>
+		</div>
+	</div>
+	<div class="main-btn margt32">
+		<a href="javascript:void(0);" class="a-btn" @click="payFn">打白条支付￥5000.00</a>
+		<span>金融服务由<img src="./custom/themes/default/images/payByBt/xfjrlogo.png" alt="">提供</span>
+	</div>
+	<component is="bv-popup" id="popup1" v-cloak>
+		<div>
+			xxxxxx
+		</div>
+	</component>
+</component>
+<!-- 请输入支付密码-->
+<!--
+<div id="enterPassword">
+	<div class="enterPassword-inner">
+		<div class="h3">请输入支付密码</div>
+		<div class="enretPwd-c"><input type="text" placeholder="请输入支付密码" class="pwd-text"></div>
+		<div class="enretPwd-btn">
+			<a href="javascript:void(0);" class="a-btn" id="confirmPay">确认支付</a>
+			<a href="javascript:void(0)" class="a-gerPayPwd" id="getPayPwd">忘记密码</a>
+		</div>
+	</div>
+</div>-->
+<script type="text/javascript">
+	require(['jquery', 'util'], function($, util) {
+		// util.title('');
+		util.script({
+			url: '/payByBt/btInstalments.js'
+		});
+	});
+</script>

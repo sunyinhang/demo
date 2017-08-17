@@ -1,0 +1,15 @@
+<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="reset_rlNmPayPsd">
+    <div class="height10"></div>
+    <component is="bv-form" class="form-align-left getPayPwd" :key="tags.formKey" :entity="entity" v-bind="formConfig"></component>
+</component>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        util.title('重置密码');
+        util.script({
+            url: '/getPayPsd/reset_rlNmPayPsd.js'
+        });
+    });
+</script>
+
+
+

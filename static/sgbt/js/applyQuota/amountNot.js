@@ -1,0 +1,24 @@
+require(['jquery', 'util', 'Const'], function($, util, Const) {
+    var vm = util.bind({
+        container: 'amountNot',
+        data: {
+            stateConfig:{
+                imgSrc: 'custom/themes/default/images/amtNotTopBg.png',
+                title: '海尔白条',
+                whether: true ,
+                subTitle: '可用总额度',
+                amtNum: 'amtNum',
+                num: '暂无',
+                whetherBtn: true,
+                activBtn: 'activAmuntBtn',
+                btnText: '激活额度'
+            }
+        },
+        methods: {
+            activeAmountFn: function(param){
+                //TODO
+                console.log(123);
+            }
+        }
+    });
+});
