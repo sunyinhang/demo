@@ -1,18 +1,25 @@
 package com.idcard;
 
+import com.alibaba.druid.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 
 public class Demo {
 	static
     {
 
-		System.loadLibrary("IDCARD_THR");
-		//System.loadLibrary("OCRDLL_THR");本地测试
+		//System.loadLibrary("IDCARD_THR");
+		String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+		if (!StringUtils.isEmpty(osName) && osName.startsWith("win")) {
+			System.loadLibrary("OCRDLL_THR");
+		} else {
+			System.loadLibrary("IDCARD_THR");
+		}
 //			System.out.println("java.library.path:"+System.getProperty("java.library.path"));
 //
 //			System.loadLibrary("IDCARD_THR");

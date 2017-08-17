@@ -1,4 +1,6 @@
 var __baseResourcePath = '/mobile';
+// 支持dev,run
+var __env = 'dev';
 var __Const = {
     rest: {
         baseUrl: window.location.protocol + "//" + window.location.host + '/api/payment',
@@ -19,7 +21,7 @@ var __Const = {
         imageLocation: '/sgbt/images',
         versionLocation: '',
         htmlLocation: '/html',
-        scriptLocation: '/js'
+        scriptLocation: (__env === 'run' ? '/run' : '') + '/js'
     },
     params: {
         maritalStatusUnknown: '60',
