@@ -40,7 +40,10 @@ public class CommonPageController extends BaseController {
     private AppServerService appServerService;
     @Autowired
     private LimitService limitService;
-
+    @Autowired
+    private RegisterService registerService;
+    @Autowired
+    private InstallmentAccountService InstallmentAccountService;
 
     /**
      * OCR获取身份信息
@@ -322,9 +325,6 @@ public class CommonPageController extends BaseController {
     /**
      * 扩展信息删除影像
      *
-     * @param iconImg
-     * @param request
-     * @param response
      * @return
      * @throws Exception
      */
@@ -342,6 +342,37 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/CreditLineApply", method = RequestMethod.POST)
     public Map<String, Object> CreditLineApply() throws Exception {
         return limitService.CreditLineApply(super.getToken(), super.getChannel(), super.getChannelNo());
+    }
+
+    /**
+     * 判断用户是否注册
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/isRegister", method = RequestMethod.POST)
+    public Map<String, Object> isRegister(@RequestBody Map<String, Object> params) throws Exception {
+        return registerService.isRegister(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+    }
+
+    /**
+     * 登陆密码设置
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/landPasswd", method = RequestMethod.POST)
+    public Map<String, Object> landPasswd(@RequestBody Map<String, Object> map) {
+        return payPasswdService.landPasswd(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
+    /**
+     * 查询全部贷款信息列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryAllLoanInfo", method = RequestMethod.POST)
+    public Map<String, Object> QueryAllLoanInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.queryAllLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
 }

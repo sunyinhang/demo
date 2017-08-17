@@ -6,7 +6,6 @@ import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -592,5 +591,32 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String param = HttpUtil.restDelete(url, null,200);
         Map<String, Object> stringObjectMap = HttpUtil.json2Map(param);
         return stringObjectMap;
+    }
+
+    //用户是否注册
+    @Override
+    public Map<String, Object> isRegister(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/isRegister";
+        logger.info("用户是否注册接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
+
+    //客户登录密码设置、修改（验证码）
+    @Override
+    public Map<String, Object> custUpdatePwd(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/custUpdatePwd";
+        logger.info("客户登录密码设置、修改（验证码）接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
+        return map;
+    }
+
+    //查询全部贷款信息列表-个人版
+    @Override
+    public Map<String, Object> getDateAppOrderPerson(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/getDateAppOrderPerson";
+        logger.info("查询全部贷款信息列表-个人版接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
     }
 }

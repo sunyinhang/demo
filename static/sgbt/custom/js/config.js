@@ -1,4 +1,6 @@
 var __baseResourcePath = '/mobile';
+// 支持dev,run
+var __env = 'dev';
 var __Const = {
     rest: {
         baseUrl: window.location.protocol + "//" + window.location.host + '/api/payment',
@@ -19,7 +21,7 @@ var __Const = {
         imageLocation: '/sgbt/images',
         versionLocation: '',
         htmlLocation: '/html',
-        scriptLocation: '/js'
+        scriptLocation: (__env === 'run' ? '/run' : '') + '/js'
     },
     params: {
         maritalStatusUnknown: '60',
@@ -80,6 +82,9 @@ var __Const = {
         agree: '请先同意相关协议',
         card: '此卡为默认放款卡和还款卡,如果想更换默认还款卡，可以在个人中心-个人资料-银行卡中绑定并设置',
         btDefin: '"顺逛白条"是顺逛商城联合海尔消费金融为其家电购买用户提供的一款"先消费，后付款"的在线支付产品服务'
+        card: '此卡为默认放款卡和还款卡,如果想更换默认还款卡，可以在个人中心-个人资料-银行卡中绑定并设置',
+        cardholder: '为了您的账户安全，请您绑定本人银行卡',
+        cardtype: '由于银行扣款要求，现已支持中国工商银行，中国邮政储蓄银行，中国农业银行，中国银行，中国建设银行，广东发展银行，兴业银行， 招商银行，交通银行，中信银行，中国光大银行，华夏银行，中国民生银行，平安银行，上海浦东发展银行，北京银行，上海银行，青岛银行'
     },
     lengths: {
         userId: 11,
