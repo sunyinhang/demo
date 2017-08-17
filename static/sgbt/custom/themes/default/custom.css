@@ -111,7 +111,7 @@
 
 /* reset public*/
 *{ padding:0px; margin:0px;}
-.fullPage-gray .page{ background-color: #eee;}
+.fullPage-gray .page,.fullPage-gray{ background-color: #eee;}
 .clear{  clear: both; }
 .align-left{ text-align:left;}
 .margt8{ margin-top: 0.4rem;}
@@ -433,3 +433,10 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
 .mfqOrDeLink{display:inline-block;width:100%;background:url(imgs/right_arrow.png) no-repeat 95% center;background-size: 0.43rem;;}
 .installPayInfo{position:relative;margin:.5rem auto;padding:.5rem 0;width:100%;background:#fff;}
 .mfqdownloadTips{position:relative;margin:0 auto;width:100%;height:2rem;line-height:2rem;text-align:center;color: #999;font-size: .6rem;}
+
+/*enterPassword start*/
+.enterPassword-inner div.h3{ height: 50px; line-height: 50px; font-size: 0.8rem; color: #333; text-align: center; border-bottom:1px solid #ddd;}
+.enretPwd-c{}
+.enretPwd-c input.pwd-text{ width:100%; height:50px; font-size: 0.7rem; color: #999; background-color: transparent; border:none; border-bottom:1px solid #ddd;}
+.enretPwd-btn{ margin-top: 1.3rem;}
+.enterPassword-inner .a-gerPayPwd{display: block; text-align: center; margin: 0.75rem 0; font-size: 0.65rem; color: #999;}
