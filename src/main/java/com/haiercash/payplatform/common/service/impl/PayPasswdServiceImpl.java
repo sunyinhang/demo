@@ -2,7 +2,7 @@ package com.haiercash.payplatform.common.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.PayPasswdService;
@@ -28,7 +28,7 @@ import java.util.Map;
 public class PayPasswdServiceImpl extends BaseService implements PayPasswdService {
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
 
@@ -56,7 +56,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("从前端获取的参数为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap.isEmpty()) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -240,22 +240,24 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String type = (String) params.get("type");
             if (type == null || type.equals("get")) {
                 retMap = new HashMap<String, Object>();
-                Map<String, Object> sessionMap = (Map<String, Object>) cache.get(token);
+                Map<String, Object> sessionMap = (Map<String, Object>) session.get(token, Map.class);
                 if (sessionMap == null) {
                     return success();
                 }
                 for (String param : paramArr) {
-                    retMap.put(EncryptUtil.simpleEncrypt(param), EncryptUtil.simpleEncrypt(JSONObject.toJSON(sessionMap.get(param)).toString()));
+                    if (sessionMap.get(param) != null) {
+                        retMap.put(EncryptUtil.simpleEncrypt(param), EncryptUtil.simpleEncrypt(JSONObject.toJSON(sessionMap.get(param)).toString()));
+                    }
                 }
             } else if (type.equals("set")) {
-                retMap = (Map<String, Object>) cache.get(token);
+                retMap = (Map<String, Object>) session.get(token, Map.class);
                 if (retMap == null) {
                     retMap = new HashMap<>();
                 }
                 for (String param : paramArr) {
                     retMap.put(param, EncryptUtil.simpleDecrypt(JSONObject.toJSON(params.get(EncryptUtil.simpleEncrypt(param))).toString()));
                 }
-                cache.set(token, retMap);
+                session.set(token, retMap);
                 return success();
             }
         }
@@ -275,7 +277,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("payPasswd" + oldpassword + " newpassword" + newpassword);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         String userId = (String) cacheMap.get("userId");
         //userId="18325423979";
         Map<String, Object> map = new HashMap<String, Object>();
@@ -310,7 +312,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Jedi获取的数据weikong");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -371,7 +373,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String retMsg = "获取前端的参数为空";
             return fail(ConstUtil.FAILED_INFO, retMsg);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap.isEmpty()) {
             logger.info("Jedis获取获取数据为空" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -398,7 +400,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if ("00000".equals(head.getString("retFlag"))) {
             cacheMap.put("payPasswd", payPasswd);
             cacheMap.put("pageFlag", "1");
-            cache.set(token, cacheMap);
+            session.set(token, cacheMap);
             return success();
         } else {
             String tetFlag = head.getString("tetFlag");
@@ -428,7 +430,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         logger.info("系统标识：channel" + channel);
         String channelNo = super.getChannelNo();//渠道编码
         logger.info("渠道编码channelNo" + channelNo);
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Jedis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -557,7 +559,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的参数为空：token：" + token + "  ,channel" + channel + "  ," + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Jedi获取的数据weikong");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -645,7 +647,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的数据为空：token" + token + "  ,channel" + channel + "  ,channelNo" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("贷款详情页面:还款总额接口，Jedis失效，cacheMap" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -688,7 +690,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     return fail(ConstUtil.ERROR_CODE, retflag);
                 }
                 cacheMap.put("loanNo", loanNo);//借据号
-                cache.set(token, cacheMap);
+                session.set(token, cacheMap);
 //                JSONObject reqJson = new JSONObject();
 //                reqJson.put("LOAN_NO", loanNo);
 //                String params = reqJson.toString();
@@ -870,7 +872,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取token失败token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Jedis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -925,7 +927,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Jedis为空：" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

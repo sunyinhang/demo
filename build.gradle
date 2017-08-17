@@ -83,7 +83,7 @@ dependencies {
     compile("com.bestvike:bv-mybatis:3.4.0-SNAPSHOT")
     compile("com.bestvike:bv-jxls-poi:1.0.9-SNAPSHOT")
     compile("com.bestvike:bv-jxls-reader:2.0.2-SNAPSHOT")
-    compile("com.haiercash:util:2.0.43-SNAPSHOT")
+    compile("com.haiercash:util:2.0.44-SNAPSHOT")
 
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter")
@@ -128,6 +128,7 @@ dependencies {
     // compile("com.haiercash:mybatis:3.4.0.8")
 
     // fastjson
+    compile("redis.clients:jedis:2.8.1")
     compile("com.alibaba:fastjson:1.2.12")
 //    compile("com.haiercash:util:1.1.25-SNAPSHOT")
 //    compile(":mybatis-spring-boot-autoconfigure-1.1.1:")

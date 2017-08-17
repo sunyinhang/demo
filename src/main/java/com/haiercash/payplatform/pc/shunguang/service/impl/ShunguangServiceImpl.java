@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.StringUtil;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
@@ -35,7 +35,7 @@ import java.util.Set;
 public class ShunguangServiceImpl extends BaseService implements ShunguangService {
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -230,7 +230,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             }else if("U0160".equals(userretFlag)){
                 //U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录
-                cache.set(token, cachemap);
+                session.set(token, cachemap);
                 String backurl = "login.html?token="+token;//TODO!!!!!!
                 map.put("backurl", backurl);
                 return success(map);
@@ -264,7 +264,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, custretflag);
         }
         if("C1120".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
-            cache.set(token, cachemap);
+            session.set(token, cachemap);
             String backurl = "login.html?token="+token;//TODO!!!!!!
             map.put("backurl", backurl);
             return success(map);
@@ -346,7 +346,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         logger.info("额度申请状态数据解析返回数据：" + params);
         JSONObject json = new JSONObject(params);
         String token = (String) json.get("token");
-        Map<String, Object> cacheEdmap = cache.get(token);
+        Map<String, Object> cacheEdmap = session.get(token, Map.class);
         String userId = (String) cacheEdmap.get("userId");
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
@@ -533,7 +533,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("获取token失败token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Jedis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

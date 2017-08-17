@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.common.service.impl;
 
 import com.amazonaws.util.IOUtils;
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.FaceService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.DataConverUtil;
@@ -38,7 +38,7 @@ import static com.haiercash.payplatform.common.utils.RestUtil.success;
 public class FaceServiceImpl extends BaseService implements FaceService{
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
 
@@ -68,7 +68,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if(cacheMap.isEmpty()){
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -258,7 +258,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if(cacheMap.isEmpty()){
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -340,7 +340,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //缓存数据获取及非空判断
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if(cacheMap.isEmpty()){
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -436,14 +436,14 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         String payPasswdFlag = bodyjson.getString("payPasswdFlag");
         if (payPasswdFlag.equals("1")) {// 1：已设置
             cacheMap.put("payPasswdFlag", "1");
-            cache.set(token, cacheMap);
+            session.set(token, cacheMap);
             logger.info("已设置支付密码，跳转支付密码验证页面");
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("faceFlag", "1");
             return success(m);
         }else{//未设置支付密码
             cacheMap.put("payPasswdFlag", "0");
-            cache.set(token, cacheMap);
+            session.set(token, cacheMap);
             logger.info("未设置支付密码，跳转支付密码设置页面");
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("faceFlag", "0");

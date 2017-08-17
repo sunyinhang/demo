@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.common.controller;
 
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ public class Democontroller extends BaseController{
     }
 
     @Autowired
-    private Cache cache;
+    private Session session;
 
     // TODO: 测试程序
     @RequestMapping(value = "/api/demo/allCache", method = RequestMethod.GET)
@@ -32,13 +32,13 @@ public class Democontroller extends BaseController{
             logger.info("token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        return (Map<String, Object>) cache.get(token);
+        return (Map<String, Object>) session.get(token, Map.class);
     }
 
     @RequestMapping(value = "/api/demo/set", method = RequestMethod.GET)
     public String setCache() {
-        cache.set("demo", "demo123", 5);
-        return cache.get("demo");
+        session.set("demo", "demo123", 5);
+        return session.get("demo", String.class);
     }
     @RequestMapping(value = "/api/demo/get", method = RequestMethod.GET)
     public String getCache() {

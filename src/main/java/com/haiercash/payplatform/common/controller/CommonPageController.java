@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.common.controller;
 
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +27,7 @@ public class CommonPageController extends BaseController {
     }
 
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private OCRIdentityService ocrIdentityService;
     @Autowired

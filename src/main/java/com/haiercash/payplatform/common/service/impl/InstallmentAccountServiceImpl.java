@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.InstallmentAccountService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
@@ -17,7 +17,7 @@ import java.util.Map;
 @Service
 public class InstallmentAccountServiceImpl extends BaseService implements InstallmentAccountService {
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
     //模块编码  02
@@ -53,7 +53,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
 //        if(cacheMap.isEmpty()){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

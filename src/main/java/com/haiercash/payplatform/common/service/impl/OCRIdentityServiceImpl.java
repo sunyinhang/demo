@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.common.service.impl;
 
 import com.amazonaws.util.IOUtils;
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.common.service.AppServerService;
@@ -41,7 +41,7 @@ import static com.haiercash.payplatform.common.utils.RestUtil.success;
 public class OCRIdentityServiceImpl extends BaseService implements OCRIdentityService {
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
 
@@ -65,7 +65,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -145,7 +145,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             cacheMap.put("certImagePathB", certImagePath);
         }
 
-        cache.set(token, cacheMap);
+        session.set(token, cacheMap);
         logger.info("OCR身份信息获取*************结束");
         return success(cardsResJson);
     }
@@ -196,13 +196,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
 
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         cacheMap.put("name", name);
-        cache.set(token, cacheMap);
+        session.set(token, cacheMap);
         logger.info("OCR信息保存（下一步）***********结束");
         return success();
     }
@@ -264,7 +264,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
 
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -327,7 +327,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //3.jedis缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -435,7 +435,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         cacheMap.put("idNo", idNo);
         cacheMap.put("idType", idType);
         cacheMap.put("cardPhone", cardPhone);
-        cache.set(token, cacheMap);
+        session.set(token, cacheMap);
 
         //绑定手机号修改为实名认证手机号
         String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)
@@ -508,14 +508,14 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("从前端获取的支付密码为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         cacheMap.put("pageFlag", "0");
         cacheMap.put("payPasswd", payPasswd);
-        cache.set(token, cacheMap);
+        session.set(token, cacheMap);
         logger.info("支付密码设置************结束");
         return success();
     }
@@ -541,7 +541,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("从前端h获取的flag为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

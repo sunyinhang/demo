@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.common.service.impl;
 
 import com.amazonaws.util.IOUtils;
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CustExtInfoService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
@@ -32,7 +32,7 @@ import java.util.*;
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService{
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Value("${app.other.baseSharePath:}")
@@ -76,7 +76,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, pLoanTypImagesretMsg);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
 //        String custNo = (String)cacheMap.get("custNo");
         String custNo = "C201607151029101937960";
         Map<String, Object> paramYXMap = new HashMap<String, Object>();
@@ -170,7 +170,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
 //        if(cacheMap.isEmpty()){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -223,7 +223,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
 //        if(cacheMap.isEmpty()){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -407,7 +407,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
 /*        if(cacheMap == null){
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

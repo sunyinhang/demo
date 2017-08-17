@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.*;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 @Service
 public class SgInnerServiceImpl extends BaseService implements SgInnerService{
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -62,7 +62,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //获取缓存数据
-        Map<String, Object> cacheMap = cache.get(token);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap.isEmpty()) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

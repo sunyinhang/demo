@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.HttpClient;
 import org.apache.commons.logging.Log;

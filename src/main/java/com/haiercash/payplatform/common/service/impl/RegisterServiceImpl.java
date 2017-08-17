@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.RegisterService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
@@ -18,7 +18,7 @@ import java.util.Map;
 @Service
 public class RegisterServiceImpl extends BaseService implements RegisterService {
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
 
@@ -51,7 +51,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         }
         String userIdEncrypt = EncryptUtil.simpleEncrypt((String) params.get("userId"));
         //缓存数据获取
-//        Map<String, Object> cacheMap = cache.get(token);
+//        Map<String, Object> cacheMap = session.get(token, Map.class);
 //        if(cacheMap.isEmpty()){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

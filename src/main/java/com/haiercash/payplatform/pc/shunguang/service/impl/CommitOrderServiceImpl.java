@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.*;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
@@ -30,7 +30,7 @@ import java.util.*;
 @Service
 public class CommitOrderServiceImpl extends BaseService implements CommitOrderService {
     @Autowired
-    private Cache cache;
+    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
