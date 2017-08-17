@@ -98,5 +98,9 @@ public interface AppServerService {
     public Map<String, Object> custUpdatePwd(String token,Map<String, Object> paramMap);
     //6.2.9.	–(GET)查询全部贷款信息列表-个人版
     public Map<String, Object> getDateAppOrderPerson(String token,Map<String, Object> paramMap);
+    //6.2.10.	(GET) 查询待提交订单列表—个人版
+    public Map<String, Object> getWtjAppOrderCust(String token,Map<String, Object> paramMap);
+    //6.1.45.	(GET) 待还款信息查询(全部)
+    public Map<String, Object> queryApplAllByIdNo(String token,Map<String, Object> paramMap);
 }
 

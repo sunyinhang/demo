@@ -619,4 +619,22 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         return map;
     }
+
+    //查询待提交订单列表
+    @Override
+    public Map<String, Object> getWtjAppOrderCust(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/getWtjAppOrderCust";
+        logger.info("查询待提交订单列表接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
+
+    //待还款信息查询
+    @Override
+    public Map<String, Object> queryApplAllByIdNo(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/queryApplAllByIdNo";
+        logger.info("查询待提交订单列表接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
 }
