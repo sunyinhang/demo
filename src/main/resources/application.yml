@@ -118,7 +118,7 @@ app:
   instance:
     #  错误码前缀：错误码组成为 前缀（此处定义）+模块代码（controller中定义）+错误码（super.fail中定义）
     errorPrefix: PPF
-    redisPrefix: PAYPLATFORM
+    # redisPrefix: PAYPLATFORM
   file:
     # 文件上传路径
     uploadPath: f:\file\upload
@@ -152,6 +152,10 @@ app:
     appServer_page_url: http://testpm.haiercash.com/
     haierData_url: http://taccount.haier.com
     haiercashpay_web_url: https://testpm.haiercash.com/
-  rediskey:
-    rediskey: ${common.redis.prefix}__DEMO__
-    redistimeout: 300
+  redis:
+    prefix: PAYPLATFORM
+    # 过期时间，以秒为单位
+    expire: 3600
+  # rediskey:
+    # rediskey: ${common.redis.prefix}__DEMO__
+    # redistimeout: 300
