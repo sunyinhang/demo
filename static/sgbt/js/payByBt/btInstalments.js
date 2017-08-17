@@ -40,11 +40,12 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             //获取当前位置
             var geolocation = new BMap.Geolocation();
             geolocation.getCurrentPosition(function(r) {
-                console.log(r);
+                console.log(r.latitude);
+                console.log(r.longitude);
                 if (this.getStatus() == BMAP_STATUS_SUCCESS) {
                     console.log('success');
                     util.get({
-                        url: 'https://api.map.baidu.com/geocode/v2/?location=' + r.point.lat + ',' + r.point.lng + '&output=json&ak=vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm',
+                        url: 'https://api.map.baidu.com/geocode/v2/?location=' + r.latitude + ',' + r.longitude + '&output=json&ak=vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm',
                         urlType: 'json',
                         dataType: 'jsonp',
                         check: true,
