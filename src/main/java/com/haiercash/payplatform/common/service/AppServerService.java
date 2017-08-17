@@ -94,4 +94,7 @@ public interface AppServerService {
     public Map<String, Object> attachDelete(String token,Map<String, Object> paramMap);
     //3.4.8.	 (GET)用户是否注册
     public Map<String, Object> isRegister(String token,Map<String, Object> paramMap);
+    //3.4.13.	 (PUT) 客户登录密码设置、修改（验证码）
+    public Map<String, Object> custUpdatePwd(String token,Map<String, Object> paramMap);
 }
+

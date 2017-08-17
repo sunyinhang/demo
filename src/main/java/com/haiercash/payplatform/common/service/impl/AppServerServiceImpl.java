@@ -601,4 +601,13 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         return map;
     }
+
+    //客户登录密码设置、修改（验证码）
+    @Override
+    public Map<String, Object> custUpdatePwd(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/custUpdatePwd";
+        logger.info("客户登录密码设置、修改（验证码）接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
+        return map;
+    }
 }

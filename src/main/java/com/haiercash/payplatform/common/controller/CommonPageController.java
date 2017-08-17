@@ -354,4 +354,14 @@ public class CommonPageController extends BaseController {
         return registerService.isRegister(super.getToken(), super.getChannel(), super.getChannelNo(),params);
     }
 
+    /**
+     * 登陆密码设置
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/landPasswd", method = RequestMethod.POST)
+    public Map<String, Object> landPasswd(@RequestBody Map<String, Object> map) {
+        return payPasswdService.landPasswd(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
 }

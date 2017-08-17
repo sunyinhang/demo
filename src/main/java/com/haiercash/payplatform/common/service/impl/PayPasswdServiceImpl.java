@@ -32,6 +32,12 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     @Autowired
     private AppServerService appServerService;
 
+    //模块编码  02
+    private static String MODULE_NO = "04";
+    public PayPasswdServiceImpl() {
+        super(MODULE_NO);
+    }
+
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
         String retflag = "";
@@ -954,5 +960,71 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             JSONArray body = jsonObject.getJSONArray("body");
             return success(body);
         }
+    }
+
+    @Override
+    public Map<String, Object> landPasswd(String token, String channelNo, String channel, Map<String, Object> params) {
+        logger.info("*********设置登陆密码开始**************开始");
+        Map<String, Object> resultparamMap = new HashMap<String, Object>();
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        if (params.get("userId") == null || "".equals(params.get("userId"))) {
+            logger.info("userId为空");
+            return fail(ConstUtil.ERROR_CODE, "参数userId为空!");
+        }
+        if (params.get("verifyNo") == null || "".equals(params.get("verifyNo"))) {
+            logger.info("verifyNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数verifyNo为空!");
+        }
+        if (params.get("pwd") == null || "".equals(params.get("pwd"))) {
+            logger.info("pwd为空");
+            return fail(ConstUtil.ERROR_CODE, "参数pwd为空!");
+        }
+        String userId  = (String) params.get("userId");
+        String verifyNo  = (String) params.get("verifyNo");
+        String pwd  = (String) params.get("pwd");
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("phone",userId);
+        paramMap.put("verifyNo",verifyNo);
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        Map<String, Object> stringObjectMap = appServerService.smsVerify(token, paramMap);
+        if(stringObjectMap == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map resultmapjsonMap = (HashMap<String, Object>) stringObjectMap.get("head");
+        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
+        if(!"00000".equals(resultmapFlag)){
+            resultparamMap.put("flag","1");//校验码错误或已经失效
+        }
+        Map<String, Object> landparamMap = new HashMap<String, Object>();
+        landparamMap.put("userId",EncryptUtil.simpleEncrypt(userId));
+        landparamMap.put("verifyNo",EncryptUtil.simpleEncrypt(verifyNo));
+        landparamMap.put("newPassword",EncryptUtil.simpleEncrypt(pwd));
+        landparamMap.put("channel", channel);
+        landparamMap.put("channelNo", channelNo);
+        Map<String, Object> landparamreturnMap = appServerService.custUpdatePwd(token, landparamMap);
+        if(landparamreturnMap == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map landparamreturnHeadMap = (HashMap<String, Object>) landparamreturnMap.get("head");
+        String reFlag = (String) landparamreturnHeadMap.get("retFlag");
+        if(!"00000".equals(reFlag)){
+            String retMsg = (String) landparamreturnHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }else{
+            resultparamMap.put("flag","2");//设置成功
+        }
+        return success(resultparamMap);
     }
 }
