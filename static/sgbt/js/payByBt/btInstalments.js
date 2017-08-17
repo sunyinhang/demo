@@ -44,10 +44,10 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 var lng=r.longitude;
                 console.log(lat);
                 console.log(lng);
+
                 if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-                    console.log(0);
                     util.get({
-                        url: 'https://api.map.baidu.com/geocode/v2/?location=' + lat + ',' + lng + '&output=json&ak=vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm',
+                        url: 'https://api.map.baidu.com/geocoder/v2/?location=' + lat + ',' + lng + '&output=json&ak=vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm',
                         urlType: 'json',
                         dataType: 'jsonp',
                         check: true,
