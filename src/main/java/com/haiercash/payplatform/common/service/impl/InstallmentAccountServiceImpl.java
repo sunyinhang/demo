@@ -207,8 +207,78 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         req.put("idNo", idNo);
         req.put("page", page);
         req.put("size", size);
-        logger.info("查询待提交订单列表接口，请求数据："+req.toString());
+        logger.info("待还款信息查询(全部)接口，请求数据："+req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.queryApplAllByIdNo(token, req);
+        if(dateAppOrderPerson == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map resultmapjsonMap = (HashMap<String, Object>) dateAppOrderPerson.get("head");
+        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
+        if(!"00000".equals(resultmapFlag)){
+            String retMsg = (String) resultmapjsonMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        return dateAppOrderPerson;
+    }
+
+    //查询已提交贷款申请列表
+    @Override
+    public Map<String, Object> queryApplLoanInfo(String token, String channelNo, String channel, Map<String, Object> map) {
+        logger.info("*********查询已提交贷款申请列表**************开始");
+        int page = 0;
+        int size = 0;
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        if (map.get("page") == null || "".equals(map.get("page"))) {
+            logger.info("pwd为空");
+            return fail(ConstUtil.ERROR_CODE, "参数pwd为空!");
+        }
+        if (map.get("size") == null || "".equals(map.get("size"))) {
+            logger.info("size为空");
+            return fail(ConstUtil.ERROR_CODE, "参数size为空!");
+        }
+        if (map.get("outSts") == null || "".equals(map.get("outSts"))) {
+            logger.info("outSts为空");
+            return fail(ConstUtil.ERROR_CODE, "参数outSts为空!");
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = cache.get(token);
+//        if(cacheMap.isEmpty()){
+//            logger.info("Redis数据获取失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+//        }
+        //TODO 总入口需查询客户信息数据
+        //        String idNo = (String)cacheMap.get("idNo");
+        String idNo = "37040319910722561X";
+        idNo = (String) map.get("idNo");
+        if(idNo == null || "".equals(idNo)){
+            logger.info("idNo为空");
+            return fail(ConstUtil.ERROR_CODE, "idNo为空!");
+        }
+        String outSts = (String) map.get("outSts");
+        page = Integer.parseInt((String) map.get("page"));
+        size = Integer.parseInt((String) map.get("size"));
+        Map req = new HashMap<String,Object>();
+        req.put("channelNo", channelNo);
+        req.put("channel", channel);
+        req.put("idNo", idNo);
+        req.put("page", page);
+        req.put("size", size);
+        req.put("outSts", outSts);
+        req.put("applyDate", "");
+        logger.info("查询已提交贷款申请列表接口，请求数据："+req.toString());
+        Map<String, Object> dateAppOrderPerson = appServerService.queryApplListPerson(token, req);
         if(dateAppOrderPerson == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }

@@ -102,5 +102,7 @@ public interface AppServerService {
     public Map<String, Object> getWtjAppOrderCust(String token,Map<String, Object> paramMap);
     //6.1.45.	(GET) 待还款信息查询(全部)
     public Map<String, Object> queryApplAllByIdNo(String token,Map<String, Object> paramMap);
+    //6.2.8.	–(GET)查询已提交贷款申请列表-个人版
+    public Map<String, Object> queryApplListPerson(String token,Map<String, Object> paramMap);
 }
 

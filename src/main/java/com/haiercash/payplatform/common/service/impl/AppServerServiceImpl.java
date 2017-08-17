@@ -633,7 +633,17 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     @Override
     public Map<String, Object> queryApplAllByIdNo(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/queryApplAllByIdNo";
-        logger.info("查询待提交订单列表接口，请求地址：" + url);
+        logger.info("待还款信息查询接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
+
+
+    //查询已提交贷款申请列表
+    @Override
+    public Map<String, Object> queryApplListPerson(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/cmis/queryApplListPerson";
+        logger.info("查询已提交贷款申请列表接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         return map;
     }

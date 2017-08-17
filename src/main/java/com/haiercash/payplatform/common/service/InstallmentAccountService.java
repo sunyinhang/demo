@@ -13,4 +13,6 @@ public interface InstallmentAccountService {
     public Map<String, Object> QueryPendingLoanInfo(String token, String channelNo, String channel, Map<String,Object> map);
     //待还款信息查询(全部)
     public Map<String, Object> queryPendingRepaymentInfo(String token, String channelNo, String channel, Map<String,Object> map);
+    //查询已提交贷款申请列表
+    public Map<String,Object> queryApplLoanInfo(String token, String channelNo, String channel, Map<String, Object> map);
 }

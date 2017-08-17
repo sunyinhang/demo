@@ -375,7 +375,7 @@ public class CommonPageController extends BaseController {
         return InstallmentAccountService.queryAllLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
-`    /**
+    /**
      * 查询待提交订单列表
      *
      * @return
@@ -395,4 +395,13 @@ public class CommonPageController extends BaseController {
         return InstallmentAccountService.queryPendingRepaymentInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
+    /**
+     * 查询已提交贷款申请列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryApplLoanInfo", method = RequestMethod.POST)
+    public Map<String, Object> queryApplLoanInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.queryApplLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
 }
