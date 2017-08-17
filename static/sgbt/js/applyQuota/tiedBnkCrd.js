@@ -183,10 +183,12 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         },
                         operate: {
                             text: '获取验证码',
-                            click: function (event,entity) {
-                                var cardNumReg=/^(1[0-9])\d{9}$/;
-                                if(cardNumReg.exec(entity.cardnumber)==null){
-                                    util.alert('请输入16位或19位卡号');
+                            click: function (event, entity) {
+                                if (!util.validate($('#cardnumber', vm.$el))) {
+                                    return;
+                                }
+                                if (!util.validate($('#mobile', vm.$el))) {
+                                    return;
                                 }
                                 util.countdown($(event.target), {
                                     text: '获取验证码',
