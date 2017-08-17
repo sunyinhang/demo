@@ -375,4 +375,43 @@ public class CommonPageController extends BaseController {
         return InstallmentAccountService.queryAllLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
+    /**
+     * 查询待提交订单列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryPendingLoanInfo", method = RequestMethod.POST)
+    public Map<String, Object> QueryPendingLoanInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.QueryPendingLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
+    /**
+     * 查询待提交订单列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryPendingRepaymentInfo", method = RequestMethod.POST)
+    public Map<String, Object> queryPendingRepaymentInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.queryPendingRepaymentInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
+    /**
+     * 查询已提交贷款申请列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryApplLoanInfo", method = RequestMethod.POST)
+    public Map<String, Object> queryApplLoanInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.queryApplLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
+    /**
+     * 删除订单
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/deleteOrderInfo", method = RequestMethod.POST)
+    public Map<String, Object> deleteOrderInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.deleteOrderInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
 }

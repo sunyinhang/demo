@@ -619,4 +619,46 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         return map;
     }
+
+    //查询待提交订单列表
+    @Override
+    public Map<String, Object> getWtjAppOrderCust(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/getWtjAppOrderCust";
+        logger.info("查询待提交订单列表接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
+
+    //待还款信息查询
+    @Override
+    public Map<String, Object> queryApplAllByIdNo(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/queryApplAllByIdNo";
+        logger.info("待还款信息查询接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
+
+
+    //查询已提交贷款申请列表
+    @Override
+    public Map<String, Object> queryApplListPerson(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/cmis/queryApplListPerson";
+        logger.info("查询已提交贷款申请列表接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
+
+    //删除订单
+    @Override
+    public Map<String, Object> deleteAppOrder(String token, Map<String, Object> paramMap) {
+        String orderNo = (String) paramMap.get("orderNo");
+        if(StringUtils.isEmpty(orderNo)){
+            return null;
+        }
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/deleteAppOrder?orderNo="+orderNo;
+        logger.info("删除订单接口，请求地址：" + url);
+        String param = HttpUtil.restDelete(url, null,200);
+        Map<String, Object> stringObjectMap = HttpUtil.json2Map(param);
+        return stringObjectMap;
+    }
 }
