@@ -404,4 +404,14 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> queryApplLoanInfo(@RequestBody Map<String, Object> map) {
         return InstallmentAccountService.queryApplLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
+
+    /**
+     * 删除订单
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/deleteOrderInfo", method = RequestMethod.POST)
+    public Map<String, Object> deleteOrderInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.deleteOrderInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
 }

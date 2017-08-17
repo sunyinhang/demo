@@ -290,4 +290,39 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         return dateAppOrderPerson;
     }
+
+    //删除订单
+    @Override
+    public Map<String, Object> deleteOrderInfo(String token, String channelNo, String channel, Map<String, Object> map) {
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        if (map.get("orderNo") == null || "".equals(map.get("orderNo"))) {
+            logger.info("orderNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数orderNo为空!");
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = cache.get(token);
+//        if(cacheMap.isEmpty()){
+//            logger.info("Redis数据获取失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+//        }
+        Map req = new HashMap<String,Object>();
+        req.put("channelNo", channelNo);
+        req.put("channel", channel);
+        req.put("orderNo", map.get("orderNo"));
+        logger.info("删除订单接口，请求数据："+req.toString());
+        Map<String, Object> dateAppOrderPerson = appServerService.deleteAppOrder(token, req);
+        return dateAppOrderPerson;
+    }
 }
