@@ -96,5 +96,7 @@ public interface AppServerService {
     public Map<String, Object> isRegister(String token,Map<String, Object> paramMap);
     //3.4.13.	 (PUT) 客户登录密码设置、修改（验证码）
     public Map<String, Object> custUpdatePwd(String token,Map<String, Object> paramMap);
+    //6.2.9.	–(GET)查询全部贷款信息列表-个人版
+    public Map<String, Object> getDateAppOrderPerson(String token,Map<String, Object> paramMap);
 }
 

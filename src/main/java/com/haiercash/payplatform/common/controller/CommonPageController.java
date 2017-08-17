@@ -42,7 +42,8 @@ public class CommonPageController extends BaseController {
     private LimitService limitService;
     @Autowired
     private RegisterService registerService;
-
+    @Autowired
+    private InstallmentAccountService InstallmentAccountService;
 
     /**
      * OCR获取身份信息
@@ -362,6 +363,16 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/landPasswd", method = RequestMethod.POST)
     public Map<String, Object> landPasswd(@RequestBody Map<String, Object> map) {
         return payPasswdService.landPasswd(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
+    /**
+     * 查询全部贷款信息列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryAllLoanInfo", method = RequestMethod.POST)
+    public Map<String, Object> QueryAllLoanInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.queryAllLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
 }

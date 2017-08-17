@@ -610,4 +610,13 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
         return map;
     }
+
+    //查询全部贷款信息列表-个人版
+    @Override
+    public Map<String, Object> getDateAppOrderPerson(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/getDateAppOrderPerson";
+        logger.info("查询全部贷款信息列表-个人版接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
 }
