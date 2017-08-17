@@ -166,7 +166,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         //缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
 //        if(cacheMap.isEmpty()){
-//            logger.info("Jedis数据获取失败");
+//            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 //        }
         //TODO 总入口需查询客户信息数据
@@ -219,7 +219,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         //缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
 //        if(cacheMap.isEmpty()){
-//            logger.info("Jedis数据获取失败");
+//            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 //        }
         //TODO 总入口需查询客户信息数据
@@ -403,7 +403,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         //缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
 /*        if(cacheMap == null){
-            logger.info("Jedis数据获取失败");
+            logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String typCde = (String) cacheMap.get("typCde");// 贷款品种

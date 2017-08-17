@@ -52,7 +52,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         //缓存数据获取
         Map<String, Object> cacheMap = cache.get(token);
 //        if(cacheMap.isEmpty()){
-//            logger.info("Jedis数据获取失败");
+//            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 //        }
         if("46".equals(channelNo)){

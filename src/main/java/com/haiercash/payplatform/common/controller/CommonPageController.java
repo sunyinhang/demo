@@ -40,6 +40,8 @@ public class CommonPageController extends BaseController {
     private AppServerService appServerService;
     @Autowired
     private LimitService limitService;
+    @Autowired
+    private RegisterService registerService;
 
 
     /**
@@ -322,9 +324,6 @@ public class CommonPageController extends BaseController {
     /**
      * 扩展信息删除影像
      *
-     * @param iconImg
-     * @param request
-     * @param response
      * @return
      * @throws Exception
      */
@@ -342,6 +341,17 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/CreditLineApply", method = RequestMethod.POST)
     public Map<String, Object> CreditLineApply() throws Exception {
         return limitService.CreditLineApply(super.getToken(), super.getChannel(), super.getChannelNo());
+    }
+
+    /**
+     * 判断用户是否注册
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/isRegister", method = RequestMethod.POST)
+    public Map<String, Object> isRegister(@RequestBody Map<String, Object> params) throws Exception {
+        return registerService.isRegister(super.getToken(), super.getChannel(), super.getChannelNo(),params);
     }
 
 }

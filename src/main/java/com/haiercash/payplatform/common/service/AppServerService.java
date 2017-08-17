@@ -92,5 +92,6 @@ public interface AppServerService {
     public Map<String, Object>  getUserId(String token,Map<String, Object> paramMap);
     //6.1.28.	 (DELETE)影像删除
     public Map<String, Object> attachDelete(String token,Map<String, Object> paramMap);
-
+    //3.4.8.	 (GET)用户是否注册
+    public Map<String, Object> isRegister(String token,Map<String, Object> paramMap);
 }

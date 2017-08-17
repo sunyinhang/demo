@@ -6,7 +6,6 @@ import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -592,5 +591,14 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String param = HttpUtil.restDelete(url, null,200);
         Map<String, Object> stringObjectMap = HttpUtil.json2Map(param);
         return stringObjectMap;
+    }
+
+    //用户是否注册
+    @Override
+    public Map<String, Object> isRegister(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/isRegister";
+        logger.info("用户是否注册接口，请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
     }
 }
