@@ -375,4 +375,24 @@ public class CommonPageController extends BaseController {
         return InstallmentAccountService.queryAllLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
+`    /**
+     * 查询待提交订单列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryPendingLoanInfo", method = RequestMethod.POST)
+    public Map<String, Object> QueryPendingLoanInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.QueryPendingLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
+    /**
+     * 查询待提交订单列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryPendingRepaymentInfo", method = RequestMethod.POST)
+    public Map<String, Object> queryPendingRepaymentInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.queryPendingRepaymentInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
 }
