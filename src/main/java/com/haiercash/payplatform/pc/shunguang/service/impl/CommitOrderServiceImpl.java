@@ -51,7 +51,40 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
      */
     @Override
     public Map<String, Object> commitOrder(Map<String, Object> map) {
-        return null;
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
+        String token = (String) map.get("token");
+
+        //1.签订注册及征信协议
+//        Map<String, Object> agreementmap = new HashMap<String, Object>();
+//        agreementmap.put("orderNo", orderNo);//订单号
+//        agreementmap.put("msgCode", msgCode);//短信验证码
+//        agreementmap.put("type", "1");//1：征信协议
+//        agreementmap.put("channel", channel);
+//        agreementmap.put("channelNo", channelNo);
+//        Map<String, Object> agreementresultmap = appServerService.updateOrderAgreement(token, agreementmap);
+//
+//        //2.签订合同
+//        Map<String, Object> contractmap = new HashMap<String, Object>();
+//        agreementmap.put("orderNo", orderNo);//订单号
+//        agreementmap.put("channel", channel);
+//        agreementmap.put("channelNo", channelNo);
+//        Map<String,Object> contractresultmap = appServerService.updateOrderContract(token, contractmap);
+//
+//        //3.影像上传
+//        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
+//        uploadimgmap.put("custNo", custNo);//订单号
+//        uploadimgmap.put("applSeq", applSeq);//订单号
+//        uploadimgmap.put("channel", channel);
+//        uploadimgmap.put("channelNo", channelNo);
+//        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, contractmap);
+
+        //4.风险信息上送   TODO!!!!!
+
+
+        //5.订单提交
+
+        return success();
     }
 
 

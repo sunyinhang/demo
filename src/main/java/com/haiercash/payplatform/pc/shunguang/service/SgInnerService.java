@@ -17,9 +17,9 @@ public interface SgInnerService {
     Map<String, Object> userlogin(Map<String, Object> map);
 
     /**
-     * 订单保存
+     * 白条分期页面加载
      * @param map
      * @return
      */
-    Map<String, Object> saveOrder(Map<String, Object> map);
+    Map<String, Object> initPayApply(Map<String, Object> map);
 }

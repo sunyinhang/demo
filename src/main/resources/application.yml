@@ -22,9 +22,9 @@ spring:
       max-active: 1000
   http.converters.preferred-json-mapper: fastjson
   rabbitmq:
-    addresses: 10.164.197.208:5672, 10.164.197.228:5672
+    addresses: 10.164.197.54:5672, 10.164.197.55:5672
     username: admin
-    password: admin123
+    password: 123456
     virtual-host: /
     publisher-confirms: true
     listener:
@@ -33,7 +33,7 @@ spring:
     requestedHeartbeat: 60
     exchange: APPMSG_TOPIC_EXCHANGE_DEV
     queue:
-      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE
+      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISGMSG_QUEUE_46_DEV
 redis:
   single:
     host: 10.164.194.123
@@ -152,6 +152,10 @@ app:
     appServer_page_url: http://testpm.haiercash.com/
     haierData_url: http://taccount.haier.com
     haiercashpay_web_url: https://testpm.haiercash.com/
+  shunguang:
+    sg_merch_no: 302017001073
+    sg_store_no: 302017040270
+    sg_user_id: 303197
   redis:
     prefix: PAYPLATFORM
     # 过期时间，以秒为单位

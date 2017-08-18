@@ -310,11 +310,12 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param reqSignMap
      * @return
      */
-    public String updateOrderAgreement(String token, Map<String, Object> reqSignMap) {
+    public Map<String, Object> updateOrderAgreement(String token, Map<String, Object> reqSignMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/updateOrderAgreement";
-        logger.info("顺逛订单协议确认接口请求地址：" + url);
-        logger.info("顺逛订单协议确认接口请求数据：" + reqSignMap);
-        String result = HttpUtil.restPutMap(url, token, reqSignMap).toString();
+        logger.info("订单协议确认接口请求地址：" + url);
+        logger.info("订单协议确认接口请求数据：" + reqSignMap);
+        Map<String, Object> result = HttpUtil.restPutMap(url, token, reqSignMap);
+        logger.info("订单协议确认接口返回数据：" + result);
         return result;
     }
 
@@ -326,11 +327,12 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param reqConMap
      * @return
      */
-    public String updateOrderContract(String token, Map<String, Object> reqConMap) {
+    public Map<String, Object> updateOrderContract(String token, Map<String, Object> reqConMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/updateOrderContract";
-        logger.info("顺逛订单合同确认接口请求地址：" + url);
-        logger.info("顺逛订单合同确认接口请求数据：" + reqConMap);
-        String result = HttpUtil.restPostMap(url, token, reqConMap).toString();
+        logger.info("订单合同确认接口请求地址：" + url);
+        logger.info("订单合同确认接口请求数据：" + reqConMap);
+        Map<String, Object> result = HttpUtil.restPostMap(url, token, reqConMap);
+        logger.info("订单合同确认接口返回数据：" + result);
         return result;
     }
 
@@ -669,5 +671,60 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String param = HttpUtil.restDelete(url, null,200);
         Map<String, Object> stringObjectMap = HttpUtil.json2Map(param);
         return stringObjectMap;
+    }
+
+    //6.2.12.	(GET) 录单校验（个人版）
+    @Override
+    public Map<String, Object> getCustInfoAndEdInfoPerson(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/getCustInfoAndEdInfoPerson";
+        logger.info("录单校验接口，请求地址：" + url);
+        logger.info("录单校验接口，请求数据：" + paramMap);
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("录单校验接口，返回数据" + resultmap);
+        return resultmap;
+    }
+
+    //6.1.53.	(GET) 是否允许申请贷款
+    @Override
+    public Map<String, Object> queryBeyondContral(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/queryBeyondContral";
+        logger.info("是否允许申请贷款接口，请求地址：" + url);
+        logger.info("是否允许申请贷款接口，请求数据：" + paramMap);
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("是否允许申请贷款接口，返回数据" + resultmap);
+        return resultmap;
+    }
+
+    //6.1.146.	(POST) 上传影像到信贷系统
+    @Override
+    public Map<String, Object> uploadImg2CreditDep(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/uploadImg2CreditDep";
+        logger.info("上传影像到信贷系统接口, 请求地址：" + url);
+        logger.info("上传影像到信贷系统接口, 请求数据：" + paramMap);
+        Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
+        logger.info("上传影像到信贷系统接口, 返回数据：" + result);
+        return result;
+    }
+
+    //6.1.103.	(POST)批量还款试算(免token)
+    @Override
+    public Map<String, Object> getBatchPaySs(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/customer/getBatchPaySs";
+        logger.info("批量还款试算接口, 请求地址：" + url);
+        logger.info("批量还款试算接口, 请求数据：" + paramMap);
+        Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
+        logger.info("批量还款试算接口, 返回数据：" + result);
+        return result;
+    }
+
+    //6.1.17.	(POST)还款试算
+    @Override
+    public Map<String, Object> getPaySs(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/customer/getPaySs";
+        logger.info("还款试算接口, 请求地址：" + url);
+        logger.info("还款试算接口, 请求数据：" + paramMap);
+        Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
+        logger.info("还款试算接口, 返回数据：" + result);
+        return result;
     }
 }
