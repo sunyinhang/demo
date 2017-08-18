@@ -357,7 +357,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             ordertotal =  total.divide(new BigDecimal(1) , 2,BigDecimal.ROUND_HALF_UP) + "";
             resMap.put("ordertotal", ordertotal);
         }
-        return resMap;
+        return success(resMap);
     }
 
 
