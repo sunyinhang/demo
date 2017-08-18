@@ -24,8 +24,13 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                         },
                         {
                             text: '忘记密码',
+                            clazz: 'test',
                             click: function () {
-
+                                util.redirect({
+                                    title: '找回支付密码',
+                                    url: '/getPayPsd/getPayPsdWay.html',
+                                    back: false
+                                });
                             }
                         }
                     ]
