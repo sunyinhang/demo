@@ -13,6 +13,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             payFn: function () {
                 util.modal({
                     title: '请输入支付密码',
+                    clazz: 'xxx',
                     message: '<div class="enretPwd-c"><input type="text" placeholder="请输入支付密码" class="pwd-text"></div>',
                     inline: false,
                     operates: [
@@ -24,7 +25,6 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                         },
                         {
                             text: '忘记密码',
-                            clazz: 'test',
                             click: function () {
                                 util.redirect({
                                     title: '找回支付密码',

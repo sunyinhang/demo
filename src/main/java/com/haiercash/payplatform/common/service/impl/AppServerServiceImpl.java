@@ -668,8 +668,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         }
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/deleteAppOrder?orderNo="+orderNo;
         logger.info("删除订单接口，请求地址：" + url);
-        String param = HttpUtil.restDelete(url, null,200);
-        Map<String, Object> stringObjectMap = HttpUtil.json2Map(param);
+        Map<String, Object> stringObjectMap = HttpUtil.restPostMap(url, token, paramMap);
         return stringObjectMap;
     }
 
