@@ -274,7 +274,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         req.put("channel", channel);
         req.put("idNo", idNo);
         req.put("page", page);
-        req.put("size", size);
+        req.put("pageSize", size);
         req.put("outSts", outSts);
         req.put("applyDate", "");
         logger.info("查询已提交贷款申请列表接口，请求数据："+req.toString());
