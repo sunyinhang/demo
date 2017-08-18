@@ -104,6 +104,8 @@ public interface AppServerService {
     public Map<String, Object> queryApplAllByIdNo(String token,Map<String, Object> paramMap);
     //6.2.8.	–(GET)查询已提交贷款申请列表-个人版
     public Map<String, Object> queryApplListPerson(String token,Map<String, Object> paramMap);
+    ////6.1.7.(GET)查询订单详情
+    public Map<String, Object> queryOrderInfo(String token,Map<String, Object> paramMap);
     //6.1.8.	 (DELETE)删除订单
     public Map<String, Object> deleteAppOrder(String token,Map<String, Object> paramMap);
 
