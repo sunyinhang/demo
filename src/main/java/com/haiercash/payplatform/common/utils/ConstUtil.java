@@ -5,6 +5,8 @@ package com.haiercash.payplatform.common.utils;
  */
 public class ConstUtil {
     public static String APP_CODE = "P";
+    public static String CHANNEL = "11";
+    public static String SOURCE = "11";
 
     public static String ERROR_PARAM_INVALID_CODE = "91";
     public static String ERROR_PARAM_INVALID_MSG = "参数无效";

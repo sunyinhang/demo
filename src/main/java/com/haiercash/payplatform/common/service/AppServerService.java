@@ -39,11 +39,9 @@ public interface AppServerService {
     //(GET)额度申请
    public Map<String,Object> getEdApplInfo(String token,Map<String,Object>edapplInfoMap);
     //6.1.29.(POST)订单协议确认
-    public String updateOrderAgreement(String token,Map<String,Object> reqSignMap);
+    public Map<String,Object> updateOrderAgreement(String token,Map<String,Object> reqSignMap);
     //6.1.30.(POST)订单合同确认
-    public String updateOrderContract(String token,Map<String,Object> reqConMap);
-    //6.1.14.(GET)订单提交
-    public String commitAppOrder(String token,Map<String,Object> commitmMap);
+    public Map<String,Object> updateOrderContract(String token,Map<String,Object> reqConMap);
     //3.4.15.	(PUT)支付密码修改(知道原密码)
     public Map<String,Object> updatePayPasswd(String token,Map<String, Object> paramMap);
     //实名认证修改密码
@@ -106,6 +104,14 @@ public interface AppServerService {
     public Map<String, Object> queryApplListPerson(String token,Map<String, Object> paramMap);
     //6.1.8.	 (DELETE)删除订单
     public Map<String, Object> deleteAppOrder(String token,Map<String, Object> paramMap);
-
+    //6.2.12.	(GET) 录单校验（个人版）
+    public Map<String, Object> getCustInfoAndEdInfoPerson(String token, Map<String, Object> paramMap);
+    //6.1.53.	(GET) 是否允许申请贷款
+    public Map<String, Object> queryBeyondContral(String token, Map<String, Object> paramMap);
+    //6.1.146.	(POST) 上传影像到信贷系统
+    public Map<String, Object> uploadImg2CreditDep(String token, Map<String, Object> paramMap);
+    //6.1.103.	(POST)批量还款试算(免token)
+    public Map<String, Object> getBatchPaySs(String token, Map<String, Object> paramMap);
+    //6.1.17.	(POST)还款试算
+    public Map<String, Object> getPaySs(String token, Map<String, Object> paramMap);
 }
-

@@ -4,6 +4,7 @@ import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
+import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import org.apache.commons.logging.Log;
@@ -37,6 +38,8 @@ public class SgInnerController extends BaseController {
     private SgInnerService sgInnerService;
     @Autowired
     private CommitOrderService commitOrderService;
+    @Autowired
+    private SaveOrderService saveOrderService;
 
     /**
      * 登录
@@ -49,6 +52,15 @@ public class SgInnerController extends BaseController {
         return sgInnerService.userlogin(super.initParam(map));
     }
 
+    /**
+     * 白条分期页面加载
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/shunguang/initPayApply", method = RequestMethod.POST)
+    public Map<String, Object> initPayApply(@RequestBody Map<String, Object> map) {
+        return sgInnerService.initPayApply(super.initParam(map));
+    }
 
     /**
      * 订单保存
@@ -57,11 +69,11 @@ public class SgInnerController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/shunguang/saveOrder", method = RequestMethod.POST)
     public Map<String, Object> saveOrder(@RequestBody Map<String, Object> map) {
-        return sgInnerService.saveOrder(super.initParam(map));
+        return saveOrderService.saveOrder(super.initParam(map));
     }
 
     /**
-     *
+     *订单提交
      * @param map
      * @return
      */
