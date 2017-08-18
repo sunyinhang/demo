@@ -89,7 +89,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
 
     public Map<String, Object> commitAppOrder(String orderNo, String applSeq, String opType, String msgCode,
-                                              String expectCredit, String typGrp, List<Map<String, Object>> riskList) {
+                                              String expectCredit, String typGrp) {
 
         //整理风险信息
 //        String riskJson = "";

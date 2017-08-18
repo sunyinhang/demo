@@ -203,6 +203,44 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         payMap.put("apprvAmt", payAmt);
         payMap.put("applyTnrTyp", psPerdNo);
         payMap.put("applyTnr", psPerdNo);
+        payMap.put("channel", channel);
+        payMap.put("channelNo", channelNo);
+        Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
+        if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
+            String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        String payresult = JSONObject.toJSONString(payresultMap);
+        JSONObject payBody = JSONObject.parseObject(payresult).getJSONObject("body");
+        logger.info("payBody:" + payBody);
+        String totalAmt = payBody.get("totalAmt").toString();
+        String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
+        String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
+
+        Map retrunmap = new HashMap();
+        retrunmap.put("payAmt", payAmt);
+        retrunmap.put("payMtd", ((HashMap<String, Object>)(payssresultMap.get("body"))).get("info"));
+        retrunmap.put("totalAmt", totalAmt);
+        return success(retrunmap);
+    }
+
+    @Override
+    public Map<String, Object> gettotalAmt(Map<String, Object> map) {
+        String token = (String) map.get("token");
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
+        String applyTnr = (String) map.get("applyTnr");
+
+        String payAmt = "3000";//申请金额
+        String typCde = "17035a";
+
+        Map<String, Object> payMap = new HashMap<String, Object>();
+        payMap.put("typCde", typCde);
+        payMap.put("apprvAmt", payAmt);
+        payMap.put("applyTnrTyp", applyTnr);
+        payMap.put("applyTnr", applyTnr);
+        payMap.put("channel", channel);
+        payMap.put("channelNo", channelNo);
         Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
         if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
             String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
@@ -214,8 +252,6 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String totalAmt = payBody.get("totalAmt").toString();
 
         Map retrunmap = new HashMap();
-        retrunmap.put("payAmt", payAmt);
-        retrunmap.put("payMtd", ((HashMap<String, Object>)(payssresultMap.get("body"))).get("info"));
         retrunmap.put("totalAmt", totalAmt);
         return success(retrunmap);
     }

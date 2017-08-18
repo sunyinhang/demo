@@ -215,12 +215,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String bankCode = (String) custjson.get("bankCode");
 
         //1.根据token获取客户信息
-        JSONObject userjson = haierDataService.userinfo(token);
-        if (userjson == null || "".equals(userjson)) {
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
             logger.info("验证客户信息接口调用失败");
             return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
         }
         //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
+        JSONObject userjson = new JSONObject(userjsonstr);
         Object uid = userjson.get("user_id");//会员id
         if(StringUtils.isEmpty(uid)){
             String error = userjson.get("error").toString();

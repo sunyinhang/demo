@@ -22,4 +22,11 @@ public interface SgInnerService {
      * @return
      */
     Map<String, Object> initPayApply(Map<String, Object> map);
+
+    /**
+     * 白条分期页面获取应还款总额
+     * @param map
+     * @return
+     */
+    Map<String, Object> gettotalAmt(Map<String, Object> map);
 }
