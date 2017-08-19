@@ -94,6 +94,16 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             }
         },
         mounted: function () {
+            util.post({
+                url: '/queryAllLoanInfo',
+                data: {
+                    page: '1',
+                    size: '3'
+                },
+                success: function(res){
+                    var data = util.data(res);
+                }
+            });
             util.refresh({
                 vm: util.vm(this, this.tags.listKey),
                 items: util.clone(items)

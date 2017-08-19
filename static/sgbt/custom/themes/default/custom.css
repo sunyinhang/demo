@@ -172,11 +172,10 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 
 .amountTop{position:relative;margin:0 auto;width:100%;height:11rem;background:url(images/amtTopBg.png) left top no-repeat;background-size:100%;}
 .cusContent{position:relative;margin:0 auto;width:100%;}
-.amountInfo{position:relative;margin:0 auto;padding-top:1.1rem;padding-bottom:1.1rem;width:100%;background:#fff;}
-.verLine{position:relative;float:left;width:50%;height:3.8rem;}
-.verLinebg{ background:url(images/amtSutiPoint.png) top right repeat-y;}
-.bill{position:relative;float:left;margin:0px; cursor:pointer}
-.bill li{text-align:left;}
+.amountInfo{ padding-top:1.1rem;padding-bottom:1.1rem;background:#fff;display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex;  }
+.line{ width:1px; height:3.8rem; background:url(images/amtSutiPoint.png) top right repeat-y;}
+.myBill,.myQuota{ cursor:pointer; margin:0 auto;position:relative; width:50%; height:3.8rem; text-align: center; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1;+}
+.bill { margin:0 auto;width:50%; text-align: left;}
 .bill li.li1{height:1.4rem;line-height:1.4rem;font-size:.85rem;color:#333;}
 .bill li.li2{height:1.1rem;line-height:1.1rem;font-size:.7rem;color:#999;}
 .bill li.li3{height:1.3rem;line-height:1.3rem;font-size:.85rem;}
@@ -354,17 +353,18 @@ a.a-btn{ margin: 0 auto; display:block; width: 80%; height: 2.5rem; line-height:
 .btInstalment .main02-3 .z{ -webkit-box-flex:1; box-flex:1; flex:1; -webkit-flex:1; font-size: 0.7rem; color: #333; text-align: right;}
 .btInstalment .main02-3 .z font{ color: #fda253}
 .btInstalment .main02-4 { padding: 0.75rem 1.3rem 0.1rem; background-color: #fff; }
-.btInstalment .main02-4 li{ float: left; margin-bottom: 0.65rem; width: 47%; margin-left:0; padding: 0.6rem 0; border:1px solid #ddd; border-radius: 5px; -webkit-border-radius:5px; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; }
+.btInstalment .main02-4 li{ float: left; cursor:pointer; margin-bottom: 0.65rem; width: 47%; margin-left:0; padding: 1.2rem 0; border:1px solid #ddd; border-radius: 5px; -webkit-border-radius:5px; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; }
+.btInstalment .main02-4 li:nth-child(even){ float:right;}
 .btInstalment .main02-4 li.even{ float: right; width: 47%;}
 .btInstalment .main02-4 li .b-img{ width:2.2rem; background: url('images/payByBt/li_normal.png') no-repeat center; background-size: 1rem; }
 .btInstalment .main02-4 li .b-text { -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1; text-align: center; }
 .btInstalment .main02-4 li span{ display: block; font-size: 0.7rem; line-height: 1.1rem;}
 .btInstalment .main02-4 li .fq{ color: #333}
 .btInstalment .main02-4 li .lx{ color: #999}
-.btInstalment .main02-4 li.active { border:1px solid #32beff;}
-.btInstalment .main02-4 li.active .b-img{ background: url('images/payByBt/li_active.png') no-repeat center; background-size: 1rem;}
-.btInstalment .main02-4 li.active .fq{ color: #32beff}
-.btInstalment .main02-4 li.active .lx{ color: #32beff}
+.btInstalment .main02-4 li.selected { border:1px solid #32beff;}
+.btInstalment .main02-4 li.selected .b-img{ background: url('images/payByBt/li_active.png') no-repeat center; background-size: 1rem;}
+.btInstalment .main02-4 li.selected .fq{ color: #32beff}
+.btInstalment .main02-4 li.selected .lx{ color: #32beff}
 
 /****** module：订单详情 ******/
 .loanDetails .main-01{ padding:0.65rem 0.8rem; background: url('images/payByBt/status_bg.png') no-repeat top center; background-size: cover; }

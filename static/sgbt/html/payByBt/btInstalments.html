@@ -1,7 +1,7 @@
 <component is="bv-layout" class='wrapper btInstalment fullPage-gray' data-container='btInstalments'>
 	<div class="main01">
 		<div class="t">向顺逛商城支付</div>
-		<div class="m">￥ 5000</div>
+		<div class="m">{{payAmt}}</div>
 	</div> 
 	<div class="main02">
 		<div class="main02-1">
@@ -16,36 +16,15 @@
 		</div>
 		<div class="main02-3">
 			<span class='t'>分期方式</span>
-			<a class='z'>应还款总额 <font>5000</font>(含手续费)</a>
+			<a class='z'>应还款总额 <font>{{totalAmt}}</font>(含手续费)</a>
 		</div>
 		<div class="main02-4">
 			<ul>
-				<li class="active fenqi">
+				<li class="fenqi"  v-for="(item, index) in payMtd" @click="changePeriodFn(item.psPerdNo)">
 					<div class="b-img"></div>
 					<div class="b-text">
-						<span class="fq">30天免息</span>
-						<span class="lx">0手续费</span>
-					</div>
-				</li>
-				<li class="fenqi even">
-					<div class="b-img"></div>
-					<div class="b-text">
-						<span class="fq">30天免息</span>
-						<span class="lx">0手续费</span>
-					</div>
-				</li>
-				<li class="fenqi">
-					<div class="b-img"></div>
-					<div class="b-text">
-						<span class="fq">30天免息</span>
-						<span class="lx">0手续费</span>
-					</div>
-				</li>
-				<li class="fenqi even">
-					<div class="b-img"></div>
-					<div class="b-text">
-						<span class="fq">30天免息</span>
-						<span class="lx">0手续费</span>
+						<span class="fq">{{item.instmAmt}}元*{{item.psPerdNo}}期</span>
+						<!--<span class="lx">0手续费</span>-->
 					</div>
 				</li>
 				<div class="clear"></div>
