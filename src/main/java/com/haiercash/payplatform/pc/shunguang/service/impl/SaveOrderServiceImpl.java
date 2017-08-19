@@ -5,6 +5,7 @@ import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CmisApplService;
@@ -15,6 +16,8 @@ import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.OrderService;
 import org.json.JSONArray;
 import org.json.JSONObject;
+//import com.alibaba.fastjson.JSONArray;
+//import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -51,41 +54,71 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
     @Override
     public Map<String, Object> saveOrder(Map<String, Object> map) {
-        String token = (String) map.get("token");
-        String channel = (String) map.get("channel");
-        String channelNo = (String) map.get("channelNo");
-        String applyTnr = (String) map.get("applyTnr");//借款期限
-        String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
-        String totalnormint = (String) map.get("totalNormInt");//总利息金额
-        String totalfeeamt = (String) map.get("totalFeeAmt");//费用总额
-        String typLevelTwo = (String) map.get("typLvlCde");//贷款品种小类
-        String areaCode = (String) map.get("areaCode");//区编码
-        //
+        //前端传入参数获取
+//        String token = (String) map.get("token");
+//        String channel = (String) map.get("channel");
+//        String channelNo = (String) map.get("channelNo");
+//        String applyTnr = (String) map.get("applyTnr");//借款期限
+//        String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
+//        String areaCode = (String) map.get("areaCode");//区编码
+        String token = "e36a9141-7644-4715-bce5-5750f49ebbb4";
+        String channel = "11";
+        String channelNo = "46";
+        String applyTnr = "12";//借款期限
+        String applyTnrTyp = "12";//期限类型（若天则传D）
+        String areaCode = "370201";//区编码
+
+//        String totalnormint = (String) map.get("totalNormInt");//总利息金额
+//        String totalfeeamt = (String) map.get("totalFeeAmt");//费用总额
+//        String typLevelTwo = (String) map.get("typLvlCde");//贷款品种小类
+
+        //缓存获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if (cacheMap == null || "".equals(cacheMap)) {
-            logger.info("Jedis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        //根据token获取会员id
-        JSONObject userjson = haierDataService.userinfo(token);
-        if (userjson == null || "".equals(userjson)) {
-            logger.info("验证客户信息接口调用失败");
-            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
-        }
-        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
-        Object uid = userjson.get("user_id");//会员id
-        if(StringUtils.isEmpty(uid)){
-            String error = userjson.get("error").toString();
-            return fail(ConstUtil.ERROR_CODE, error);
-        }
-        //根据会员id获取内部ID
-        String uidHaier = uid.toString();
-        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
-        if (!HttpUtil.isSuccess(userInforesult) ) {
-            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
-        }
-        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
-        String userId = (String) ((HashMap<String, Object>)(resultMap.get("body"))).get("userId");
+//        if (cacheMap == null || "".equals(cacheMap)) {
+//            logger.info("Jedis数据获取失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+//        }
+        AppOrder appOrder = new AppOrder();
+        List<AppOrderGoods> appOrderGoodsList = new ArrayList<AppOrderGoods>();
+        AppOrderGoods appOrderGoods = new AppOrderGoods();
+        appOrderGoods.setGoodsBrand("HDJY");//商品品牌
+        appOrderGoods.setGoodsKind("JY");//商品类型
+        appOrderGoods.setGoodsName("JY");//商品名称
+        appOrderGoods.setGoodsNum("1");//商品数量
+        appOrderGoods.setGoodsPrice("3000");//单价
+        appOrderGoodsList.add(appOrderGoods);
+        //
+        //AppOrder appOrder = new AppOrder();
+        appOrder.setTypCde("17035a");//贷款品种代码
+        appOrder.setApplyAmt("3000");//借款总额  ???  TODO!!!!!
+        appOrder.setDeliverAddr("山东青岛崂山");//送货地址
+        appOrder.setDeliverProvince("370000");//送货地址省
+        appOrder.setDeliverCity("370200");//送货地址市
+        appOrder.setDeliverArea("370201");//送货地址区
+        appOrder.setAppOrderGoodsList(appOrderGoodsList);
+
+//        //根据token获取会员id
+//        String userjsonstr = haierDataService.userinfo(token);
+//        if (userjsonstr == null || "".equals(userjsonstr)) {
+//            logger.info("验证客户信息接口调用失败");
+//            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+//        }
+//        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
+//        org.json.JSONObject userjson = new org.json.JSONObject(userjsonstr);
+//        Object uid = userjson.get("user_id");//会员id
+//        if(StringUtils.isEmpty(uid)){
+//            String error = userjson.get("error").toString();
+//            return fail(ConstUtil.ERROR_CODE, error);
+//        }
+//        //根据会员id获取内部ID
+//        String uidHaier = uid.toString();
+//        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
+//        if (!HttpUtil.isSuccess(userInforesult) ) {
+//            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
+//        }
+//        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
+//        String userId = (String) ((HashMap<String, Object>)(resultMap.get("body"))).get("userId");
+        String userId = "18325423979";
         if(StringUtils.isEmpty(userId)){
             logger.info("userid没有进行绑定");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -95,24 +128,44 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         custMap.put("userId", userId);
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
-        Map<String, Object> custresult = appServerService.queryPerCustInfo(token, custMap);
-        if (!HttpUtil.isSuccess(custresult) ) {
+        Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
+        if (!HttpUtil.isSuccess(custInforesult) ) {
             return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
         }
+        String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
+        com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
         String custName = (String) custresult.get("custName");
         String custNo = (String) custresult.get("custNo");
         String certNo = (String) custresult.get("certNo");
         String mobile = (String) custresult.get("mobile");
-        //
-        AppOrder appOrder = (AppOrder) cacheMap.get("apporder");//获取订单信息
+        //获取订单金额
+        Map<String, Object> payMap = new HashMap<String, Object>();
+        payMap.put("typCde", appOrder.getTypCde());
+        payMap.put("apprvAmt", appOrder.getApplyAmt());
+        payMap.put("applyTnrTyp", applyTnrTyp);
+        payMap.put("applyTnr", applyTnr);
+        payMap.put("channel", channel);
+        payMap.put("channelNo", channelNo);
+        Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
+        if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
+            String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        String payresult = com.alibaba.fastjson.JSONObject.toJSONString(payresultMap);
+        com.alibaba.fastjson.JSONObject payBody = com.alibaba.fastjson.JSONObject.parseObject(payresult).getJSONObject("body");
+        logger.info("payBody:" + payBody);
+        String totalAmt = payBody.get("totalAmt").toString();
+        String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
+        String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
+
 
         appOrder.setVersion("1");//接口版本号  固定传’1’
         appOrder.setSource("11");//订单来源
         appOrder.setChannelNo((String)map.get("channelNo"));//渠道编号
-//        appOrder.setApplyTnr();//借款期限
-//        appOrder.setApplyTnrTyp();//借款期限类型
-//        appOrder.setTotalnormint();//总利息金额
-//        appOrder.setTotalfeeamt();//费用总额
+        appOrder.setApplyTnr(applyTnr);//借款期限
+        appOrder.setApplyTnrTyp(applyTnrTyp);//借款期限类型
+        appOrder.setTotalnormint(totalNormInt);//总利息金额
+        appOrder.setTotalfeeamt(totalFeeAmt);//费用总额
         appOrder.setMerchNo(sg_merch_no);//商户编号
         appOrder.setCooprCde(sg_store_no);//门店编号
         appOrder.setCrtUsr(sg_user_id);//销售代表用户ID（）
@@ -125,6 +178,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         appOrder.setIdTyp("20");//证件类型
         appOrder.setIdNo(certNo);//客户证件号码
         appOrder.setUserId(userId);//录单用户ID
+        appOrder.setChannelNo("46");
 
 
         //0.准入资格校验
@@ -136,34 +190,50 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         ispassmap.put("channel", channel);
         ispassmap.put("channelNo", channelNo);
         Map<String, Object> ispassresult = appServerService.getCustIsPass(token, ispassmap);
+        if (!HttpUtil.isSuccess(ispassresult) ) {//准入资格校验失败
+            String retmsg = (String) ((HashMap<String, Object>)(ispassresult.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        String isPass = (String) ((HashMap<String, Object>)(ispassresult.get("body"))).get("isPass");
+        if("-1".equals(isPass)){
+            return fail(ConstUtil.ERROR_CODE, "没有准入资格");
+        }
 
         //1.录单校验（所在城市开通服务）
         //获取市代码
-        Map<String, Object > citymap = new HashMap<String, Object>();
-        citymap.put("areaCode", areaCode);
-        citymap.put("flag", "parent");
-        citymap.put("channel", channel);
-        citymap.put("channelNo", channelNo);
-        String cityCode = this.getCode(token, citymap);
-        if(StringUtils.isEmpty(cityCode)){
-            logger.info("获取市编码失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
-        //获取省代码
-        Map<String, Object > provincemap = new HashMap<String, Object>();
-        provincemap.put("areaCode", cityCode);
-        provincemap.put("flag", "parent");
-        provincemap.put("channel", channel);
-        provincemap.put("channelNo", channelNo);
-        String provinceCode = this.getCode(token, provincemap);
+//        Map<String, Object > citymap = new HashMap<String, Object>();
+//        citymap.put("areaCode", areaCode);
+//        citymap.put("flag", "parent");
+//        citymap.put("channel", channel);
+//        citymap.put("channelNo", channelNo);
+//        String cityCode = this.getCode(token, citymap);
+//        if(StringUtils.isEmpty(cityCode)){
+//            logger.info("获取市编码失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
+//        //获取省代码
+//        Map<String, Object > provincemap = new HashMap<String, Object>();
+//        provincemap.put("areaCode", cityCode);
+//        provincemap.put("flag", "parent");
+//        provincemap.put("channel", channel);
+//        provincemap.put("channelNo", channelNo);
+//        String provinceCode = this.getCode(token, provincemap);
+//        if(StringUtils.isEmpty(provinceCode)){
+//            logger.info("获取省编码失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
+
         Map<String, Object> ordercheakmap = new HashMap<String, Object>();
         ordercheakmap.put("userId", userId);
-        ordercheakmap.put("provinceCode", provinceCode);//TODO！！！！是否在白条页面获取
-        ordercheakmap.put("cityCode", cityCode);////TODO！！！！是否在白条页面获取
+        ordercheakmap.put("provinceCode", "370000");//TODO！！！！是否在白条页面获取
+        ordercheakmap.put("cityCode", "370200");////TODO！！！！是否在白条页面获取
         ordercheakmap.put("channel", channel);
         ordercheakmap.put("channelNo", channelNo);
         Map<String, Object> ordercheakresult = appServerService.getCustInfoAndEdInfoPerson(token, ordercheakmap);
-
+        if (!HttpUtil.isSuccess(ordercheakresult) ) {//录单校验失败
+            String retmsg = (String) ((HashMap<String, Object>)(ordercheakresult.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
 
         //2.是否允许申请贷款
         String typCde = appOrder.getTypCde();
@@ -174,15 +244,25 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         queryordermap.put("date", date);
         queryordermap.put("channel", channel);
         queryordermap.put("channelNo", channelNo);
-        Map<String, Object> queryorderresult = appServerService.queryBeyondContral(token, ordercheakmap);
+        Map<String, Object> queryorderresult = appServerService.queryBeyondContral(token, queryordermap);
+        if (!HttpUtil.isSuccess(queryorderresult) ) {//是否允许申请贷款失败
+            String retmsg = (String) ((HashMap<String, Object>)(queryorderresult.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        String flag = (String) ((HashMap<String, Object>)(queryorderresult.get("body"))).get("flag");
+        if(!"Y".equals(flag)){
+            return fail(ConstUtil.ERROR_CODE, "不允许申请贷款");
+        }
 
         //3.订单保存
         Map<String, Object> ordermap = saveAppOrderInfo(appOrder);
+        if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
+            String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        logger.info(ordermap);
 
-
-        return success();
-
-
+        return ordermap;
 
     }
 
@@ -194,8 +274,9 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         if (!"00000".equals(retFlag)) {
             return cityCode;
         }
-        JSONArray cityArray = new JSONArray(result.get("body"));
-        for (int i = 0; i < cityArray.length(); i++) {
+        //String result = com.alibaba.fastjson.JSONObject.toJSONString(payssresultMap);
+        com.alibaba.fastjson.JSONArray cityArray = com.alibaba.fastjson.JSONArray.parseArray(com.alibaba.fastjson.JSONObject.toJSONString(result));
+        for (int i = 0; i < cityArray.size(); i++) {
             Object object = cityArray.get(i);
             JSONObject jsonObject = new JSONObject(object.toString());
             cityCode = jsonObject.get("areaCode").toString();

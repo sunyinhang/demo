@@ -11,10 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -57,9 +54,19 @@ public class SgInnerController extends BaseController {
      * @param map
      * @return
      */
-    @RequestMapping(value = "/api/payment/shunguang/initPayApply", method = RequestMethod.POST)
-    public Map<String, Object> initPayApply(@RequestBody Map<String, Object> map) {
+    @RequestMapping(value = "/api/payment/shunguang/initPayApply", method = RequestMethod.GET)
+    public Map<String, Object> initPayApply(@RequestParam Map<String, Object> map) {
         return sgInnerService.initPayApply(super.initParam(map));
+    }
+
+    /**
+     * 获取应还款总额
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/shunguang/gettotalAmt", method = RequestMethod.GET)
+    public Map<String, Object> gettotalAmt(@RequestParam Map<String, Object> params) {
+        return sgInnerService.gettotalAmt(super.initParam(params));
     }
 
     /**

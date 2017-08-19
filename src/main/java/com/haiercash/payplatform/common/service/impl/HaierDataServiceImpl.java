@@ -21,10 +21,10 @@ public class HaierDataServiceImpl implements HaierDataService{
     protected String haierData_url;
 
     @Override
-    public JSONObject userinfo(String token) {
+    public String userinfo(String token) {
         String url = haierData_url + "/userinfo?access_token=" + token;
         logger.info("根据token验证用户信息，请求url:" + url);
-        JSONObject jsonObj = HttpClient.sendGetUrl(url);
+        String jsonObj = HttpClient.sendGetUrl(url);
         logger.info("根据token验证用户信息，返回数据：" + jsonObj);
         return jsonObj;
     }

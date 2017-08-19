@@ -6,5 +6,5 @@ import org.json.JSONObject;
  * Created by yuanli on 2017/8/8.
  */
 public interface HaierDataService {
-    public JSONObject userinfo(String token);
+    public String userinfo(String token);
 }

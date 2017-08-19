@@ -1155,22 +1155,23 @@ public class HttpClient {
 	 * @return
 	 * @auther zhaohan
 	 */
-	public static JSONObject sendGetUrl(String url) {
+	public static String sendGetUrl(String url) {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(url);
-		JSONObject jsonObj = null;
+//		JSONObject jsonObj = null;
+		String result = null;
 		try {
 			HttpResponse response = httpClient.execute(httpGet);
 			HttpEntity entity = response.getEntity();
-			String result = EntityUtils.toString(entity, "UTF-8");
-			if (result != null && !"".equals(result)) {
-				jsonObj = new JSONObject(result);
-			}
+			result = EntityUtils.toString(entity, "UTF-8");
+//			if (result != null && !"".equals(result)) {
+//				jsonObj = new JSONObject(result);
+//			}
 			httpGet.releaseConnection();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return jsonObj;
+		return result;
 	}
 
 	/**

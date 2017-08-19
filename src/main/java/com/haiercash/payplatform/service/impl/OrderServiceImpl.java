@@ -203,7 +203,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             // 默认需要发货确认
             orderMap.put("isNeedSend", "01");
         }
-
+        orderMap.put("sysNo", "11");
         String url;
         if (isGoodsList) {//多商品
             url = EurekaServer.ORDER + "/api/order/saveOrder";

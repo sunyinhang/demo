@@ -209,18 +209,26 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String userType = (String) json.get("userType");
         String custmessage = json.get("custmessage").toString();
         JSONObject custjson = new JSONObject(custmessage);
-        String name = (String) custjson.get("name");
-        String idNo = (String) custjson.get("idNo");
-        String mobile = (String) custjson.get("mobile");
-        String bankCode = (String) custjson.get("bankCode");
+        if(custjson.has("name")){
+            Object name = custjson.get("name");
+        }
+
+//        Object idNo = custjson.get("idNo");
+//        Object mobile = custjson.get("mobile");
+//        Object bankCode = custjson.get("bankCode");
 
         //1.根据token获取客户信息
-        JSONObject userjson = haierDataService.userinfo(token);
-        if (userjson == null || "".equals(userjson)) {
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
             logger.info("验证客户信息接口调用失败");
             return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
         }
         //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
+        //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
+        JSONObject userjson = new JSONObject(userjsonstr);
+        if(!userjson.has("user_id")){
+            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
+        }
         Object uid = userjson.get("user_id");//会员id
         if(StringUtils.isEmpty(uid)){
             String error = userjson.get("error").toString();
@@ -228,7 +236,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         String uidHaier = uid.toString();
         String custPhoneNo = (String) userjson.get("phone_number");
-        String userName = (String) userjson.get("username");
+        //String userName = (String) userjson.get("username");
         cachemap.put("token", token);
         cachemap.put("uidHaier", uidHaier);//会员id
 
@@ -247,11 +255,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, "未获取到userId");
         }
         String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
-        if (!HttpUtil.isSuccess(userInforesult) ) {
-            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
-        }
+//        if (!HttpUtil.isSuccess(userInforesult) ) {
+//            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
+//        }
         Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
-        String retFlag = ((HashMap<String, Object>)(resultMap.get("head"))).get("retFlag").toString();
+//        String retFlag = ((HashMap<String, Object>)(resultMap.get("head"))).get("retFlag").toString();
+        String head = resultMap.get("head").toString();
+        Map<String, Object> headMap = HttpUtil.json2Map(head);
+        String retFlag = headMap.get("retFlag").toString();
         if("U0157".equals(retFlag)){//U0157：未查到该集团用户的信息
             //用户未注册   进行注册
             Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -276,12 +287,19 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 String userretmsg = ((HashMap<String, Object>)(usermap.get("head"))).get("retMsg").toString();
                 return fail(ConstUtil.ERROR_CODE, userretmsg);
             }
+        }else if("00000".equals(retFlag)){
+            //集团uid已在统一认证做过绑定
+            String body = resultMap.get("body").toString();
+            Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            uidLocal = bodyMap.get("userId").toString();//统一认证内userId
+            phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
+            cachemap.put("userId", uidLocal);//统一认证userId
+            cachemap.put("phoneNo", phoneNo);//绑定手机号
+        }else{
+            String retMsg = headMap.get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        //集团uid已在统一认证做过绑定
-        uidLocal = ((HashMap<String, Object>)(resultMap.get("body"))).get("userId").toString();//统一认证内userId
-        phoneNo = ((HashMap<String, Object>)(resultMap.get("body"))).get("mobile").toString();//统一认绑定手机号
-        cachemap.put("userId", uidLocal);//统一认证userId
-        cachemap.put("phoneNo", phoneNo);//绑定手机号
+
         //4.token绑定
         Map<String, Object> bindMap = new HashMap<String, Object>();
         bindMap.put("userId", uidLocal);//内部userId
