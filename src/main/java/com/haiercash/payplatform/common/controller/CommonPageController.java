@@ -406,7 +406,7 @@ public class CommonPageController extends BaseController {
     }
 
     /**
-     * 查询已提交贷款申请列表
+     * 查询订单详情
      *
      * @return
      */
