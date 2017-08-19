@@ -114,4 +114,11 @@ public interface AppServerService {
     public Map<String, Object> getBatchPaySs(String token, Map<String, Object> paramMap);
     //6.1.17.	(POST)还款试算
     public Map<String, Object> getPaySs(String token, Map<String, Object> paramMap);
+    //3.1.79.(POST)额度申请进度查询（最新的进度 根据idNo查询）
+    public Map<String, Object> getEdApplProgress(String token,Map<String, Object> paramMap);
+    //1.32(GET) 根据统一认证userid查询用户信息
+   public Map<String, Object> findUserByUserid(String token,Map<String, Object> paramMap);
+    //48、(GET)根据身份证号查询客户基本信息和实名认证信息(userId)
+    public Map<String, Object> getCustInfoByCertNo(String token,Map<String, Object> paramMap);
+
 }

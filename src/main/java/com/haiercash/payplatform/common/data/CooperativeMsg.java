@@ -1,6 +1,13 @@
 package com.haiercash.payplatform.common.data;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "cooperativemsg")
 public class CooperativeMsg {
+	@Id
 	private String channelno; //渠道编号
 	private String activeflag;//状态标识
 	private String cooperationurl; //消息推送URL

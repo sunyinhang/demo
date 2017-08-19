@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.payplatform.common.dao.PublishDao">
+    <!--额度申请URL-->
+    <select id="selectChannelNoUrl" resultType="java.lang.String">
+        select cooperationurl from cooperativemsg where channelno=#{channelNo ,jdbcType=VARCHAR};
+    </select>
+    <!--额度申请URL-->
+    <select id="selectChannelNoUrlOne" resultType="java.lang.String">
+     select remark from cooperativemsg where channelno=#{channelNo ,jdbcType=VARCHAR};
+    </select>
+</mapper>
