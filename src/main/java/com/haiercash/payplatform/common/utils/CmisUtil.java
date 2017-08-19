@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.haiercash.payplatform.common.config.EurekaServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -103,7 +105,9 @@ public abstract class CmisUtil {
         HashMap requestMap = makeParamMap(tradeCode, tradeType, map);
         logger.debug("Cmis request:");
         logger.debug(new JSONObject(requestMap));
-        Map responseMap = HttpUtil.restPostMap(hcportal + "/pub/cmisfront", requestMap);
+        //Map responseMap = HttpUtil.restPostMap(hcportal + "/pub/cmisfront", requestMap);
+        Map<String, Object> responseMap = HttpUtil
+                .restPostMap(EurekaServer.CMISFRONTSERVER + "/pub/cmisfront", "", requestMap);
         logger.debug("Cmis response:");
         logger.debug(new JSONObject(responseMap));
         return responseMap;
