@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by use on 2017/8/15.
+ * Created by ljy on 2017/8/15.
  */
 @Service
 public class LimitServiceImpl extends BaseService implements LimitService{
@@ -51,10 +51,10 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if(cacheMap.isEmpty()){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
+        if(cacheMap.isEmpty()){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
         if("46".equals(channelNo)){
             typCde = "17044a";//贷款品种
             tag = "SHH";
@@ -62,14 +62,14 @@ public class LimitServiceImpl extends BaseService implements LimitService{
             //查询贷款品种类型
         }
         //TODO 总入口需查询客户信息数据
-//        String custNo = (String)cacheMap.get("custNo");
-//        String userId = (String)cacheMap.get("userId");
-//        String custName = (String)cacheMap.get("custName");
-//        String idNumber = (String)cacheMap.get("idNumber"); //身份证
-        String custNo = "C201708010722561X68720";
-        String userId = "15264826872";
-        String custName = "李甲团";
-        String idNumber = "37040319910722561X";
+        String custNo = (String)cacheMap.get("custNo");
+        String userId = (String)cacheMap.get("userId");
+        String custName = (String)cacheMap.get("custName");
+        String idNumber = (String)cacheMap.get("idCard"); //身份证
+//        String custNo = "C201708010722561X68720";
+//        String userId = "15264826872";
+//        String custName = "李甲团";
+//        String idNumber = "37040319910722561X";
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channelNo",channelNo);
@@ -111,9 +111,12 @@ public class LimitServiceImpl extends BaseService implements LimitService{
                 //如个人信息完整，则判断是否做过人脸识别
                 ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
                 ifNeedFaceChkByTypCdeMap.put("source",channel);
-                ifNeedFaceChkByTypCdeMap.put("custNo","C201708010722561X68720");
-                ifNeedFaceChkByTypCdeMap.put("name","李甲团");
-                ifNeedFaceChkByTypCdeMap.put("idNumber","37040319910722561X");
+//                ifNeedFaceChkByTypCdeMap.put("custNo","C201708010722561X68720");
+//                ifNeedFaceChkByTypCdeMap.put("name","李甲团");
+//                ifNeedFaceChkByTypCdeMap.put("idNumber","37040319910722561X");
+                ifNeedFaceChkByTypCdeMap.put("custNo",custNo);
+                ifNeedFaceChkByTypCdeMap.put("name",custName);
+                ifNeedFaceChkByTypCdeMap.put("idNumber",idNumber);
                 ifNeedFaceChkByTypCdeMap.put("isEdAppl","Y");
                 Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
                 if(saveCustFCiCustContactMap == null){
@@ -133,7 +136,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
 //                resultparamMap.put("faceFlag", "1");
                         validateUserFlagMap.put("channelNo", channelNo);// 渠道
                         validateUserFlagMap.put("channel", channel);
-                        validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt("18254561920"));//客户编号
+                        validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userId));//客户编号18254561920
                         Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
                         if(alidateUserMap == null){
                             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
