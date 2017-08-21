@@ -38,7 +38,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
         data: {
             currentIndex: 0,
             pageNo: 1,
-            pageSize: 3,
+            pageSize: 20,
             tags: {
                 tabsKey: 'installmentBillTabs',
                 listKey: 'installmentBillList'
