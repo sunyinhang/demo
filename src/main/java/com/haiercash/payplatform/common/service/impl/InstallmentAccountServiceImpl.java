@@ -209,6 +209,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         req.put("idNo", idNo);
         req.put("page", String.valueOf(page));
         req.put("size", String.valueOf(size));
+        req.put("flag", "A");
         logger.info("待还款信息查询(全部)接口，请求数据："+req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.queryApplAllByIdNo(token, req);
         if(dateAppOrderPerson == null){
