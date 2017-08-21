@@ -77,8 +77,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-//        String custNo = (String)cacheMap.get("custNo");
-        String custNo = "C201607151029101937960";
+        String custNo = (String)cacheMap.get("custNo");
+//        String custNo = "C201607151029101937960";
         Map<String, Object> paramYXMap = new HashMap<String, Object>();
         //获取贷款类型查询客户所有影像ID
 //        JSONObject pLoanTypImagesBodyjson = new JSONObject(pLoanTypImagesMap.get("body"));
@@ -122,14 +122,14 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 resultJson_.put("id",id);//影像ID
                 resultJson_.put("filePath",filePath);//图片地址
                 resultList_.add(resultJson_);
-                //TODO
-                j= list_.size()-1;
+//
+//                j= list_.size()-1;
             }
             //////
-            JSONObject resultJson_ = new JSONObject();
-            resultJson_.put("id", 9999999);//影像ID
-            resultJson_.put("filePath", "/A.jpg");//图片地址
-            resultList_.add(resultJson_);
+//            JSONObject resultJson_ = new JSONObject();
+//            resultJson_.put("id", 9999999);//影像ID
+//            resultJson_.put("filePath", "/A.jpg");//图片地址
+//            resultList_.add(resultJson_);
             //////
             JSONObject resultJson = new JSONObject();
             resultJson.put("docCde",docCde);//影像代码
@@ -171,13 +171,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if(cacheMap.isEmpty()){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-        //TODO 总入口需查询客户信息数据
-//        String custNo = (String)cacheMap.get("custNo");
-        String custNo = "C201506300921381093450";
+        if(cacheMap.isEmpty()){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        // 总入口需查询客户信息数据
+        String custNo = (String)cacheMap.get("custNo");
+//        String custNo = "C201506300921381093450";
         paramMap.put("custNo", custNo);
         paramMap.put("flag", "Y");
         paramMap.put("channelNo", channelNo);
@@ -224,19 +224,19 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if(cacheMap.isEmpty()){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-        //TODO 总入口需查询客户信息数据
-//        String custNo = (String)cacheMap.get("custNo");
-//        String userid = (String)cacheMap.get("userid");
-//        String name = (String)cacheMap.get("name");//姓名
-        //        String idNumber = (String)cacheMap.get("idNumber"); //身份证
-        String userid = "1231231";
-        String custNo = "B201706011214031809670";
-        String name = "张三丰";
-        String idNumber = "232302198201012540";
+        if(cacheMap.isEmpty()){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //总入口需查询客户信息数据
+        String custNo = (String)cacheMap.get("custNo");
+        String userid = (String)cacheMap.get("userid");
+        String name = (String)cacheMap.get("name");//姓名
+        String idNumber = (String)cacheMap.get("idNumber"); //身份证
+//        String userid = "1231231";
+//        String custNo = "B201706011214031809670";
+//        String name = "张三丰";
+//        String idNumber = "232302198201012540";
         if(custNo == null || "".equals(custNo)){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -275,12 +275,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         if ( id_one !=null   && !"null".equals(id_one)) {
             custparamMap_one.put("id", id_one);// 联系人ID
         }
-     /*   String id_one =  Integer.toString((int) params.get("id_one"));
-
-
-        if(id_one != null && !"".equals(id_one)){
-            custparamMap_one.put("id", id_one);// 联系人ID
-        }*/
         custparamMap_one.put("channelNo", channelNo);// 渠道
         custparamMap_one.put("channel", channel);
         custparamMap_one.put("custNo", custNo);//客户编号
@@ -299,15 +293,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
-//        String id_two = (String) params.get("id_two");
-//        String id_two = Integer.toString((int) params.get("id_two"));
         Integer id_two = (Integer) params.get("id_two");
         if ( id_two !=null   && !"null".equals(id_two)) {
             custparamMap_one.put("id", id_two);// 联系人ID
         }
-//        if(id_two != null && !"".equals(id_two)){
-//            custparamMap_two.put("id", id_two);// 联系人ID
-//        }
         custparamMap_two.put("channelNo", channelNo);// 渠道
         custparamMap_two.put("channel", channel);
         custparamMap_two.put("custNo",custNo);//客户编号
@@ -333,9 +322,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
         ifNeedFaceChkByTypCdeMap.put("source",channel);
-        ifNeedFaceChkByTypCdeMap.put("custNo","C201708010722561X68720");
-        ifNeedFaceChkByTypCdeMap.put("name","李甲团");
-        ifNeedFaceChkByTypCdeMap.put("idNumber","37040319910722561X");
+        ifNeedFaceChkByTypCdeMap.put("custNo",custNo);
+        ifNeedFaceChkByTypCdeMap.put("name",name);
+        ifNeedFaceChkByTypCdeMap.put("idNumber",idNumber);
         ifNeedFaceChkByTypCdeMap.put("isEdAppl","");
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
         if(saveCustFCiCustContactMap == null){
@@ -355,7 +344,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //                resultparamMap.put("faceFlag", "1");
                 validateUserFlagMap.put("channelNo", channelNo);// 渠道
                 validateUserFlagMap.put("channel", channel);
-                validateUserFlagMap.put("userId",EncryptUtil.simpleEncrypt("18254561920"));//客户编号
+                validateUserFlagMap.put("userId",EncryptUtil.simpleEncrypt(userid));//客户编号
                 Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
                 if(alidateUserMap == null){
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -408,7 +397,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-/*        if(cacheMap == null){
+        if(cacheMap == null){
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -417,13 +406,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String name = (String) cacheMap.get("name");// 姓名
         String mobile = (String) cacheMap.get("phoneNo");// 手机号
         String custNo = (String) cacheMap.get("custNo");
-        String userId = (String) cacheMap.get("userId");*/
-        String typCde = "17044a";// 贷款品种
-        String idNumber = "37040319910722561X";// 身份证号
-        String name = "李甲团";// 姓名
-        String mobile = "15264826872";// 手机号
-        String custNo = "C201708010722561X68720";
-        String userId = "18678282831";
+        String userId = (String) cacheMap.get("userId");
+//        String typCde = "17044a";// 贷款品种
+//        String idNumber = "37040319910722561X";// 身份证号
+//        String name = "李甲团";// 姓名
+//        String mobile = "15264826872";// 手机号
+//        String custNo = "C201708010722561X68720";
+//        String userId = "18678282831";
         if(StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)){
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
@@ -470,9 +459,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }*/
         logger.info("上传影像*****************结束");
-        uploadresultmap = new HashMap<String, Object>();
-        uploadresultmap.put("id", 9999999);
-        return success(uploadresultmap);
+//        uploadresultmap = new HashMap<String, Object>();
+//        uploadresultmap.put("id", 9999999);
+//        return success(uploadresultmap);
+        return uploadresultmap;
     }
 
     @Override
