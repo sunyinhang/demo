@@ -62,7 +62,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //总入口需查询客户信息数据
         String crtUsr = (String)cacheMap.get("userId");
-        String idNo = (String) cacheMap.get("idNo");//身份证号
+        String idNo = (String) cacheMap.get("idCard");//身份证号
 //        String crtUsr = "15264826872";
 //        String idNo = "37040319910722561X";
         if(crtUsr == null || "".equals(crtUsr)){
@@ -80,8 +80,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         req.put("channel", channel);
         req.put("crtUsr", crtUsr);
         req.put("idNo", idNo);
-        req.put("page", page);
-        req.put("size", size);
+        req.put("page", String.valueOf(page));
+        req.put("size", String.valueOf(size));
         logger.info("查询全部贷款信息列表接口，请求数据："+req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.getDateAppOrderPerson(token, req);
         if(dateAppOrderPerson == null){
@@ -138,14 +138,14 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             logger.info("custNo为空");
             return fail(ConstUtil.ERROR_CODE, "custNo为空!");
         }
-        page = Integer.parseInt((String) map.get("page"));
-        size = Integer.parseInt((String) map.get("size"));
+        page = (Integer) map.get("page");
+        size = (Integer) map.get("size");
         Map req = new HashMap<String,Object>();
         req.put("channelNo", channelNo);
         req.put("channel", channel);
         req.put("custNo", custNo);
-        req.put("page", page);
-        req.put("size", size);
+        req.put("page", String.valueOf(page));
+        req.put("size", String.valueOf(size));
         logger.info("查询待提交订单列表接口，请求数据："+req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.getWtjAppOrderCust(token, req);
         if(dateAppOrderPerson == null){
@@ -201,14 +201,14 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             logger.info("idNo为空");
             return fail(ConstUtil.ERROR_CODE, "idNo为空!");
         }
-        page = Integer.parseInt((String) map.get("page"));
-        size = Integer.parseInt((String) map.get("size"));
+        page = (Integer) map.get("page");
+        size = (Integer) map.get("size");
         Map req = new HashMap<String,Object>();
         req.put("channelNo", channelNo);
         req.put("channel", channel);
         req.put("idNo", idNo);
-        req.put("page", page);
-        req.put("size", size);
+        req.put("page", String.valueOf(page));
+        req.put("size", String.valueOf(size));
         logger.info("待还款信息查询(全部)接口，请求数据："+req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.queryApplAllByIdNo(token, req);
         if(dateAppOrderPerson == null){
@@ -269,14 +269,14 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "idNo为空!");
         }
         String outSts = (String) map.get("outSts");
-        page = Integer.parseInt((String) map.get("page"));
-        size = Integer.parseInt((String) map.get("size"));
+        page = (Integer) map.get("page");
+        size = (Integer) map.get("size");
         Map req = new HashMap<String,Object>();
         req.put("channelNo", channelNo);
         req.put("channel", channel);
         req.put("idNo", idNo);
-        req.put("page", page);
-        req.put("pageSize", size);
+        req.put("page", String.valueOf(page));
+        req.put("pageSize", String.valueOf(size));
         req.put("outSts", outSts);
         req.put("applyDate", "");
         logger.info("查询已提交贷款申请列表接口，请求数据："+req.toString());
