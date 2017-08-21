@@ -183,4 +183,16 @@ public class ShunguangController extends BaseController {
         }
         return success();
     }
+
+    /**
+     * 额度测试入口
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/shunguang/edApplytest", method = RequestMethod.POST)
+    public Map<String, Object> edApplytest(@RequestBody Map<String, Object> map) throws Exception {
+        // 参数非空校验
+        return shunguangService.edApplytest(map);
+    }
 }

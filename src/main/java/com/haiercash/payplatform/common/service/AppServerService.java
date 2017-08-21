@@ -116,4 +116,6 @@ public interface AppServerService {
     public Map<String, Object> getBatchPaySs(String token, Map<String, Object> paramMap);
     //6.1.17.	(POST)还款试算
     public Map<String, Object> getPaySs(String token, Map<String, Object> paramMap);
+    //3.4.16.	(POST)用户注册
+    public Map<String, Object> saveUauthUsers(String token, Map<String, Object> map);
 }

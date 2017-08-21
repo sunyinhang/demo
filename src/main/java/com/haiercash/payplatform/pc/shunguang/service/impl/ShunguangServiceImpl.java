@@ -97,36 +97,22 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String userid = (String) json.get("userid");
         String body = json.get("body").toString();
 
-        //获取userId
-//        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(userid));
-//        if (!HttpUtil.isSuccess(userInforesult)) {
-//            logger.info("获取userId失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-//        }
-//        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
-//        String bodystr = resultMap.get("body").toString();
-//        Map<String, Object> bodyMap = HttpUtil.json2Map(bodystr);
-//        String userId = bodyMap.get("userId").toString();//统一认证内userId
-        String userId = "1000030088";
-        // 获取实名认证信息
-        Map<String, Object> custInfo = crmService.queryPerCustInfoByUserId(userId);
-        if (!HttpUtil.isSuccess(custInfo)) {
-            return custInfo;
-        }
-        logger.info("用户" + userId + "实名信息:" + custInfo);
-
-        Map<String, Object> custBody = (Map<String, Object>) custInfo.get("body");
 
         Map<String, Object> requestParams = new HashMap<>();
+        requestParams.put("userId", userid);
         requestParams.put("channelno", channelNo);
         requestParams.put("applseq", null);
-        requestParams.put("cardnumber", custBody.get("certNo"));
-        requestParams.put("data", body);
-        Map<String, Object> result = HttpUtil
-                .restPostMap(this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData", requestParams);
+        requestParams.put("cardnumber", null);
+        requestParams.put("data", new JSONObject(body));
+        System.out.println(outplatUrl);
 
+        String url = this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData";
+        logger.info("推送外联风险信息，请求地址：" + url);
+        String resData = HttpClient.sendJson(url, (new JSONObject(requestParams)).toString());
+        logger.info("推送外联风险信息，返回数据：" + resData);
+        JSONObject result = new JSONObject(resData);
         if (!"0000".equals(result.get("code"))) {
-            return fail("02", (String) result.get("message"));
+            return fail("02", ConstUtil.ERROR_INFO);
         }
         return success();
     }
@@ -179,6 +165,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
             AppOrderGoods appOrderGoods = new AppOrderGoods();
             //appOrderGoods.setGoodsCode(goodsCode);//商品代码
+            appOrderGoods.setcOrderSn(cOrderSn);//
             appOrderGoods.setGoodsBrand(topLevel);//商品品牌
             appOrderGoods.setGoodsKind(model);//商品类型
             appOrderGoods.setGoodsName(model);//商品名称
@@ -190,6 +177,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //
 
         AppOrder appOrder = new AppOrder();
+        appOrder.setMallOrderNo(orderSn);
         appOrder.setTypCde(loanType);//贷款品种代码
         appOrder.setApplyAmt(payAmt);//借款总额  ???  TODO!!!!!
         appOrder.setDeliverAddr(detailAddress);//送货地址
@@ -256,6 +244,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //        String uidHaier = uid.toString();
 //        String custPhoneNo = (String) userjson.get("phone_number");
 
+        //TODO!!!!
         String uidHaier = "1000030088";
         String custPhoneNo = "18525369183";
 
@@ -679,6 +668,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 
         //请求数据解析
+        String ss = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey));
+        //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
+
+
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
         String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
 
@@ -712,6 +705,124 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         HashMap<Object, Object> mapone = new HashMap<>();
         mapone.put("userId", userIdone);
         return success(mapone);
+    }
+
+    public Map<String, Object> edApplytest(Map<String, Object> map) throws Exception{
+        String userId = map.get("userId").toString();
+        //String phone = map.get("phone").toString();
+        String token = map.get("token").toString();
+        String channelNo = map.get("channelNo").toString();
+        Map cachemap = new HashMap<String, Object>();
+        Map returnmap = new HashMap<String, Object>();
+        //查询是否已注册
+
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
+        paramMap.put("channelNo",channelNo);
+        paramMap.put("channel","11");
+        paramMap.put("mobile",userIdEncrypt);
+        Map<String, Object> m = appServerService.isRegister(token, paramMap);
+        if(!HttpUtil.isSuccess(m)){
+            return  m;
+        }
+        Map bodyMap = (HashMap<String, Object>) m.get("body");
+        String isRegister = bodyMap.get("isRegister").toString();
+        if(!"Y".equals(isRegister)){//未注册
+            return fail(ConstUtil.ERROR_CODE, "账号未注册");
+        }
+        cachemap.put("userId", userId);
+
+
+        //4.token绑定
+        Map<String, Object> bindMap = new HashMap<String, Object>();
+        bindMap.put("userId", userId);//内部userId
+        bindMap.put("token", token);
+        bindMap.put("channel", "11");
+        bindMap.put("channelNo", channelNo);
+        Map bindresult = appServerService.saveThirdPartToken(bindMap);
+        if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+
+        //5.查询实名信息
+        Map<String, Object> custMap = new HashMap<String, Object>();
+        custMap.put("userId", userId);//内部userId
+        custMap.put("channel", "11");
+        custMap.put("channelNo", channelNo);
+        Map custresult = appServerService.queryPerCustInfo(token, custMap);
+        String custretflag = ((HashMap<String, Object>)(custresult.get("head"))).get("retFlag").toString();
+        if(!"00000".equals(custretflag) && !"C1220".equals(custretflag)){//查询实名信息失败
+            String custretMsg = ((HashMap<String, Object>)(custresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, custretMsg);
+        }
+        if("C1220".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
+            session.set(token, cachemap);
+
+            ///
+            Map<String, Object> cacheMap = session.get(token, Map.class);
+            logger.info("cacheMap:" +cacheMap);
+
+
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }
+        String certType = ((HashMap<String, Object>)(custresult.get("body"))).get("certType").toString();//证件类型
+        String certNo = ((HashMap<String, Object>)(custresult.get("body"))).get("certNo").toString();//身份证号
+        String custNo = ((HashMap<String, Object>)(custresult.get("body"))).get("custNo").toString();//客户编号
+        String custName = ((HashMap<String, Object>)(custresult.get("body"))).get("custName").toString();//客户名称
+        String cardNo = ((HashMap<String, Object>)(custresult.get("body"))).get("cardNo").toString();//银行卡号
+        String bankNo = ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankNo").toString();//银行代码
+        String bankName = ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankName").toString();//银行名称
+
+
+        cachemap.put("custNo", custNo);//客户编号
+        cachemap.put("custName", custName);//客户姓名
+        cachemap.put("cardNo", cardNo);//银行卡号
+        cachemap.put("bankCode", bankNo);//银行代码
+        cachemap.put("bankName", bankName);//银行名称
+        cachemap.put("idNo", certNo);//身份证号
+        cachemap.put("idType", certType);
+        session.set(token, cachemap);
+        //6.查询客户额度
+        Map<String, Object> edMap = new HashMap<String, Object>();
+        edMap.put("userId", userId);//内部userId
+        edMap.put("channelNo", channelNo);
+        edMap.put("channel", "11");
+        edMap.put("channelNo", channelNo);
+        Map edresult = appServerService.checkEdAppl(token, edMap);
+        if (!HttpUtil.isSuccess(edresult) ) {//额度校验失败
+            String retmsg = ((HashMap<String, Object>)(edresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        //获取自主支付可用额度金额
+        String crdNorAvailAmt = (String)((HashMap<String, Object>)(edresult.get("body"))).get("crdNorAvailAmt");
+        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt) ){
+            //跳转有额度页面
+            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }
+        //审批状态判断
+        String outSts = (String)((HashMap<String, Object>)(edresult.get("body"))).get("outSts");
+        if("01".equals(outSts)) {//额度正在审批中
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }else if("22".equals(outSts)) {//审批被退回
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }else if("25".equals(outSts)) {//审批被拒绝
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }else {//没有额度  额度激活
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }
+
     }
 
 }

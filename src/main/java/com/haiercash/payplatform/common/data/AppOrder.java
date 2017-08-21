@@ -9,6 +9,7 @@ import java.util.List;
 
 public class AppOrder {
 	private String orderNo;// 订单1号
+	private String mallOrderNo;//商城订单号
 	private String applseq;// 申请流水号（为防混淆废弃，但不能删）
 	private String idTyp;// 客户证件类型
 	private String idNo;// 客户证件号码
@@ -1277,6 +1278,14 @@ public class AppOrder {
 
 	public void setAppOrderGoodsList(List<AppOrderGoods> appOrderGoodsList) {
 		this.appOrderGoodsList = appOrderGoodsList;
+	}
+
+	public String getMallOrderNo() {
+		return mallOrderNo;
+	}
+
+	public void setMallOrderNo(String mallOrderNo) {
+		this.mallOrderNo = mallOrderNo;
 	}
 
 	@Override
