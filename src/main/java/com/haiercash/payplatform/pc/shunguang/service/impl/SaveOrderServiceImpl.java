@@ -63,7 +63,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 //        String areaCode = (String) map.get("areaCode");//区编码
         String token = "e36a9141-7644-4715-bce5-5750f49ebbb4";
         String channel = "11";
-        String channelNo = "46";
+        String channelNo = "35";
         String applyTnr = "12";//借款期限
         String applyTnrTyp = "12";//期限类型（若天则传D）
         String areaCode = "370201";//区编码
@@ -85,12 +85,12 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         appOrderGoods.setGoodsKind("JY");//商品类型
         appOrderGoods.setGoodsName("JY");//商品名称
         appOrderGoods.setGoodsNum("1");//商品数量
-        appOrderGoods.setGoodsPrice("3000");//单价
+        appOrderGoods.setGoodsPrice("300");//单价
         appOrderGoodsList.add(appOrderGoods);
         //
         //AppOrder appOrder = new AppOrder();
         appOrder.setTypCde("17035a");//贷款品种代码
-        appOrder.setApplyAmt("3000");//借款总额  ???  TODO!!!!!
+        appOrder.setApplyAmt("300");//借款总额  ???  TODO!!!!!
         appOrder.setDeliverAddr("山东青岛崂山");//送货地址
         appOrder.setDeliverProvince("370000");//送货地址省
         appOrder.setDeliverCity("370200");//送货地址市
@@ -136,6 +136,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
         String custName = (String) custresult.get("custName");
         String custNo = (String) custresult.get("custNo");
+        logger.info("客户编号：" +custNo + "   客户姓名：" + custName);
         String certNo = (String) custresult.get("certNo");
         String mobile = (String) custresult.get("mobile");
         //获取订单金额

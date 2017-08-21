@@ -279,7 +279,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         /**现住房信息 星巢贷、大数据、美分期统一传99（其他）**/
         if (channelType == ChannelType.Micron
                 || channelType == ChannelType.BigData
-                || channelType == ChannelType.LoveByStage) {
+                || channelType == ChannelType.LoveByStage
+                || channelType == ChannelType.Shunguang) {
             apptmap.put("live_info", "99");
         }
         // 现住房性质缺省值10 (无)

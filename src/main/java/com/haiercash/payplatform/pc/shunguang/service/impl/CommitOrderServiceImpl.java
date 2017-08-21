@@ -51,11 +51,23 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
      */
     @Override
     public Map<String, Object> commitOrder(Map<String, Object> map) {
-        String channel = (String) map.get("channel");
-        String channelNo = (String) map.get("channelNo");
-        String token = (String) map.get("token");
+//        String channel = (String) map.get("channel");
+//        String channelNo = (String) map.get("channelNo");
+//        String token = (String) map.get("token");
+//        String orderNo = (String) map.get("orderNo");
+//        String msgCode = (String) map.get("msgCode");
+//        String applSeq = (String) map.get("applSeq");
 
-        //1.签订注册及征信协议
+        String channel = "11";
+        String token = "e36a9141-7644-4715-bce5-5750f49ebbb4";
+        String orderNo = "4d75689a391d43c7bbc2979f021c159f";
+        String msgCode = "1265240";
+        String applSeq = "1265254";
+        String custNo = "C201708110701812339790";
+        String channelNo = super.getChannelNo();
+        System.out.println(channelNo);
+
+//        //1.签订注册及征信协议
 //        Map<String, Object> agreementmap = new HashMap<String, Object>();
 //        agreementmap.put("orderNo", orderNo);//订单号
 //        agreementmap.put("msgCode", msgCode);//短信验证码
@@ -83,8 +95,18 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
 
         //5.订单提交
+        // 获取订单对象
+        AppOrdernoTypgrpRelation relation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
 
-        return success();
+        if (relation == null) {
+            logger.debug("订单编号为" + orderNo + "的订单不存在！");
+            // 暂时修改为订单不存在默认返回成功 2016年11月23日 11:16:08
+            return success();
+            // return fail("04", "所提交的订单不存在！");
+        }
+        applSeq = relation.getApplSeq();
+        Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", msgCode, null, relation.getTypGrp());
+        return result;
     }
 
 
@@ -200,11 +222,6 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
                 //直接取订单中的手机号
                 //个人版的手机号校验规则：验证的时候取绑定的手机号，并把绑定的手机号更新至订单。
                 this.updateAppOrderMobile(apporder, getToken());
-                //TODO！！！！校验短信验证码
-//                String checkVerifyNoResult = FileSignUtil.checkVerifyNo(apporder.getIndivMobile(), msgCode);
-//                if (!"00000".equals(checkVerifyNoResult)) {
-//                    return fail("06", checkVerifyNoResult);
-//                }
             }
         }
 
@@ -218,58 +235,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             Map<String, Object> result = cmisApplService.commitBussiness(apporder.getApplSeq(), apporder);
             logger.debug("订单提交commitBussiness方法返回：" + result);
             return success(result);
-//            HashMap<String, Object> hm = new HashMap<>();
-//            if (HttpUtil.isSuccess(result)) {
-//                try {
-//                    if (!StringUtils.isEmpty(super.getChannel()) && super.getChannel().equals("16")) {
-//                        // 如果是星巢贷的订单，应通知信贷更新营销人员信息
-//                        // 判断渠道进件成功
-//                        logger.debug(
-//                                "星巢贷业务，营销人员信息：promCde=" + apporder.getPromCde() + "/promDesc=" + apporder
-//                                        .getPromDesc()
-//                                        + "/promPhone="
-//                                        + apporder.getPromPhone());
-//                        Map<String, Object> redStarRiskInfo = cmisApplService.updateRedStarRiskInfo(apporder);
-//                        logger.debug("星巢贷业务通知信贷更新营销人员信息结果：" + redStarRiskInfo);
-//                    }
-
-//                    // 提交合同签章
-//                    logger.debug("提交合同签章请求开始:" + orderNo);
-//                    Map<String, Object> resultMap = caSignService.caSignRequest(orderNo, clientId, "1");
-//                    logger.debug("提交合同签章请求结束:" + orderNo);
-//                    logger.debug("合同签章结束后返回：" + resultMap);
-//                    if ("err".equals(resultMap.get("resultCode"))) {
-//                        logger.error("提交合同签章失败:" + resultMap.get("resultMsg"));
-//                    }
-//
-//                    hm.put("orderNo", orderNo);
-//                    hm.put("isDeleteAppl", "0");// 避免调用贷款取消接口
-//                } catch (Exception e) {
-//                    logger.error("提交合同签章并删除订单发生未知异常:" + e.getMessage());
-//                    throw e;
-//                }
-                // 返回申请流水号
-//                result.clear();
-                /* 提交订单成功年后删除共同还款人替代影像信息
-                if (apporder.getSource().equals("1")) {
-                    attachService.deleteCommonReplaceImage(apporder.getApplSeq(), apporder.getCommonCustNo(), apporder.getTypCde());
-                }*/
-//                result.put("applSeq", apporder.getApplSeq());
-//                result.put("applCde", apporder.getApplCde());
-//                logger.debug("提交订单成功:" + orderNo);
-//                return success(result);
-//            } else {
-//                Map<String, Object> mapHead = (Map) result.get("head");
-//                return fail("15", "提交订单失败，" + mapHead.get("retMsg"));
-//            }
         }
-//        else if (opType.equals("2")) {
-//            Map<String, Object> submitResult = orderService.submitOrder(orderNo, "1", riskJson);
-//            if (!HttpUtil.isSuccess(submitResult)) {
-//                logger.info("订单提交到商户失败,applSeq:" + applSeq + ",result:" + submitResult);
-//            }
-//            return submitResult;
-//        }
         else {
             return fail("05", "订单提交类型不正确");
         }

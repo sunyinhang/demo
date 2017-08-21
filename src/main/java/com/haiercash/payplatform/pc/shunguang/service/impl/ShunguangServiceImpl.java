@@ -82,12 +82,20 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
      * @return 处理结果Map
      */
     private Map<String, Object> savePeopleInfo(Map<String, Object> info) {
+        String applyNo = (String) info.get("applyNo");//交易流水号
+        String channelNo = info.get("channelNo").toString();
+        String tradeCode = (String) info.get("tradeCode");//交易编码
+        String data = (String) info.get("data");//交易信息
+        String key = (String) info.get("key");
+
+//        String userId = (String) info.get("userId");
+//        String data = (String) info.get("data");
         String userId = (String) info.get("userId");//集团userId
         String data = (String) info.get("data");
 
         String params;
         try {
-            params = this.decryptData(data, super.getChannelNo());
+            params = this.decryptData(data, channelNo, key);
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
@@ -95,6 +103,22 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> userIdinfo = getUserId(userId);
         JSONObject body = new JSONObject(userIdinfo.get("body"));
         String userIdInfo = body.getString("userId");
+        logger.info("客户推送接口请求数据：" + params);
+        JSONObject json = new JSONObject(params);
+        String userid = (String) json.get("userid");
+        String body = json.get("body").toString();
+
+        //获取userId
+//        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(userid));
+//        if (!HttpUtil.isSuccess(userInforesult)) {
+//            logger.info("获取userId失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
+//        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
+//        String bodystr = resultMap.get("body").toString();
+//        Map<String, Object> bodyMap = HttpUtil.json2Map(bodystr);
+//        String userId = bodyMap.get("userId").toString();//统一认证内userId
+        String userId = "1000030088";
         // 获取实名认证信息
         Map<String, Object> custInfo = crmService.queryPerCustInfoByUserId(userIdInfo);
         if (!HttpUtil.isSuccess(custInfo)) {
@@ -103,10 +127,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         logger.info("用户" + userId + "实名信息:" + custInfo);
         Map<String, Object> custBody = (Map<String, Object>) custInfo.get("body");
         Map<String, Object> requestParams = new HashMap<>();
-        requestParams.put("channelno", info.get("channelNo"));
+        requestParams.put("channelno", channelNo);
         requestParams.put("applseq", null);
         requestParams.put("cardnumber", custBody.get("certNo"));
-        requestParams.put("data", new JSONObject(params));
+        requestParams.put("data", body);
         Map<String, Object> result = HttpUtil
                 .restPostMap(this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData", requestParams);
 
@@ -124,10 +148,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String channelNo = map.get("channelNo").toString();
         String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
+        String key = (String) map.get("key");
 
         String params;
         try {
-            params = this.decryptData(data, channelNo);
+            params = this.decryptData(data, channelNo, key);
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
@@ -201,10 +226,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String channelNo = map.get("channelNo").toString();
         String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
+        String key = (String) map.get("key");
 
         String params;
         try {
-            params = this.decryptData(data, channelNo);
+            params = this.decryptData(data, channelNo, key);
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
@@ -219,11 +245,29 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             Object name = custjson.get("name");
         }
 
-//        Object idNo = custjson.get("idNo");
-//        Object mobile = custjson.get("mobile");
-//        Object bankCode = custjson.get("bankCode");
-
         //1.根据token获取客户信息
+//        String userjsonstr = haierDataService.userinfo(token);
+//        if (userjsonstr == null || "".equals(userjsonstr)) {
+//            logger.info("验证客户信息接口调用失败");
+//            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+//        }
+//        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
+//        //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
+//        JSONObject userjson = new JSONObject(userjsonstr);
+//        if(!userjson.has("user_id")){
+//            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
+//        }
+//        Object uid = userjson.get("user_id");//会员id
+//        if(StringUtils.isEmpty(uid)){
+//            String error = userjson.get("error").toString();
+//            return fail(ConstUtil.ERROR_CODE, error);
+//        }
+//        String uidHaier = uid.toString();
+//        String custPhoneNo = (String) userjson.get("phone_number");
+
+        String uidHaier = "1000030088";
+        String custPhoneNo = "18525369183";
+
         String userjsonstr = haierDataService.userinfo(token);
         if (userjsonstr == null || "".equals(userjsonstr)) {
             logger.info("验证客户信息接口调用失败");
@@ -281,6 +325,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier)); //海尔集团userId
             //paramMap.put("userName", EncryptUtil.simpleEncrypt(userName == null ? "" : userName));
             Map usermap = appServerService.saveUauthUsersByHaier(paramMap);
+            String userretFlag = ((HashMap<String, Object>)(usermap.get("head"))).get("retFlag").toString();
+            if("00000".equals(userretFlag)){
+                 //注册成功
+                uidLocal = usermap.get("body").toString();//统一认证内userId
+                phoneNo = custPhoneNo;//统一认绑定手机号
+            }else if("U0160".equals(userretFlag)){
             String userretFlag = ((HashMap<String, Object>) (usermap.get("head"))).get("retFlag").toString();
             if ("00000".equals(userretFlag)) {
                 //注册成功
@@ -321,6 +371,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> bindMap = new HashMap<String, Object>();
         bindMap.put("userId", uidLocal);//内部userId
         bindMap.put("token", token);
+        bindMap.put("channel", "11");
+        bindMap.put("channelNo", channelNo);
         Map bindresult = appServerService.saveThirdPartToken(bindMap);
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -329,12 +381,19 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //5.查询实名信息
         Map<String, Object> custMap = new HashMap<String, Object>();
         custMap.put("userId", uidLocal);//内部userId
+        custMap.put("channel", "11");
+        custMap.put("channelNo", channelNo);
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
+        String custretflag = ((HashMap<String, Object>)(custresult.get("head"))).get("retFlag").toString();
+        if(!"00000".equals(custretflag) && !"C1220".equals(custretflag)){//查询实名信息失败
+            String custretMsg = ((HashMap<String, Object>)(custresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, custretMsg);
         String custretflag = ((HashMap<String, Object>) (custresult.get("head"))).get("retFlag").toString();
         if (!"00000".equals(custretflag) && !"C1120".equals(custretflag)) {//查询实名信息失败
             String custretMsg = ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, custretflag);
         }
+        if("C1220".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
         if ("C1120".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
             session.set(token, cachemap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
@@ -361,12 +420,18 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", uidLocal);//内部userId
         edMap.put("channelNo", channelNo);
+        edMap.put("channel", "11");
+        edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
+        if (!HttpUtil.isSuccess(edresult) ) {//额度校验失败
+            String retmsg = ((HashMap<String, Object>)(edresult.get("head"))).get("retMsg").toString();
         if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
             String retmsg = ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         //获取自主支付可用额度金额
+        String crdNorAvailAmt = (String)((HashMap<String, Object>)(edresult.get("body"))).get("crdNorAvailAmt");
+        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt) ){
         String crdNorAvailAmt = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("crdNorAvailAmt");
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
             //跳转有额度页面
@@ -375,6 +440,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return success(returnmap);
         }
         //审批状态判断
+        String outSts = (String)((HashMap<String, Object>)(edresult.get("body"))).get("outSts");
+        if("01".equals(outSts)) {//额度正在审批中
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token="+token;
         String outSts = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("outSts");
         if ("01".equals(outSts)) {//额度正在审批中
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
@@ -408,9 +476,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String channelNo = map.get("channelNo").toString();
         String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
+        String key = (String) map.get("key");
         String params;
         try {
-            params = this.decryptData(data, channelNo);
+            params = this.decryptData(data, channelNo, key);
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
@@ -482,10 +551,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String channelNo = (String) map.get("channelNo");
         String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
+        String key = (String) map.get("key");
 
         String params;
         try {
-            params = this.decryptData(data, channelNo);
+            params = this.decryptData(data, channelNo, key);
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
@@ -592,9 +662,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String channelNo = map.get("channelNo").toString();
         String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
+        String key = (String) map.get("key");
         String params;
         try {
-            params = this.decryptData(data, channelNo);
+            params = this.decryptData(data, channelNo, key);
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
@@ -656,7 +727,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
     }
 
-    private String decryptData(String data, String channelNo) throws Exception {
+    private String decryptData(String data, String channelNo, String key) throws Exception {
         //获取渠道公钥
         logger.info("获取渠道" + channelNo + "公钥");
         CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
@@ -666,7 +737,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 
         //请求数据解析
-        String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
+        //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
+        String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
+
         return params;
     }
 
