@@ -1,0 +1,29 @@
+<div class="wrapper loanDetails fullPage-gray" data-container="orderDetails">
+    <div class="main-01">
+      <span class="stat">待还款</span><span class="tit">订单状态</span>
+    </div>
+    <div class="main-02">
+      <span class="crdNo">{{repayApplCardNo}}</span><span class="crd">默认还款卡 <em>{{repayAccBankName}}</em></span>
+    </div>
+    <div class="main-03 margt8">
+      <div class="main-03-01"><span class="crdNo">货款编号：{{applseq}}</span>{{applyDt}}</div>
+      <div class="main-03-02">
+        <div class="main-03-02-a"><img src="./custom/themes/default/images/payByBt/product.png" alt=""></div>
+        <div class="main-03-02-b"><b>{{goodName}}</b><span>￥{{goodsPrice}}</span></div>
+        <div class="main-03-02-c">1699.67*3期</div>
+      </div>
+      <div class="main-03-03">
+        <div class="main-03-03-a">分期本金<b>{{applyAmt}}</b></div>
+        <div class="main-03-03-b">息费<b>{{xfze}}({{applyTnrTyp}}月)</b></div>
+        <div class="main-03-03-c">合计金额<b>{{ordertotal}}</b></div>
+      </div>
+    </div>
+</div>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        // util.title('');
+        util.script({
+            url: '/payByBt/orderDetails.js'
+        });
+    });
+</script>

@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.common.controller;
 
-import com.haiercash.commons.redis.Session;
+import com.haiercash.commons.redis.Cache;
 import com.haiercash.payplatform.common.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,7 +27,7 @@ public class CommonPageController extends BaseController {
     }
 
     @Autowired
-    private Session session;
+    private Cache cache;
     @Autowired
     private OCRIdentityService ocrIdentityService;
     @Autowired
@@ -386,7 +386,7 @@ public class CommonPageController extends BaseController {
     }
 
     /**
-     * 待还款信息查询(全部)
+     * 查询待提交订单列表
      *
      * @return
      */
@@ -404,6 +404,17 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> queryApplLoanInfo(@RequestBody Map<String, Object> map) {
         return InstallmentAccountService.queryApplLoanInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
+
+    /**
+     * 查询订单详情
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryOrderInfo", method = RequestMethod.POST)
+    public Map<String, Object> queryOrderInfo(@RequestBody Map<String, Object> map) {
+        return InstallmentAccountService.queryOrderInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
 
     /**
      * 删除订单

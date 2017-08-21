@@ -16,8 +16,11 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         },
         methods: {
             activeAmountFn: function(param){
-                //TODO
-                console.log(123);
+                util.redirect({
+                    title: '实名',
+                    url: '/applyQuota/checkIdCard.html',
+                    back: false
+                });
             }
         }
     });

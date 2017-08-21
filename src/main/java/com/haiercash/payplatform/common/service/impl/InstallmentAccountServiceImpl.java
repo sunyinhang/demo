@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.common.service.impl;
 
+import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.InstallmentAccountService;
@@ -7,7 +8,9 @@ import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,7 +126,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = session.get(token,Map.class);
 //        if(cacheMap.isEmpty()){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -186,7 +189,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = session.get(token,Map.class);
 //        if(cacheMap.isEmpty()){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -253,7 +256,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数outSts为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = session.get(token,Map.class);
 //        if(cacheMap.isEmpty()){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -290,6 +293,73 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         return dateAppOrderPerson;
     }
+
+    //查询订单详情
+    @Override
+    public Map<String, Object> queryOrderInfo(String token, String channelNo, String channel, Map<String, Object> map) {
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        if(!map.containsKey("orderNo")){
+            logger.info("订单号orderNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数orderNo不存在!");
+        }
+        String orderNo = (String) map.get("orderNo");
+        if(StringUtils.isEmpty(orderNo)){
+            logger.info("订单号orderNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数orderNo为空!");
+        }
+        Map req = new HashMap<String,Object>();
+        req.put("channelNo", channelNo);
+        req.put("channel", channel);
+        req.put("orderNo", orderNo);
+        logger.info("查询订单详情接口，请求数据："+req.toString());
+        Map<String, Object> queryOrderInfo = appServerService.queryOrderInfo(token, req);
+        if(queryOrderInfo == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map<String, Object> resultHeadMap = (Map<String, Object>) queryOrderInfo.get("head");
+        String retFlag = (String) resultHeadMap.get("retFlag");
+        if(!"00000".equals(retFlag)){
+            String retMsg = (String) resultHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        BigDecimal xfze = new BigDecimal(0) ;
+        BigDecimal applyAmt = new BigDecimal(0) ;
+        String ordertotal = "";
+        Map<String, Object> resMap = (Map<String, Object>) queryOrderInfo.get("body");
+        String applyTnrTyp = (String) resMap.get("applyTnrTyp");
+        if(!applyTnrTyp.equals("D") && !applyTnrTyp.equals("d") &&( applyTnrTyp != null && !"".equals(applyTnrTyp))){
+            String xfzeStr = String.valueOf(resMap.get("xfze"));//息费总额
+            if (xfzeStr.equals("null")){
+                xfze = new BigDecimal(0);
+            }else{
+                xfze = new BigDecimal(xfzeStr);
+            }
+            String applyAmtStr = String.valueOf(resMap.get("applyAmt"));//借款总额
+            if (applyAmtStr.equals("null")){
+                applyAmt = new BigDecimal(0);
+            }else{
+                applyAmt = new BigDecimal(applyAmtStr);
+            }
+            BigDecimal total = new BigDecimal(0);
+            total = xfze.add(applyAmt);
+            ordertotal =  total.divide(new BigDecimal(1) , 2,BigDecimal.ROUND_HALF_UP) + "";
+            resMap.put("ordertotal", ordertotal);
+        }
+        return success(resMap);
+    }
+
 
     //删除订单
     @Override

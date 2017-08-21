@@ -1,21 +1,21 @@
-<component is="bv-layout" class="bv-align-center fullPage gray" data-container="myAmount">
+<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="myAmount">
     <quota-state v-bind="config" @on-click="goShopFn"></quota-state>
     <div class="amountInfo">
-        <div class="verLine verLinebg">
-            <ul class="bill"  data-redirect="installmentBill1.html">
+        <div class="myBill">
+            <ul class="bill"  data-redirect="/payByBt/installmentBill.html">
                 <li class="li1">我的账单</li>
                 <li class="li2">本月应还：</li>
                 <li class="li3 liorg">&yen;528.00</li>
             </ul>
         </div>
-        <div class="verLine">
-            <ul class="bill" data-redirect="myAmountView.html">
+        <div class="line"></div>
+        <div class="myQuota">
+            <ul class="bill" data-redirect="/payByBt/myAmountView.html">
                 <li class="li1">我的额度</li>
                 <li class="li2">可用额度：</li>
                 <li class="li3 liblue">&yen;100,000.00</li>
             </ul>
         </div>
-        <div class="clear"></div>
     </div>
 </component>
 <script type="text/javascript">
