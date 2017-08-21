@@ -74,8 +74,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             logger.info("idNo为空");
             return fail(ConstUtil.ERROR_CODE, "idNo为空!");
         }
-        page = Integer.parseInt((String) map.get("page"));
-        size = Integer.parseInt((String) map.get("size"));
+        page = (Integer) map.get("page");
+        size = (Integer) map.get("size");
         Map req = new HashMap<String,Object>();
         req.put("channelNo", channelNo);
         req.put("channel", channel);

@@ -97,8 +97,8 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             util.post({
                 url: '/queryAllLoanInfo',
                 data: {
-                    page: '1',
-                    size: '3'
+                    page: 1,
+                    size: 3
                 },
                 success: function(res){
                     var data = util.data(res);
