@@ -152,7 +152,7 @@ public class OCRIdentityTC {
         {
             try {
                 strResult = new String(jsonbuf,"GBK");//此处只能GBK 编码
-                logger.info("天诚OCR身份证识别成功,返回值:" + strResult);
+                //logger.info("天诚OCR身份证识别成功,返回值:" + strResult);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 logger.info("天诚OCR身份证识别：识别出现异常："+e.getMessage());

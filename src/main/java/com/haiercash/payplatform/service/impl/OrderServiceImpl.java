@@ -320,7 +320,8 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         if (channelType == ChannelType.Personal
                 || channelType == ChannelType.Micron
                 || channelType == ChannelType.BigData
-                || channelType == ChannelType.LoveByStage) {
+                || channelType == ChannelType.LoveByStage
+                || channelType == ChannelType.Shunguang) {
             applInfMap.put("purpose", "SALE");
         }
         // 用户选择其他用途时，自动修改为：SALE、消费
@@ -443,7 +444,11 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             result.put("sysFlag", "18");
             result.put("channelNo", "42");
         }
-
+        //顺逛Ｈ５
+        if ("46".equals(appOrder.getChannelNo())) {
+            result.put("sysFlag", "11");
+            result.put("channelNo", "46");
+        }
         // 如果为空，设置默认值》
         if (StringUtils.isEmpty(result.get("sysFlag"))) {
             result.put("sysFlag", "04");

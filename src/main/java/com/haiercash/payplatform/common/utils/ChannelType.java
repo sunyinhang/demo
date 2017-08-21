@@ -36,6 +36,10 @@ public enum ChannelType {
      */
     LoveByStage(null, "35", null),
     /**
+     * 顺逛H5
+     */
+    Shunguang(null, "46", null),
+    /**
      * 够花
      */
     EnoughSpend("18", "42", null);
