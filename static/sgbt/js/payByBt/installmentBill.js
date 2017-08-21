@@ -1,5 +1,4 @@
 require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const) {
-    var pageSize = 20;
     /*var count = 0;
     var items = [];
     for (var i=0; i<8; i++) {
@@ -37,6 +36,9 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
     var vm = util.bind({
         container: 'installmentBill',
         data: {
+            currentIndex: 0,
+            pageNo: 1,
+            pageSize: 3,
             tags: {
                 tabsKey: 'installmentBillTabs',
                 listKey: 'installmentBillList'
@@ -67,9 +69,10 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                 type: 'media',
                 /// title: 'xxxx',
                 items: [
-                ]
-                /*infinite: function () {
-                    var items = [];
+                ],
+                infinite: function () {
+                    vm.onActive(vm.currentIndex, true, this);
+                    /*var items = [];
                     for (var i=0; i<10; i++) {
                         items.push({
                             title: '标题' + (count*10 + i),
@@ -81,28 +84,33 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                         this.load(items, false);
                     } else {
                         this.load(items, true);
-                    }
-                }*/
+                    }*/
+                }
             }
         },
         methods: {
-            onActive: function (index) {
+            onActive: function (index, pagination, _vm) {
                 /*util.refresh({
                     vm: util.vm(vm, vm.tags.listKey),
                     title: '第' + (index + 1) + '个',
                     items: util.clone(items)
                 });*/
+                if (!pagination) {
+                    this.currentIndex = index;
+                    this.pageNo = 1;
+                } else {
+                    this.pageNo++;
+                }
                 if (index === 0) {
                     // 全部
                     util.post({
                         url: '/queryAllLoanInfo',
                         data: {
-                            page: 1,
-                            size: pageSize
+                            page: this.pageNo,
+                            size: this.pageSize
                         },
                         success: function(res){
-                            var data = util.data(res);
-                            vm.refresh(data);
+                            vm.refresh(util.data(res), pagination, _vm);
                         },
                         error: function () {
                             util.refresh({
@@ -116,12 +124,11 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     util.post({
                         url: '/queryPendingLoanInfo',
                         data: {
-                            page: 1,
-                            size: pageSize
+                            page: this.pageNo,
+                            size: this.pageSize
                         },
                         success: function(res){
-                            var data = util.data(res);
-                            vm.refresh(data);
+                            vm.refresh(util.data(res), pagination, _vm);
                         },
                         error: function () {
                             util.refresh({
@@ -135,12 +142,11 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     util.post({
                         url: '/queryPendingRepaymentInfo',
                         data: {
-                            page: 1,
-                            size: pageSize
+                            page: this.pageNo,
+                            size: this.pageSize
                         },
                         success: function(res){
-                            var data = util.data(res);
-                            vm.refresh(data);
+                            vm.refresh(util.data(res), pagination, _vm);
                         },
                         error: function () {
                             util.refresh({
@@ -154,12 +160,12 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     util.post({
                         url: '/queryApplLoanInfo',
                         data: {
-                            page: 1,
-                            size: pageSize
+                            page: this.pageNo,
+                            size: this.pageSize,
+                            outSts: '01'
                         },
                         success: function(res){
-                            var data = util.data(res);
-                            vm.refresh(data);
+                            vm.refresh(util.data(res), pagination, _vm);
                         },
                         error: function () {
                             util.refresh({
@@ -170,7 +176,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     });
                 }
             },
-            refresh: function (data) {
+            refresh: function (data, pagination, _vm) {
                 if (data && data.orders && data.orders.length > 0) {
                     var items = [];
                     for (var i=0; i<data.orders.length; i++) {
@@ -206,10 +212,18 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                             }
                         );
                     }
-                    util.refresh({
-                        vm: util.vm(vm, vm.tags.listKey),
-                        items: items
-                    });
+                    if (!pagination) {
+                        util.refresh({
+                            vm: util.vm(vm, vm.tags.listKey),
+                            items: items
+                        });
+                    } else {
+                        _vm.load(items, true);
+                    }
+                } else {
+                    if (pagination) {
+                        _vm.load([], false);
+                    }
                 }
             }
         },
