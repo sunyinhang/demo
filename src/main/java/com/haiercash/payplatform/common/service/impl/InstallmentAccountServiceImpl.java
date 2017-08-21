@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.InstallmentAccountService;
@@ -57,15 +56,15 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if(cacheMap.isEmpty()){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-        //TODO 总入口需查询客户信息数据
-//        String crtUsr = (String)cacheMap.get("userId");
-//        String idNo = (String) cacheMap.get("idNo");//身份证号
-        String crtUsr = "15264826872";
-        String idNo = "37040319910722561X";
+        if(cacheMap.isEmpty()){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //总入口需查询客户信息数据
+        String crtUsr = (String)cacheMap.get("userId");
+        String idNo = (String) cacheMap.get("idNo");//身份证号
+//        String crtUsr = "15264826872";
+//        String idNo = "37040319910722561X";
         if(crtUsr == null || "".equals(crtUsr)){
             logger.info("crtUsr为空");
             return fail(ConstUtil.ERROR_CODE, "UserID为空!");
@@ -127,14 +126,14 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token,Map.class);
-//        if(cacheMap.isEmpty()){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-        //TODO 总入口需查询客户信息数据
-        //        String custNo = (String)cacheMap.get("custNo");
-        String custNo = "C201708090109301402340";
-        custNo = (String) map.get("custNo");
+        if(cacheMap.isEmpty()){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //总入口需查询客户信息数据
+        String custNo = (String)cacheMap.get("custNo");
+//        String custNo = "C201708090109301402340";
+//        custNo = (String) map.get("custNo");
         if(custNo == null || "".equals(custNo)){
             logger.info("custNo为空");
             return fail(ConstUtil.ERROR_CODE, "custNo为空!");
@@ -190,14 +189,14 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token,Map.class);
-//        if(cacheMap.isEmpty()){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-        //TODO 总入口需查询客户信息数据
-        //        String idNo = (String)cacheMap.get("idNo");
-        String idNo = "37040319910722561X";
-        idNo = (String) map.get("idNo");
+        if(cacheMap.isEmpty()){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //总入口需查询客户信息数据
+        String idNo = (String)cacheMap.get("idNo");
+//        String idNo = "37040319910722561X";
+//        idNo = (String) map.get("idNo");
         if(idNo == null || "".equals(idNo)){
             logger.info("idNo为空");
             return fail(ConstUtil.ERROR_CODE, "idNo为空!");
@@ -257,14 +256,14 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token,Map.class);
-//        if(cacheMap.isEmpty()){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-        //TODO 总入口需查询客户信息数据
-        //        String idNo = (String)cacheMap.get("idNo");
-        String idNo = "37040319910722561X";
-        idNo = (String) map.get("idNo");
+        if(cacheMap.isEmpty()){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //总入口需查询客户信息数据
+        String idNo = (String)cacheMap.get("idNo");
+//        String idNo = "37040319910722561X";
+//        idNo = (String) map.get("idNo");
         if(idNo == null || "".equals(idNo)){
             logger.info("idNo为空");
             return fail(ConstUtil.ERROR_CODE, "idNo为空!");
@@ -383,10 +382,10 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if(cacheMap.isEmpty()){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
+        if(cacheMap.isEmpty()){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
         Map req = new HashMap<String,Object>();
         req.put("channelNo", channelNo);
         req.put("channel", channel);
