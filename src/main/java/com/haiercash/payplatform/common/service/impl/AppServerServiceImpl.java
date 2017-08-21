@@ -574,9 +574,9 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //1.27(GET) 根据集团用户id查询用户信息
     public Map<String, Object> getUserId(String token, Map<String, Object> paramMap) {
-        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/queryHaierUserInfo";
+        String url = EurekaServer.UAUTH + "/app/uauth/queryHaierUserInfo";
         logger.info("根据集团用户id查询用户信息：" + url);
-        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("根据集团用户id查询用户信息：" + map);
         return map;
     }
