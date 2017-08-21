@@ -70,8 +70,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "UserID为空!");
         }
         if(idNo == null || "".equals(idNo)){
-            logger.info("idNo为空");
-            return fail(ConstUtil.ERROR_CODE, "idNo为空!");
+            logger.info("idCard为空");
+            return fail(ConstUtil.ERROR_CODE, "idCard为空!");
         }
         page = (Integer) map.get("page");
         size = (Integer) map.get("size");
@@ -194,12 +194,12 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //总入口需查询客户信息数据
-        String idNo = (String)cacheMap.get("idNo");
+        String idNo = (String)cacheMap.get("idCard");
 //        String idNo = "37040319910722561X";
 //        idNo = (String) map.get("idNo");
         if(idNo == null || "".equals(idNo)){
-            logger.info("idNo为空");
-            return fail(ConstUtil.ERROR_CODE, "idNo为空!");
+            logger.info("idCard为空");
+            return fail(ConstUtil.ERROR_CODE, "idCard为空!");
         }
         page = (Integer) map.get("page");
         size = (Integer) map.get("size");
@@ -262,12 +262,12 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //总入口需查询客户信息数据
-        String idNo = (String)cacheMap.get("idNo");
+        String idNo = (String)cacheMap.get("idCard");
 //        String idNo = "37040319910722561X";
 //        idNo = (String) map.get("idNo");
         if(idNo == null || "".equals(idNo)){
-            logger.info("idNo为空");
-            return fail(ConstUtil.ERROR_CODE, "idNo为空!");
+            logger.info("idCard为空");
+            return fail(ConstUtil.ERROR_CODE, "idCard为空!");
         }
         String outSts = (String) map.get("outSts");
         page = (Integer) map.get("page");
