@@ -368,6 +368,11 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         if (!StringUtils.isEmpty(appOrder.getIdNo()) && StringUtils.isEmpty(appOrder.getIdTyp())) {
             appOrder.setIdTyp("20");
         }
+
+        // 顺逛白条月均收入默认5000
+        if ("46".equals(super.getChannelNo()) ) {
+            orderMap.put("IndivMthInc", "5000");
+        }
     }
 
     public Map<String, Object> getSysFlagAndChannelNo(AppOrder appOrder) {

@@ -42,7 +42,11 @@ public enum ChannelType {
     /**
      * 够花
      */
-    EnoughSpend("18", "42", null);
+    EnoughSpend("18", "42", null),
+    /**
+     * 顺逛白条.
+     */
+    ShunguangBaitiao("11", "46", null);
 
     private String channel;
     private String channelNo;
