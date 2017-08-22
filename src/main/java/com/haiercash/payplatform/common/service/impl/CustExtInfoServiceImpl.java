@@ -421,13 +421,12 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         InputStream inputStream = iconImg.getInputStream();
         //TODO
-        //StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(docCde).append(File.separator);//        D:/JavaProjects/PayPlatform/payplatform/static/sgbt/images/crm/image/C201708010722561X68720\DOC001\a1f4d50d8b6743e58a3c3fdc206fb184.jpg;
-        StringBuffer filePath = new StringBuffer(face_DataImg_url);
+        StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(docCde).append(File.separator);//        D:/JavaProjects/PayPlatform/payplatform/static/sgbt/images/crm/image/C201708010722561X68720\DOC001\a1f4d50d8b6743e58a3c3fdc206fb184.jpg;
+//        StringBuffer filePath = new StringBuffer(face_DataImg_url);
         createDir(String.valueOf(filePath));
         String filestreamname = custNo + ".jpg";
         String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-        //TODO
-        fileName = "1111";
+//        fileName = "1111";
         filePath = filePath.append(fileName).append(".jpg"); // 测试打开
         FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
         byte[] bufferOut = new byte[1024];
