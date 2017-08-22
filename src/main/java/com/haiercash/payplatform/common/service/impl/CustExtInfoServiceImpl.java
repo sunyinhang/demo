@@ -301,7 +301,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存联系人二**************开始");
         Integer id_two = (Integer) params.get("id_two");
         if ( id_two !=null   && !"null".equals(id_two)) {
-            custparamMap_one.put("id", id_two);// 联系人ID
+            custparamMap_two.put("id", id_two);// 联系人ID
         }
         custparamMap_two.put("channelNo", channelNo);// 渠道
         custparamMap_two.put("channel", channel);
