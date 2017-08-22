@@ -64,7 +64,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         //TODO 总入口需查询客户信息数据
         String custNo = (String)cacheMap.get("custNo");
         String userId = (String)cacheMap.get("userId");
-        String custName = (String)cacheMap.get("custName");
+        String custName = (String)cacheMap.get("name");
         String idNumber = (String)cacheMap.get("idCard"); //身份证
 //        String custNo = "C201708010722561X68720";
 //        String userId = "15264826872";
