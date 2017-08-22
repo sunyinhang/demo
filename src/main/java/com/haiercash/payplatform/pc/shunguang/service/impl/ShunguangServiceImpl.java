@@ -674,7 +674,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 //        }
 //        String idNo = (String) cacheMap.get("idNo");//客户证件号码
-        String idNo="372926199009295116";
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
+            logger.info("验证客户信息接口调用失败");
+            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+        }
+        JSONObject userjson = new JSONObject(userjsonstr);
+        String idNo = (String) userjson.get("idNo");//客户证件号码
+       // String idNo="372926199009295116";
         String idTyp = "20";//证件类型  身份证：20
         if (StringUtils.isEmpty(idNo) || StringUtils.isEmpty(channelNo)) {
             logger.info("获取的数据为空：idNo=" + idNo + "  ,channelNo" + channelNo);
