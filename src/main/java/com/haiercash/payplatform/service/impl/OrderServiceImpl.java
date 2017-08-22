@@ -320,9 +320,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         }
         ChannelType channelType = ChannelType.forName(null, appOrder.getChannelNo(), appOrder.getSource());
         // 个人版、美凯龙、大数据、美分期固定为：SALE、消费
-        if (channelType == ChannelType.Personal
-                || channelType == ChannelType.Micron
-                || channelType == ChannelType.BigData
+        if ( channelType == ChannelType.BigData
                 || channelType == ChannelType.LoveByStage
                 || channelType == ChannelType.Shunguang) {
             applInfMap.put("purpose", "SALE");
@@ -370,7 +368,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         }
 
         // 顺逛白条月均收入默认5000
-        if ("46".equals(super.getChannelNo()) ) {
+        if (channelType == ChannelType.Shunguang) {
             orderMap.put("IndivMthInc", "5000");
         }
     }
