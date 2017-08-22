@@ -557,7 +557,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
 
-    //post)信息完整查询接口
+    //(post)信息完整查询接口
     @Override
     public Map<String, Object> checkIfMsgComplete(String token, Map<String, Object> paramMap) {
         String tag = (String) paramMap.get("tag");
