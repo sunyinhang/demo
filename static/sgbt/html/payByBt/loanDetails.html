@@ -26,7 +26,7 @@
         <li v-for="(item , index) in items" class='selected border-bottom'>
           <em></em>
           <div class="eachOrder"><b>￥{{item.amount}}</b><p>[{{index}}/{{item.psPerdNo}}]{{goodsName}}</p></div>
-          <span>剩余{{item.days}}天</span>
+          <span> {{item.days >= 0 ?  '剩余' + item.days '天' : '逾期 '+ item.days) +'天'}}</span>
         </li>
       </ul>
     </div>
