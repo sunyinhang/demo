@@ -117,6 +117,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         //xmllog.info("调用外联人脸识别接口，请求数据：" + json.toString());
         String resData = HttpClient.sendJson(url, json.toString());
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
+        //resData = "{\"code\":\"0000\",\"message\":\"{\\\"user_check_result\\\":\\\"3\\\",\\\"msg\\\":\\\"比对服务处理成功\\\",\\\"requestId\\\":\\\"d77b77852fe728c13b7114dbd5c448d9\\\",\\\"code\\\":\\\"1001\\\",\\\"entity\\\":{\\\"score\\\":\\\"83.23\\\",\\\"desc\\\":\\\"是同一个人\\\"}}\",\"data\":null}";
         //{"code":"0000","data":[],"message":"{\"msg\":\"账号密码不匹配\",\"code\":\"-1\"}"}
         //{"code":"0000","data":[],"message":"{\"msg\":\"未检测到脸\",\"code\":\"-2\"}"}
         //{"code":"0000","message":"{\"msg\":\"请求参数错误，缺少必要的参数\",\"code\":\"9990\"}","data":null}
@@ -134,7 +135,10 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         JSONObject jsonmsg = new JSONObject(message);
         String code = jsonmsg.getString("code");
         if("1001".equals(code)){
-            score = new JSONObject(jsonmsg.getString("entity")).getString("score");
+            String entity = jsonmsg.get("entity").toString();
+            JSONObject jsonn = new JSONObject(entity);
+            score = jsonn.get("score").toString();
+            //score = new JSONObject(jsonmsg.getString("entity")).getString("score");
         }
 
         //人脸识别成功。将图片上送到app后台
@@ -424,16 +428,16 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         pwdmap.put("channel", channelNo);
         pwdmap.put("channelNo", channelNo);
         Map<String, Object> resultmap = appServerService.validateUserFlag(token, pwdmap);
-        JSONObject headjson = new JSONObject(resultmap.get("head"));
-        String retFlag = headjson.getString("retFlag");
-        String retMsg = headjson.getString("retMsg");
+        Map headjson = (HashMap<String, Object>) resultmap.get("head");
+        String retFlag = (String) headjson.get("retFlag");
+        String retMsg = (String) headjson.get("retMsg");
         if(!"00000".equals(retFlag)){
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
         logger.info("上传手持身份证**********************成功");
-        JSONObject bodyjson = new JSONObject(resultmap.get("body"));
-        String payPasswdFlag = bodyjson.getString("payPasswdFlag");
+        Map bodyjson = (HashMap<String, Object>) resultmap.get("body");
+        String payPasswdFlag = (String) bodyjson.get("payPasswdFlag");
         if (payPasswdFlag.equals("1")) {// 1：已设置
             cacheMap.put("payPasswdFlag", "1");
             session.set(token, cacheMap);

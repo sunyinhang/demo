@@ -171,7 +171,7 @@ public class HttpUtil {
                 .reduce((p1, p2) -> p1 + "&" + p2)
                 .map(s -> "?" + s)
                 .orElse("");
-        return restExchangeMap(HttpMethod.GET, url + param, token, null, Integer.valueOf(responseCode));
+        return restExchangeMap(HttpMethod.GET, url + param, token, map, Integer.valueOf(responseCode));
     }
 
     public static Map<String, Object> restGetMap(String url) {
