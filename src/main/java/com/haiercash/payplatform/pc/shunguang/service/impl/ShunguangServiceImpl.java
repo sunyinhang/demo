@@ -419,35 +419,61 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         logger.info("额度申请状态数据解析返回数据：" + params);
         JSONObject json = new JSONObject(params);
         String token = (String) json.get("token");
-        Map<String, Object> cacheEdmap = session.get(token, Map.class);
-        String userId = (String) cacheEdmap.get("userId");
+        //1.根据token获取客户信息
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
+            logger.info("验证客户信息接口调用失败");
+            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+        }
+        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
+        //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
+        JSONObject userjson = new JSONObject(userjsonstr);
+        if(!userjson.has("user_id")){
+            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
+        }
+        Object uid = userjson.get("user_id");//会员id
+        if(StringUtils.isEmpty(uid)){
+            String error = userjson.get("error").toString();
+            return fail(ConstUtil.ERROR_CODE, error);
+        }
+        String uidHaier = uid.toString();
+        Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
+        String userIdone = (String) userIdOne.get("body");//用户信息
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
         cacheedmap.put("channelNo", channelNo);
-        cacheedmap.put("userId", userId);
+        cacheedmap.put("userId", userIdone);
         Map<String, Object> mapcache = appServerService.checkEdAppl(token, cacheedmap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
+            Map<String,Object> body = (Map) mapcache.get("body");
+            String retFlag = (String) body.get("retFlag");
+            if("A1183".equals(retFlag)){
+                logger.info("没有额度申请");
+                String retmsg = "01";//未申请
+                return fail(ConstUtil.ERROR_CODE, retmsg);
+            }
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         JSONObject head = new JSONObject(mapcache.get("head"));
         String retFlag = head.getString("retFlag");
         String retMsg = head.getString("retMsg");
         if ("00000".equals(retFlag)) {
-            JSONObject body = new JSONObject(mapcache.get("body"));
-            String applType = body.getString("applType");
+            Map<String,Object> headinfo = (Map) (mapcache.get("body"));
+            String applType = (String)headinfo.get("applType");
             String retmsg = "01";//未申请
             if ("1".equals(applType)) {
                 logger.info("没有额度申请");
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             } else if ("2".equals(applType)) {
                 HashMap<Object, Object> mapone = new HashMap<>();
-                mapone.put("apprvCrdAmt", body.getString("apprvCrdAmt"));//审批总额度
-                mapone.put("applyDt", body.getString("applyDt"));//申请时间
-                mapone.put("operateTime", body.getString("operateTime"));//审批时间
-                mapone.put("appOutAdvice", body.getString("appOutAdvice"));//审批意见
-                mapone.put("applSeq", body.getString("applSeq"));//申请流水号
-                String outSts = body.getString("outSts");
+                mapone.put("apprvCrdAmt", (String)headinfo.get("apprvCrdAmt"));//审批总额度
+                mapone.put("applyDt", (String)headinfo.get("applyDt"));//申请时间
+                mapone.put("operateTime", (String)headinfo.get("operateTime"));//审批时间
+                mapone.put("appOutAdvice", (String)headinfo.get("appOutAdvice"));//审批意见
+                mapone.put("applSeq", (String)headinfo.get("applSeq"));//申请流水号
+                String outSts = (String)headinfo.get("outSts");
+                outSts="01";
                 if ("01".equals(outSts)) {//APP 审批中  01
                     mapone.put("outSts", "02");//顺逛 审批中  02
                     logger.info("返回顺狂数据：" + mapone);
@@ -567,7 +593,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("获取的参数为空：userId" + userId);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> userIdOne = getUserId(userId, channelNo);//获取用户userId
+        Map<String, Object> userIdOne = getUserId(userId);//获取用户userId
         String userIdone = (String) userIdOne.get("body");//用户信息
         // 获取实名认证信息
         Map<String, Object> custInfo = crmService.queryPerCustInfoByUserId(userIdone);
@@ -690,18 +716,19 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
     }
 
-    public Map<String, Object> getUserId(String userId, String channelNo) {
+    public Map<String, Object> getUserId(String userId) {//根据集团userId查统一认证userId
         HashMap<String, Object> map = new HashMap<>();
-        map.put("userId", userId);
-        map.put("channel", "11");
-        map.put("channelNo", channelNo);
+        map.put("externUid", EncryptUtil.simpleEncrypt(userId));
+        //map.put("channel", "11");
+        //map.put("channelNo", channelNo);
         Map<String, Object> userIdmap = appServerService.getUserId(null, map);
         if (!HttpUtil.isSuccess(userIdmap)) {
             logger.info("调集团用户id查询用户信息接口返回信息错误userIdmap" + userIdmap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        JSONObject body = new JSONObject(map.get("body"));
-        String userIdone = body.getString("userId");
+        Object body1 = userIdmap.get("body");
+        Map<String,Object> body11 = (Map) body1;
+        String userIdone = (String)body11.get("userId");
         HashMap<Object, Object> mapone = new HashMap<>();
         mapone.put("userId", userIdone);
         return success(mapone);

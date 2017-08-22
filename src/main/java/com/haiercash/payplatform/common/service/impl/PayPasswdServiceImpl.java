@@ -91,7 +91,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             JSONObject resultHead = jsonObject.getJSONObject("head");
             String retFlag = resultHead.getString("retFlag");
             String retMsg = resultHead.getString("retMsg");
-            retFlag = "00000";
+            //retFlag = "00000";
             if (!"00000".equals(retFlag)) {
                 logger.info("设置支付密码失败" + retMsg);
                 return fail(retFlag, retMsg);
