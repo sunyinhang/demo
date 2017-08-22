@@ -84,7 +84,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         paramMap.put("typCde",typCde);//贷款品种代码
         paramMap.put("custName",custName);//用户名称
         paramMap.put("noEduLocal","NO");//是否校验最高学历与户口性质
-        paramMap.put("idNo",idNumber);
+        paramMap.put("idNo",idNumber);//身份证号
         Map<String, Object> stringObjectMap = appServerService.checkIfMsgComplete(token, paramMap);
         if(stringObjectMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);

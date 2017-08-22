@@ -566,7 +566,8 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
             return null;
         }
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/" + tag + "/" + businessType + "/checkIfMsgComplete";
-        logger.info("信息完整查询接口，请求地址：" + url);
+        logger.info("信息完整查询接口，请求参数：" + url);
+        logger.info("信息完整查询接口，请求地址：" + paramMap);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("信息完整查询接口，返回数据：" + map);
         return map;
