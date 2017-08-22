@@ -731,6 +731,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, "账号未注册");
         }
         cachemap.put("userId", userId);
+        cachemap.put("phoneNo", userId);//绑定手机号
 
 
         //4.token绑定
