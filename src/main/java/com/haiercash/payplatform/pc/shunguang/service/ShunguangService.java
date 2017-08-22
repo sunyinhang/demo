@@ -42,7 +42,7 @@ public interface ShunguangService {
      * @return Map
      * @throws Exception
      */
-    Map<String, Object> edApply(Map<String, Object> map) throws Exception;//checkEdAppl
+    Map<String, Object> edApply(Map<String, Object> map) throws Exception;
 
 
     /**
@@ -82,5 +82,13 @@ public interface ShunguangService {
      * @throws Exception
      */
     Map<String, Object> edcheck(Map<String, Object> map) throws Exception;
+
+    /**
+     * 额度测试入口
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> edApplytest(Map<String, Object> map) throws Exception;
 
 }

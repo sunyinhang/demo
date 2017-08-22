@@ -51,21 +51,27 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
      */
     @Override
     public Map<String, Object> commitOrder(Map<String, Object> map) {
-//        String channel = (String) map.get("channel");
-//        String channelNo = (String) map.get("channelNo");
-//        String token = (String) map.get("token");
-//        String orderNo = (String) map.get("orderNo");
-//        String msgCode = (String) map.get("msgCode");
-//        String applSeq = (String) map.get("applSeq");
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
+        String token = (String) map.get("token");
+        String orderNo = (String) map.get("orderNo");
+        String msgCode = (String) map.get("msgCode");
+        String applSeq = (String) map.get("applSeq");
 
-        String channel = "11";
-        String token = "e36a9141-7644-4715-bce5-5750f49ebbb4";
-        String orderNo = "4d75689a391d43c7bbc2979f021c159f";
-        String msgCode = "1265240";
-        String applSeq = "1265254";
-        String custNo = "C201708110701812339790";
-        String channelNo = super.getChannelNo();
-        System.out.println(channelNo);
+        if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
+                || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(msgCode) || StringUtils.isEmpty(applSeq)){
+            logger.info("前台获取数据有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+
+//        String channel = "11";
+//        String token = "e36a9141-7644-4715-bce5-5750f49ebbb4";
+//        String orderNo = "4d75689a391d43c7bbc2979f021c159f";
+//        String msgCode = "1265240";
+//        String applSeq = "1265254";
+//        String custNo = "C201708110701812339790";
+//        String channelNo = super.getChannelNo();
+//        System.out.println(channelNo);
 
 //        //1.签订注册及征信协议
 //        Map<String, Object> agreementmap = new HashMap<String, Object>();
@@ -101,7 +107,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         if (relation == null) {
             logger.debug("订单编号为" + orderNo + "的订单不存在！");
             // 暂时修改为订单不存在默认返回成功 2016年11月23日 11:16:08
-            return success();
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             // return fail("04", "所提交的订单不存在！");
         }
         applSeq = relation.getApplSeq();

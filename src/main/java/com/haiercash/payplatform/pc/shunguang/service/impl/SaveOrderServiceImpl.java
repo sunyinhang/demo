@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.config.EurekaServer;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -54,13 +56,19 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
     @Override
     public Map<String, Object> saveOrder(Map<String, Object> map) {
-        //前端传入参数获取
+        //前端传入参数获取(放开)
 //        String token = (String) map.get("token");
 //        String channel = (String) map.get("channel");
 //        String channelNo = (String) map.get("channelNo");
 //        String applyTnr = (String) map.get("applyTnr");//借款期限
 //        String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
 //        String areaCode = (String) map.get("areaCode");//区编码
+//        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
+//                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(areaCode)){
+//            logger.info("前台获取数据有误");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
+
         String token = "e36a9141-7644-4715-bce5-5750f49ebbb4";
         String channel = "11";
         String channelNo = "35";
@@ -68,34 +76,24 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String applyTnrTyp = "12";//期限类型（若天则传D）
         String areaCode = "370201";//区编码
 
-//        String totalnormint = (String) map.get("totalNormInt");//总利息金额
-//        String totalfeeamt = (String) map.get("totalFeeAmt");//费用总额
-//        String typLevelTwo = (String) map.get("typLvlCde");//贷款品种小类
-
-        //缓存获取
+        //缓存获取（放开）
         Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if (cacheMap == null || "".equals(cacheMap)) {
-//            logger.info("Jedis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-        AppOrder appOrder = new AppOrder();
-        List<AppOrderGoods> appOrderGoodsList = new ArrayList<AppOrderGoods>();
-        AppOrderGoods appOrderGoods = new AppOrderGoods();
-        appOrderGoods.setGoodsBrand("HDJY");//商品品牌
-        appOrderGoods.setGoodsKind("JY");//商品类型
-        appOrderGoods.setGoodsName("JY");//商品名称
-        appOrderGoods.setGoodsNum("1");//商品数量
-        appOrderGoods.setGoodsPrice("300");//单价
-        appOrderGoodsList.add(appOrderGoods);
-        //
-        //AppOrder appOrder = new AppOrder();
-        appOrder.setTypCde("17035a");//贷款品种代码
-        appOrder.setApplyAmt("300");//借款总额  ???  TODO!!!!!
-        appOrder.setDeliverAddr("山东青岛崂山");//送货地址
-        appOrder.setDeliverProvince("370000");//送货地址省
-        appOrder.setDeliverCity("370200");//送货地址市
-        appOrder.setDeliverArea("370201");//送货地址区
-        appOrder.setAppOrderGoodsList(appOrderGoodsList);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        AppOrder appOrder = null;
+        try {
+            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
+            logger.info("appOrder0:" + appOrder);
+            if(appOrder == null){
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
 //        //根据token获取会员id
 //        String userjsonstr = haierDataService.userinfo(token);
@@ -118,7 +116,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 //        }
 //        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
 //        String userId = (String) ((HashMap<String, Object>)(resultMap.get("body"))).get("userId");
-        String userId = "18325423979";
+        //TODO!!!!
+        String userId = "13665477186";
         if(StringUtils.isEmpty(userId)){
             logger.info("userid没有进行绑定");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -130,7 +129,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         custMap.put("channelNo", channelNo);
         Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
         if (!HttpUtil.isSuccess(custInforesult) ) {
-            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
+            return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
         }
         String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
         com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
@@ -179,7 +178,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         appOrder.setIdTyp("20");//证件类型
         appOrder.setIdNo(certNo);//客户证件号码
         appOrder.setUserId(userId);//录单用户ID
-        appOrder.setChannelNo("46");
+        appOrder.setChannelNo(channelNo);
 
 
         //0.准入资格校验
@@ -202,32 +201,32 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //1.录单校验（所在城市开通服务）
         //获取市代码
-//        Map<String, Object > citymap = new HashMap<String, Object>();
-//        citymap.put("areaCode", areaCode);
-//        citymap.put("flag", "parent");
-//        citymap.put("channel", channel);
-//        citymap.put("channelNo", channelNo);
-//        String cityCode = this.getCode(token, citymap);
-//        if(StringUtils.isEmpty(cityCode)){
-//            logger.info("获取市编码失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-//        }
-//        //获取省代码
-//        Map<String, Object > provincemap = new HashMap<String, Object>();
-//        provincemap.put("areaCode", cityCode);
-//        provincemap.put("flag", "parent");
-//        provincemap.put("channel", channel);
-//        provincemap.put("channelNo", channelNo);
-//        String provinceCode = this.getCode(token, provincemap);
-//        if(StringUtils.isEmpty(provinceCode)){
-//            logger.info("获取省编码失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-//        }
+        Map<String, Object > citymap = new HashMap<String, Object>();
+        citymap.put("areaCode", areaCode);
+        citymap.put("flag", "parent");
+        citymap.put("channel", channel);
+        citymap.put("channelNo", channelNo);
+        String cityCode = this.getCode(token, citymap);
+        if(StringUtils.isEmpty(cityCode)){
+            logger.info("获取市编码失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        //获取省代码
+        Map<String, Object > provincemap = new HashMap<String, Object>();
+        provincemap.put("areaCode", cityCode);
+        provincemap.put("flag", "parent");
+        provincemap.put("channel", channel);
+        provincemap.put("channelNo", channelNo);
+        String provinceCode = this.getCode(token, provincemap);
+        if(StringUtils.isEmpty(provinceCode)){
+            logger.info("获取省编码失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
 
         Map<String, Object> ordercheakmap = new HashMap<String, Object>();
         ordercheakmap.put("userId", userId);
-        ordercheakmap.put("provinceCode", "370000");//TODO！！！！是否在白条页面获取
-        ordercheakmap.put("cityCode", "370200");////TODO！！！！是否在白条页面获取
+        ordercheakmap.put("provinceCode", provinceCode);//TODO！！！！是否在白条页面获取
+        ordercheakmap.put("cityCode", cityCode);////TODO！！！！是否在白条页面获取
         ordercheakmap.put("channel", channel);
         ordercheakmap.put("channelNo", channelNo);
         Map<String, Object> ordercheakresult = appServerService.getCustInfoAndEdInfoPerson(token, ordercheakmap);
@@ -275,12 +274,11 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         if (!"00000".equals(retFlag)) {
             return cityCode;
         }
-        //String result = com.alibaba.fastjson.JSONObject.toJSONString(payssresultMap);
-        com.alibaba.fastjson.JSONArray cityArray = com.alibaba.fastjson.JSONArray.parseArray(com.alibaba.fastjson.JSONObject.toJSONString(result));
-        for (int i = 0; i < cityArray.size(); i++) {
-            Object object = cityArray.get(i);
-            JSONObject jsonObject = new JSONObject(object.toString());
-            cityCode = jsonObject.get("areaCode").toString();
+        List<Map<String, Object>> body = (List<Map<String, Object>>) result.get("body");
+
+        for (int i = 0; i < body.size(); i++) {
+            Map<String, Object> m = body.get(i);
+            cityCode = m.get("areaCode").toString();
         }
         return cityCode;
     }

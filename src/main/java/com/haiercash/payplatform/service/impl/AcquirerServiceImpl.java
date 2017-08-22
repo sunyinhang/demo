@@ -582,7 +582,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
                 || channelType == ChannelType.Merchant
                 || channelType == ChannelType.BigData
                 || channelType == ChannelType.LoveByStage
-                || channelType == ChannelType.EnoughSpend) {
+                || channelType == ChannelType.EnoughSpend
+                || channelType == ChannelType.Shunguang) {
             acquirer.put("purpose", "SALE");
         }
         // 用户选择其他用途时，自动修改为：SALE、消费

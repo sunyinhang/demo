@@ -49,7 +49,9 @@ public enum OrderEnum {
     ADPHONE         ("indivMobile",     "adPhone"),     // 收货人联系方式
     CHANNEL         ("source",          "sysNo"),       // 系统标识
     CHANNEL_NO      ("channelNo",       "channelNo"),   // 渠道号
-    GOODSLIST       ("appOrderGoodsList","goodsList");   // 商品信息列表
+    GOODSLIST       ("appOrderGoodsList","goodsList"),   // 商品信息列表
+    MALLORDERNO     ("mallOrderNo",     "mallOrderNo"),  //商城订单号
+    CORDERSN        ("cOrderSn",        "cOrderSn");    //网单号
 
     private String appOrderAttr;
     private String orderAttr;

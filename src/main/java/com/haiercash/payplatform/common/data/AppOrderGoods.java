@@ -13,6 +13,7 @@ public class AppOrderGoods {
 	private String goodsModel;// 商品型号
 	private String goodsNum;// 数量
 	private String goodsPrice;// 单价
+	private String cOrderSn;//网单号
 	/**====以下字段为商品管理系统需要的字段====**/
 	@Transient
 	private String brandCode;//商品品牌代码
@@ -210,6 +211,14 @@ public class AppOrderGoods {
 
 	public void setStoreName(String[] storeName) {
 		this.storeName = storeName;
+	}
+
+	public String getcOrderSn() {
+		return cOrderSn;
+	}
+
+	public void setcOrderSn(String cOrderSn) {
+		this.cOrderSn = cOrderSn;
 	}
 
 	@Override

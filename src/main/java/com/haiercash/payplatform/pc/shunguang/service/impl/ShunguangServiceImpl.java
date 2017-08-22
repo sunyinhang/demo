@@ -1,7 +1,5 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.haiercash.commons.redis.Cache;
-import com.haiercash.commons.util.*;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.StringUtil;
 import com.haiercash.payplatform.common.config.EurekaServer;
@@ -13,7 +11,6 @@ import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.*;
-import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.BaseService;
 import com.netflix.ribbon.proxy.annotation.Http;
@@ -31,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static com.sun.corba.se.impl.util.RepositoryId.cache;
 
 /**
  * shunguang service impl.
@@ -102,34 +97,22 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String userid = (String) json.get("userid");
         String body = json.get("body").toString();
 
-        //获取userId
-//        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(userid));
-//        if (!HttpUtil.isSuccess(userInforesult)) {
-//            logger.info("获取userId失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-//        }
-//        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
-//        String bodystr = resultMap.get("body").toString();
-//        Map<String, Object> bodyMap = HttpUtil.json2Map(bodystr);
-//        String userId = bodyMap.get("userId").toString();//统一认证内userId
-        String userId = "1000030088";
-        // 获取实名认证信息
-        Map<String, Object> custInfo = crmService.queryPerCustInfoByUserId(userId);
-        if (!HttpUtil.isSuccess(custInfo)) {
-            return custInfo;
-        }
-        logger.info("用户" + userId + "实名信息:" + custInfo);
-        Map<String, Object> custBody = (Map<String, Object>) custInfo.get("body");
+
         Map<String, Object> requestParams = new HashMap<>();
+        requestParams.put("userId", userid);
         requestParams.put("channelno", channelNo);
         requestParams.put("applseq", null);
-        requestParams.put("cardnumber", custBody.get("certNo"));
-        requestParams.put("data", body);
-        Map<String, Object> result = HttpUtil
-                .restPostMap(this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData", requestParams);
+        requestParams.put("cardnumber", null);
+        requestParams.put("data", new JSONObject(body));
+        System.out.println(outplatUrl);
 
+        String url = this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData";
+        logger.info("推送外联风险信息，请求地址：" + url);
+        String resData = HttpClient.sendJson(url, (new JSONObject(requestParams)).toString());
+        logger.info("推送外联风险信息，返回数据：" + resData);
+        JSONObject result = new JSONObject(resData);
         if (!"0000".equals(result.get("code"))) {
-            return fail("02", (String) result.get("message"));
+            return fail("02", ConstUtil.ERROR_INFO);
         }
         return success();
     }
@@ -182,6 +165,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
             AppOrderGoods appOrderGoods = new AppOrderGoods();
             //appOrderGoods.setGoodsCode(goodsCode);//商品代码
+            appOrderGoods.setcOrderSn(cOrderSn);//
             appOrderGoods.setGoodsBrand(topLevel);//商品品牌
             appOrderGoods.setGoodsKind(model);//商品类型
             appOrderGoods.setGoodsName(model);//商品名称
@@ -193,6 +177,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //
 
         AppOrder appOrder = new AppOrder();
+        appOrder.setMallOrderNo(orderSn);
         appOrder.setTypCde(loanType);//贷款品种代码
         appOrder.setApplyAmt(payAmt);//借款总额  ???  TODO!!!!!
         appOrder.setDeliverAddr(detailAddress);//送货地址
@@ -207,7 +192,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("apporder", appOrder);
         session.set(token, cachemap);
         Map returnmap = new HashMap<>();
-        String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;//TODO!!!!!!
+        String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token="+token;//TODO!!!!!!
         returnmap.put("backurl", backurl);
         return success(returnmap);
     }
@@ -259,6 +244,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //        String uidHaier = uid.toString();
 //        String custPhoneNo = (String) userjson.get("phone_number");
 
+        //TODO!!!!
         String uidHaier = "1000030088";
         String custPhoneNo = "18525369183";
 
@@ -297,7 +283,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             Map usermap = appServerService.saveUauthUsersByHaier(paramMap);
             String userretFlag = ((HashMap<String, Object>)(usermap.get("head"))).get("retFlag").toString();
             if("00000".equals(userretFlag)){
-                //注册成功
+                 //注册成功
                 uidLocal = usermap.get("body").toString();//统一认证内userId
                 phoneNo = custPhoneNo;//统一认绑定手机号
             }else if("U0160".equals(userretFlag)){
@@ -414,7 +400,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //        return success(m);
     }
 
-
     //7.白条额度申请状态查询    Sg-10006    checkEdAppl
     public Map<String, Object> checkEdAppl(Map<String, Object> map) {
         logger.info("白条额度申请状态查询接口*******************开始");
@@ -425,69 +410,44 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String data = (String) map.get("data");//交易信息
         String key = (String) map.get("key");
         String params;
-//        try {
-//            params = this.decryptData(data, channelNo, key);
-//        } catch (Exception e) {
-//            logger.error(e);
-//            return fail("01", "请求数据校验失败");
-//        }
-//        logger.info("额度申请状态数据解析返回数据：" + params);
-//        JSONObject json = new JSONObject(params);
-//        String token = (String) json.get("token");
-        //Map<String, Object> cacheEdmap = session.get(token, Map.class);
-        //String userId = (String) cacheEdmap.get("userId");
-        //String userId="1000037473";
-        //1.根据token获取客户信息
-//        String userjsonstr = haierDataService.userinfo("40e61a7e-0ab1-4223-9b10-e0f39bbf6b7e");
-//        if (userjsonstr == null || "".equals(userjsonstr)) {
-//            logger.info("验证客户信息接口调用失败");
-//            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
-//        }
-        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
-        //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
-//        JSONObject userjson = new JSONObject(userjsonstr);
-//        if(!userjson.has("user_id")){
-//            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
-//        }
-//        Object uid = userjson.get("user_id");//会员id
-//        if(StringUtils.isEmpty(uid)){
-//            String error = userjson.get("error").toString();
-//            return fail(ConstUtil.ERROR_CODE, error);
-//        }
-//        String uid="1000037746";//1000037746
-//        String uidHaier = uid.toString();
-//        Map<String, Object> userId = getUserId(uidHaier);
-//        Map<String,Object> body1 = (Map) (userId.get("body"));//用户信息
-//        String userIdInfo = (String) body1.get("userId");
+        try {
+            params = this.decryptData(data, channelNo, key);
+        } catch (Exception e) {
+            logger.error(e);
+            return fail("01", "请求数据校验失败");
+        }
+        logger.info("额度申请状态数据解析返回数据：" + params);
+        JSONObject json = new JSONObject(params);
+        String token = (String) json.get("token");
+        Map<String, Object> cacheEdmap = session.get(token, Map.class);
+        String userId = (String) cacheEdmap.get("userId");
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
         cacheedmap.put("channelNo", channelNo);
-        cacheedmap.put("userId", "13290104209");
-        Map<String, Object> mapcache = appServerService.checkEdAppl("40e61a7e-0ab1-4223-9b10-e0f39bbf6b7e", cacheedmap);
+        cacheedmap.put("userId", userId);
+        Map<String, Object> mapcache = appServerService.checkEdAppl(token, cacheedmap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map<String,Object> head = (Map) mapcache.get("head");
-        String retFlag = (String)head.get("retFlag");
-        String retMsg = (String) head.get("retMsg");
+        JSONObject head = new JSONObject(mapcache.get("head"));
+        String retFlag = head.getString("retFlag");
+        String retMsg = head.getString("retMsg");
         if ("00000".equals(retFlag)) {
-            Map<String,Object> headinfo = (Map) (mapcache.get("body"));
-            String applType = (String)headinfo.get("applType");
-            applType="2";
+            JSONObject body = new JSONObject(mapcache.get("body"));
+            String applType = body.getString("applType");
             String retmsg = "01";//未申请
             if ("1".equals(applType)) {
                 logger.info("没有额度申请");
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             } else if ("2".equals(applType)) {
                 HashMap<Object, Object> mapone = new HashMap<>();
-                mapone.put("apprvCrdAmt", (String)headinfo.get("apprvCrdAmt"));//审批总额度
-                mapone.put("applyDt", (String)headinfo.get("applyDt"));//申请时间
-                mapone.put("operateTime", (String)headinfo.get("operateTime"));//审批时间
-                mapone.put("appOutAdvice", (String)headinfo.get("appOutAdvice"));//审批意见
-                mapone.put("applSeq", (String)headinfo.get("applSeq"));//申请流水号
-                String outSts = (String)headinfo.get("outSts");
-                outSts="01";
+                mapone.put("apprvCrdAmt", body.getString("apprvCrdAmt"));//审批总额度
+                mapone.put("applyDt", body.getString("applyDt"));//申请时间
+                mapone.put("operateTime", body.getString("operateTime"));//审批时间
+                mapone.put("appOutAdvice", body.getString("appOutAdvice"));//审批意见
+                mapone.put("applSeq", body.getString("applSeq"));//申请流水号
+                String outSts = body.getString("outSts");
                 if ("01".equals(outSts)) {//APP 审批中  01
                     mapone.put("outSts", "02");//顺逛 审批中  02
                     logger.info("返回顺狂数据：" + mapone);
@@ -607,11 +567,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("获取的参数为空：userId" + userId);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> userIdOne = getUserId(userId);//获取用户userId
-        JSONObject body = new JSONObject(userIdOne.get("body"));//用户信息
-        String userIdInfo = body.getString("userId");
+        Map<String, Object> userIdOne = getUserId(userId, channelNo);//获取用户userId
+        String userIdone = (String) userIdOne.get("body");//用户信息
         // 获取实名认证信息
-        Map<String, Object> custInfo = crmService.queryPerCustInfoByUserId(userIdInfo);
+        Map<String, Object> custInfo = crmService.queryPerCustInfoByUserId(userIdone);
         if (!HttpUtil.isSuccess(custInfo)) {
             return custInfo;
         }
@@ -620,7 +579,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("custName", custBody.get("custName"));//姓名
         jsonObject.put("cardNo", custBody.get("cardNo"));//银行卡号
-        //jsonObject.put("accBankCde", custBody.get("accBankCde"));//开户行名  需要确认  TODO
+        //jsonObject.put("accBankCde", custBody.get("accBankCde"));//开户行名  需要确认
         jsonObject.put("accBankName", custBody.get("accBankName"));//开户行号
         jsonObject.put("certNo", custBody.get("certNo"));//身份证号
         jsonObject.put("phonenumber", custBody.get("mobile"));//手机号码
@@ -709,15 +668,19 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 
         //请求数据解析
+        String ss = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey));
+        //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
+
+
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
         String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
 
         return params;
     }
 
-    /**
+    /*
      * 判断参数是否有空值
-     */
+	 */
     private void ifParamsIsNull(Map<String, String> map) throws Exception {
         Set<String> keys = map.keySet();
         for (String key : keys) {
@@ -727,21 +690,139 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
     }
 
-    public Map<String, Object> getUserId(String userId) {//根据集团userId查统一认证userId
+    public Map<String, Object> getUserId(String userId, String channelNo) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("externUid", EncryptUtil.simpleEncrypt(userId));
-        //map.put("channel", "11");
-        //map.put("channelNo", channelNo);
+        map.put("userId", userId);
+        map.put("channel", "11");
+        map.put("channelNo", channelNo);
         Map<String, Object> userIdmap = appServerService.getUserId(null, map);
         if (!HttpUtil.isSuccess(userIdmap)) {
             logger.info("调集团用户id查询用户信息接口返回信息错误userIdmap" + userIdmap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Object body1 = userIdmap.get("body");
-        Map<String,Object> body11 = (Map) body1;
-        String userIdone = (String)body11.get("userId");
+        JSONObject body = new JSONObject(map.get("body"));
+        String userIdone = body.getString("userId");
         HashMap<Object, Object> mapone = new HashMap<>();
         mapone.put("userId", userIdone);
         return success(mapone);
     }
+
+    public Map<String, Object> edApplytest(Map<String, Object> map) throws Exception{
+        String userId = map.get("userId").toString();
+        //String phone = map.get("phone").toString();
+        String token = map.get("token").toString();
+        String channelNo = map.get("channelNo").toString();
+        Map cachemap = new HashMap<String, Object>();
+        Map returnmap = new HashMap<String, Object>();
+        //查询是否已注册
+
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
+        paramMap.put("channelNo",channelNo);
+        paramMap.put("channel","11");
+        paramMap.put("mobile",userIdEncrypt);
+        Map<String, Object> m = appServerService.isRegister(token, paramMap);
+        if(!HttpUtil.isSuccess(m)){
+            return  m;
+        }
+        Map bodyMap = (HashMap<String, Object>) m.get("body");
+        String isRegister = bodyMap.get("isRegister").toString();
+        if(!"Y".equals(isRegister)){//未注册
+            return fail(ConstUtil.ERROR_CODE, "账号未注册");
+        }
+        cachemap.put("userId", userId);
+
+
+        //4.token绑定
+        Map<String, Object> bindMap = new HashMap<String, Object>();
+        bindMap.put("userId", userId);//内部userId
+        bindMap.put("token", token);
+        bindMap.put("channel", "11");
+        bindMap.put("channelNo", channelNo);
+        Map bindresult = appServerService.saveThirdPartToken(bindMap);
+        if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+
+        //5.查询实名信息
+        Map<String, Object> custMap = new HashMap<String, Object>();
+        custMap.put("userId", userId);//内部userId
+        custMap.put("channel", "11");
+        custMap.put("channelNo", channelNo);
+        Map custresult = appServerService.queryPerCustInfo(token, custMap);
+        String custretflag = ((HashMap<String, Object>)(custresult.get("head"))).get("retFlag").toString();
+        if(!"00000".equals(custretflag) && !"C1220".equals(custretflag)){//查询实名信息失败
+            String custretMsg = ((HashMap<String, Object>)(custresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, custretMsg);
+        }
+        if("C1220".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
+            session.set(token, cachemap);
+
+            ///
+            Map<String, Object> cacheMap = session.get(token, Map.class);
+            logger.info("cacheMap:" +cacheMap);
+
+
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }
+        String certType = ((HashMap<String, Object>)(custresult.get("body"))).get("certType").toString();//证件类型
+        String certNo = ((HashMap<String, Object>)(custresult.get("body"))).get("certNo").toString();//身份证号
+        String custNo = ((HashMap<String, Object>)(custresult.get("body"))).get("custNo").toString();//客户编号
+        String custName = ((HashMap<String, Object>)(custresult.get("body"))).get("custName").toString();//客户名称
+        String cardNo = ((HashMap<String, Object>)(custresult.get("body"))).get("cardNo").toString();//银行卡号
+        String bankNo = ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankNo").toString();//银行代码
+        String bankName = ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankName").toString();//银行名称
+
+
+        cachemap.put("custNo", custNo);//客户编号
+        cachemap.put("custName", custName);//客户姓名
+        cachemap.put("cardNo", cardNo);//银行卡号
+        cachemap.put("bankCode", bankNo);//银行代码
+        cachemap.put("bankName", bankName);//银行名称
+        cachemap.put("idNo", certNo);//身份证号
+        cachemap.put("idType", certType);
+        session.set(token, cachemap);
+        //6.查询客户额度
+        Map<String, Object> edMap = new HashMap<String, Object>();
+        edMap.put("userId", userId);//内部userId
+        edMap.put("channelNo", channelNo);
+        edMap.put("channel", "11");
+        edMap.put("channelNo", channelNo);
+        Map edresult = appServerService.checkEdAppl(token, edMap);
+        if (!HttpUtil.isSuccess(edresult) ) {//额度校验失败
+            String retmsg = ((HashMap<String, Object>)(edresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        //获取自主支付可用额度金额
+        String crdNorAvailAmt = (String)((HashMap<String, Object>)(edresult.get("body"))).get("crdNorAvailAmt");
+        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt) ){
+            //跳转有额度页面
+            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }
+        //审批状态判断
+        String outSts = (String)((HashMap<String, Object>)(edresult.get("body"))).get("outSts");
+        if("01".equals(outSts)) {//额度正在审批中
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }else if("22".equals(outSts)) {//审批被退回
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }else if("25".equals(outSts)) {//审批被拒绝
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }else {//没有额度  额度激活
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token="+token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }
+
+    }
+
 }

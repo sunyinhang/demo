@@ -751,4 +751,15 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
 
+
+    //3.4.21.	(POST)集团用户注册统一认证账户
+    @Override
+    public Map<String, Object> saveUauthUsers(String token, Map<String, Object> params) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/saveUauthUsers";
+        logger.info("用户注册接口, 请求地址：" + url);
+        logger.info("用户注册接口, 请求数据：" + params);
+        Map<String, Object> result = HttpUtil.restPostMap(url, params);
+        logger.info("用户注册接口, 返回数据：" + result);
+        return result;
+    }
 }

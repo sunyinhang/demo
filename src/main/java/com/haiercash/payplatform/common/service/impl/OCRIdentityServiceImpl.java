@@ -426,7 +426,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String bankName = (String) identitybodyjson.get("acctBankName");
         String idNo = (String) identitybodyjson.get("certNo");
         String idType = (String) identitybodyjson.get("certType");
-        String cardPhone = (String) identitybodyjson.get(mobile);
+        String cardPhone = (String) identitybodyjson.get("mobile");
 
         cacheMap.put("custNo", custNo);
         cacheMap.put("cardNo", cardNo);
