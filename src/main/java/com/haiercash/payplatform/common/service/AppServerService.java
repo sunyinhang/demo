@@ -122,6 +122,8 @@ public interface AppServerService {
    public Map<String, Object> findUserByUserid(String token,Map<String, Object> paramMap);
     //48、(GET)根据身份证号查询客户基本信息和实名认证信息(userId)
     public Map<String, Object> getCustInfoByCertNo(String token,Map<String, Object> paramMap);
+    //OM-1108 根据applSeq查询商城订单号和网单号
+    public Map<String,Object> getorderNo(String applSeq);
 
     //3.4.16.	(POST)用户注册
     public Map<String, Object> saveUauthUsers(String token, Map<String, Object> map);

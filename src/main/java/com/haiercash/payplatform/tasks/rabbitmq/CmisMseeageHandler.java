@@ -96,6 +96,9 @@ public class CmisMseeageHandler {
                         mapinfo.put("channelNo", channelNo);
                         mapinfo.put("idNo", idNo);//身份证号
                         mapinfo.put("idTyp", "20");//证件类型 20为身份证
+                        Map<String, Object> mapappl = null;//(get)根据applseq查询orderNo
+                        Map<String,Object> bodyappl = null;
+                        String mallOrderNo = null;//商城订单号
                         Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, mapinfo);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
                         mapidNo.put("certNo",idNo);
                         Map<String, Object> custInfoByCertNo = appServerService.getCustInfoByCertNo(null, mapidNo);//根据身份证号查询客户基本信息和实名认证信息(userId)
@@ -142,11 +145,14 @@ public class CmisMseeageHandler {
                             String sgString = JSONObject.toJSONString(map);
                             result = HttpClient.sendPost(url, sgString, "utf-8");
                         }else if ("02".equals(outSts)){//贷款申请被拒
+                            mapappl = appServerService.getorderNo(applSeq);//(get)根据applseq查询orderNo
+                            bodyappl = (Map) mapappl.get("body");
+                            mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
                             map.put("outSts", "02");
                             map.put("applSeq", applSeq);//申请流水号
                             map.put("idNo", idNo);//身份证号
                             map.put("userid", externUid);//集团userid
-                           // map.put("orderNo",orderNo);//订单编号
+                            map.put("orderNo",mallOrderNo);//订单编号
                             if (StringUtils.isEmpty(urlOne)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的贷款申请推送地址";
                                 logger.info(retMsg);
@@ -155,11 +161,14 @@ public class CmisMseeageHandler {
                             String sgString = JSONObject.toJSONString(map);
                             result = HttpClient.sendPost(urlOne, sgString, "utf-8");
                         }else if ("06".equals(outSts)){//贷款申请通过
+                            mapappl = appServerService.getorderNo(applSeq);//(get)根据applseq查询orderNo
+                            bodyappl = (Map) mapappl.get("body");
+                            mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
                             map.put("outSts", "01");
                             map.put("applSeq", applSeq);//申请流水号
                             map.put("idNo", idNo);//身份证号
                             map.put("userid", externUid);//集团userid
-                            //map.put("orderNo",orderNo);//订单编号
+                            map.put("orderNo",mallOrderNo);//订单编号
                             if (StringUtils.isEmpty(urlOne)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的贷款申请推送地址";
                                 logger.info(retMsg);

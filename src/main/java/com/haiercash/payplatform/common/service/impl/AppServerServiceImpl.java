@@ -732,6 +732,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/getEdApplProgress";
         logger.info("额度申请进度查询（最新的进度 根据idNo查询）,请求地址：" + url);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("额度申请进度查询（最新的进度 根据idNo查询）返回数据:"+map);
         return map;
     }
 
@@ -740,6 +741,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = EurekaServer.UAUTH + "/app/uauth/findUserByUserid";
         logger.info("根据统一认证userid查询用户信息,请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("根据统一认证userid查询用户信息返回信息："+map);
         return map;
     }
 
@@ -748,6 +750,14 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = EurekaServer.CRM + "/app/crm/cust/getCustInfoByCertNo";
         logger.info("根据身份证号查询客户基本信息和实名认证信息(userId),请求地址："+url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("根据身份证号查询客户基本信息和实名认证信息(userId)返回数据："+map);
+        return map;
+    }
+    //OM-1108 根据applSeq查询商城订单号
+    public Map<String,Object> getorderNo(String applSeq){
+        String url = EurekaServer.ORDER + "/api/order/getMallOrderNoByApplSeq";
+        logger.info("根据applSeq查询商城订单号："+url);
+        Map<String, Object> map = HttpUtil.restGetMap(url);
         return map;
     }
 
