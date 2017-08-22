@@ -425,8 +425,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("验证客户信息接口调用失败");
             return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
         }
-        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
-        //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
+//        {"error_description":"Invalid access token: asadada","error":"invalid_token"}
+//        {"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
         JSONObject userjson = new JSONObject(userjsonstr);
         if(!userjson.has("user_id")){
             return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
@@ -436,8 +436,15 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String error = userjson.get("error").toString();
             return fail(ConstUtil.ERROR_CODE, error);
         }
-        String uidHaier = uid.toString();
+        String uidHaier = uid.toString();//1000030088
+        //String uidHaier = "100003008";
         Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
+        Object head1 = userIdOne.get("head");
+        JSONObject jsonObject = new JSONObject(head1);
+        String retMsg1 = (String) jsonObject.get("retMsg");
+        if ("01".equals(retMsg1)){
+            return fail(ConstUtil.ERROR_CODE,"01");
+        }
         String userIdone = (String) userIdOne.get("body");//用户信息
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
@@ -723,6 +730,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //map.put("channelNo", channelNo);
         Map<String, Object> userIdmap = appServerService.getUserId(null, map);
         if (!HttpUtil.isSuccess(userIdmap)) {
+            Map<String,Object> head = (Map) userIdmap.get("head");
+            String retFlag = (String) head.get("retFlag");
+            if ("U0157".equals(retFlag)){//未查到该集团用户的信息
+                String retmsg = "01";//未申请
+                return fail(ConstUtil.ERROR_CODE,retmsg);
+            }
             logger.info("调集团用户id查询用户信息接口返回信息错误userIdmap" + userIdmap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
