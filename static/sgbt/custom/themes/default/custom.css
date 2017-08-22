@@ -430,7 +430,7 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
 .itemList{position:relative;margin:0 auto;height:1.4rem;line-height:1.4rem;font-size:.55rem;color:#666;text-indent:.8rem}
 .marginTop10{padding-top:.5rem}
 .blank10{position:relative;margin:0 auto;width:100%;height:.5rem;}
-.mfqOrDeLink{display:inline-block;width:100%;background:url(imgs/right_arrow.png) no-repeat 95% center;background-size: 0.43rem;;}
+.mfqOrDeLink{display:inline-block;width:100%;background:url(images/right_arrow.png) no-repeat 95% center;background-size: 0.43rem;;}
 .installPayInfo{position:relative;margin:.5rem auto;padding:.5rem 0;width:100%;background:#fff;}
 .mfqdownloadTips{position:relative;margin:0 auto;width:100%;height:2rem;line-height:2rem;text-align:center;color: #999;font-size: .6rem;}
 
@@ -440,3 +440,19 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
 .enretPwd-c input.pwd-text{ width:100%; height:50px; font-size: 0.7rem; color: #999; background-color: transparent; border:none; border-bottom:1px solid #ddd;}
 .enretPwd-btn{ margin-top: 1.3rem;}
 .enterPassword-inner .a-gerPayPwd{display: block; text-align: center; margin: 0.75rem 0; font-size: 0.65rem; color: #999;}
+
+/*media-list*/
+.bv-theme .list-block.media-list .item-content { padding-bottom:0.5rem; padding-left:0; border-bottom: none; background-color: #eee; }
+.bv-theme .list-block.media-list .item-content .item-inner{ padding-top:0; padding-bottom:0;}
+.media-list .item-inner .item-title{ height: 2rem; line-height: 2rem; background-color: #fff; font-weight: normal!important; font-size: 0.55rem; }
+.media-list .item-inner .item-title span:first-child{ padding-left:15px; color: #666;}
+.media-list .item-inner .item-title span:last-child{ padding-right:15px; color: #ff5500;}
+.media-list .item-inner .item-after{ max-height:none; flex-align:center;align-items:center; }
+.media-list .item-inner .item-after .innerImage{ padding:5px 0.5rem;;}
+.media-list .item-inner .item-after .innerImage img{ width:3.5rem; height: 3.5rem; border:1px solid #ddd; overflow: hidden;}
+.media-list .item-inner .item-after .content{ padding-left: 0.5rem; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1;}
+.media-list .item-inner .item-after .badge{ width: 13px; height:13px; background: url(images/right_arrow.png) no-repeat center; background-size: 13px; }
+.media-list .item-inner .item-text{ padding-right:15px; border-bottom: 1px solid #ddd; background-color: #fff; font-size: 0.6rem; height: 1.8rem; line-height: 1.8rem;}
+.media-list .item-inner .item-btns{ padding: 5px 15px; background-color: #fff; }
+.media-list .item-inner .item-btns .row{ -webkit-box-pack: end;-ms-flex-pack: end; -webkit-justify-content: flex-end; justify-content:  flex-end;}
+.media-list .item-inner .item-btns .row .col-auto{ margin-left:0.5rem; max-width: 80px; min-width:60px;}

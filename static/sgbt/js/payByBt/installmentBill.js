@@ -33,10 +33,10 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             }
         );
     }*/
+
     var vm = util.bind({
         container: 'installmentBill',
         data: {
-            currentIndex: 0,
             pageNo: 1,
             pageSize: 20,
             tags: {
@@ -45,7 +45,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             },
             tabsConfig: {
                 layout: 'head',
-                currentIndex: 1,
+                currentIndex: 0,
                 tabs: [
                     {
                         text: '全部',
@@ -71,7 +71,10 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                 items: [
                 ],
                 infinite: function () {
-                    vm.onActive(vm.currentIndex, true, this);
+                    var _vm = util.vm(vm , vm.tags.tabsKey);
+                    if (_vm) {
+                        vm.onActive(util.tabsIndex(_vm), true, this);
+                    }
                     /*var items = [];
                     for (var i=0; i<10; i++) {
                         items.push({
@@ -96,7 +99,6 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     items: util.clone(items)
                 });*/
                 if (!pagination) {
-                    this.currentIndex = index;
                     this.pageNo = 1;
                 } else {
                     this.pageNo++;
@@ -184,25 +186,119 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                         items.push(
                             {
                                 title: '<span class="bv-left">日期：' + order.applyDt + '</span><span class="bv-right">状态：' + util.trans(order.outSts, '#outSts') + '</span>',
-                                image: 'custom/themes/default/images/active.png',
-                                content: '内容',
-                                extra: '<span class="bv-align-right">合计：</span>',
-                                data: 'xxxx',
+                                innerImage: 'custom/themes/default/images/payByBt/product.png',
+                                content: order.goodsName,
+                                badge: 'badge',
+                                extra: '<span class="bv-align-right">合计：总计'+order.goodsCount +'件商品，合计: ￥'+ order.apprvAmt+'</span>',
+                                click: function(){
+                                    util.redirect({
+                                        title: '贷款详情',
+                                        url: '/payByBt/loanDetails.html',
+                                        back: false
+                                    });
+                                },
                                 operates: [
+                                    // 1-待提交
+                                    // 2-待确认
+                                    // 3-被退回
+                                    // 01	审批中
+                                    // 02	贷款被拒绝
+                                    // 03	贷款已取消
+                                    // 04	合同签订中
+                                    // 05	审批通过，等待放款
+                                    // 06	已放款
+                                    // 20	待放款
+                                    // 22	审批退回
+                                    // 23	合同签章中
+                                    // 24	放款审核中
+                                    // 25	额度申请被拒
+                                    // 26	额度申请已取消
+                                    // 27	已通过
+                                    // AA	取消放款
+                                    // OD   逾期
+                                    // WS   待发货/待取货
+                                    // 30-已付款待发货
+                                    // 31-已发货
+                                    // 92-退货中
+                                    // 93-已退货
                                     {
-                                        text: '按钮1',
+                                        text: '继续提交',
                                         layout: 'primary',
                                         show: function (item) {
-                                            return true;
+                                            if( order.outSts === '1'){
+                                                return true;
+                                            }else{
+                                                return false;
+                                            }
                                         },
                                         click: function (event, item) {
                                             console.log('clicked' + item.data);
                                         }
-                                    },
-                                    {
-                                        text: '按钮2',
+                                    },{
+                                        text: '删除订单',
+                                        layout: 'primary',
                                         show: function (item) {
-                                            return true;
+                                            if( order.outSts === '1'){
+                                                return true;
+                                            }else{
+                                                return false;
+                                            }
+                                        },
+                                        click: function (event, item) {
+                                            console.log('clicked');
+                                        }
+                                    },{
+                                        text: '审批进度',
+                                        layout: 'primary',
+                                        show: function (item) {
+                                            if( order.outSts === '01' || order.outSts === '02' || order.outSts === '05' || order.outSts === '06' || order.outSts === '20' || order.outSts === '22' || order.outSts === '24'){
+                                                return true;
+                                            }else{
+                                                return false;
+                                            }
+                                        },
+                                        click: function (event, item) {
+                                            util.redirect({
+                                                title: '审批进度',
+                                                url: '/payByBt/applyProgress.html',
+                                                back: false
+                                            });
+                                        }
+                                    },{
+                                        text: '还款',
+                                        layout: 'primary',
+                                        show: function (item) {
+                                            if( order.outSts === '20' || order.outSts === 'OD'){
+                                                return true;
+                                            }else{
+                                                return false;
+                                            }
+                                        },
+                                        click: function (event, item) {
+                                            console.log('clicked');
+                                        }
+                                    },{
+                                        text: '修改提交',
+                                        layout: 'primary',
+                                        show: function (item) {
+                                            if( order.outSts === '22'){
+                                                return true;
+                                            }else{
+                                                return false;
+                                            }
+                                        },
+                                        click: function (event, item) {
+                                            console.log('clicked');
+                                        }
+                                    },{
+                                        text: '申请放款',
+                                        layout: 'primary',
+                                        show: function (item) {
+                                            if( order.outSts === '20'){
+                                                return true;
+                                            }else{
+                                                return false;
+                                            }
                                         },
                                         click: function (event, item) {
                                             console.log('clicked');
@@ -228,17 +324,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             }
         },
         mounted: function () {
-            util.post({
-                url: '/queryPendingLoanInfo',
-                data: {
-                    page: 1,
-                    size: 3
-                },
-                success: function(res){
-                    var data = util.data(res);
-                    vm.refresh(data);
-                }
-            });
+            this.onActive(this.tabsConfig.currentIndex);
             /*util.refresh({
                 vm: util.vm(this, this.tags.listKey),
                 items: util.clone(items)
