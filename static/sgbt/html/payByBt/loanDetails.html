@@ -10,7 +10,7 @@
       <div class="main-03-02">
         <div class="main-03-02-a"><img src="./custom/themes/default/images/payByBt/product.png" alt=""></div>
         <div class="main-03-02-b"><b>{{goodsName}}</b><span>￥{{goodsPrice}}</span></div>
-        <div class="main-03-02-c">{{mthAmt}}*3期</div>
+        <div class="main-03-02-c">{{mthAmt}}*{{applyTnr}}期</div>
       </div>
       <div class="main-03-03">
         <div class="main-03-03-a">分期本金<b>{{psPrcpAmt}}</b></div>
@@ -25,7 +25,7 @@
       <ul>
         <li v-for="(item , index) in items" class='selected border-bottom'>
           <em></em>
-          <div class="eachOrder"><b>￥{{item.amount}}</b><p>[{{index}}/{{item.psPerdNo}}]{{goodsName}}</p></div>
+          <div class="eachOrder"><b>￥{{item.amount}} + {{odAmt}}</b><p>[{{index}}/{{item.psPerdNo}}]{{goodsName}}</p></div>
           <span> {{item.days >= 0 ?  '剩余' + item.days '天' : '逾期 '+ item.days) +'天'}}</span>
         </li>
       </ul>

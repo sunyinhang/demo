@@ -43,28 +43,29 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 }),
                                 data: util.form('faceImg', entity.upload.faceImg),
                                 success: function (res) {
-                                    if (res.retObj.faceFlag === '0') {
+                                    var data = util.data(res);
+                                    if ( data.faceFlag === '0') {
                                         //未设置支付密码
                                         util.redirect({
                                             title: '设置支付密码',
                                             url: '/applyQuota/setPayPsd.html',
                                             back: false
                                         });
-                                    } else if (res.retObj.faceFlag === '1') {
+                                    } else if (data.faceFlag === '1') {
                                         //已设置支付密码
                                         util.redirect({
                                             title: '输入短信验证码',
                                             url: '/applyQuota/payPsdValidcode.html',
                                             back: false
                                         });
-                                    } else if (res.retObj.faceFlag === '2') {
+                                    } else if (data.faceFlag === '2') {
                                         //人脸识别失败，跳转手持身份证
                                         util.redirect({
                                             title: '手持身份证',
                                             url: '/applyQuota/handholdIdCard.html',
                                             back: false
                                         });
-                                    } else if (res.retObj.faceFlag === '3') {
+                                    } else if (data.faceFlag === '3') {
                                         //人脸识别失败，再拍摄一遍
                                         util.alert('人脸识别失败，请再使用摄像头拍摄一张人脸照片');
                                     } else {
