@@ -18,7 +18,7 @@ var __Const = {
     route: {
         baseUrl: window.location.protocol + "//" + window.location.host,
         baseLocation: '/sgbt',
-        imageLocation: '/sgbt/images',
+        // imageLocation: '/sgbt/images',
         versionLocation: '',
         htmlLocation: '/html',
         scriptLocation: (__env === 'run' ? '/run' : '') + '/js'
