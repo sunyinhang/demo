@@ -52,7 +52,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         List<JSONObject> resultList =  new ArrayList<JSONObject>();
 
         String typCde = "" ;//贷款品种
-        List<JSONObject> resultList_ =  new ArrayList<JSONObject>();
+
         Map<String, Object> allCustExtInfo = getAllCustExtInfo(token, channel, channelNo);
         Map<String, Object> allCustExtInfoHeadMap = (HashMap<String, Object>) allCustExtInfo.get("head");
         String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
@@ -84,6 +84,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //        JSONObject pLoanTypImagesBodyjson = new JSONObject(pLoanTypImagesMap.get("body"));
         ArrayList<Map<String,String>> list = (ArrayList<Map<String,String>>)pLoanTypImagesMap.get("body");
         for (int i = 0; i < list.size(); i++) {
+            List<JSONObject> resultList_ =  new ArrayList<JSONObject>();
             String docCde = list.get(i).get("docCde");//影像代码
             String docDesc = list.get(i).get("docDesc");//影像名称
             paramYXMap.put("attachType",docCde);
