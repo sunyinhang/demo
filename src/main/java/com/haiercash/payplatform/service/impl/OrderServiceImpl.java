@@ -265,7 +265,10 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             isConfirm = needAndConfirmBody.get("isConfirm").toString();
         }
         // 默认提交商户.
-        if (StringUtils.isEmpty(type)) {
+        if ("46".equals(super.getChannelNo())){
+            // 顺逛白条不需要商户确认
+            params.put("type", "0");
+        } else if (StringUtils.isEmpty(type)) {
             params.put("type", "1");
         } else if ("N".equals(isConfirm)) {
             params.put("type", "0");

@@ -670,12 +670,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("获取token失败token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = session.get(token, Map.class);
-        if (StringUtils.isEmpty(cacheMap)) {
-            logger.info("Jedis获取缓存失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        String idNo = (String) cacheMap.get("idNo");//客户证件号码
+//        Map<String, Object> cacheMap = session.get(token, Map.class);
+//        if (StringUtils.isEmpty(cacheMap)) {
+//            logger.info("Jedis获取缓存失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+//        }
+//        String idNo = (String) cacheMap.get("idNo");//客户证件号码
+        String idNo="372926199009295116";
         String idTyp = "20";//证件类型  身份证：20
         if (StringUtils.isEmpty(idNo) || StringUtils.isEmpty(channelNo)) {
             logger.info("获取的数据为空：idNo=" + idNo + "  ,channelNo" + channelNo);
@@ -697,12 +698,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //        //JSONObject jsonObject = new JSONObject(limit);
 //        com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(limit);
 //        com.alibaba.fastjson.JSONObject head = jsonObject.getJSONObject("head");
-        JSONObject head = new JSONObject(edCheck.get("head"));
+        Map<String,Object> head = (Map) edCheck.get("head");
         String retFlag = (String) head.get("retFlag");
         String retMsg = (String) head.get("retMsg");
         if ("00000".equals(retFlag)) {
             //com.alibaba.fastjson.JSONObject limitRes = jsonObject.getJSONObject("body");
-            JSONObject limitRes = new JSONObject(edCheck.get("body"));
+            JSONObject limitRes = jsonObject.getJSONObject("body");
             double crdComAvailAnt = limitRes.getDouble("crdComAvailAnt");// 剩余额度（受托支付可用额度金额）
             //double crdNorAvailAmt = limitRes.getDouble("crdNorAvailAmt");// 自主支付可用额度金额(现金)
             //double crdAmt = limitRes.getDouble("crdAmt");// 总额度

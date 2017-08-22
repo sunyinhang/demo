@@ -35,8 +35,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     private Session session;
     @Autowired
     private AppServerService appServerService;
-    @Value("${app.other.baseSharePath:}")
-    protected String baseSharePath;
+//    @Value("${app.other.baseSharePath:}")
+//    protected String baseSharePath;
     @Value("${app.other.face_DataImg_url}")
     protected String face_DataImg_url;
 
@@ -117,7 +117,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 if (filePath == null || "".equals(filePath)){
                     return fail(ConstUtil.ERROR_CODE, "图片路径为空");
                 }
-                filePath = filePath.replace(baseSharePath, "");
+//                filePath = filePath.replace(baseSharePath, "");
                 JSONObject resultJson_ = new JSONObject();
                 resultJson_.put("id",id);//影像ID
                 resultJson_.put("filePath",filePath);//图片地址
