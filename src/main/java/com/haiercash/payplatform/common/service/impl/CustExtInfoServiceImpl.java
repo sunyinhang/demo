@@ -97,45 +97,50 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 return fail(ConstUtil.ERROR_CODE, stringObjectMapMsg);
             }
             ArrayList<Map<String,Object>> list_ = (ArrayList<Map<String,Object>>)stringObjectMap.get("body");
-            for (int j = 0; j < list_.size(); j++) {
-                int id =  (int)list_.get(j).get("id") ;
-                Map<String, Object> paramYXbyIDMap = new HashMap<String, Object>();
-                //TODO
-                paramYXbyIDMap.put("id",id);
-                paramYXbyIDMap.put("channel", channel);
-                paramYXbyIDMap.put("channelNo", channelNo);
-                Map<String, Object> filePathByFileId = appServerService.getFilePathByFileId(token, paramYXbyIDMap);
-                Map<String, Object> filePathByFileIdHeadMap = (HashMap<String, Object>) filePathByFileId.get("head");
-                String filePathByFileIdMsg = (String) filePathByFileIdHeadMap.get("retMsg");
+            if(list_.size()>0){
+                for (int j = 0; j < list_.size(); j++) {
+                    int id =  (int)list_.get(j).get("id") ;
+                    Map<String, Object> paramYXbyIDMap = new HashMap<String, Object>();
+                    //TODO
+                    paramYXbyIDMap.put("id",id);
+                    paramYXbyIDMap.put("channel", channel);
+                    paramYXbyIDMap.put("channelNo", channelNo);
+                    Map<String, Object> filePathByFileId = appServerService.getFilePathByFileId(token, paramYXbyIDMap);
+                    Map<String, Object> filePathByFileIdHeadMap = (HashMap<String, Object>) filePathByFileId.get("head");
+                    String filePathByFileIdMsg = (String) filePathByFileIdHeadMap.get("retMsg");
 
-                if(!ifError(filePathByFileIdHeadMap)){
-                    return fail(ConstUtil.ERROR_CODE, filePathByFileIdMsg);
-                }
-                Map<String, Object> bodyJSONObjectMap = (HashMap<String, Object>) filePathByFileId.get("body");
+                    if(!ifError(filePathByFileIdHeadMap)){
+                        return fail(ConstUtil.ERROR_CODE, filePathByFileIdMsg);
+                    }
+                    Map<String, Object> bodyJSONObjectMap = (HashMap<String, Object>) filePathByFileId.get("body");
 //                JSONObject bodyJSONObject = new JSONObject(filePathByFileId.get("body"));
-                String filePath = (String) bodyJSONObjectMap.get("filePath");
-                if (filePath == null || "".equals(filePath)){
-                    return fail(ConstUtil.ERROR_CODE, "图片路径为空");
-                }
+                    String filePath = (String) bodyJSONObjectMap.get("filePath");
+                    if (filePath == null || "".equals(filePath)){
+                        return fail(ConstUtil.ERROR_CODE, "图片路径为空");
+                    }
 //                filePath = filePath.replace(baseSharePath, "");
-                JSONObject resultJson_ = new JSONObject();
-                resultJson_.put("id",id);//影像ID
-                resultJson_.put("filePath",filePath);//图片地址
-                resultList_.add(resultJson_);
+                    JSONObject resultJson_ = new JSONObject();
+                    resultJson_.put("id",id);//影像ID
+                    resultJson_.put("filePath",filePath);//图片地址
+                    resultList_.add(resultJson_);
 //
 //                j= list_.size()-1;
-            }
-            //////
+                }
+                //////
 //            JSONObject resultJson_ = new JSONObject();
 //            resultJson_.put("id", 9999999);//影像ID
 //            resultJson_.put("filePath", "/A.jpg");//图片地址
 //            resultList_.add(resultJson_);
-            //////
-            JSONObject resultJson = new JSONObject();
-            resultJson.put("docCde",docCde);//影像代码
-            resultJson.put("docDesc",docDesc);//影像名称
-            resultJson.put("urlList",resultList_);//地址List
-            resultList.add(resultJson);
+                //////
+                JSONObject resultJson = new JSONObject();
+                resultJson.put("docCde",docCde);//影像代码
+                resultJson.put("docDesc",docDesc);//影像名称
+                resultJson.put("urlList",resultList_);//地址List
+                resultList.add(resultJson);
+
+            }else{
+                continue;
+            }
         }
         resultMap.put("CustExtInfoMap",(HashMap<String, Object>) allCustExtInfo.get("body"));
         resultMap.put("docList",resultList);
