@@ -232,7 +232,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String custNo = (String)cacheMap.get("custNo");
         String userid = (String)cacheMap.get("userid");
         String name = (String)cacheMap.get("name");//姓名
-        String idNumber = (String)cacheMap.get("idNumber"); //身份证
+        String idNumber = (String)cacheMap.get("idCard"); //身份证
 //        String userid = "1231231";
 //        String custNo = "B201706011214031809670";
 //        String name = "张三丰";
