@@ -12,7 +12,7 @@
             <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} [%Line] - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} %L - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -21,7 +21,7 @@
           <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.visit.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-          <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] [%Line]  - %msg%n</pattern>
+          <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %L  - %msg%n</pattern>
         </encoder>
       </appender>
 
@@ -30,7 +30,7 @@
           <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.task.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-          <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] [%Line] - %msg%n</pattern>
+          <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %L - %msg%n</pattern>
         </encoder>
       </appender>
 
@@ -48,7 +48,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} [%Line] - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} %L - %msg%n</pattern>
         </encoder>
     </appender>
 

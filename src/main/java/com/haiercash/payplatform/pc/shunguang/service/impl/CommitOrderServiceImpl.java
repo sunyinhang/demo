@@ -55,13 +55,26 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String channelNo = (String) map.get("channelNo");
         String token = (String) map.get("token");
         String orderNo = (String) map.get("orderNo");
-        String msgCode = (String) map.get("msgCode");
+        //String msgCode = (String) map.get("msgCode");
         String applSeq = (String) map.get("applSeq");
 
         if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
-                || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(msgCode) || StringUtils.isEmpty(applSeq)){
+                || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq)){
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+
+        //缓存数据获取
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //TODO!!!!
+        String custNo = (String) cacheMap.get("custNo");
+        if (StringUtils.isEmpty(custNo)) {
+            logger.info("jedis获取数据失效");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
 
 //        String channel = "11";
@@ -82,20 +95,28 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 //        agreementmap.put("channelNo", channelNo);
 //        Map<String, Object> agreementresultmap = appServerService.updateOrderAgreement(token, agreementmap);
 //
-//        //2.签订合同
-//        Map<String, Object> contractmap = new HashMap<String, Object>();
-//        agreementmap.put("orderNo", orderNo);//订单号
-//        agreementmap.put("channel", channel);
-//        agreementmap.put("channelNo", channelNo);
-//        Map<String,Object> contractresultmap = appServerService.updateOrderContract(token, contractmap);
-//
-//        //3.影像上传
-//        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
-//        uploadimgmap.put("custNo", custNo);//订单号
-//        uploadimgmap.put("applSeq", applSeq);//订单号
-//        uploadimgmap.put("channel", channel);
-//        uploadimgmap.put("channelNo", channelNo);
-//        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, contractmap);
+        //2.签订合同
+        Map<String, Object> contractmap = new HashMap<String, Object>();
+        contractmap.put("orderNo", orderNo);//订单号
+        contractmap.put("channel", channel);
+        contractmap.put("channelNo", channelNo);
+        Map<String,Object> contractresultmap = appServerService.updateOrderContract(token, contractmap);
+        if(!HttpUtil.isSuccess(contractresultmap)){
+            logger.info("合同签订失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+
+        //3.影像上传
+        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
+        uploadimgmap.put("custNo", custNo);//客户编号
+        uploadimgmap.put("applSeq", applSeq);//订单号
+        uploadimgmap.put("channel", channel);
+        uploadimgmap.put("channelNo", channelNo);
+        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
+        if(!HttpUtil.isSuccess(uploadimgresultmap)){
+            logger.info("影像上传失败失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
 
         //4.风险信息上送   TODO!!!!!
 
@@ -111,7 +132,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             // return fail("04", "所提交的订单不存在！");
         }
         applSeq = relation.getApplSeq();
-        Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", msgCode, null, relation.getTypGrp());
+        Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
         return result;
     }
 
