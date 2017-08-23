@@ -14,6 +14,7 @@ import com.haiercash.payplatform.common.enums.OrderEnum;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CmisApplService;
 import com.haiercash.payplatform.common.service.GmService;
+import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.*;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
@@ -41,6 +42,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
     @Autowired
     private CmisApplService cmisApplService;
+    @Autowired
+    private HaierDataService haierDataService;
 
     @Override
     public Map<String, Object> userlogin(Map<String, Object> map) {
@@ -254,6 +257,45 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         Map retrunmap = new HashMap();
         retrunmap.put("totalAmt", totalAmt);
         return success(retrunmap);
+    }
+
+    @Override
+    public String getuserId(String token) {
+        String userId = "";
+        //1.根据token获取客户信息custNo
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
+            logger.info("验证客户信息接口调用失败");
+            return userId;
+        }
+        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
+        //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
+        org.json.JSONObject userjson = new org.json.JSONObject(userjsonstr);
+        if(!userjson.has("user_id")){
+            logger.info("没有获取到客户信息");
+            return userId;
+        }
+        Object uid = userjson.get("user_id");//会员id
+        if(StringUtils.isEmpty(uid)){
+            String error = userjson.get("error").toString();
+            return userId;
+        }
+        String uidHaier = uid.toString();
+        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
+        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
+        String head = resultMap.get("head").toString();
+        Map<String, Object> headMap = HttpUtil.json2Map(head);
+        String retFlag = headMap.get("retFlag").toString();
+        if("00000".equals(retFlag)) {
+            //集团uid已在统一认证做过绑定
+            String body = resultMap.get("body").toString();
+            Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            userId = bodyMap.get("userId").toString();
+            return userId;
+        }else{
+            logger.info("会员验证失败");
+            return userId;
+        }
     }
 
 

@@ -9,7 +9,9 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CmisApplService;
 import com.haiercash.payplatform.common.service.GmService;
+import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.*;
+import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.service.AcquirerService;
@@ -43,6 +45,9 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     private AcquirerService acquirerService;
     @Autowired
     private GmService gmService;
+    @Autowired
+    private SgInnerService sgInnerService;
+
 
     /**
      * 订单提交
@@ -55,36 +60,41 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String channelNo = (String) map.get("channelNo");
         String token = (String) map.get("token");
         String orderNo = (String) map.get("orderNo");
-        //String msgCode = (String) map.get("msgCode");
         String applSeq = (String) map.get("applSeq");
+//        String paypwd = (String) map.get("paypwd");
 
+
+//        String channel = "11";
+//        String channelNo = "46";
+//        String token = "1992010301";
+//        String orderNo = "534d00b9b87e44859b7f025f7f98c2be";
+//        String applSeq = "1265365";
+
+        //参数非空校验
         if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
                 || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq)){
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-
-        //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
-        if (cacheMap == null || "".equals(cacheMap)) {
-            logger.info("Jedis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        //根据用户中心token获取统一认证userId
+        String userId = sgInnerService.getuserId(token);
+        if(StringUtils.isEmpty(userId)){
+            logger.info("根据用户中心token获取统一认证userId失败");
+            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
         }
-        //TODO!!!!
-        String custNo = (String) cacheMap.get("custNo");
-        if (StringUtils.isEmpty(custNo)) {
-            logger.info("jedis获取数据失效");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        //根据userId获取客户编号
+        Map<String, Object> custMap = new HashMap<String, Object>();
+        custMap.put("userId", userId);
+        custMap.put("channel", channel);
+        custMap.put("channelNo", channelNo);
+        Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
+        if (!HttpUtil.isSuccess(custInforesult) ) {
+            return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
         }
-
-//        String channel = "11";
-//        String token = "e36a9141-7644-4715-bce5-5750f49ebbb4";
-//        String orderNo = "4d75689a391d43c7bbc2979f021c159f";
-//        String msgCode = "1265240";
-//        String applSeq = "1265254";
-//        String custNo = "C201708110701812339790";
-//        String channelNo = super.getChannelNo();
-//        System.out.println(channelNo);
+        String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
+        com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
+        String custNo = (String) custresult.get("custNo");
+        //String custNo = "C201708220103152818240";
 
 //        //1.签订注册及征信协议
 //        Map<String, Object> agreementmap = new HashMap<String, Object>();
@@ -96,27 +106,27 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 //        Map<String, Object> agreementresultmap = appServerService.updateOrderAgreement(token, agreementmap);
 //
         //2.签订合同
-        Map<String, Object> contractmap = new HashMap<String, Object>();
-        contractmap.put("orderNo", orderNo);//订单号
-        contractmap.put("channel", channel);
-        contractmap.put("channelNo", channelNo);
-        Map<String,Object> contractresultmap = appServerService.updateOrderContract(token, contractmap);
-        if(!HttpUtil.isSuccess(contractresultmap)){
-            logger.info("合同签订失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
+//        Map<String, Object> contractmap = new HashMap<String, Object>();
+//        contractmap.put("orderNo", orderNo);//订单号
+//        contractmap.put("channel", channel);
+//        contractmap.put("channelNo", channelNo);
+//        Map<String,Object> contractresultmap = appServerService.updateOrderContract(token, contractmap);
+//        if(!HttpUtil.isSuccess(contractresultmap)){//订单不存在
+//            logger.info("合同签订失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
 
         //3.影像上传
-        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
-        uploadimgmap.put("custNo", custNo);//客户编号
-        uploadimgmap.put("applSeq", applSeq);//订单号
-        uploadimgmap.put("channel", channel);
-        uploadimgmap.put("channelNo", channelNo);
-        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
-        if(!HttpUtil.isSuccess(uploadimgresultmap)){
-            logger.info("影像上传失败失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
+//        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
+//        uploadimgmap.put("custNo", custNo);//客户编号
+//        uploadimgmap.put("applSeq", applSeq);//订单号
+//        uploadimgmap.put("channel", channel);
+//        uploadimgmap.put("channelNo", channelNo);
+//        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
+//        if(!HttpUtil.isSuccess(uploadimgresultmap)){
+//            logger.info("影像上传失败失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
 
         //4.风险信息上送   TODO!!!!!
 
@@ -124,12 +134,9 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         //5.订单提交
         // 获取订单对象
         AppOrdernoTypgrpRelation relation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
-
         if (relation == null) {
             logger.debug("订单编号为" + orderNo + "的订单不存在！");
-            // 暂时修改为订单不存在默认返回成功 2016年11月23日 11:16:08
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-            // return fail("04", "所提交的订单不存在！");
         }
         applSeq = relation.getApplSeq();
         Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
@@ -163,7 +170,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
 
         // 商户版直接提交核心
-        if ("13".equals(super.getChannel())) {
+        if ("13".equals(super.getChannel()) || "11".equals(super.getChannel())) {
             opType = "1";
             // 现金贷直接提交核心
         } else if ("02".equals(apporder.getTypGrp())) {
@@ -254,7 +261,6 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
         // 查询当前用户信息
         //String clientId = "A0000055B0FB82";// TODO 这里暂时使用固定值，不会影响业务数据
-
         if (opType.equals("1")) {//3为支付平台，处理方式同个人版
 
             logger.debug("贷款申请提交, " + apporder.getApplSeq());

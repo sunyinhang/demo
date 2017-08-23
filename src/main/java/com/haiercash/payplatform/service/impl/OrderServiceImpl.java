@@ -203,6 +203,10 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             // 默认需要发货确认
             orderMap.put("isNeedSend", "01");
         }
+
+        if ("46".equals(super.getChannelNo())) {
+            orderMap.put("isNeedSend", "00");
+        }
         orderMap.put("sysNo", "11");
         String url;
         if (isGoodsList) {//多商品

@@ -57,24 +57,25 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
     @Override
     public Map<String, Object> saveOrder(Map<String, Object> map) {
         //前端传入参数获取(放开)
-//        String token = (String) map.get("token");
-//        String channel = (String) map.get("channel");
-//        String channelNo = (String) map.get("channelNo");
-//        String applyTnr = (String) map.get("applyTnr");//借款期限
-//        String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
-//        String areaCode = (String) map.get("areaCode");//区编码
-//        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
-//                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(areaCode)){
-//            logger.info("前台获取数据有误");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-//        }
+        String token = (String) map.get("token");
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
+        String applyTnr = (String) map.get("applyTnr");//借款期限
+        String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
+        String areaCode = (String) map.get("areaCode");//区编码
+        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
+                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(areaCode)){
+            logger.info("前台获取数据有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
 
-        String token = "e36a9141-7644-4715-bce5-5750f49ebbb4";
-        String channel = "11";
-        String channelNo = "35";
-        String applyTnr = "12";//借款期限
-        String applyTnrTyp = "12";//期限类型（若天则传D）
-        String areaCode = "370201";//区编码
+//        String token = "1992010301";
+//        String channel = "11";
+//        String channelNo = "46";
+//        String applyTnr = "12";//借款期限
+//        String applyTnrTyp = "12";//期限类型（若天则传D）
+//        String areaCode = "370201";//区编码
+//        String userId = "15066111824";
 
         //缓存获取（放开）
         Map<String, Object> cacheMap = session.get(token, Map.class);
@@ -95,29 +96,29 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
 
 
-//        //根据token获取会员id
-//        String userjsonstr = haierDataService.userinfo(token);
-//        if (userjsonstr == null || "".equals(userjsonstr)) {
-//            logger.info("验证客户信息接口调用失败");
-//            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
-//        }
-//        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
-//        org.json.JSONObject userjson = new org.json.JSONObject(userjsonstr);
-//        Object uid = userjson.get("user_id");//会员id
-//        if(StringUtils.isEmpty(uid)){
-//            String error = userjson.get("error").toString();
-//            return fail(ConstUtil.ERROR_CODE, error);
-//        }
-//        //根据会员id获取内部ID
-//        String uidHaier = uid.toString();
-//        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
-//        if (!HttpUtil.isSuccess(userInforesult) ) {
-//            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
-//        }
-//        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
-//        String userId = (String) ((HashMap<String, Object>)(resultMap.get("body"))).get("userId");
+        //根据token获取会员id
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
+            logger.info("验证客户信息接口调用失败");
+            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+        }
+        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
+        org.json.JSONObject userjson = new org.json.JSONObject(userjsonstr);
+        Object uid = userjson.get("user_id");//会员id
+        if(StringUtils.isEmpty(uid)){
+            String error = userjson.get("error").toString();
+            return fail(ConstUtil.ERROR_CODE, error);
+        }
+        //根据会员id获取内部ID
+        String uidHaier = uid.toString();
+        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
+        if (!HttpUtil.isSuccess(userInforesult) ) {
+            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
+        }
+        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
+        String userId = (String) ((HashMap<String, Object>)(resultMap.get("body"))).get("userId");
         //TODO!!!!
-        String userId = "13665477186";
+
         if(StringUtils.isEmpty(userId)){
             logger.info("userid没有进行绑定");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -367,6 +368,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
                 orderNo = (String) bodyMap.get("orderNo");
                 applSeq = (String) bodyMap.get("applSeq");
                 this.saveRelation(orderNo, appOrder.getTypGrp(), applSeq, appOrder.getCustNo());
+                return resultMap;
             } else {
                 return resultMap;
             }

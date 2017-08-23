@@ -29,4 +29,11 @@ public interface SgInnerService {
      * @return
      */
     Map<String, Object> gettotalAmt(Map<String, Object> map);
+
+    /**
+     * 根据用户中心token获取统一认证Id
+     * @param token
+     * @return
+     */
+    String getuserId(String token);
 }
