@@ -11,7 +11,7 @@
 		</div>
 		<div class="main02-2">
 			<span class='t'>优惠方式</span>
-			<a href="javascript:;" class="q" @click="chooseCoupon"><span>3张免息券可用</span></a>
+			<a href="javascript:;" class="q" @click="chooseCoupon"><!--<span>3张免息券可用</span>--></a>
 			<a href="javascript:;" class="t2">暂不使用</a>
 		</div>
 		<div class="main02-3">
@@ -20,7 +20,7 @@
 		</div>
 		<div class="main02-4">
 			<ul>
-				<li class="fenqi"  v-for="(item, index) in payMtd" @click="changePeriodFn(item.psPerdNo)">
+				<li class="fenqi"  v-for="(item, index) in payMtd" :class="{selected: index === 0  }" @click="changePeriodFn($event,item.psPerdNo)">
 					<div class="b-img"></div>
 					<div class="b-text">
 						<span class="fq">{{item.instmAmt}}元*{{item.psPerdNo}}期</span>

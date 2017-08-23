@@ -486,7 +486,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 mapone.put("appOutAdvice", (String)headinfo.get("appOutAdvice"));//审批意见
                 mapone.put("applSeq", (String)headinfo.get("applSeq"));//申请流水号
                 String outSts = (String)headinfo.get("outSts");
-                outSts="01";
+                //outSts="01";
                 if ("01".equals(outSts)) {//APP 审批中  01
                     mapone.put("outSts", "02");//顺逛 审批中  02
                     logger.info("返回顺狂数据：" + mapone);
@@ -535,35 +535,33 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         JSONObject json = new JSONObject(params);
         String token = (String) json.get("token");
         //1.根据token获取客户信息
-//        String userjsonstr = haierDataService.userinfo(token);
-//        if (userjsonstr == null || "".equals(userjsonstr)) {
-//            logger.info("验证客户信息接口调用失败");
-//            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
-//        }
-//        JSONObject userjson = new JSONObject(userjsonstr);
-//        if(!userjson.has("user_id")){
-//            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
-//        }
-//        Object uid = userjson.get("user_id");//会员id
-//        String orderNo = (String) userjson.get("orderNo");//订单号 非必输
-//        String applSeq = (String)userjson.get("applseq");//支付流水号  必输
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
+            logger.info("验证客户信息接口调用失败");
+            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+        }
+        JSONObject userjson = new JSONObject(userjsonstr);
+        if(!userjson.has("user_id")){
+            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
+        }
+        Object uid = userjson.get("user_id");//会员id
+        String orderNo = (String) userjson.get("orderNo");//订单号 非必输
+        String applSeq = (String)userjson.get("applseq");//支付流水号  必输
 //        if(StringUtils.isEmpty(uid)){
 //            String error = userjson.get("error").toString();
 //            return fail(ConstUtil.ERROR_CODE, error);
 //        }
 //        String uidHaier = uid.toString();//1000030088
-        //String uidHaier = "100003008";
+//        //String uidHaier = "100003008";
 //        Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
 //        Object head1 = userIdOne.get("head");
 //        JSONObject jsonObject = new JSONObject(head1);
 //        String retMsg1 = (String) jsonObject.get("retMsg");
-//        String orderNo = (String) json.get("orderNo");//订单号 非必输
-//        String applSeq = (String) json.get("applseq");//支付流水号  必输
-//        if (StringUtils.isEmpty(applSeq)) {
-//            logger.info("获取信息失败,为空:applSeq" + applSeq);
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-        String applSeq="1265216";//1265216    953808
+        if (StringUtils.isEmpty(applSeq)) {
+            logger.info("获取信息失败,为空:applSeq" + applSeq);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //String applSeq="1265216";//1265216    953808
         HashMap<String, Object> applmap = new HashMap<>();
         applmap.put("channel", "11");
         applmap.put("channelNo", channelNo);
@@ -676,7 +674,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 //        }
 //        String idNo = (String) cacheMap.get("idNo");//客户证件号码
-        String idNo="372926199009295116";
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
+            logger.info("验证客户信息接口调用失败");
+            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+        }
+        JSONObject userjson = new JSONObject(userjsonstr);
+        String idNo = (String) userjson.get("idNo");//客户证件号码
+       // String idNo="372926199009295116";
         String idTyp = "20";//证件类型  身份证：20
         if (StringUtils.isEmpty(idNo) || StringUtils.isEmpty(channelNo)) {
             logger.info("获取的数据为空：idNo=" + idNo + "  ,channelNo" + channelNo);

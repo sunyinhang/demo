@@ -6,6 +6,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             repayAccBankName: '',
             applyDt: '',
             applseq: '',
+            mthAmt: '',
             applyAmt: '',
             applyTnrTyp: '',
             xfze: '',
@@ -24,7 +25,6 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 },
                 success: function (res) {
                     var data = util.data(res);
-                    console.log(data)
                     // 默认还款卡号：repayApplCardNo
                     // 默认还款卡银行名称：repayAccBankName
                     // 业务日期：applyDt
@@ -43,13 +43,13 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                     vm.repayAccBankName = data.repayAccBankName;
                     vm.applyDt = data.applyDt;
                     vm.applseq = data.applseq;
+                    vm.goodsName = data.goodsName;
+                    vm.goodsPrice = data.goodsPrice;
+                    vm.mthAmt = data.mthAmt;
                     vm.applyAmt = '￥'+data.applyAmt;
                     vm.xfze = data.xfze;
                     vm.applyTnrTyp = data.applyTnrTyp;
-                    vm.ordertotal = data.ordertotal;
-
-
-
+                    vm.ordertotal = '￥'+data.ordertotal;
                 }
             });
         }
