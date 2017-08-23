@@ -1,6 +1,4 @@
 require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
-    //获取手机号
-    var param=util.cache('mobile');
 
     var vm = util.bind({
         container: 'setPayPsd',
@@ -56,7 +54,6 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         layout: 'primary',
                         click: function (event, editType, entity) {
                             util.cache({
-                                mobile: param && param.mobile,
                                 payPasswd: entity.payPassword
                             });
                             util.redirect({

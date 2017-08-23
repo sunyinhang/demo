@@ -1,10 +1,11 @@
 require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
-    //获取手机号和密码
-    var param=util.cache('mobile','payPasswd','edxgflag');
+    //获取密码
+    var param=util.cache('payPasswd','edxgflag');
 
     var vm = util.bind({
         container: 'payPsdValidcode',
         data: {
+            phoneNo: '',
             tags: {
                 formKey: 'payPsdValidcodeForm'
             },
@@ -12,7 +13,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
             },
             formConfig: {
                 columns: [{
-                    head: '请输入'+(param && (util.format(param.mobile || '', 'phone4')))+'手机收到的短信校验码',//+ param && param.mobile+
+                    head: '请输入'+ (util.format(vm.phoneNo || '', 'phone4'))+'手机收到的短信校验码',
                     name: 'verifyNo',
                     clazz: 'bv-align-left',
                     config: {
@@ -39,7 +40,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             util.get({
                                 url: '/sendMsg',
                                 data: {
-                                    phone: '18325423979'
+                                    phone: vm.phoneNo
                                 }
                             });
                         }
@@ -107,6 +108,14 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                     }
                 ]
             }
+        },
+        mounted: function(){
+            util.get({
+                url: '/getPhoneNo',
+                success: function(res){
+                    vm.phoneNo = util.data(res).phoneNo;
+                }
+            });
         }
     });
 });

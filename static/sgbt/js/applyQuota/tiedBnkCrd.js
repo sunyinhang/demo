@@ -218,9 +218,6 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                     verifyNo: entity.verifyNo,
                                 },
                                 success:function(res){
-                                    util.cache({
-                                        mobile: entity.mobile
-                                    });
                                     util.redirect({
                                         title: '个人资料',
                                         url: '/applyQuota/personalInform.html',
