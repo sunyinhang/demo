@@ -1,4 +1,4 @@
-require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
     //获取持卡人姓名
     var param = util.cache('name');
 
@@ -201,7 +201,18 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 });
                             }
                         },
-                        hint: '#card'
+                        hint: '#card',
+                        agree: {
+                            name: 'agree',
+                            text: '《个人信息使用授权书》',
+                            click: function () {
+                                util.popup({
+                                    $element: $('.agree-popup'),
+                                    title: '协议1',
+                                    url: 'https://www.baidu.com'
+                                });
+                            }
+                        }
                     }
                 ],
                 operates: [

@@ -111,7 +111,7 @@
 
 /* reset public*/
 *{ padding:0px; margin:0px;}
-.fullPage-gray .page,.fullPage-gray{ background-color: #eee;}
+.fullPage-gray .page,.fullPage-gray{ height:100%; background-color: #eee;}
 .clear{  clear: both; }
 .align-left{ text-align:left;}
 .margt8{ margin-top: 0.4rem;}
@@ -183,6 +183,10 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 .bill li.liblue{color:#29A9FC;}
 
 /* 设置支付密码和短信验证码*/
+.form-pwd.list-block .content-block,
+.form-sms.list-block .content-block{
+    padding: 0 15px;
+}
 .list-circle li{
     padding-left: 2.5rem; height: 2.5rem; font-size: 0.7rem; color: #999;
     background: #eee url('./images/pwd.png') no-repeat 24px center;

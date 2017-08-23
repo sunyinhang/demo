@@ -16,7 +16,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         config: {
                             type: 'password',
                             attr: {
-                                placeholder: '6-20位字母，数字，符号组合',
+                                placeholder: '6-20位字母，数字组合',
                                 maxlength: 'payPassword'
                             },
                             validate: {
@@ -32,7 +32,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                 operates: [
                     {
                         text: '下一步',
-                        layout: 'primary',
+                        layout: 'active',
                         click: function (event, editType, entity) {
                             util.cache({
                                 payPasswd: entity.payPassword

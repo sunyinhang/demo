@@ -5,7 +5,6 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
     var vm = util.bind({
         container: 'payPsdValidcode',
         data: {
-            phoneNo: '',
             tags: {
                 formKey: 'payPsdValidcodeForm'
             },
@@ -13,7 +12,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
             },
             formConfig: {
                 columns: [{
-                    head: '请输入'+ (util.format(vm.phoneNo || '', 'phone4'))+'手机收到的短信校验码',
+                    head: '请输入手机收到的短信校验码', //'+ (util.format(vm.phoneNo || '', 'phone4'))+'
                     name: 'verifyNo',
                     clazz: 'bv-align-left',
                     config: {
@@ -113,7 +112,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
             util.get({
                 url: '/getPhoneNo',
                 success: function(res){
-                    vm.phoneNo = util.data(res).phoneNo;
+                    vm.formConfig.columns[0].head = util.data(res).phoneNo;
                 }
             });
         }

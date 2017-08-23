@@ -6,7 +6,8 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             payAmt: '', //支付总额
             totalAmt: '', //应还款总额
             payMtd: [],
-            applyTnr: ''
+            applyTnr: '',
+            paypwd: ''
         },
         methods: {
             chooseCoupon: function () {
@@ -22,6 +23,9 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                         areaCode: '370203'
                     },
                     success: function(res){
+                        var orderNo = util.data(res).orderNo;
+                        var applSeq = util.data(res).applSeq;
+
                         util.modal({
                             title: '请输入支付密码',
                             clazz: 'xxx',
@@ -31,7 +35,28 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                                 {
                                     text: '确认支付',
                                     click: function () {
-
+                                        util.post({
+                                            url: '/shunguang/commitOrder',
+                                            data: {
+                                                orderNo: orderNo,
+                                                applSeq: applSeq,
+                                                paypwd: $(".pwd-text").val()
+                                            },
+                                            success: function(res){
+                                                util.redirect({
+                                                    title: '支付成功',
+                                                    url: '/getPayPsd/paySuccess.html',
+                                                    back: false
+                                                });
+                                            },
+                                            error: function(res){
+                                                util.redirect({
+                                                    title: '支付成功',
+                                                    url: '/getPayPsd/payFail.html',
+                                                    back: false
+                                                });
+                                            }
+                                        });
                                     }
                                 },
                                 {
@@ -90,7 +115,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             });
             //获取当前位置
             var geolocation = new BMap.Geolocation();
-            /*geolocation.getCurrentPosition(function(r) {
+            geolocation.getCurrentPosition(function(r) {
                 var lat=r.latitude;
                 var lng=r.longitude;
                 //关于状态码
@@ -123,7 +148,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 util.alert('#locationFail');
             }, {
                 enableHighAccuracy: true
-            });*/
+            });
         }
     });
 });

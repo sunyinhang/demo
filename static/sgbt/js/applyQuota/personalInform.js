@@ -1,4 +1,8 @@
 require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], function($, util, Const) {
+
+    //获取url的参数
+    var flag= util.gup('edxg');
+
     var vm = util.bind({
         container: 'personalInform',
         data: {

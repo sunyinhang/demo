@@ -19,6 +19,9 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             goShopFn: function(){
                 console.log(123);
             }
+        },
+        mounted: function(){
+
         }
     });
 });
