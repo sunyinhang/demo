@@ -773,4 +773,15 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("用户注册接口, 返回数据：" + result);
         return result;
     }
+    //3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
+    public Map<String, Object> getidNoInfo(String userId){
+        String url=EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/queryPerCustInfo";
+        logger.info("查询客户实名认证信息,请求地址："+url);
+        logger.info("查询客户实名认证信息,请求参数"+userId);
+        Map<String, Object> result = HttpUtil.restGetMap(userId);
+        logger.info("查询客户实名认证信息接口, 返回数据：" + result);
+        return result;
+
+
+    }
 }

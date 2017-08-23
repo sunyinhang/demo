@@ -130,7 +130,7 @@ public class CmisMseeageHandler {
                             map.put("outSts", "02");
                             map.put("appOutAdvice", appOutAdvice);//审批意见
                             map.put("apprvCrdAmt", apprvCrdAmt);//审批总额度
-                            map.put("userid", externUid);//集团userid
+                            map.put("userid", "100003008");//集团userid
                             if (StringUtils.isEmpty(url)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的额度申请推送地址";
                                 logger.info(retMsg);
@@ -222,7 +222,8 @@ public class CmisMseeageHandler {
 //            throw new RuntimeException("渠道" + channelNo + "私钥获取失败");
 //        }
 //        String publicKey = cooperativeBusiness.getRsapublic();//获取私钥
-        String privateKey = "MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAm6cZeX4HRK9FoBpdhC7gvmXm2OM4lJqNEW70pxcnm31puUT/sWSD4gYwEgDmco9CqFMGoKFwevC6290lw73D+wIDAQABAkAySWEEjD/i49FVsU7nJpH7UUasaXRdJjVPHY6y8Nsd83v5kUP1JvxkHRz+8/xiZFKHifiXmv4ycOiAPXYaTi0xAiEA3Et2EksgYViQXddNcKZHevXtl9OhsCZJzx+aFbw1HhMCIQC04X2og0K//sKAC/6EJTAny/l1spwTmGJB6tYhvtDfeQIhAMjXq7AF+mGGAyjrMFkx4B2EtbckZVdZsRU7NJn4W10tAiEAgmltYti4gJraet2q9HWngZnz0uMi2pHsjeAV4SClkekCIAksWUgYYiUVrwiXqY4rUFolsCYhjXdHXtSfPEc3oNn6";//获取私钥
+        //String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";
+        String privateKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";//获取私钥
         //请求数据加密
 //        String s = new String(RSAUtils.encryptByPrivateKey(Base64Utils.encode(bytes).getBytes(), privateKey));
 //        String params = new String(DesUtil.encrypt(Base64Utils.encode(data.getBytes()).getBytes(), s));

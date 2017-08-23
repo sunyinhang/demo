@@ -127,4 +127,6 @@ public interface AppServerService {
 
     //3.4.16.	(POST)用户注册
     public Map<String, Object> saveUauthUsers(String token, Map<String, Object> map);
+    //3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
+    public Map<String, Object> getidNoInfo(String token);
 }
