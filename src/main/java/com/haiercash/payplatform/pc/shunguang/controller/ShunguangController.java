@@ -1,10 +1,12 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
+import com.haiercash.payplatform.tasks.rabbitmq.CmisMseeageHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -13,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.haiercash.payplatform.common.utils.RestUtil.fail;
@@ -38,7 +41,8 @@ public class ShunguangController extends BaseController {
     private Session session;
     @Autowired
     private ShunguangService shunguangService;
-
+@Autowired
+private CmisMseeageHandler cmisMseeageHandler;
     /**
      * 微店主客户信息推送 Sg-10001.
      *
@@ -136,7 +140,7 @@ public class ShunguangController extends BaseController {
     }
 
     /**
-     * 10.  白条额度进行贷款支付结果主动查询接口    Sg-10009
+     * 10.  白条支付实名认证同步接口    Sg-10009
      *
      * @param map
      * @return
@@ -164,6 +168,14 @@ public class ShunguangController extends BaseController {
         if (!HttpUtil.isSuccess(queryAppmap)) {
             return queryAppmap;
         }
+//        HashMap<Object, Object> map1 = new HashMap<>();
+//        map1.put("tradeCode","100022");
+//        map1.put("channelNo","46");
+//        map1.put("applSeq","1");
+//        map1.put("outSts","25");
+//        map1.put("idNo","372926199009295116");
+//        String s = JSON.toJSONString(map1);
+//        cmisMseeageHandler.consumeNodeMessage(s);
         return shunguangService.edcheck(map);
     }
 

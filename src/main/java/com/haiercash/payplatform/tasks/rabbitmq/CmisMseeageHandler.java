@@ -3,7 +3,10 @@ package com.haiercash.payplatform.tasks.rabbitmq;
 import com.alibaba.fastjson.JSONObject;
 import com.haiercash.payplatform.common.dao.PublishDao;
 import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.payplatform.common.utils.Base64Utils;
+import com.haiercash.payplatform.common.utils.DesUtil;
 import com.haiercash.payplatform.common.utils.HttpClient;
+import com.haiercash.payplatform.common.utils.RSAUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.impl.store.Saaj;
@@ -16,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 核心消息处理.
@@ -87,8 +91,10 @@ public class CmisMseeageHandler {
                         // 推送给第三方
                         // 调用通知接口通知第三方：如果失败 重试2次
                         // 根据合作方编码 获取要转发的第三方的url
-                        String urlOne = publishDao.selectChannelNoUrl(channelNo);//获取贷款申请URL
-                        String url = publishDao.selectChannelNoUrlOne(channelNo);//获取额度申请URL
+//                        String urlOne = publishDao.selectChannelNoUrl(channelNo);//获取贷款申请URL
+                        String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";
+//                        String url = publishDao.selectChannelNoUrlOne(channelNo);//获取额度申请URL
+                        String url="http://mobiletest.ehaier.com:58093/paycenter/json/ious/limitNotify.json";
                         HashMap<String, Object> mapidNo = new HashMap<>();
                         HashMap<Object, Object> map = new HashMap<>();
                         HashMap<String, Object> mapinfo = new HashMap<>();
@@ -109,7 +115,7 @@ public class CmisMseeageHandler {
                         HashMap<String, Object> mapuser = new HashMap<>();
                         mapuser.put("channel", "11");
                         mapuser.put("channelNo", channelNo);
-                        mapuser.put("userId", userId);//身份证号
+                        mapuser.put("userId", userId);
                         Map<String, Object> userByUserid = appServerService.findUserByUserid(null, mapuser);//根据统一认证userid查询用户信息
                         String s = JSONObject.toJSONString(userByUserid);
                         JSONObject jsonObject1 = JSONObject.parseObject(s);
@@ -131,7 +137,8 @@ public class CmisMseeageHandler {
                                 return;
                             }
                             String sgString = JSONObject.toJSONString(map);
-                            result = HttpClient.sendPost(url, sgString, "utf-8");
+                            String encrypt = encrypt(sgString, channelNo);
+                            result = HttpClient.sendPost(url, encrypt, "utf-8");
                         } else if ("27".equals(outSts)) {//贷款申请通过
                             map.put("outSts", "01");
                             map.put("appOutAdvice", appOutAdvice);//审批意见
@@ -175,6 +182,7 @@ public class CmisMseeageHandler {
                                 return;
                             }
                             String sgString = JSONObject.toJSONString(map);
+                            encrypt(sgString, channelNo);
                             result = HttpClient.sendPost(urlOne, sgString, "utf-8");
                         }
                         //result = HttpClient.sendPost(url, json, "utf-8");
@@ -205,6 +213,33 @@ public class CmisMseeageHandler {
             logger.info("获取实时推送信息，结束");
         }
     }
+    private String encrypt(String data, String channelNo) throws Exception {
+        //byte[] bytes = key.getBytes();
+        //获取渠道私钥
+//        logger.info("获取渠道" + channelNo + "私钥");
+//        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
+//        if (cooperativeBusiness == null) {
+//            throw new RuntimeException("渠道" + channelNo + "私钥获取失败");
+//        }
+//        String publicKey = cooperativeBusiness.getRsapublic();//获取私钥
+        String privateKey = "MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAm6cZeX4HRK9FoBpdhC7gvmXm2OM4lJqNEW70pxcnm31puUT/sWSD4gYwEgDmco9CqFMGoKFwevC6290lw73D+wIDAQABAkAySWEEjD/i49FVsU7nJpH7UUasaXRdJjVPHY6y8Nsd83v5kUP1JvxkHRz+8/xiZFKHifiXmv4ycOiAPXYaTi0xAiEA3Et2EksgYViQXddNcKZHevXtl9OhsCZJzx+aFbw1HhMCIQC04X2og0K//sKAC/6EJTAny/l1spwTmGJB6tYhvtDfeQIhAMjXq7AF+mGGAyjrMFkx4B2EtbckZVdZsRU7NJn4W10tAiEAgmltYti4gJraet2q9HWngZnz0uMi2pHsjeAV4SClkekCIAksWUgYYiUVrwiXqY4rUFolsCYhjXdHXtSfPEc3oNn6";//获取私钥
+        //请求数据加密
+//        String s = new String(RSAUtils.encryptByPrivateKey(Base64Utils.encode(bytes).getBytes(), privateKey));
+//        String params = new String(DesUtil.encrypt(Base64Utils.encode(data.getBytes()).getBytes(), s));
 
+        //1.生成随机密钥
+        String password = DesUtil.productKey();
+        //2.des加密
+        String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(), password));
+        //3.加密des的key
+        String password_ = Base64Utils.encode(RSAUtils.encryptByPrivateKey(password.getBytes(), privateKey));
+        org.json.JSONObject reqjson = new org.json.JSONObject();
+        reqjson.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
+        reqjson.put("channelNo", "46");
+        reqjson.put("tradeCode", "Sg-10005");
+        reqjson.put("data", desData);
+        reqjson.put("key", password_);
+        return reqjson.toString();
+    }
 
 }
