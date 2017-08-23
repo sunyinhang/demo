@@ -206,10 +206,22 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                             name: 'agree',
                             text: '《个人信息使用授权书》',
                             click: function () {
-                                util.popup({
-                                    $element: $('.agree-popup'),
-                                    title: '协议1',
-                                    url: 'https://www.baidu.com'
+                                util.post({
+                                    url: '/treatyShow',
+                                    data: {
+                                        flag: 'contract'
+                                    },
+                                    success: function (res) {
+                                        var data = util.data(res);
+                                        if (data.realmName) {
+                                            // http://testpm.haiercash.com/app/appserver/contract?custNo=18325423979&applSeq=null
+                                            util.popup({
+                                                $element: $('.agree-popup'),
+                                                title: '协议1',
+                                                url: '/app/appserver/contract?custNo=18325423979&applseq=null'
+                                            });
+                                        }
+                                    }
                                 });
                             }
                         }

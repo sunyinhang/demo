@@ -245,7 +245,16 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                             }
                                         },
                                         click: function (event, item) {
-                                            console.log('clicked');
+                                            util.post({
+                                                url: '/deleteOrderInfo',
+                                                data: {
+                                                    orderNo: order.orderNo
+                                                },
+                                                success: function(res){
+                                                    util.alert('删除成功');
+                                                }
+                                            });
+
                                         }
                                     },{
                                         text: '审批进度',

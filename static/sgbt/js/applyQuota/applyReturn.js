@@ -30,8 +30,11 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
         },
         methods: {
             getReasonsFn: function(param){
-                //TODO
-                console.log(123);
+                util.redirect({
+                    title: '个人资料',
+                    url: '/applyQuota/applyProgress.html',
+                    back: false
+                });
             }
         }
     });
