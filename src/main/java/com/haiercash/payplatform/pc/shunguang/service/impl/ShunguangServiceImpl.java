@@ -23,11 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * shunguang service impl.
@@ -448,7 +444,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             map1.put("outSts", "01");
             return success(map1);
         }
-        String userIdone = (String) userIdOne.get("body");//用户信息
+        Object body1 = userIdOne.get("body");//用户信息
+        JSONObject jsonObjectinfo = new JSONObject(body1);
+        String userIdone = (String) jsonObjectinfo.get("userId");
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
         cacheedmap.put("channelNo", channelNo);
@@ -618,7 +616,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
     }
 
-    //10.  白条额度进行贷款支付结果主动查询接口    Sg-10009
+    //10.  白条支付实名认证同步接口    Sg-10009
     public Map<String, Object> queryAppLoanAndGoodsOne(Map<String, Object> map) throws Exception {
         String channelNo = (String) map.get("channelNo");
         String userId = (String) map.get("userId");//海尔集团用户ID
@@ -668,19 +666,26 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("获取token失败token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-//        Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if (StringUtils.isEmpty(cacheMap)) {
-//            logger.info("Jedis获取缓存失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-//        String idNo = (String) cacheMap.get("idNo");//客户证件号码
+        //1.根据token获取客户信息
         String userjsonstr = haierDataService.userinfo(token);
         if (userjsonstr == null || "".equals(userjsonstr)) {
             logger.info("验证客户信息接口调用失败");
             return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
         }
         JSONObject userjson = new JSONObject(userjsonstr);
+        if(!userjson.has("user_id")){
+            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
+        }
+        Object uid = userjson.get("user_id");//会员id
+        if(StringUtils.isEmpty(uid)){
+            String error = userjson.get("error").toString();
+            return fail(ConstUtil.ERROR_CODE, error);
+        }
+        String uidHaier = uid.toString();//1000030088
+        //String uidHaier = "100003008";
+        Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
         String idNo = (String) userjson.get("idNo");//客户证件号码
+        logger.info("获取的客户证件号码idNo:"+idNo);
        // String idNo="372926199009295116";
         String idTyp = "20";//证件类型  身份证：20
         if (StringUtils.isEmpty(idNo) || StringUtils.isEmpty(channelNo)) {
@@ -738,8 +743,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //请求数据解析
         String ss = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey));
         //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
-
-
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
         String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
 
@@ -758,7 +761,30 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
     }
 
-    public Map<String, Object> getUserId(String userId) {//根据集团userId查统一认证userId
+    public Map<String, Object> getUinfoserId(String userId) {//根据集团userId查统一认证userId
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("externUid", EncryptUtil.simpleEncrypt(userId));
+        //map.put("channel", "11");
+        //map.put("channelNo", channelNo);
+        Map<String, Object> userIdmap = appServerService.getUserId(null, map);
+        if (!HttpUtil.isSuccess(userIdmap)) {
+            Map<String,Object> head = (Map) userIdmap.get("head");
+            String retFlag = (String) head.get("retFlag");
+            if ("U0157".equals(retFlag)){//未查到该集团用户的信息
+                String retmsg = "01";//未申请
+                return fail(ConstUtil.ERROR_CODE,retmsg);
+            }
+            logger.info("调集团用户id查询用户信息接口返回信息错误userIdmap" + userIdmap);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Object body1 = userIdmap.get("body");
+        Map<String,Object> body11 = (Map) body1;
+        String userIdone = (String)body11.get("userId");
+        HashMap<Object, Object> mapone = new HashMap<>();
+        mapone.put("userId", userIdone);
+        return success(mapone);
+    }
+    public Map<String, Object> getUserId(String userId) {// Sg-10006借口   根据集团userId查统一认证userId
         HashMap<String, Object> map = new HashMap<>();
         map.put("externUid", EncryptUtil.simpleEncrypt(userId));
         //map.put("channel", "11");

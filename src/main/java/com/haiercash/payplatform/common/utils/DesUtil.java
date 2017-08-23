@@ -9,7 +9,15 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 public class DesUtil {
-
+	/**
+	 * 生成随机密钥
+	 * @return
+	 */
+	public static String  productKey()
+	{
+		Random ran=new Random();
+		return 10000000 + ran.nextInt(90000000)+"";
+	}
 	/**
 	* 加密
 	* @param src byte[]
@@ -17,7 +25,7 @@ public class DesUtil {
 	* @return byte[]
 	* @throws Exception
 	*/
-	public static byte[] encrypt(byte[] datasource, String password) { 
+	public static byte[] encrypt(byte[] datasource, String password) {
 		try{
 		SecureRandom random = new SecureRandom();
 		DESKeySpec desKey = new DESKeySpec(password.getBytes());

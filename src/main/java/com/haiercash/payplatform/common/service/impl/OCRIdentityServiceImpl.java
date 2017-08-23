@@ -552,7 +552,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String custNo = cacheMap.get("custNo") + "";
             String applSeq = cacheMap.get("applSeq") + "";
             if (!StringUtils.isEmpty(custNo) && !StringUtils.isEmpty(applSeq)) {
-                realmName = appServer_page_url + "app/appserver/contract?custNo=" + custNo + "&applSeq=" + applSeq;
+                realmName = appServer_page_url + "app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
                 logger.info("------------个人借款合同地址---------" + realmName);
                 map.put("realmName", realmName);
             }
@@ -561,7 +561,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String certNo = cacheMap.get("idNo") + "";
             if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
                 String custNameB = new String(Base64.encode(custName.getBytes()), "UTF-8");
-                realmName = realmName + "app/appserver/register?orderNo=" + custNameB + "&certNo=" + certNo;
+                realmName = realmName + "app/appserver/edCredit?custName=" + custNameB+"&certNo="+certNo;
                 logger.info("--------------征信查询------------" + realmName);
                 map.put("realmName", realmName);
             }
@@ -575,6 +575,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         } else if ("person".equals(flag)) {
             realmName = realmName + "static/agreement/PersonInfo.html";
             logger.info("----------个人信息协议-----------" + realmName);
+            map.put("realmName", realmName);
         }
         return success(map);
     }
