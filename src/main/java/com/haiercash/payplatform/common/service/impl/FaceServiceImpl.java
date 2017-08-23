@@ -212,8 +212,8 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         if("00000".equals(checkretFlag)){
             //人脸识别成功
             //判断是否已经设置过支付密码
-            validateUserFlag(userId, token, channel, channelNo, cacheMap);
-            return success();
+            Map m = validateUserFlag(userId, token, channel, channelNo, cacheMap);
+            return m;
         }else{
             Map checkbodyjson = (HashMap<String, Object>) checkresultmap.get("body");
             if("N".equals(checkbodyjson.get("isRetry")) &&
@@ -321,8 +321,8 @@ public class FaceServiceImpl extends BaseService implements FaceService{
 
         //上传替代影像成功
         //判断是否已经设置过支付密码
-        validateUserFlag(userId, token, channel, channelNo, cacheMap);
-        return success();
+        Map<String, Object> m = validateUserFlag(userId, token, channel, channelNo, cacheMap);
+        return m;
     }
 
     /**
@@ -400,7 +400,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             //可以做人脸识别
             logger.info("未通过人脸识别，可以再做人脸识别");
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("faceFlag", "3");// 手持身份证
+            map.put("faceFlag", "3");// 人脸识别
             return success(map);
         }
 

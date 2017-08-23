@@ -41,4 +41,7 @@ public interface OCRIdentityService {
 
     //校验短信验证码  设置支付密码  提交订单
     //public Map<String, Object> verifyMessage(String token, String verifyNo,String channelNo,String channel);
+
+    //获取绑定手机号
+    public Map<String, Object> getPhoneNo(String token);
 }

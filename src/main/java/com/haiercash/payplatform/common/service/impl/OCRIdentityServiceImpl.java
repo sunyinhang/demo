@@ -456,6 +456,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             }
         }
 
+        cacheMap.put("phoneNo", mobile);
+        session.set(token, cacheMap);
         //OCR图片路径上送
         Map<String, String> pathMap = new HashMap<String, String>();
         pathMap.put("certImagePathA", (String) cacheMap.get("certImagePathA"));//正面共享盘位置
@@ -575,5 +577,23 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("----------个人信息协议-----------" + realmName);
         }
         return success(map);
+    }
+
+    //获取绑定手机号
+    @Override
+    public Map<String, Object> getPhoneNo(String token) {
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String phoneNo = (String) cacheMap.get("phoneNo");
+        if(StringUtils.isEmpty(phoneNo)){
+            logger.info("获取手机号为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map m = new HashMap();
+        m.put("phoneNo", phoneNo);
+        return success(m);
     }
 }

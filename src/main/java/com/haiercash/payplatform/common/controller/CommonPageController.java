@@ -425,4 +425,16 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> deleteOrderInfo(@RequestBody Map<String, Object> map) {
         return InstallmentAccountService.deleteOrderInfo(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
+
+
+    /**
+     * 获取绑定手机号
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/getPhoneNo", method = RequestMethod.GET)
+    public Map<String, Object> getPhoneNo() {
+        return ocrIdentityService.getPhoneNo(super.getToken());
+    }
+
+
 }
