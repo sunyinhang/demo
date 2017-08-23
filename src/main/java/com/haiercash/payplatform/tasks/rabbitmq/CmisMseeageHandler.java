@@ -223,7 +223,9 @@ public class CmisMseeageHandler {
 //        }
 //        String publicKey = cooperativeBusiness.getRsapublic();//获取私钥
         //String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";
-        String privateKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";//获取私钥
+        String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";
+
+        //String privateKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";//获取私钥
         //请求数据加密
 //        String s = new String(RSAUtils.encryptByPrivateKey(Base64Utils.encode(bytes).getBytes(), privateKey));
 //        String params = new String(DesUtil.encrypt(Base64Utils.encode(data.getBytes()).getBytes(), s));
@@ -233,7 +235,7 @@ public class CmisMseeageHandler {
         //2.des加密
         String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(), password));
         //3.加密des的key
-        String password_ = Base64Utils.encode(RSAUtils.encryptByPrivateKey(password.getBytes(), privateKey));
+        String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(), publicKey));
         org.json.JSONObject reqjson = new org.json.JSONObject();
         reqjson.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
         reqjson.put("channelNo", "46");
