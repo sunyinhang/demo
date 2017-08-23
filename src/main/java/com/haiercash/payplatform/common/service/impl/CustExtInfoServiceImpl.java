@@ -264,7 +264,15 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("officeCity", officeAddress_split[1]);// 单位地址（市）
         paramMap.put("officeArea", officeAddress_split[2]);// 单位地址（区）
         paramMap.put("officeAddr", params.get("officeAddr"));// 单位详细地址
-        paramMap.put("dataFrom", params.get("dataFrom"));// 数据来源
+        paramMap.put("dataFrom", channelNo);// 数据来源
+        //CRM 为额度激活填写默认值
+        if("46".equals(channelNo)){
+            paramMap.put("education", "20");// 最高学历   大专
+            paramMap.put("liveInfo", "99");//现居住情况    其他
+            paramMap.put("localResid", "10");//户口性质   本地城镇
+            paramMap.put("mthInc", 5000);//月收入
+            paramMap.put("position", "03");//职务   基层
+        }
         Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
         if(stringObjectMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
