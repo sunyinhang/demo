@@ -445,8 +445,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return success(map1);
         }
         Object body1 = userIdOne.get("body");//用户信息
-        JSONObject jsonObjectinfo = new JSONObject(body1);
-        String userIdone = (String) jsonObjectinfo.get("userId");
+        Map<String,Object> body11 = (Map) body1;
+        String userIdone = (String) body11.get("userId");
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
         cacheedmap.put("channelNo", channelNo);
@@ -454,8 +454,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> mapcache = appServerService.checkEdAppl(token, cacheedmap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
-            Map<String,Object> body = (Map) mapcache.get("body");
-            String retFlag = (String) body.get("retFlag");
+            Map<String,Object> head = (Map) mapcache.get("head");
+            String retFlag = (String) head.get("retFlag");
             if("A1183".equals(retFlag)){
                 logger.info("没有额度申请");
                 HashMap<Object, Object> map1 = new HashMap<>();
