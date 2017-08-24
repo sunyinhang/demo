@@ -26,7 +26,9 @@ var __Const = {
     params: {
         maritalStatusUnknown: '60',
         maritalStatusMarried: '20',
-        relationTypeCouple: '06'
+        relationTypeCouple: '06',
+        // 百度地图api
+        mapKey: 'vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm'
     },
     dicts: {
         education: [
@@ -150,6 +152,7 @@ var __Const = {
         ]
     },
     messages: {
+        locationFail: '获取地理位置失败，无法继续操作，请确认GPS定位是否打开或网络是否正常！',
         agree: '请先同意相关协议',
         card: '此卡为默认放款卡和还款卡,如果想更换默认还款卡，可以在个人中心-个人资料-银行卡中绑定并设置',
         btDefin: '"顺逛白条"是顺逛商城联合海尔消费金融为其家电购买用户提供的一款"先消费，后付款"的在线支付产品服务',

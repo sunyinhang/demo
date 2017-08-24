@@ -1,4 +1,4 @@
-require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
+require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, Const) {
     var vm = util.bind({
         container: 'btInstalments',
         data: {
@@ -8,6 +8,11 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             payMtd: [],
             applyTnr: '',
             paypwd: ''
+        },
+        filters: {
+            currency: function (val) {
+                return util.format(val, 'currency');
+            }
         },
         methods: {
             chooseCoupon: function () {
@@ -22,56 +27,63 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                         applyTnr: vm.applyTnr,
                         areaCode: '370203'
                     },
-                    success: function(res){
-                        var orderNo = util.data(res).orderNo;
-                        var applSeq = util.data(res).applSeq;
-
-                        util.modal({
-                            title: '请输入支付密码',
-                            clazz: 'xxx',
-                            message: '<div class="enretPwd-c"><input type="text" placeholder="请输入支付密码" class="pwd-text"></div>',
-                            inline: false,
-                            operates: [
-                                {
-                                    text: '确认支付',
-                                    click: function () {
-                                        util.post({
-                                            url: '/shunguang/commitOrder',
-                                            data: {
-                                                orderNo: orderNo,
-                                                applSeq: applSeq,
-                                                paypwd: $(".pwd-text").val()
-                                            },
-                                            success: function(res){
-                                                util.redirect({
-                                                    title: '支付成功',
-                                                    url: '/getPayPsd/paySuccess.html',
-                                                    back: false
-                                                });
-                                            },
-                                            error: function(res){
-                                                util.redirect({
-                                                    title: '支付成功',
-                                                    url: '/getPayPsd/payFail.html',
-                                                    back: false
-                                                });
-                                            }
-                                        });
-                                    }
-                                },
-                                {
-                                    text: '忘记密码',
-                                    click: function () {
+                    success: function(res) {
+                        var data = util.data(res);
+                        if (data) {
+                            util.cache({
+                                orderNo: data.orderNo,
+                                applSeq: data.applSeq
+                            });
+                            this.openCheckPassword(data.orderNo, data.applSeq);
+                        }
+                    }
+                });
+            },
+            openCheckPassword: function (orderNo, applSeq) {
+                util.modal({
+                    title: '请输入支付密码',
+                    clazz: 'xxx',
+                    message: '<div class="enretPwd-c"><input type="password" placeholder="请输入支付密码" class="pwd-text"></div>',
+                    inline: false,
+                    operates: [
+                        {
+                            text: '确认支付',
+                            click: function () {
+                                util.post({
+                                    url: '/shunguang/commitOrder',
+                                    data: {
+                                        orderNo: orderNo,
+                                        applSeq: applSeq,
+                                        paypwd: $(".pwd-text").val()
+                                    },
+                                    success: function(res){
                                         util.redirect({
-                                            title: '找回支付密码',
-                                            url: '/getPayPsd/getPayPsdWay.html',
+                                            title: '支付成功',
+                                            url: '/getPayPsd/paySuccess.html',
+                                            back: false
+                                        });
+                                    },
+                                    error: function(res){
+                                        util.redirect({
+                                            title: '支付成功',
+                                            url: '/getPayPsd/payFail.html',
                                             back: false
                                         });
                                     }
-                                }
-                            ]
-                        });
-                    }
+                                });
+                            }
+                        },
+                        {
+                            text: '忘记密码',
+                            click: function () {
+                                util.redirect({
+                                    title: '找回支付密码',
+                                    url: '/getPayPsd/getPayPsdWay.html',
+                                    back: false
+                                });
+                            }
+                        }
+                    ]
                 });
             },
             //什么是白条
@@ -93,6 +105,12 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             }
         },
         mounted: function(){
+            if (util.gup('from') === 'reset') {
+                var param = util.cache('orderNo,applSeq');
+                if (param) {
+                    this.openCheckPassword(param.orderNo, param.applSeq);
+                }
+            }
             //预加载
             util.get({
                 url: '/shunguang/initPayApply',
@@ -130,21 +148,22 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 //BMAP_STATUS_TIMEOUT	超时。对应数值“8”。(自 1.1 新增)
                 if (this.getStatus() == BMAP_STATUS_SUCCESS) {
                     util.get({
-                        url: 'https://api.map.baidu.com/geocoder/v2/?location=' + lat + ',' + lng + '&output=json&ak=vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm',
+                        url: 'https://api.map.baidu.com/geocoder/v2/?location=' + lat + ',' + lng + '&output=json&ak=' + Const.params.mapKey,
                         urlType: 'json',
                         dataType: 'jsonp',
                         check: true,
                         success: function(res) {
-                            vm.areacode=res.addressComponent.adcode
-                            console.log( vm.areacode);
+                            if (res.status === 0 && res.result && res.result.addressComponent && res.result.addressComponent.adcode) {
+                                vm.areacode = res.result.addressComponent.adcode;
+                            }
                         }
                     });
                 } else {
-                    util.loading('close');
+                    // util.loading('close');
                     util.alert('#locationFail');
                 }
             }, function(e) {
-                util.loading('close');
+                // util.loading('close');
                 util.alert('#locationFail');
             }, {
                 enableHighAccuracy: true

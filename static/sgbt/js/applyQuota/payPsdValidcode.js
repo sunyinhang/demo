@@ -111,8 +111,18 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
         mounted: function(){
             util.get({
                 url: '/getPhoneNo',
-                success: function(res){
-                    vm.formConfig.columns[0].head = util.data(res).phoneNo;
+                success: function(res) {
+                    var data = util.data(res);
+                    if (data && data.phoneNo) {
+                        util.refresh({
+                            vm: util.vm(vm, vm.tags.formKey),
+                            column: {
+                                name: 'verifyNo',
+                                head: '请输入手机' + util.format(data.phoneNo, 'phone4') + '收到的短信校验码'
+                            }
+                        });
+                    }
+                    // vm.formConfig.columns[0].head = util.data(res).phoneNo;
                 }
             });
         }

@@ -62,6 +62,13 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                 success: function (res){
                                     util.alert('重置成功');
                                     //TODO   跳转到输入支付密码页面
+                                    util.redirect({
+                                        title: '',
+                                        url: util.mix('/payByBt/btInstalments.html', {
+                                            from: 'reset'
+                                        }),
+                                        back: false
+                                    });
                                 }
                             });
                         }
