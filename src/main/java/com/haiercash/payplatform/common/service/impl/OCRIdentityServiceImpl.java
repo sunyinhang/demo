@@ -530,7 +530,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
      * @return
      */
     public Map<String, Object> treatyShowServlet(String token, Map<String,Object> params) throws Exception {
-        String realmName = null;
+        String realmName = "";
         String flag = (String) params.get("flag");
         HashMap<String, Object> map = new HashMap<>();
         if (StringUtils.isEmpty(token)) {
@@ -552,7 +552,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String custNo = cacheMap.get("custNo") + "";
             String applSeq = cacheMap.get("applSeq") + "";
             if (!StringUtils.isEmpty(custNo) && !StringUtils.isEmpty(applSeq)) {
-                realmName = appServer_page_url + "app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
+                realmName =  "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
                 logger.info("------------个人借款合同地址---------" + realmName);
                 map.put("realmName", realmName);
             }
@@ -561,19 +561,19 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String certNo = cacheMap.get("idNo") + "";
             if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
                 String custNameB = new String(Base64.encode(custName.getBytes()), "UTF-8");
-                realmName = realmName + "app/appserver/edCredit?custName=" + custNameB+"&certNo="+certNo;
+                realmName = "/app/appserver/edCredit?custName=" + custNameB+"&certNo="+certNo;
                 logger.info("--------------征信查询------------" + realmName);
                 map.put("realmName", realmName);
             }
         } else if ("register".equals(flag)) {
             String orderNo = cacheMap.get("orderNo") + "";
             if (!StringUtils.isEmpty(orderNo)) {
-                realmName = realmName + "app/appserver/register?orderNo=" + orderNo;
+                realmName = "/app/appserver/register?orderNo=" + orderNo;
                 logger.info("------------注册协议------------" + realmName);
                 map.put("realmName", realmName);
             }
         } else if ("person".equals(flag)) {
-            realmName = realmName + "static/agreement/PersonInfo.html";
+            realmName = "/app/ht/agreement/PersonInfo.html";
             logger.info("----------个人信息协议-----------" + realmName);
             map.put("realmName", realmName);
         }
