@@ -460,3 +460,17 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
 .media-list .item-inner .item-btns{ padding: 5px 15px; background-color: #fff; }
 .media-list .item-inner .item-btns .row{ -webkit-box-pack: end;-ms-flex-pack: end; -webkit-justify-content: flex-end; justify-content:  flex-end;}
 .media-list .item-inner .item-btns .row .col-auto{ margin-left:0.5rem; max-width: 80px; min-width:60px;}
+
+/* 支付中图标 */
+.modal-preloader.paying .modal-inner {
+    padding: 0;
+    border-radius: 0;
+}
+.modal-preloader.paying .preloader {
+    background: url(images/paying.gif) no-repeat 50% 16%;
+    animation: unset;
+    background-size: 190%;
+    width: 8rem;
+    height: 8rem;
+    display: block;
+}
