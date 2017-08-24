@@ -13,6 +13,7 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 @ServletComponentScan
 @ComponentScan(basePackages = {"com.haiercash.commons", "com.haiercash.payplatform"})
 @EnableEurekaClient
+@EnableZuulProxy
 @EnableScheduling
 @Configuration
 @EnableAutoConfiguration

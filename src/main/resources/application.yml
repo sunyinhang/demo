@@ -104,6 +104,17 @@ eureka:
     lease-expiration-duration-in-seconds: 2
     secure-port-enabled: false
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
+zuul:
+  ignoredServices: '*'
+  set-content-length: true # 返回长度,微服务没有返回长度或请求 GZip 压缩除外
+  host:
+    socket-timeout-millis: 30000
+  routes:
+    crmForApp:
+      path: /app/appserver/**
+      serviceId: APPSERVERNOAUTHNEW
+      stripPrefix: false
+      sensitive-headers:
 ribbon:
   ConnectTimeout: 3000
   ReadTimeout: 60000
