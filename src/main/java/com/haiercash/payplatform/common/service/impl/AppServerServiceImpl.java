@@ -755,10 +755,10 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
     //OM-1108 根据applSeq查询商城订单号
-    public Map<String,Object> getorderNo(String applSeq){
+    public Map<String,Object> getorderNo(String token,Map<String, Object> paramMap){
         String url = EurekaServer.ORDER + "/api/order/getMallOrderNoByApplSeq";
-        logger.info("根据applSeq查询商城订单号："+url);
-        Map<String, Object> map = HttpUtil.restGetMap(url);
+        logger.info("根据applSeq查询商城订单号："+paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         return map;
     }
 
@@ -774,11 +774,11 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return result;
     }
     //3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
-    public Map<String, Object> getidNoInfo(String userId){
+    public Map<String, Object> getidNoInfo(String token, Map<String, Object> params){
         String url=EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/queryPerCustInfo";
         logger.info("查询客户实名认证信息,请求地址："+url);
-        logger.info("查询客户实名认证信息,请求参数"+userId);
-        Map<String, Object> result = HttpUtil.restGetMap(userId);
+        logger.info("查询客户实名认证信息,请求参数"+params);
+        Map<String, Object> result = HttpUtil.restGetMap(url, token, params);
         logger.info("查询客户实名认证信息接口, 返回数据：" + result);
         return result;
 

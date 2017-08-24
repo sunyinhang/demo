@@ -686,13 +686,18 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, error);
         }
         String uidHaier = uid.toString();//1000030088
-        //String uidHaier = "100003008";
-        Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
+        //String  uidHaier = "1000030088";
+        Map<String, Object> userIdOne = getUserIdif(uidHaier);//获取用户userId
         Object body1 = userIdOne.get("body");//用户信息
         Map<String, Object> body11 = (Map) body1;
         String userIdone = (String) body11.get("userId");
+
+        HashMap<String, Object> mapinfo = new HashMap<>();
+        mapinfo.put("userId",userIdone);//15275126181
+        mapinfo.put("channelNo",channelNo);
+        mapinfo.put("channel","11");
         //String idNo = (String) userjson.get("idNo");//客户证件号码
-        Map<String, Object> map1 = appServerService.getidNoInfo(userIdone);//3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
+        Map<String, Object> map1 = appServerService.getidNoInfo(token,mapinfo);//3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
         Map<String, Object> headinfo = (Map) map1.get("head");
         String retMsginfo = (String) headinfo.get("retMsg");
         if (StringUtils.isEmpty(map1)){
