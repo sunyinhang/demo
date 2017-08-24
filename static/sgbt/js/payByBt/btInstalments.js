@@ -16,20 +16,20 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 });
             },
             payFn: function () {
-                util.post({
-                    url: '/shunguang/saveOrder',
-                    data:{
-                        applyTnr: vm.applyTnr,
-                        areaCode: '370203'
-                    },
-                    success: function(res){
-                        var orderNo = util.data(res).orderNo;
-                        var applSeq = util.data(res).applSeq;
+                // util.post({
+                //     url: '/shunguang/saveOrder',
+                //     data:{
+                //         applyTnr: vm.applyTnr,
+                //         areaCode: '370203'
+                //     },
+                //     success: function(res){
+                //         var orderNo = util.data(res).orderNo;
+                //         var applSeq = util.data(res).applSeq;
 
                         util.modal({
                             title: '请输入支付密码',
-                            clazz: 'xxx',
-                            message: '<div class="enretPwd-c"><input type="text" placeholder="请输入支付密码" class="pwd-text"></div>',
+                            clazz: 'enterPayPwd',
+                            message: '<input type="text" placeholder="请输入支付密码" class="pwd-text">',
                             inline: false,
                             operates: [
                                 {
@@ -71,8 +71,8 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                                 }
                             ]
                         });
-                    }
-                });
+                   /* }
+                });*/
             },
             //什么是白条
             definitionBtFn: function(){

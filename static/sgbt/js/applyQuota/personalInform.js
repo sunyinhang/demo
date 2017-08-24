@@ -1,8 +1,5 @@
 require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], function($, util, Const) {
 
-    //获取url的参数
-    var flag= util.gup('edxg');
-
     var vm = util.bind({
         container: 'personalInform',
         data: {
@@ -50,7 +47,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                             placeholder: '请选择居住地址'
                                         },
                                         validate: {
-                                            //required: '居住地址不能为空'
+                                            required: '居住地址不能为空'
                                         },
                                         code: 'areaCode',
                                         desc: 'areaName',
@@ -106,7 +103,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                             maxlength: '#address'
                                         },
                                         validate: {
-                                            required: '居住详细地址不能为空'
+                                            //required: '居住详细地址不能为空'
                                         }
                                     }
                                 }
@@ -125,7 +122,8 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                     name: 'officeName',
                                     config: {
                                         attr: {
-                                            maxlength: '#officeName'
+                                            maxlength: '#officeName',
+                                            placeholder: '请输入工作单位'
                                         },
                                         validate: {
                                             required: '请输入工作单位'
@@ -160,7 +158,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                             placeholder: '请选择单位地址'
                                         },
                                         validate: {
-                                            //required: '单位地址不能为空'
+                                            required: '单位地址不能为空'
                                         },
                                         code: 'areaCode',
                                         desc: 'areaName',
@@ -271,10 +269,10 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                             maxlength: '#phone'
                                         },
                                         validate: {
-                                            required: '紧急联系人不能为空',
+                                            required: '紧急联系人联系电话不能为空',
                                             custom: {
                                                 code: 'mobile',
-                                                desc: '请输入正确的紧急联系人联系方式'
+                                                desc: '请输入正确的紧急联系人联系电话'
                                             }
                                         }
                                     }
@@ -293,7 +291,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                         choose: '#relationType',
                                         excludes: [Const.params.relationTypeCouple],
                                         validate: {
-                                            //required: '请选择紧急联系人关系'
+                                            required: '请选择紧急联系人关系'
                                         }
                                     }
                                 },
@@ -319,10 +317,10 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                             maxlength: '#phone'
                                         },
                                         validate: {
-                                            required: '紧急联系人不能为空',
+                                            required: '紧急联系人联系电话不能为空',
                                             custom: {
                                                 code: 'mobile',
-                                                desc: '请输入正确的紧急联系人联系方式'
+                                                desc: '请输入正确的紧急联系人联系电话'
                                             }
                                         }
                                     }
@@ -350,62 +348,75 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                         text: '下一步',
                         layout: 'primary',
                         click: function (event, editType, entity) {
-                            util.post({
-                                url: "/saveAllCustExtInfo",
-                                data:{
-                                    liveAddress_code: entity.liveAddress,
-                                    officeAddress_code: entity.officeAddress,
-                                    maritalStatus: entity.maritalStatus,
-                                    liveAddr: entity.liveAddr,
-                                    officeName: entity.officeName,
-                                    officeTel: entity.officeTel,
-                                    officeAddr: entity.officeAddr,
-                                    id_one: entity.id1,
-                                    relationType_one: entity.relationType1,
-                                    contactName_one: entity.contactName1,
-                                    contactMobile_one: entity.contactMobile1,
-                                    id_two: entity.id2,
-                                    relationType_two: entity.relationType2,
-                                    contactName_two: entity.contactName2,
-                                    contactMobile_two: entity.contactMobile2,
-                                    dataFrom: 'app_person'
-                                },
-                                success:function(res){
-                                    //1：通过人脸识别，并已设置支付密码
-                                    //2：通过人脸识别，但没有设置支付密码
-                                    //3. 未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                                    //4：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                                    //5. 跳转人脸识别
-                                    if(res.body.flag == '1'){
-                                        util.redirect({
-                                            title: '确认支付密码',
-                                            url: '/applyQuota/confirmPayPsd.html',
-                                            back: false
-                                        });
-                                    }else if(res.body.flag == '2'){
-                                        util.redirect({
-                                            title: '设置支付密码',
-                                            url: '/applyQuota/setPayPsd.html',
-                                            back: false
-                                        });
-                                    }else if(res.body.flag == '3'){
-                                        //TODO
+                            //居住地址和单位地址校验
+                            var liveAddressAttr = entity.liveAddress.split(",");
+                            var officeAddressAttr = entity.officeAddress.split(",");
+                            if(util.isEmpty(liveAddressAttr[1])){
+                                util.alert('请选择居住地址市/区 ');
+                            }else if(util.isEmpty(liveAddressAttr[2])){
+                                util.alert('请选择居住地址区/县 ');
+                            }else if(util.isEmpty(officeAddressAttr[1])){
+                                util.alert('请选择单位地址市/区 ');
+                            }else if(util.isEmpty(officeAddressAttr[2])){
+                                util.alert('请选择单位地址区/县 ');
+                            }else{
+                                util.post({
+                                    url: "/saveAllCustExtInfo",
+                                    data:{
+                                        liveAddress_code: entity.liveAddress,
+                                        officeAddress_code: entity.officeAddress,
+                                        maritalStatus: entity.maritalStatus,
+                                        liveAddr: entity.liveAddr,
+                                        officeName: entity.officeName,
+                                        officeTel: entity.officeTel,
+                                        officeAddr: entity.officeAddr,
+                                        id_one: entity.id1,
+                                        relationType_one: entity.relationType1,
+                                        contactName_one: entity.contactName1,
+                                        contactMobile_one: entity.contactMobile1,
+                                        id_two: entity.id2,
+                                        relationType_two: entity.relationType2,
+                                        contactName_two: entity.contactName2,
+                                        contactMobile_two: entity.contactMobile2,
+                                        dataFrom: 'app_person'
+                                    },
+                                    success:function(res){
+                                        //1：通过人脸识别，并已设置支付密码
+                                        //2：通过人脸识别，但没有设置支付密码
+                                        //3. 未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                                        //4：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                                        //5. 跳转人脸识别
+                                        if(res.body.flag == '1'){
+                                            util.redirect({
+                                                title: '确认支付密码',
+                                                url: '/applyQuota/confirmPayPsd.html',
+                                                back: false
+                                            });
+                                        }else if(res.body.flag == '2'){
+                                            util.redirect({
+                                                title: '设置支付密码',
+                                                url: '/applyQuota/setPayPsd.html',
+                                                back: false
+                                            });
+                                        }else if(res.body.flag == '3'){
+                                            //TODO
 
-                                    }else if(res.body.flag == '4'){
-                                        util.redirect({
-                                            title: '手持身份证',
-                                            url: '/applyQuota/handholdIdCard.html',
-                                            back: false
-                                        });
-                                    }else if(res.body.flag == '5'){
-                                        util.redirect({
-                                            title: '人脸识别',
-                                            url: '/applyQuota/identityVrfic.html',
-                                            back: false
-                                        });
+                                        }else if(res.body.flag == '4'){
+                                            util.redirect({
+                                                title: '手持身份证',
+                                                url: '/applyQuota/handholdIdCard.html',
+                                                back: false
+                                            });
+                                        }else if(res.body.flag == '5'){
+                                            util.redirect({
+                                                title: '人脸识别',
+                                                url: '/applyQuota/identityVrfic.html',
+                                                back: false
+                                            });
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
                     }
                 ]
@@ -439,99 +450,101 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                 url: "/getAllCustExtInfo",
                 success: function(res) {
                     var data = util.data(res);
-                    util.refresh({
-                        vm: util.vm(vm, vm.tags.formKey),
-                        entity: {
-                            maritalStatus: data.CustExtInfoMap.maritalStatus,
-                            liveAddress: data.CustExtInfoMap.liveProvince+ ','+data.CustExtInfoMap.liveCity+','+data.CustExtInfoMap.liveArea,
-                            /// liveAddress: data.CustExtInfoMap.liveProvinceName+ data.CustExtInfoMap.liveCityName+data.CustExtInfoMap.liveAreaName,
-                            liveAddr: data.CustExtInfoMap.liveAddr,
-                            officeName: data.CustExtInfoMap.officeName,
-                            officeTel: data.CustExtInfoMap.officeTel,
-                            officeAddr: data.CustExtInfoMap.officeAddr,
-                            officeAddress: data.CustExtInfoMap.officeProvince+','+ data.CustExtInfoMap.officeCity+','+data.CustExtInfoMap.officeArea
-                            /// officeAddress: data.CustExtInfoMap.officeProvinceName+ data.CustExtInfoMap.officeCity+data.CustExtInfoMap.officeAreaName
-                        }
-                    });
-                    for (var i=0; i<data.CustExtInfoMap.lxrList.length; i++) {
-                        var lxr = {};
-                        lxr['id' + (i + 1)] = data.CustExtInfoMap.lxrList[i].id;
-                        lxr['relationType' + (i + 1)] = data.CustExtInfoMap.lxrList[i].relationType;
-                        lxr['contactName' + (i + 1)] = data.CustExtInfoMap.lxrList[i].contactName;
-                        lxr['contactMobile' + (i + 1)] = data.CustExtInfoMap.lxrList[i].contactMobile;
+                    if(!util.isEmpty(data) && !util.isEmpty(data.CustExtInfoMap)){
                         util.refresh({
                             vm: util.vm(vm, vm.tags.formKey),
-                            entity: lxr
+                            entity: {
+                                maritalStatus: data.CustExtInfoMap.maritalStatus,
+                                liveAddress: data.CustExtInfoMap.liveProvince+ ','+data.CustExtInfoMap.liveCity+','+data.CustExtInfoMap.liveArea,
+                                /// liveAddress: data.CustExtInfoMap.liveProvinceName+ data.CustExtInfoMap.liveCityName+data.CustExtInfoMap.liveAreaName,
+                                liveAddr: data.CustExtInfoMap.liveAddr,
+                                officeName: data.CustExtInfoMap.officeName,
+                                officeTel: data.CustExtInfoMap.officeTel,
+                                officeAddr: data.CustExtInfoMap.officeAddr,
+                                officeAddress: data.CustExtInfoMap.officeProvince+','+ data.CustExtInfoMap.officeCity+','+data.CustExtInfoMap.officeArea
+                                /// officeAddress: data.CustExtInfoMap.officeProvinceName+ data.CustExtInfoMap.officeCity+data.CustExtInfoMap.officeAreaName
+                            }
                         });
-                        if (i === 1) {
-                            break;
+                        for (var i=0; i<data.CustExtInfoMap.lxrList.length; i++) {
+                            var lxr = {};
+                            lxr['id' + (i + 1)] = data.CustExtInfoMap.lxrList[i].id;
+                            lxr['relationType' + (i + 1)] = data.CustExtInfoMap.lxrList[i].relationType;
+                            lxr['contactName' + (i + 1)] = data.CustExtInfoMap.lxrList[i].contactName;
+                            lxr['contactMobile' + (i + 1)] = data.CustExtInfoMap.lxrList[i].contactMobile;
+                            util.refresh({
+                                vm: util.vm(vm, vm.tags.formKey),
+                                entity: lxr
+                            });
+                            if (i === 1) {
+                                break;
+                            }
                         }
-                    }
-                    for (var i=data.CustExtInfoMap.lxrList.length; i<2; i++) {
-                        var lxr = {};
-                        lxr['id' + (i + 1)] = null;
-                        lxr['relationType' + (i + 1)] = null;
-                        lxr['contactName' + (i + 1)] = null;
-                        lxr['contactMobile' + (i + 1)] = null;
-                        util.refresh({
-                            vm: util.vm(vm, vm.tags.formKey),
-                            entity: lxr
-                        });
-                        if (i === 1) {
-                            break;
+                        for (var i=data.CustExtInfoMap.lxrList.length; i<2; i++) {
+                            var lxr = {};
+                            lxr['id' + (i + 1)] = null;
+                            lxr['relationType' + (i + 1)] = null;
+                            lxr['contactName' + (i + 1)] = null;
+                            lxr['contactMobile' + (i + 1)] = null;
+                            util.refresh({
+                                vm: util.vm(vm, vm.tags.formKey),
+                                entity: lxr
+                            });
+                            if (i === 1) {
+                                break;
+                            }
                         }
-                    }
 
-                    // 选传影像
-                    if (data.docList && data.docList.length > 0) {
-                        var filesVm = util.vm(vm, vm.tags.accordionKey, 'files');
-                        if (filesVm != null) {
-                            for (var i=0; i<data.docList.length; i++) {
-                                var files = [];
-                                if (data.docList[i].urlList && data.docList[i].urlList.length > 0) {
-                                    for (var fileIndex=0; fileIndex<data.docList[i].urlList.length; fileIndex++) {
-                                        files.push({
-                                            id: data.docList[i].urlList[fileIndex].id,
-                                            url: Const.route.imageLocation + data.docList[i].urlList[fileIndex].filePath
-                                        });
+                        // 选传影像
+                        if (data.docList && data.docList.length > 0) {
+                            var filesVm = util.vm(vm, vm.tags.accordionKey, 'files');
+                            if (filesVm != null) {
+                                for (var i=0; i<data.docList.length; i++) {
+                                    var files = [];
+                                    if (data.docList[i].urlList && data.docList[i].urlList.length > 0) {
+                                        for (var fileIndex=0; fileIndex<data.docList[i].urlList.length; fileIndex++) {
+                                            files.push({
+                                                id: data.docList[i].urlList[fileIndex].id,
+                                                url: Const.route.imageLocation + data.docList[i].urlList[fileIndex].filePath
+                                            });
+                                        }
+                                    } else {
+                                        files.push({});
                                     }
-                                } else {
-                                    files.push({});
-                                }
-                                util.refresh({
-                                    vm: filesVm,
-                                    columns: [
-                                        {
-                                            head: data.docList[i].docDesc,
-                                            name: data.docList[i].docCde,
-                                            edit: {
-                                                type: 'upload'
-                                            },
-                                            config: {
-                                                clazz: 'upload-multiple',
-                                                url: util.mix('/upIconPic', {
-                                                    docCde: data.docList[i].docCde,
-                                                    docDesc: data.docList[i].docDesc
-                                                }),
-                                                formName: 'iconImg',
-                                                files: files,
-                                                autoIncrease: true,
-                                                // autoUpload: false,
-                                                delete: function (file, callback) {
-                                                    util.post({
-                                                        url: '/attachDelete',
-                                                        data: {
-                                                            id: file.id
-                                                        },
-                                                        success: function () {
-                                                            callback.call(null);
-                                                        }
-                                                    });
+                                    util.refresh({
+                                        vm: filesVm,
+                                        columns: [
+                                            {
+                                                head: data.docList[i].docDesc,
+                                                name: data.docList[i].docCde,
+                                                edit: {
+                                                    type: 'upload'
+                                                },
+                                                config: {
+                                                    clazz: 'upload-multiple',
+                                                    url: util.mix('/upIconPic', {
+                                                        docCde: data.docList[i].docCde,
+                                                        docDesc: data.docList[i].docDesc
+                                                    }),
+                                                    formName: 'iconImg',
+                                                    files: files,
+                                                    autoIncrease: true,
+                                                    // autoUpload: false,
+                                                    delete: function (file, callback) {
+                                                        util.post({
+                                                            url: '/attachDelete',
+                                                            data: {
+                                                                id: file.id
+                                                            },
+                                                            success: function () {
+                                                                callback.call(null);
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                             }
-                                        }
-                                    ]
-                                });
+                                        ]
+                                    });
+                                }
                             }
                         }
                     }

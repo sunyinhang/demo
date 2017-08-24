@@ -1,7 +1,8 @@
 require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
+
     //获取持卡人姓名
     var param = util.cache('name');
-
+    debugger
     var vm = util.bind({
         container: 'tiedBnkCrd',
         data: {
