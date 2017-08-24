@@ -42,8 +42,9 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             openCheckPassword: function (orderNo, applSeq) {
                 util.modal({
                     title: '请输入支付密码',
-                    clazz: 'xxx',
+                    // clazz: 'xxx',
                     message: '<div class="enretPwd-c"><input type="password" placeholder="请输入支付密码" class="pwd-text"></div>',
+                    close: true,
                     inline: false,
                     operates: [
                         {

@@ -5,7 +5,31 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
         router: false,
         modalTitle: '',
         modalButtonOk: '确定',
-        modalButtonCancel: '取消'
+        modalButtonCancel: '取消',
+        modalTemplate: util.heredoc(function() {
+            /*!
+            <div class="modal {{cssClass}} {{#unless buttons}}modal-no-buttons{{/unless}}">
+                <div class="modal-inner">
+                {{#if title}}
+                    <div class="modal-title">{{title}}</div>
+                {{/if}}
+                {{#if text}}
+                    <div class="modal-text">{{text}}</div>
+                {{/if}}
+                {{#if afterText}}
+                    {{afterText}}
+                {{/if}}
+                </div>
+                {{#if buttons}}
+                    <div class="modal-buttons {{#if verticalButtons}}modal-buttons-vertical{{/if}}">
+                {{#each buttons}}
+                    <span class="modal-button {{#if cssClass}}modal-button-{{cssClass}}{{/if}} {{#if bold}}modal-button-bold{{/if}}">{{text}}</span>
+                {{/each}}
+                </div>
+                {{/if}}
+            </div>
+            */
+        })
         /*pushState: true,
         onAjaxStart: function (xhr) {
             Const.global.f.showIndicator();
