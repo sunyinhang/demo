@@ -332,6 +332,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                     },
                     {
                         title: '选传影像',
+                        create: util.gup('edxg') !== null,
                         type: 'form',
                         config: {
                             name: 'files',

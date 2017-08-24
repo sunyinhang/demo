@@ -14,6 +14,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
             Const.global.f.hideIndicator();
         }*/
     });
+    $('body').height($(window).height());
     // #!/
 
     /*if ($('#mainDiv').length > 1) {
