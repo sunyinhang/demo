@@ -106,7 +106,7 @@ public class CmisMseeageHandler {
                         Map<String,Object> bodyappl = null;
                         String mallOrderNo = null;//商城订单号
                         Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, mapinfo);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
-                        mapidNo.put("certNo",idNo);
+                        mapidNo.put("certNo","14243319820706131X");
                         Map<String, Object> custInfoByCertNo = appServerService.getCustInfoByCertNo(null, mapidNo);//根据身份证号查询客户基本信息和实名认证信息(userId)
                         String userIdinfo = JSONObject.toJSONString(custInfoByCertNo);
                         JSONObject jsonObjectIdif = JSONObject.parseObject(userIdinfo);
@@ -137,53 +137,71 @@ public class CmisMseeageHandler {
                                 return;
                             }
                             String sgString = JSONObject.toJSONString(map);
-                            String encrypt = encrypt(sgString, channelNo);
+                            tradeCode="Sg-10005";
+                            String encrypt = encrypt(sgString, channelNo,tradeCode);
                             result = HttpClient.sendPost(url, encrypt, "utf-8");
                         } else if ("27".equals(outSts)) {//贷款申请通过
                             map.put("outSts", "01");
                             map.put("appOutAdvice", appOutAdvice);//审批意见
                             map.put("apprvCrdAmt", apprvCrdAmt);//审批总额度
-                            map.put("userid", externUid);//集团userid
+                            map.put("userid", "1000030088");//集团userid
                             if (StringUtils.isEmpty(url)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的额度申请推送地址";
                                 logger.info(retMsg);
                                 return;
                             }
                             String sgString = JSONObject.toJSONString(map);
-                            result = HttpClient.sendPost(url, sgString, "utf-8");
+                            tradeCode="Sg-10005";
+                            String encrypt = encrypt(sgString, channelNo,tradeCode);
+                            result = HttpClient.sendPost(url, encrypt, "utf-8");
                         }else if ("02".equals(outSts)){//贷款申请被拒
-                            mapappl = appServerService.getorderNo(applSeq);//(get)根据applseq查询orderNo
+                            HashMap<String, Object> maporder = new HashMap<>();
+                            maporder.put("applSeq","1265221");
+                            maporder.put("channel","11");
+                            maporder.put("channelNo",channelNo);
+                            mapappl = appServerService.getorderNo(null,maporder);//(get)根据applseq查询orderNo
                             bodyappl = (Map) mapappl.get("body");
                             mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
+                            HashMap<Object, Object> bodyinfo = new HashMap<>();
                             map.put("outSts", "02");
                             map.put("applSeq", applSeq);//申请流水号
                             map.put("idNo", idNo);//身份证号
-                            map.put("userid", externUid);//集团userid
-                            map.put("orderNo",mallOrderNo);//订单编号
+                            map.put("orderNo","D17082411290147627");//订单编号
+                            bodyinfo.put("body",map);
+                            bodyinfo.put("userid","1000030088");//集团userid
                             if (StringUtils.isEmpty(urlOne)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的贷款申请推送地址";
                                 logger.info(retMsg);
                                 return;
                             }
-                            String sgString = JSONObject.toJSONString(map);
-                            result = HttpClient.sendPost(urlOne, sgString, "utf-8");
+                            String sgString = JSONObject.toJSONString(bodyinfo);
+                            tradeCode="Sg-10007";
+                            String encrypt = encrypt(sgString, channelNo,tradeCode);
+                            result = HttpClient.sendPost(urlOne, encrypt, "utf-8");
                         }else if ("06".equals(outSts)){//贷款申请通过
-                            mapappl = appServerService.getorderNo(applSeq);//(get)根据applseq查询orderNo
+                            HashMap<String, Object> maporder = new HashMap<>();
+                            HashMap<Object, Object> bodyinfo = new HashMap<>();
+                            maporder.put("applSeq","1265221");
+                            maporder.put("channel","11");
+                            maporder.put("channelNo",channelNo);
+                            mapappl = appServerService.getorderNo(null,maporder);//(get)根据applseq查询orderNo
                             bodyappl = (Map) mapappl.get("body");
                             mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
                             map.put("outSts", "01");
                             map.put("applSeq", applSeq);//申请流水号
                             map.put("idNo", idNo);//身份证号
-                            map.put("userid", externUid);//集团userid
-                            map.put("orderNo",mallOrderNo);//订单编号
+                            map.put("orderNo","D17082411290147627");//订单编号
+                            bodyinfo.put("body",map);
+                            bodyinfo.put("userid","1000030088");//集团userid
                             if (StringUtils.isEmpty(urlOne)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的贷款申请推送地址";
                                 logger.info(retMsg);
                                 return;
                             }
-                            String sgString = JSONObject.toJSONString(map);
-                            encrypt(sgString, channelNo);
-                            result = HttpClient.sendPost(urlOne, sgString, "utf-8");
+                            String sgString = JSONObject.toJSONString(bodyinfo);
+                            tradeCode="Sg-10007";
+                            String encrypt = encrypt(sgString, channelNo,tradeCode);
+                            result = HttpClient.sendPost(urlOne, encrypt, "utf-8");
                         }
                         //result = HttpClient.sendPost(url, json, "utf-8");
                         logger.info("推送第三方通知，推送URL地址: " + channelUrl + " \n返回结果：" + result);
@@ -194,9 +212,10 @@ public class CmisMseeageHandler {
                             resultjson = result.substring(result.indexOf("{"), result.lastIndexOf("}") + 1);
                             logger.info("实时推送接口(JSON格式)，第三方返回的结果数据：" + resultjson);
                             JSONObject jsonsObj = JSONObject.parseObject(resultjson);
-                            retflag = jsonsObj.getString("retFlag");
+                            JSONObject head = jsonsObj.getJSONObject("head");
+                            retflag = head.getString("retFlag");
                             if (!"00000".equals(retflag)) {// 如果返回异常，继续发送
-                                retMsg = jsonsObj.getString("retMsg");
+                                retMsg = head.getString("retMsg");
                                 logger.info("实时推送，响应错误：" + retMsg);
                                 throw new Exception(retMsg);
                             }
@@ -213,7 +232,7 @@ public class CmisMseeageHandler {
             logger.info("获取实时推送信息，结束");
         }
     }
-    private String encrypt(String data, String channelNo) throws Exception {
+    private String encrypt(String data, String channelNo,String tradeCode) throws Exception {
         //byte[] bytes = key.getBytes();
         //获取渠道私钥
 //        logger.info("获取渠道" + channelNo + "私钥");
@@ -239,7 +258,7 @@ public class CmisMseeageHandler {
         org.json.JSONObject reqjson = new org.json.JSONObject();
         reqjson.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
         reqjson.put("channelNo", "46");
-        reqjson.put("tradeCode", "Sg-10005");
+        reqjson.put("tradeCode", tradeCode);
         reqjson.put("data", desData);
         reqjson.put("key", password_);
         return reqjson.toString();

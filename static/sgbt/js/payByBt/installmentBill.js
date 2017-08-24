@@ -190,6 +190,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                 content: order.goodsName,
                                 badge: 'badge',
                                 extra: '<span class="bv-align-right">合计：总计'+order.goodsCount +'件商品，合计: ￥'+ order.apprvAmt+'</span>',
+                                order: order,
                                 click: function(){
                                     util.redirect({
                                         title: '贷款详情',
@@ -225,7 +226,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         text: '继续提交',
                                         layout: 'primary',
                                         show: function (item) {
-                                            if( order.outSts === '1'){
+                                            if( item.order.outSts === '1'){
                                                 return true;
                                             }else{
                                                 return false;
@@ -238,17 +239,19 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         text: '删除订单',
                                         layout: 'primary',
                                         show: function (item) {
-                                            if( order.outSts === '1'){
+                                            if( item.order.outSts === '1'){
                                                 return true;
                                             }else{
                                                 return false;
                                             }
                                         },
-                                        click: function (event, item) {
+                                        click: function (event, item, index) {
+                                            /*vm.onActive(vm.tabsConfig.currentIndex);
+                                            util.alert('删除成功');*/
                                             util.post({
                                                 url: '/deleteOrderInfo',
                                                 data: {
-                                                    orderNo: order.orderNo
+                                                    orderNo: item.order.orderNo
                                                 },
                                                 success: function(res){
                                                     util.alert('删除成功');
@@ -260,7 +263,8 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         text: '审批进度',
                                         layout: 'primary',
                                         show: function (item) {
-                                            if( order.outSts === '01' || order.outSts === '02' || order.outSts === '05' || order.outSts === '06' || order.outSts === '20' || order.outSts === '22' || order.outSts === '24'){
+                                            if( item.order.outSts === '01' || item.order.outSts === '02' || item.order.outSts === '05' || item.order.outSts === '06'
+                                                || item.order.outSts === '20' || item.order.outSts === '22' || item.order.outSts === '24'){
                                                 return true;
                                             }else{
                                                 return false;
@@ -277,7 +281,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         text: '还款',
                                         layout: 'primary',
                                         show: function (item) {
-                                            if( order.outSts === '20' || order.outSts === 'OD'){
+                                            if( item.order.outSts === '20' || item.order.outSts === 'OD'){
                                                 return true;
                                             }else{
                                                 return false;
@@ -290,7 +294,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         text: '修改提交',
                                         layout: 'primary',
                                         show: function (item) {
-                                            if( order.outSts === '22'){
+                                            if( item.order.outSts === '22'){
                                                 return true;
                                             }else{
                                                 return false;
@@ -303,7 +307,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         text: '申请放款',
                                         layout: 'primary',
                                         show: function (item) {
-                                            if( order.outSts === '20'){
+                                            if( item.order.outSts === '20'){
                                                 return true;
                                             }else{
                                                 return false;

@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.common.utils;
 
-import com.haiercash.payplatform.common.utils.Convert;
 import org.apache.commons.lang.StringUtils;
 
 /**

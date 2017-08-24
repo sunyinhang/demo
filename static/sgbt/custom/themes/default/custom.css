@@ -353,7 +353,7 @@ a.a-btn{ margin: 0 auto; display:block; width: 80%; height: 2.5rem; line-height:
 .btInstalment .main02-3{ padding: 0 0.6rem; height: 50px; border-bottom: 1px solid #ddd; background-color: #fff; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; box-align:center; -webkit-box-align:center; flex-align:center; align-items:center;}
 .btInstalment .main02-3 .t { font-size: 0.8rem; color: #333;}
 .btInstalment .main02-3 .z{ -webkit-box-flex:1; box-flex:1; flex:1; -webkit-flex:1; font-size: 0.7rem; color: #333; text-align: right;}
-.btInstalment .main02-3 .z font{ color: #fda253}
+.btInstalment .main02-3 .z span{ color: #fda253}
 .btInstalment .main02-4 { padding: 0.75rem 1.3rem 0.1rem; background-color: #fff; }
 .btInstalment .main02-4 li{ float: left; cursor:pointer; margin-bottom: 0.65rem; width: 47%; margin-left:0; padding: 1.2rem 0; border:1px solid #ddd; border-radius: 5px; -webkit-border-radius:5px; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; }
 .btInstalment .main02-4 li:nth-child(even){ float:right;}
