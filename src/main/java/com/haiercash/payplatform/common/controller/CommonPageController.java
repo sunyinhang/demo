@@ -386,7 +386,7 @@ public class CommonPageController extends BaseController {
     }
 
     /**
-     * 查询待提交订单列表
+     * 查询待还款订单列表
      *
      * @return
      */

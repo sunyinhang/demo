@@ -11,13 +11,11 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.enums.OrderEnum;
-import com.haiercash.payplatform.common.service.AppServerService;
-import com.haiercash.payplatform.common.service.CmisApplService;
-import com.haiercash.payplatform.common.service.GmService;
-import com.haiercash.payplatform.common.service.HaierDataService;
+import com.haiercash.payplatform.common.service.*;
 import com.haiercash.payplatform.common.utils.*;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
+import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +42,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
     private CmisApplService cmisApplService;
     @Autowired
     private HaierDataService haierDataService;
+    @Autowired
+    private OrderManageService orderManageService;
+    @Autowired
+    private AcquirerService acquirerService;
 
     @Override
     public Map<String, Object> userlogin(Map<String, Object> map) {
@@ -98,11 +100,11 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         custMap.put("userId", uidLocal);//内部userId
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
         String custretflag = (String) ((HashMap<String, Object>)(custresult.get("head"))).get("retFlag");
-        if(!"00000".equals(custretflag) && !"C1120".equals(custretflag)){//查询实名信息失败
+        if(!"00000".equals(custretflag) && !"C1220".equals(custretflag)){//查询实名信息失败
             String custretMsg = (String) ((HashMap<String, Object>)(custresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
-        if("C1120".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
+        if("C1220".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
             String backurl = "login.html?token="+token;//TODO!!!!!!
             map.put("backurl", backurl);
             return success(map);
@@ -165,19 +167,104 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String token = (String) map.get("token");
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
+        String flag = (String) map.get("flag");//1.待提交返显
+        String orderNo = (String) map.get("oederNo");//待提交时必传
+        Map retrunmap = new HashMap();
 
-//        Map<String, Object> cacheMap = cache.get(token);
-//        if (cacheMap == null || "".equals(cacheMap)) {
-//            logger.info("Jedis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-//        AppOrder appOrder = (AppOrder) cacheMap.get("apporder");//获取订单信息
-//        String payAmt = appOrder.getApplyAmt();//申请金额
-//        String typCde = appOrder.getTypCde();//贷款品种
+        String payAmt = "";//申请金额
+        String typCde = "";//贷款品种
+        String psPerdNo = "";//借款期限
+        if("1".equals(flag)){//待提交返显
+            AppOrder appOrder = new AppOrder();
+            if(StringUtils.isEmpty(orderNo)){
+                logger.info("前台传入参数有误");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            //
+            AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
+            if(AppOrdernoTypgrpRelation == null){
+                logger.info("没有获取到订单信息");
+                return fail(ConstUtil.ERROR_CODE, "没有获取到订单信息");
+            }
+            //获取申请流水号
+            String applseq = AppOrdernoTypgrpRelation.getApplSeq();
+            //根据applSeq查询商城订单号和网单号
+            Map m = orderManageService.getMallOrderNoByApplSeq(applseq);
+            if(!HttpUtil.isSuccess(m)){
+                return m;
+            }
+            Map ordermap = (HashMap<String, Object>)m.get("body");
+            String mallOrderNo = (String) ordermap.get("mallOrderNo");
+            List<Map<String, Object>> body = (List<Map<String, Object>>) ordermap.get("goodsList");
+            List<AppOrderGoods> appOrderGoodsList = new ArrayList<AppOrderGoods>();
+            for (int i = 0; i < body.size(); i++) {
+                Map<String, Object> good = body.get(i);
+                //
+                AppOrderGoods appOrderGoods = new AppOrderGoods();
+                appOrderGoods.setGoodsBrand((String) good.get("goodsBrand"));//商品品牌
+                appOrderGoods.setGoodsKind((String) good.get("goodsModel"));//商品类型
+                appOrderGoods.setGoodsName((String) good.get("goodsName"));//商品名称
+                appOrderGoods.setGoodsNum((String) good.get("goodsNum"));//商品数量
+                appOrderGoods.setGoodsPrice((String) good.get("goodsPrice"));//单价
+                appOrderGoods.setcOrderSn((String) good.get("cOrderSn"));//网单号
+                appOrderGoods.setGoodsModel((String) good.get("goodsModel"));
+                appOrderGoods.setBrandName((String) good.get("goodsBrand"));
+                //
+                appOrderGoodsList.add(appOrderGoods);
+            }
 
-        String payAmt = "3000";//申请金额
-        String typCde = "17035a";
+            appOrder.setMallOrderNo(mallOrderNo);//商城订单号
+            appOrder.setAppOrderGoodsList(appOrderGoodsList);
+            //根据申请流水号获取送货信息
+            Map mapAddress = orderManageService.getAddressByFormId(orderNo);
+            if(!HttpUtil.isSuccess(mapAddress)){
+                return  mapAddress;
+            }
+            Map adAddrmap = (HashMap<String, Object>)mapAddress.get("body");
+            String adAddr = (String) adAddrmap.get("adAddr");//送货详细地址
+            String adProvince = (String) adAddrmap.get("adProvince");//送货地址省
+            String adCity = (String) adAddrmap.get("adCity");//送货地址市
+            String adArea = (String) adAddrmap.get("adArea");//送货地址区
+            //
+            appOrder.setDeliverAddr(adAddr);//送货地址
+            appOrder.setDeliverProvince(adProvince);//送货地址省
+            appOrder.setDeliverCity(adCity);//送货地址市
+            appOrder.setDeliverArea(adArea);//送货地址区
 
+            //查询订单详情
+            Map<String, Object> mapLoanDetail = acquirerService.getOrderFromAcquirer(applseq, channel, channelNo, null, null, "2");
+            if(!HttpUtil.isSuccess(mapLoanDetail)){
+                return mapLoanDetail;
+            }
+            Map bodyLoanDetail = (HashMap<String, Object>) mapLoanDetail.get("body");
+            payAmt = bodyLoanDetail.get("apply_amt").toString();//借款金额
+            typCde = (String) bodyLoanDetail.get("typ_cde");//贷款品种
+            String applyTnr = (String) bodyLoanDetail.get("apply_tnr");//借款期限
+            String applyTnrTyp = (String) bodyLoanDetail.get("apply_tnr_typ");//借款期限类型
+
+            appOrder.setTypCde(typCde);//贷款品种代码
+            appOrder.setApplyAmt(payAmt);//借款总额
+
+            Map cachemap = new HashMap<String, Object>();
+            cachemap.put("apporder", appOrder);
+            session.set(token, cachemap);
+
+            psPerdNo = applyTnr;
+            retrunmap.put("applyTnr", applyTnr);
+            retrunmap.put("applyTnrTyp", applyTnrTyp);
+        } else {
+            Map<String, Object> cacheMap = session.get(token, Map.class);
+            if (cacheMap == null || "".equals(cacheMap)) {
+                logger.info("Jedis数据获取失败");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+            AppOrder appOrder = (AppOrder) cacheMap.get("apporder");//获取订单信息
+            payAmt = appOrder.getApplyAmt();//申请金额
+            typCde = appOrder.getTypCde();//贷款品种
+        }
+
+
+        //批量还款试算获取期数*金额
         Map<String, Object> paySsMap = new HashMap<String, Object>();
         paySsMap.put("typCde", typCde);
         paySsMap.put("apprvAmt", payAmt);
@@ -192,15 +279,19 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String result = JSONObject.toJSONString(payssresultMap);
         JSONObject custBody = JSONObject.parseObject(result).getJSONObject("body");
         JSONArray jsonarray = custBody.getJSONArray("info");
-        String instmAmt = "";
-        String psPerdNo = "";
-        for (int i = 0; i < jsonarray.size(); i++) {
-            Object object = jsonarray.get(0);
-            JSONObject json = JSONObject.parseObject(JSONObject.toJSONString(object));
-            instmAmt = json.getString("instmAmt");
-            psPerdNo = json.getString("psPerdNo");
+
+        if(!"1".equals(flag)){//待提交
+            for (int i = 0; i < jsonarray.size(); i++) {
+                Object object = jsonarray.get(0);
+                JSONObject json = JSONObject.parseObject(JSONObject.toJSONString(object));
+                //instmAmt = json.getString("instmAmt");
+                psPerdNo = json.getString("psPerdNo");
+                break;
+            }
         }
 
+
+        //还款试算获取金额
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", payAmt);
@@ -217,10 +308,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         JSONObject payBody = JSONObject.parseObject(payresult).getJSONObject("body");
         logger.info("payBody:" + payBody);
         String totalAmt = payBody.get("totalAmt").toString();
-        String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
-        String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
+//        String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
+//        String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
 
-        Map retrunmap = new HashMap();
+
         retrunmap.put("payAmt", payAmt);
         retrunmap.put("payMtd", ((HashMap<String, Object>)(payssresultMap.get("body"))).get("info"));
         retrunmap.put("totalAmt", totalAmt);
@@ -234,8 +325,13 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String channelNo = (String) map.get("channelNo");
         String applyTnr = (String) map.get("applyTnr");
 
-        String payAmt = "3000";//申请金额
-        String typCde = "17035a";
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        AppOrder appOrder = (AppOrder) cacheMap.get("apporder");//获取订单信息
+        String payAmt = appOrder.getApplyAmt();//申请金额
+        String typCde = appOrder.getTypCde();//贷款品种
+        //TODO!!!!
+//        String payAmt = "3000";//申请金额
+//        String typCde = "17035a";
 
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", typCde);
