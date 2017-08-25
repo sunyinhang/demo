@@ -282,7 +282,7 @@ public class CommonPageController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/api/payment/edCheck", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/payment/edCheck", method = RequestMethod.POST)
     public Map<String, Object> edCheck() {
         return payPasswdService.edCheck(super.getToken());
     }
