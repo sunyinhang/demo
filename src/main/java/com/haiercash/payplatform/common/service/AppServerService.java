@@ -49,7 +49,8 @@ public interface AppServerService {
     // 验证支付密码
     public  Map<String,Object>  validatePayPasswd(String token,Map<String,Object> map);
     //(GET)查询贷款详情（根据申请流水号）
-    public Map<String,Object> queryApplLoanDetail(String token,Map<String, Object> paramMap);
+    public Map<String,Object> queryApplLoanDetail(String token,Map<String, Object> paramMap);//调app
+    public Map<String,Object> queryApplLoanDetail(Map<String, Object> paramMap);//调收单
     //(GET)按贷款申请查询分期账单
     public Map<String,Object> queryApplListBySeq(String token,Map<String,Object> queryApplListMap);
     //7.1.(POST) 欠款查询(参照核算接口5.1)

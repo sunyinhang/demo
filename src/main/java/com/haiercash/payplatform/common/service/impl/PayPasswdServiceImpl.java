@@ -218,7 +218,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         JSONObject head = jb.getJSONObject("head");
         retflag = head.getString("retFlag");
         retmsg = head.getString("retMsg");
-        retflag = "00000";
+        //retflag = "00000";
         if (!"00000".equals(retflag)) {
             logger.info("额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
@@ -585,7 +585,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         Map<String, Object> req = new HashMap<>();
-        req.put("channelNo", "19");
+        req.put("channelNo", channelNo);
         req.put("channel", channel);
         req.put("applSeq", applSeq);
         logger.info("查询贷款详情接口，请求数据：" + req.toString());
@@ -614,7 +614,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             }
             //applSeq="930201";
             HashMap<String, Object> queryApplListMap = new HashMap<>();
-            queryApplListMap.put("channelNo", "34");
+            queryApplListMap.put("channelNo", channelNo);
             queryApplListMap.put("channel", channel);
             queryApplListMap.put("applseq", applSeq);
             //token="f294c5ad-1b63-4340-8ddb-7de9d0366ed7";
