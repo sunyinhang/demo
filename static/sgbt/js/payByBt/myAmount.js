@@ -9,7 +9,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
                 subTitle: '可用总额度',
                 amtNum: 'amtNum',
                 numUnit: true,
-                num: '15000',
+                num: '',
                 whetherBtn: true,
                 activBtn: 'activAmuntBtn',
                 btnText: '去购物'
@@ -25,12 +25,20 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         mounted: function(){
             util.post({
                 url: '/getPersonalCenterInfo',
-                data: function(res){
-                    var data = util.getData(res);
-                    if(!util.isEmpty(res)){
-                        vm.config.num = data.crdNorAvailAmt;
-                        vm.crdNorAvailAmt = data.crdNorAvailAmt;
+                success: function(res){
+                    var data = util.data(res);
+                    if(!util.isEmpty(data)){
                         vm.mounthAmount = data.mounthAmount;
+                    }
+                }
+            });
+            util.post({
+                url: '/edCheck',
+                success: function(res){
+                    var data = util.data(res);
+                    if(!util.isEmpty(data)){
+                        vm.config.num = data.crdAmt;
+                        vm.crdNorAvailAmt = data.crdComAvailAnt
                     }
                 }
             });

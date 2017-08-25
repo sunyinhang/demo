@@ -20,30 +20,11 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                     $element: $('#popup1', vm.$el)
                 });
             },
-            payFn: function () {
-                util.post({
-                    url: '/shunguang/saveOrder',
-                    data:{
-                        applyTnr: vm.applyTnr,
-                        areaCode: '370203'
-                    },
-                    success: function(res) {
-                        var data = util.data(res);
-                        if (data) {
-                            util.cache({
-                                orderNo: data.orderNo,
-                                applSeq: data.applSeq
-                            });
-                            this.openCheckPassword(data.orderNo, data.applSeq);
-                        }
-                    }
-                });
-            },
             openCheckPassword: function (orderNo, applSeq) {
                 util.modal({
                     title: '请输入支付密码',
-                    // clazz: 'xxx',
-                    message: '<div class="enretPwd-c"><input type="password" placeholder="请输入支付密码" class="pwd-text"></div>',
+                    clazz: 'enterPayPwd',
+                    message: '<input type="password" placeholder="请输入支付密码" class="pwd-text">',
                     close: true,
                     inline: false,
                     operates: [
@@ -85,6 +66,25 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                             }
                         }
                     ]
+                });
+            },
+            payFn: function () {
+                util.post({
+                    url: '/shunguang/saveOrder',
+                    data:{
+                        applyTnr: vm.applyTnr,
+                        areaCode: '370203'
+                    },
+                    success: function(res) {
+                        var data = util.data(res);
+                        if (data) {
+                            util.cache({
+                                orderNo: data.orderNo,
+                                applSeq: data.applSeq
+                            });
+                            vm.openCheckPassword(data.orderNo, data.applSeq);
+                        }
+                    }
                 });
             },
             //什么是白条

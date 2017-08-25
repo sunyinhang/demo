@@ -94,7 +94,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 data:{
                                     payPasswd: param && param.payPasswd,
                                     verifyNo: entity.verifyNo,
-                                    edxgflag: param && param.edxgflag,
+                                    /*edxgflag: param && param.edxgflag,*/
                                 },
                                 success:function(res){
                                     util.redirect({
