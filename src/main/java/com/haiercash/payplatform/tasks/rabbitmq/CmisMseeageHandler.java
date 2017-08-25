@@ -1,7 +1,9 @@
 package com.haiercash.payplatform.tasks.rabbitmq;
 
 import com.alibaba.fastjson.JSONObject;
+import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.PublishDao;
+import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.utils.Base64Utils;
 import com.haiercash.payplatform.common.utils.DesUtil;
@@ -38,6 +40,8 @@ public class CmisMseeageHandler {
     private PublishDao publishDao;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private CooperativeBusinessDao cooperativeBusinessDao;
 
     private boolean validNodeMessage(Object nodeMessage) {
         if (nodeMessage == null) {
@@ -91,6 +95,8 @@ public class CmisMseeageHandler {
                         // 推送给第三方
                         // 调用通知接口通知第三方：如果失败 重试2次
                         // 根据合作方编码 获取要转发的第三方的url
+
+                        //cooperativeBusinessDao.selectBycooperationcoed(channelNo);
 //                        String urlOne = publishDao.selectChannelNoUrl(channelNo);//获取贷款申请URL
                         String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";
 //                        String url = publishDao.selectChannelNoUrlOne(channelNo);//获取额度申请URL
@@ -106,21 +112,21 @@ public class CmisMseeageHandler {
                         Map<String,Object> bodyappl = null;
                         String mallOrderNo = null;//商城订单号
                         Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, mapinfo);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
-                        mapidNo.put("certNo","14243319820706131X");
-                        Map<String, Object> custInfoByCertNo = appServerService.getCustInfoByCertNo(null, mapidNo);//根据身份证号查询客户基本信息和实名认证信息(userId)
-                        String userIdinfo = JSONObject.toJSONString(custInfoByCertNo);
-                        JSONObject jsonObjectIdif = JSONObject.parseObject(userIdinfo);
-                        JSONObject bodyIdif = jsonObjectIdif.getJSONObject("body");
-                        String userId = bodyIdif.getString("userId");//同一认证userId
-                        HashMap<String, Object> mapuser = new HashMap<>();
-                        mapuser.put("channel", "11");
-                        mapuser.put("channelNo", channelNo);
-                        mapuser.put("userId", userId);
-                        Map<String, Object> userByUserid = appServerService.findUserByUserid(null, mapuser);//根据统一认证userid查询用户信息
-                        String s = JSONObject.toJSONString(userByUserid);
-                        JSONObject jsonObject1 = JSONObject.parseObject(s);
-                        JSONObject body1 = jsonObject1.getJSONObject("body");
-                        String externUid = body1.getString("externUid");//集团userId
+//                        mapidNo.put("certNo","14243319820706131X");
+//                        Map<String, Object> custInfoByCertNo = appServerService.getCustInfoByCertNo(null, mapidNo);//根据身份证号查询客户基本信息和实名认证信息(userId)
+//                        String userIdinfo = JSONObject.toJSONString(custInfoByCertNo);
+//                        JSONObject jsonObjectIdif = JSONObject.parseObject(userIdinfo);
+//                        JSONObject bodyIdif = jsonObjectIdif.getJSONObject("body");
+//                        String userId = bodyIdif.getString("userId");//同一认证userId
+//                        HashMap<String, Object> mapuser = new HashMap<>();
+//                        mapuser.put("channel", "11");
+//                        mapuser.put("channelNo", channelNo);
+//                        mapuser.put("userId", userId);
+//                        Map<String, Object> userByUserid = appServerService.findUserByUserid(null, mapuser);//根据统一认证userid查询用户信息
+//                        String s = JSONObject.toJSONString(userByUserid);
+//                        JSONObject jsonObject1 = JSONObject.parseObject(s);
+//                        JSONObject body1 = jsonObject1.getJSONObject("body");
+//                        String externUid = body1.getString("externUid");//集团userId
                         String edappl = JSONObject.toJSONString(edApplProgress);
                         JSONObject jsonObject = JSONObject.parseObject(edappl);
                         JSONObject body = jsonObject.getJSONObject("body");
@@ -235,14 +241,17 @@ public class CmisMseeageHandler {
     private String encrypt(String data, String channelNo,String tradeCode) throws Exception {
         //byte[] bytes = key.getBytes();
         //获取渠道私钥
-//        logger.info("获取渠道" + channelNo + "私钥");
-//        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-//        if (cooperativeBusiness == null) {
-//            throw new RuntimeException("渠道" + channelNo + "私钥获取失败");
-//        }
-//        String publicKey = cooperativeBusiness.getRsapublic();//获取私钥
+        logger.info("获取渠道" + channelNo + "私钥");
+        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
+        if (cooperativeBusiness == null) {
+            throw new RuntimeException("渠道" + channelNo + "私钥获取失败");
+        }
+        String publicKey = cooperativeBusiness.getRsapublic();//获取私钥
+        if ("MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==".equals(publicKey)){
+            System.out.print("参数一致");
+        }
         //String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";
-        String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";
+        //String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";
 
         //String privateKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";//获取私钥
         //请求数据加密

@@ -384,10 +384,10 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //(GET)查询贷款详情（根据申请流水号）
     public Map<String, Object> queryApplLoanDetail(String token, Map<String, Object> paramMap) {
-        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/queryAppLoanAndGoods";
+        String url = EurekaServer.ACQUIRER + "/api/appl/getApplInfo";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
-        Map<String, Object> queryApplLoanDetailMap = HttpUtil.restGetMap(url, token, paramMap);
+        Map<String, Object> queryApplLoanDetailMap = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("查询贷款详情（根据申请流水号）接口返回数据" + queryApplLoanDetailMap);
         return queryApplLoanDetailMap;
     }
@@ -773,15 +773,5 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("用户注册接口, 返回数据：" + result);
         return result;
     }
-    //3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
-    public Map<String, Object> getidNoInfo(String token, Map<String, Object> params){
-        String url=EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/queryPerCustInfo";
-        logger.info("查询客户实名认证信息,请求地址："+url);
-        logger.info("查询客户实名认证信息,请求参数"+params);
-        Map<String, Object> result = HttpUtil.restGetMap(url, token, params);
-        logger.info("查询客户实名认证信息接口, 返回数据：" + result);
-        return result;
 
-
-    }
 }

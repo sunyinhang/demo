@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.haiercash.commons.redis.Session;
+import com.haiercash.commons.util.DateUtil;
 import com.haiercash.commons.util.StringUtil;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
@@ -23,6 +24,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -535,17 +538,17 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String token = (String) json.get("token");
         //1.根据token获取客户信息
         String userjsonstr = haierDataService.userinfo(token);
-        if (userjsonstr == null || "".equals(userjsonstr)) {
-            logger.info("验证客户信息接口调用失败");
-            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
-        }
-        JSONObject userjson = new JSONObject(userjsonstr);
-        if (!userjson.has("user_id")) {
-            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
-        }
-        Object uid = userjson.get("user_id");//会员id
-        String orderNo = (String) userjson.get("orderNo");//订单号 非必输
-        String applSeq = (String) userjson.get("applseq");//支付流水号  必输
+//        if (userjsonstr == null || "".equals(userjsonstr)) {
+//            logger.info("验证客户信息接口调用失败");
+//            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+//        }
+//        JSONObject userjson = new JSONObject(userjsonstr);
+//        if (!userjson.has("user_id")) {
+//            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
+//        }
+//        Object uid = userjson.get("user_id");//会员id
+//        String orderNo = (String) userjson.get("orderNo");//订单号 非必输
+//        String applSeq = (String) userjson.get("applseq");//支付流水号  必输
 //        if(StringUtils.isEmpty(uid)){
 //            String error = userjson.get("error").toString();
 //            return fail(ConstUtil.ERROR_CODE, error);
@@ -556,16 +559,23 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //        Object head1 = userIdOne.get("head");
 //        JSONObject jsonObject = new JSONObject(head1);
 //        String retMsg1 = (String) jsonObject.get("retMsg");
+        String applSeq="918653";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("获取信息失败,为空:applSeq" + applSeq);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //String applSeq="1265216";//1265216    953808
-        HashMap<String, Object> applmap = new HashMap<>();
-        applmap.put("channel", "11");
-        applmap.put("channelNo", channelNo);
-        applmap.put("applSeq", applSeq);
-        Map<String, Object> queryApplmap = appServerService.queryApplLoanDetail(token, applmap);
+//        HashMap<String, Object> applmap = new HashMap<>();
+//        applmap.put("channel", "11");
+//        applmap.put("channelNo", channelNo);
+//        applmap.put("applSeq", applSeq);
+        Map<String, Object> acqHead = getAcqHead(tradeCode, "11", channelNo, "", "");
+        HashMap<String, Object> maphead = new HashMap<>();
+        HashMap<String, Object> maprequest = new HashMap<>();
+        maphead.put("head",acqHead);
+        maphead.put("body",applSeq);
+        maprequest.put("request",maphead);
+        Map<String, Object> queryApplmap = appServerService.queryApplLoanDetail(token, maprequest);
         logger.info("查询贷款详情接口，响应数据：" + map);
         if (map == null || "".equals(map)) {
             logger.info("网络异常,查询贷款详情接口,响应数据为空！" + map);
@@ -582,18 +592,18 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String loanNo = (String) body.get("loanNo");//借据号
             String applyAmt = (String) body.get("applyAmt");//申请金额
             String apprvAmt = (String) body.get("apprvAmt");//核准金额（审批金额）
-            //String = body.getString("repayApplAcNam");//还款账号户名
+            String repayApplAcNam= (String)body.get("repayApplAcNam");//还款账号户名
             String repayApplCardNo = (String) body.get("repayApplCardNo");//还款卡号
             String repayAccBankCde = (String) body.get("repayAccBankCde");//还款开户银行代码
             String repayAcProvince = (String) body.get("repayAcProvince");//还款账户所在省
             String repayAcCity = (String) body.get("repayAcCity");//还款账户所在市
             String applyDt = (String) body.get("applyDt");//申请注册日期
-            // String = body.getString("loanActvDt");//放款日期
-            //String = body.getString("apprvTnr");//贷款期数
+            String loanActvDt= (String)body.get("loanActvDt");//放款日期
+            String apprvTnr= (String) body.get("apprvTnr");//贷款期数
             String mtdCde = (String) body.get("mtdCde");//还款方式
-            //String  = body.getString("dueDay");//还款日
-            // String applSeq1 = body.getString("lastDueDay");//到期日
-            //String applSeq1 = body.getString("outSts");//审批状态
+            String dueDay= (String)body.get("dueDay");//还款日
+            String lastDueDay = (String) body.get("lastDueDay");//到期日
+            String outSts = (String)body.get("outSts");//审批状态
             String demo = (String) body.get("apprvAmt");//拒绝原因
             HashMap<String, String> mapone = new HashMap<>();
             mapone.put("applSeq", applSeq1);
@@ -697,7 +707,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         mapinfo.put("channelNo",channelNo);
         mapinfo.put("channel","11");
         //String idNo = (String) userjson.get("idNo");//客户证件号码
-        Map<String, Object> map1 = appServerService.getidNoInfo(token,mapinfo);//3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
+        Map<String, Object> map1 = appServerService.queryPerCustInfo(token,mapinfo);//3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
         Map<String, Object> headinfo = (Map) map1.get("head");
         String retMsginfo = (String) headinfo.get("retMsg");
         if (StringUtils.isEmpty(map1)){
@@ -967,5 +977,19 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
 
     }
+    public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
+        Map<String, Object> headMap = new HashMap();
+        Date now = new Date();
+        headMap.put("serno", UUID.randomUUID().toString().replaceAll("-", ""));
+        headMap.put("tradeDate", DateUtil.formatDate(now, "yyyy-MM-dd"));
+        headMap.put("tradeTime", DateUtil.formatDate(now, "HH:mm:ss"));
+        headMap.put("tradeCode", tradeCode);
+        headMap.put("sysFlag", sysFlag);
+        headMap.put("channelNo", channelNo);
+        headMap.put("cooprCode", StringUtils.isEmpty(cooprCode)?"":cooprCode);
+        headMap.put("tradeType", StringUtils.isEmpty(tradeType)?"":tradeType);
+        return headMap;
+    }
+
 
 }
