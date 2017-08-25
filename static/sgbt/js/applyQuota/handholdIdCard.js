@@ -57,8 +57,8 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                         } else if (data.faceFlag === '1') {
                                             //已设置支付密码
                                             util.redirect({
-                                                title: '输入短信验证码',
-                                                url: '/applyQuota/payPsdValidcode.html',
+                                                title: '确认支付密码页面',
+                                                url: '/applyQuota/confirmPayPsd.html',
                                                 back: false
                                             });
                                         } else if (data.faceFlag === '2') {
