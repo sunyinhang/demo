@@ -131,6 +131,6 @@ public interface AppServerService {
     public Map<String, Object> getPersonalCenterInfo(String token,Map<String, Object> paramMap);
     //6.1.31.	(GET)影像下载
     public Map<String, Object> attachPic(String token,Map<String, Object> paramMap);
-
-
+    //6.1.104.	(POST)提交签章请求
+    public Map<String, Object> caRequest(String token, Map<String, Object> map);
 }
