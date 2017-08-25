@@ -47,18 +47,18 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                     },
                     agree: {
                         name: 'agree',
-                        text: '海尔消费金融账户开通相关协议',
+                        text: '《海尔消费金融账户开通相关协议》',
                         click: function () {
                             // 多个协议
                             util.actions([
                                 {
                                     text: '协议1',
                                     click: function () {
-                                        util.popup({
-                                            $element: $('.agree-popup'),
-                                            title: '协议1',
-                                            url: 'https://www.baidu.com'
-                                        });
+                                       util.popup({
+                                         $element: $('.agree-popup'),
+                                         title: '协议1',
+                                         url: 'https://www.baidu.com'
+                                         });
                                     }
                                 }, {
                                     text: '协议2',

@@ -230,6 +230,11 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     margin: 0 35px;
     margin-top: 10px;
 }
+@media screen  and (max-width: 320px){
+    .bv-form.form-pwd , .bv-form.form-sms {
+        margin: 0 10px;
+    }
+}
 .bv-theme .form-sms.list-block .item-content {
     border-bottom: none;
 }
