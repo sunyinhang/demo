@@ -262,10 +262,8 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     padding-left: 0;
     width: 100%;
 }
-.list-block .item-input.item-input-operate.item-input-hint {
-    padding-left: 0.2rem;
-}
-.list-block .item-input.item-input-operate.item-input-hint a {
+.list-block .item-input-operate.item-input-hint a {
+    display: block;
     background: url(images/prompt.png) no-repeat center center;
     width: 0.7rem;
     background-size: 0.7rem;
