@@ -357,8 +357,26 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         AppOrder appOrder = acquirerService.acquirerMap2OrderObject(resMap, new AppOrder());
 //        String applyTnrTyp = (String) resMap.get("applyTnrTyp");
         String applyTnrTyp = appOrder.getApplyTnrTyp();
+
+        String totalnormint = appOrder.getTotalnormint();
+        String totalfeeamt = appOrder.getTotalfeeamt();
+        BigDecimal Totalnormint = new BigDecimal(0);
+        BigDecimal Totalfeeamt = new BigDecimal(0);
+        if("null".equals(totalnormint) || "".equals(totalnormint) || totalnormint == null){
+            Totalnormint = new BigDecimal(0);
+        }else{
+            Totalnormint = new BigDecimal(totalnormint);
+        }
+        if("null".equals(totalfeeamt) || "".equals(totalfeeamt) || totalfeeamt == null){
+            Totalfeeamt = new BigDecimal(0);
+        }else{
+            Totalfeeamt = new BigDecimal(totalfeeamt);
+        }
+        BigDecimal xfzeBig = new BigDecimal(0);
+        xfzeBig = Totalnormint.add(Totalfeeamt);
+
         if(!applyTnrTyp.equals("D") && !applyTnrTyp.equals("d") &&( applyTnrTyp != null && !"".equals(applyTnrTyp))){
-            String xfzeStr = String.valueOf(resMap.get("xfze"));//息费总额
+            String xfzeStr = String.valueOf(xfzeBig);//息费总额
             if (xfzeStr.equals("null")){
                 xfze = new BigDecimal(0);
             }else{
@@ -374,6 +392,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             total = xfze.add(applyAmt);
             ordertotal =  total.divide(new BigDecimal(1) , 2,BigDecimal.ROUND_HALF_UP) + "";
             resMap.put("ordertotal", ordertotal);
+            resMap.put("xfze",xfzeStr);
         }
         return success(resMap);
     }
