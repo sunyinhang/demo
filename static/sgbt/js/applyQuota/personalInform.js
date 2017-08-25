@@ -424,6 +424,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
         },
         watch: {
             'entity.maritalStatus': function (val, oldVal) {
+                debugger
                 var relationType1Vm = util.vm(vm, vm.tags.accordionKey, 'relation.relationType1');
                 if (relationType1Vm) {
                     if (!val || val === Const.params.maritalStatusUnknown) {
