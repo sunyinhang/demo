@@ -299,6 +299,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("额度申请接口请求地址：" + url);
         logger.info("额度申请接口请求数据：" + edapplInfoMap);
         Map<String, Object> edapplInfomap = HttpUtil.restGetMap(url, token, edapplInfoMap);
+        logger.info("额度申请接口返回数据：" + edapplInfomap);
         return edapplInfomap;
     }
 
@@ -358,7 +359,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("支付密码修改接口请求地址：" + url);
         logger.info("支付密码修改接口请求参数：" + paramMap);
         Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
-        logger.info("支付密码修改接口请求参数：" + map);
+        logger.info("支付密码修改接口返回数据：" + map);
         return map;
     }
 
@@ -368,7 +369,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("实名认证修改密码接口请求地址：" + url);
         logger.info("实名认证修改密码接口请求参数：" + paramMap);
         Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
-        logger.info("实名认证修改密码接口请求参数：" + map);
+        logger.info("实名认证修改密码接口返回数据：" + map);
         return map;
     }
 
@@ -378,7 +379,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("确认支付密码验证接口请求地址：" + url);
         logger.info("确认支付密码验证接口请求参数：" + paramMap);
         Map<String, Object> result = HttpUtil.restGetMap(url, token, paramMap);
-        logger.info("确认支付密码验证接口请求参数：" + result);
+        logger.info("确认支付密码验证接口返回数据：" + result);
         return result;
     }
 
@@ -767,6 +768,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = EurekaServer.ORDER + "/api/order/getMallOrderNoByApplSeq";
         logger.info("根据applSeq查询商城订单号："+paramMap);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("根据applSeq查询商城订单号返回数据："+map);
         return map;
     }
 
