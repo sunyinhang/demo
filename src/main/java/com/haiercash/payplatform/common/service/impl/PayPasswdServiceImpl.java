@@ -69,7 +69,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String custNo = (String) cacheMap.get("custNo");// 客户号
         //String custNo = "A0001";
 
-        //String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
+        String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
         // String n = "3";// 签订注册 + 征信
         //flag = "0";
         if ("0".equals(flag)) {//0  密码未设置
@@ -203,7 +203,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         //String crdSeq = "";
         if ("1".equals(edxgflag)) {//有在途的流水号(修改)
             mapEd.put("flag", "2");
-            mapEd.put("applSeq", "crdSeq");
+            mapEd.put("applSeq", crdSeq);
         } else {//新增
             mapEd.put("flag", "0");//额度申请
         }
