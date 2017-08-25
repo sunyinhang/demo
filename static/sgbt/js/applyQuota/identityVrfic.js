@@ -39,7 +39,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         click: function (event, editType, entity) {
                             util.upload({
                                 url: util.mix('/uploadFacePic', {
-                                    edflag: 1
+                                    edflag: 1 //是不是额度申请
                                 }),
                                 data: util.form('faceImg', entity.upload.faceImg),
                                 success: function (res) {
