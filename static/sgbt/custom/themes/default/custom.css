@@ -127,6 +127,8 @@ html {
 
 /* reset public*/
 *{ padding:0px; margin:0px;}
+a{ cursor:pointer;}
+body{margin:0 auto;max-width:750px;}
 .fullPage-gray .page,.fullPage-gray{ height:100%; background-color: #eee;}
 .clear{  clear: both; }
 .align-left{ text-align:left;}
@@ -152,9 +154,6 @@ html {
 .handheldIdCamera .file-container .default-image{ background: url('images/applyQuota/holder.png') no-repeat top center; background-size: 5.67rem;}
 
 /* 额度状态*/
-@media only screen and (max-width:320px){html{font-size:18px !important}}
-a{cursor:pointer;}
-body{margin:0 auto;max-width:750px;}
 .amtSituTopPrnt{position: relative;margin:0 auto;width:100%;height:auto;}
 .amtNotBg{position:relative;margin:0px;padding:0px;width:100%;height:100%;background:#EDEEEE;}
 .btmBg{position: relative;margin:0 auto;width:100%;padding:0px; line-height:0;}
