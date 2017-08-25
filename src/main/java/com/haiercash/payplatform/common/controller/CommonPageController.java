@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.common.controller;
 
 import com.haiercash.commons.redis.Cache;
+import com.haiercash.commons.util.FileUtil;
 import com.haiercash.payplatform.common.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 
@@ -451,9 +453,10 @@ public class CommonPageController extends BaseController {
      *
      * @return
      */
-//    @RequestMapping(value = "/api/payment/attachPic", method = RequestMethod.POST)
-//    public Map<String, Object> attachPic(@RequestBody Map<String, Object> map) {
-//        return custExtInfoService.attachPic(super.getToken(), super.getChannelNo(), super.getChannel(), map);
-//    }
+    @RequestMapping(value = "/api/payment/attachPic", method = RequestMethod.GET)
+    public void attachPic(HttpServletRequest request, HttpServletResponse response, @RequestParam("filePath") String filePath) throws IOException {
+        FileUtil.download(request, response, filePath);
+        // return custExtInfoService.attachPic(super.getToken(), super.getChannelNo(), super.getChannel(), filePath);
+    }
 
 }
