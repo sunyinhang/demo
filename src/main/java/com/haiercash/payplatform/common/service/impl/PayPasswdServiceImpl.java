@@ -58,7 +58,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -382,7 +382,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.FAILED_INFO, retMsg);
         }
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取获取数据为空" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }

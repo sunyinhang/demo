@@ -2,15 +2,13 @@ package com.haiercash.payplatform.common.service.impl;
 
 import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.FaceService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
-import com.haiercash.payplatform.common.utils.DataConverUtil;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.common.utils.HttpClient;
-import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -26,10 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.*;
-
-import static com.haiercash.payplatform.common.utils.RestUtil.fail;
-import static com.haiercash.payplatform.common.utils.RestUtil.success;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by yuanli on 2017/8/1.
@@ -69,7 +66,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if(cacheMap.isEmpty()){
+        if(cacheMap == null || "".equals(cacheMap)){
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -263,7 +260,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if(cacheMap.isEmpty()){
+        if(cacheMap == null || "".equals(cacheMap)){
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -345,7 +342,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         }
         //缓存数据获取及非空判断
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if(cacheMap.isEmpty()){
+        if(cacheMap == null || "".equals(cacheMap)){
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }

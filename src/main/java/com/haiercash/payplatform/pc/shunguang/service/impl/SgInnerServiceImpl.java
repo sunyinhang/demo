@@ -4,26 +4,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.haiercash.commons.redis.Cache;
-import com.haiercash.commons.util.*;
-import com.haiercash.payplatform.common.config.EurekaServer;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.common.enums.OrderEnum;
-import com.haiercash.payplatform.common.service.*;
-import com.haiercash.payplatform.common.utils.*;
+import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.payplatform.common.service.CmisApplService;
+import com.haiercash.payplatform.common.service.HaierDataService;
+import com.haiercash.payplatform.common.service.OrderManageService;
+import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
+import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.io.IOException;
 import java.util.*;
 
@@ -67,7 +71,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         }
         //获取缓存数据
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if (cacheMap.isEmpty()) {
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -109,8 +113,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if("C1220".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
-            session.set(token, cacheMap);
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+            String backurl = "login.html?token="+token;//TODO!!!!!!
             map.put("backurl", backurl);
             return success(map);
         }
