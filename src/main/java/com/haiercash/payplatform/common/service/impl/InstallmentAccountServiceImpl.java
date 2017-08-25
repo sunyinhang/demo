@@ -1,9 +1,13 @@
 package com.haiercash.payplatform.common.service.impl;
 
 import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
+import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.InstallmentAccountService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,10 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
     private Session session;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private AcquirerService acquirerService;
+    @Autowired
+    private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
     //模块编码  02
     private static String MODULE_NO = "05";
     public InstallmentAccountServiceImpl() {
@@ -324,7 +332,15 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         req.put("channel", channel);
         req.put("orderNo", orderNo);
         logger.info("查询订单详情接口，请求数据："+req.toString());
-        Map<String, Object> queryOrderInfo = appServerService.queryOrderInfo(token, req);
+        AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
+        if(AppOrdernoTypgrpRelation == null){
+            logger.info("没有获取到订单信息");
+            return fail(ConstUtil.ERROR_CODE, "没有获取到订单信息");
+        }
+        //获取申请流水号
+        String applseq = AppOrdernoTypgrpRelation.getApplSeq();
+        Map<String, Object> queryOrderInfo = acquirerService.getOrderFromAcquirer(applseq, channel, channelNo, null, null, "2");
+//        Map<String, Object> queryOrderInfo = appServerService.queryOrderInfo(token, req);
         if(queryOrderInfo == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -338,7 +354,9 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         BigDecimal applyAmt = new BigDecimal(0) ;
         String ordertotal = "";
         Map<String, Object> resMap = (Map<String, Object>) queryOrderInfo.get("body");
-        String applyTnrTyp = (String) resMap.get("applyTnrTyp");
+        AppOrder appOrder = acquirerService.acquirerMap2OrderObject(resMap, new AppOrder());
+//        String applyTnrTyp = (String) resMap.get("applyTnrTyp");
+        String applyTnrTyp = appOrder.getApplyTnrTyp();
         if(!applyTnrTyp.equals("D") && !applyTnrTyp.equals("d") &&( applyTnrTyp != null && !"".equals(applyTnrTyp))){
             String xfzeStr = String.valueOf(resMap.get("xfze"));//息费总额
             if (xfzeStr.equals("null")){
@@ -346,8 +364,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             }else{
                 xfze = new BigDecimal(xfzeStr);
             }
-            String applyAmtStr = String.valueOf(resMap.get("applyAmt"));//借款总额
-            if (applyAmtStr.equals("null")){
+            String applyAmtStr = appOrder.getApplyAmt();//借款总额
+            if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null){
                 applyAmt = new BigDecimal(0);
             }else{
                 applyAmt = new BigDecimal(applyAmtStr);

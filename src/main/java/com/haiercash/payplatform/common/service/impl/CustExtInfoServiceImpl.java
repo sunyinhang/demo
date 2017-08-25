@@ -337,7 +337,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存联系人二**************结束");
         logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
         if("46".equals(channelNo)){
-            typCde = "17044a";//贷款品种
+            typCde = sg_typCde;//贷款品种
         }else{
             //查询贷款品种类型
         }
@@ -347,6 +347,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         ifNeedFaceChkByTypCdeMap.put("name",name);
         ifNeedFaceChkByTypCdeMap.put("idNumber",idNumber);
         ifNeedFaceChkByTypCdeMap.put("isEdAppl","");
+        ifNeedFaceChkByTypCdeMap.put("channel",channel);
+        ifNeedFaceChkByTypCdeMap.put("channelNo",channelNo);
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
         if(saveCustFCiCustContactMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);

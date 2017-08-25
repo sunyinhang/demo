@@ -658,7 +658,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         return map;
     }
-    //查询订单详情
+    //查询订单详情（暂不用）
     @Override
     public Map<String, Object> queryOrderInfo(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/getAppOrderAndGoods";
