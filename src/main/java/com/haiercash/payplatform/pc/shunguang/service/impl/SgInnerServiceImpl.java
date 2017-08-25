@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -46,6 +48,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
     private OrderManageService orderManageService;
     @Autowired
     private AcquirerService acquirerService;
+    @Value("${app.other.haiercashpay_web_url}")
+    protected String haiercashpay_web_url;
 
     @Override
     public Map<String, Object> userlogin(Map<String, Object> map) {
@@ -105,7 +109,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if("C1220".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
-            String backurl = "login.html?token="+token;//TODO!!!!!!
+            session.set(token, cacheMap);
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
             map.put("backurl", backurl);
             return success(map);
         }
@@ -118,15 +123,17 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String bankName = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankName");//银行名称
 
         cacheMap.put("custNo", custNo);//客户编号
-        cacheMap.put("custName", custName);//客户姓名
+        cacheMap.put("name", custName);//客户姓名
         cacheMap.put("cardNo", cardNo);//银行卡号
         cacheMap.put("bankCode", bankNo);//银行代码
         cacheMap.put("bankName", bankName);//银行名称
         cacheMap.put("idNo", certNo);//身份证号
         cacheMap.put("idType", certType);
+        session.set(token, cacheMap);
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", uidLocal);//内部userId
+        edMap.put("channel", "11");
         edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
         if (!HttpUtil.isSuccess(edresult) ) {//额度校验失败
@@ -137,26 +144,29 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String crdNorAvailAmt = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdNorAvailAmt");
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt) ){
             //跳转有额度页面
-            String backurl = "login.html?token="+token;//TODO!!!!!!
+            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
             map.put("backurl", backurl);
             return success(map);
         }
         //审批状态判断
         String outSts = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("outSts");
         if("01".equals(outSts)) {//额度正在审批中
-            String backurl = "login.html?token="+token;//TODO!!!!!!
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
             map.put("backurl", backurl);
             return success(map);
         }else if("22".equals(outSts)) {//审批被退回
-            String backurl = "login.html?token="+token;//TODO!!!!!!
+            String crdSeq = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdSeq");
+            cacheMap.put("crdSeq", crdSeq);
+            session.set(token, cacheMap);
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             map.put("backurl", backurl);
             return success(map);
         }else if("25".equals(outSts)) {//审批被拒绝
-            String backurl = "login.html?token="+token;//TODO!!!!!!
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
             map.put("backurl", backurl);
             return success(map);
         }else {//没有额度  额度激活
-            String backurl = "login.html?token="+token;//TODO!!!!!!
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
             map.put("backurl", backurl);
             return success(map);
         }
@@ -258,7 +268,18 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
                 logger.info("Jedis数据获取失败");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
-            AppOrder appOrder = (AppOrder) cacheMap.get("apporder");//获取订单信息
+            ObjectMapper objectMapper = new ObjectMapper();
+            AppOrder appOrder = null;
+            try {
+                appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
+                logger.info("appOrder0:" + appOrder);
+                if(appOrder == null){
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             payAmt = appOrder.getApplyAmt();//申请金额
             typCde = appOrder.getTypCde();//贷款品种
         }
