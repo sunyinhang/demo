@@ -66,7 +66,7 @@ public class SgInnerController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/shunguang/gettotalAmt", method = RequestMethod.GET)
     public Map<String, Object> gettotalAmt(@RequestParam Map<String, Object> params) {
-        return sgInnerService.gettotalAmt(super.initParam(params));
+        return  sgInnerService.gettotalAmt(super.initParam(params));
     }
 
     /**

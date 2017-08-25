@@ -239,15 +239,15 @@ public class CmisApplService extends BaseService {
 //            return result;
 //        }
         else {
-            if (!"2".equals(order.getStatus())) {
-                this.cleanGoodsInfo(order);
-                // 防止个人版保存商户版提交时修改系统标识信息
-                order.setSource(null);
-                Map<String, Object> resultMap = orderService.saveOrUpdateAppOrder(order, null);
-                if (!HttpUtil.isSuccess(resultMap)) {
-                    return resultMap;
-                }
-            }
+//            if (!"2".equals(order.getStatus())) {
+//                this.cleanGoodsInfo(order);
+//                // 防止个人版保存商户版提交时修改系统标识信息
+//                order.setSource(null);
+//                Map<String, Object> resultMap = orderService.saveOrUpdateAppOrder(order, null);
+//                if (!HttpUtil.isSuccess(resultMap)) {
+//                    return resultMap;
+//                }
+//            }
             logger.debug("订单系统接口提交订单开始");
             Map<String, Object> result = orderService.submitOrder(order.getOrderNo(), "0");
             return result;
