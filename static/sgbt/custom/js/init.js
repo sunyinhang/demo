@@ -140,7 +140,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     util.redirect({
         title: isDefault ? '实名绑卡' : '',
         url: path,
-        back: false
+        ignore: true
     });
     window.util = util;
 });
