@@ -111,13 +111,13 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
             }
             String result = JSONObject.toJSONString(validatamap);
-            //JSONObject jb = new JSONObject(result);
-            JSONObject jb = JSONObject.parseObject(result);
-            retflag = jb.getString("retFlag");
-            retmsg = jb.getString("retMsg");
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            JSONObject resultHead = jsonObject.getJSONObject("head");
+            retflag = resultHead.getString("retFlag");
+            retmsg = resultHead.getString("retMsg");
             if (!"00000".equals(retflag)) {
                 logger.info("支付密码验证失败！" + retmsg);
-                return fail(ConstUtil.ERROR_CODE, retmsg);
+                return fail(ConstUtil.ERROR_CODE, "支付密码验证失败");
             }
         } else {
             logger.info("是否设置过支付密码标志无效");
