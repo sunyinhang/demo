@@ -538,28 +538,28 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String token = (String) json.get("token");
         //1.根据token获取客户信息
         String userjsonstr = haierDataService.userinfo(token);
-//        if (userjsonstr == null || "".equals(userjsonstr)) {
-//            logger.info("验证客户信息接口调用失败");
-//            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
-//        }
-//        JSONObject userjson = new JSONObject(userjsonstr);
-//        if (!userjson.has("user_id")) {
-//            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
-//        }
-//        Object uid = userjson.get("user_id");//会员id
-//        String orderNo = (String) userjson.get("orderNo");//订单号 非必输
-//        String applSeq = (String) userjson.get("applseq");//支付流水号  必输
-//        if(StringUtils.isEmpty(uid)){
-//            String error = userjson.get("error").toString();
-//            return fail(ConstUtil.ERROR_CODE, error);
-//        }
-//        String uidHaier = uid.toString();//1000030088
-//        //String uidHaier = "100003008";
-//        Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
-//        Object head1 = userIdOne.get("head");
-//        JSONObject jsonObject = new JSONObject(head1);
-//        String retMsg1 = (String) jsonObject.get("retMsg");
-        String applSeq="918653";
+        if (userjsonstr == null || "".equals(userjsonstr)) {
+            logger.info("验证客户信息接口调用失败");
+            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+        }
+        JSONObject userjson = new JSONObject(userjsonstr);
+        if (!userjson.has("user_id")) {
+            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
+        }
+        Object uid = userjson.get("user_id");//会员id
+        String orderNo = (String) userjson.get("orderNo");//订单号 非必输
+        String applSeq = (String) userjson.get("applseq");//支付流水号  必输
+        if(StringUtils.isEmpty(uid)){
+            String error = userjson.get("error").toString();
+            return fail(ConstUtil.ERROR_CODE, error);
+        }
+        String uidHaier = uid.toString();//1000030088
+        //String uidHaier = "100003008";
+        Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
+        Object head1 = userIdOne.get("head");
+        JSONObject jsonObject = new JSONObject(head1);
+        String retMsg1 = (String) jsonObject.get("retMsg");
+        //String applSeq="918653";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("获取信息失败,为空:applSeq" + applSeq);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -572,17 +572,21 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> acqHead = getAcqHead(tradeCode, "11", channelNo, "", "");
         HashMap<String, Object> maphead = new HashMap<>();
         HashMap<String, Object> maprequest = new HashMap<>();
+        HashMap<Object, Object> mapappl = new HashMap<>();
+        mapappl.put("applSeq",applSeq);
         maphead.put("head",acqHead);
-        maphead.put("body",applSeq);
+        maphead.put("body",mapappl);
         maprequest.put("request",maphead);
-        Map<String, Object> queryApplmap = appServerService.queryApplLoanDetail(token, maprequest);
+        //Map<String, Object> queryApplmap = appServerService.queryApplLoanDetail(token, maprequest);
+        Map<String, Object> queryApplmap = appServerService.queryApplLoanDetail(maprequest);
         logger.info("查询贷款详情接口，响应数据：" + map);
-        if (map == null || "".equals(map)) {
+        if (queryApplmap == null || "".equals(queryApplmap)) {//response
             logger.info("网络异常,查询贷款详情接口,响应数据为空！" + map);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map<String, Object> head = (Map) queryApplmap.get("head");
-        Map<String, Object> body = (Map) queryApplmap.get("body");
+        Map<String,Object> response = (Map) queryApplmap.get("response");
+        Map<String, Object> head = (Map) response.get("head");
+        Map<String, Object> body = (Map) response.get("body");
         String code = (String) head.get("retFlag");
         String message = (String) head.get("retMsg");
         if ("00000".equals(code)) {//查询贷款详情成功
@@ -590,12 +594,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String applSeq1 = (String) body.get("applSeq");//申请流水号
             String contNo = (String) body.get("contNo");//合同号
             String loanNo = (String) body.get("loanNo");//借据号
-            String applyAmt = (String) body.get("applyAmt");//申请金额
-            String apprvAmt = (String) body.get("apprvAmt");//核准金额（审批金额）
+            Object applyAmto = body.get("applyAmt");//申请金额applyAmt
+            String applyAmt = applyAmto.toString();
+            Object apprvAmto = body.get("apprvAmt");//核准金额（审批金额）apprvAmt
+            String apprvAmt = apprvAmto.toString();
             String repayApplAcNam= (String)body.get("repayApplAcNam");//还款账号户名
-            String repayApplCardNo = (String) body.get("repayApplCardNo");//还款卡号
-            String repayAccBankCde = (String) body.get("repayAccBankCde");//还款开户银行代码
-            String repayAcProvince = (String) body.get("repayAcProvince");//还款账户所在省
+            String repayApplCardNo = (String)body.get("repayApplCardNo");//还款卡号
+            String repayAccBankCde = (String)body.get("repayAccBankCde");//还款开户银行代码
+            String repayAcProvince = (String)body.get("repayAcProvince");//还款账户所在省
             String repayAcCity = (String) body.get("repayAcCity");//还款账户所在市
             String applyDt = (String) body.get("applyDt");//申请注册日期
             String loanActvDt= (String)body.get("loanActvDt");//放款日期
@@ -604,7 +610,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String dueDay= (String)body.get("dueDay");//还款日
             String lastDueDay = (String) body.get("lastDueDay");//到期日
             String outSts = (String)body.get("outSts");//审批状态
-            String demo = (String) body.get("apprvAmt");//拒绝原因
+            String demo = (String) body.get("demo");//拒绝原因
             HashMap<String, String> mapone = new HashMap<>();
             mapone.put("applSeq", applSeq1);
             mapone.put("contNo", contNo);

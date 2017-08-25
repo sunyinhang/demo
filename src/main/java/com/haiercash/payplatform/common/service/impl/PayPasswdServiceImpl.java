@@ -218,7 +218,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         JSONObject head = jb.getJSONObject("head");
         retflag = head.getString("retFlag");
         retmsg = head.getString("retMsg");
-        retflag = "00000";
+        //retflag = "00000";
         if (!"00000".equals(retflag)) {
             logger.info("额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
@@ -585,7 +585,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         Map<String, Object> req = new HashMap<>();
-        req.put("channelNo", "19");
+        req.put("channelNo", channelNo);
         req.put("channel", channel);
         req.put("applSeq", applSeq);
         logger.info("查询贷款详情接口，请求数据：" + req.toString());
@@ -614,7 +614,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             }
             //applSeq="930201";
             HashMap<String, Object> queryApplListMap = new HashMap<>();
-            queryApplListMap.put("channelNo", "34");
+            queryApplListMap.put("channelNo", channelNo);
             queryApplListMap.put("channel", channel);
             queryApplListMap.put("applseq", applSeq);
             //token="f294c5ad-1b63-4340-8ddb-7de9d0366ed7";
@@ -946,7 +946,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         }
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
-            logger.info("Jedis为空：" + cacheMap);
+            logger.info("Redis为空：" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String applSeq = (String) cacheMap.get("applSeq");//申请流水号
@@ -1045,5 +1045,27 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             resultparamMap.put("flag", "2");//设置成功
         }
         return success(resultparamMap);
+    }
+
+
+    @Override
+    public Map<String, Object> getPersonalCenterInfo(String token, String channelNo, String channel) {
+        logger.info("*********获取个人信息中心**************开始");
+
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Redis为空：" + cacheMap);
+         }
+        String userId = (String) cacheMap.get("userId");//用户ID
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("userId", userId);
+        Map<String, Object> resultparamMap = appServerService.getPersonalCenterInfo(token, paramMap);
+        return resultparamMap;
     }
 }

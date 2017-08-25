@@ -436,5 +436,24 @@ public class CommonPageController extends BaseController {
         return ocrIdentityService.getPhoneNo(super.getToken());
     }
 
+    /**
+     * 获取个人中心信息（本月应还）
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/getPersonalCenterInfo", method = RequestMethod.POST)
+    public Map<String, Object> getPersonalCenterInfo() {
+        return payPasswdService.getPersonalCenterInfo(super.getToken(), super.getChannelNo(), super.getChannel());
+    }
+
+        /**
+     * 影像下载(暂时无用)
+     *
+     * @return
+     */
+//    @RequestMapping(value = "/api/payment/attachPic", method = RequestMethod.POST)
+//    public Map<String, Object> attachPic(@RequestBody Map<String, Object> map) {
+//        return custExtInfoService.attachPic(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+//    }
 
 }

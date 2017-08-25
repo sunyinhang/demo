@@ -22,4 +22,6 @@ public interface CustExtInfoService {
     public Map<String, Object> upIconPic(MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception;
     //个人扩展信息删除影像
     public Map<String,Object> attachDelete(String token, String channel, String channelNo, Map<String, Object> params);
+    //影像下载
+    Map<String,Object> attachPic(String token, String channelNo, String channel, Map<String, Object> map);
 }

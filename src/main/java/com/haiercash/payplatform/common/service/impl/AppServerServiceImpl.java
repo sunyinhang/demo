@@ -382,8 +382,17 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return result;
     }
 
-    //(GET)查询贷款详情（根据申请流水号）
-    public Map<String, Object> queryApplLoanDetail(String token, Map<String, Object> paramMap) {
+    //(GET)查询贷款详情（根据申请流水号）  收单
+    public Map<String, Object> queryApplLoanDetail(Map<String, Object> paramMap) {
+        String url = EurekaServer.ACQUIRER + "/api/appl/getApplInfo";
+        logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
+        logger.info("查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
+        Map<String, Object> queryApplLoanDetailMap = HttpUtil.restPostMap(url, paramMap);
+        logger.info("查询贷款详情（根据申请流水号）接口返回数据" + queryApplLoanDetailMap);
+        return queryApplLoanDetailMap;
+    }
+    //(GET)查询贷款详情（根据申请流水号）  APP后台
+    public Map<String, Object> queryApplLoanDetail(String token,Map<String, Object> paramMap) {
         String url = EurekaServer.ACQUIRER + "/api/appl/getApplInfo";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
@@ -391,7 +400,6 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("查询贷款详情（根据申请流水号）接口返回数据" + queryApplLoanDetailMap);
         return queryApplLoanDetailMap;
     }
-
     //(GET)按贷款申请查询分期账单
     public Map<String, Object> queryApplListBySeq(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/queryApplListBySeq";
@@ -774,4 +782,27 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return result;
     }
 
+    //6.1.133.	(GET)获取个人\信息
+    public Map<String, Object> getPersonalCenterInfo(String token,Map<String, Object> paramMap){
+        String url=EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/getPersonalCenterInfo";
+        logger.info("获取个人信息接口,请求地址："+url);
+        logger.info("获取个人信息接口,请求参数"+paramMap);
+        Map<String, Object> result = HttpUtil.restGetMap(url, token,paramMap);
+        logger.info("查询客户实名认证信息接口, 返回数据：" + result);
+        return result;
+
+
+    }
+
+    //6.1.31.	(GET)影像下载
+    @Override
+    public Map<String, Object> attachPic(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachPic?attachId="+(Integer)paramMap.get("attachId");
+        logger.info("影像下载口, 请求地址：" + url);
+        logger.info("影像下载口, 请求数据：" + paramMap);
+//        Map<String, Object> result = HttpUtil.restGetMap(url, token,paramMap);
+        Map<String, Object> result = HttpUtil.restGetMap(url);
+        logger.info("影像下载口, 返回数据：" + result);
+        return result;
+    }
 }
