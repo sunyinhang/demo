@@ -40,6 +40,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     @Value("${app.other.face_DataImg_url}")
     protected String face_DataImg_url;
 
+    @Value("${app.shunguang.sg_typCde}")
+    protected String sg_typCde;
+
     //模块编码  03
     private static String MODULE_NO = "03";
     public CustExtInfoServiceImpl() {
@@ -64,7 +67,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, allCustExtInfotMsg);
         }
         if("46".equals(channelNo)){
-            typCde = "17044a";//贷款品种
+            typCde = sg_typCde;//贷款品种
         }else{
             //查询贷款品种类型
         }
@@ -525,6 +528,35 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         if (dir.mkdirs()) {
             return;
         }
+    }
+
+    @Override
+    public Map<String, Object> attachPic(String token, String channelNo, String channel, Map<String, Object> map) {
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        Integer id = (Integer) map.get("id");
+        if ( id ==null   && "null".equals(id)) {
+            logger.info("影像ID为空");
+            return fail(ConstUtil.ERROR_CODE, "参数影像ID为空!");
+        }
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("attachId", id);// 用户ID
+        Map<String, Object> uploadresultmap = appServerService.attachPic(token, paramMap);
+
+        return uploadresultmap;
     }
 
 }

@@ -946,7 +946,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         }
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
-            logger.info("Jedis为空：" + cacheMap);
+            logger.info("Redis为空：" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String applSeq = (String) cacheMap.get("applSeq");//申请流水号
@@ -1045,5 +1045,27 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             resultparamMap.put("flag", "2");//设置成功
         }
         return success(resultparamMap);
+    }
+
+
+    @Override
+    public Map<String, Object> getPersonalCenterInfo(String token, String channelNo, String channel) {
+        logger.info("*********获取个人信息中心**************开始");
+
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Redis为空：" + cacheMap);
+         }
+        String userId = (String) cacheMap.get("userId");//用户ID
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("userId", userId);
+        Map<String, Object> resultparamMap = appServerService.getPersonalCenterInfo(token, paramMap);
+        return resultparamMap;
     }
 }

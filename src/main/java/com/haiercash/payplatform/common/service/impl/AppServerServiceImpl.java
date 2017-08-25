@@ -774,4 +774,27 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return result;
     }
 
+    //6.1.133.	(GET)获取个人\信息
+    public Map<String, Object> getPersonalCenterInfo(String token,Map<String, Object> paramMap){
+        String url=EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/getPersonalCenterInfo";
+        logger.info("获取个人信息接口,请求地址："+url);
+        logger.info("获取个人信息接口,请求参数"+paramMap);
+        Map<String, Object> result = HttpUtil.restGetMap(url, token,paramMap);
+        logger.info("查询客户实名认证信息接口, 返回数据：" + result);
+        return result;
+
+
+    }
+
+    //6.1.31.	(GET)影像下载
+    @Override
+    public Map<String, Object> attachPic(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachPic?attachId="+(Integer)paramMap.get("attachId");
+        logger.info("影像下载口, 请求地址：" + url);
+        logger.info("影像下载口, 请求数据：" + paramMap);
+//        Map<String, Object> result = HttpUtil.restGetMap(url, token,paramMap);
+        Map<String, Object> result = HttpUtil.restGetMap(url);
+        logger.info("影像下载口, 返回数据：" + result);
+        return result;
+    }
 }

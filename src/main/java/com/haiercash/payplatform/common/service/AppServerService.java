@@ -124,8 +124,12 @@ public interface AppServerService {
     public Map<String, Object> getCustInfoByCertNo(String token,Map<String, Object> paramMap);
     //OM-1108 根据applSeq查询商城订单号和网单号
     public Map<String,Object> getorderNo(String token,Map<String, Object> paramMap);
-
     //3.4.16.	(POST)用户注册
     public Map<String, Object> saveUauthUsers(String token, Map<String, Object> map);
+    //6.1.133.	(GET)获取个人中心信息
+    public Map<String, Object> getPersonalCenterInfo(String token,Map<String, Object> paramMap);
+    //6.1.31.	(GET)影像下载
+    public Map<String, Object> attachPic(String token,Map<String, Object> paramMap);
+
 
 }

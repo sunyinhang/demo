@@ -44,6 +44,8 @@ public interface PayPasswdService {
     //登陆密码设置
     public Map<String, Object> landPasswd(String token, String channelNo, String channel,Map<String,Object> map);
 
+    //获取个人中心信息
+    public Map<String, Object> getPersonalCenterInfo(String token, String channelNo, String channel);
 
 }
 
