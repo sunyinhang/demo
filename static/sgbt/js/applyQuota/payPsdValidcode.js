@@ -9,6 +9,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                 formKey: 'payPsdValidcodeForm'
             },
             entity: {
+                phoneNo: ''
             },
             formConfig: {
                 columns: [{
@@ -114,11 +115,12 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                 success: function(res) {
                     var data = util.data(res);
                     if (data && data.phoneNo) {
+                        vm.phoneNo = data.phoneNo ;
                         util.refresh({
                             vm: util.vm(vm, vm.tags.formKey),
                             column: {
                                 name: 'verifyNo',
-                                head: '请输入手机' + util.format(data.phoneNo, 'phone4') + '收到的短信校验码'
+                                head: '请输入手机' + util.format(vm.phoneNo, 'phone4') + '收到的短信校验码'
                             }
                         });
                     }

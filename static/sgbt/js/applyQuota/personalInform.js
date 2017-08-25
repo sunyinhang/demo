@@ -399,7 +399,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                                 back: false
                                             });
                                         }else if(res.body.flag == '3'){
-                                            //TODO
+                                            util.alert('不能再做人脸识别，录单终止')
 
                                         }else if(res.body.flag == '4'){
                                             util.redirect({

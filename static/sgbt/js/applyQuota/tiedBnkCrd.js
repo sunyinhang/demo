@@ -2,7 +2,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
 
     //获取持卡人姓名
     var param = util.cache('name');
-    debugger
+
     var vm = util.bind({
         container: 'tiedBnkCrd',
         data: {
@@ -232,22 +232,30 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                         text: '下一步',
                         layout: 'primary',
                         click: function (event, editType, entity) {
-                            util.post({
-                                url: '/realAuthentication',
-                                data:{
-                                    cityCode: entity.account,
-                                    cardnumber: entity.cardnumber,
-                                    mobile: entity.mobile,
-                                    verifyNo: entity.verifyNo,
-                                },
-                                success:function(res){
-                                    util.redirect({
-                                        title: '个人资料',
-                                        url: '/applyQuota/personalInform.html',
-                                        back: false
-                                    });
-                                }
-                            });
+                            //开户省市地址校验
+                            var accountAttr = entity.account.split(",");
+                            if(util.isEmpty(accountAttr[1])){
+                                util.alert('请选择开户省市地址市/区 ');
+                            }else if(util.isEmpty(accountAttr[2])){
+                                util.alert('请选择开户省市地址区/县 ');
+                            }else {
+                                util.post({
+                                    url: '/realAuthentication',
+                                    data: {
+                                        cityCode: entity.account,
+                                        cardnumber: entity.cardnumber,
+                                        mobile: entity.mobile,
+                                        verifyNo: entity.verifyNo,
+                                    },
+                                    success: function (res) {
+                                        util.redirect({
+                                            title: '个人资料',
+                                            url: '/applyQuota/personalInform.html',
+                                            back: false
+                                        });
+                                    }
+                                });
+                            }
                         }
                     }
                 ]
