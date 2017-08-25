@@ -23,7 +23,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
                 {{#if buttons}}
                     <div class="modal-buttons {{#if verticalButtons}}modal-buttons-vertical{{/if}}">
                 {{#each buttons}}
-                    <span class="modal-button {{#if cssClass}}modal-button-{{cssClass}}{{/if}} {{#if bold}}modal-button-bold{{/if}}">{{text}}</span>
+                    <span class="modal-button {{#if cssClass}}modal-button-{{cssClass}}{{/if}}">{{text}}</span>
                 {{/each}}
                 </div>
                 {{/if}}
