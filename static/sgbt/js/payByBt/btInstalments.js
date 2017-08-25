@@ -121,15 +121,6 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                     vm.totalAmt = data.totalAmt;
                     vm.payMtd = data.payMtd;
                     vm.applyTnr = data.payMtd[0].psPerdNo;
-
-                    /*util.cache({
-
-                     });*/
-                    /*util.redirect({
-                     title: '实名绑卡',
-                     url: '/applyQuota/checkIdCardB.html',
-                     back: false
-                     });*/
                 }
             });
             //获取当前位置

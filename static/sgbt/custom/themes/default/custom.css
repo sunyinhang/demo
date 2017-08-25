@@ -241,14 +241,15 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     height: 30px;
 }
 .form-sms #verifyNo {
+    display: block;
     margin-right: 0.5rem;
     border-radius: 1.25rem;
     background: #eee url(images/icon_v.png) no-repeat 0.8rem center;
     background-size: 1rem;
     padding-left: 2.2rem;
-    width: 7.5rem;
+    width: 100%;
     height: 2.5rem;
-    line-height: 2.5rem;
+    /*line-height: 2.5rem;*/
     font-size: 0.7rem;
 }
 .form-sms #sendSms {

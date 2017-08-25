@@ -13,7 +13,9 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
                 whetherBtn: true,
                 activBtn: 'activAmuntBtn',
                 btnText: '去购物'
-            }
+            },
+            mounthAmount: '',
+            crdNorAvailAmt: '',
         },
         methods:{
             goShopFn: function(){
@@ -21,7 +23,17 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             }
         },
         mounted: function(){
-
+            util.post({
+                url: '/getPersonalCenterInfo',
+                data: function(res){
+                    var data = util.getData(res);
+                    if(!util.isEmpty(res)){
+                        vm.config.num = data.crdNorAvailAmt;
+                        vm.crdNorAvailAmt = data.crdNorAvailAmt;
+                        vm.mounthAmount = data.mounthAmount;
+                    }
+                }
+            });
         }
     });
 });
