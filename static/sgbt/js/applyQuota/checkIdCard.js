@@ -119,8 +119,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                     });
                                     util.redirect({
                                         title: '实名绑卡',
-                                        url: '/applyQuota/checkIdCardB.html',
-                                        back: false
+                                        url: '/applyQuota/checkIdCardB.html'
                                     });
                                 }
                             });
