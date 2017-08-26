@@ -285,6 +285,12 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 .agree-popup p#title a {
     float: right;
 }
+/* 修改默认样式 */
+.list-block input[type=date], .list-block input[type=datetime-local], .list-block input[type=email], .list-block input[type=number], .list-block input[type=password],
+        .list-block input[type=search], .list-block input[type=tel], .list-block input[type=text], .list-block input[type=time], .list-block input[type=url], .list-block select,
+        .list-block {
+    font-size: 0.75rem;
+}
 /*找回密码*/
 .bv-theme .getPayPwd li{
     border-bottom: 1px solid #ccc;
