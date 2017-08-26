@@ -30,6 +30,17 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                     desc: '密码由6-20位字母和数字组成'
                                 }
                             }
+                        },
+                        operate: {
+                            position: 'bottom',
+                            text: '忘记密码？',
+                            click: function () {
+                                util.redirect({
+                                    title: '重置支付密码',
+                                    url: '/getPayPsd/getPayPsdWay.html',
+                                    back: false
+                                });
+                            }
                         }
                     }
                 ],
