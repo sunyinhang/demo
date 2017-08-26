@@ -504,7 +504,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                         for (var fileIndex=0; fileIndex<data.docList[i].urlList.length; fileIndex++) {
                                             files.push({
                                                 id: data.docList[i].urlList[fileIndex].id,
-                                                url: Const.route.imageLocation + data.docList[i].urlList[fileIndex].filePath
+                                                url: Const.rest.baseUrl + '/attachPic?filePath=' + data.docList[i].urlList[fileIndex].filePath   //Const.route.imageLocation + data.docList[i].urlList[fileIndex].filePath
                                             });
                                         }
                                     } else {

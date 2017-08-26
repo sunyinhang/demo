@@ -7,6 +7,7 @@ import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,6 +23,8 @@ public class LimitServiceImpl extends BaseService implements LimitService{
     @Autowired
     private AppServerService appServerService;
 
+    @Value("${app.shunguang.sg_typCde}")
+    protected String sg_typCde;
     //模块编码  02
     private static String MODULE_NO = "02";
     public LimitServiceImpl() {
@@ -51,12 +54,12 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         }
         //缓存数据获取
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if(cacheMap.isEmpty()){
+        if(cacheMap == null || "".equals(cacheMap)){
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         if("46".equals(channelNo)){
-            typCde = "17044a";//贷款品种
+            typCde = sg_typCde;//贷款品种
             tag = "SHH";
         }else{
             //查询贷款品种类型

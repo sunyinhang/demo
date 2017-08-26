@@ -38,6 +38,9 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
             Const.global.f.hideIndicator();
         }*/
     });
+    util.loading();
+    $('.bv-preloader-container').remove();
+    $('.bv-overlay').remove();
     $('body').height($(window).height());
     // #!/
 
@@ -142,5 +145,10 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
         url: path,
         ignore: true
     });
+
+    setTimeout(function () {
+        util.loading('hide');
+    }, 200);
+
     window.util = util;
 });
