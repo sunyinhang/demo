@@ -45,7 +45,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             },
             tabsConfig: {
                 layout: 'head',
-                currentIndex: 0,
+                currentIndex: 1,
                 tabs: [
                     {
                         text: '全部',
@@ -233,7 +233,11 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                             }
                                         },
                                         click: function (event, item) {
-                                            console.log('clicked' + item.data);
+                                            util.redirect({
+                                                title: '顺逛白条',
+                                                url: '/payByBt/btInstalments.html?orderNo='+ order.orderNo,
+                                                back: false
+                                            });
                                         }
                                     },{
                                         text: '删除订单',

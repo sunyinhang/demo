@@ -50,25 +50,51 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         text: '《海尔消费金融账户开通相关协议》',
                         click: function () {
                             // 多个协议
+                            //个人借款合同地  contract
+                            // 征信查询credit
+                            // 注册协议register
+                            // 个人信息协议person
+
                             util.actions([
                                 {
-                                    text: '协议1',
+                                    text: '消费信贷协议',
                                     click: function () {
-                                       util.popup({
-                                         $element: $('.agree-popup'),
-                                         title: '协议1',
-                                         url: 'https://www.baidu.com'
-                                         });
+                                        util.post({
+                                            url: '/treatyShow',
+                                            data: {
+                                                flag: 'register'
+                                            },
+                                            success: function (res) {
+                                                var data = util.data(res);
+                                                if (data.realmName) {
+                                                    util.popup({
+                                                        $element: $('.agree-popup'),
+                                                        title: '消费信贷协议',
+                                                        url: data.realmName     // '/app/ht/agreement/PersonInfo.html'
+                                                    });
+                                                }
+                                            }
+                                        });
                                     }
                                 }, {
-                                    text: '协议2',
+                                    text: '个人征信查询授权书',
                                     click: function () {
-                                        console.log('协议2');
-                                    }
-                                }, {
-                                    text: '协议3',
-                                    click: function () {
-                                        console.log('协议3');
+                                        util.post({
+                                            url: '/treatyShow',
+                                            data: {
+                                                flag: 'credit'
+                                            },
+                                            success: function (res) {
+                                                var data = util.data(res);
+                                                if (data.realmName) {
+                                                    util.popup({
+                                                        $element: $('.agree-popup'),
+                                                        title: '个人征信查询授权书',
+                                                        url: data.realmName     // '/app/ht/agreement/PersonInfo.html'
+                                                    });
+                                                }
+                                            }
+                                        });
                                     }
                                 }
                             ]);

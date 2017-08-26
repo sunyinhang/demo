@@ -231,6 +231,15 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                     {
                         text: '下一步',
                         layout: 'primary',
+                        validate: {
+                            after: function (event, editType, entity) {
+                                if (!entity.agree) {
+                                    util.alert('#agree');
+                                    return false;
+                                }
+                                return true;
+                            }
+                        },
                         click: function (event, editType, entity) {
                             //开户省市地址校验
                             var accountAttr = entity.account.split(",");

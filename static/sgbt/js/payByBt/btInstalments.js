@@ -1,4 +1,9 @@
 require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, Const) {
+
+    //获取重新提交的订单号
+    var orderNo = util.gup('orderNo');
+
+
     var vm = util.bind({
         container: 'btInstalments',
         data: {
@@ -96,6 +101,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 $('.fenqi').removeClass('selected');
                 $(e.target).parent().addClass('selected');
                 $(e.target).addClass('selected');
+                vm.applyTnr = applyTnr;
                 util.get({
                     url: '/shunguang/gettotalAmt?applyTnr='+applyTnr ,
                     success: function (res) {
@@ -113,14 +119,23 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 }
             }
             //预加载
+            if( !util.isEmpty(orderNo)){
+                var url = '/shunguang/initPayApply?flag=1&orderNo='+orderNo;
+            }else{
+                var url = '/shunguang/initPayApply';
+            }
             util.get({
-                url: '/shunguang/initPayApply',
+                url: url,
                 success: function (res) {
                     var data = util.data(res);
                     vm.payAmt = '￥'+data.payAmt;
                     vm.totalAmt = data.totalAmt;
                     vm.payMtd = data.payMtd;
-                    vm.applyTnr = data.payMtd[0].psPerdNo;
+                    if(!util.isEmpty(data.applyTnr)){
+                        vm.applyTnr = data.applyTnr;
+                    }else{
+                        vm.applyTnr = data.payMtd[0].psPerdNo;
+                    }
                 }
             });
             //获取当前位置
