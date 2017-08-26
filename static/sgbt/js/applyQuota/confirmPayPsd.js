@@ -38,7 +38,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 util.redirect({
                                     title: '重置支付密码',
                                     url: '/getPayPsd/getPayPsdWay.html',
-                                    back: false
+                                    back: true
                                 });
                             }
                         }

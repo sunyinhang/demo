@@ -184,6 +184,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                         },
                         operate: {
                             text: '获取验证码',
+                            clazz: 'validate_code',
                             click: function (event, entity) {
                                 if (!util.validate($('#cardnumber', vm.$el))) {
                                     return;

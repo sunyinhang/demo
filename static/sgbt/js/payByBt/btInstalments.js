@@ -74,12 +74,23 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 });
             },
             payFn: function () {
-                util.post({
-                    url: '/shunguang/saveOrder',
-                    data:{
+                if( !util.isEmpty(orderNo)){
+                    var data={
+                        flag: '1',
+                        orderNo: orderNo ,
                         applyTnr: vm.applyTnr,
                         areaCode: '370203'
-                    },
+                    }
+
+                }else{
+                    var data={
+                        applyTnr: vm.applyTnr,
+                        areaCode: '370203'
+                    }
+                }
+                util.post({
+                    url: '/shunguang/saveOrder',
+                    data: data,
                     success: function(res) {
                         var data = util.data(res);
                         if (data) {

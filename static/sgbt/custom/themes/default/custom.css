@@ -226,6 +226,12 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     background: #eee url(' ./images/pwd.png') no-repeat 24px center;
     background-size: 0.8rem;
 }
+.bv-theme .form-pwd .item-after label{
+    width: 100%;
+    text-align: right;
+    margin-top: 10px;
+    margin-right:15px;
+}
 .bv-form.form-pwd , .bv-form.form-sms {
     margin: 0 35px;
     margin-top: 10px;

@@ -238,7 +238,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         click: function (event, item) {
                                             util.redirect({
                                                 title: '顺逛白条',
-                                                url: '/payByBt/btInstalments.html?orderNo='+ order.orderNo,
+                                                url: '/payByBt/btInstalments.html?orderNo='+ item.order.orderNo,
                                                 back: false
                                             });
                                         }
