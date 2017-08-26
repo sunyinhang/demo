@@ -2,6 +2,9 @@ var __baseResourcePath = '/mobile';
 // 支持dev,run
 var __env = 'dev';
 var __Const = {
+    init: {
+        auth: 'h5'
+    },
     rest: {
         baseUrl: window.location.protocol + "//" + window.location.host + '/api/payment',
         headers: {
