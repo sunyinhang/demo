@@ -62,6 +62,10 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String channelNo = (String) map.get("channelNo");
         String applyTnr = (String) map.get("applyTnr");//借款期限
         String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
+        String updflag = (String) map.get("flag");//1.待提交返显
+        String orderNo = (String) map.get("orderNo");//待提交时必传
+        //TODO!!!!
+        applyTnrTyp = applyTnr;
         String areaCode = (String) map.get("areaCode");//区编码
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
                 || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(areaCode)){
@@ -69,15 +73,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
-//        String token = "1992010301";
-//        String channel = "11";
-//        String channelNo = "46";
-//        String applyTnr = "12";//借款期限
-//        String applyTnrTyp = "12";//期限类型（若天则传D）
-//        String areaCode = "370201";//区编码
-//        String userId = "15066111824";
-
-        //缓存获取（放开）
+        //appOrder缓存获取（放开）
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
@@ -118,6 +114,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
         String userId = (String) ((HashMap<String, Object>)(resultMap.get("body"))).get("userId");
         //TODO!!!!
+        //String userId = cacheMap.get("userId").toString();
+
 
         if(StringUtils.isEmpty(userId)){
             logger.info("userid没有进行绑定");
@@ -172,14 +170,31 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         appOrder.setCrtUsr(sg_user_id);//销售代表用户ID（）
         appOrder.setTypGrp("01");//贷款类型  01:商品贷  02  现金贷
         appOrder.setSource(ConstUtil.SOURCE);//订单来源
-        appOrder.setWhiteType("SHH");//白名单类型  (TODO!!!!)
-        appOrder.setFormType("10");//10:线下订单   20:线上订单   (TODO!!!!)
+        appOrder.setWhiteType("SHH");//白名单类型
+        appOrder.setFormType("20");//10:线下订单   20:线上订单   (TODO!!!!)
         appOrder.setCustNo(custNo);//客户编号
         appOrder.setCustName(custName);//客户姓名
         appOrder.setIdTyp("20");//证件类型
         appOrder.setIdNo(certNo);//客户证件号码
         appOrder.setUserId(userId);//录单用户ID
         appOrder.setChannelNo(channelNo);
+        appOrder.setFstPay("0");
+        if("1".equals(updflag)){
+            if(StringUtils.isEmpty(orderNo)){
+                logger.info("前台传入参数有误");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            appOrder.setOrderNo(orderNo);
+//            //
+//            AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
+//            if(AppOrdernoTypgrpRelation == null){
+//                logger.info("没有获取到订单信息");
+//                return fail(ConstUtil.ERROR_CODE, "没有获取到订单信息");
+//            }
+//            //获取申请流水号
+//            String applseq = AppOrdernoTypgrpRelation.getApplSeq();
+//            appOrder.setApplseq(applseq);
+        }
 
 
         //0.准入资格校验
@@ -226,8 +241,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         Map<String, Object> ordercheakmap = new HashMap<String, Object>();
         ordercheakmap.put("userId", userId);
-        ordercheakmap.put("provinceCode", provinceCode);//TODO！！！！是否在白条页面获取
-        ordercheakmap.put("cityCode", cityCode);////TODO！！！！是否在白条页面获取
+        ordercheakmap.put("provinceCode", provinceCode);
+        ordercheakmap.put("cityCode", cityCode);
         ordercheakmap.put("channel", channel);
         ordercheakmap.put("channelNo", channelNo);
         Map<String, Object> ordercheakresult = appServerService.getCustInfoAndEdInfoPerson(token, ordercheakmap);
@@ -678,13 +693,16 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             relation.setIsConfirmContract("0");  // 未确认
             relation.setIsCustInfoComplete("N"); // 未确认
             relation.setInsertTime(new Date());
+            relation.setChannel(super.getChannel());
+            relation.setChannelNo(super.getChannelNo());
+            appOrdernoTypgrpRelationDao.insert(relation);
         } else {
+            relation.setChannel(super.getChannel());
+            relation.setChannelNo(super.getChannelNo());
             relation.setTypGrp(typGrp);
             relation.setApplSeq(applSeq);
+            appOrdernoTypgrpRelationDao.updateByPrimaryKey(relation);
         }
-        relation.setChannel(super.getChannel());
-        relation.setChannelNo(super.getChannelNo());
-        appOrdernoTypgrpRelationDao.saveAppOrdernoTypgrpRelation(relation);
     }
 
     /**

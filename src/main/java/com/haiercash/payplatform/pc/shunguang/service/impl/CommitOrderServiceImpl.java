@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.*;
 import com.haiercash.payplatform.common.config.EurekaServer;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -61,14 +63,27 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String token = (String) map.get("token");
         String orderNo = (String) map.get("orderNo");
         String applSeq = (String) map.get("applSeq");
-//        String paypwd = (String) map.get("paypwd");
+        String paypwd = (String) map.get("paypwd");
 
-
-//        String channel = "11";
-//        String channelNo = "46";
-//        String token = "1992010301";
-//        String orderNo = "534d00b9b87e44859b7f025f7f98c2be";
-//        String applSeq = "1265365";
+        //缓存获取（放开）
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        AppOrder appOrder = null;
+        String typCde = "";
+        try {
+            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
+            logger.info("appOrder0:" + appOrder);
+            if(appOrder == null){
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+            typCde = appOrder.getTypCde();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //参数非空校验
         if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
@@ -82,6 +97,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("根据用户中心token获取统一认证userId失败");
             return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
         }
+        //String userId = cacheMap.get("userId").toString();
         //根据userId获取客户编号
         Map<String, Object> custMap = new HashMap<String, Object>();
         custMap.put("userId", userId);
@@ -94,39 +110,40 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
         com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
         String custNo = (String) custresult.get("custNo");
-        //String custNo = "C201708220103152818240";
+        String custName = (String) custresult.get("custName");
+        String certNo = (String) custresult.get("certNo");
+        String mobile = (String) custresult.get("mobile");
 
-//        //1.签订注册及征信协议
-//        Map<String, Object> agreementmap = new HashMap<String, Object>();
-//        agreementmap.put("orderNo", orderNo);//订单号
-//        agreementmap.put("msgCode", msgCode);//短信验证码
-//        agreementmap.put("type", "1");//1：征信协议
-//        agreementmap.put("channel", channel);
-//        agreementmap.put("channelNo", channelNo);
-//        Map<String, Object> agreementresultmap = appServerService.updateOrderAgreement(token, agreementmap);
-//
-        //2.签订合同
-//        Map<String, Object> contractmap = new HashMap<String, Object>();
-//        contractmap.put("orderNo", orderNo);//订单号
-//        contractmap.put("channel", channel);
-//        contractmap.put("channelNo", channelNo);
-//        Map<String,Object> contractresultmap = appServerService.updateOrderContract(token, contractmap);
-//        if(!HttpUtil.isSuccess(contractresultmap)){//订单不存在
-//            logger.info("合同签订失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        //1.支付密码验证
+        HashMap<String, Object> pwdmap = new HashMap<>();
+        String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
+        String payPasswdEncrypt = EncryptUtil.simpleEncrypt(paypwd);
+        pwdmap.put("userId", userIdEncrypt);
+        pwdmap.put("payPasswd", payPasswdEncrypt);
+        pwdmap.put("channel", channel);
+        pwdmap.put("channelNo", channelNo);
+        Map<String, Object> resmap = appServerService.validatePayPasswd(token, pwdmap);
+        if(!HttpUtil.isSuccess(resmap)){
+            return resmap;
+        }
+
+        //2.合同签订
+//        Map<String, Object> contractmap =  signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
+//        if(!HttpUtil.isSuccess(contractmap)){
+//            return contractmap;
 //        }
 
         //3.影像上传
-//        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
-//        uploadimgmap.put("custNo", custNo);//客户编号
-//        uploadimgmap.put("applSeq", applSeq);//订单号
-//        uploadimgmap.put("channel", channel);
-//        uploadimgmap.put("channelNo", channelNo);
-//        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
-//        if(!HttpUtil.isSuccess(uploadimgresultmap)){
-//            logger.info("影像上传失败失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-//        }
+        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
+        uploadimgmap.put("custNo", custNo);//客户编号
+        uploadimgmap.put("applSeq", "1265410");//订单号
+        uploadimgmap.put("channel", channel);
+        uploadimgmap.put("channelNo", channelNo);
+        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
+        if(!HttpUtil.isSuccess(uploadimgresultmap)){
+            logger.info("影像上传失败失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
 
         //4.风险信息上送   TODO!!!!!
 
@@ -468,4 +485,31 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         return mobile;
     }
 
+    //合同签订
+    public Map<String, Object> signContract(String custName, String custIdCode, String applseq, String phone, String typCde,
+                                            String channelNo, String token) {
+        //合同签订
+        JSONObject order = new JSONObject();
+        order.put("custName", custName);// 客户姓名
+        order.put("idNo", custIdCode);// 客户身份证号
+        order.put("indivMobile", phone);// 客户手机号码
+        order.put("applseq", applseq);// 请求流水号
+        order.put("typLevelTwo", "050002");// typLevelTwo 贷款品种小类  TODO!!!!
+        order.put("typCde", typCde);// 贷款品种代码
+
+        JSONObject orderJson = new JSONObject();// 订单信息json串
+        orderJson.put("order", order.toString());
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("custName", custName);//客户姓名
+        map.put("custIdCode", custIdCode);// 客户身份证号
+        map.put("applseq", applseq);//申请流水号
+        map.put("signType", "SHUNGUANG_H5");//签章类型
+        map.put("orderJson", orderJson);//订单信息json串
+        map.put("sysFlag", "11");//系统标识
+        map.put("channelNo", channelNo);//渠道编码
+        Map camap = appServerService.caRequest(token, map);
+
+        return camap;
+    }
 }
