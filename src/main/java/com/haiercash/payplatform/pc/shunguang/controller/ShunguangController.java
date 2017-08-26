@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.shunguang.controller;
 import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
+import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
@@ -206,5 +207,17 @@ private CmisMseeageHandler cmisMseeageHandler;
     public Map<String, Object> edApplytest(@RequestBody Map<String, Object> map) throws Exception {
         // 参数非空校验
         return shunguangService.edApplytest(map);
+    }
+
+    /**
+     * 贷款测试入口
+     * @param appOrder
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/shunguang/payApplytest", method = RequestMethod.POST)
+    public Map<String, Object> payApplytest(@RequestBody AppOrder appOrder) throws Exception {
+        // 参数非空校验
+        return shunguangService.payApplytest(appOrder);
     }
 }

@@ -182,8 +182,14 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
         String flag = (String) map.get("flag");//1.待提交返显
-        String orderNo = (String) map.get("oederNo");//待提交时必传
+        String orderNo = (String) map.get("orderNo");//待提交时必传
         Map retrunmap = new HashMap();
+
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
 
         String payAmt = "";//申请金额
         String typCde = "";//贷款品种
@@ -218,8 +224,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
                 appOrderGoods.setGoodsBrand((String) good.get("goodsBrand"));//商品品牌
                 appOrderGoods.setGoodsKind((String) good.get("goodsModel"));//商品类型
                 appOrderGoods.setGoodsName((String) good.get("goodsName"));//商品名称
-                appOrderGoods.setGoodsNum((String) good.get("goodsNum"));//商品数量
-                appOrderGoods.setGoodsPrice((String) good.get("goodsPrice"));//单价
+                appOrderGoods.setGoodsNum(good.get("goodsNum").toString());//商品数量
+                appOrderGoods.setGoodsPrice(good.get("goodsPrice").toString());//单价
                 appOrderGoods.setcOrderSn((String) good.get("cOrderSn"));//网单号
                 appOrderGoods.setGoodsModel((String) good.get("goodsModel"));
                 appOrderGoods.setBrandName((String) good.get("goodsBrand"));
@@ -259,19 +265,13 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             appOrder.setTypCde(typCde);//贷款品种代码
             appOrder.setApplyAmt(payAmt);//借款总额
 
-            Map cachemap = new HashMap<String, Object>();
-            cachemap.put("apporder", appOrder);
-            session.set(token, cachemap);
+            cacheMap.put("apporder", appOrder);
+            session.set(token, cacheMap);
 
             psPerdNo = applyTnr;
             retrunmap.put("applyTnr", applyTnr);
             retrunmap.put("applyTnrTyp", applyTnrTyp);
         } else {
-            Map<String, Object> cacheMap = session.get(token, Map.class);
-            if (cacheMap == null || "".equals(cacheMap)) {
-                logger.info("Jedis数据获取失败");
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-            }
             ObjectMapper objectMapper = new ObjectMapper();
             AppOrder appOrder = null;
             try {
@@ -351,7 +351,17 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String applyTnr = (String) map.get("applyTnr");
 
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        AppOrder appOrder = (AppOrder) cacheMap.get("apporder");//获取订单信息
+        ObjectMapper objectMapper = new ObjectMapper();
+        AppOrder appOrder = null;
+        try {
+            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
+            logger.info("appOrder0:" + appOrder);
+            if(appOrder == null){
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String payAmt = appOrder.getApplyAmt();//申请金额
         String typCde = appOrder.getTypCde();//贷款品种
         //TODO!!!!
@@ -374,6 +384,11 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         JSONObject payBody = JSONObject.parseObject(payresult).getJSONObject("body");
         logger.info("payBody:" + payBody);
         String totalAmt = payBody.get("totalAmt").toString();
+
+        appOrder.setApplyTnr(applyTnr);//借款期限
+        appOrder.setApplyTnrTyp(applyTnr);//借款期限类型
+        cacheMap.put("apporder", appOrder);
+        session.set(token, cacheMap);
 
         Map retrunmap = new HashMap();
         retrunmap.put("totalAmt", totalAmt);

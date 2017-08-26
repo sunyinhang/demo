@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.pc.shunguang.service;
 
+import com.haiercash.payplatform.common.data.AppOrder;
+
 import java.util.Map;
 
 /**
@@ -90,5 +92,13 @@ public interface ShunguangService {
      * @throws Exception
      */
     Map<String, Object> edApplytest(Map<String, Object> map) throws Exception;
+
+    /**
+     * 贷款测试入口
+     * @param appOrder
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> payApplytest(AppOrder appOrder) throws Exception;
 
 }

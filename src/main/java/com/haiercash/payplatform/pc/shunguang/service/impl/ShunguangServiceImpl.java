@@ -183,9 +183,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         appOrder.setDeliverArea(country);//送货地址区
         appOrder.setAppOrderGoodsList(appOrderGoodsList);
         //
-
-        //TODO!!!!
-        //appOrder.http://testpm.haiercash.com/sgbt/#!/applyQuota/checkIdCard.html?token=f294c5ad-1b63-4340-8ddb-7de9d0366ed7
         cachemap.put("apporder", appOrder);
         session.set(token, cachemap);
         Map returnmap = new HashMap<>();
@@ -345,7 +342,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String bankName = ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
 
         cachemap.put("custNo", custNo);//客户编号
-        cachemap.put("custName", custName);//客户姓名
+        cachemap.put("name", custName);//客户姓名
         cachemap.put("cardNo", cardNo);//银行卡号
         cachemap.put("bankCode", bankNo);//银行代码
         cachemap.put("bankName", bankName);//银行名称
@@ -355,7 +352,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", uidLocal);//内部userId
-        edMap.put("channelNo", channelNo);
         edMap.put("channel", "11");
         edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
@@ -378,6 +374,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else if ("22".equals(outSts)) {//审批被退回
+            String crdSeq = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdSeq");
+            cachemap.put("crdSeq", crdSeq);
+            session.set(token, cachemap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
@@ -861,6 +860,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         return success(mapone);
     }
 
+    //额度测试入口
     public Map<String, Object> edApplytest(Map<String, Object> map) throws Exception {
         String userId = map.get("userId").toString();
         //String phone = map.get("phone").toString();
@@ -966,6 +966,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else if ("22".equals(outSts)) {//审批被退回
+            String crdSeq = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdSeq");
+            cachemap.put("crdSeq", crdSeq);
+            session.set(token, cachemap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
@@ -980,6 +983,25 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
 
     }
+
+    //贷款测试入口
+    @Override
+    public Map<String, Object> payApplytest(AppOrder appOrder) throws Exception {
+        String token = super.getToken();
+        if(StringUtils.isEmpty(token)){
+            return fail(ConstUtil.ERROR_CODE, "请在header中传入token");
+        }
+        Map<String, Object> cachemap = session.get(token, Map.class);
+        if (cachemap == null || "".equals(cachemap)) {
+            cachemap = new HashMap<String, Object>();
+        }
+        cachemap.put("apporder", appOrder);
+        cachemap.put("userId", appOrder.getUserId());
+        session.set(token, cachemap);
+
+        return success();
+    }
+
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
         Map<String, Object> headMap = new HashMap();
         Date now = new Date();
