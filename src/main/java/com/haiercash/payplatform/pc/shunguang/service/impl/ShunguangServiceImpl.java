@@ -219,28 +219,28 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
 
         //1.根据token获取客户信息
-//        String userjsonstr = haierDataService.userinfo(token);
-//        if (userjsonstr == null || "".equals(userjsonstr)) {
-//            logger.info("验证客户信息接口调用失败");
-//            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
-//        }
-//        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
-//        //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
-//        JSONObject userjson = new JSONObject(userjsonstr);
-//        if(!userjson.has("user_id")){
-//            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
-//        }
-//        Object uid = userjson.get("user_id");//会员id
-//        if(StringUtils.isEmpty(uid)){
-//            String error = userjson.get("error").toString();
-//            return fail(ConstUtil.ERROR_CODE, error);
-//        }
-//        String uidHaier = uid.toString();
-//        String custPhoneNo = (String) userjson.get("phone_number");
+        String userjsonstr = haierDataService.userinfo(token);
+        if (userjsonstr == null || "".equals(userjsonstr)) {
+            logger.info("验证客户信息接口调用失败");
+            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+        }
+        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
+        //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
+        JSONObject userjson = new JSONObject(userjsonstr);
+        if(!userjson.has("user_id")){
+            return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
+        }
+        Object uid = userjson.get("user_id");//会员id
+        if(StringUtils.isEmpty(uid)){
+            String error = userjson.get("error").toString();
+            return fail(ConstUtil.ERROR_CODE, error);
+        }
+        String uidHaier = uid.toString();
+        String custPhoneNo = (String) userjson.get("phone_number");
 
         //TODO!!!!
-        String uidHaier = "1000030088";
-        String custPhoneNo = "18525369183";
+//        String uidHaier = "1000030088";
+//        String custPhoneNo = "18525369183";
 
         cachemap.put("token", token);
         cachemap.put("uidHaier", uidHaier);//会员id
@@ -347,6 +347,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("bankCode", bankNo);//银行代码
         cachemap.put("bankName", bankName);//银行名称
         cachemap.put("idNo", certNo);//身份证号
+        cachemap.put("idCard", certNo);//身份证号
         cachemap.put("idType", certType);
         session.set(token, cachemap);
         //6.查询客户额度
