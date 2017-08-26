@@ -24,7 +24,15 @@ require(['jquery', 'util', 'Const', 'bvForm'], function($, util, Const) {
                                     token: util.gup('token'),
                                     channel: Const.rest.headers.channel,
                                     channelNo: Const.rest.headers.channelNo
-                                }, entity)
+                                }, entity),
+                                success: function (res) {
+                                    var data = util.data(res);
+                                    if (data && data.backurl) {
+                                        util.redirect({
+                                            url: data.backurl.substring(data.backurl.indexOf('/#!/') + 3)
+                                        });
+                                    }
+                                }
                             });
                         }
                     }

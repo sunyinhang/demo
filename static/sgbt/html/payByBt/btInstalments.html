@@ -20,7 +20,7 @@
 		</div>
 		<div class="main02-4">
 			<ul>
-				<li class="fenqi"  v-for="(item, index) in payMtd" :class="{selected: index === 0  }" @click="changePeriodFn($event,item.psPerdNo)">
+				<li class="fenqi"  v-for="(item, index) in payMtd" :class="{selected: applyTnr === item.psPerdNo}" @click="changePeriodFn($event,item.psPerdNo)">
 					<div class="b-img"></div>
 					<div class="b-text">
 						<span class="fq">{{item.instmAmt | currency}}元*{{item.psPerdNo}}期</span>
