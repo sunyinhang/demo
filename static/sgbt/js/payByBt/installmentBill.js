@@ -98,6 +98,9 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     title: '第' + (index + 1) + '个',
                     items: util.clone(items)
                 });*/
+                if (!_vm) {
+                    _vm = util.vm(this, this.tags.listKey);
+                }
                 if (!pagination) {
                     this.pageNo = 1;
                 } else {
@@ -334,7 +337,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                         _vm.load(items, true);
                     }
                 } else {
-                    if (pagination) {
+                    if (!pagination) {
                         _vm.load([], false);
                     }
                 }
