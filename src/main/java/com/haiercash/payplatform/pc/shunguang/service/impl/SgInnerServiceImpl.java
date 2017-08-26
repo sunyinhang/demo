@@ -114,8 +114,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if("C1220".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
-            String backurl = "login.html?token="+token;//TODO!!!!!!
+            session.set(token, cacheMap);
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
             map.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(map);
         }
         String certType = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("certType");//证件类型
@@ -126,12 +128,21 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String bankNo = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankNo");//银行代码
         String bankName = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankName");//银行名称
 
+//        cacheMap.put("custNo", custNo);//客户编号
+//        cacheMap.put("name", custName);//客户姓名
+//        cacheMap.put("cardNo", cardNo);//银行卡号
+//        cacheMap.put("bankCode", bankNo);//银行代码
+//        cacheMap.put("bankName", bankName);//银行名称
+//        cacheMap.put("idNo", certNo);//身份证号
+//        cacheMap.put("idType", certType);
+
         cacheMap.put("custNo", custNo);//客户编号
         cacheMap.put("name", custName);//客户姓名
         cacheMap.put("cardNo", cardNo);//银行卡号
         cacheMap.put("bankCode", bankNo);//银行代码
         cacheMap.put("bankName", bankName);//银行名称
         cacheMap.put("idNo", certNo);//身份证号
+        cacheMap.put("idCard", certNo);//身份证号
         cacheMap.put("idType", certType);
         session.set(token, cacheMap);
         //6.查询客户额度
@@ -150,6 +161,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             //跳转有额度页面
             String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
             map.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(map);
         }
         //审批状态判断
@@ -157,6 +169,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         if("01".equals(outSts)) {//额度正在审批中
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
             map.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(map);
         }else if("22".equals(outSts)) {//审批被退回
             String crdSeq = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdSeq");
@@ -164,14 +177,17 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             session.set(token, cacheMap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             map.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(map);
         }else if("25".equals(outSts)) {//审批被拒绝
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
             map.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(map);
         }else {//没有额度  额度激活
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
             map.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(map);
         }
     }

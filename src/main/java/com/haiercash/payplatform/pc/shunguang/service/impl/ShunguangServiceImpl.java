@@ -286,6 +286,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 session.set(token, cachemap);
                 String backurl = haiercashpay_web_url + "sgbt/#!/login/login.html?token=" + token;
                 returnmap.put("backurl", backurl);
+                logger.info("页面跳转到：" + backurl);
                 return success(returnmap);
             } else {
                 //注册失败
@@ -331,6 +332,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             session.set(token, cachemap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
             returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         }
         String certType = ((HashMap<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
@@ -366,6 +368,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             //跳转有额度页面
             String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
             returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         }
         //审批状态判断
@@ -373,6 +376,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if ("01".equals(outSts)) {//额度正在审批中
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
             returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         } else if ("22".equals(outSts)) {//审批被退回
             String crdSeq = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdSeq");
@@ -380,14 +384,17 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             session.set(token, cachemap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         } else if ("25".equals(outSts)) {//审批被拒绝
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
             returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         } else {//没有额度  额度激活
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
             returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         }
 
