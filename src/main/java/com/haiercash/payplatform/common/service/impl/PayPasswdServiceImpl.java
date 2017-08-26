@@ -261,9 +261,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     Object value = params.get(EncryptUtil.simpleEncrypt(param));
                     if (value != null) {
                         retMap.put(param, EncryptUtil.simpleDecrypt(JSONObject.toJSON(value).toString()));
-                    } else {
+                    }/* else {
                         retMap.put(param, null);
-                    }
+                    }*/
                 }
                 session.set(token, retMap);
                 return success();
