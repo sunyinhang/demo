@@ -155,6 +155,7 @@ var __Const = {
         ]
     },
     messages: {
+        alertOk: '我知道了',
         unknownError: '网络通讯异常',
         error500: '网络通讯异常',
         error401: '登录超时，请重新登录',
