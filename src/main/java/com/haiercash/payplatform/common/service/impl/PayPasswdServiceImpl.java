@@ -119,10 +119,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 logger.info("支付密码验证失败！" + retmsg);
                 return fail(ConstUtil.ERROR_CODE, "支付密码验证失败");
             }
-        } else {
-            logger.info("是否设置过支付密码标志无效");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_PARAM_INVALID_MSG);
         }
+//        else {
+//            logger.info("是否设置过支付密码标志无效");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_PARAM_INVALID_MSG);
+//        }
         // 3、签订注册 + 征信
 //        HashMap<String, Object> reqSignMap = new HashMap<>();
 //        reqSignMap.put("orderNo", orderNo);
