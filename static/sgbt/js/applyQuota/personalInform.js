@@ -1,4 +1,6 @@
 require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], function($, util, Const) {
+    // 获取额度重新提交标识
+    var edxg = util.gup('edxg');
 
     var vm = util.bind({
         container: 'personalInform',
@@ -377,8 +379,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                         id_two: entity.id2,
                                         relationType_two: entity.relationType2,
                                         contactName_two: entity.contactName2,
-                                        contactMobile_two: entity.contactMobile2,
-                                        dataFrom: 'app_person'
+                                        contactMobile_two: entity.contactMobile2
                                     },
                                     success:function(res){
                                         //1：通过人脸识别，并已设置支付密码
@@ -389,14 +390,14 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                         if(res.body.flag == '1'){
                                             util.redirect({
                                                 title: '确认支付密码',
-                                                url: '/applyQuota/confirmPayPsd.html',
-                                                back: false
+                                                url: util.mix('/applyQuota/confirmPayPsd.html',{ edxg: util.gup('edxg')},true),
+                                                back: true
                                             });
                                         }else if(res.body.flag == '2'){
                                             util.redirect({
                                                 title: '设置支付密码',
                                                 url: '/applyQuota/setPayPsd.html',
-                                                back: false
+                                                back: true
                                             });
                                         }else if(res.body.flag == '3'){
                                             util.alert('不能再做人脸识别，录单终止')
@@ -404,14 +405,14 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                         }else if(res.body.flag == '4'){
                                             util.redirect({
                                                 title: '手持身份证',
-                                                url: '/applyQuota/handholdIdCard.html',
-                                                back: false
+                                                url: util.mix('/applyQuota/handholdIdCard.html',{ edxg: util.gup('edxg')},true),
+                                                back: true
                                             });
                                         }else if(res.body.flag == '5'){
                                             util.redirect({
                                                 title: '人脸识别',
                                                 url: '/applyQuota/identityVrfic.html',
-                                                back: false
+                                                back: true
                                             });
                                         }
                                     }

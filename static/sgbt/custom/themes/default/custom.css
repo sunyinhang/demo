@@ -148,6 +148,7 @@ body{margin:0 auto;max-width:750px;}
 .id-r{ float:right; width:50%; margin-top: 25px;}
 .id-r p{ margin-top:0.45rem; colo:#333; text-align:center; font-size:0.6rem;}
 .h-inform{ margin:.75rem 0; padding-left: 1.25rem; font-size:0.6rem; color: #999; text-align:left;}
+.handheldIdCamera{ margin: 10px 0;}
 .bv-theme .handheldIdCamera .item-after { margin-top:0.75rem; font-size: 0.6rem; }
 .bv-theme .handheldIdCamera .file-container {  width: 5.67rem; background-color: #fff; color: #333;}
 .handheldIdCamera .file-container .default-image, .id-r img,.handheldIdCamera .file-container .file-preview{ width:5.675rem; height: 5.85rem; overflow: hidden;}
@@ -283,6 +284,12 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 }
 .agree-popup p#title a {
     float: right;
+}
+/* 修改默认样式 */
+.list-block input[type=date], .list-block input[type=datetime-local], .list-block input[type=email], .list-block input[type=number], .list-block input[type=password],
+        .list-block input[type=search], .list-block input[type=tel], .list-block input[type=text], .list-block input[type=time], .list-block input[type=url], .list-block select,
+        .list-block {
+    font-size: 0.75rem;
 }
 /*找回密码*/
 .bv-theme .getPayPwd li{

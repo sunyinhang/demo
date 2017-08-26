@@ -4,7 +4,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
         data: {
             config:{
                 imgSrc: 'custom/themes/default/images/amtNotTopBg.png',
-                title: '海尔白条',
+                title: '顺逛白条',
                 whether: false ,
                 subTitle: '可用总额度',
                 amtNum: 'amtSitu',
