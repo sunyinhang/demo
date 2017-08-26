@@ -1,6 +1,8 @@
 require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
     //获取密码
-    var param=util.cache('payPasswd','edxgflag');
+    var param=util.cache('payPasswd');
+    //获取额度修改的标识
+    var edxg = util.gup('edxg');
 
     var vm = util.bind({
         container: 'payPsdValidcode',
@@ -120,7 +122,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 data:{
                                     payPasswd: param && param.payPasswd,
                                     verifyNo: entity.verifyNo,
-                                    /*edxgflag: param && param.edxgflag,*/
+                                    edxgflag: edxg,
                                 },
                                 success:function(res){
                                     util.redirect({
