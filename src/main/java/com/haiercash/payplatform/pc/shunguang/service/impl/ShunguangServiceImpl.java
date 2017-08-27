@@ -326,6 +326,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String custretMsg = ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
+        if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
+            session.set(token, cachemap);
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
+            return success(returnmap);
+        }
         String certType = ((HashMap<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
         String certNo = ((HashMap<String, Object>) (custresult.get("body"))).get("certNo").toString();//身份证号
         String custNo = ((HashMap<String, Object>) (custresult.get("body"))).get("custNo").toString();//客户编号
@@ -343,13 +350,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("idCard", certNo);//身份证号
         cachemap.put("idType", certType);
         session.set(token, cachemap);
-        if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
-            session.set(token, cachemap);
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
-            returnmap.put("backurl", backurl);
-            logger.info("页面跳转到：" + backurl);
-            return success(returnmap);
-        }
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", uidLocal);//内部userId
