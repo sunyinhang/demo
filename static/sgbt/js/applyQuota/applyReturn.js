@@ -20,8 +20,9 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                         click: function (event, editType, entity) {
                             util.redirect({
                                 title: '个人资料',
-                                url: '/applyQuota/personalInform.html?edxg=1',
-                                back: false
+                                url: util.mix('/applyQuota/personalInform.html', {
+                                    edxg: '1'
+                                })
                             });
                         }
                     }

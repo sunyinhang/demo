@@ -78,9 +78,9 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                         util.redirect({
                                             title: title,
                                             url: util.mix(url, {
-                                                from: 'reset'
-                                            }),
-                                            back: false
+                                                from: 'reset',
+                                                edxg: util.gup('edxg')
+                                            }, true)
                                         });
                                     }
                                 }

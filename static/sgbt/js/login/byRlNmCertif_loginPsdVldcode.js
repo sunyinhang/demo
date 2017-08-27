@@ -96,8 +96,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             });
                             util.redirect({
                                 title: '实名认证找回密码',
-                                url: '/login/reset_rlNmLoginPsd.html',
-                                back: false
+                                url: '/login/reset_rlNmLoginPsd.html'
                             });
                         }
                     }

@@ -147,6 +147,49 @@ function getArea (code, callback) {
     });
     // return items;
 }
+//1：通过人脸识别，并已设置支付密码
+//2：通过人脸识别，但没有设置支付密码
+//3. 未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+//4：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+//5. 跳转人脸识别
+//6.未实名认证
+//7.个人扩展信息未完整
+function initRedirect (flag) {
+    if (flag == '1') {
+        util.redirect({
+            title: '确认支付密码',
+            url: '/applyQuota/confirmPayPsd.html'
+        });
+    } else if (flag == '2') {
+        util.redirect({
+            title: '设置支付密码',
+            url: '/applyQuota/setPayPsd.html'
+        });
+    } else if (flag == '3') {
+        //TODO
+
+    } else if (flag == '4') {
+        util.redirect({
+            title: '手持身份证',
+            url: '/applyQuota/handholdIdCard.html'
+        });
+    } else if (flag == '5') {
+        util.redirect({
+            title: '人脸识别',
+            url: '/applyQuota/identityVrfic.html'
+        });
+    } else if (flag == '6') {
+        util.redirect({
+            title: '实名绑卡',
+            url: '/applyQuota/checkIdCard.html'
+        });
+    } else if (flag == '7') {
+        util.redirect({
+            title: '个人资料',
+            url: '/applyQuota/personalInform.html'
+        });
+    }
+}
 window.app = {
     cacheArea: cacheArea,
     getArea: getArea

@@ -46,15 +46,17 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                     success: function(res){
                                         util.redirect({
                                             title: '支付成功',
-                                            url: '/getPayPsd/paySuccess.html',
-                                            back: false
+                                            url: util.mix('/getPayPsd/paySuccess.html', {
+                                                edxg: util.gup('edxg')
+                                            }, true)
                                         });
                                     },
                                     error: function(res){
                                         util.redirect({
-                                            title: '支付成功',
-                                            url: '/getPayPsd/payFail.html',
-                                            back: false
+                                            title: '支付失败',
+                                            url: util.mix('/getPayPsd/payFail.html', {
+                                                edxg: util.gup('edxg')
+                                            }, true)
                                         });
                                     }
                                 });
@@ -66,9 +68,9 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                 util.redirect({
                                     title: '找回支付密码',
                                     url: util.mix('/getPayPsd/getPayPsdWay.html', {
-                                        from: 'btInstalments'
-                                    }),
-                                    back: false
+                                        from: 'btInstalments',
+                                        edxg: util.gup('edxg')
+                                    }, true)
                                 });
                             }
                         }
@@ -77,6 +79,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             },
             payFn: function () {
                 if( !util.isEmpty(orderNo)){
+                    // TODO:
                     var data={
                         flag: '1',
                         orderNo: orderNo ,

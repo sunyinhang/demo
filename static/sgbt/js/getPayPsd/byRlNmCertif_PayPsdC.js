@@ -63,8 +63,9 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             util.redirect({
                                 title: '实名认证找回密码',
                                 url: util.mix('/getPayPsd/byRlNmCertif_PayPsdVldcode.html', {
-                                    from: util.gup('from')
-                                })
+                                    from: util.gup('from'),
+                                    edxg: util.gup('edxg')
+                                }, true)
                             });
                         }
                     }

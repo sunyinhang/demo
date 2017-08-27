@@ -76,7 +76,7 @@ html {
     width: 13.5rem;
     height: 7.2rem;
     margin: 0 auto;
-    background-color: #f4fcff;
+    /*background-color: #f4fcff;*/
     color: #32beff;
     border: none;
 }
@@ -87,6 +87,7 @@ html {
     margin-left: 0;
     margin-right: 0;
 }
+.file-container .default-image{ background: url('images/applyQuota/holder.png') no-repeat top center; background-size: contain;}
 .bv-theme .bv-upload .file-preview+.item-after {
     font-size: 0.6rem;
 }
@@ -321,12 +322,12 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 }
 /****** module：审批进度 ******/
 .approvalNode{ width: 100%; padding: 1.5rem 0; display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; background: url(images/applyQuota/nodeBg.png) no-repeat top center; background-size: cover;}
-.approvalNode img{ padding-left: 2rem; padding-right:1.5rem; height: 3.5rem;}
-.approvalNode .nodeStatus{ width: 100%; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1;}
+.approvalNode img{ padding-left: 1rem; padding-right:1rem; height: 3.5rem;}
+.approvalNode .nodeStatus{ width: 100%; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1; padding-right: 5px;}
 .approvalNode .nodeStatus b{ font-size: 0.85rem; line-height: 0.85rem; color: #fff; font-weight: normal;}
 .approvalNode .nodeStatus p{ margin-top: 0.5rem; font-size: 0.7rem; line-height: 0.7rem; color:#dcecff;}
 .nodeList ul{ display: block; margin-top:1.5rem;}
-.nodeList li{ position: relative; padding-left: 2rem; padding-bottom:1rem; border-left:1px solid #ddd;}
+.nodeList li{ position: relative; padding-left: 1rem; margin-left: 1rem; padding-bottom:1rem; border-left:1px solid #ddd;}
 .nodeList li:last-child{ padding-bottom:3px;}
 .nodeList li em{ display: block; width: 0.7rem; height: 0.7rem; position: absolute; top:0px; left:-7px; background:url('./images/c1.png') no-repeat top left; background-size:0.7rem; }
 .nodeList li span {font-size: 0.85rem; line-height: 0.85rem; color: #333}
@@ -529,4 +530,9 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
 /* payPsdValidcode.html */
 .item-input-operate.big {
     margin-top: -8px;
+}
+
+/* 验证码 */
+.validate-code a.button {
+    padding: 0;
 }

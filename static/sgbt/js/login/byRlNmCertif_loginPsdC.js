@@ -62,8 +62,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             });
                             util.redirect({
                                 title: '实名认证找回密码',
-                                url: '/login/byRlNmCertif_loginPsdVldcode.html',
-                                back: false
+                                url: '/login/byRlNmCertif_loginPsdVldcode.html'
                             });
                         }
                     }

@@ -38,9 +38,9 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 util.redirect({
                                     title: '重置支付密码',
                                     url: util.mix('/getPayPsd/getPayPsdWay.html', {
-                                        from: 'confirmPayPsd'
-                                    }),
-                                    back: true
+                                        from: 'confirmPayPsd',
+                                        edxg: util.gup('edxg')
+                                    }, true)
                                 });
                             }
                         }
@@ -56,7 +56,9 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             });
                             util.redirect({
                                 title: '短信验证码',
-                                url: util.mix('/applyQuota/payPsdValidcode.html',{ edxg: util.gup('edxg')},true)
+                                url: util.mix('/applyQuota/payPsdValidcode.html', {
+                                    edxg: util.gup('edxg')
+                                }, true)
                             });
                         }
                     }

@@ -39,9 +39,11 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
         }*/
     });
     util.loading();
-    $('.bv-preloader-container').remove();
-    $('.bv-overlay').remove();
-    $('.agree-popup').removeClass('hide');
+    setTimeout(function () {
+        $('.bv-preloader-container').remove();
+        $('.bv-overlay').remove();
+        $('.agree-popup').removeClass('hide');
+    }, 500);
     $('body').height($(window).height());
     // #!/
 
@@ -56,15 +58,14 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     window.addEventListener("popstate", function() {
         if (!history.state || history.state.back === undefined) {
             var path = util.path();
-            if (util.isEmpty(path) || path === '/' || path === '/index.html') {
-                path = '/applyQuota/checkIdCard.html';
+            if (!util.isEmpty(path) && path !== '/' && path !== '/index.html') {
+                util.redirect({
+                    // location.href, '', undefined, true
+                    // title: '',
+                    url: path,
+                    ignore: true
+                });
             }
-            util.redirect({
-                // location.href, '', undefined, true
-                // title: '',
-                url: path,
-                ignore: true
-            });
         } else if (util.type(history.state.back) === 'string') {
             util.redirect({
                 // history.state.back, '', false, true
@@ -127,7 +128,15 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     /*$(document).on('opened', '.agree-popup', function () {
     });*/
     $('.agree-popup iframe').on('load', function () {
-        $(this).height($('body', $(this).contents()).height());
+        /*$(this).width($(window).width() - 10);
+        var width = $(this).width();
+        var height = $('body', $(this).contents()).height();
+        $(this).height(height);
+        var $iframe = $(this);
+        setTimeout(function () {
+            $iframe.height($('body', $iframe.contents()).height());
+        }, 500);*/
+        $(this).height($('html', $(this).contents()).height());
         util.loading('hide');
     });
     $(document).on('closed', '.agree-popup', function () {

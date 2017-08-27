@@ -1,10 +1,10 @@
-<component is="bv-layout" data-container="applyProgress">
+<component is="bv-layout" data-container="applyProgress" v-cloak>
     <div class="approvalNode">
         <img src="./custom/themes/default/images/refuse.png" alt="">
         <div class="nodeStatus">
             <b>审批节点：{{lastItem.wfiNodeName}}</b>
             <p>审批状态：{{lastItem.appConclusionDesc}}</p>
-            <p>拒绝原因：{{lastItem.operateTime}}</p>
+            <p>拒绝原因：{{lastItem.appOutAdvice}}</p>
         </div>
     </div>
     <div class="height10 gray"></div>

@@ -197,8 +197,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                 click: function(){
                                     util.redirect({
                                         title: '贷款详情',
-                                        url: '/payByBt/loanDetails.html',
-                                        back: false
+                                        url: '/payByBt/loanDetails.html'
                                     });
                                 },
                                 operates: [
@@ -238,8 +237,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         click: function (event, item) {
                                             util.redirect({
                                                 title: '顺逛白条',
-                                                url: '/payByBt/btInstalments.html?orderNo='+ item.order.orderNo,
-                                                back: false
+                                                url: '/payByBt/btInstalments.html?orderNo='+ item.order.orderNo
                                             });
                                         }
                                     },{
@@ -280,8 +278,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         click: function (event, item) {
                                             util.redirect({
                                                 title: '审批进度',
-                                                url: '/payByBt/applyProgress.html',
-                                                back: false
+                                                url: '/payByBt/applyProgress.html'
                                             });
                                         }
                                     },{

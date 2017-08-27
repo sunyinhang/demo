@@ -18,8 +18,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             activeAmountFn: function(param){
                 util.redirect({
                     title: '实名',
-                    url: '/applyQuota/checkIdCard.html',
-                    back: false
+                    url: '/applyQuota/checkIdCard.html'
                 });
             }
         }

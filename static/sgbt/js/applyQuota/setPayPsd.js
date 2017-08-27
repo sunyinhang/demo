@@ -58,8 +58,9 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             });
                             util.redirect({
                                 title: '短信验证码',
-                                url: '/applyQuota/payPsdValidcode.html',
-                                back: false
+                                url: util.mix('/applyQuota/payPsdValidcode.html', {
+                                    edxg: util.gup('edxg')
+                                }, true)
                             });
                         }
                     }

@@ -13,8 +13,11 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             util.get({
                 url: "/queryApprovalProcessInfo",
                 success:function(res){
-                    vm.items=util.data(res).reverse();
-                    vm.lastItem=vm.items[0];
+                    var data = util.data(res);
+                    if (data && data.length > 0) {
+                        vm.items = data.reverse();
+                        vm.lastItem = vm.items[0];
+                    }
                 }
             });
         }
