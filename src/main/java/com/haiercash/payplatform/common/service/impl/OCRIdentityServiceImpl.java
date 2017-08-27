@@ -9,11 +9,9 @@ import com.haiercash.payplatform.common.service.OCRIdentityService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.ocr.OCRIdentityTC;
 import com.haiercash.payplatform.service.BaseService;
-import com.sun.jersey.core.util.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,13 +24,10 @@ import sun.misc.BASE64Encoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.haiercash.payplatform.common.utils.RestUtil.fail;
-import static com.haiercash.payplatform.common.utils.RestUtil.success;
 
 /**
  * Created by yuanli on 2017/7/31.
@@ -557,10 +552,11 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 map.put("realmName", realmName);
             }
         } else if ("credit".equals(flag)) {
-            String custName = cacheMap.get("custName") + "";
-            String certNo = cacheMap.get("idNo") + "";
+            String custName = (String) cacheMap.get("name");
+            String certNo = (String) cacheMap.get("idNo");
             if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
-                String custNameB = new String(Base64.encode(custName.getBytes()), "UTF-8");
+                String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                /// String custNameB = URLEncoder.encode(new String(Base64.encode(custName), "UTF-8"), "UTF-8");
                 realmName = "/app/appserver/edCredit?custName=" + custNameB+"&certNo="+certNo;
                 logger.info("--------------征信查询------------" + realmName);
                 map.put("realmName", realmName);
