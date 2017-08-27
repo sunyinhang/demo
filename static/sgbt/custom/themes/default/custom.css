@@ -302,6 +302,7 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 }
 .agree-popup div#content {
     position: absolute;
+    width: 100%;
     top: 1.2rem;
     overflow: auto;
 }
