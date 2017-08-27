@@ -241,6 +241,21 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+
+        //判断联系人信息管控
+        String contactMobile_one = (String) params.get("contactMobile_one");
+        String contactMobile_two = (String) params.get("contactMobile_two");
+        if(contactMobile_one != null && !"".equals(contactMobile_one) && contactMobile_two != null && !"".equals(contactMobile_two)){
+            if(contactMobile_one.equals(contactMobile_two)){
+                logger.info("两个联系人手机号不能重复");
+                return fail(ConstUtil.ERROR_CODE, "联系人手机号不能重复!");
+            }
+        }else{
+            logger.info("联系人手机号为空");
+            return fail(ConstUtil.ERROR_CODE, "联系人手机号为空!");
+        }
+
+
         //总入口需查询客户信息数据
         String custNo = (String)cacheMap.get("custNo");
         String userid = (String)cacheMap.get("userid");

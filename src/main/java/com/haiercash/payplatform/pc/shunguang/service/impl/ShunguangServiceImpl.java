@@ -2,19 +2,16 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.DateUtil;
-import com.haiercash.commons.util.StringUtil;
-import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
-import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.*;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.BaseService;
-import com.netflix.ribbon.proxy.annotation.Http;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -280,6 +277,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 //注册成功
                 uidLocal = usermap.get("body").toString();//统一认证内userId
                 phoneNo = custPhoneNo;//统一认绑定手机号
+                cachemap.put("userId", uidLocal);//统一认证userId
+                cachemap.put("phoneNo", phoneNo);//绑定手机号
             } else if ("U0160".equals(userretFlag)) {
                 //U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录
@@ -299,8 +298,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             Map<String, Object> bodyMap = HttpUtil.json2Map(body);
             uidLocal = bodyMap.get("userId").toString();//统一认证内userId
             phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
-            cachemap.put("userId", uidLocal);//统一认证userId
-            cachemap.put("phoneNo", phoneNo);//绑定手机号
+
         } else {
             String retMsg = headMap.get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, retMsg);
