@@ -140,15 +140,17 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //            resultJson_.put("filePath", "/A.jpg");//图片地址
 //            resultList_.add(resultJson_);
                 //////
+
+
+            }
+//            else{
                 JSONObject resultJson = new JSONObject();
                 resultJson.put("docCde",docCde);//影像代码
                 resultJson.put("docDesc",docDesc);//影像名称
                 resultJson.put("urlList",resultList_);//地址List
                 resultList.add(resultJson);
-
-            }else{
-                continue;
-            }
+//                continue;
+//            }
         }
         resultMap.put("CustExtInfoMap",(HashMap<String, Object>) allCustExtInfo.get("body"));
         resultMap.put("docList",resultList);
