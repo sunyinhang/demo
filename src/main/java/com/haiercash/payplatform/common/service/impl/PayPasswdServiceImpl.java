@@ -63,10 +63,13 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String userId = (String) cacheMap.get("userId");
+        logger.info("获取的userId为："+userId);
         //String userId = "18325423979";
         String flag = (String) cacheMap.get("payPasswdFlag");//空
+        logger.info("密码设置标识：flag"+flag);
         //String orderNo = (String) cacheMap.get("orderNo");//空
         String custNo = (String) cacheMap.get("custNo");// 客户号
+        logger.info("获取的客户号："+custNo);
         //String custNo = "A0001";
 
         String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号

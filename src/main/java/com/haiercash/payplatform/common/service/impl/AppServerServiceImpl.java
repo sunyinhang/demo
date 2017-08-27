@@ -383,7 +383,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return result;
     }
 
-    //(GET)查询贷款详情（根据申请流水号）  收单
+    //(post)查询贷款详情（根据申请流水号）  收单
     public Map<String, Object> queryApplLoanDetail(Map<String, Object> paramMap) {
         String url = EurekaServer.ACQUIRER + "/api/appl/getApplInfo";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
@@ -394,10 +394,10 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
     //(GET)查询贷款详情（根据申请流水号）  APP后台
     public Map<String, Object> queryApplLoanDetail(String token,Map<String, Object> paramMap) {
-        String url = EurekaServer.ACQUIRER + "/api/appl/getApplInfo";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/queryAppLoanAndGoods";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
-        Map<String, Object> queryApplLoanDetailMap = HttpUtil.restPostMap(url, token, paramMap);
+        Map<String, Object> queryApplLoanDetailMap = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("查询贷款详情（根据申请流水号）接口返回数据" + queryApplLoanDetailMap);
         return queryApplLoanDetailMap;
     }
