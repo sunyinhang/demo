@@ -41,6 +41,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     util.loading();
     $('.bv-preloader-container').remove();
     $('.bv-overlay').remove();
+    $('.agree-popup').removeClass('hide');
     $('body').height($(window).height());
     // #!/
 
@@ -124,7 +125,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     $(document).on('click', 'a[href]', function (event) {
         event.preventDefault();
     });
-    $('.agree-popup iframe').height($(window).height() - 66);
+    $('.agree-popup div#content').height($(window).height() - 45);
     $(document).on('open', '.agree-popup', function () {
         util.loading();
         $('#title span', this).text( $(this).attr('data-title'));
@@ -133,6 +134,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     /*$(document).on('opened', '.agree-popup', function () {
     });*/
     $('.agree-popup iframe').on('load', function () {
+        $(this).height($('body', $(this).contents()).height());
         util.loading('hide');
     });
     $(document).on('closed', '.agree-popup', function () {

@@ -17,10 +17,12 @@
 <body class="bv-theme">
 <div class="statusbar-overlay"></div>
 <div id="mainDiv" class="views"></div>
-<div class="popup popup-about agree-popup">
+<div class="popup popup-about agree-popup hide">
     <div class="content-block">
         <p id="title"><span>协议标题</span><a href="#" class="close-popup">关闭</a></p>
-        <iframe id="treatyContainer" width="100%" height="100%" frameborder="0"></iframe>
+        <div id="content">
+            <iframe id="treatyContainer" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
     </div>
 </div>
 <div class="bv-preloader-container"><span class="bv-preloader"></span></div>

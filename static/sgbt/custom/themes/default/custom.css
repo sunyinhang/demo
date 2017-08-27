@@ -286,10 +286,24 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
     padding: 0;
 }
 .agree-popup .content-block p {
-    margin: 0.5rem;
+    position: absolute;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    height: 25px;
+    line-height: 25px;
 }
 .agree-popup p#title a {
-    float: right;
+    position: absolute;
+    right: 0;
+    width: 2rem;
+    text-align: center;
+}
+.agree-popup div#content {
+    position: absolute;
+    top: 1.2rem;
+    overflow: auto;
 }
 /* 修改默认样式 */
 .list-block input[type=date], .list-block input[type=datetime-local], .list-block input[type=email], .list-block input[type=number], .list-block input[type=password],
