@@ -34,6 +34,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                     operate: {
                         id: 'sendSms',
                         text: '发送验证码',
+                        clazz: 'big',
                         click: function(event) {
                             util.countdown($(event.target), {
                                 text: '发送验证码',
