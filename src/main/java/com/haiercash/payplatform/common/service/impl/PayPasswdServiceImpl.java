@@ -227,6 +227,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
+        JSONObject body = jb.getJSONObject("body");
+        String applSeq = (String) body.getString("applSeq");
+        cacheMap.put("crdSeq",applSeq);
+        session.set(token, cacheMap);
         return success();
     }
 
@@ -953,7 +957,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("Redis为空：" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String applSeq = (String) cacheMap.get("applSeq");//申请流水号
+        String applSeq = (String) cacheMap.get("crdSeq");//申请流水号
         //String   applSeq = "1097515";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("从Jedis中获取的数据为空：applSeq=" + applSeq);

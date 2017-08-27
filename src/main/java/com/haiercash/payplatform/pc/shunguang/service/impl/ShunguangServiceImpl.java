@@ -958,13 +958,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("调用接口返回的数据为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        String retFlag = ((HashMap<String, Object>) (edCheck.get("head"))).get("retFlag").toString();
-        if ("A1199".equals(retFlag)) {
-            // 没有额度
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
-            returnmap.put("backurl", backurl);
-            return success(returnmap);
-        }
+//        String retFlag = ((HashMap<String, Object>) (edCheck.get("head"))).get("retFlag").toString();
+//        if ("A1199".equals(retFlag)) {
+//            // 没有额度
+//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
+//            returnmap.put("backurl", backurl);
+//            return success(returnmap);
+//        }
 
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
