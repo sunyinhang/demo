@@ -562,9 +562,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 map.put("realmName", realmName);
             }
         } else if ("register".equals(flag)) {
-            String orderNo = cacheMap.get("orderNo") + "";
-            if (!StringUtils.isEmpty(orderNo)) {
-                realmName = "/app/appserver/register?orderNo=" + orderNo;
+            String orderNo = (String) cacheMap.get("orderNo");
+            String custName = (String) cacheMap.get("name");
+            if (!StringUtils.isEmpty(orderNo) || !StringUtils.isEmpty(custName)) {
+                realmName = "/app/appserver/register?orderNo=" + orderNo + "&custName=" + URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
                 logger.info("------------注册协议------------" + realmName);
                 map.put("realmName", realmName);
             }
