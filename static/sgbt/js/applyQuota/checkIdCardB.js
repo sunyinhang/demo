@@ -75,8 +75,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         click: function (event, editType, entity) {
                             util.redirect({
                                 title: '个人资料',
-                                url: '/applyQuota/tiedBnkCrd.html',
-                                back: false
+                                url: '/applyQuota/tiedBnkCrd.html'
                             });
                         }
                     }

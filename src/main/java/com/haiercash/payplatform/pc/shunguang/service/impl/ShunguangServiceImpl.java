@@ -948,12 +948,33 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("idCard", certNo);//身份证号
         cachemap.put("idType", certType);
         session.set(token, cachemap);
+
+        // 查询有无额度 by lihua
+        HashMap<String, Object> edCheckmap = new HashMap<>();
+        edCheckmap.put("idNo", certNo);
+        edCheckmap.put("channel", "11");
+        edCheckmap.put("channelNo", channelNo);
+        edCheckmap.put("idTyp", certType);
+        Map<String, Object> edCheck = appServerService.getEdCheck(token, edCheckmap);// 获取额度剩余额度=crdComAvailAnt+crdNorAvailAmt
+        if (StringUtils.isEmpty(edCheck)) {
+            logger.info("调用接口返回的数据为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        String retFlag = ((HashMap<String, Object>) (edCheck.get("head"))).get("retFlag").toString();
+        if ("A1199".equals(retFlag)) {
+            // 没有额度
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
+        }
+
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", userId);//内部userId
         edMap.put("channelNo", channelNo);
+        // TODO: 不能写死
         edMap.put("channel", "11");
-        edMap.put("channelNo", channelNo);
+        /// edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
         if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
             String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();

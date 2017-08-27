@@ -53,13 +53,6 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
         });
         return;
     }*/
-
-    var path = util.path();
-    var isDefault = false;
-    if (util.isEmpty(path) || path === '/' || path === '/index.html') {
-        path = '/applyQuota/checkIdCard.html';
-        isDefault = true;
-    }
     window.addEventListener("popstate", function() {
         if (!history.state || history.state.back === undefined) {
             var path = util.path();
@@ -142,11 +135,15 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
         $('iframe', this).attr('src', 'about:blank');
     });
 
-    util.redirect({
-        title: isDefault ? '实名绑卡' : '',
-        url: path,
-        ignore: true
-    });
+    var path = util.path();
+    if (!util.isEmpty(path) && path !== '/' && path !== '/index.html') {
+        /*path = '/applyQuota/checkIdCard.html';
+         isDefault = true;*/
+        util.redirect({
+            url: path,
+            ignore: true
+        });
+    }
 
     setTimeout(function () {
         util.loading('hide');

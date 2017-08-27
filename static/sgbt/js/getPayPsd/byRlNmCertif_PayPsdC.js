@@ -1,6 +1,6 @@
 require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
     //获取银行卡号
-    var param=util.cache('cardnumber');
+    var param = util.cache('cardnumber');
 
     var vm = util.bind({
         container: 'byRlNmCertif_PayPsdC',
@@ -62,27 +62,32 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             });
                             util.redirect({
                                 title: '实名认证找回密码',
-                                url: '/getPayPsd/byRlNmCertif_PayPsdVldcode.html',
-                                back: false
+                                url: util.mix('/getPayPsd/byRlNmCertif_PayPsdVldcode.html', {
+                                    from: util.gup('from')
+                                })
                             });
                         }
                     }
                 ]
             }
-        }
-    });
-    util.get({
-        url: util.mix("/getCardInfo", {
-            cardNo: param && param.cardnumber,
-        }),
-        success:function(res){
-            util.refresh({
-                vm: util.vm(vm, vm.tags.formKey),
-                entity: {
-                    cardType: res.body.bankName+res.body.cardType,
-                    bankNo: res.body.bankNo,
-                }
-            });
+        },
+        mounted: function () {
+            if (param && param.cardnumber) {
+                util.get({
+                    url: util.mix("/getCardInfo", {
+                        cardNo: param.cardnumber,
+                    }),
+                    success:function(res){
+                        util.refresh({
+                            vm: util.vm(vm, vm.tags.formKey),
+                            entity: {
+                                cardType: res.body.bankName + res.body.cardType,
+                                bankNo: res.body.bankNo,
+                            }
+                        });
+                    }
+                });
+            }
         }
     });
 });

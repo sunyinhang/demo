@@ -96,8 +96,9 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             });
                             util.redirect({
                                 title: '实名认证找回密码',
-                                url: '/getPayPsd/reset_rlNmPayPsd.html',
-                                back: false
+                                url: util.mix('/getPayPsd/reset_rlNmPayPsd.html', {
+                                    from: util.gup('from')
+                                })
                             });
                         }
                     }

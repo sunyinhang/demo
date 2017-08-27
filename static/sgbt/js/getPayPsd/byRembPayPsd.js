@@ -39,8 +39,9 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             });
                             util.redirect({
                                 title: '设置支付密码',
-                                url: '/getPayPsd/reset_rembPayPsd.html',
-                                back: false
+                                url: util.mix('/getPayPsd/reset_rembPayPsd.html', {
+                                    from: util.gup('mix')
+                                })
                             });
                         }
                     }

@@ -1,6 +1,6 @@
 require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
     //获取卡号、手机号、验证码
-    var param=util.cache('cardnumber','mobile','verifyNo');
+    var param = util.cache('cardnumber','mobile','verifyNo');
 
     var vm = util.bind({
         container: 'reset_rlNmPayPsd',
@@ -62,6 +62,28 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                 },
                                 success: function (res) {
                                     util.alert('重置成功');
+                                    // from
+                                    // confirmPayPsd
+                                    // btInstalments
+                                    var from = util.gup('from');
+                                    if (from) {
+                                        var url;
+                                        var title;
+                                        if (from === 'confirmPayPsd') {
+                                            title = '验证支付密码';
+                                            url = '/applyQuota/confirmPayPsd.html';
+                                        } else if (from === 'btInstalments') {
+                                            title = '白条支付';
+                                            url = '/payByBt/btInstalments.html';
+                                        }
+                                        util.redirect({
+                                            title: title,
+                                            url: util.mix(url, {
+                                                from: 'reset'
+                                            }),
+                                            back: false
+                                        });
+                                    }
                                 }
                             });
                         }

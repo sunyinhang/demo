@@ -65,7 +65,9 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                             click: function () {
                                 util.redirect({
                                     title: '找回支付密码',
-                                    url: '/getPayPsd/getPayPsdWay.html',
+                                    url: util.mix('/getPayPsd/getPayPsdWay.html', {
+                                        from: 'btInstalments'
+                                    }),
                                     back: false
                                 });
                             }
