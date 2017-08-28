@@ -72,7 +72,24 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String userId = (String) cacheMap.get("userId");
         logger.info("获取的userId为："+userId);
         //String userId = "18325423979";
-        String flag = (String) cacheMap.get("payPasswdFlag");//空
+
+        Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
+        validateUserFlagMap.put("channelNo", channelNo);// 渠道
+        validateUserFlagMap.put("channel", channel);
+        validateUserFlagMap.put("userId", com.haiercash.payplatform.common.utils.EncryptUtil.simpleEncrypt(userId));//客户编号
+        Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
+        if(alidateUserMap == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map alidateUserHeadMap = (HashMap<String, Object>) alidateUserMap.get("head");
+        String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
+        if(!"00000".equals(alidateUserHeadMapFlag)){
+            String retMsg = (String) alidateUserHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map alidateUserBodyMap = (HashMap<String, Object>) alidateUserMap.get("body");
+        String flag = (String) alidateUserBodyMap.get("payPasswdFlag");
+//        String flag = (String) cacheMap.get("payPasswdFlag");//空
         logger.info("密码设置标识：flag"+flag);
         //String orderNo = (String) cacheMap.get("orderNo");//空
         String custNo = (String) cacheMap.get("custNo");// 客户号
