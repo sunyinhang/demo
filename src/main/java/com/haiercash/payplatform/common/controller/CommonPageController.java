@@ -275,8 +275,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/queryApplAmtBySeqAndOrederNo", method = RequestMethod.GET)
-    public Map<String, Object> queryApplAmtBySeqAndOrederNo() {
-        return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(), super.getChannel(), super.getChannelNo());
+    public Map<String, Object> queryApplAmtBySeqAndOrederNo(@RequestBody Map<String, Object> params) {
+        return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
     }
 
     /**

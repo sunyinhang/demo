@@ -33,7 +33,7 @@ public interface PayPasswdService {
     public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo);
 
     //贷款详情页面:还款总额
-    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo);
+    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo,Map<String, Object> params);
 
     //查询额度
     public Map<String, Object> edCheck(String token);

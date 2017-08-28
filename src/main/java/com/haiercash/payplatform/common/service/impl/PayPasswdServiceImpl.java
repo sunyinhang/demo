@@ -653,7 +653,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情页面:还款总额
-    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo) {
+    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo,Map<String, Object> paramsMap) {
         logger.info("待还款-贷款详情页面:还款总额接口，开始");
         String retflag = "";
         String retmsg = "";
@@ -675,14 +675,13 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("贷款详情页面:还款总额接口，Jedis失效，cacheMap" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String applSeq = (String) cacheMap.get("applSeq");// 申请流水号----需要放开
-        String outSts = (String) cacheMap.get("outSts");//审批状态
+        String applSeq = (String) paramsMap.get("applSeq");// 申请流水号----需要放开
+        String outSts = (String) paramsMap.get("outSts");//审批状态
 //        String applSeq = "1265216";//1265216   930201
 //        String outSts="待还款";
         if (StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(outSts)) {
-            logger.info("Jedis中获取的数据为空：applSeq=" + applSeq + "  ,outSts=" + outSts);
-            retflag = "从Jedis中获取的数据为空";
-            return fail(ConstUtil.ERROR_CODE, retmsg);
+            logger.info("请求的参数为空：applSeq=" + applSeq + "  ,outSts=" + outSts);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_PARAM_INVALID_MSG);
         }
         Map<String, Object> req = new HashMap<>();
         req.put("channelNo", channelNo);
