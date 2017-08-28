@@ -30,7 +30,7 @@ import java.util.UUID;
  * @since v1.0.1
  */
 @Component
-@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
+//@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
 public class CmisMseeageHandler {
     private Log logger = LogFactory.getLog(CmisMseeageHandler.class);
 
