@@ -88,4 +88,22 @@ public class SgInnerController extends BaseController {
     public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) {
         return commitOrderService.commitOrder(super.initParam(map));
     }
+
+    /**
+     * 额度回调url
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/shunguang/getedbackurl", method = RequestMethod.GET)
+    public Map<String, Object> getedbackurl() {
+        return sgInnerService.getedbackurl();
+    }
+
+    /**
+     * 贷款回调url
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/shunguang/getpaybackurl", method = RequestMethod.GET)
+    public Map<String, Object> getpaybackurl() {
+        return sgInnerService.getpaybackurl();
+    }
 }

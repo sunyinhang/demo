@@ -36,4 +36,16 @@ public interface SgInnerService {
      * @return
      */
     String getuserId(String token);
+
+    /**
+     * 额度回调url
+     * @return
+     */
+    Map<String, Object> getedbackurl();
+
+    /**
+     * 贷款回调url
+     * @return
+     */
+    Map<String, Object> getpaybackurl();
 }

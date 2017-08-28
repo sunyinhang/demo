@@ -45,6 +45,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
 
+    private static String MODULE_NO = "01";
+    public ShunguangServiceImpl() {
+        super(MODULE_NO);
+    }
+
     @Override
     public Map<String, Object> saveStoreInfo(Map<String, Object> storeInfo) {
 
@@ -131,11 +136,26 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         logger.info("支付申请接口请求数据：" + params);
         JSONObject json = new JSONObject(params);
+        //json参数非空判断
+        if(StringUtils.isEmpty(json.get("token")) || StringUtils.isEmpty(json.get("userType"))
+                || StringUtils.isEmpty(json.get("URL")) || StringUtils.isEmpty(json.get("body"))){
+            logger.info("贷款申请**必传参数非空校验失败");
+            return fail(ConstUtil.ERROR_CODE, "贷款申请，必传参数非空校验失败");
+        }
+
         String token = (String) json.get("token");
         String userType = (String) json.get("userType");
         String body = json.get("body").toString();//本比订单信息
-        //String URL = (String) json.get("URL");
+        String URL = (String) json.get("URL");
         JSONObject bodyjson = new JSONObject(body);
+
+        //bodyjson参数非空判断
+        if(StringUtils.isEmpty(bodyjson.get("orderSn")) || StringUtils.isEmpty(json.get("userType"))
+                || StringUtils.isEmpty(json.get("URL")) || StringUtils.isEmpty(json.get("body"))){
+            logger.info("贷款申请**必传参数非空校验失败");
+            return fail(ConstUtil.ERROR_CODE, "贷款申请，必传参数非空校验失败");
+        }
+
         String orderSn = bodyjson.getString("orderSn");//订单号
         String loanType = bodyjson.getString("loanType");//贷款品种编码
         String payAmt = bodyjson.getString("payAmt");//订单实付金额
@@ -180,10 +200,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         appOrder.setDeliverArea(country);//送货地址区
         appOrder.setAppOrderGoodsList(appOrderGoodsList);
         //
+        cachemap.put("paybackurl", URL);//支付申请回调url
         cachemap.put("apporder", appOrder);
         session.set(token, cachemap);
         Map returnmap = new HashMap<>();
-        String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;//TODO!!!!!!
+        String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
         returnmap.put("backurl", backurl);
         return success(returnmap);
     }
@@ -207,8 +228,16 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         logger.info("额度申请接口请求数据：" + params);
         JSONObject json = new JSONObject(params);
+
+        if(StringUtils.isEmpty(json.get("token")) || StringUtils.isEmpty(json.get("userType"))
+                || StringUtils.isEmpty(json.get("URL")) || StringUtils.isEmpty(json.get("custmessage"))){
+            logger.info("额度申请**必传参数非空校验失败");
+            return fail(ConstUtil.ERROR_CODE, "额度申请，必传参数非空校验失败");
+        }
+
         String token = (String) json.get("token");
         String userType = (String) json.get("userType");
+        String URL = (String) json.get("URL");//额度回调url
         String custmessage = json.get("custmessage").toString();
         JSONObject custjson = new JSONObject(custmessage);
         if (custjson.has("name")) {
@@ -235,10 +264,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String uidHaier = uid.toString();
         String custPhoneNo = (String) userjson.get("phone_number");
 
-        //TODO!!!!
-//        String uidHaier = "1000030088";
-//        String custPhoneNo = "18525369183";
-
+        cachemap.put("edbackurl", URL);
         cachemap.put("token", token);
         cachemap.put("uidHaier", uidHaier);//会员id
 
@@ -277,8 +303,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 //注册成功
                 uidLocal = usermap.get("body").toString();//统一认证内userId
                 phoneNo = custPhoneNo;//统一认绑定手机号
-                cachemap.put("userId", uidLocal);//统一认证userId
-                cachemap.put("phoneNo", phoneNo);//绑定手机号
+
             } else if ("U0160".equals(userretFlag)) {
                 //U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录
@@ -304,6 +329,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
+        cachemap.put("userId", uidLocal);//统一认证userId
+        cachemap.put("phoneNo", phoneNo);//绑定手机号
+        session.set(token, cachemap);
+        logger.info("进行token绑定");
         //4.token绑定
         Map<String, Object> bindMap = new HashMap<String, Object>();
         bindMap.put("userId", uidLocal);//内部userId
@@ -327,6 +356,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
+            logger.info("token:" + token);
+            logger.info("跳转额度激活，cachemap：" + cachemap.toString());
             session.set(token, cachemap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
             returnmap.put("backurl", backurl);
@@ -395,11 +426,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         }
-
-//        Map m = new HashMap<>();
-//        String urlback = "https://www.baidu.com/";//TODO!!!!!!
-//        m.put("backurl", urlback);
-//        return success(m);
     }
 
     //7.白条额度申请状态查询    Sg-10006    checkEdAppl
@@ -958,21 +984,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("调用接口返回的数据为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-//        String retFlag = ((HashMap<String, Object>) (edCheck.get("head"))).get("retFlag").toString();
-//        if ("A1199".equals(retFlag)) {
-//            // 没有额度
-//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
-//            returnmap.put("backurl", backurl);
-//            return success(returnmap);
-//        }
 
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", userId);//内部userId
         edMap.put("channelNo", channelNo);
-        // TODO: 不能写死
         edMap.put("channel", "11");
-        /// edMap.put("channelNo", channelNo);
+        edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
         if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
             String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();

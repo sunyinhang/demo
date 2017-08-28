@@ -194,6 +194,9 @@ private CmisMseeageHandler cmisMseeageHandler;
         if (StringUtils.isEmpty(map.get("data"))) {
             return fail(ConstUtil.ERROR_CODE, "交易信息(data)不能为空");
         }
+        if (StringUtils.isEmpty(map.get("key"))) {
+            return fail(ConstUtil.ERROR_CODE, "key不能为空");
+        }
         return success();
     }
 
