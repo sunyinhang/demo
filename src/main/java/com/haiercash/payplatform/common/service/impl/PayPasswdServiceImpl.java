@@ -4,8 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
+import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.PayPasswdService;
+import com.haiercash.payplatform.common.utils.AcqUtil;
+import com.haiercash.payplatform.common.utils.CmisUtil;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
@@ -16,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -988,6 +992,61 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return success(body);
         }
     }
+
+    //根据流水号查询贷款审批进度
+    public Map<String, Object> queryDkProcessInfo(String token, String channel, String channelNo,Map<String, Object> params) {
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Redis为空：" + cacheMap);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String applSeq = (String) params.get("applSeq");//申请流水号
+        //String   applSeq = "1097515";
+        if (StringUtils.isEmpty(applSeq)) {
+            logger.info("请求的数据为空：applSeq=" + applSeq);
+            String retmsg = "请求的数据为空：applSeq";
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        List procList  = new ArrayList<>();
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("applSeq", applSeq);
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        Map<String, Object> result = AcqUtil.getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/getApprovalProcess","ACQ-1151", super.getChannel(), super.getChannelNo(), null, null, paramMap);
+        logger.info("根据流水号查询额度贷款进度,请求参数：" + paramMap);
+        if (!CmisUtil.getIsSucceed(result)) {
+            logger.info("调用收单系统查询贷款审批进度失败, 返回结果：" + result);
+            return (Map<String, Object>) result.get("response");
+        }
+        Map<String, Object> responseMap = (Map<String, Object>) result.get("response");
+        procList = (List<Map<String, Object>>) ((Map<String, Object>) responseMap.get("body")).get("info");
+        return success(procList);
+
+
+//        Map<String, Object> map = appServerService.approvalProcessInfo(token, paramMap);
+//        if (StringUtils.isEmpty(map)) {
+//            logger.info("根据流水号查询贷款审批进度返回参数为空");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
+//        //JSONObject jsonObject = new JSONObject(result);
+//        String result = JSONObject.toJSONString(map);
+//        JSONObject jsonObject = JSONObject.parseObject(result);
+//        JSONObject head = jsonObject.getJSONObject("head");
+//        String flag = (String) head.get("retFlag");
+//        String retMsg = (String) head.get("retMsg");
+//        if (!"00000".equals(flag)) {
+//            return fail(flag, retMsg);
+//        } else {
+//            //JSONObject body = jsonObject.getJSONObject("body");
+//            JSONArray body = jsonObject.getJSONArray("body");
+//            return success(body);
+//        }
+    }
+
 
     @Override
     public Map<String, Object> landPasswd(String token, String channelNo, String channel, Map<String, Object> params) {

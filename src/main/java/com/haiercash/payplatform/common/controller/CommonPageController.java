@@ -300,6 +300,16 @@ public class CommonPageController extends BaseController {
     }
 
     /**
+     * 根据流水号查询贷款审批进度
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryDkProcessInfo", method = RequestMethod.GET)
+    public Map<String, Object> queryDkProcessInfo(@RequestParam Map<String, Object> params) {
+        return payPasswdService.queryDkProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+    }
+
+    /**
      * 保存客户个人扩展信息
      *
      * @return

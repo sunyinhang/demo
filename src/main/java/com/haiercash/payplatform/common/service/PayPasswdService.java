@@ -41,6 +41,9 @@ public interface PayPasswdService {
     //根据流水号查询额度审批进度
    public Map<String,Object> approvalProcessInfo(String token, String channel, String channelNo,Map<String, Object> params);
 
+    //根据流水号查询额度审批进度
+    public Map<String,Object> queryDkProcessInfo(String token, String channel, String channelNo,Map<String, Object> params);
+
     //登陆密码设置
     public Map<String, Object> landPasswd(String token, String channelNo, String channel,Map<String,Object> map);
 
