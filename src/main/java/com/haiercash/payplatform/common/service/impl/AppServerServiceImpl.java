@@ -426,7 +426,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/newZdhkMoney";
         logger.info("全部还款试算接口请求地址：" + url);
         logger.info("全部还款试算接口请求参数：" + paramMap);
-        Map<String, Object> refundTrialmap = HttpUtil.restGetMap(url, token, paramMap);
+        Map<String, Object> refundTrialmap = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("全部还款试算接口返回数据：" + refundTrialmap);
         return refundTrialmap;
     }
