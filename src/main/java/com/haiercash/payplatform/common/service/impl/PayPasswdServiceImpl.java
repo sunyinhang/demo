@@ -653,7 +653,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情页面:还款总额
-    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo) {
+    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo,String applSeq) {
         logger.info("待还款-贷款详情页面:还款总额接口，开始");
         String retflag = "";
         String retmsg = "";
@@ -675,13 +675,13 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("贷款详情页面:还款总额接口，Jedis失效，cacheMap" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String applSeq = (String) cacheMap.get("applSeq");// 申请流水号----需要放开
-        String outSts = (String) cacheMap.get("outSts");//审批状态
+   //     String applSeq = (String) cacheMap.get("applSeq");// 申请流水号----需要放开
+  //      String outSts = (String) cacheMap.get("outSts");//审批状态
 //        String applSeq = "1265216";//1265216   930201
 //        String outSts="待还款";
-        if (StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(outSts)) {
-            logger.info("Jedis中获取的数据为空：applSeq=" + applSeq + "  ,outSts=" + outSts);
-            retflag = "从Jedis中获取的数据为空";
+        if (StringUtils.isEmpty(applSeq)) {
+            logger.info("前端获取的数据为空：applSeq=" + applSeq );
+            retflag = "从前端获取的数据为空";
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         Map<String, Object> req = new HashMap<>();
@@ -704,8 +704,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if (code.equals("00000")) {//查询贷款详情成功
             logger.info("查询贷款详情接口，响应数据：" + jsonObject.getJSONObject("body").toString());
             JSONObject jsonData = jsonObject.getJSONObject("body");
+            String outSts = jsonData.getString("outSts");
             if (outSts.equals("待还款") || outSts.equals("已放款") || outSts.equals("已逾期")) {
-
                 loanNo = jsonData.getString("loanNo");
                 //loanNo="HCF-HAPA0120160320795362001";
                 if (StringUtils.isEmpty(loanNo)) {
