@@ -253,8 +253,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/queryLoanDetailInfo", method = RequestMethod.GET)
-    public Map<String, Object> queryLoanDetailInfo() {
-        return payPasswdService.queryLoanDetailInfo(super.getToken());
+    public Map<String, Object> queryLoanDetailInfo(@RequestParam(value = "applSeq") String applSeq) {
+        return payPasswdService.queryLoanDetailInfo(super.getToken(),applSeq);
     }
 
 

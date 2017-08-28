@@ -27,7 +27,7 @@ public interface PayPasswdService {
     public Map<String, Object> edApply(String token, String verifyNo, String payPasswd, String channel, String channelNo);
 
     //贷款详情查询
-    public Map<String, Object> queryLoanDetailInfo(String token);
+    public Map<String, Object> queryLoanDetailInfo(String token,String applSeq);
 
     //贷款详情页面:按贷款申请查询分期账单
     public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo);

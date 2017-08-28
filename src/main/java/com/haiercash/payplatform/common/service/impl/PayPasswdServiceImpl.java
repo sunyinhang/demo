@@ -433,26 +433,25 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情查询
-    public Map<String, Object> queryLoanDetailInfo(String token) {
+    public Map<String, Object> queryLoanDetailInfo(String token,String applSeq) {
         BigDecimal psNormIntAmt = new BigDecimal(0);
         BigDecimal feeAmt = new BigDecimal(0);
         BigDecimal apprvAmt = new BigDecimal(0);
-//        if (StringUtils.isEmpty(token)) {
-//            logger.info("获取的token为空" + token);
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-//        String channel = super.getChannel();//系统标识
-//        logger.info("系统标识：channel" + channel);
-//        String channelNo = super.getChannelNo();//渠道编码
-//        logger.info("渠道编码channelNo" + channelNo);
-//        Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if (StringUtils.isEmpty(cacheMap)) {
-//            logger.info("Jedis获取缓存失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-//        String applSeq = (String) cacheMap.get("applSeq");//申请流水号
-        //String applSeq = "1097515";
-     String   applSeq="1263841";//1265216   918653
+        if (StringUtils.isEmpty(token)) {
+            logger.info("获取的token为空" + token);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String channel = super.getChannel();//系统标识
+        logger.info("系统标识：channel" + channel);
+        String channelNo = super.getChannelNo();//渠道编码
+        logger.info("渠道编码channelNo" + channelNo);
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Jedis获取缓存失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //String applSeq = (String) cacheMap.get("applSeq");//申请流水号
+       // String   applSeq="1263841";//1265216   918653
 //         String outSts = (String) cacheMap.get("outSts");//审批状态
 //        String outSts = "04";
         if (StringUtils.isEmpty(applSeq)) {
@@ -460,8 +459,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String retMsg = "从Redis获取的数据为空";
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        String channelNo = "19";
-        String channel = "11";
+//        String channelNo = "19";
+//        String channel = "11";
         Map<String, Object> req = new HashMap<>();
         req.put("channelNo", channelNo);
         req.put("channel", channel);
