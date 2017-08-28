@@ -570,7 +570,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情页面:按贷款申请查询分期账单
-    public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo) {
+    public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo,String applSeq) {
         String loanNo = "";
         String retflag = "";
 //        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
@@ -583,14 +583,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
 //        }
 //        String applSeq = (String) cacheMap.get("applSeq");//申请流水号
-       String applSeq="1263841";
+       //String applSeq="1263841";
         //String outSts = (String) cacheMap.get("outSts");//审批状态
       //String  outSts="00";
-//        if (StringUtils.isEmpty(applSeq) ) {
-//            logger.info("从Redis获取数据失败applSeq:" + applSeq);
-//            String retMsg = "从Redis获取数据失败";
-//            return fail(ConstUtil.ERROR_CODE, retMsg);
-//        }
+        if (StringUtils.isEmpty(applSeq) ) {
+            logger.info("从前端获取数据失败applSeq:" + applSeq);
+            String retMsg = "从前端获取数据失败";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
 //        Map<String, Object> req = new HashMap<>();
 //        req.put("channelNo", "19");
 //        req.put("channel", channel);
@@ -620,7 +620,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //                    return fail(ConstUtil.ERROR_CODE, retMsg);
 //                }
 //            }
-            applSeq="930201";
+            //applSeq="930201";
             HashMap<String, Object> queryApplListMap = new HashMap<>();
             queryApplListMap.put("channelNo", channelNo);
             queryApplListMap.put("channel", channel);
