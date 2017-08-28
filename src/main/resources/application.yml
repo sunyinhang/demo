@@ -33,7 +33,7 @@ spring:
     requestedHeartbeat: 60
     exchange: APPMSG_TOPIC_EXCHANGE_DEV
     queue:
-      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE
+      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
 redis:
   single:
     host: 10.164.194.123
