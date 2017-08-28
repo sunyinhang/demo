@@ -16,7 +16,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         },
         methods:{
             goShopFn: function(){
-                console.log(123);
+
             }
         }
     });
