@@ -1,4 +1,7 @@
 require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
+    //获取 applSeq
+    var applSeq = util.gup('applSeq');
+
     var vm = util.bind({
         container: 'loanDetails',
         data: {
@@ -32,7 +35,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             // 总利息金额	psNormIntAmt
             // 应还款总额	repayAmt
             util.get({
-                url: '/queryLoanDetailInfo',
+                url: '/queryLoanDetailInfo?applSeq='+ applSeq,
                 success: function(res){
                     var data = util.data(res);
                     vm.repayApplCardNo = '****'+ data.repayApplCardNo.substring(-4,4);
@@ -56,13 +59,13 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             // 期数	psPerdNo
             // 剩余天数	days
             util.get({
-                url: '/queryApplListBySeq',
+                url: '/queryApplListBySeq?applSeq='+ applSeq,
                 success: function(res){
                     vm.items = util.data(res);
                 }
             });
             util.get({
-                url: '/queryApplAmtBySeqAndOrederNo',
+                url: '/queryApplAmtBySeqAndOrederNo?applSeq='+ applSeq,
                 success: function(res){
                     var data = util.data(res);
                     vm.zdhkFee = '￥'+data.zdhkFee;

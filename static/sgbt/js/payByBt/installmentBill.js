@@ -197,8 +197,8 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                 click: function(){
                                     util.redirect({
                                         title: '贷款详情',
-                                        url: '/payByBt/loanDetails.html',
-                                        back: false
+                                        url: '/payByBt/loanDetails.html?applSeq='+ order.applSeq,
+                                        back: true
                                     });
                                 },
                                 operates: [
@@ -297,7 +297,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         click: function (event, item) {
                                             console.log('clicked');
                                         }
-                                    },{
+                                    },/*{
                                         text: '修改提交',
                                         layout: 'primary',
                                         show: function (item) {
@@ -310,7 +310,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         click: function (event, item) {
                                             console.log('clicked');
                                         }
-                                    },{
+                                    },*/{
                                         text: '申请放款',
                                         layout: 'primary',
                                         show: function (item) {

@@ -1,4 +1,5 @@
 require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+    var data = '';
     var vm = util.bind({
         container: 'byRlNmCertif_PayPsd',
         data: {
@@ -14,22 +15,24 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         name: 'cardholder',
                         clazz: '',
                         config: {
+                            value:'',
                             attr: {
                                 readonly: 'readonly'
                             },
                             validate: {
-                                //required: '姓名不能为空'
+                                required: '姓名不能为空'
                             }
                         }
                     },{
                         head: '身份证',
                         name: 'cardID',
                         config: {
+                            value: data && data.idNo,
                             attr: {
                                 readonly: 'readonly'
                             },
                             validate: {
-                                //required: '身份证号不能为空'
+                                required: '身份证号不能为空'
                             }
                         }
                     },{
@@ -76,6 +79,30 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                     }
                 ]
             }
+        },
+        mounted: function(){
+            util.get({
+                 url: '/queryCustNameByUId',
+                 success: function(res){
+                     data = util.data(res);
+                     if (data && data.name) {
+                         util.refresh({
+                             vm: util.vm(vm, vm.tags.formKey),
+                             entity: {
+                                 cardholder: data.name
+                             }
+                         });
+                     }
+                     if (data && data.idNo) {
+                         util.refresh({
+                             vm: util.vm(vm, vm.tags.formKey),
+                             entity: {
+                                 cardID: data.idNo
+                             }
+                         });
+                     }
+                 }
+             });
         }
     });
 });
