@@ -10,6 +10,7 @@ import com.haiercash.payplatform.common.service.PayPasswdService;
 import com.haiercash.payplatform.common.utils.AcqUtil;
 import com.haiercash.payplatform.common.utils.CmisUtil;
 import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +36,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private Session session;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private AcquirerService acquirerService;
 
     //模块编码  02
     private static String MODULE_NO = "04";
@@ -446,8 +449,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String channel = super.getChannel();//系统标识
+        //String channel="11";
         logger.info("系统标识：channel" + channel);
         String channelNo = super.getChannelNo();//渠道编码
+       //String channelNo="46";
         logger.info("渠道编码channelNo" + channelNo);
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
@@ -455,9 +460,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //String applSeq = (String) cacheMap.get("applSeq");//申请流水号
-       // String   applSeq="1263841";//1265216   918653
-//         String outSts = (String) cacheMap.get("outSts");//审批状态
-//        String outSts = "04";
+        //String   applSeq="1263841";//1265216   918653
+         //String outSts = (String) cacheMap.get("outSts");//审批状态
+        //String outSts = "04";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("获取数据为空申请流水号：" + applSeq);
             String retMsg = "从Redis获取的数据为空";
@@ -465,12 +470,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         }
 //        String channelNo = "19";
 //        String channel = "11";
-        Map<String, Object> req = new HashMap<>();
-        req.put("channelNo", channelNo);
-        req.put("channel", channel);
-        req.put("applSeq", applSeq);
-        logger.info("查询贷款详情接口，请求数据：" + req.toString());
-        Map<String, Object> map = appServerService.queryApplLoanDetail(token, req);//查询贷款详情
+//        Map<String, Object> req = new HashMap<>();
+//        req.put("channelNo", channelNo);
+//        req.put("channel", channel);
+//        req.put("applSeq", applSeq);
+//        logger.info("查询贷款详情接口，请求数据：" + req.toString());
+//        Map<String, Object> map = appServerService.queryApplLoanDetail(token, req);//查询贷款详情
+        //applSeq="1265566";
+        Map<String, Object> map = acquirerService.getOrderFromAcquirer(applSeq, channel, channelNo, null, null, "2");
         logger.info("查询贷款详情接口，响应数据：" + map);
         if (map == null || "".equals(map)) {
             logger.info("网络异常,查询贷款详情接口,响应数据为空！" + map);
@@ -485,17 +492,17 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if ("00000".equals(code)) {//查询贷款详情成功
             logger.info("查询贷款详情接口，响应数据：" + jsonObject.getJSONObject("body").toString());
             JSONObject json = jsonObject.getJSONObject("body");
-            String applyTnrTyp = json.get("applyTnrTyp").toString();
+            String applyTnrTyp = json.getString("apply_tnr_typ");
             String totfee = "";
             String apprvTotal = "";
-            if (!applyTnrTyp.equals("D") && !applyTnrTyp.equals("d") && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
-                String psNormIntAmtStr = String.valueOf(json.get("psNormIntAmt"));//总利息金额
+            if (!"D".equals(applyTnrTyp) && !"d".equals(applyTnrTyp) && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
+                String psNormIntAmtStr = String.valueOf(json.get("totalnormint"));//总利息金额
                 if (psNormIntAmtStr.equals("null")) {
                     psNormIntAmt = new BigDecimal(0);
                 } else {
                     psNormIntAmt = new BigDecimal(psNormIntAmtStr);
                 }
-                String feeAmtStr = String.valueOf(json.get("feeAmt"));//费用总额
+                String feeAmtStr = String.valueOf(json.get("totalfeeamt"));//费用总额
                 if (feeAmtStr.equals("null")) {
                     feeAmt = new BigDecimal(0);
                 } else {
@@ -624,7 +631,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //                    return fail(ConstUtil.ERROR_CODE, retMsg);
 //                }
 //            }
-            //applSeq="930201";
+            //applSeq="1265566";
             HashMap<String, Object> queryApplListMap = new HashMap<>();
             queryApplListMap.put("channelNo", channelNo);
             queryApplListMap.put("channel", channel);
