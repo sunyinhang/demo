@@ -54,6 +54,10 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
     @Value("${app.shunguang.sg_user_id}")
     protected String sg_user_id;
 
+    private static String MODULE_NO = "01";
+    public SaveOrderServiceImpl() {
+        super(MODULE_NO);
+    }
     @Override
     public Map<String, Object> saveOrder(Map<String, Object> map) {
         //前端传入参数获取(放开)

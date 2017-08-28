@@ -56,6 +56,11 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
 
+    private static String MODULE_NO = "01";
+    public SgInnerServiceImpl() {
+        super(MODULE_NO);
+    }
+
     @Override
     public Map<String, Object> userlogin(Map<String, Object> map) {
         logger.info("登录页面********************开始");
@@ -367,6 +372,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String applyTnr = (String) map.get("applyTnr");
 
         Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         AppOrder appOrder = null;
         try {
@@ -448,6 +457,36 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             logger.info("会员验证失败");
             return userId;
         }
+    }
+
+    //获取额度回调地址
+    @Override
+    public Map<String, Object> getedbackurl() {
+        String token = super.getToken();
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String edbackurl = (String) cacheMap.get("edbackurl");
+        Map m = new HashMap();
+        m.put("edbackurl", edbackurl);
+        return success(m);
+    }
+
+    //获取贷款回调地址
+    @Override
+    public Map<String, Object> getpaybackurl() {
+        String token = super.getToken();
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String edbackurl = (String) cacheMap.get("paybackurl");
+        Map m = new HashMap();
+        m.put("paybackurl", edbackurl);
+        return success(m);
     }
 
 
