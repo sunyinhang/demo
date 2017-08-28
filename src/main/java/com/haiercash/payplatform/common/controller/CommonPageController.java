@@ -295,7 +295,7 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/queryApprovalProcessInfo", method = RequestMethod.GET)
-    public Map<String, Object> queryApprProcessByCust(@RequestBody Map<String, Object> params) {
+    public Map<String, Object> queryApprProcessByCust(@RequestParam Map<String, Object> params) {
         return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
     }
 
