@@ -540,7 +540,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
-            logger.info("Redis为空");
+            logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         if ("contract".equals(flag)) {

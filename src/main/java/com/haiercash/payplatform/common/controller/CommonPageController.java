@@ -459,4 +459,13 @@ public class CommonPageController extends BaseController {
         // return custExtInfoService.attachPic(super.getToken(), super.getChannelNo(), super.getChannel(), filePath);
     }
 
+    /**
+     * 查询返回实名认证需要的数据
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryCustNameByUId", method = RequestMethod.GET)
+    public Map<String, Object> queryCustNameByUId(){
+        return payPasswdService.queryCustNameByUId(super.getToken());
+    }
+
 }

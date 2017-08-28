@@ -46,6 +46,8 @@ public interface PayPasswdService {
 
     //获取个人中心信息
     public Map<String, Object> getPersonalCenterInfo(String token, String channelNo, String channel);
+    //返回实名认证需要的数据
+    public Map<String, Object> queryCustNameByUId(String token);
 
 }
 

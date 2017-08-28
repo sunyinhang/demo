@@ -561,7 +561,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Object head1 = userIdOne.get("head");
         JSONObject jsonObject = new JSONObject(head1);
         String retMsg1 = (String) jsonObject.get("retMsg");
-        //String applSeq="918653";
+       //String applSeq="918653";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("获取信息失败,为空:applSeq" + applSeq);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
