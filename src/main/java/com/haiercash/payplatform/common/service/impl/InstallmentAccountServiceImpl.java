@@ -2,7 +2,6 @@ package com.haiercash.payplatform.common.service.impl;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
-import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.InstallmentAccountService;
@@ -354,12 +353,15 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         BigDecimal applyAmt = new BigDecimal(0) ;
         String ordertotal = "";
         Map<String, Object> resMap = (Map<String, Object>) queryOrderInfo.get("body");
-        AppOrder appOrder = acquirerService.acquirerMap2OrderObject(resMap, new AppOrder());
+//        AppOrder appOrder = acquirerService.acquirerMap2OrderObject(resMap, new AppOrder());
 //        String applyTnrTyp = (String) resMap.get("applyTnrTyp");
-        String applyTnrTyp = appOrder.getApplyTnrTyp();
+        String applyTnrTyp = (String) resMap.get("apply_tnr_typ");
+//                appOrder.getApplyTnrTyp();
 
-        String totalnormint = appOrder.getTotalnormint();
-        String totalfeeamt = appOrder.getTotalfeeamt();
+        Integer totalnormint = (Integer) resMap.get("totalnormint");
+//                appOrder.getTotalnormint();
+        Integer totalfeeamt = (Integer) resMap.get("totalfeeamt");
+//                appOrder.getTotalfeeamt();
         BigDecimal Totalnormint = new BigDecimal(0);
         BigDecimal Totalfeeamt = new BigDecimal(0);
         if("null".equals(totalnormint) || "".equals(totalnormint) || totalnormint == null){
@@ -370,7 +372,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         if("null".equals(totalfeeamt) || "".equals(totalfeeamt) || totalfeeamt == null){
             Totalfeeamt = new BigDecimal(0);
         }else{
-            Totalfeeamt = new BigDecimal(totalfeeamt);
+            Totalfeeamt =  new BigDecimal(totalfeeamt);
         }
         BigDecimal xfzeBig = new BigDecimal(0);
         xfzeBig = Totalnormint.add(Totalfeeamt);
@@ -382,7 +384,9 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             }else{
                 xfze = new BigDecimal(xfzeStr);
             }
-            String applyAmtStr = appOrder.getApplyAmt();//借款总额
+            Integer applyAmtStr = (Integer)resMap.get("apply_amt");
+//            String applyAmtStr = (String) resMap.get("apply_amt");
+//                    appOrder.getApplyAmt();//借款总额
             if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null){
                 applyAmt = new BigDecimal(0);
             }else{
