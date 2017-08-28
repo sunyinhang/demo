@@ -22,9 +22,9 @@ spring:
       max-active: 1000
   http.converters.preferred-json-mapper: fastjson
   rabbitmq:
-    addresses: 10.164.197.54:5672, 10.164.197.55:5672
+    addresses: 10.164.197.208:5672, 10.164.197.228:5672
     username: admin
-    password: 123456
+    password: admin123
     virtual-host: /
     publisher-confirms: true
     listener:
@@ -33,7 +33,7 @@ spring:
     requestedHeartbeat: 60
     exchange: APPMSG_TOPIC_EXCHANGE_DEV
     queue:
-      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISGMSG_QUEUE_46_DEV
+      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE
 redis:
   single:
     host: 10.164.194.123
