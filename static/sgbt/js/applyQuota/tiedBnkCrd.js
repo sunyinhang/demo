@@ -186,21 +186,21 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                             text: '获取验证码',
                             clazz: 'validate-code',
                             click: function (event, entity) {
-                                /*if (!util.validate($('#cardnumber', vm.$el))) {
+                                if (!util.validate($('#cardnumber', vm.$el))) {
                                     return;
                                 }
                                 if (!util.validate($('#mobile', vm.$el))) {
                                     return;
-                                }*/
+                                }
                                 util.countdown($(event.target), {
                                     text: '获取验证码',
                                     second: 60
                                 });
-                                /*util.get({
+                                util.get({
                                     url: util.mix('/sendMsg',{
                                         phone: entity.mobile
                                     })
-                                });*/
+                                });
                             }
                         },
                         hint: '#card',
