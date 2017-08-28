@@ -571,7 +571,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情页面:按贷款申请查询分期账单
-    public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo,Map<String, Object> params) {
+    public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo) {
         String loanNo = "";
         String retflag = "";
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
@@ -583,9 +583,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("Jedi获取的数据weikong");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        String applSeq = (String) params.get("applSeq");//申请流水号
+        String applSeq = (String) cacheMap.get("applSeq");//申请流水号
        //String applSeq="1265216";
-        String outSts = (String) params.get("outSts");//审批状态
+        String outSts = (String) cacheMap.get("outSts");//审批状态
       //String  outSts="00";
         if (StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(outSts)) {
             logger.info("从jedis获取数据失败applSeq:" + applSeq + "  ,outSts" + outSts);
@@ -653,7 +653,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情页面:还款总额
-    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo,Map<String, Object> paramsMap) {
+    public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo) {
         logger.info("待还款-贷款详情页面:还款总额接口，开始");
         String retflag = "";
         String retmsg = "";
@@ -675,13 +675,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("贷款详情页面:还款总额接口，Jedis失效，cacheMap" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String applSeq = (String) paramsMap.get("applSeq");// 申请流水号----需要放开
-        String outSts = (String) paramsMap.get("outSts");//审批状态
+        String applSeq = (String) cacheMap.get("applSeq");// 申请流水号----需要放开
+        String outSts = (String) cacheMap.get("outSts");//审批状态
 //        String applSeq = "1265216";//1265216   930201
 //        String outSts="待还款";
         if (StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(outSts)) {
-            logger.info("请求的参数为空：applSeq=" + applSeq + "  ,outSts=" + outSts);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_PARAM_INVALID_MSG);
+            logger.info("Jedis中获取的数据为空：applSeq=" + applSeq + "  ,outSts=" + outSts);
+            retflag = "从Jedis中获取的数据为空";
+            return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         Map<String, Object> req = new HashMap<>();
         req.put("channelNo", channelNo);
@@ -946,7 +947,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //根据流水号查询额度审批进度
-    public Map<String, Object> approvalProcessInfo(String token, String channel, String channelNo) {
+    public Map<String, Object> approvalProcessInfo(String token, String channel, String channelNo,Map<String, Object> params) {
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
@@ -956,11 +957,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("Redis为空：" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String applSeq = (String) cacheMap.get("crdSeq");//申请流水号
+        String applSeq = (String) params.get("applSeq");//申请流水号
         //String   applSeq = "1097515";
         if (StringUtils.isEmpty(applSeq)) {
-            logger.info("从Jedis中获取的数据为空：applSeq=" + applSeq);
-            String retmsg = "从Jedis中获取的数据为空";
+            logger.info("请求的数据为空：applSeq=" + applSeq);
+            String retmsg = "请求的数据为空：applSeq";
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         HashMap<String, Object> paramMap = new HashMap<>();

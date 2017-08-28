@@ -264,8 +264,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/queryApplListBySeq", method = RequestMethod.GET)
-    public Map<String, Object> queryApplListBySeq(@RequestBody Map<String, Object> params) {
-        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+    public Map<String, Object> queryApplListBySeq() {
+        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
 
@@ -275,8 +275,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/queryApplAmtBySeqAndOrederNo", method = RequestMethod.GET)
-    public Map<String, Object> queryApplAmtBySeqAndOrederNo(@RequestBody Map<String, Object> params) {
-        return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+    public Map<String, Object> queryApplAmtBySeqAndOrederNo() {
+        return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
     /**
@@ -295,8 +295,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/queryApprovalProcessInfo", method = RequestMethod.GET)
-    public Map<String, Object> queryApprProcessByCust() {
-        return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo());
+    public Map<String, Object> queryApprProcessByCust(@RequestBody Map<String, Object> params) {
+        return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
     }
 
     /**
