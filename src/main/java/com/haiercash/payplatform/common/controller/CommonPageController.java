@@ -264,8 +264,8 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/queryApplListBySeq", method = RequestMethod.GET)
-    public Map<String, Object> queryApplListBySeq() {
-        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo());
+    public Map<String, Object> queryApplListBySeq(@RequestBody Map<String, Object> params) {
+        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo(),params);
     }
 
 

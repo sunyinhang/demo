@@ -571,7 +571,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情页面:按贷款申请查询分期账单
-    public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo) {
+    public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo,Map<String, Object> params) {
         String loanNo = "";
         String retflag = "";
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
@@ -583,9 +583,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("Jedi获取的数据weikong");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        String applSeq = (String) cacheMap.get("applSeq");//申请流水号
+        String applSeq = (String) params.get("applSeq");//申请流水号
        //String applSeq="1265216";
-        String outSts = (String) cacheMap.get("outSts");//审批状态
+        String outSts = (String) params.get("outSts");//审批状态
       //String  outSts="00";
         if (StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(outSts)) {
             logger.info("从jedis获取数据失败applSeq:" + applSeq + "  ,outSts" + outSts);
