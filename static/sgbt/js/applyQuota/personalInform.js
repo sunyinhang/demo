@@ -512,9 +512,9 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                                 url: Const.rest.baseUrl + '/attachPic?filePath=' + data.docList[i].urlList[fileIndex].filePath   //Const.route.imageLocation + data.docList[i].urlList[fileIndex].filePath
                                             });
                                         }
-                                    } else {
+                                    }/* else {
                                         files.push({});
-                                    }
+                                    }*/
                                     util.refresh({
                                         vm: filesVm,
                                         columns: [
