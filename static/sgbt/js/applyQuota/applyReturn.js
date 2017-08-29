@@ -12,7 +12,8 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                 whetherBtn: true,
                 activBtn: 'goGrayBtn',
                 btnText: '查看原因'
-            },formConfig:{
+            },
+            formConfig:{
                 operates: [
                     {
                         text: '修改',

@@ -78,14 +78,12 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             },
             payFn: function () {
                 if( !util.isEmpty(orderNo)){
-                    // TODO: 写死的值？
                     var data={
                         flag: '1',
                         orderNo: orderNo ,
                         applyTnr: vm.applyTnr,
-                        areaCode: '370203'
+                        areaCode: vm.areaCode
                     }
-
                 }else{
                     var data={
                         applyTnr: vm.applyTnr,

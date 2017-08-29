@@ -14,8 +14,12 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         password: this.loginpassword
                     },
                     success: function (res) {
-                        // TODO: 处理？
-                        // console.log(res);
+                        var data = util.data(res);
+                        if(!util.isEmpty(data)){
+                            util.redirect({
+                                url: data.backurl
+                            });
+                        }
                     }
                 });
             }

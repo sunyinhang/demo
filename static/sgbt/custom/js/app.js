@@ -62,6 +62,7 @@ require(['vue', 'jquery', 'util'], function(vue, $, util) {
             btnClickFn: function(){
                 this.$emit('on-click');
             }
+            /*<a href="javascript:void(0);" @click='redirectFn'>返回商城</a>*/
         }
     });
     vue.component('staticText',{

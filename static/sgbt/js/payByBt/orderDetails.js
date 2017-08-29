@@ -9,41 +9,34 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             repayAccBankName: '',
             applyDt: '',
             applseq: '',
-            mthAmt: '',
             applyAmt: '',
             applyTnrTyp: '',
             xfze: '',
-            goodName: '',
-            goodsPrice: '',
+            goodsList: [],
             ordertotal: ''
         },
-        methods: {
-
+        filters: {
+            currency: function (val) {
+                return util.format(val, 'currency');
+            }
         },
         mounted: function(){
             util.post({
                 url: '/queryOrderInfo',
                 data: {
-                    // TODO: 写死？
-                    orderNo: "ede45c47cf524411bf185799a1cc1944"
+                    orderNo: orderNo
                 },
                 success: function (res) {
                     var data = util.data(res);
                     if( !util.isEmpty(data)){
-
-                        vm.repayApplCardNo = '****'+data.repay_appl_card_no.substring(-4,4);
+                        vm.repayApplCardNo = '****'+ util.format(data.repay_appl_card_no, 'card4');
                         vm.repayAccBankName = data.repay_acc_bank_name;
                         vm.applyDt = data.apply_dt;
                         vm.applseq = data.appl_seq;
-
-                        vm.goodsName = data.goods_name;
-                        vm.goodsPrice = data.goodsPrice;
-                        vm.mthAmt = data.mthAmt;
-
-
-                        vm.applyAmt = '￥'+data.apply_amt;
+                        vm.goodsList = data.goodsList.good;
+                        vm.applyAmt = data.apply_amt;
                         vm.xfze = data.xfze;
-                        vm.ordertotal = '￥'+data.apply_amt + data.xfze;
+                        vm.ordertotal = parseInt(data.apply_amt)+ parseInt(data.xfze);
                     }
                 }
             });

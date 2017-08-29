@@ -1,4 +1,4 @@
-<div class="wrapper loanDetails fullPage-gray" data-container="loanDetails">
+<div class="wrapper loanDetails fullPage-gray" data-container="loanDetails" v-cloak>
     <div class="main-01">
       <span class="stat">待还款</span><span class="tit">订单状态</span>
     </div>
@@ -6,32 +6,34 @@
       <span class="crdNo">{{repayApplCardNo}}</span><span class="crd">默认还款卡 <em>{{repayAccBankName}}</em></span>
     </div>
     <div class="main-03 margt8">
-      <div class="main-03-01"><span class="crdNo">货款编号：{{applCde}}</span>{{applyDt}}</div>
-      <div class="main-03-02">
-        <div class="main-03-02-a"><img src="./custom/themes/default/images/payByBt/product.png" alt=""></div>
-        <div class="main-03-02-b"><b>{{goodsName}}</b><span>￥{{goodsPrice}}</span></div>
-        <div class="main-03-02-c">{{mthAmt}}*{{applyTnr}}期</div>
-      </div>
-      <div class="main-03-03">
-        <div class="main-03-03-a">分期本金<b>{{psPrcpAmt}}</b></div>
-        <div class="main-03-03-b">息费<b>{{psNormIntAmt}}({{applyTnrTyp}}月)</b></div>
-        <div class="main-03-03-c">合计金额<b>{{repayAmt}}</b></div>
-      </div>
+        <div class="main-03-01"><span class="crdNo">货款编号：{{applseq}}</span>{{applyDt}}</div>
+
+        <div class="main-03-02" v-for="good in goodsList">
+            <div class="main-03-02-a"><img src="./custom/themes/default/images/payByBt/product.png" alt=""></div>
+            <div class="main-03-02-b"><b>{{good.goods_name}}</b></b></div>
+            <div class="main-03-02-c">{{good.goods_price}}*{{good.goods_num}}期</div>
+        </div>
+
+        <div class="main-03-03">
+            <div class="main-03-03-a">分期本金<b>{{applyAmt | currency}}</b></div>
+            <div class="main-03-03-b">息费<b>{{xfze}}</b></div>
+            <div class="main-03-03-c">合计金额<b>{{ordertotal | currency}}</b></div>
+        </div>
     </div>
     <div class="main-04">
-      <span>已还{{setlPrcpAmt}}，待还{{repayPrcpAmt}}</span>分期账单</span>
+      <span>已还{{setlTotalAmt}}，待还{{repayAmt}}</span>分期账单
     </div>
     <div class="main-05 margt8">
       <ul>
-        <li v-for="(item , index) in items" class='selected border-bottom'>
+        <li v-for="(item , index) in bills" class="selected border-bottom">
           <em></em>
-          <div class="eachOrder"><b>￥{{item.amount}} + {{odAmt}}</b><p>[{{index}}/{{item.psPerdNo}}]{{goodsName}}</p></div>
-          <span> {{item.days >= 0 ?  '剩余' + item.days '天' : '逾期 '+ item.days) +'天'}}</span>
+          <div class="eachOrder"><b>{{pricefn(item) | currency}}</b><p>[{{item.psPerdNo}}/{{bills.length}}期]&nbsp;&nbsp;{{goodsName}}</p></div>
+          <span> {{ stateFn(item)}}</span>
         </li>
       </ul>
     </div>
     <div class="main-bottom margt8 clear">
-        <div class="bottom-l"><span>还款总额<b>{{zdhkFee}}</b></span></div>
+        <div class="bottom-l"><span>还款总额<b>{{zdhkFee | currency}}</b></span></div>
         <div class="bottom-r"><a href="javascript:void(0);">立即还款</a></div>
         <div class="clear"></div>
     </div>

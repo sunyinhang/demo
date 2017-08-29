@@ -21,8 +21,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 readonly: 'readonly'
                             },
                             validate: {
-                                // TODO: 确认一下非必填
-                                //required: '银行卡类型不能为空'
+                                required: '银行卡类型不能为空'
                             }
                         }
                     },{

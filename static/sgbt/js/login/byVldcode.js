@@ -43,36 +43,6 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 }
                             });
                         }
-                    },
-                    agree: {
-                        name: 'agree',
-                        text: '海尔消费金融账户开通相关协议',
-                        click: function () {
-                            // 多个协议
-                            // TODO: 处理一下协议
-                            util.actions([
-                                {
-                                    text: '协议1',
-                                    click: function () {
-                                        util.popup({
-                                            $element: $('.agree-popup'),
-                                            title: '协议1',
-                                            url: 'https://www.baidu.com'
-                                        });
-                                    }
-                                }, {
-                                    text: '协议2',
-                                    click: function () {
-                                        console.log('协议2');
-                                    }
-                                }, {
-                                    text: '协议3',
-                                    click: function () {
-                                        console.log('协议3');
-                                    }
-                                }
-                            ]);
-                        }
                     }
                 }],
                 operates: [

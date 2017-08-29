@@ -34,8 +34,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                         preset: 'json',
                                         choose: '#maritalStatus',
                                         validate: {
-                                            // TODO: 非必填？
-                                            //required: '婚姻状况不能为空'
+                                            required: '婚姻状况不能为空'
                                         }
                                     }
                                 },
@@ -106,8 +105,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                             maxlength: '#address'
                                         },
                                         validate: {
-                                            // TODO: 非必填？
-                                            //required: '居住详细地址不能为空'
+                                            required: '居住详细地址不能为空'
                                         }
                                     }
                                 }

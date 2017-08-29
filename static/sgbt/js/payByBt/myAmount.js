@@ -19,8 +19,17 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         },
         methods:{
             goShopFn: function(){
-                // TODO: 处理
-                // console.log(123);
+                util.get({
+                    url: 'shunguang/getedbackurl',
+                    success: function(res){
+                        var data = util.data(res);
+                        if( !util.isEmpty(data)){
+                            util.redirect({
+                                url: data.edbackurl
+                            });
+                        }
+                    }
+                });
             }
         },
         mounted: function(){

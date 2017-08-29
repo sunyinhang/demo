@@ -457,7 +457,7 @@ a.a-btn{ margin: 0 auto; display:block; width: 80%; height: 2.5rem; line-height:
 .loanDetails .main-05 li div{ width: 100%; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1; font-size: 0.65rem; color: #333;}
 .loanDetails .main-05 li div b{ font-weight: normal; color:#fda253; font-size: 0.8rem; line-height: 1.2rem;}
 .loanDetails .main-05 li div p{ margin:0;}
-.loanDetails .main-05 li span{ width: 3rem; font-size: 0.7rem; line-height: 0.7rem; color: #999;}
+.loanDetails .main-05 li span{ width: 3.5rem; font-size: 0.7rem; line-height: 0.7rem; color: #999;}
 .loanDetails .main-bottom .bottom-l{ float: left; width: 70%; height: 2.65rem; line-height: 2.65rem; background:#fff url('images/payByBt/orderActive.png') no-repeat 0.8rem center; background-size: 1rem; font-size: 0.8rem;}
 .loanDetails .main-bottom .bottom-l span{ padding-left:2.5rem;}
 .loanDetails .main-bottom .bottom-l b{ color: #f15a4a;}
