@@ -295,7 +295,14 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> getEdApplInfo(String token, Map<String, Object> edapplInfoMap) {
-        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/customer/getEdApplInfo";
+        String verifyMobile = (String) edapplInfoMap.get("verifyMobile");
+        String verifyNo = (String) edapplInfoMap.get("verifyNo");
+        String url = "";
+        if(verifyMobile != null && !"".equals(verifyMobile) && verifyNo!= null && !"".equals(verifyNo)){
+            url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/customer/getEdApplInfo/needVerify";
+        }else{
+            url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/customer/getEdApplInfo";
+        }
         logger.info("额度申请接口请求地址：" + url);
         logger.info("额度申请接口请求数据：" + edapplInfoMap);
         Map<String, Object> edapplInfomap = HttpUtil.restGetMap(url, token, edapplInfoMap);

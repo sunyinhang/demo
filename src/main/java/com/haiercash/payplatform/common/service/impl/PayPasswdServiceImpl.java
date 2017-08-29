@@ -65,6 +65,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String userId = (String) cacheMap.get("userId");
         logger.info("获取的userId为："+userId);
         //String userId = "18325423979";
+        String phoneNo = (String) cacheMap.get("phoneNo");//手机号
+
 
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
         validateUserFlagMap.put("channelNo", channelNo);// 渠道
@@ -221,6 +223,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         mapEd.put("channel", channel);
         mapEd.put("channelNo", channelNo);
         mapEd.put("custNo", custNo);
+        mapEd.put("verifyMobile", phoneNo);//手机号
+        mapEd.put("verifyNo", verifyNo);//验证码
         //String crdSeq = "";
         if ("1".equals(edxgflag)) {//有在途的流水号(修改)
             mapEd.put("flag", "2");
