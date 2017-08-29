@@ -48,19 +48,22 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                         //未设置支付密码
                                         util.redirect({
                                             // title: '设置支付密码',
-                                            url: '/applyQuota/setPayPsd.html'
+                                            url: '/applyQuota/setPayPsd.html',
+                                            back: false
                                         });
                                     } else if (data.faceFlag === '1') {
                                         //已设置支付密码
                                         util.redirect({
                                             title: '输入短信验证码',
-                                            url: '/applyQuota/confirmPayPsd.html'
+                                            url: '/applyQuota/confirmPayPsd.html',
+                                            back: false
                                         });
                                     } else if (data.faceFlag === '2') {
                                         //人脸识别失败，跳转手持身份证
                                         util.redirect({
                                             // title: '手持身份证',
-                                            url: '/applyQuota/handholdIdCard.html'
+                                            url: '/applyQuota/handholdIdCard.html',
+                                            back: false
                                         });
                                     } else if (data.faceFlag === '3') {
                                         //人脸识别失败，再拍摄一遍
