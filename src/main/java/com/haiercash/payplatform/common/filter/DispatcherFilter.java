@@ -36,7 +36,7 @@ public final class DispatcherFilter implements Filter {
         }
 
         //非转发 (not forward)
-        HttpServletRequest httpRequest = new DispatcherRequestWrapper((HttpServletRequest) request);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         RequestContext.begin(httpRequest, httpResponse);
         try {
