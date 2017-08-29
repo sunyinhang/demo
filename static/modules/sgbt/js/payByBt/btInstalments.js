@@ -11,7 +11,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer'], function(avalon, $, util
 		$id: "btInstalment",
         lengths: Const.lengths,
         definitionFn: function(){
-            util.alert('"顺逛白条"是顺逛商城联合海尔消费金融为其家电购买用户提供的一款"先消费，后付款"的在线支付产品服务');
+            util.alert('#btDescribe');
         },
         payFn:function(){
             layer.open({

@@ -46,6 +46,11 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     @Value("${app.other.appServer_page_url}")
     protected String appServer_page_url;
 
+    private static String MODULE_NO = "01";
+    public OCRIdentityServiceImpl(){
+        super(MODULE_NO);
+    }
+
     public Map<String, Object> ocrIdentity(MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("OCR身份信息获取*************开始");
         //图片非空判断

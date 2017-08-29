@@ -19,7 +19,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                         layout: 'primary',
                         click: function (event, editType, entity) {
                             util.redirect({
-                                title: '个人资料',
+                                // title: '个人资料',
                                 url: util.mix('/applyQuota/personalInform.html', {
                                     edxg: '1'
                                 })
@@ -32,7 +32,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
         methods: {
             getReasonsFn: function(param){
                 util.redirect({
-                    title: '额度申请进度',
+                    // title: '额度申请进度',
                     url: '/applyQuota/applyProgress.html'
                 });
             }

@@ -57,7 +57,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 payPasswd: entity.payPassword
                             });
                             util.redirect({
-                                title: '短信验证码',
+                                // title: '短信验证码',
                                 url: util.mix('/applyQuota/payPsdValidcode.html', {
                                     edxg: util.gup('edxg')
                                 }, true)

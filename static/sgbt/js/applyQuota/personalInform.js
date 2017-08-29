@@ -34,6 +34,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                         preset: 'json',
                                         choose: '#maritalStatus',
                                         validate: {
+                                            // TODO: 非必填？
                                             //required: '婚姻状况不能为空'
                                         }
                                     }
@@ -105,6 +106,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                             maxlength: '#address'
                                         },
                                         validate: {
+                                            // TODO: 非必填？
                                             //required: '居住详细地址不能为空'
                                         }
                                     }
@@ -389,31 +391,31 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                         //5. 跳转人脸识别
                                         if(res.body.flag == '1'){
                                             util.redirect({
-                                                title: '确认支付密码',
+                                                // title: '确认支付密码',
                                                 url: util.mix('/applyQuota/confirmPayPsd.html', {
                                                     edxg: util.gup('edxg')
                                                 }, true)
                                             });
                                         }else if(res.body.flag == '2'){
                                             util.redirect({
-                                                title: '设置支付密码',
+                                                // title: '设置支付密码',
                                                 url: util.mix('/applyQuota/setPayPsd.html', {
                                                     edxg: util.gup('edxg')
                                                 }, true)
                                             });
                                         }else if(res.body.flag == '3'){
-                                            util.alert('不能再做人脸识别，录单终止')
+                                            util.alert('#faceTerminate')
 
                                         }else if(res.body.flag == '4'){
                                             util.redirect({
-                                                title: '手持身份证',
+                                                // title: '手持身份证',
                                                 url: util.mix('/applyQuota/handholdIdCard.html', {
                                                     edxg: util.gup('edxg')
                                                 }, true)
                                             });
                                         }else if(res.body.flag == '5'){
                                             util.redirect({
-                                                title: '人脸识别',
+                                                // title: '人脸识别',
                                                 url: util.mix('/applyQuota/identityVrfic.html', {
                                                     edxg: util.gup('edxg')
                                                 }, true)

@@ -111,7 +111,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         validate: {
                             after: function (event, editType, entity) {
                                 if (!entity.agree) {
-                                    util.alert('#agree');
+                                    util.alert('#agreement');
                                     return false;
                                 }
                                 return true;
@@ -127,7 +127,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 },
                                 success:function(res){
                                     util.redirect({
-                                        title: '额度输出中',
+                                        // title: '额度输出中',
                                         url: '/applyQuota/applyIn.html'
                                     });
                                 }

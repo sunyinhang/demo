@@ -3,7 +3,6 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
     //获取重新提交的订单号
     var orderNo = util.gup('orderNo');
 
-
     var vm = util.bind({
         container: 'btInstalments',
         data: {
@@ -45,7 +44,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                     },
                                     success: function(res){
                                         util.redirect({
-                                            title: '支付成功',
+                                            // title: '支付成功',
                                             url: util.mix('/getPayPsd/paySuccess.html', {
                                                 edxg: util.gup('edxg')
                                             }, true)
@@ -53,7 +52,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                     },
                                     error: function(res){
                                         util.redirect({
-                                            title: '支付失败',
+                                            // title: '支付失败',
                                             url: util.mix('/getPayPsd/payFail.html', {
                                                 edxg: util.gup('edxg')
                                             }, true)
@@ -66,7 +65,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                             text: '忘记密码',
                             click: function () {
                                 util.redirect({
-                                    title: '找回支付密码',
+                                    // title: '找回支付密码',
                                     url: util.mix('/getPayPsd/getPayPsdWay.html', {
                                         from: 'btInstalments',
                                         edxg: util.gup('edxg')
@@ -79,7 +78,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             },
             payFn: function () {
                 if( !util.isEmpty(orderNo)){
-                    // TODO:
+                    // TODO: 写死的值？
                     var data={
                         flag: '1',
                         orderNo: orderNo ,
@@ -110,7 +109,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             },
             //什么是白条
             definitionBtFn: function(){
-                util.alert('#btDefin');
+                util.alert('#btDescribe');
             },
             //选择期数
             changePeriodFn: function(e,applyTnr){
@@ -144,6 +143,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 url: url,
                 success: function (res) {
                     var data = util.data(res);
+                    // TODO: 该使用filter
                     vm.payAmt = '￥'+data.payAmt;
                     vm.totalAmt = data.totalAmt;
                     vm.payMtd = data.payMtd;

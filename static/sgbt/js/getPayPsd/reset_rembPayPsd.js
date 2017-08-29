@@ -67,16 +67,16 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                     var from = util.gup('from');
                                     if (from) {
                                         var url;
-                                        var title;
+                                        // var title;
                                         if (from === 'confirmPayPsd') {
-                                            title = '验证支付密码';
+                                            // title = '验证支付密码';
                                             url = '/applyQuota/confirmPayPsd.html';
                                         } else if (from === 'btInstalments') {
-                                            title = '白条支付';
+                                            // title = '白条支付';
                                             url = '/payByBt/btInstalments.html';
                                         }
                                         util.redirect({
-                                            title: title,
+                                            // title: title,
                                             url: util.mix(url, {
                                                 from: 'reset',
                                                 edxg: util.gup('edxg')

@@ -133,7 +133,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                             size: this.pageSize
                         },
                         success: function(res){
-                            vm.refresh(util.data(res), pagination, _vm);
+                            vm.refresh(util.data(res), pagination, _vm , '1');
                         },
                         error: function () {
                             util.refresh({
@@ -181,7 +181,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     });
                 }
             },
-            refresh: function (data, pagination, _vm) {
+            refresh: function (data, pagination, _vm , flag) {
                 if (data && data.orders && data.orders.length > 0) {
                     var items = [];
                     for (var i=0; i<data.orders.length; i++) {
@@ -192,14 +192,22 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                 innerImage: 'custom/themes/default/images/payByBt/product.png',
                                 content: order.goodsName,
                                 badge: 'badge',
+                                // TODO: 应使用过滤器
                                 extra: '<span class="bv-align-right">合计：总计'+order.goodsCount +'件商品，合计: ￥'+ order.apprvAmt+'</span>',
                                 order: order,
                                 click: function(){
-                                    util.redirect({
-                                        title: '贷款详情',
-                                        url: '/payByBt/loanDetails.html?applSeq='+ order.applSeq,
-                                        back: true
-                                    });
+                                    // debugger
+                                    if(flag === '1'){
+                                        util.redirect({
+                                            // title: '订单详情',
+                                            url: '/payByBt/orderDetails.html?orderNo='+ order.orderNo
+                                        });
+                                    }else{
+                                        util.redirect({
+                                            // title: '贷款详情',
+                                            url: '/payByBt/loanDetails.html?applSeq='+ order.applSeq
+                                        });
+                                    }
                                 },
                                 operates: [
                                     // 1-待提交
@@ -237,9 +245,8 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         },
                                         click: function (event, item) {
                                             util.redirect({
-                                                title: '顺逛白条',
-                                                url: '/payByBt/btInstalments.html?orderNo='+ item.order.orderNo,
-                                                back: false
+                                                // title: '顺逛白条',
+                                                url: '/payByBt/btInstalments.html?orderNo='+ item.order.orderNo
                                             });
                                         }
                                     },{
@@ -279,9 +286,9 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         },
                                         click: function (event, item) {
                                             util.redirect({
-                                                title: '审批进度',
-                                                url: '/payByBt/applyProgress.html?applSeq='+ item.order.applSeq ,
-                                                back: false
+                                                // title: '审批进度',
+                                                url: '/payByBt/applyProgress.html?applSeq='+ item.order.applSeq
+                                                //back: false
                                             });
                                         }
                                     },{

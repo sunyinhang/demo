@@ -46,6 +46,11 @@ public class FaceServiceImpl extends BaseService implements FaceService{
     @Value("${app.other.haierDataImg_url}")
     protected String haierDataImg_url;
 
+    private static String MODULE_NO = "01";
+    public FaceServiceImpl(){
+        super(MODULE_NO);
+    }
+
     //人脸识别
     @Override
     public Map<String, Object> uploadFacePic(MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {

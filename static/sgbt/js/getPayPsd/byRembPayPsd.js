@@ -38,7 +38,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 payPasswd: entity.payPassword
                             });
                             util.redirect({
-                                title: '设置支付密码',
+                                // title: '设置支付密码',
                                 url: util.mix('/getPayPsd/reset_rembPayPsd.html', {
                                     from: util.gup('mix'),
                                     edxg: util.gup('edxg')

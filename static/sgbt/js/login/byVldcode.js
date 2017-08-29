@@ -49,6 +49,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         text: '海尔消费金融账户开通相关协议',
                         click: function () {
                             // 多个协议
+                            // TODO: 处理一下协议
                             util.actions([
                                 {
                                     text: '协议1',
@@ -81,7 +82,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         validate: {
                             after: function (event, editType, entity) {
                                 if (!entity.agree) {
-                                    util.alert('#agree');
+                                    util.alert('#agreement');
                                     return false;
                                 }
                                 return true;
@@ -95,7 +96,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 bankNo: param && param.bankNo
                             });
                             util.redirect({
-                                title: '实名认证找回密码',
+                                // title: '实名认证找回密码',
                                 url: '/login/reset_byVldcode.html'
                             });
                         }

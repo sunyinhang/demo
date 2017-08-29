@@ -37,7 +37,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','msPhotoUgrade'], function
                             }
                				else if (res.retObj.faceFlag === '3') {
                					//人脸识别失败，再拍摄一遍
-                                util.alert('人脸识别失败，请再使用摄像头拍摄一张人脸照片');
+                                util.alert('#faceCapture');
                             }else{
                             	return;
                             }

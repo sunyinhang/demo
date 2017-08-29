@@ -21,6 +21,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 readonly: 'readonly'
                             },
                             validate: {
+                                // TODO: 确认一下非必填
                                 //required: '银行卡类型不能为空'
                             }
                         }
@@ -45,7 +46,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         operate: {
                             type: 'hint',
                             click: function () {
-                                util.alert('银行预留手机号码是办理该银行卡是所填写的手机号码。没有预留、手机号码忘记或者已停用，请联系银行客服进行处理。');
+                                util.alert('#reservedMobile');
                             }
                         }
                     }
@@ -61,7 +62,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 bankNo: entity.bankNo
                             });
                             util.redirect({
-                                title: '实名认证找回密码',
+                                // title: '实名认证找回密码',
                                 url: '/login/byRlNmCertif_loginPsdVldcode.html'
                             });
                         }
@@ -79,7 +80,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                 vm: util.vm(vm, vm.tags.formKey),
                 entity: {
                     cardType: res.body.bankName+res.body.cardType,
-                    bankNo: res.body.bankNo,
+                    bankNo: res.body.bankNo
                 }
             });
         }

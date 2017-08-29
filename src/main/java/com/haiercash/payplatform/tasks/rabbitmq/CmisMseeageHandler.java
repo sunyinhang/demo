@@ -30,7 +30,7 @@ import java.util.UUID;
  * @since v1.0.1
  */
 @Component
-@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
+//@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
 public class CmisMseeageHandler {
     private Log logger = LogFactory.getLog(CmisMseeageHandler.class);
 
@@ -97,10 +97,10 @@ public class CmisMseeageHandler {
                         // 根据合作方编码 获取要转发的第三方的url
 
                         //cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-                        String urlOne = publishDao.selectChannelNoUrl(channelNo);//获取贷款申请URL
-                        //String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";
-                        String url = publishDao.selectChannelNoUrlOne(channelNo);//获取额度申请URL
-                        //String url="http://mobiletest.ehaier.com:58093/paycenter/json/ious/limitNotify.json";
+//                        String urlOne = publishDao.selectChannelNoUrl(channelNo);//获取贷款申请URL
+                        String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";
+//                        String url = publishDao.selectChannelNoUrlOne(channelNo);//获取额度申请URL
+                        String url="http://mobiletest.ehaier.com:58093/paycenter/json/ious/limitNotify.json";
                         HashMap<String, Object> mapidNo = new HashMap<>();
                         HashMap<Object, Object> map = new HashMap<>();
                         HashMap<String, Object> mapinfo = new HashMap<>();

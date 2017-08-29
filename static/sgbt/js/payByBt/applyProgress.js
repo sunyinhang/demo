@@ -1,7 +1,6 @@
 require(['jquery', 'util', 'Const'], function($, util, Const) {
 
     var applSeq = util.gup('applSeq');
-    var orderNo = util.gup('orderNo');
 
     var vm = util.bind({
         container: 'applyProgress',
@@ -15,7 +14,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         },
         mounted: function(){
             util.get({
-                url: "/queryApprovalProcessInfo?applSeq="+ applSeq,
+                url: "/queryDkProcessInfo?applSeq="+ applSeq,
                 success:function(res){
                     vm.items=util.data(res).reverse();
                     vm.lastItem=vm.items[0];
