@@ -53,8 +53,8 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                     } else if (data.faceFlag === '1') {
                                         //已设置支付密码
                                         util.redirect({
-                                            // title: '输入短信验证码',
-                                            url: '/applyQuota/payPsdValidcode.html'
+                                            title: '输入短信验证码',
+                                            url: '/applyQuota/confirmPayPsd.html'
                                         });
                                     } else if (data.faceFlag === '2') {
                                         //人脸识别失败，跳转手持身份证

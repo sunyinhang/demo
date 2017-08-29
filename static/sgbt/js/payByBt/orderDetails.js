@@ -29,18 +29,21 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 },
                 success: function (res) {
                     var data = util.data(res);
-                    if( util.isEmpty(data)){
-                        vm.repayApplCardNo = '****'+data.appl_card_no.substring(-4,4);
-                        vm.repayAccBankName = data.acc_bank_name;
-                        vm.applyDt = data.applyDt;
-                        vm.applseq = data.applseq;
-                        vm.goodsName = data.goodsName;
+                    if( !util.isEmpty(data)){
+
+                        vm.repayApplCardNo = '****'+data.repay_appl_card_no.substring(-4,4);
+                        vm.repayAccBankName = data.repay_acc_bank_name;
+                        vm.applyDt = data.apply_dt;
+                        vm.applseq = data.appl_seq;
+
+                        vm.goodsName = data.goods_name;
                         vm.goodsPrice = data.goodsPrice;
                         vm.mthAmt = data.mthAmt;
-                        vm.applyAmt = '￥'+data.applyAmt;
+
+
+                        vm.applyAmt = '￥'+data.apply_amt;
                         vm.xfze = data.xfze;
-                        vm.applyTnrTyp = data.applyTnrTyp;
-                        vm.ordertotal = '￥'+data.ordertotal;
+                        vm.ordertotal = '￥'+data.apply_amt + data.xfze;
                     }
                 }
             });
