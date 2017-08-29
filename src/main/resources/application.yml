@@ -168,6 +168,9 @@ app:
     sg_store_no: 302017040270
     sg_user_id: 303197
     sg_typCde: 17098a
+    sg_typLevelTwo: 010014
+    sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
+    sg_consumer: dc04a273474a404bafdad48ddb63cce2
   redis:
     prefix: PAYPLATFORM
     # 过期时间，以秒为单位
