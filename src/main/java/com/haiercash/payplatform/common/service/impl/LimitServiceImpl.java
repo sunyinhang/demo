@@ -25,11 +25,6 @@ public class LimitServiceImpl extends BaseService implements LimitService{
 
     @Value("${app.shunguang.sg_typCde}")
     protected String sg_typCde;
-    //模块编码  02
-    private static String MODULE_NO = "02";
-    public LimitServiceImpl() {
-        super(MODULE_NO);
-    }
 
     @Override
     public Map<String, Object> CreditLineApply(String token, String channel, String channelNo) throws Exception {

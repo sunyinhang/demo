@@ -45,11 +45,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
 
-    private static String MODULE_NO = "01";
-    public ShunguangServiceImpl() {
-        super(MODULE_NO);
-    }
-
     @Override
     public Map<String, Object> saveStoreInfo(Map<String, Object> storeInfo) {
 

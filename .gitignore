@@ -4,8 +4,9 @@
 .classpath
 .project
 AppServer.iml
-*/**/*.iml
+*.iml
 bin/
+classes/
 logback/
 .gradle/
 build/

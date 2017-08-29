@@ -43,12 +43,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     @Value("${app.shunguang.sg_typCde}")
     protected String sg_typCde;
 
-    //模块编码  03
-    private static String MODULE_NO = "03";
-    public CustExtInfoServiceImpl() {
-        super(MODULE_NO);
-    }
-
     @Override
     public Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();

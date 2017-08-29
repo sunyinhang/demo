@@ -47,6 +47,15 @@ public class BaseController extends AbstractController {
         return RestUtil.success(result);
     }
 
+    public String getModuleNo() {
+        return module;
+    }
+
+    @Override
+    protected String getToken() {
+        return RequestContext.data().getToken();
+    }
+
     @Override
     protected String getChannel() {
         return RequestContext.data().getChannel();
@@ -57,22 +66,13 @@ public class BaseController extends AbstractController {
         return RequestContext.data().getChannelNo();
     }
 
-    @Override
-    protected String getToken(){
-        return RequestContext.data().getToken();
-    }
-
-    public String getModuleNo() {
-        return module;
-    }
-
     protected Map<String, Object> initParam(Map<String, Object> paramMap) {
         if (paramMap == null) {
             paramMap = new HashMap<>();
         }
-        paramMap.put("token", httpServletRequest.getHeader("token"));
-        paramMap.put("channel", httpServletRequest.getHeader("channel"));
-        paramMap.put("channelNo", httpServletRequest.getHeader("channelNo"));
+        paramMap.put("token", RequestContext.data().getToken());
+        paramMap.put("channel", RequestContext.data().getChannel());
+        paramMap.put("channelNo", RequestContext.data().getChannelNo());
         return paramMap;
     }
 
