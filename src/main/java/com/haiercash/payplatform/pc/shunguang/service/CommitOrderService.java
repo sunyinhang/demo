@@ -14,5 +14,7 @@ public interface CommitOrderService {
      * @param map
      * @return
      */
-    Map<String, Object> commitOrder(Map<String, Object> map);
+    Map<String, Object> commitOrder(Map<String, Object> map)  throws Exception;
+
+    Map<String, Object> test();
 }

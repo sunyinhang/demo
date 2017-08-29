@@ -85,7 +85,7 @@ public class SgInnerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/shunguang/commitOrder", method = RequestMethod.POST)
-    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) {
+    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) throws Exception{
         return commitOrderService.commitOrder(super.initParam(map));
     }
 

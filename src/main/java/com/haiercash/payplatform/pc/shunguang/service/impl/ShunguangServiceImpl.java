@@ -159,6 +159,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String orderSn = bodyjson.getString("orderSn");//订单号
         String loanType = bodyjson.getString("loanType");//贷款品种编码
         String payAmt = bodyjson.getString("payAmt");//订单实付金额
+        double payAmount = Double.parseDouble(payAmt);
+        if(payAmount < 600){
+            logger.info("单笔支付金额需大于等于600元");
+            return fail(ConstUtil.ERROR_CODE, "单笔支付金额需大于等于600元");
+        }
         String province = bodyjson.getString("province");//省
         String city = bodyjson.getString("city");//市
         String country = bodyjson.getString("country");//区

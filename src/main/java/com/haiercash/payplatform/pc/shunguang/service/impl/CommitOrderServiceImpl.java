@@ -5,12 +5,11 @@ import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.*;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
+import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.common.service.AppServerService;
-import com.haiercash.payplatform.common.service.CmisApplService;
-import com.haiercash.payplatform.common.service.GmService;
-import com.haiercash.payplatform.common.service.HaierDataService;
+import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.service.*;
 import com.haiercash.payplatform.common.utils.*;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
@@ -49,6 +48,11 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     private GmService gmService;
     @Autowired
     private SgInnerService sgInnerService;
+    @Autowired
+    private CooperativeBusinessDao cooperativeBusinessDao;
+    @Autowired
+    private OrderManageService orderManageService;
+
     private static String MODULE_NO = "01";
     public CommitOrderServiceImpl() {
         super(MODULE_NO);
@@ -60,7 +64,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
      * @return
      */
     @Override
-    public Map<String, Object> commitOrder(Map<String, Object> map) {
+    public Map<String, Object> commitOrder(Map<String, Object> map)  throws Exception{
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
         String token = (String) map.get("token");
@@ -127,7 +131,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         pwdmap.put("channelNo", channelNo);
         Map<String, Object> resmap = appServerService.validatePayPasswd(token, pwdmap);
         if(!HttpUtil.isSuccess(resmap)){
-            return resmap;
+            return fail("error", "支付密码校验失败");
         }
 
         //2.合同签订
@@ -160,7 +164,93 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
         applSeq = relation.getApplSeq();
         Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
+
+        //6.信息推送
+        if(HttpUtil.isSuccess(result)){//提交订单成功
+            String uidHaier = (String) cacheMap.get("uidHaier");
+            //根据applSeq查询商城订单号和网单号
+            Map m = orderManageService.getMallOrderNoByApplSeq(applSeq);
+            if(!HttpUtil.isSuccess(m)){
+                return m;
+            }
+            Map ordermap = (HashMap<String, Object>)m.get("body");
+            String mallOrderNo = (String) ordermap.get("mallOrderNo");
+
+            HashMap<Object, Object> bodyinfo = new HashMap<>();
+            Map sendmap = new HashMap<>();
+            sendmap.put("outSts", "01");
+            sendmap.put("applSeq", applSeq);//申请流水号
+            sendmap.put("idNo", certNo);//身份证号
+            sendmap.put("orderNo",mallOrderNo);//商城订单编号
+            bodyinfo.put("body",sendmap);
+            bodyinfo.put("userid",uidHaier);//集团userid   1000030088
+            String sgString = com.alibaba.fastjson.JSONObject.toJSONString(bodyinfo);
+            String tradeCode="Sg-10007";
+            String encrypt = encrypt(sgString, channelNo,tradeCode);
+            String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";//TODO!!!!
+            HttpClient.sendPost(urlOne, encrypt, "utf-8");
+        }
+
+
         return result;
+    }
+
+    @Override
+    public Map<String, Object> test() {
+//        String uidHaier = (String) cacheMap.get("uidHaier");
+//        //根据applSeq查询商城订单号和网单号
+//        Map m = orderManageService.getMallOrderNoByApplSeq(applSeq);
+//        if(!HttpUtil.isSuccess(m)){
+//            return m;
+//        }
+//        Map ordermap = (HashMap<String, Object>)m.get("body");
+//        String mallOrderNo = (String) ordermap.get("mallOrderNo");
+
+        HashMap<Object, Object> bodyinfo = new HashMap<>();
+        Map sendmap = new HashMap<>();
+        sendmap.put("outSts", "01");
+        sendmap.put("applSeq", "11");//申请流水号
+        sendmap.put("idNo", "11");//身份证号
+        sendmap.put("orderNo","11");//商城订单编号
+        bodyinfo.put("body",sendmap);
+        bodyinfo.put("userid","1000030088");//集团userid   1000030088
+        String sgString = com.alibaba.fastjson.JSONObject.toJSONString(bodyinfo);
+        String tradeCode="Sg-10007";
+        String encrypt = null;
+        try {
+            encrypt = encrypt(sgString, "46",tradeCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";//TODO!!!!
+        String sendresult = HttpClient.sendPost(urlOne, encrypt, "utf-8");
+        logger.info("sendresult:  " + sendresult);
+        return fail("error", "支付密码校验失败");
+    }
+
+    private String encrypt(String data, String channelNo,String tradeCode) throws Exception {
+        //byte[] bytes = key.getBytes();
+        //获取渠道私钥
+        logger.info("获取渠道" + channelNo + "私钥");
+        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
+        if (cooperativeBusiness == null) {
+            throw new RuntimeException("渠道" + channelNo + "私钥获取失败");
+        }
+        String publicKey = cooperativeBusiness.getRsapublic();//获取私钥
+
+        //1.生成随机密钥
+        String password = DesUtil.productKey();
+        //2.des加密
+        String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(), password));
+        //3.加密des的key
+        String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(), publicKey));
+        org.json.JSONObject reqjson = new org.json.JSONObject();
+        reqjson.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
+        reqjson.put("channelNo", super.getChannelNo());
+        reqjson.put("tradeCode", tradeCode);
+        reqjson.put("data", desData);
+        reqjson.put("key", password_);
+        return reqjson.toString();
     }
 
 

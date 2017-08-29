@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
+import java.util.Locale;
 
 import static java.lang.System.out;
 
@@ -127,11 +128,20 @@ public class OCRIdentityTC {
     public String getOCR(byte[] pImgBuff){
 
         String strResult = null;
-
-        String timeKey = "ed969133dd0eece08b478d9478ff3c06";
-        int ret = engineOCR.Start(timeKey);
-
+        //window
+        //String timeKey = "ed969133dd0eece08b478d9478ff3c06";
+        //int ret = engineOCR.Start(timeKey);
+        //linux
         //int ret = engineOCR.Start(engineOCR.Byte2String(engineOCR.GetEngineTimeKey()));//初始化
+
+        int ret;
+        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        if (!com.alibaba.druid.util.StringUtils.isEmpty(osName) && osName.startsWith("win")) { //window
+            String timeKey = "ed969133dd0eece08b478d9478ff3c06";
+            ret = engineOCR.Start(timeKey);
+        } else { //linux
+            ret = engineOCR.Start(engineOCR.Byte2String(engineOCR.GetEngineTimeKey()));//初始化
+        }
         if (ret == 100) {
             out.println("天诚OCR身份证识别：该版本为试用版本，时间过期，请联系技术员\n");
             logger.info("天诚OCR身份证识别：该版本为试用版本，时间过期，请联系技术员\n");

@@ -15,9 +15,9 @@ public class Demo {
 
 		//System.loadLibrary("IDCARD_THR");
 		String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-		if (!StringUtils.isEmpty(osName) && osName.startsWith("win")) {
+		if (!StringUtils.isEmpty(osName) && osName.startsWith("win")) { //window
 			System.loadLibrary("OCRDLL_THR");
-		} else {
+		} else { //linux
 			System.loadLibrary("IDCARD_THR");
 		}
 //			System.out.println("java.library.path:"+System.getProperty("java.library.path"));
