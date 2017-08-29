@@ -501,9 +501,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             }
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        JSONObject head = new JSONObject(mapcache.get("head"));
-        String retFlag = head.getString("retFlag");
-        String retMsg = head.getString("retMsg");
+        Object head2 = mapcache.get("head");
+        Map<String,Object> retinfo = (Map) head2;
+        String retFlag = (String) retinfo.get("retFlag");
+        String retMsg = (String) retinfo.get("retMsg");
         if ("00000".equals(retFlag)) {
             Map<String, Object> headinfo = (Map) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
