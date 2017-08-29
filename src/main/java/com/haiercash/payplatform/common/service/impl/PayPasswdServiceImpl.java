@@ -466,7 +466,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         logger.info("渠道编码channelNo" + channelNo);
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
-            logger.info("Jedis获取缓存失败");
+            logger.info("Redis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //String applSeq = (String) cacheMap.get("applSeq");//申请流水号
