@@ -245,8 +245,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String URL = (String) json.get("URL");//额度回调url
         String custmessage = json.get("custmessage").toString();
         JSONObject custjson = new JSONObject(custmessage);
-        if (custjson.has("name")) {
-            Object name = custjson.get("name");
+        String idNoHaier = "";
+        if (custjson.has("idNo")) {//第三方推送的身份证号
+            idNoHaier = (String) custjson.get("idNo");
+            cachemap.put("idNoHaier", idNoHaier);
         }
 
         //1.根据token获取客户信息
@@ -288,11 +290,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, "未获取到userId");
         }
         String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
-//        if (!HttpUtil.isSuccess(userInforesult) ) {
-//            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
-//        }
+        if (StringUtils.isEmpty(userInforesult)) {
+            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
+        }
         Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
-//        String retFlag = ((HashMap<String, Object>)(resultMap.get("head"))).get("retFlag").toString();
         String head = resultMap.get("head").toString();
         Map<String, Object> headMap = HttpUtil.json2Map(head);
         String retFlag = headMap.get("retFlag").toString();
@@ -376,6 +377,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String cardNo = ((HashMap<String, Object>) (custresult.get("body"))).get("cardNo").toString();//银行卡号
         String bankNo = ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankNo").toString();//银行代码
         String bankName = ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
+
+        //顺逛传送身份证与客户实名身份证不一致
+        if(!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(certNo)){
+            logger.info("顺逛传送身份证与客户实名身份证不一致");
+            return fail(ConstUtil.ERROR_CODE, "身份验证失败");
+        }
 
         cachemap.put("custNo", custNo);//客户编号
         cachemap.put("name", custName);//客户姓名

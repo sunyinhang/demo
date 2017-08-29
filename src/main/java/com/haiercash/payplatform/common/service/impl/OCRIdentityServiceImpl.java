@@ -341,6 +341,14 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String ethnic = (String) cacheMap.get("race");//扫描民族
         String idCard = (String) cacheMap.get("idCard");//扫描身份证号
         String userId = (String) cacheMap.get("userId");//userId
+
+        //顺逛传送身份证与客户实名身份证不一致
+        String idNoHaier = (String) cacheMap.get("idNoHaier");//
+        if(!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(idCard)){
+            logger.info("顺逛传送身份证与客户实名身份证不一致");
+            return fail(ConstUtil.ERROR_CODE, "身份验证失败");
+        }
+
         //4.缓存数据非空判断
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
                 || StringUtils.isEmpty(regAddr) || StringUtils.isEmpty(validDate) || StringUtils.isEmpty(certOrga)
