@@ -276,7 +276,8 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                     success: function (res) {
                                         util.redirect({
                                             // title: '个人资料',
-                                            url: '/applyQuota/personalInform.html'
+                                            url: '/applyQuota/personalInform.html',
+                                            back: false
                                         });
                                     }
                                 });

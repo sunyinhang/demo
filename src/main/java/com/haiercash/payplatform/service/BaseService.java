@@ -2,9 +2,10 @@ package com.haiercash.payplatform.service;
 
 import com.haiercash.commons.service.AbstractService;
 import com.haiercash.payplatform.common.filter.RequestContext;
+import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.RestUtil;
 import com.haiercash.payplatform.common.utils.ResultHead;
-import com.haiercash.payplatform.common.utils.ConstUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,29 +23,7 @@ public class BaseService extends AbstractService {
     @Value("${app.other.outplatform_url}")
     protected String outplatUrl;
 
-    private String moduleNo;
-
-//    @Value("${common.address.gateUrl}")
-//    private String gateUrl;
-
     public BaseService() {
-    }
-
-    public BaseService(String moduleNo) {
-        this.moduleNo = moduleNo;
-    }
-
-    public String getModuleNo() {
-        return this.moduleNo;
-    }
-
-    public void setModuleNo(String moduleNo) {
-        this.moduleNo = moduleNo;
-    }
-
-    @Override
-    protected String getToken() {
-        return RequestContext.data().getToken();
     }
 
     @Override
@@ -57,7 +36,7 @@ public class BaseService extends AbstractService {
     }
 
     protected Map<String, Object> success(String retMsg) {
-        Map<String, Object> returnMap =  RestUtil.success();
+        Map<String, Object> returnMap = RestUtil.success();
         ResultHead head = (ResultHead) returnMap.get("head");
         head.setRetMsg(retMsg);
         returnMap.put("head", head);
@@ -90,6 +69,17 @@ public class BaseService extends AbstractService {
         return resultMap;
     }
 
+    protected String getModuleNo() {
+        return RequestContext.exists()
+                ? RequestContext.data().getEntryModuleNo()
+                : StringUtils.EMPTY;
+    }
+
+    @Override
+    protected String getToken() {
+        return RequestContext.data().getToken();
+    }
+
     @Override
     protected String getChannel() {
         return RequestContext.data().getChannel();
@@ -99,5 +89,4 @@ public class BaseService extends AbstractService {
     protected String getChannelNo() {
         return RequestContext.data().getChannelNo();
     }
-
 }

@@ -45,11 +45,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
 
-    private static String MODULE_NO = "01";
-    public ShunguangServiceImpl() {
-        super(MODULE_NO);
-    }
-
     @Override
     public Map<String, Object> saveStoreInfo(Map<String, Object> storeInfo) {
 
@@ -515,20 +510,53 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if ("00000".equals(retFlag)) {
             Map<String, Object> headinfo = (Map) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
+            //applType="2";
             String retmsg = "01";//未申请
-            if ("1".equals(applType)) {
+            if ("1".equals(applType) || "".equals(applType)) {
                 logger.info("没有额度申请");
                 HashMap<Object, Object> map1 = new HashMap<>();
                 map1.put("outSts", "01");
                 return success(map1);
             } else if ("2".equals(applType)) {
+                HashMap<String, Object> mapinfo = new HashMap<>();
+                mapinfo.put("userId",userIdone);//15275126181
+                mapinfo.put("channelNo",channelNo);
+                mapinfo.put("channel","11");
+                //String idNo = (String) userjson.get("idNo");//客户证件号码
+                Map<String, Object> map1 = appServerService.queryPerCustInfo(token,mapinfo);//3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
+                Map<String, Object> headin = (Map) map1.get("head");
+                String retMsginfo = (String) headin.get("retMsg");
+                if (StringUtils.isEmpty(map1)){
+                    logger.info("查询客户实名认证信息接口返回数据为空"+map1);
+                    return fail(ConstUtil.ERROR_CODE,retMsginfo);
+                }
+                Map<String, Object> bodyinfo = (Map) map1.get("body");
+                String idNo = (String) bodyinfo.get("certNo");
+                logger.info("获取的客户证件号码idNo:" + idNo);
+                // String idNo="372926199009295116";
+                String idTyp = "20";//证件类型  身份证：20
+                if (StringUtils.isEmpty(idNo) || StringUtils.isEmpty(channelNo)) {
+                    logger.info("获取的数据为空：idNo=" + idNo + "  ,channelNo" + channelNo);
+                    String retMsgin = "获取的数据为空";
+                    return fail(ConstUtil.ERROR_CODE, retMsgin);
+                }
+                HashMap<String, Object> edCheckmap = new HashMap<>();
+                edCheckmap.put("idNo", idNo);
+                edCheckmap.put("channel", "11");
+                edCheckmap.put("channelNo", channelNo);
+                edCheckmap.put("idTyp", idTyp);
+                Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, edCheckmap);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
+//                String edappl = com.alibaba.fastjson.JSONObject.toJSONString(edApplProgress);
+//                com.alibaba.fastjson.JSONObject jsonObjectone = com.alibaba.fastjson.JSONObject.parseObject(edappl);
+//                com.alibaba.fastjson.JSONObject body = jsonObjectone.getJSONObject("body");
+                Map<String,Object> body = (Map) edApplProgress.get("body");
                 HashMap<Object, Object> mapone = new HashMap<>();
-                mapone.put("apprvCrdAmt", (String) headinfo.get("apprvCrdAmt"));//审批总额度
-                mapone.put("applyDt", (String) headinfo.get("applyDt"));//申请时间
-                mapone.put("operateTime", (String) headinfo.get("operateTime"));//审批时间
-                mapone.put("appOutAdvice", (String) headinfo.get("appOutAdvice"));//审批意见
-                mapone.put("applSeq", (String) headinfo.get("applSeq"));//申请流水号
-                String outSts = (String) headinfo.get("outSts");
+                mapone.put("apprvCrdAmt", body.get("apprvCrdAmt"));//审批总额度
+                mapone.put("applyDt", body.get("applyDt"));//申请时间
+                mapone.put("operateTime", body.get("operateTime"));//审批时间
+                mapone.put("appOutAdvice", body.get("appOutAdvice"));//审批意见
+                mapone.put("applSeq", body.get("applSeq"));//申请流水号
+                String outSts = body.get("outSts").toString();
                 //outSts="01";
                 if ("01".equals(outSts)) {//APP 审批中  01
                     mapone.put("outSts", "02");//顺逛 审批中  02

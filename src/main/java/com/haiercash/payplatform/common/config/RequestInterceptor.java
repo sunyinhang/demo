@@ -3,14 +3,13 @@ package com.haiercash.payplatform.common.config;
 import com.haiercash.payplatform.common.controller.BaseController;
 import com.haiercash.payplatform.common.filter.RequestContext;
 import com.haiercash.payplatform.common.filter.RequestContextData;
-import org.apache.commons.lang.StringUtils;
+import com.haiercash.payplatform.common.utils.RestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * request interceptor.
  * <p>
- *     统一处理请求方channel与channel_no，便于控制层与service层获取使用.
+ * 拦截所有带有@RequestCheck注解的方法，获取请求参数中的userId，
+ * 根据userId获取用户token，与请求中的token进行比较，如果不相同，
+ * 则认定为非法请求，返回错误。
  * </p>
  *
  * @author liu qingxiang
@@ -41,13 +42,17 @@ public class RequestInterceptor {
         //获取目标 controller
         Object target = joinPoint.getTarget();
         if (!(target instanceof BaseController)) {
-            logger.error(String.format("%s not extends %s", target.getClass(), BaseController.class));
+            this.logger.error(String.format("%s not extends %s", target.getClass(), BaseController.class));
             return null;
         }
         BaseController controller = (BaseController) target;
         //初始化数据,如果扩展 rcData 数据,在此添加
         if (!rcData.isInited()) {
-            this.initChannelAndToken(rc);
+            try {
+                this.init(rc);
+            } catch (Exception e) {
+                return RestUtil.fail("P9999", e.getMessage());
+            }
             rcData.completeInit();//完成初始化
         }
         //进入 controller
@@ -60,17 +65,11 @@ public class RequestInterceptor {
     }
 
     //初始化渠道
-    private void initChannelAndToken(RequestContext rc) {
+    private void init(RequestContext rc) {
         HttpServletRequest request = rc.getRequest();
+        String token = request.getHeader("token");
         String channel = request.getHeader("channel");
         String channelNo = request.getHeader("channelNo");
-        String token = request.getHeader("token");
-        if (StringUtils.isEmpty(channel))
-            channel = "11";
-        /*if (StringUtils.isEmpty(channelNo))
-            channelNo = "05";*/
-        rc.getData().initChannel(channel, channelNo);
-        rc.getData().initToken(token);
+        rc.getData().init(token, channel, channelNo);
     }
-
 }

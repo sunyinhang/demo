@@ -13,11 +13,9 @@ import java.util.Stack;
  */
 public final class RequestContextData {
     private boolean inited;
+    private String token;
     private String channel;
     private String channelNo;
-    private String token;
-    private boolean needVerify;
-    private boolean executedVerify;
     private Stack<BaseController> controllerStack = new Stack<>();
 
     //构造函数
@@ -30,22 +28,16 @@ public final class RequestContextData {
         return inited;
     }
 
+    public String getToken() {
+        return token;
+    }
+
     public String getChannel() {
         return channel;
     }
 
     public String getChannelNo() {
         return channelNo;
-    }
-
-    public String getToken() {return token;}
-
-    public boolean isNeedVerify() {
-        return needVerify;
-    }
-
-    public boolean isExecutedVerify() {
-        return executedVerify;
     }
 
     public BaseController getEntryController() {
@@ -72,27 +64,17 @@ public final class RequestContextData {
 
     //endregion
 
-    public void initChannel(String channel, String channelNo) {
-//        Assert.notNull(channel, "channel can not be null");
-//        Assert.notNull(channelNo, "channelNo can not be null");
+    public void init(String token, String channel, String channelNo) {
+//        Assert.hasText(token, "token 不能为空");
+//        Assert.hasText(channel, "channel 不能为空");
+//        Assert.hasText(channelNo, "channelNo 不能为空");
+        this.token = token;
         this.channel = channel;
         this.channelNo = channelNo;
     }
 
-    public void initToken(String token) {
-        this.token = token;
-    }
-
     public void completeInit() {
         this.inited = true;
-    }
-
-    public void setNeedVerify(boolean needVerify) {
-        this.needVerify = needVerify;
-    }
-
-    public void setExecutedVerify() {
-        this.executedVerify = true;
     }
 
     public void enterController(BaseController controller) {

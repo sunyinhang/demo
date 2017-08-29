@@ -53,11 +53,6 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     @Autowired
     private OrderManageService orderManageService;
 
-    private static String MODULE_NO = "01";
-    public CommitOrderServiceImpl() {
-        super(MODULE_NO);
-    }
-
     /**
      * 订单提交
      * @param map

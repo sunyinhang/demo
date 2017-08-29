@@ -39,13 +39,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     @Autowired
     private AcquirerService acquirerService;
 
-    //模块编码  02
-    private static String MODULE_NO = "04";
-
-    public PayPasswdServiceImpl() {
-        super(MODULE_NO);
-    }
-
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
         String retflag = "";
@@ -72,6 +65,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String userId = (String) cacheMap.get("userId");
         logger.info("获取的userId为："+userId);
         //String userId = "18325423979";
+        String phoneNo = (String) cacheMap.get("phoneNo");//手机号
+
 
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
         validateUserFlagMap.put("channelNo", channelNo);// 渠道
@@ -228,6 +223,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         mapEd.put("channel", channel);
         mapEd.put("channelNo", channelNo);
         mapEd.put("custNo", custNo);
+        mapEd.put("verifyMobile", phoneNo);//手机号
+        mapEd.put("verifyNo", verifyNo);//验证码
         //String crdSeq = "";
         if ("1".equals(edxgflag)) {//有在途的流水号(修改)
             mapEd.put("flag", "2");
@@ -469,7 +466,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         logger.info("渠道编码channelNo" + channelNo);
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
-            logger.info("Jedis获取缓存失败");
+            logger.info("Redis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //String applSeq = (String) cacheMap.get("applSeq");//申请流水号
