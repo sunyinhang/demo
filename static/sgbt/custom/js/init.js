@@ -143,6 +143,13 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
         $(this).removeAttr('data-title').removeAttr('data-url');
         $('iframe', this).attr('src', 'about:blank');
     });
+    window.onerror = function(errorMessage, scriptURI, lineNumber, columnNumber, errorObj) {
+        util.report({
+            from: 'onerror',
+            errorMessage: errorMessage,
+            scriptURI: scriptURI
+        });
+    };
 
     var path = util.path();
     if (!util.isEmpty(path) && path !== '/' && path !== '/index.html') {

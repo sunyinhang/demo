@@ -16,7 +16,8 @@ var __Const = {
         cache: {
             get: '/cache',
             set: '/cache'
-        }
+        },
+        report: '/report'
     },
     route: {
         baseUrl: window.location.protocol + "//" + window.location.host,
