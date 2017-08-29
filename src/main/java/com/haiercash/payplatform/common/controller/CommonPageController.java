@@ -478,4 +478,8 @@ public class CommonPageController extends BaseController {
         return payPasswdService.queryCustNameByUId(super.getToken());
     }
 
+    @RequestMapping(value = "/api/payment/report", method = RequestMethod.POST)
+    public void report(@RequestBody String error) {
+        logger.error(error);
+    }
 }
