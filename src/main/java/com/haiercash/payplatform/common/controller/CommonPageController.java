@@ -233,18 +233,18 @@ public class CommonPageController extends BaseController {
     }
 
 
-    /**
-     * 额度申请提交
-     *
-     * @param verifyNo
-     * @param payPasswd
-     * @return
-     */
-    @RequestMapping(value = "/api/payment/edApply", method = RequestMethod.GET)
-    public Map<String, Object> edApply(@RequestParam(value = "verifyNo") String verifyNo,
-                                       @RequestParam(value = "password") String payPasswd) {
-        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNo());
-    }
+//    /**
+//     * 额度申请提交
+//     *
+//     * @param verifyNo
+//     * @param payPasswd
+//     * @return
+//     */
+//    @RequestMapping(value = "/api/payment/edApply", method = RequestMethod.GET)
+//    public Map<String, Object> edApply(@RequestParam(value = "verifyNo") String verifyNo,
+//                                       @RequestParam(value = "password") String payPasswd) {
+//        return payPasswdService.edApply(super.getToken(), verifyNo, payPasswd, super.getChannel(), super.getChannelNo());
+//    }
 
 
     /**
