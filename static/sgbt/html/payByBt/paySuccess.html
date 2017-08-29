@@ -5,7 +5,7 @@
 	<div class="main02">
 		<b>支付成功</b>
 		<p>感谢您对海尔的支持，货物正快马加鞭送至您的府上</p>
-		<a href="javascript:void(0);" class="a-btn" ms-click="@paySuccFn">查看订单</a>
+		<a href="javascript:void(0);" class="a-btn" @click="reviewOrdersFn">查看订单</a>
 	</div>
 	<div class="main-03">
 		<div class="main-03-l"></div>
@@ -18,7 +18,9 @@
 </div>
 <script type="text/javascript">
 	require(['jquery', 'util'], function($, util) {
-		// TODO: 标题
-		// util.title('');
+		util.title('支付成功');
+		util.script({
+			url: '/payByBt/paySuccess.js'
+		});
 	});
 </script>

@@ -46,7 +46,8 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                         util.redirect({
                                             // title: '支付成功',
                                             url: util.mix('/getPayPsd/paySuccess.html', {
-                                                edxg: util.gup('edxg')
+                                                edxg: util.gup('edxg'),
+                                                applSeq: applSeq
                                             }, true)
                                         });
                                     },
@@ -141,8 +142,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 url: url,
                 success: function (res) {
                     var data = util.data(res);
-                    // TODO: 该使用filter
-                    vm.payAmt = '￥'+data.payAmt;
+                    vm.payAmt = data.payAmt;
                     vm.totalAmt = data.totalAmt;
                     vm.payMtd = data.payMtd;
                     if(!util.isEmpty(data.applyTnr)){

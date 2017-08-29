@@ -91,6 +91,11 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                 }
             }
         },
+        filters: {
+            currency: function (val) {
+                return util.format(val, 'currency');
+            }
+        },
         methods: {
             onActive: function (index, pagination, _vm) {
                 /*util.refresh({
@@ -192,8 +197,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                 innerImage: 'custom/themes/default/images/payByBt/product.png',
                                 content: order.goodsName,
                                 badge: 'badge',
-                                // TODO: 应使用过滤器
-                                extra: '<span class="bv-align-right">合计：总计'+order.goodsCount +'件商品，合计: ￥'+ order.apprvAmt+'</span>',
+                                extra: '<span class="bv-align-right">合计：总计'+order.goodsCount +'件商品，合计: '+ util.format(order.apprvAmt , 'currency' )+'</span>',
                                 order: order,
                                 click: function(event, item){
                                     // debugger

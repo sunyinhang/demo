@@ -79,16 +79,8 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             util.get({
                 url: '/queryApplListBySeq?applSeq='+ applSeq,
                 success: function(res){
-                    vm.bills = util.data(res);
-                }
-            });
-            util.get({
-                url: '/queryApplAmtBySeqAndOrederNo?applSeq='+ applSeq,
-                success: function(res){
-                    var data = util.data(res);
-                    if(!util.isEmpty(data)){
-                        vm.zdhkFee = data.zdhkFee;
-                    }
+                    vm.bills = util.data(res).list;
+                    vm.zdhkFee = util.data(res).fqze;
                 }
             });
         }
