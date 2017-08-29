@@ -65,9 +65,9 @@ public final class RequestContextData {
     //endregion
 
     public void init(String token, String channel, String channelNo) {
-        Assert.notNull(token, "token can not be null");
-        Assert.notNull(channel, "channel can not be null");
-        Assert.notNull(channelNo, "channelNo can not be null");
+        Assert.hasText(token, "token 不能为空");
+        Assert.hasText(channel, "channel 不能为空");
+        Assert.hasText(channelNo, "channelNo 不能为空");
         this.token = token;
         this.channel = channel;
         this.channelNo = channelNo;
