@@ -3,6 +3,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         container: 'applyIn',
         data: {
             config:{
+                whetherRedirect: 'true',
                 imgSrc: 'custom/themes/default/images/amtNotTopBg.png',
                 title: '顺逛白条',
                 whether: false,
@@ -15,8 +16,21 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             }
         },
         methods:{
+            redirectFn: function(){
+                util.get({
+                    url: 'shunguang/getedbackurl',
+                    success: function(res){
+                        var data = util.data(res);
+                        if( !util.isEmpty(data)){
+                            util.redirect({
+                                url: data.edbackurl
+                            });
+                        }
+                    }
+                });
+            },
             goShopFn: function(){
-
+                //TODO
             }
         }
     });

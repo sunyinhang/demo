@@ -44,7 +44,7 @@ require(['vue', 'jquery', 'util'], function(vue, $, util) {
              <div class="amtSituTopPrnt">
                 <div class="btmBg"><img v-bind:src="imgSrc"/></div>
                 <div class="cvgCont">
-                     <div class="amtNotTitle"><span>{{title}}</span></div>
+                     <div class="amtNotTitle"><a href="javascript:void(0);" @click='redirectFn' v-if="whetherRedirect"></a><span>{{title}}</span></div>
                      <div class="amtNotSubTitle" v-if="whether">{{subTitle}}</div>
                      <div :class="amtNum"><span class="rmb" v-if="numUnit">&yen;</span>{{num}}</div>
                      <div class="amtReson" v-if="whetherDesc">您暂不符合申请条件，请稍后再试</div>
@@ -53,16 +53,18 @@ require(['vue', 'jquery', 'util'], function(vue, $, util) {
              </div>
              */
         }),
-        props:['imgSrc','title','whether','subTitle','amtNum','numUnit','num','whetherBtn','activBtn','btnText','whetherDesc'],
+        props:['whetherRedirect','imgSrc','title','whether','subTitle','amtNum','numUnit','num','whetherBtn','activBtn','btnText','whetherDesc'],
         data: function(){
             return{
             }
         },
         methods:{
+            redirectFn: function(){
+                this.$emit('on-redirect');
+            },
             btnClickFn: function(){
                 this.$emit('on-click');
             }
-            /*<a href="javascript:void(0);" @click='redirectFn'>返回商城</a>*/
         }
     });
     vue.component('staticText',{

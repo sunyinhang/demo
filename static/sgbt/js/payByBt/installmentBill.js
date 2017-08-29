@@ -195,17 +195,17 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                 // TODO: 应使用过滤器
                                 extra: '<span class="bv-align-right">合计：总计'+order.goodsCount +'件商品，合计: ￥'+ order.apprvAmt+'</span>',
                                 order: order,
-                                click: function(){
+                                click: function(event, item){
                                     // debugger
                                     if(flag === '1'){
                                         util.redirect({
                                             // title: '订单详情',
-                                            url: '/payByBt/orderDetails.html?orderNo='+ order.orderNo
+                                            url: '/payByBt/orderDetails.html?orderNo='+ item.order.orderNo
                                         });
                                     }else{
                                         util.redirect({
                                             // title: '贷款详情',
-                                            url: '/payByBt/loanDetails.html?applSeq='+ order.applSeq
+                                            url: '/payByBt/loanDetails.html?applSeq='+ item.order.applSeq
                                         });
                                     }
                                 },
