@@ -451,10 +451,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
     }
 
-    //额度申请提交
-    public Map<String, Object> edApply(String token, String verifyNo, String payPasswd, String channel, String channelNo) {
-        return null;
-    }
 
     //贷款详情查询
     public Map<String, Object> queryLoanDetailInfo(String token,String applSeq) {

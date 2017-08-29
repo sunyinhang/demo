@@ -167,7 +167,7 @@ app:
     sg_merch_no: 302017001073
     sg_store_no: 302017040270
     sg_user_id: 303197
-    sg_typCde: 17044a
+    sg_typCde: 17098a
   redis:
     prefix: PAYPLATFORM
     # 过期时间，以秒为单位
