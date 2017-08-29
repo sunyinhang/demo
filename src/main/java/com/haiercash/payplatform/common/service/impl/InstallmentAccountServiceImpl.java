@@ -29,11 +29,6 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
     private AcquirerService acquirerService;
     @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
-    //模块编码  02
-    private static String MODULE_NO = "05";
-    public InstallmentAccountServiceImpl() {
-        super(MODULE_NO);
-    }
 
     @Override
     public Map<String, Object> queryAllLoanInfo(String token, String channelNo, String channel, Map<String, Object> map) {

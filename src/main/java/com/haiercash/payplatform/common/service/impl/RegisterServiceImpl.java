@@ -22,12 +22,6 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     @Autowired
     private AppServerService appServerService;
 
-    //模块编码  02
-    private static String MODULE_NO = "03";
-    public RegisterServiceImpl() {
-        super(MODULE_NO);
-    }
-
     @Override
     public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
         logger.info("*********判断用户是否注册**************开始");

@@ -56,11 +56,6 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
 
-    private static String MODULE_NO = "01";
-    public SgInnerServiceImpl() {
-        super(MODULE_NO);
-    }
-
     @Override
     public Map<String, Object> userlogin(Map<String, Object> map) {
         logger.info("登录页面********************开始");

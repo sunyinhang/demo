@@ -49,10 +49,6 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     private GmService gmService;
     @Autowired
     private SgInnerService sgInnerService;
-    private static String MODULE_NO = "01";
-    public CommitOrderServiceImpl() {
-        super(MODULE_NO);
-    }
 
     /**
      * 订单提交

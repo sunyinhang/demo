@@ -39,13 +39,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     @Autowired
     private AcquirerService acquirerService;
 
-    //模块编码  02
-    private static String MODULE_NO = "04";
-
-    public PayPasswdServiceImpl() {
-        super(MODULE_NO);
-    }
-
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
         String retflag = "";
