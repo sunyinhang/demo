@@ -363,26 +363,27 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String bankCode = (String) params.get("bankCode");//银行号
         String mobile = (String) params.get("mobile");//预留手机号
         String verifyNo = (String) params.get("verifyNo");//验证码
-        String newPassword = (String) params.get("newPassword");//密码
+        String newPayPasswd = (String) params.get("newPassword");//密码
         String channel = super.getChannel();//系统标识
         String channelNo = super.getChannelNo();//渠道编码
 
         if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(cardNo) ||
                 StringUtils.isEmpty(custName) || StringUtils.isEmpty(mobile) || StringUtils.isEmpty(verifyNo) ||
-                StringUtils.isEmpty(newPassword)) {
-            logger.info("userId" + userId + "  certNo" + certNo + "  cardNo" + cardNo + "  mobile" + mobile + "verifyNo" + verifyNo + "  newPassword" + newPassword);
+                StringUtils.isEmpty(newPayPasswd)) {
+            logger.info("userId" + userId + "  certNo" + certNo + "  cardNo" + cardNo + "  mobile" + mobile + "verifyNo" + verifyNo + "  newPayPasswd" + newPayPasswd);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> map = new HashMap();
         map.put("userId", EncryptUtil.simpleEncrypt(userId));//用户账号
-        map.put("certNo", certNo);
-        map.put("cardNo", cardNo);
-        map.put("custName", custName);
-        map.put("mobile", mobile);
-        map.put("verifyNo", verifyNo);
-        map.put("newPassword", EncryptUtil.simpleEncrypt(newPassword));//新支付密码
-        map.put("channel", channel);
-        map.put("channelNo", channelNo);
+        map.put("certNo", EncryptUtil.simpleEncrypt(certNo));//身份证号
+        map.put("cardNo", EncryptUtil.simpleEncrypt(cardNo));//银行卡号
+        map.put("custName", EncryptUtil.simpleEncrypt(custName));//客户姓名
+        map.put("mobile", EncryptUtil.simpleEncrypt(mobile));//预留手机号
+        map.put("verifyNo", verifyNo);//验证码
+        map.put("bankCode", bankCode);//银行号
+        map.put("newPayPasswd", EncryptUtil.simpleEncrypt(newPayPasswd));//新支付密码
+        map.put("channel", channel);//
+        map.put("channelNo", channelNo);//
         Map<String, Object> resultmap = appServerService.updPwdByIdentity(token, map);
         if (resultmap == null || "".equals(resultmap)) {
             logger.info("实名认证修改密码接口，返回数据为空" + resultmap.toString());
@@ -393,7 +394,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         JSONObject head = jb.getJSONObject("head");
         String retFlag = head.getString("retFlag");
         String retMsg = head.getString("retMsg");
-        retFlag = "00000";
 
         if ("00000".equals(retFlag)) {
             return success();
@@ -738,7 +738,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("查询贷款详情接口，响应数据：" + jsonObject.getJSONObject("body").toString());
             JSONObject jsonData = jsonObject.getJSONObject("body");
             String outSts = jsonData.getString("outSts");
-            if ("20".equals(outSts) || "06".equals(outSts) || outSts.equals("已逾期")) {//20-待还款    06-已放款
+            String hkSts = jsonData.getString("hkSts");//逾期标识
+            if ("20".equals(outSts) || "06".equals(outSts) || "1".equals(hkSts)) {//20-待还款    06-已放款
                 loanNo = jsonData.getString("loan_no");
                 //loanNo="HCF-HAPA0120160320795362001";
 //                if (StringUtils.isEmpty(loanNo)) {
@@ -839,6 +840,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                                 String messageOne = jsonObjectresThree.getString("retMsg");
                                 if (codeOne.equals("00000")) {// 全部还款试算成功
                                     JSONObject jsonThree = jsonObjectresThree.getJSONObject("body");
+
                                     //Map<String, Object> resTwoMap = DataConverUtil.jsonToMap(jsonThree.toString());
                                         /*
                                          * String ze = jsonThree.getString("ze"); if(ze
@@ -850,7 +852,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 										 * ze);
 										 */
                                     logger.info("全部还款试算接口，响应数据：" + jsonThree.toString());
-                                    return success(jsonThree);
+                                    String ze = jsonThree.getString("ze");
+                                    Map<String, Object> resTwoMap = new HashMap<String, Object>();
+                                    resTwoMap.put("zdhkFee", ze);
+                                    return success(resTwoMap);
+                                   // return success(jsonThree);
                                 } else {
                                     retflag = codeOne;
                                     return fail(retflag, messageOne);
@@ -893,7 +899,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                                         return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
                                     }
                                     Map<String, Object> resTwoMap = new HashMap<String, Object>();
-                                    resTwoMap.put("ze", zdhkFee);
+                                    resTwoMap.put("zdhkFee", zdhkFee);
                                     return success(resTwoMap);
                                 } else {
                                     retflag = retFlagTwo;

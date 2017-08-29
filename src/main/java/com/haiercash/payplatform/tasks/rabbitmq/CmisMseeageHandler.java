@@ -112,8 +112,14 @@ public class CmisMseeageHandler {
                         Map<String,Object> bodyappl = null;
                         String mallOrderNo = null;//商城订单号
                         Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, mapinfo);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
+                        if (edApplProgress==null  || "".equals(edApplProgress)){
+                            return;
+                        }
                         mapidNo.put("certNo",idNo);//14243319820706131X
                         Map<String, Object> custInfoByCertNo = appServerService.getCustInfoByCertNo(null, mapidNo);//根据身份证号查询客户基本信息和实名认证信息(userId)
+                        if (custInfoByCertNo==null || "".equals(custInfoByCertNo)){
+                            return;
+                        }
                         String userIdinfo = JSONObject.toJSONString(custInfoByCertNo);
                         JSONObject jsonObjectIdif = JSONObject.parseObject(userIdinfo);
                         JSONObject bodyIdif = jsonObjectIdif.getJSONObject("body");
@@ -123,6 +129,9 @@ public class CmisMseeageHandler {
                         mapuser.put("channelNo", channelNo);
                         mapuser.put("userId", userId);
                         Map<String, Object> userByUserid = appServerService.findUserByUserid(null, mapuser);//根据统一认证userid查询用户信息
+                       if (userByUserid==null || "".equals(userByUserid)){
+                           return;
+                       }
                         String s = JSONObject.toJSONString(userByUserid);
                         JSONObject jsonObject1 = JSONObject.parseObject(s);
                         JSONObject body1 = jsonObject1.getJSONObject("body");
