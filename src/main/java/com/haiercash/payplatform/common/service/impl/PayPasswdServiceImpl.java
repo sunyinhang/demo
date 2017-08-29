@@ -598,11 +598,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的参数为空：token：" + token + "  ,channel" + channel + "  ," + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = session.get(token, Map.class);
-        if (StringUtils.isEmpty(cacheMap)) {
-            logger.info("Redi获取的数据weikong");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
+//        Map<String, Object> cacheMap = session.get(token, Map.class);
+//        if (StringUtils.isEmpty(cacheMap)) {
+//            logger.info("Redi获取的数据weikong");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
         //String applSeq = (String) cacheMap.get("applSeq");//申请流水号
        //String applSeq="1263841";
         //String outSts = (String) cacheMap.get("outSts");//审批状态
@@ -662,7 +662,17 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             if (retOneFlag.equals("00000")) {
                 //JSONArray body = jsonOne.getJSONArray("body");
                 com.alibaba.fastjson.JSONArray body = jsonOne.getJSONArray("body");
-                return success(body);
+                BigDecimal bigDecimal =  new BigDecimal(0);
+                for (int i = 0; i < body.size() ; i++) {
+                    JSONObject jobj = (JSONObject) body.get(i);
+                    String amount = jobj.getString("amount");
+                    BigDecimal amount_int = new BigDecimal(amount);
+                    bigDecimal = bigDecimal.add(amount_int);
+                }
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("fqze",bigDecimal);
+                resultMap.put("list",body);
+                return success(resultMap);
             } else {
                 retflag = retOneFlag;
                 return fail(retflag, retOneMsg);
