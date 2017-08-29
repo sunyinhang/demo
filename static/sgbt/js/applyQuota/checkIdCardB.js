@@ -66,7 +66,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         validate: {
                             before: function (event, editType, entity) {
                                 if (!entity.upload || !entity.upload.identityCard) {
-                                    util.alert('请使用扫描功能上传信息');
+                                    util.alert('#needCapture');
                                     return false;
                                 }
                                 return true;
@@ -74,7 +74,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         },
                         click: function (event, editType, entity) {
                             util.redirect({
-                                title: '个人资料',
+                                // title: '个人资料',
                                 url: '/applyQuota/tiedBnkCrd.html'
                             });
                         }

@@ -69,7 +69,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
         } else if (util.type(history.state.back) === 'string') {
             util.redirect({
                 // history.state.back, '', false, true
-                title: history.state.title,
+                // title: history.state.title,
                 url: history.state.back,
                 back: false,
                 ignore: true
@@ -104,7 +104,7 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
             url += p;
         }
         util.redirect({
-            title: $(this).attr('data-title'),
+            // title: $(this).attr('data-title'),
             url: url,
             $target: $(this).closest(target),
             back: $(this).attr('data-redirect-back')

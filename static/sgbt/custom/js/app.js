@@ -157,12 +157,12 @@ function getArea (code, callback) {
 function initRedirect (flag) {
     if (flag == '1') {
         util.redirect({
-            title: '确认支付密码',
+            // title: '确认支付密码',
             url: '/applyQuota/confirmPayPsd.html'
         });
     } else if (flag == '2') {
         util.redirect({
-            title: '设置支付密码',
+            // title: '设置支付密码',
             url: '/applyQuota/setPayPsd.html'
         });
     } else if (flag == '3') {
@@ -170,22 +170,22 @@ function initRedirect (flag) {
 
     } else if (flag == '4') {
         util.redirect({
-            title: '手持身份证',
+            // title: '手持身份证',
             url: '/applyQuota/handholdIdCard.html'
         });
     } else if (flag == '5') {
         util.redirect({
-            title: '人脸识别',
+            // title: '人脸识别',
             url: '/applyQuota/identityVrfic.html'
         });
     } else if (flag == '6') {
         util.redirect({
-            title: '实名绑卡',
+            // title: '实名绑卡',
             url: '/applyQuota/checkIdCard.html'
         });
     } else if (flag == '7') {
         util.redirect({
-            title: '个人资料',
+            // title: '个人资料',
             url: '/applyQuota/personalInform.html'
         });
     }

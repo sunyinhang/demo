@@ -55,7 +55,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         operate: {
                             type: 'hint',
                             click: function () {
-                                util.alert('由于银行扣款要求，现已支持中国工商银行，中国邮政储蓄银行，中国农业银行，中国银行，中国建设银行，广东发展银行，兴业银行， 招商银行，交通银行，中信银行，中国光大银行，华夏银行，中国民生银行，平安银行，上海浦东发展银行，北京银行，上海银行，青岛银行');
+                                util.alert('#cardSupport');
                             }
                         }
                     }
@@ -69,7 +69,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 cardnumber: entity.cardnumber
                             });
                             util.redirect({
-                                title: '实名认证找回密码',
+                                // title: '实名认证找回密码',
                                 url: util.mix('/getPayPsd/byRlNmCertif_PayPsdC.html', {
                                     from: util.gup('from'),
                                     edxg: util.gup('edxg')

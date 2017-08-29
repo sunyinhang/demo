@@ -30,7 +30,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                         operate: {
                             type: 'hint',
                             click: function () {
-                                util.alert('#cardholder');
+                                util.alert('#cardBind');
                             }
                         }
                     },{
@@ -49,7 +49,23 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                 }
                             },
                             blur: function (event, val, entity) {
-                                var cardNumReg=/^([0-9]{16}|[0-9]{19})$/;//卡号正则
+                                if (!util.validate($('#cardnumber', vm.$el))) {
+                                    return;
+                                }
+                                util.get({
+                                    url: util.mix("/getCardInfo", {
+                                        cardNo: entity.cardnumber
+                                    }),
+                                    success:function(res){
+                                        util.refresh({
+                                            vm: util.vm(vm, vm.tags.formKey),
+                                            entity: {
+                                                cardtype: res.body.bankName+res.body.cardType
+                                            }
+                                        });
+                                    }
+                                });
+                                /*var cardNumReg=/^([0-9]{16}|[0-9]{19})$/;//卡号正则
                                 if(cardNumReg.exec(entity.cardnumber)==null){
                                     util.alert('请输入16位或19位卡号');
                                 }else{
@@ -66,7 +82,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                             });
                                         }
                                     });
-                                }
+                                }*/
                             }
                         }
                     },{
@@ -81,7 +97,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                             },operate: {
                                 click: function (event,entity) {
                                     if (util.isEmpty(entity.cardnumber)) {
-                                        util.alert('请先输入银行卡号');
+                                        util.alert('#cardMatch');
                                     }
                                 }
                             }
@@ -89,7 +105,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                         operate: {
                             type: 'hint',
                             click: function () {
-                                util.alert('#cardtype');
+                                util.alert('#cardSupport');
                             }
                         }
                     },{
@@ -203,7 +219,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                 });
                             }
                         },
-                        hint: '#card',
+                        hint: '#cardDescribe',
                         agree: {
                             name: 'agree',
                             text: '《个人信息使用授权书》',
@@ -235,7 +251,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                         validate: {
                             after: function (event, editType, entity) {
                                 if (!entity.agree) {
-                                    util.alert('#agree');
+                                    util.alert('#agreement');
                                     return false;
                                 }
                                 return true;
@@ -259,7 +275,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                     },
                                     success: function (res) {
                                         util.redirect({
-                                            title: '个人资料',
+                                            // title: '个人资料',
                                             url: '/applyQuota/personalInform.html'
                                         });
                                     }

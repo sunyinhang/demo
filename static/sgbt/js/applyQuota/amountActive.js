@@ -15,7 +15,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         methods: {
             activeAmountFn: function(param){
                 util.post({
-                    url: "/CreditLineApply",
+                    url: "/creditLineApply",
                     success: function (res) {
                         var data = util.data(res);
                         if (data) {

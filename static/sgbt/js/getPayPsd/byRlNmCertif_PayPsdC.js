@@ -45,7 +45,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         operate: {
                             type: 'hint',
                             click: function () {
-                                util.alert('银行预留手机号码是办理该银行卡是所填写的手机号码。没有预留、手机号码忘记或者已停用，请联系银行客服进行处理。');
+                                util.alert('#reservedMobile');
                             }
                         }
                     }
@@ -61,7 +61,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 bankNo: entity.bankNo
                             });
                             util.redirect({
-                                title: '实名认证找回密码',
+                                // title: '实名认证找回密码',
                                 url: util.mix('/getPayPsd/byRlNmCertif_PayPsdVldcode.html', {
                                     from: util.gup('from'),
                                     edxg: util.gup('edxg')

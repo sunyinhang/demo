@@ -153,7 +153,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect','msPhot
 		url: url,
 		type: 'post',
 		success:function(obj){
-			debugger
+			// debugger
 			//单位地址和居住地址
 			vm.personal.officeAddress=obj.retObj.officeProvinceName+obj.retObj.officeCityName+obj.retObj.officeAreaName;
 			vm.personal.officeAddressCode=obj.retObj.officeProvince+","+obj.retObj.officeCity+","+obj.retObj.officeArea; //单位地址编码officeArea

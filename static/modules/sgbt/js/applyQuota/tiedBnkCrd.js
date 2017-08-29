@@ -41,7 +41,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect'], funct
 		getBankType: function(event){
 			//util.getBankName(event.currentTarget);
 			if (util.isEmpty(vm.bankCards.cardnumber)) {
-                util.alert('请先输入银行卡号,卡类型会自动匹配！');
+                util.alert('#cardMatch');
 			}else{
 				util.post({
 					url: "sendMsg",
@@ -58,7 +58,7 @@ require(['avalon', 'jquery', 'util', 'Const', 'layer','mobileAreaSelect'], funct
 		},
 		getBankTypeInfo:function(){
 			if (util.isEmpty(vm.bankCards.cardnumber)) {
-                util.alert('请先输入银行卡号,卡类型会自动匹配！');
+                util.alert('#cardMatch');
 			}
 		},
 		validateCodeFn: function(event){

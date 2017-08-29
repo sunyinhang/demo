@@ -14,7 +14,8 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         password: this.loginpassword
                     },
                     success: function (res) {
-                        console.log(res);
+                        // TODO: 处理？
+                        // console.log(res);
                     }
                 });
             }

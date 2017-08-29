@@ -24,6 +24,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             util.post({
                 url: '/queryOrderInfo',
                 data: {
+                    // TODO: 写死？
                     orderNo: "ede45c47cf524411bf185799a1cc1944"
                 },
                 success: function (res) {

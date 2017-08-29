@@ -68,6 +68,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 url: '/queryApplAmtBySeqAndOrederNo?applSeq='+ applSeq,
                 success: function(res){
                     var data = util.data(res);
+                    // TODO: 该使用过滤器
                     vm.zdhkFee = '￥'+data.zdhkFee;
                 }
             });
