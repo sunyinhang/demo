@@ -18,7 +18,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         methods:{
             redirectFn: function(){
                 util.get({
-                    url: 'shunguang/getedbackurl',
+                    url: '/shunguang/getedbackurl',
                     success: function(res){
                         var data = util.data(res);
                         if( !util.isEmpty(data)){

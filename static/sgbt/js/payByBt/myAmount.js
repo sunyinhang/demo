@@ -20,7 +20,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         methods:{
             goShopFn: function(){
                 util.get({
-                    url: 'shunguang/getedbackurl',
+                    url: '/shunguang/getedbackurl',
                     success: function(res){
                         var data = util.data(res);
                         if( !util.isEmpty(data)){
