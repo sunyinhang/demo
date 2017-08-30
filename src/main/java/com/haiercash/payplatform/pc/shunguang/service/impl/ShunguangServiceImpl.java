@@ -574,15 +574,15 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 //outSts="01";
                 if ("01".equals(outSts)) {//APP 审批中  01
                     mapone.put("outSts", "02");//顺逛 审批中  02
-                    logger.info("返回顺狂数据：" + mapone);
+                    logger.info("返回顺逛数据：" + mapone);
                     return success(mapone);
                 } else if ("27".equals(outSts)) {// APP 通过
-                    mapone.put("outSts", "03");//顺狂  通过
-                    logger.info("返回顺狂数据：" + mapone);
+                    mapone.put("outSts", "03");//顺逛  通过
+                    logger.info("返回顺逛数据：" + mapone);
                     return success(mapone);
                 } else if ("25".equals(outSts)) {//APP 拒绝
                     mapone.put("outSts", "04");//顺逛 拒绝
-                    logger.info("返回顺狂数据：" + mapone);
+                    logger.info("返回顺逛数据：" + mapone);
                     return success(mapone);
                 } else {
                     logger.info("APP返回的状态与顺逛无法对应"+outSts);
