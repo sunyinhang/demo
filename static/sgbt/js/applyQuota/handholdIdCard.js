@@ -53,7 +53,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                                 // title: '设置支付密码',
                                                 url: util.mix('/applyQuota/setPayPsd.html', {
                                                     edxg: util.gup('edxg')
-                                                }, true)
+                                                }, false)
                                             });
                                         } else if (data.faceFlag === '1') {
                                             //已设置支付密码
@@ -61,19 +61,8 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                                 // title: '确认支付密码页面',
                                                 url: util.mix('/applyQuota/confirmPayPsd.html', {
                                                     edxg: util.gup('edxg')
-                                                }, true)
+                                                }, false)
                                             });
-                                        } else if (data.faceFlag === '2') {
-                                            //人脸识别失败，跳转手持身份证
-                                            util.redirect({
-                                                // title: '手持身份证',
-                                                url: util.mix('/applyQuota/handholdIdCard.html', {
-                                                    edxg: util.gup('edxg')
-                                                }, true)
-                                            });
-                                        } else if (data.faceFlag === '3') {
-                                            //人脸识别失败，再拍摄一遍
-                                            util.alert('#faceCapture');
                                         } else {
                                             return;
                                         }

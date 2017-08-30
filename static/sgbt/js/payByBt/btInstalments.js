@@ -28,38 +28,52 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 util.modal({
                     title: '请输入支付密码',
                     clazz: 'enterPayPwd',
-                    message: '<input type="password" placeholder="请输入支付密码" class="pwd-text">',
+                    message: '<p class="hide errorInform">支付密码输入错误</p><input type="password" placeholder="请输入支付密码" class="pwd-text">',
                     close: true,
                     inline: false,
                     operates: [
                         {
                             text: '确认支付',
+                            close: false,
                             click: function () {
-                                util.post({
-                                    url: '/shunguang/commitOrder',
-                                    data: {
-                                        orderNo: orderNo,
-                                        applSeq: applSeq,
-                                        paypwd: $(".pwd-text").val()
-                                    },
-                                    success: function(res){
-                                        util.redirect({
-                                            // title: '支付成功',
-                                            url: util.mix('/getPayPsd/paySuccess.html', {
-                                                edxg: util.gup('edxg'),
-                                                applSeq: applSeq
-                                            }, true)
-                                        });
-                                    },
-                                    error: function(res){
-                                        util.redirect({
-                                            // title: '支付失败',
-                                            url: util.mix('/getPayPsd/payFail.html', {
-                                                edxg: util.gup('edxg')
-                                            }, true)
-                                        });
-                                    }
-                                });
+                                $('.errorInform').hide();
+                                if( util.isEmpty($(".pwd-text").val())){
+                                    util.alert('#payPwdError');
+                                }else{
+                                    util.post({
+                                        url: '/shunguang/commitOrder',
+                                        check: true,
+                                        data: {
+                                            orderNo: orderNo,
+                                            applSeq: applSeq,
+                                            paypwd: $(".pwd-text").val()
+                                        },
+                                        alert: false ,
+                                        success: function(res){
+                                            util.modal('close');
+                                            util.redirect({
+                                                // title: '支付成功',
+                                                url: util.mix('/payByBt/paySuccess.html', {
+                                                    edxg: util.gup('edxg'),
+                                                    applSeq: applSeq
+                                                }, true)
+                                            });
+                                        },
+                                        error: function(res){
+                                            if (res && res.head && util.endsWith(res.head.retFlag,'error')) {
+                                                $('.errorInform').show();
+                                            }else{
+                                                util.modal('close');
+                                                util.redirect({
+                                                    // title: '支付失败',
+                                                    url: util.mix('/payByBt/payFail.html', {
+                                                        edxg: util.gup('edxg')
+                                                    }, true)
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         },
                         {
@@ -83,12 +97,12 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                         flag: '1',
                         orderNo: orderNo ,
                         applyTnr: vm.applyTnr,
-                        areaCode: vm.areaCode
+                        areaCode: vm.areacode
                     }
                 }else{
                     var data={
                         applyTnr: vm.applyTnr,
-                        areaCode: '370203'
+                        areaCode: vm.areacode
                     }
                 }
                 util.post({
@@ -176,6 +190,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                         success: function(res) {
                             if (res.status === 0 && res.result && res.result.addressComponent && res.result.addressComponent.adcode) {
                                 vm.areacode = res.result.addressComponent.adcode;
+                                //console.log(vm.areacode);
                             }
                         }
                     });

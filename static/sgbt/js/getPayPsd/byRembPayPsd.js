@@ -32,7 +32,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                 operates: [
                     {
                         text: '下一步',
-                        layout: 'active',
+                        layout: 'primary',
                         click: function (event, editType, entity) {
                             util.cache({
                                 payPasswd: entity.payPassword
@@ -40,7 +40,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             util.redirect({
                                 // title: '设置支付密码',
                                 url: util.mix('/getPayPsd/reset_rembPayPsd.html', {
-                                    from: util.gup('mix'),
+                                    from: util.gup('from'),
                                     edxg: util.gup('edxg')
                                 }, true)
                             });

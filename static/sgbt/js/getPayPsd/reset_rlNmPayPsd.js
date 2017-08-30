@@ -58,7 +58,8 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                     mobile: param && param.mobile,
                                     verifyNo: param && param.verifyNo,
                                     cardNo: param && param.cardnumber,
-                                    newPassword: entity.payPassword
+                                    newPassword: entity.payPassword,
+                                    bankCode: param && param.bankNo,
                                 },
                                 success: function (res) {
                                     util.alert('重置成功');

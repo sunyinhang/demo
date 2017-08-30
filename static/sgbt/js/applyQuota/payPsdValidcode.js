@@ -129,7 +129,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                     util.redirect({
                                         // title: '额度输出中',
                                         url: '/applyQuota/applyIn.html'
-                                    });
+                                    },false);
                                 }
                             });
                         }

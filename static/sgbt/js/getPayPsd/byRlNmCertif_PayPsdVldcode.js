@@ -31,6 +31,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                     operate: {
                         id: 'sendSms',
                         text: '发送验证码',
+                        clazz: 'big',
                         click: function(event) {
                             util.countdown($(event.target), {
                                 text: '发送验证码',
@@ -50,13 +51,13 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         text: '下一步',
                         layout: 'primary',
                         validate: {
-                            after: function (event, editType, entity) {
+                            /*after: function (event, editType, entity) {
                                 if (!entity.agree) {
                                     util.alert('#agreement');
                                     return false;
                                 }
                                 return true;
-                            }
+                            }*/
                         },
                         click: function (event, editType, entity) {
                             util.cache({

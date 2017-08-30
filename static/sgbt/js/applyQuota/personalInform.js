@@ -409,7 +409,7 @@ require(['jquery', 'util', 'Const', 'bvAccordion', 'bvForm', 'bvUpload'], functi
                                                 // title: '手持身份证',
                                                 url: util.mix('/applyQuota/handholdIdCard.html', {
                                                     edxg: util.gup('edxg')
-                                                }, true)
+                                                }, false)
                                             });
                                         }else if(res.body.flag == '5'){
                                             util.redirect({

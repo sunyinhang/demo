@@ -174,7 +174,9 @@ var __Const = {
         faceCapture: '人脸识别失败，请再使用摄像头拍摄一张人脸照片',
         faceTerminate: '不能再做人脸识别，录单终止',
         btDescribe: '"顺逛白条"是顺逛商城联合海尔消费金融为其家电购买用户提供的一款"先消费，后付款"的在线支付产品服务',
-        cardMatch: '请先输入银行卡号,卡类型会自动匹配！'
+        cardMatch: '请先输入银行卡号,卡类型会自动匹配！',
+        payPwdInform: '支付密码输入错误，请重新输入！',
+        payPwdError: '支付密码不能为空'
     },
     lengths: {
         userId: 11,
