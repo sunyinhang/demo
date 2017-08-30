@@ -200,6 +200,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         appOrder.setDeliverArea(country);//送货地址区
         appOrder.setAppOrderGoodsList(appOrderGoodsList);
         //
+        cachemap.put("userType", userType);//01:微店主  02:消费者
         cachemap.put("paybackurl", URL);//支付申请回调url
         cachemap.put("apporder", appOrder);
         session.set(token, cachemap);
@@ -269,6 +270,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("edbackurl", URL);
         cachemap.put("token", token);
         cachemap.put("uidHaier", uidHaier);//会员id
+        cachemap.put("userType", userType);//01:微店主  02:消费者
 
         //2.查看是否绑定手机号
         if (custPhoneNo.isEmpty()) {
@@ -284,6 +286,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (uidHaier.isEmpty()) {
             return fail(ConstUtil.ERROR_CODE, "未获取到userId");
         }
+        logger.info("海尔会员ID：" + uidHaier);
         String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
         if (StringUtils.isEmpty(userInforesult)) {
             return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
@@ -304,7 +307,16 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 //注册成功
                 uidLocal = usermap.get("body").toString();//统一认证内userId
                 phoneNo = custPhoneNo;//统一认绑定手机号
-
+                //
+//                //验证并绑定集团用户
+//                Map<String, Object> bindMap = new HashMap<String, Object>();
+//                bindMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
+//                bindMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));
+//                bindMap.put("password", EncryptUtil.simpleEncrypt(password));
+//                Map usermap = appServerService.validateAndBindHaierUser(token, bindMap);
+//                if(!HttpUtil.isSuccess(usermap)){
+//                    return fail(ConstUtil.ERROR_CODE, "会员绑定失败");
+//                }
             } else if ("U0160".equals(userretFlag)) {
                 //U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录
@@ -321,7 +333,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         } else if ("00000".equals(retFlag)) {
             //集团uid已在统一认证做过绑定
             String body = resultMap.get("body").toString();
-            Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            JSONObject bodyMap = new JSONObject(body);
             uidLocal = bodyMap.get("userId").toString();//统一认证内userId
             phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
 
@@ -959,6 +972,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         cachemap.put("userId", userId);
         cachemap.put("phoneNo", userId);//绑定手机号
+        cachemap.put("userType", "01");////01:微店主  02:消费者
 
 
         //4.token绑定

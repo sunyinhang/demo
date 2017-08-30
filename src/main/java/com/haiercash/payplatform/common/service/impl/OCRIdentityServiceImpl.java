@@ -5,8 +5,10 @@ import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.payplatform.common.service.CrmManageService;
 import com.haiercash.payplatform.common.service.OCRIdentityService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.common.utils.ocr.OCRIdentityTC;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -45,6 +48,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
     @Value("${app.other.appServer_page_url}")
     protected String appServer_page_url;
+
+    @Autowired
+    private CrmManageService crmManageService;
+    @Value("${app.shunguang.sg_shopkeeper}")
+    protected String sg_shopkeeper;
+    @Value("${app.shunguang.sg_consumer}")
+    protected String sg_consumer;
 
     public Map<String, Object> ocrIdentity(MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("OCR身份信息获取*************开始");
@@ -439,6 +449,46 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         cacheMap.put("idType", idType);
         cacheMap.put("cardPhone", cardPhone);
         session.set(token, cacheMap);
+
+        //获取客户标签
+        Map tagmap = new HashMap<>();
+        tagmap.put("custName", name);//姓名
+        tagmap.put("idTyp", "20");//证件类型
+        tagmap.put("idNo", idCard);//证件号码
+        Map tagmapresult = crmManageService.getCustTag("", tagmap);
+        if(!HttpUtil.isSuccess(tagmapresult)){
+            return tagmapresult;
+        }
+        //
+        String userType = (String) cacheMap.get("userType");
+        String tagId = "";
+        if("01".equals(userType)){//微店主
+            tagId = sg_shopkeeper;
+        }
+        if("02".equals(userType)){//消费者
+            tagId = sg_consumer;
+        }
+        //
+        Boolean b = false;
+        List<Map<String, Object>> body = (List<Map<String, Object>>) tagmapresult.get("body");
+        for (int i = 0; i < body.size(); i++) {
+            Map<String, Object> m = body.get(i);
+            String tagid = m.get("tagId").toString();
+            if(tagid.equals(tagId)){
+                b = true;
+            }
+        }
+        //若不存在进行添加  /app/crm/cust/setCustTag
+        if(!b){
+            logger.info("打标签");
+            Map addtagmap = new HashMap<>();
+            addtagmap.put("certNo", idCard);//身份证号
+            addtagmap.put("tagId", tagId);//自定义标签ID
+            Map addtagmapresult = crmManageService.setCustTag("", addtagmap);
+            if(!HttpUtil.isSuccess(addtagmapresult)){
+                return addtagmapresult;
+            }
+        }
 
         //绑定手机号修改为实名认证手机号
         String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)

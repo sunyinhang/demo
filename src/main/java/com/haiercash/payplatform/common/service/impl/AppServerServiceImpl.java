@@ -817,7 +817,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
 
     //6.1.104.	(POST)提交签章请求
     public Map<String, Object> caRequest(String token, Map<String, Object> map){
-        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/caRequest";
+        String url = EurekaServer.APPCA + "/app/appserver/caRequest";
         logger.info("提交签章请求接口, 请求地址：" + url);
         logger.info("提交签章请求接口, 请求数据：" + map);
         Map<String, Object> result = HttpUtil.restPostMap(url, map);
