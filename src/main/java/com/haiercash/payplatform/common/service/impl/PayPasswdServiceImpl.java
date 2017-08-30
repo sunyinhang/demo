@@ -1062,7 +1062,41 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         }
         Map<String, Object> responseMap = (Map<String, Object>) result.get("response");
         procList = (List<Map<String, Object>>) ((Map<String, Object>) responseMap.get("body")).get("info");
-        return success(procList);
+        if(procList.size() == 1){
+            Map<String, Object> map = acquirerService.getOrderFromAcquirer(applSeq, channel, channelNo, null, null, "2");
+            logger.info("查询贷款详情接口，响应数据：" + map);
+            if (map == null || "".equals(map)) {
+                logger.info("网络异常,查询贷款详情接口,响应数据为空！" + map);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            String res = JSONObject.toJSONString(map);
+            //JSONObject jsonObject = new JSONObject(res);
+            JSONObject jsonObject = JSONObject.parseObject(res);
+            JSONObject head = jsonObject.getJSONObject("head");
+            JSONObject json = jsonObject.getJSONObject("body");
+            String code = head.getString("retFlag");
+            String message = head.getString("retMsg");
+            if ("00000".equals(code)) {//查询贷款详情成功
+                String outStsNew = json.getString("outSts");
+                String app_out_advice = json.getString("app_out_advice");
+                if (!"WS".equals(outStsNew)) {
+                    if ("00".equals(outStsNew)) {
+                        return success(procList);
+                    }
+                    HashMap<String, Object> param = new HashMap<>();
+                    param.put("operateTime","");//办理时间
+                    param.put("appOutAdvice","【退回】");//外部意见
+                    param.put("appConclusion","");//审批结论标识
+                    param.put("wfiNodeName","退回");//审批状态
+                    param.put("appConclusionDesc",app_out_advice);//审批结论
+                    procList.add(param);
+                }
+            }
+            return success(procList);
+
+        }else{
+            return success(procList);
+        }
 
 
 //        Map<String, Object> map = appServerService.approvalProcessInfo(token, paramMap);
