@@ -67,7 +67,8 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                 util.redirect({
                                                     // title: '支付失败',
                                                     url: util.mix('/payByBt/payFail.html', {
-                                                        edxg: util.gup('edxg')
+                                                        edxg: util.gup('edxg'),
+                                                        orderNo: orderNo
                                                     }, true)
                                                 });
                                             }

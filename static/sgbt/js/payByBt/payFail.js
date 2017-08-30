@@ -1,14 +1,17 @@
 require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
-
-    var applSeq = util.gup('applSeq');
-
     var vm = util.bind({
         container: 'payFail',
         data: {
         },
         methods: {
             payFailFn: function(){
-                //TODO
+                var url = '/payByBt/btInstalments.html';
+                util.redirect({
+                    // title: title,
+                    url: util.mix(url, {
+                        from: 'reset'
+                    }, true)
+                });
             }
         }
     });

@@ -177,6 +177,9 @@ a.activAmuntBtn:link,a.activAmuntBtn:visited,a.activAmuntBtn:hover{display: bloc
 a.goGrayBtn:link,a.goGrayBtn:visited,a.goGrayBtn:hover{display: block;float:right;margin:0 auto;padding:0px;width:4.5rem;height:1.6rem;line-height:1.6rem;color:#D2D2D2;-webkit-border-radius:.8rem;border-radius:.8rem;font-size:.7rem;background:#9F9F9F;text-align:center;border:0px;}
 
 .amtSitu{margin:0 auto;margin-top:2.9rem;width:81%;color:#fff;font-size:2.3rem;line-height:2.3rem;text-align:left;}
+@media only screen and (max-width:320px) {
+    .amtSitu{ width:90%;}
+}
 .amtz{margin:0 auto;margin-top:1.2rem;width:80%;color:#fff;font-size:.7rem;line-height:.7rem;text-align:left;}
 
 .b-downloadTips{ padding: 0 0.8rem;}
@@ -245,7 +248,7 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 }
 @media screen  and (max-width: 320px){
     .bv-form.form-pwd , .bv-form.form-sms {
-        margin: 0 10px;
+        margin: 0;
     }
 }
 .bv-theme .form-sms.list-block .item-content {
