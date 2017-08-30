@@ -464,12 +464,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String tagId = "";
         if("01".equals(userType)){//微店主
             tagId = sg_shopkeeper;
-        }else{
+        }
+        if("02".equals(userType)){//消费者
             tagId = sg_consumer;
         }
-//        if("02".equals(userType)){//消费者
-//            tagId = sg_consumer;
-//        }
         //
         Boolean b = false;
         List<Map<String, Object>> body = (List<Map<String, Object>>) tagmapresult.get("body");

@@ -144,12 +144,12 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         logger.info("订单提交，支付密码验证成功");
 
         //2.合同签订
-//        Map<String, Object> contractmap =  signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
-//        if(!HttpUtil.isSuccess(contractmap)){
-//            logger.info("订单提交，合同签订失败");
-//            return contractmap;
-//        }
-//        logger.info("订单提交，合同签订成功");
+        Map<String, Object> contractmap =  signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
+        if(!HttpUtil.isSuccess(contractmap)){
+            logger.info("订单提交，合同签订失败");
+            return contractmap;
+        }
+        logger.info("订单提交，合同签订成功");
 
         //3.影像上传
         Map<String, Object> uploadimgmap = new HashMap<String, Object>();
@@ -573,15 +573,15 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         JSONObject orderJson = new JSONObject();// 订单信息json串
         orderJson.put("order", order.toString());
 
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("custName", custName);//客户姓名
+        Map map = new HashMap();// 征信
+        map.put("custName", custName);// 客户姓名
         map.put("custIdCode", custIdCode);// 客户身份证号
-        map.put("applseq", applseq);//申请流水号
-        map.put("signType", "SHUNGUANG_H5");//签章类型
-        map.put("orderJson", orderJson);//订单信息json串
-        map.put("sysFlag", ConstUtil.CHANNEL);//系统标识
-        map.put("channelNo", channelNo);//渠道编码
-        Map camap = appServerService.caRequest(token, map);
+        map.put("applseq", applseq);// 请求流水号
+        map.put("signType", "SHUNGUANG_H5");// 签章类型
+        map.put("flag", "0");//1 代表合同  0 代表 协议
+        map.put("orderJson", orderJson.toString());
+        map.put("sysFlag", "11");// 系统标识：支付平台
+        Map camap = appServerService.caRequest(null, map);
 
         //征信签章
         JSONObject orderZX = new JSONObject();
@@ -605,6 +605,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
         //合同与征信签章都成功
         if(HttpUtil.isSuccess(camap) && HttpUtil.isSuccess(zxmap)){
+            logger.info("订单提交，签章成功");
             return success();
         } else {
             return fail(ConstUtil.ERROR_CODE, "签章失败");

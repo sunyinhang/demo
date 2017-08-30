@@ -333,7 +333,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         } else if ("00000".equals(retFlag)) {
             //集团uid已在统一认证做过绑定
             String body = resultMap.get("body").toString();
-            Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            JSONObject bodyMap = new JSONObject(body);
             uidLocal = bodyMap.get("userId").toString();//统一认证内userId
             phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
 
@@ -971,6 +972,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         cachemap.put("userId", userId);
         cachemap.put("phoneNo", userId);//绑定手机号
+        cachemap.put("userType", "01");////01:微店主  02:消费者
 
 
         //4.token绑定

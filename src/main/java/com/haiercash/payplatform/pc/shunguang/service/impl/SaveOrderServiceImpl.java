@@ -143,8 +143,9 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         if(!HttpUtil.isSuccess(tagmapresult)){
             return tagmapresult;
         }
-        //
+        //TODO!!!!
         String userType = (String) cacheMap.get("userType");
+        //String userType = "01";
         String tagId = "";
         if("01".equals(userType)){//微店主
             tagId = sg_shopkeeper;
@@ -304,15 +305,14 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //3.订单保存
         Map<String, Object> ordermap = saveAppOrderInfo(appOrder);
+        logger.info("订单保存结果：" + ordermap);
         if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
             logger.info("订单保存失败");
             String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        logger.info(ordermap);
 
         return ordermap;
-
     }
 
     public String getCode(String token, Map<String, Object> citymap) {
@@ -411,6 +411,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 //            }
         } else {
             Map<String, Object> resultMap = orderService.saveOrUpdateAppOrder(appOrder, null);
+            logger.info("订单保存结果输出：" + resultMap);
             if (HttpUtil.isSuccess(resultMap)) {
                 Map<String, Object> bodyMap = (Map<String, Object>) resultMap.get("body");
                 orderNo = (String) bodyMap.get("orderNo");

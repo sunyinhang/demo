@@ -460,6 +460,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
     //获取额度回调地址
     @Override
     public Map<String, Object> getedbackurl() {
+        logger.info("额度回调*************开始");
         String token = super.getToken();
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
@@ -467,23 +468,28 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String edbackurl = (String) cacheMap.get("edbackurl");
+        logger.info("额度回调地址：" + edbackurl);
         Map m = new HashMap();
         m.put("edbackurl", edbackurl);
+        logger.info("额度回调*************结束");
         return success(m);
     }
 
     //获取贷款回调地址
     @Override
     public Map<String, Object> getpaybackurl() {
+        logger.info("贷款回调*************开始");
         String token = super.getToken();
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String edbackurl = (String) cacheMap.get("paybackurl");
+        String paybackurl = (String) cacheMap.get("paybackurl");
+        logger.info("贷款回调地址：" + paybackurl);
         Map m = new HashMap();
-        m.put("paybackurl", edbackurl);
+        m.put("paybackurl", paybackurl);
+        logger.info("贷款回调*************结束");
         return success(m);
     }
 
