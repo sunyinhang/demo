@@ -9,6 +9,7 @@ import com.haiercash.payplatform.common.utils.Base64Utils;
 import com.haiercash.payplatform.common.utils.DesUtil;
 import com.haiercash.payplatform.common.utils.HttpClient;
 import com.haiercash.payplatform.common.utils.RSAUtils;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.impl.store.Saaj;
@@ -112,18 +113,42 @@ public class CmisMseeageHandler {
                         Map<String,Object> bodyappl = null;
                         String mallOrderNo = null;//商城订单号
                         Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, mapinfo);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
+                        logger.info("额度申请进度查询接口返回的数据时："+edApplProgress);
                         if (edApplProgress==null  || "".equals(edApplProgress)){
                             return;
                         }
                         mapidNo.put("certNo",idNo);//14243319820706131X
                         Map<String, Object> custInfoByCertNo = appServerService.getCustInfoByCertNo(null, mapidNo);//根据身份证号查询客户基本信息和实名认证信息(userId)
+                        logger.info("根据身份证号查询客户基本信息和实名认证信息(统一认证userId)返回信息"+custInfoByCertNo);
                         if (custInfoByCertNo==null || "".equals(custInfoByCertNo)){
                             return;
                         }
                         String userIdinfo = JSONObject.toJSONString(custInfoByCertNo);
                         JSONObject jsonObjectIdif = JSONObject.parseObject(userIdinfo);
+                        JSONObject head1 = jsonObjectIdif.getJSONObject("head");
+                        String retFlag1 = head1.getString("retFlag");
+                        retFlag1="00000";
+                        if (!"00000".equals(retFlag1)){
+                            return;
+                        }
                         JSONObject bodyIdif = jsonObjectIdif.getJSONObject("body");
+                        bodyIdif=null;
+                        if (bodyIdif == null) {
+                            Integer count = jsonObj.getInteger("count");
+                            if (count == null)
+                                count = 0;
+                            count++;
+                            if (count > 5)
+                                return;
+                            jsonObj.put("count", count);
+                            rabbitTemplate.convertAndSend("APPMSG_TOPIC_EXCHANGE_DEV", "CMISMSG.46", jsonObj.toString());
+                        }
+
                         String userId = bodyIdif.getString("userId");//同一认证userId
+                        logger.info("统一认证获取的userId是："+userId);
+                        if (userId==null || "".equals(userId)){
+                            return;
+                        }
                         HashMap<String, Object> mapuser = new HashMap<>();
                         mapuser.put("channel", "11");
                         mapuser.put("channelNo", channelNo);
@@ -134,14 +159,30 @@ public class CmisMseeageHandler {
                        }
                         String s = JSONObject.toJSONString(userByUserid);
                         JSONObject jsonObject1 = JSONObject.parseObject(s);
+                        JSONObject head2 = jsonObject1.getJSONObject("head");
+                        String retFlag2 = head2.getString("retFlag");
+                        logger.info("根据统一认证userid查询用户信息返回错误"+userId);
+                        if (!"00000".equals(retFlag2)){
+                            return;
+                        }
                         JSONObject body1 = jsonObject1.getJSONObject("body");
                         String externUid = body1.getString("externUid");//集团userId
+                        if (externUid==null || "".equals(externUid)){
+                            return;
+                        }
+                        externUid="1000038108";
                         String edappl = JSONObject.toJSONString(edApplProgress);
                         JSONObject jsonObject = JSONObject.parseObject(edappl);
+                        JSONObject head3 = jsonObject.getJSONObject("head");
+                        String retFlag3 = head3.getString("retFlag");
+                        if (!"00000".equals(retFlag3)){
+                            return;
+                        }
+                        outSts="02";
                         JSONObject body = jsonObject.getJSONObject("body");
                         String appOutAdvice = body.getString("appOutAdvice");//审批意见
                         String apprvCrdAmt = body.getString("apprvCrdAmt");//审批总额度
-                        if ("25".equals(outSts)) {//贷款申请被拒
+                        if ("25".equals(outSts)) {//额度申请被拒
                             map.put("outSts", "02");
                             map.put("appOutAdvice", appOutAdvice);//审批意见
                             map.put("apprvCrdAmt", apprvCrdAmt);//审批总额度
@@ -171,19 +212,23 @@ public class CmisMseeageHandler {
                             result = HttpClient.sendPost(url, encrypt, "utf-8");
                         }else if ("02".equals(outSts)){//贷款申请被拒
                             HashMap<String, Object> maporder = new HashMap<>();
-                            maporder.put("applSeq",applSeq);//1265221
+                            maporder.put("applSeq","1265566");//1265221
                             maporder.put("channel","11");
                             maporder.put("channelNo",channelNo);
                             mapappl = appServerService.getorderNo(null,maporder);//(get)根据applseq查询orderNo
+                            logger.info("根据applseq查询orderNo接口返回数据："+mapappl);
                             bodyappl = (Map) mapappl.get("body");
+                            if (bodyappl==null || "".equals(bodyappl)){
+                                return;
+                            }
                             mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
                             HashMap<Object, Object> bodyinfo = new HashMap<>();
                             map.put("outSts", "02");
-                            map.put("applSeq", applSeq);//申请流水号
+                            map.put("applSeq", "1265221");//申请流水号
                             map.put("idNo", idNo);//身份证号
-                            map.put("orderNo",mallOrderNo);//订单编号    D17082411290147627
+                            map.put("orderNo","D17082411290147627");//订单编号    D17082411290147627
                             bodyinfo.put("body",map);
-                            bodyinfo.put("userid",externUid);//集团userid   1000030088
+                            bodyinfo.put("userid","1000030088");//集团userid   1000030088
                             if (StringUtils.isEmpty(urlOne)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的贷款申请推送地址";
                                 logger.info(retMsg);
@@ -196,18 +241,26 @@ public class CmisMseeageHandler {
                         }else if ("06".equals(outSts)){//贷款申请通过
                             HashMap<String, Object> maporder = new HashMap<>();
                             HashMap<Object, Object> bodyinfo = new HashMap<>();
-                            maporder.put("applSeq",applSeq);//1265221
+                            maporder.put("applSeq","1265221");//1265221
                             maporder.put("channel","11");
                             maporder.put("channelNo",channelNo);
                             mapappl = appServerService.getorderNo(null,maporder);//(get)根据applseq查询orderNo
+                            Map<String,Object> head = (Map) mapappl.get("head");
+                            String retFlag4 = (String) head.get("retFlag");
+                            if (!"00000".equals(retFlag4)){
+                                return;
+                            }
                             bodyappl = (Map) mapappl.get("body");
+                            if (bodyappl==null || "".equals(bodyappl)){
+                                return;
+                            }
                             mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
                             map.put("outSts", "01");
-                            map.put("applSeq", applSeq);//申请流水号
+                            map.put("applSeq", "1265221");//申请流水号
                             map.put("idNo", idNo);//身份证号
-                            map.put("orderNo",mallOrderNo);//订单编号   D17082411290147627
+                            map.put("orderNo","D17082411290147627");//订单编号   D17082411290147627
                             bodyinfo.put("body",map);
-                            bodyinfo.put("userid",externUid);//集团userid   1000030088
+                            bodyinfo.put("userid","1000030088");//集团userid   1000030088
                             if (StringUtils.isEmpty(urlOne)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的贷款申请推送地址";
                                 logger.info(retMsg);
@@ -217,6 +270,9 @@ public class CmisMseeageHandler {
                             tradeCode="Sg-10007";
                             String encrypt = encrypt(sgString, channelNo,tradeCode);
                             result = HttpClient.sendPost(urlOne, encrypt, "utf-8");
+                        }else {
+                            logger.info("推送的这笔单子状态不符合,流水号是"+applSeq);
+                            return;
                         }
                         //result = HttpClient.sendPost(url, json, "utf-8");
                         logger.info("推送第三方通知，推送URL地址: " + channelUrl + " \n返回结果：" + result);
@@ -234,6 +290,7 @@ public class CmisMseeageHandler {
                                 logger.info("实时推送，响应错误：" + retMsg);
                                 throw new Exception(retMsg);
                             }
+                            logger.info("推送成功了：数据时"+result);
                         }
                     } else {
                         logger.info("推送数据不是贷款审批状态查询的信息！");

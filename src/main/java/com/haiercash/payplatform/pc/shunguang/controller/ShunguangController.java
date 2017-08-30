@@ -168,13 +168,15 @@ private CmisMseeageHandler cmisMseeageHandler;
         Map<String, Object> queryAppmap = confirmData(map);
         if (!HttpUtil.isSuccess(queryAppmap)) {
             return queryAppmap;
-        }
+        }//{cooprCode=, applSeq=1265566, channelNo=46, outSts=06, tradeCode=100022, idNo=370682199107018123, msgTyp=01}
 //        HashMap<Object, Object> map1 = new HashMap<>();
-//        map1.put("tradeCode","100022");
+//        map1.put("cooprCode","");
 //        map1.put("channelNo","46");
-//        map1.put("applSeq","1265221");
-//        map1.put("outSts","27");
-//        map1.put("idNo","372926199009295116");
+//        map1.put("applSeq","1265566");
+//        map1.put("outSts","06");
+//        map1.put("idNo","370682199107018123");
+//        map1.put("msgTyp","01");
+//        map1.put("tradeCode","100022");
 //        String s = JSON.toJSONString(map1);
 //        cmisMseeageHandler.consumeNodeMessage(s);
         return shunguangService.edcheck(map);

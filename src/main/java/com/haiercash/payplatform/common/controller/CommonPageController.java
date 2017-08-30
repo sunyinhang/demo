@@ -46,7 +46,6 @@ public class CommonPageController extends BaseController {
     private RegisterService registerService;
     @Autowired
     private InstallmentAccountService InstallmentAccountService;
-
     /**
      * OCR获取身份信息
      *

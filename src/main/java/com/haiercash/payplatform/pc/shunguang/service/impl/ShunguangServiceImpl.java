@@ -523,14 +523,15 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if ("00000".equals(retFlag)) {
             Map<String, Object> headinfo = (Map) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
+            String flag = (String) headinfo.get("flag");
             //applType="2";
             String retmsg = "01";//未申请
-            if ("1".equals(applType) || "".equals(applType)) {
+            if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
                 logger.info("没有额度申请");
                 HashMap<Object, Object> map1 = new HashMap<>();
                 map1.put("outSts", "01");
                 return success(map1);
-            } else if ("2".equals(applType)) {
+            } else if ("2".equals(applType) || "".equals(flag)) {
                 HashMap<String, Object> mapinfo = new HashMap<>();
                 mapinfo.put("userId",userIdone);//15275126181
                 mapinfo.put("channelNo",channelNo);
@@ -584,9 +585,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                     logger.info("返回顺狂数据：" + mapone);
                     return success(mapone);
                 } else {
-                    logger.info("APP返回的状态与顺逛无法对应");
-                    String retmsgo = "当前返回的状态不符合";
-                    return fail(ConstUtil.ERROR_CODE, retmsgo);
+                    logger.info("APP返回的状态与顺逛无法对应"+outSts);
+                    //String retmsgo = "当前返回的状态不符合";
+                    return fail(ConstUtil.ERROR_CODE, outSts);
                 }
             } else {
                 logger.info("返回的申请类型为空：applType" + applType);
