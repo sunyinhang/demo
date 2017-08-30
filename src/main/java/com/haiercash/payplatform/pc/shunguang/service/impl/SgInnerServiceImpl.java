@@ -1,9 +1,8 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haiercash.commons.redis.Session;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
@@ -25,12 +24,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by yuanli on 2017/8/9.
@@ -87,9 +85,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
         paramMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));
         paramMap.put("password", EncryptUtil.simpleEncrypt(password));
-        Map usermap = appServerService.validateAndBindHaierUser(token, paramMap);
+        Map<String,Object> usermap = appServerService.validateAndBindHaierUser(token, paramMap);
         if(!HttpUtil.isSuccess(usermap)){
-            return fail(ConstUtil.ERROR_CODE, "会员绑定失败");
+            String retMsg = (String) ((HashMap<String, Object>)(usermap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         //获取绑定手机号
         String phoneNo = (String) ((HashMap<String, Object>)(usermap.get("body"))).get("mobile");
