@@ -974,6 +974,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("userId", userId);
         cachemap.put("phoneNo", userId);//绑定手机号
         cachemap.put("userType", "01");////01:微店主  02:消费者
+        cachemap.put("edbackurl", "www.baidu.com");
 
 
         //4.token绑定
@@ -1100,7 +1101,16 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("userId", appOrder.getUserId());
         session.set(token, cachemap);
 
-        return success();
+        cachemap.put("userType", "01");//01:微店主  02:消费者
+        cachemap.put("paybackurl", "www.baidu.com");//支付申请回调url
+        cachemap.put("apporder", appOrder);
+        session.set(token, cachemap);
+        Map returnmap = new HashMap<>();
+        String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
+        returnmap.put("backurl", backurl);
+        return success(returnmap);
+
+        ///return success();
     }
 
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {

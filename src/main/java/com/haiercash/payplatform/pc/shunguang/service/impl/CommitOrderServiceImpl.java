@@ -77,6 +77,12 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+
+        String key0 = "applSeq" + applSeq;
+        if(cacheMap.containsKey(key0)){
+            return success();
+        }
+
         ObjectMapper objectMapper = new ObjectMapper();
         AppOrder appOrder = null;
         String typCde = "";
@@ -154,7 +160,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         //3.影像上传
         Map<String, Object> uploadimgmap = new HashMap<String, Object>();
         uploadimgmap.put("custNo", custNo);//客户编号
-        uploadimgmap.put("applSeq", "1265410");//订单号
+        uploadimgmap.put("applSeq", applSeq);//订单号
         uploadimgmap.put("channel", channel);
         uploadimgmap.put("channelNo", channelNo);
         Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
@@ -176,6 +182,10 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         applSeq = relation.getApplSeq();
         Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
         logger.info("订单提交，返回数据：" + result);
+        //签章成功进行redis存储
+        String key = "applSeq" + applSeq;
+        cacheMap.put(key, key);
+        session.set(token, cacheMap);
 
         //6.信息推送
         if(HttpUtil.isSuccess(result)){//提交订单成功
@@ -561,13 +571,26 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     //合同签订
     public Map<String, Object> signContract(String custName, String custIdCode, String applseq, String phone, String typCde,
                                             String channelNo, String token) {
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("typCdeList", typCde);
+        Map<String, Object> loanmap = appServerService.pLoanTypList(token, paramMap);
+        if(!HttpUtil.isSuccess(loanmap)){
+            return loanmap;
+        }
+        List<Map<String, Object>> loanbody = (List<Map<String, Object>>) loanmap.get("body");
+        String typLevelTwo = "";
+        for (int i = 0; i < loanbody.size(); i++) {
+            Map<String, Object> m = loanbody.get(i);
+            typLevelTwo = m.get("levelTwo").toString();
+        }
+        logger.info("贷款品种小类：" + typLevelTwo);
         //合同签订
         JSONObject order = new JSONObject();
         order.put("custName", custName);// 客户姓名
         order.put("idNo", custIdCode);// 客户身份证号
         order.put("indivMobile", phone);// 客户手机号码
         order.put("applseq", applseq);// 请求流水号
-        order.put("typLevelTwo", sg_typLevelTwo);// typLevelTwo 贷款品种小类
+        order.put("typLevelTwo", typLevelTwo);// typLevelTwo 贷款品种小类
         order.put("typCde", typCde);// 贷款品种代码
 
         JSONObject orderJson = new JSONObject();// 订单信息json串
@@ -581,6 +604,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         map.put("flag", "0");//1 代表合同  0 代表 协议
         map.put("orderJson", orderJson.toString());
         map.put("sysFlag", "11");// 系统标识：支付平台
+        map.put("channelNo", channelNo);
         Map camap = appServerService.caRequest(null, map);
 
         //征信签章
@@ -601,6 +625,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         reqZXJson.put("flag", "0");//1 代表合同  0 代表 协议
         reqZXJson.put("orderJson", orderZXJson.toString());
         reqZXJson.put("sysFlag", "11");// 系统标识：支付平台
+        map.put("channelNo", channelNo);
         Map zxmap = appServerService.caRequest(token, reqZXJson);
 
         //合同与征信签章都成功

@@ -283,6 +283,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("查询客户准入资格url:" + url);
         logger.info("查询客户准入资格请求数据：" + paramMap);
         Map<String, Object> custispassmap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("查询客户准入资格返回数据：" + custispassmap);
         return custispassmap;
     }
 
@@ -354,9 +355,10 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      */
     public String commitAppOrder(String token, Map<String, Object> commitmMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/updateOrderContract";
-        logger.info("顺逛订单合同确认接口请求地址：" + url);
-        logger.info("顺逛订单合同确认接口请求数据：" + commitmMap);
+        logger.info("订单合同确认接口请求地址：" + url);
+        logger.info("订单合同确认接口请求数据：" + commitmMap);
         String result = HttpUtil.restGetMap(url, token, commitmMap).toString();
+        logger.info("订单合同确认接口返回数据：" + result);
         return result;
     }
 
@@ -531,27 +533,30 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
     public Map<String, Object> pLoanTypImages(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/cmis/pLoanTypImages";
-        logger.info("获取卡信息接口，请求地址：" + url);
+        logger.info("查询贷款品种所需的影像列表接口，请求地址：" + url);
+        logger.info("查询贷款品种所需的影像列表接口，请求数据：" + paramMap);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        logger.info("获取卡信息接口，返回数据：" + map);
+        logger.info("查询贷款品种所需的影像列表接口，返回数据：" + map);
         return map;
     }
 
     //(GET)影像列表按类型查询-个人版
     public Map<String, Object> attachTypeSearchPerson(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/attachTypeSearchPerson";
-        logger.info("获取卡信息接口，请求地址：" + url);
+        logger.info("影像列表按类型查询接口，请求地址：" + url);
+        logger.info("影像列表按类型查询接口，请求数据：" + paramMap);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        logger.info("获取卡信息接口，返回数据：" + map);
+        logger.info("影像列表按类型查询接口，返回数据：" + map);
         return map;
     }
 
-    //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
+    //(GET)根据影像文件ID查询影像文件的路径
     public Map<String, Object> getFilePathByFileId(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/getFilePathByFileId";
-        logger.info("获取卡信息接口，请求地址：" + url);
+        logger.info("根据影像文件ID查询影像文件的路径接口，请求地址：" + url);
+        logger.info("根据影像文件ID查询影像文件的路径接口，请求数据：" + paramMap);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        logger.info("获取卡信息接口，返回数据：" + map);
+        logger.info("根据影像文件ID查询影像文件的路径接口，返回数据：" + map);
         return map;
     }
 
@@ -559,6 +564,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> saveAllCustExtInfo(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/cust/saveAllCustExtInfo";
         logger.info("修改保存客户所有扩展信息接口，请求地址：" + url);
+        logger.info("修改保存客户所有扩展信息接口，请求数据：" + paramMap);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("修改保存客户所有扩展信息接口，返回数据：" + map);
         return map;
@@ -567,9 +573,10 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     //(POST)新增/修改 联系人(CRM6)
     public Map<String, Object> saveCustFCiCustContact(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/crm/saveCustFCiCustContact";
-        logger.info("获取卡信息接口，请求地址：" + url);
+        logger.info("新增/修改 联系人接口，请求地址：" + url);
+        logger.info("新增/修改 联系人接口，请求数据：" + paramMap);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
-        logger.info("获取卡信息接口，返回数据：" + map);
+        logger.info("新增/修改 联系人接口，返回数据：" + map);
         return map;
     }
 
@@ -592,9 +599,10 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     //1.27(GET) 根据集团用户id查询用户信息
     public Map<String, Object> getUserId(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.UAUTH + "/app/uauth/queryHaierUserInfo";
-        logger.info("根据集团用户id查询用户信息：" + url);
+        logger.info("根据集团用户id查询用户信息，请求地址：" + url);
+        logger.info("根据集团用户id查询用户信息，请求数据：" + paramMap);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        logger.info("根据集团用户id查询用户信息：" + map);
+        logger.info("根据集团用户id查询用户信息，返回数据" + map);
         return map;
     }
 
@@ -823,5 +831,15 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> result = HttpUtil.restPostMap(url, map);
         logger.info("提交签章请求接口, 返回数据：" + result);
         return result;
+    }
+
+    //6.1.130.	(GET) 查询贷款品种信息列表
+    public Map<String, Object> pLoanTypList(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/cmis/pLoanTypList";
+        logger.info("查询贷款品种信息列表，请求地址：" + url);
+        logger.info("查询贷款品种信息列表，请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("查询贷款品种信息列表，返回数据" + map);
+        return map;
     }
 }

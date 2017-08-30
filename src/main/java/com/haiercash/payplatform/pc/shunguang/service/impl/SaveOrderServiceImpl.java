@@ -94,6 +94,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+
+
         ObjectMapper objectMapper = new ObjectMapper();
         AppOrder appOrder = null;
         try {

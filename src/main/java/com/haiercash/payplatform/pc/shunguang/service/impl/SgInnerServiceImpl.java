@@ -488,7 +488,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         logger.info("贷款回调地址：" + paybackurl);
         Map m = new HashMap();
         m.put("paybackurl", paybackurl);
-        logger.info("贷款回调*************结束");
+        logger.info("贷款回调*************开始");
         return success(m);
     }
 
