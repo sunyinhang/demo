@@ -22,9 +22,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
                     success: function(res){
                         var data = util.data(res);
                         if( !util.isEmpty(data)){
-                            util.redirect({
-                                url: data.edbackurl
-                            });
+                           util.location(data.edbackurl) ;
                         }
                     }
                 });
