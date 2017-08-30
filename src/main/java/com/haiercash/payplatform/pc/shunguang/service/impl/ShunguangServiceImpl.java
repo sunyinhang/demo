@@ -200,6 +200,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         appOrder.setDeliverArea(country);//送货地址区
         appOrder.setAppOrderGoodsList(appOrderGoodsList);
         //
+        cachemap.put("userType", userType);//01:微店主  02:消费者
         cachemap.put("paybackurl", URL);//支付申请回调url
         cachemap.put("apporder", appOrder);
         session.set(token, cachemap);
@@ -269,6 +270,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("edbackurl", URL);
         cachemap.put("token", token);
         cachemap.put("uidHaier", uidHaier);//会员id
+        cachemap.put("userType", userType);//01:微店主  02:消费者
 
         //2.查看是否绑定手机号
         if (custPhoneNo.isEmpty()) {
@@ -284,6 +286,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (uidHaier.isEmpty()) {
             return fail(ConstUtil.ERROR_CODE, "未获取到userId");
         }
+        logger.info("海尔会员ID：" + uidHaier);
         String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
         if (StringUtils.isEmpty(userInforesult)) {
             return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
@@ -304,7 +307,16 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 //注册成功
                 uidLocal = usermap.get("body").toString();//统一认证内userId
                 phoneNo = custPhoneNo;//统一认绑定手机号
-
+                //
+//                //验证并绑定集团用户
+//                Map<String, Object> bindMap = new HashMap<String, Object>();
+//                bindMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
+//                bindMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));
+//                bindMap.put("password", EncryptUtil.simpleEncrypt(password));
+//                Map usermap = appServerService.validateAndBindHaierUser(token, bindMap);
+//                if(!HttpUtil.isSuccess(usermap)){
+//                    return fail(ConstUtil.ERROR_CODE, "会员绑定失败");
+//                }
             } else if ("U0160".equals(userretFlag)) {
                 //U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录

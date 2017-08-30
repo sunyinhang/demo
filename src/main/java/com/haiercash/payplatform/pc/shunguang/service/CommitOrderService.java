@@ -16,5 +16,4 @@ public interface CommitOrderService {
      */
     Map<String, Object> commitOrder(Map<String, Object> map)  throws Exception;
 
-    Map<String, Object> test();
 }

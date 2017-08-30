@@ -10,9 +10,11 @@ import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CmisApplService;
+import com.haiercash.payplatform.common.service.CrmManageService;
 import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.*;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
+import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.OrderService;
 import org.json.JSONArray;
@@ -46,16 +48,27 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
     @Autowired
     private CmisApplService cmisApplService;
     @Autowired
+    private SgInnerService sgInnerService;
+    @Autowired
     private HaierDataService haierDataService;
+    @Autowired
+    private CrmManageService crmManageService;
+
     @Value("${app.shunguang.sg_merch_no}")
     protected String sg_merch_no;
     @Value("${app.shunguang.sg_store_no}")
     protected String sg_store_no;
     @Value("${app.shunguang.sg_user_id}")
     protected String sg_user_id;
+    @Value("${app.shunguang.sg_shopkeeper}")
+    protected String sg_shopkeeper;
+    @Value("${app.shunguang.sg_consumer}")
+    protected String sg_consumer;
+
 
     @Override
     public Map<String, Object> saveOrder(Map<String, Object> map) {
+        logger.info("订单保存****************开始");
         //前端传入参数获取(放开)
         String token = (String) map.get("token");
         String channel = (String) map.get("channel");
@@ -64,11 +77,13 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
         String updflag = (String) map.get("flag");//1.待提交返显
         String orderNo = (String) map.get("orderNo");//待提交时必传
-        //TODO!!!!
-        applyTnrTyp = applyTnr;
         String areaCode = (String) map.get("areaCode");//区编码
+        //非空判断
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
                 || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(areaCode)){
+            logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
+                       + "   applyTnr:" + applyTnr + "   updflag:" + updflag + "  orderNo:" + orderNo
+                       + "   areaCode:" + areaCode);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -82,8 +97,9 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         ObjectMapper objectMapper = new ObjectMapper();
         AppOrder appOrder = null;
         try {
+            logger.info("缓存数据获取");
             appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-            logger.info("appOrder0:" + appOrder);
+            logger.info("提交订单信息appOrder:" + appOrder);
             if(appOrder == null){
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
@@ -91,37 +107,17 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             e.printStackTrace();
         }
 
-
-        //根据token获取会员id
-        String userjsonstr = haierDataService.userinfo(token);
-        if (userjsonstr == null || "".equals(userjsonstr)) {
-            logger.info("验证客户信息接口调用失败");
-            return fail(ConstUtil.ERROR_CODE, "验证客户信息失败");
+        //根据token获取统一认证userid
+        String userId = sgInnerService.getuserId(token);
+        if(StringUtils.isEmpty(userId)){
+            logger.info("根据用户中心token获取统一认证userId失败");
+            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
         }
-        //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
-        org.json.JSONObject userjson = new org.json.JSONObject(userjsonstr);
-        Object uid = userjson.get("user_id");//会员id
-        if(StringUtils.isEmpty(uid)){
-            String error = userjson.get("error").toString();
-            return fail(ConstUtil.ERROR_CODE, error);
-        }
-        //根据会员id获取内部ID
-        String uidHaier = uid.toString();
-        String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
-        if (!HttpUtil.isSuccess(userInforesult) ) {
-            return fail(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
-        }
-        Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
-        String userId = (String) ((HashMap<String, Object>)(resultMap.get("body"))).get("userId");
         //TODO!!!!
         //String userId = cacheMap.get("userId").toString();
 
-
-        if(StringUtils.isEmpty(userId)){
-            logger.info("userid没有进行绑定");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
         //获取客户信息
+        logger.info("订单保存，根据userId获取客户信息");
         Map<String, Object> custMap = new HashMap<String, Object>();
         custMap.put("userId", userId);
         custMap.put("channel", channel);
@@ -137,7 +133,51 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         logger.info("客户编号：" +custNo + "   客户姓名：" + custName);
         String certNo = (String) custresult.get("certNo");
         String mobile = (String) custresult.get("mobile");
-        //获取订单金额
+
+        //获取客户标签
+        Map tagmap = new HashMap<>();
+        tagmap.put("custName", custName);//姓名
+        tagmap.put("idTyp", "20");//证件类型
+        tagmap.put("idNo", certNo);//证件号码
+        Map tagmapresult = crmManageService.getCustTag("", tagmap);
+        if(!HttpUtil.isSuccess(tagmapresult)){
+            return tagmapresult;
+        }
+        //
+        String userType = (String) cacheMap.get("userType");
+        String tagId = "";
+        if("01".equals(userType)){//微店主
+            tagId = sg_shopkeeper;
+        }
+        if("02".equals(userType)){//消费者
+            tagId = sg_consumer;
+        }
+        //
+        Boolean b = false;
+        List<Map<String, Object>> body = (List<Map<String, Object>>) tagmapresult.get("body");
+        for (int i = 0; i < body.size(); i++) {
+            Map<String, Object> m = body.get(i);
+            String tagid = m.get("tagId").toString();
+            if(tagid.equals(tagId)){
+                b = true;
+            }
+        }
+        //若不存在进行添加  /app/crm/cust/setCustTag
+        if(!b){
+            logger.info("打标签");
+            Map addtagmap = new HashMap<>();
+            addtagmap.put("certNo", certNo);//身份证号
+            addtagmap.put("tagId", tagId);//自定义标签ID
+            Map addtagmapresult = crmManageService.setCustTag("", addtagmap);
+            if(!HttpUtil.isSuccess(addtagmapresult)){
+                return addtagmapresult;
+            }
+        }
+
+
+        //获取订单金额  总利息 金额
+        logger.info("订单保存，获取订单金额，总利息金额");
+        applyTnrTyp = applyTnr;
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", appOrder.getTypCde());
         payMap.put("apprvAmt", appOrder.getApplyAmt());
@@ -157,7 +197,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
         String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
 
-
+        //获取订单信息
+        logger.info("订单保存，获取订单信息");
         appOrder.setVersion("1");//接口版本号  固定传’1’
         appOrder.setSource("11");//订单来源
         appOrder.setChannelNo((String)map.get("channelNo"));//渠道编号
@@ -171,31 +212,22 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         appOrder.setTypGrp("01");//贷款类型  01:商品贷  02  现金贷
         appOrder.setSource(ConstUtil.SOURCE);//订单来源
         appOrder.setWhiteType("SHH");//白名单类型
-        appOrder.setFormType("20");//10:线下订单   20:线上订单   (TODO!!!!)
+        appOrder.setFormType("10");//10:线下订单   20:线上订单
         appOrder.setCustNo(custNo);//客户编号
         appOrder.setCustName(custName);//客户姓名
         appOrder.setIdTyp("20");//证件类型
         appOrder.setIdNo(certNo);//客户证件号码
         appOrder.setUserId(userId);//录单用户ID
         appOrder.setChannelNo(channelNo);
-        appOrder.setFstPay("0");
-        if("1".equals(updflag)){
+        appOrder.setFstPay("0");//首付金额
+        if("1".equals(updflag)){//待提交订单
             if(StringUtils.isEmpty(orderNo)){
                 logger.info("前台传入参数有误");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
             appOrder.setOrderNo(orderNo);
-//            //
-//            AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
-//            if(AppOrdernoTypgrpRelation == null){
-//                logger.info("没有获取到订单信息");
-//                return fail(ConstUtil.ERROR_CODE, "没有获取到订单信息");
-//            }
-//            //获取申请流水号
-//            String applseq = AppOrdernoTypgrpRelation.getApplSeq();
-//            appOrder.setApplseq(applseq);
         }
-
+        logger.info("订单信息：" + appOrder);
 
         //0.准入资格校验
         Map<String, Object> ispassmap = new HashMap<String, Object>();
@@ -273,6 +305,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         //3.订单保存
         Map<String, Object> ordermap = saveAppOrderInfo(appOrder);
         if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
+            logger.info("订单保存失败");
             String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
