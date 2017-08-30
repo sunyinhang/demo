@@ -347,7 +347,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String payresult = JSONObject.toJSONString(payresultMap);
         JSONObject payBody = JSONObject.parseObject(payresult).getJSONObject("body");
         logger.info("payBody:" + payBody);
-        String totalAmt = payBody.get("totalAmt").toString();
+        String totalAmt = payBody.get("repaymentTotalAmt").toString();
 //        String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
 //        String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
 
@@ -447,7 +447,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         if("00000".equals(retFlag)) {
             //集团uid已在统一认证做过绑定
             String body = resultMap.get("body").toString();
-            Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            org.json.JSONObject bodyMap = new org.json.JSONObject(body);
             userId = bodyMap.get("userId").toString();
             return userId;
         }else{

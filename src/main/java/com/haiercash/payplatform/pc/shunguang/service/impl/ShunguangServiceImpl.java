@@ -3,9 +3,11 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
+import com.haiercash.payplatform.common.dao.SgRegionsDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.data.SgRegions;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.service.HaierDataService;
@@ -42,6 +44,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     private HaierDataService haierDataService;
     @Autowired
     private CrmService crmService;
+    @Autowired
+    private SgRegionsDao sgRegionsDao;
+
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
 
@@ -189,6 +194,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
 
         //
+
+        SgRegions sgRegions = sgRegionsDao.selectByRegionId(country);
+        country = sgRegions.getGbCode();//区编码
+        province = country.substring(0, 2) + "0000";//省编码
+        city = country.substring(0, 4) + "00";//市编码
 
         AppOrder appOrder = new AppOrder();
         appOrder.setMallOrderNo(orderSn);

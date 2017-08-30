@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.payplatform.common.dao.SgRegionsDao">
+
+    <select id="selectByGbCode" resultType="com.haiercash.payplatform.common.data.SgRegions">
+        select * from sg_regions where gb_code = #{gbCode}
+    </select>
+
+    <select id="selectByRegionId" resultType="com.haiercash.payplatform.common.data.SgRegions">
+        select * from sg_regions where region_id = #{regionId}
+    </select>
+
+</mapper>
