@@ -2,6 +2,7 @@ package com.haiercash.payplatform.common.service.impl;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.payplatform.common.service.CrmManageService;
 import com.haiercash.payplatform.common.service.LimitService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.EncryptUtil;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,15 +25,27 @@ public class LimitServiceImpl extends BaseService implements LimitService{
     private Session session;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private CrmManageService crmManageService;
 
     @Value("${app.shunguang.sg_typCde}")
     protected String sg_typCde;
+
+
+    @Value("${app.shunguang.sg_shopkeeper}")
+    protected String sg_shopkeeper;
+
+    @Value("${app.shunguang.sg_consumer}")
+    protected String sg_consumer;
+
 
     @Override
     public Map<String, Object> CreditLineApply(String token, String channel, String channelNo) throws Exception {
         logger.info("*********点击额度激活判断跳转页面**************开始");
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
+        Map<String, Object> gettigIDMap = new HashMap<String, Object>();
+        Map<String, Object> settigIDMap = new HashMap<String, Object>();
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
         String typCde = "" ;//贷款品种
         String tag = "";//标签
@@ -64,6 +79,13 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         String userId = (String)cacheMap.get("userId");
         String custName = (String)cacheMap.get("name");
         String idNumber = (String)cacheMap.get("idCard"); //身份证
+        String userType = (String) cacheMap.get("userType");//01 微店主    02 普通用户
+        String sg_tig = "";
+        if("01".equals(userType)){
+            sg_tig = sg_shopkeeper;
+        }else{
+            sg_tig = sg_consumer;
+        }
 //        String custNo = "C201708010722561X68720";
 //        String userId = "15264826872";
 //        String custName = "李甲团";
@@ -105,6 +127,44 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         //没有做过实名认证，跳转实名认证页面
             resultparamMap.put("flag", "6");//转实名认证页面
         }else{
+            //实名认证成功，查询客户是否存在标签
+            gettigIDMap.put("custName",custName);
+            gettigIDMap.put("idTyp","20");
+            gettigIDMap.put("idNo",idNumber);
+            Map<String, Object> custTag = crmManageService.getCustTag(token, gettigIDMap);
+            if(custTag == null){
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            Map custTagHeadMap = (HashMap<String, Object>) custTag.get("head");
+            String custTagHeadMapHeadFlag = (String) custTagHeadMap.get("retFlag");
+            if(!"00000".equals(custTagHeadMapHeadFlag)){
+                String retMsg = (String) custTagHeadMap.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+            List<Map<String,Object>> tiglist =  (ArrayList<Map<String,Object>>) custTag.get("body");
+            boolean flag = false;
+            for (int i = 0; i < tiglist.size(); i++) {
+               String tagIdData = (String) tiglist.get(i).get("tagId");
+                if(sg_tig.equals(tagIdData)){
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag){
+                settigIDMap.put("certNo",idNumber);
+                settigIDMap.put("tagId",sg_tig);
+                Map<String, Object> setcustTag = crmManageService.setCustTag(token, settigIDMap);
+                if(setcustTag == null){
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                }
+                Map setcustTagHeadMap = (HashMap<String, Object>) custTag.get("head");
+                String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
+                if(!"00000".equals(setcustTagHeadMapFlag)){
+                    String retMsg = (String) custTagHeadMap.get("retMsg");
+                    return fail(ConstUtil.ERROR_CODE, retMsg);
+                }
+            }
+
             if ("Y".equals(GRJBXX) && "Y".equals(DWXX) && "Y".equals(JZXX) && "Y".equals(LXRXX) && "Y".equals(BCYX)){//
                 //如个人信息完整，则判断是否做过人脸识别
                 ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
