@@ -173,7 +173,7 @@ public class ShunguangController extends BaseController {
 //        map1.put("channelNo","46");
 //        map1.put("applSeq","1265726");
 //        map1.put("outSts","06");
-//        map1.put("idNo","372926198911178630");
+//        map1.put("idNo","371102198011105713");
 //        map1.put("msgTyp","01");
 //        map1.put("tradeCode","100022");
 //        String s = JSON.toJSONString(map1);

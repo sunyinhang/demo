@@ -511,20 +511,20 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String apprvTotal = "";
             if (!"D".equals(applyTnrTyp) && !"d".equals(applyTnrTyp) && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
                 String psNormIntAmtStr = String.valueOf(json.get("totalnormint"));//总利息金额
-                if (psNormIntAmtStr.equals("null")) {
+                if (StringUtils.isEmpty(psNormIntAmtStr)) {
                     psNormIntAmt = new BigDecimal(0);
                 } else {
                     psNormIntAmt = new BigDecimal(psNormIntAmtStr);
                 }
                 String feeAmtStr = String.valueOf(json.get("totalfeeamt"));//费用总额
-                if (feeAmtStr.equals("null")) {
+                if (StringUtils.isEmpty(feeAmtStr)) {
                     feeAmt = new BigDecimal(0);
                 } else {
                     feeAmt = new BigDecimal(feeAmtStr);
                 }
 //                String apprvAmtStr = String.valueOf(json.get("apprvAmt"));//贷款审批金额
                 String apprvAmtStr = String.valueOf(json.get("apply_amt"));//申请金额（元）
-                if (apprvAmtStr.equals("null")) {
+                if (StringUtils.isEmpty(apprvAmtStr)) {
                     apprvAmt = new BigDecimal(0);
                 } else {
                     apprvAmt = new BigDecimal(apprvAmtStr);
