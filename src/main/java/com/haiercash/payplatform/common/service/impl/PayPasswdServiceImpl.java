@@ -316,6 +316,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         }
         Map<String, Object> cacheMap = session.get(token, Map.class);
         String userId = (String) cacheMap.get("userId");
+        if(userId == null && "".equals(userId)){
+            logger.info("缓存中userID为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
         //userId="18325423979";
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("token", token);
