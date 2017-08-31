@@ -70,7 +70,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                         vm.goodsName = goodsName;
                         vm.applyAmt = data.apply_amt;
                         vm.xfze = data.totfee;
-                        vm.ordertotal = parseInt(data.apply_amt)+ parseInt(data.totfee);
+                        vm.ordertotal = data.ordertotal;
                         vm.setlTotalAmt = data.setlFeeAmt + data.setlIncAmt + data.setlPrcpAmt
                         vm.repayAmt = data.repayAmt;
                     }
