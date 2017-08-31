@@ -34,6 +34,12 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
         );
     }*/
 
+    var currentIndex = util.gup('currentIndex');
+    if (currentIndex) {
+        currentIndex = util.toNumber(currentIndex);
+    } else {
+        currentIndex = 1;
+    }
     var vm = util.bind({
         container: 'installmentBill',
         data: {
@@ -45,7 +51,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             },
             tabsConfig: {
                 layout: 'head',
-                currentIndex: 1,
+                currentIndex: currentIndex,
                 tabs: [
                     {
                         text: '全部',
@@ -207,12 +213,14 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                     if(flag === '1'){
                                         util.redirect({
                                             // title: '订单详情',
-                                            url: '/payByBt/orderDetails.html?orderNo='+ item.order.orderNo
+                                            url: '/payByBt/orderDetails.html?orderNo='+ item.order.orderNo + '&currentIndex=' + util.tabsIndex(util.vm(vm, vm.tags.tabsKey)),
+                                            back: '/payByBt/installmentBill.html?currentIndex=' + util.tabsIndex(util.vm(vm, vm.tags.tabsKey))
                                         });
                                     }else{
                                         util.redirect({
                                             // title: '贷款详情',
-                                            url: '/payByBt/loanDetails.html?applSeq='+ item.order.applSeq
+                                            url: '/payByBt/loanDetails.html?applSeq='+ item.order.applSeq + '&currentIndex=' + util.tabsIndex(util.vm(vm, vm.tags.tabsKey)),
+                                            back: '/payByBt/installmentBill.html?currentIndex=' + util.tabsIndex(util.vm(vm, vm.tags.tabsKey))
                                         });
                                     }
                                 },

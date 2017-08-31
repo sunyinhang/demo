@@ -9,12 +9,9 @@ import com.haiercash.payplatform.common.utils.Base64Utils;
 import com.haiercash.payplatform.common.utils.DesUtil;
 import com.haiercash.payplatform.common.utils.HttpClient;
 import com.haiercash.payplatform.common.utils.RSAUtils;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlbeans.impl.store.Saaj;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,8 +29,8 @@ import java.util.UUID;
  */
 @Component
 //@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
-public class CmisMseeageHandler {
-    private Log logger = LogFactory.getLog(CmisMseeageHandler.class);
+public class CmisMessageHandler {
+    private Log logger = LogFactory.getLog(CmisMessageHandler.class);
 
     @Autowired
     private RabbitTemplate rabbitTemplate;

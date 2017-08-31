@@ -1,26 +1,21 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
-import com.haiercash.payplatform.tasks.rabbitmq.CmisMseeageHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
-
-import static com.haiercash.payplatform.common.utils.RestUtil.fail;
-
 
 /**
  * shunguang controller.
@@ -42,8 +37,7 @@ public class ShunguangController extends BaseController {
     private Session session;
     @Autowired
     private ShunguangService shunguangService;
-@Autowired
-private CmisMseeageHandler cmisMseeageHandler;
+
     /**
      * 微店主客户信息推送 Sg-10001.
      *
