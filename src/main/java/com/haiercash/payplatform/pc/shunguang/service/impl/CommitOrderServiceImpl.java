@@ -117,6 +117,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         //String userId = cacheMap.get("userId").toString();
 
         //根据userId获取客户编号
+        logger.info("获取客户实名信息");
         Map<String, Object> custMap = new HashMap<String, Object>();
         custMap.put("userId", userId);
         custMap.put("channel", channel);
@@ -188,30 +189,30 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         session.set(token, cacheMap);
 
         //6.信息推送
-        if(HttpUtil.isSuccess(result)){//提交订单成功
-            String uidHaier = (String) cacheMap.get("uidHaier");
-            //根据applSeq查询商城订单号和网单号
-            Map m = orderManageService.getMallOrderNoByApplSeq(applSeq);
-            if(!HttpUtil.isSuccess(m)){
-                return m;
-            }
-            Map ordermap = (HashMap<String, Object>)m.get("body");
-            String mallOrderNo = (String) ordermap.get("mallOrderNo");
-
-            HashMap<Object, Object> bodyinfo = new HashMap<>();
-            Map sendmap = new HashMap<>();
-            sendmap.put("outSts", "01");
-            sendmap.put("applSeq", applSeq);//申请流水号
-            sendmap.put("idNo", certNo);//身份证号
-            sendmap.put("orderNo",mallOrderNo);//商城订单编号
-            bodyinfo.put("body",sendmap);
-            bodyinfo.put("userid",uidHaier);//集团userid   1000030088
-            String sgString = com.alibaba.fastjson.JSONObject.toJSONString(bodyinfo);
-            String tradeCode="Sg-10007";
-            String encrypt = encrypt(sgString, channelNo,tradeCode);
-            String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";//TODO!!!!
-            HttpClient.sendPost(urlOne, encrypt, "utf-8");
-        }
+//        if(HttpUtil.isSuccess(result)){//提交订单成功
+//            String uidHaier = (String) cacheMap.get("uidHaier");
+//            //根据applSeq查询商城订单号和网单号
+//            Map m = orderManageService.getMallOrderNoByApplSeq(applSeq);
+//            if(!HttpUtil.isSuccess(m)){
+//                return m;
+//            }
+//            Map ordermap = (HashMap<String, Object>)m.get("body");
+//            String mallOrderNo = (String) ordermap.get("mallOrderNo");
+//
+//            HashMap<Object, Object> bodyinfo = new HashMap<>();
+//            Map sendmap = new HashMap<>();
+//            sendmap.put("outSts", "01");
+//            sendmap.put("applSeq", applSeq);//申请流水号
+//            sendmap.put("idNo", certNo);//身份证号
+//            sendmap.put("orderNo",mallOrderNo);//商城订单编号
+//            bodyinfo.put("body",sendmap);
+//            bodyinfo.put("userid",uidHaier);//集团userid   1000030088
+//            String sgString = com.alibaba.fastjson.JSONObject.toJSONString(bodyinfo);
+//            String tradeCode="Sg-10007";
+//            String encrypt = encrypt(sgString, channelNo,tradeCode);
+//            String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";//TODO!!!!
+//            HttpClient.sendPost(urlOne, encrypt, "utf-8");
+//        }
 
 
         return result;

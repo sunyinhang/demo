@@ -137,6 +137,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String mobile = (String) custresult.get("mobile");
 
         //获取客户标签
+        logger.info("获取标签");
         Map tagmap = new HashMap<>();
         tagmap.put("custName", custName);//姓名
         tagmap.put("idTyp", "20");//证件类型
@@ -233,6 +234,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         logger.info("订单信息：" + appOrder);
 
         //0.准入资格校验
+        logger.info("进行准入资格校验");
         Map<String, Object> ispassmap = new HashMap<String, Object>();
         ispassmap.put("custName", custName);//姓名
         ispassmap.put("certNo", certNo);//身份证
@@ -252,6 +254,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //1.录单校验（所在城市开通服务）
         //获取市代码
+        logger.info("获取业务发生地省市区");
         Map<String, Object > citymap = new HashMap<String, Object>();
         citymap.put("areaCode", areaCode);
         citymap.put("flag", "parent");
@@ -273,7 +276,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             logger.info("获取省编码失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-
+        //录单校验
+        logger.info("进行录单校验");
         Map<String, Object> ordercheakmap = new HashMap<String, Object>();
         ordercheakmap.put("userId", userId);
         ordercheakmap.put("provinceCode", provinceCode);
@@ -287,6 +291,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
 
         //2.是否允许申请贷款
+        logger.info("查看是否允许申请贷款");
         String typCde = appOrder.getTypCde();
         SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
         String date = dateFormater.format(new Date());
