@@ -353,21 +353,21 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         String applyTnrTyp = (String) resMap.get("apply_tnr_typ");
 //                appOrder.getApplyTnrTyp();
 
-        Integer totalnormint = (Integer) resMap.get("totalnormint");
+        BigDecimal totalnormint = new  BigDecimal(resMap.get("totalnormint").toString());
 //                appOrder.getTotalnormint();
-        Integer totalfeeamt = (Integer) resMap.get("totalfeeamt");
+        BigDecimal totalfeeamt =new  BigDecimal(resMap.get("totalfeeamt").toString());
 //                appOrder.getTotalfeeamt();
         BigDecimal Totalnormint = new BigDecimal(0);
         BigDecimal Totalfeeamt = new BigDecimal(0);
         if("null".equals(totalnormint) || "".equals(totalnormint) || totalnormint == null){
             Totalnormint = new BigDecimal(0);
         }else{
-            Totalnormint = new BigDecimal(totalnormint);
+            Totalnormint = totalnormint;
         }
         if("null".equals(totalfeeamt) || "".equals(totalfeeamt) || totalfeeamt == null){
             Totalfeeamt = new BigDecimal(0);
         }else{
-            Totalfeeamt =  new BigDecimal(totalfeeamt);
+            Totalfeeamt =  totalfeeamt;
         }
         BigDecimal xfzeBig = new BigDecimal(0);
         xfzeBig = Totalnormint.add(Totalfeeamt);
@@ -379,13 +379,14 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             }else{
                 xfze = new BigDecimal(xfzeStr);
             }
-            Integer applyAmtStr = (Integer)resMap.get("apply_amt");
+//            Integer applyAmtStr = (Integer)resMap.get("apply_amt");
+            BigDecimal applyAmtStr = new  BigDecimal(resMap.get("apply_amt").toString());
 //            String applyAmtStr = (String) resMap.get("apply_amt");
 //                    appOrder.getApplyAmt();//借款总额
             if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null){
                 applyAmt = new BigDecimal(0);
             }else{
-                applyAmt = new BigDecimal(applyAmtStr);
+                applyAmt = applyAmtStr;
             }
             BigDecimal total = new BigDecimal(0);
             total = xfze.add(applyAmt);
