@@ -240,8 +240,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("apporder", appOrder);//
         cachemap.put("name", custName);
         cachemap.put("idNo", certNo);
+        cachemap.put("userId", userId);
         session.set(token, cachemap);
-        logger.info("name:" + custName + "  idNo:" + certNo);
+        logger.info("name:" + custName + "  idNo:" + certNo + "  userId:" + userId);
         Map returnmap = new HashMap<>();
         String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
         returnmap.put("backurl", backurl);
