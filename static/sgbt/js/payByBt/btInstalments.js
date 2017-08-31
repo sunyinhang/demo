@@ -62,6 +62,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                 util.post({
                                                     url: '/queryOrderInfo',
                                                     loading: false,
+                                                    alert: false,
                                                     data: {
                                                         orderNo: orderNo
                                                     },
@@ -75,6 +76,9 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                                 // util.modal('close');
                                                                 util.loading('hide', 'paying');
                                                                 clearInterval(t);
+                                                                util.cache({
+                                                                    $error: '支付结果异常'
+                                                                });
                                                                 util.redirect({
                                                                     url: util.mix('/payByBt/payFail.html', {
                                                                         edxg: util.gup('edxg'),
@@ -102,6 +106,9 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                             util.loading('hide', 'paying');
                                                             // 查询支付结果失败，则跳转支付失败页面
                                                             clearInterval(t);
+                                                            util.cache({
+                                                                $error: '支付结果异常'
+                                                            });
                                                             util.redirect({
                                                                 url: util.mix('/payByBt/payFail.html', {
                                                                     edxg: util.gup('edxg'),
@@ -111,10 +118,13 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                             });
                                                         }
                                                     },
-                                                    error: function () {
-                                                        util.loading('hide');
+                                                    error: function (res) {
+                                                        util.loading('hide', 'paying');
                                                         // 查询支付结果失败，则跳转支付失败页面
                                                         clearInterval(t);
+                                                        util.cache({
+                                                            $error: res.head.retMsg
+                                                        });
                                                         util.redirect({
                                                             url: util.mix('/payByBt/payFail.html', {
                                                                 edxg: util.gup('edxg'),
@@ -133,6 +143,9 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                 $('.errorInform').show();
                                             }else{
                                                 util.modal('close');
+                                                util.cache({
+                                                    $error: res.head.retMsg
+                                                });
                                                 util.redirect({
                                                     // title: '支付失败',
                                                     url: util.mix('/payByBt/payFail.html', {

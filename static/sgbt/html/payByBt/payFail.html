@@ -12,7 +12,7 @@
 		<img src="./custom/themes/default/images/payByBt/fail.png" alt="">
 	</div>
 	<div class="main02">
-		<b>支付失败</b>
+		<b>支付失败<span v-text="'：' + error" v-if="error"></span></b>
 		<a href="javascript:void(0);" class="a-btn" @click="payFailFn">重新提交</a>
 	</div>
 </div>
