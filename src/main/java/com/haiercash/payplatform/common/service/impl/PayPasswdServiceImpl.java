@@ -522,7 +522,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 } else {
                     feeAmt = new BigDecimal(feeAmtStr);
                 }
-                String apprvAmtStr = String.valueOf(json.get("apprvAmt"));//贷款审批金额
+//                String apprvAmtStr = String.valueOf(json.get("apprvAmt"));//贷款审批金额
+                String apprvAmtStr = String.valueOf(json.get("apply_amt"));//申请金额（元）
                 if (apprvAmtStr.equals("null")) {
                     apprvAmt = new BigDecimal(0);
                 } else {
@@ -536,7 +537,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 BigDecimal total = new BigDecimal(0);
                 total = tot.add(apprvAmt);//总利息+总费用+贷款审批金额
                 apprvTotal = total.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
-                json.put("apprvTotal", apprvTotal);
+                json.put("ordertotal", apprvTotal);
 
             }
             String outStsNew = json.getString("outSts");

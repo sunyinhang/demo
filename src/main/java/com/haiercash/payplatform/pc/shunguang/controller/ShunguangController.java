@@ -1,11 +1,13 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
+import com.haiercash.payplatform.tasks.rabbitmq.CmisMessageHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,6 +40,8 @@ public class ShunguangController extends BaseController {
     private Session session;
     @Autowired
     private ShunguangService shunguangService;
+    @Autowired
+    private CmisMessageHandler cmisMseeageHandler;
 
     /**
      * 微店主客户信息推送 Sg-10001.
@@ -166,9 +171,9 @@ public class ShunguangController extends BaseController {
 //        HashMap<Object, Object> map1 = new HashMap<>();
 //        map1.put("cooprCode","");
 //        map1.put("channelNo","46");
-//        map1.put("applSeq","1265566");
+//        map1.put("applSeq","1265726");
 //        map1.put("outSts","06");
-//        map1.put("idNo","370682199107018123");
+//        map1.put("idNo","372926198911178630");
 //        map1.put("msgTyp","01");
 //        map1.put("tradeCode","100022");
 //        String s = JSON.toJSONString(map1);
