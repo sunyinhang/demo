@@ -188,6 +188,9 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             },
             refresh: function (data, pagination, _vm , flag) {
                 if (data && data.orders && data.orders.length > 0) {
+                    if (data.orders.length < vm.pageSize) {
+                        _vm.complete();
+                    }
                     var items = [];
                     for (var i=0; i<data.orders.length; i++) {
                         var order = data.orders[i];
@@ -350,6 +353,8 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                 } else {
                     if (!pagination) {
                         _vm.load([], false);
+                    } else {
+                        _vm.complete();
                     }
                 }
             }
