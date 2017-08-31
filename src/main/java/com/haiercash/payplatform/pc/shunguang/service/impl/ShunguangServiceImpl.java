@@ -87,7 +87,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
 //        String userId = (String) info.get("userId");
 //        String data = (String) info.get("data");
-
+        logger.info("交易编码：" + tradeCode);
         String params;
         try {
             params = this.decryptData(data, channelNo, key);
@@ -241,6 +241,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("name", custName);
         cachemap.put("idNo", certNo);
         session.set(token, cachemap);
+        logger.info("name:" + custName + "  idNo:" + certNo);
         Map returnmap = new HashMap<>();
         String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
         returnmap.put("backurl", backurl);
