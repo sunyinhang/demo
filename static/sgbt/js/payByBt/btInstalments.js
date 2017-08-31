@@ -28,7 +28,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 util.modal({
                     title: '请输入支付密码',
                     clazz: 'enterPayPwd',
-                    message: '<p class="hide errorInform">支付密码输入错误</p><input type="password" placeholder="请输入支付密码" class="pwd-text">',
+                    message: '<p class="hide errorInform"></p><input type="password" placeholder="请输入支付密码" class="pwd-text">',
                     close: true,
                     inline: false,
                     operates: [
@@ -38,11 +38,12 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                             click: function () {
                                 $('.errorInform').hide();
                                 if( util.isEmpty($(".pwd-text").val())){
-                                    util.alert('#payPwdError');
+                                    $('.errorInform').text("支付密码不能为空");
+                                    $('.errorInform').show();
                                 }else{
+                                    //util.loading('支付中...', 'paying')
                                     util.post({
                                         url: '/shunguang/commitOrder',
-                                        check: true,
                                         data: {
                                             orderNo: orderNo,
                                             applSeq: applSeq,
@@ -61,6 +62,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                         },
                                         error: function(res){
                                             if (res && res.head && util.endsWith(res.head.retFlag,'error')) {
+                                                $('.errorInform').text("支付密码输入错误");
                                                 $('.errorInform').show();
                                             }else{
                                                 util.modal('close');
@@ -85,7 +87,8 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                     url: util.mix('/getPayPsd/getPayPsdWay.html', {
                                         from: 'btInstalments',
                                         edxg: util.gup('edxg')
-                                    }, true)
+                                    }),
+                                    back: '/payByBt/btInstalments.html?show=reset'
                                 });
                             }
                         }
