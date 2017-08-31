@@ -1,4 +1,5 @@
 require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
+
     var vm = util.bind({
         container: 'payFail',
         data: {
@@ -9,7 +10,8 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 util.redirect({
                     // title: title,
                     url: util.mix(url, {
-                        from: 'reset'
+                        from: 'reset',
+                        orderNo: util.gup('orderNo'),
                     }, true)
                 });
             }
