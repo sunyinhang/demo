@@ -110,13 +110,13 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
 
         //根据token获取统一认证userid
-        String userId = sgInnerService.getuserId(token);
-        if(StringUtils.isEmpty(userId)){
-            logger.info("根据用户中心token获取统一认证userId失败");
-            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
-        }
+//        String userId = sgInnerService.getuserId(token);
+//        if(StringUtils.isEmpty(userId)){
+//            logger.info("根据用户中心token获取统一认证userId失败");
+//            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
+//        }
         //TODO!!!!
-        //String userId = cacheMap.get("userId").toString();
+        String userId = cacheMap.get("userId").toString();
 
         //获取客户信息
         logger.info("订单保存，根据userId获取客户信息");
@@ -146,8 +146,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             return tagmapresult;
         }
         //TODO!!!!
-        String userType = (String) cacheMap.get("userType");
-        //String userType = "01";
+        //String userType = (String) cacheMap.get("userType");
+        String userType = "01";
         String tagId = "";
         if("01".equals(userType)){//微店主
             tagId = sg_shopkeeper;
@@ -307,10 +307,15 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //3.订单保存
         Map<String, Object> ordermap = saveAppOrderInfo(appOrder);
-        logger.info("订单保存结果：" + ordermap);
+        cacheMap.put("ordermap", ordermap);
+        session.set(token, cacheMap);
+        logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
             logger.info("订单保存失败");
-            String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
+            Map resultHead = (LinkedHashMap<String, Object>)(ordermap.get("head"));
+            String retmsg = resultHead.get("retMsg").toString();
+            //String retmsg = resultHead.getRetMsg();
+            //String retmsg = (String) ((HashMap<String, Object>)(ordermap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
 

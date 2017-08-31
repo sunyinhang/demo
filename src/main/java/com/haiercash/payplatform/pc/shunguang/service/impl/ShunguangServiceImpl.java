@@ -12,6 +12,7 @@ import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.service.HaierDataService;
 import com.haiercash.payplatform.common.utils.*;
+import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
@@ -46,6 +47,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     private CrmService crmService;
     @Autowired
     private SgRegionsDao sgRegionsDao;
+    @Autowired
+    private SgInnerService sgInnerService;
 
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
@@ -149,6 +152,28 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String URL = (String) json.get("URL");
         JSONObject bodyjson = new JSONObject(body);
 
+        String userId = sgInnerService.getuserId(token);
+        if(StringUtils.isEmpty(userId)){
+            logger.info("根据用户中心token获取统一认证userId失败");
+            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
+        }
+
+        //根据userId获取客户编号
+        Map<String, Object> custMap = new HashMap<String, Object>();
+        custMap.put("userId", userId);
+        custMap.put("channel", ConstUtil.CHANNEL);
+        custMap.put("channelNo", channelNo);
+        Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
+        if (!HttpUtil.isSuccess(custInforesult) ) {
+            logger.info("订单提交，获取实名信息失败");
+            return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
+        }
+        String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
+        com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
+        String custNo = (String) custresult.get("custNo");
+        String custName = (String) custresult.get("custName");
+        String certNo = (String) custresult.get("certNo");
+
         //bodyjson参数非空判断
         if(StringUtils.isEmpty(bodyjson.get("orderSn")) || StringUtils.isEmpty(json.get("userType"))
                 || StringUtils.isEmpty(json.get("URL")) || StringUtils.isEmpty(json.get("body"))){
@@ -212,7 +237,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //
         cachemap.put("userType", userType);//01:微店主  02:消费者
         cachemap.put("paybackurl", URL);//支付申请回调url
-        cachemap.put("apporder", appOrder);
+        cachemap.put("apporder", appOrder);//
+        cachemap.put("name", custName);
+        cachemap.put("idNo", certNo);
         session.set(token, cachemap);
         Map returnmap = new HashMap<>();
         String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;

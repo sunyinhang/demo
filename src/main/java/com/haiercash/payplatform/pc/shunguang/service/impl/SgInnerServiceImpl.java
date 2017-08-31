@@ -402,7 +402,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String payresult = JSONObject.toJSONString(payresultMap);
         JSONObject payBody = JSONObject.parseObject(payresult).getJSONObject("body");
         logger.info("payBody:" + payBody);
-        String totalAmt = payBody.get("totalAmt").toString();
+        String totalAmt = payBody.get("repaymentTotalAmt").toString();
 
         appOrder.setApplyTnr(applyTnr);//借款期限
         appOrder.setApplyTnrTyp(applyTnr);//借款期限类型

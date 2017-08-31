@@ -1211,19 +1211,20 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         Map<String, Object> resultparamMap = appServerService.getPersonalCenterInfo(token, paramMap);
         return resultparamMap;
     }
+
     //返回实名认证需要的数据
     public Map<String, Object> queryCustNameByUId(String token){
-    if (token == null || "".equals(token)) {
-        logger.info("获取的token为空" + token);
-        return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-    }
-    Map<String, Object> cacheMap = session.get(token, Map.class);
-    if (StringUtils.isEmpty(cacheMap)) {
-        logger.info("Redi获取的数据为空");
-        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-    }
-    String idNo = (String) cacheMap.get("idNo");//身份证号
-    String name = (String) cacheMap.get("name");//客户姓名
+        if (token == null || "".equals(token)) {
+            logger.info("获取的token为空" + token);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Redi获取的数据为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        String idNo = (String) cacheMap.get("idNo");//身份证号
+        String name = (String) cacheMap.get("name");//客户姓名
         HashMap<Object, Object> map = new HashMap<>();
         map.put("idNo",idNo);
         map.put("name",name);
