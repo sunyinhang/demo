@@ -12,6 +12,7 @@ import com.haiercash.payplatform.common.utils.RSAUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -96,9 +97,9 @@ public class CmisMessageHandler {
 
                         //cooperativeBusinessDao.selectBycooperationcoed(channelNo);
 //                        String urlOne = publishDao.selectChannelNoUrl(channelNo);//获取贷款申请URL
-                        String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";
+                        String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";//07
 //                        String url = publishDao.selectChannelNoUrlOne(channelNo);//获取额度申请URL
-                        String url="http://mobiletest.ehaier.com:58093/paycenter/json/ious/limitNotify.json";
+                        String url="http://mobiletest.ehaier.com:58093/paycenter/json/ious/limitNotify.json";//05
                         HashMap<String, Object> mapidNo = new HashMap<>();
                         HashMap<Object, Object> map = new HashMap<>();
                         HashMap<String, Object> mapinfo = new HashMap<>();
@@ -138,6 +139,7 @@ public class CmisMessageHandler {
                         mapuser.put("channelNo", channelNo);
                         mapuser.put("userId", userId);
                         Map<String, Object> userByUserid = appServerService.findUserByUserid(null, mapuser);//根据统一认证userid查询用户信息
+                        logger.info("根据统一认证userid查询用户信息返回数据是"+userByUserid);
                        if (userByUserid==null || "".equals(userByUserid)){
                            return;
                        }
