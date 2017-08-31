@@ -55,7 +55,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
     @Override
     public Map<String, Object> saveStoreInfo(Map<String, Object> storeInfo) {
-
+        logger.info("微店主信息推送");
         Map<String, Object> result = this.savePeopleInfo(storeInfo);
         if (!HttpUtil.isSuccess(result)) {
             logger.error("保存微店主客户信息失败,处理结果:" + result);
@@ -65,6 +65,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
     @Override
     public Map<String, Object> saveOrdinaryUserInfo(Map<String, Object> ordinaryInfo) {
+        logger.info("普通用户消息推送");
         Map<String, Object> result = this.savePeopleInfo(ordinaryInfo);
         if (!HttpUtil.isSuccess(result)) {
             logger.error("保存普通用户信息失败,处理结果:" + result);
@@ -99,7 +100,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         JSONObject json = new JSONObject(params);
         String userid = (String) json.get("userid");
         String body = json.get("body").toString();
-
+        logger.info("消息推送会员userId:" + userid);
 
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("userId", userid);
@@ -107,7 +108,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         requestParams.put("applseq", null);
         requestParams.put("cardnumber", null);
         requestParams.put("data", new JSONObject(body));
-        System.out.println(outplatUrl);
 
         String url = this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData";
         logger.info("推送外联风险信息，请求地址：" + url);
@@ -757,6 +757,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
     //10.  白条支付实名认证同步接口    Sg-10009
     public Map<String, Object> queryAppLoanAndGoodsOne(Map<String, Object> map) throws Exception {
+        logger.info("白条支付实名认证同步接口************开始");
         String channelNo = (String) map.get("channelNo");
         String userId = (String) map.get("userId");//海尔集团用户ID
         String data = (String) map.get("data");
@@ -788,6 +789,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
     //11.  白条额度进行主动查询接口    Sg-10010
     public Map<String, Object> edcheck(Map<String, Object> map) {
+        logger.info("白条额度进行主动查询接口*********************开始");
         Map cachemap = new HashMap<String, Object>();
         String applyNo = (String) map.get("applyNo");//交易流水号
         String channelNo = map.get("channelNo").toString();

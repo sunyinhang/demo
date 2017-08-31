@@ -193,6 +193,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
 
     @Override
     public Map<String, Object> initPayApply(Map<String, Object> map) {
+        logger.info("白条分期页面加载*******************开始");
         String token = (String) map.get("token");
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
@@ -210,6 +211,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String typCde = "";//贷款品种
         String psPerdNo = "";//借款期限
         if("1".equals(flag)){//待提交返显
+            logger.info("待提交订单*********数据加载");
             AppOrder appOrder = new AppOrder();
             if(StringUtils.isEmpty(orderNo)){
                 logger.info("前台传入参数有误");
@@ -223,6 +225,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             }
             //获取申请流水号
             String applseq = AppOrdernoTypgrpRelation.getApplSeq();
+            logger.info("得到申请流水号：" + applseq);
             //根据applSeq查询商城订单号和网单号
             Map m = orderManageService.getMallOrderNoByApplSeq(applseq);
             if(!HttpUtil.isSuccess(m)){
@@ -287,6 +290,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             retrunmap.put("applyTnr", applyTnr);
             retrunmap.put("applyTnrTyp", applyTnrTyp);
         } else {
+            logger.info("新订单********数据加载");
             ObjectMapper objectMapper = new ObjectMapper();
             AppOrder appOrder = null;
             try {
@@ -303,7 +307,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             typCde = appOrder.getTypCde();//贷款品种
         }
 
-
+        logger.info("获取期数以及金额");
         //批量还款试算获取期数*金额
         Map<String, Object> paySsMap = new HashMap<String, Object>();
         paySsMap.put("typCde", typCde);
@@ -355,11 +359,14 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         retrunmap.put("payAmt", payAmt);
         retrunmap.put("payMtd", ((HashMap<String, Object>)(payssresultMap.get("body"))).get("info"));
         retrunmap.put("totalAmt", totalAmt);
+
+        logger.info("白条分期页面加载*******************结束");
         return success(retrunmap);
     }
 
     @Override
     public Map<String, Object> gettotalAmt(Map<String, Object> map) {
+        logger.info("获取应还款总额******************开始");
         String token = (String) map.get("token");
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
@@ -383,9 +390,6 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         }
         String payAmt = appOrder.getApplyAmt();//申请金额
         String typCde = appOrder.getTypCde();//贷款品种
-        //TODO!!!!
-//        String payAmt = "3000";//申请金额
-//        String typCde = "17035a";
 
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", typCde);
@@ -411,6 +415,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
 
         Map retrunmap = new HashMap();
         retrunmap.put("totalAmt", totalAmt);
+        logger.info("获取应还款总额******************开始");
         return success(retrunmap);
     }
 
