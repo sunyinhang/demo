@@ -36,7 +36,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                         vm.goodsList = data.goodsList.good;
                         vm.applyAmt = data.apply_amt;
                         vm.xfze = data.xfze;
-                        vm.ordertotal = parseInt(data.apply_amt)+ parseInt(data.xfze);
+                        vm.ordertotal = data.ordertotal;
                     }
                 }
             });

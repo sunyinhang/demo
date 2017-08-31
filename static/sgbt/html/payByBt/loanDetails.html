@@ -21,7 +21,7 @@
         </div>
     </div>
     <div class="main-04">
-      <span>已还{{setlTotalAmt}}，待还{{repayAmt}}</span>分期账单
+      <span>已还{{(setlTotalAmt == '' ? 0 : setlTotalAmt) | currency}}，待还{{(repayAmt == '' ? 0 : repayAmt)| currency}}</span>分期账单
     </div>
     <div class="main-05 margt8">
       <ul>

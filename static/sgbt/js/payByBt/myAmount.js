@@ -17,6 +17,11 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             mounthAmount: '',
             crdNorAvailAmt: '',
         },
+        filters: {
+            currency: function (val) {
+                return util.format(val, 'currency');
+            }
+        },
         methods:{
             goShopFn: function(){
                 util.get({
