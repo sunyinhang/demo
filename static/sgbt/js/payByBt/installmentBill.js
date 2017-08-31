@@ -302,7 +302,8 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         click: function (event, item) {
                                             util.redirect({
                                                 // title: '审批进度',
-                                                url: '/payByBt/applyProgress.html?applSeq='+ item.order.applSeq
+                                                url: '/payByBt/applyProgress.html?applSeq='+ item.order.applSeq,
+                                                back: '/payByBt/installmentBill.html?currentIndex=' + util.tabsIndex(util.vm(vm, vm.tags.tabsKey))
                                                 //back: false
                                             });
                                         }

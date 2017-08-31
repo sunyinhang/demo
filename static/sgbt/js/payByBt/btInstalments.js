@@ -42,8 +42,11 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                     $('.errorInform').show();
                                 }else{
                                     //util.loading('支付中...', 'paying')
+                                    util.loading();
                                     util.post({
                                         url: '/shunguang/commitOrder',
+                                        check: true,
+                                        loading: false,
                                         data: {
                                             orderNo: orderNo,
                                             applSeq: applSeq,
@@ -52,15 +55,79 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                         alert: false ,
                                         success: function(res){
                                             util.modal('close');
-                                            util.redirect({
-                                                // title: '支付成功',
-                                                url: util.mix('/payByBt/paySuccess.html', {
-                                                    edxg: util.gup('edxg'),
-                                                    applSeq: applSeq
-                                                }, true)
-                                            });
+                                            util.loading('hide');
+                                            util.loading(null, 'paying');
+                                            // 判断订单状态
+                                            var t = setInterval(function () {
+                                                util.post({
+                                                    url: '/queryOrderInfo',
+                                                    loading: false,
+                                                    data: {
+                                                        orderNo: orderNo
+                                                    },
+                                                    success: function (res) {
+                                                        var data = util.data(res);
+                                                        if (!util.isEmpty(data) && !util.isEmpty(data.outSts)) {
+                                                            // 02   03    aa   22  拒绝
+                                                            // 04   05    06   23   24    成功
+                                                            if (data.outSts === '02' || data.outSts === '03' || data.outSts === 'aa' || data.outSts === '22') {
+                                                                // 失败
+                                                                // util.modal('close');
+                                                                util.loading('hide', 'paying');
+                                                                clearInterval(t);
+                                                                util.redirect({
+                                                                    url: util.mix('/payByBt/payFail.html', {
+                                                                        edxg: util.gup('edxg'),
+                                                                        orderNo: orderNo
+                                                                    }, true),
+                                                                    back: false
+                                                                });
+                                                            } else if (data.outSts === '04' || data.outSts === '05' || data.outSts === '06' || data.outSts === '23' || data.outSts === '24') {
+                                                                // 成功
+                                                                // util.modal('close');
+                                                                util.loading('hide', 'paying');
+                                                                clearInterval(t);
+                                                                util.redirect({
+                                                                    // title: '支付成功',
+                                                                    url: util.mix('/payByBt/paySuccess.html', {
+                                                                        edxg: util.gup('edxg'),
+                                                                        applSeq: applSeq
+                                                                    }, true),
+                                                                    back: false
+                                                                });
+                                                            } else {
+                                                                // 审批中
+                                                            }
+                                                        } else {
+                                                            util.loading('hide', 'paying');
+                                                            // 查询支付结果失败，则跳转支付失败页面
+                                                            clearInterval(t);
+                                                            util.redirect({
+                                                                url: util.mix('/payByBt/payFail.html', {
+                                                                    edxg: util.gup('edxg'),
+                                                                    orderNo: orderNo
+                                                                }, true),
+                                                                back: false
+                                                            });
+                                                        }
+                                                    },
+                                                    error: function () {
+                                                        util.loading('hide');
+                                                        // 查询支付结果失败，则跳转支付失败页面
+                                                        clearInterval(t);
+                                                        util.redirect({
+                                                            url: util.mix('/payByBt/payFail.html', {
+                                                                edxg: util.gup('edxg'),
+                                                                orderNo: orderNo
+                                                            }, true),
+                                                            back: false
+                                                        });
+                                                    }
+                                                });
+                                            }, 10000);
                                         },
                                         error: function(res){
+                                            util.loading('hide');
                                             if (res && res.head && util.endsWith(res.head.retFlag,'error')) {
                                                 $('.errorInform').text("支付密码输入错误");
                                                 $('.errorInform').show();
@@ -71,7 +138,8 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                     url: util.mix('/payByBt/payFail.html', {
                                                         edxg: util.gup('edxg'),
                                                         orderNo: orderNo
-                                                    }, true)
+                                                    }, true),
+                                                    back: false
                                                 });
                                             }
                                         }
@@ -87,8 +155,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                     url: util.mix('/getPayPsd/getPayPsdWay.html', {
                                         from: 'btInstalments',
                                         edxg: util.gup('edxg')
-                                    }),
-                                    back: '/payByBt/btInstalments.html?show=reset'
+                                    })
                                 });
                             }
                         }
