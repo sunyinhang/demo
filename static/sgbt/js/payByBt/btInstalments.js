@@ -93,6 +93,16 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 });
             },
             payFn: function () {
+                if (!vm.areacode) {
+                    // util.alert('#locationFail');
+                    // TODO: 临时写死370200
+                    // return;
+                    // util.alert('临时固定为青岛市测试');
+                    vm.areacode = '370203';
+                    util.report({
+                        message: '定位失败，使用默认地区'
+                    });
+                }
                 if( !util.isEmpty(orderNo)){
                     var data={
                         flag: '1',
@@ -197,10 +207,18 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                     });
                 } else {
                     // util.loading('close');
+                    util.report({
+                        message: '定位失败',
+                        status: this.getStatus()
+                    });
                     util.alert('#locationFail');
                 }
             }, function(e) {
                 // util.loading('close');
+                util.report({
+                    message: '定位失败',
+                    error: e
+                });
                 util.alert('#locationFail');
             }, {
                 enableHighAccuracy: true
