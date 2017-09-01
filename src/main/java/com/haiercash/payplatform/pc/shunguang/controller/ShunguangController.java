@@ -3,10 +3,14 @@ package com.haiercash.payplatform.pc.shunguang.controller;
 import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
+import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.common.utils.HttpUtil;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.tasks.rabbitmq.CmisMessageHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +46,12 @@ public class ShunguangController extends BaseController {
     private ShunguangService shunguangService;
     @Autowired
     private CmisMessageHandler cmisMseeageHandler;
+    @Autowired
+    private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private AcquirerService acquirerService;
 
     /**
      * 微店主客户信息推送 Sg-10001.
@@ -223,5 +233,38 @@ public class ShunguangController extends BaseController {
     public Map<String, Object> payApplytest(@RequestBody AppOrder appOrder) throws Exception {
         // 参数非空校验
         return shunguangService.payApplytest(appOrder);
+    }
+
+
+    /**
+     * 描述：根据主键（订单号）删除订单对象及该订单下的所有商品以及共同还款人
+     *
+     * @param orderNoMap
+     * @return 处理成功json
+     */
+    @RequestMapping(value = "/api/payment/shunguang/cancelAppOrder", method = RequestMethod.POST)
+    public Map<String, Object> deleteAppOrder(@RequestBody Map<String, Object> orderNoMap) {
+        if (StringUtils.isEmpty(orderNoMap.get("orderNo"))) {
+            return fail("9004", "系统未接收到订单编号");
+        }
+        String orderNo = (String) orderNoMap.get("orderNo");
+        logger.info("开始删除订单：" + orderNo);
+        AppOrdernoTypgrpRelation relation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
+        if (relation == null) {
+            return fail("9005", "订单信息不存在");
+        }
+        Map<String, Object> resultMap;
+        // 如果为商品贷，且未生成流水号，则调用订单系统取消订单接口.
+        if ("01".equals(relation.getTypGrp()) && StringUtils.isEmpty(relation.getApplSeq())) {
+            resultMap = orderService.cancelOrder(orderNo);
+        } else {
+            resultMap = acquirerService.cancelAppl(relation.getApplSeq());
+        }
+        if (HttpUtil.isSuccess(resultMap)) {
+            HashMap<String, Object> hm = new HashMap<>();
+            hm.put("msg", "订单已被取消！");
+            return success(hm);
+        }
+        return resultMap;
     }
 }
