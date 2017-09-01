@@ -1033,11 +1033,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-//        Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if (StringUtils.isEmpty(cacheMap)) {
-//            logger.info("Redis为空：" + cacheMap);
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Redis为空：" + cacheMap);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
         String applSeq = (String) params.get("applSeq");//申请流水号
         //String   applSeq = "1097515";
         if (StringUtils.isEmpty(applSeq)) {
