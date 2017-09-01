@@ -135,4 +135,6 @@ public interface AppServerService {
     public Map<String, Object> caRequest(String token, Map<String, Object> map);
     //6.1.130.	(GET) 查询贷款品种信息列表
     public Map<String, Object> pLoanTypList(String token, Map<String, Object> paramMap);
+    //3.4.11(GET) 实名认证
+    public Map<String, Object> identify(String token, Map<String, Object> paramMap);
 }
