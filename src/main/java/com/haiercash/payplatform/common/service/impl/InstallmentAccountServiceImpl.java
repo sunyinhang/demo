@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -293,6 +294,10 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             String retMsg = (String) resultmapjsonMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
+        List<Map<String, Object>>body= (List<Map<String, Object>>) dateAppOrderPerson.get("body");
+        Map<String, Object> orders = new HashMap<String, Object>();
+        orders.put("orders",body);
+        dateAppOrderPerson.put("body",orders);
         return dateAppOrderPerson;
     }
 
