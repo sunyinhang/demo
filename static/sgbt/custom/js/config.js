@@ -5,7 +5,9 @@ var __env = 'dev';
 var __version = '1.0.0';
 var __Const = {
     init: {
-        auth: 'h5'
+        auth: 'h5',
+        // 定位失败是否允许提交
+        locationFailSubmit: true
     },
     rest: {
         baseUrl: window.location.protocol + "//" + window.location.host + '/api/payment',

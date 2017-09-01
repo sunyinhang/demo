@@ -166,4 +166,5 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     }, 200);
 
     window.util = util;
+    window.Const = Const;
 });
