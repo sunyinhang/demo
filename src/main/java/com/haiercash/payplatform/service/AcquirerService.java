@@ -71,4 +71,11 @@ public interface AcquirerService {
      * @return  Map
      */
     public AppOrder getAppOrderFromAcquirer(String applSeq, String channelNo);
+
+    /**
+     * 贷款申请取消.
+     * @param applSeq 贷款申请流水号
+     * @return Map
+     */
+    Map<String, Object> cancelAppl(String applSeq);
 }

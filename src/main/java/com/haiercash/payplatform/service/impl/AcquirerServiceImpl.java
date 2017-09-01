@@ -712,4 +712,23 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         return appOrder;
     }
 
+    @Override
+    public Map<String, Object> cancelAppl(String applSeq) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("applSeq", applSeq);
+        Map<String, Object> result = AcqUtil
+                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/cancelAppl", AcqTradeCode.COMMIT_APPL,
+                        super.getChannel(), super.getChannelNo(), null, null, params);
+        if (result == null || result.isEmpty()) {
+            return fail(RestUtil.ERROR_INTERNAL_CODE, "收单系统通信失败！");
+        }
+        if (!CmisUtil.getIsSucceed(result)) {
+            logger.info("收单系统取消贷款申请失败, applSeq:" + applSeq);
+        } else {
+            logger.info("收单系统取消贷款申请成功, applSeq:" + applSeq);
+        }
+
+        return (Map<String, Object>) result.get("response");
+    }
+
 }

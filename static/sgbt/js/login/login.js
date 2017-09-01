@@ -14,10 +14,11 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         password: this.loginpassword
                     },
                     success: function (res) {
+                        debugger
                         var data = util.data(res);
                         if(!util.isEmpty(data)){
                             util.redirect({
-                                url: data.backurl
+                                url: data.backurl.substring(data.backurl.indexOf('/#!/') + 3)
                             });
                         }
                     }
