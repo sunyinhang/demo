@@ -131,9 +131,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String key = (String) map.get("key");
 
         String params;
-        try {
-            params = this.decryptData(data, channelNo, key);
-        } catch (Exception e) {
+            try {
+                params = this.decryptData(data, channelNo, key);
+            } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
         }
