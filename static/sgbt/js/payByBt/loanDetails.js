@@ -46,6 +46,23 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                 else if(obj.setlInd == 'N' && obj.days <0){
                     return '逾期'+ obj.days + '天';
                 }
+            },
+            repaymentFn: function(){
+                util.modal({
+                    message: '您可下载嗨付app进行主动还款',
+                    close: false,
+                    inline: true,
+                    operates: [{
+                        text: '取消',
+                        close: true,
+                    },{
+                        text: '下载',
+                        close: false,
+                        click: function () {
+                            window.location.href="http://app.haiercash.com/appdeploy/haiercustomer/appdownload.html" ;//下载app
+                        }
+                    }]
+                })
             }
         },
         mounted: function(){
