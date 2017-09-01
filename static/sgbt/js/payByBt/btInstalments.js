@@ -77,7 +77,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                                 util.loading('hide', 'paying');
                                                                 clearInterval(t);
                                                                 util.cache({
-                                                                    $error: '支付结果异常'
+                                                                    $error: data.app_out_advice || '支付结果未知'
                                                                 });
                                                                 util.redirect({
                                                                     url: util.mix('/payByBt/payFail.html', {
@@ -123,7 +123,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                         // 查询支付结果失败，则跳转支付失败页面
                                                         clearInterval(t);
                                                         util.cache({
-                                                            $error: res.head.retMsg
+                                                            $error: res && res.head ? res.head.retMsg : '支付结果异常'
                                                         });
                                                         util.redirect({
                                                             url: util.mix('/payByBt/payFail.html', {
