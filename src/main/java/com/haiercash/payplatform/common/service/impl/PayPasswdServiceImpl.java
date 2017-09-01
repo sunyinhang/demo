@@ -10,11 +10,13 @@ import com.haiercash.payplatform.common.service.PayPasswdService;
 import com.haiercash.payplatform.common.utils.AcqUtil;
 import com.haiercash.payplatform.common.utils.CmisUtil;
 import com.haiercash.payplatform.common.utils.ConstUtil;
+import com.haiercash.payplatform.common.utils.HttpClient;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,6 +40,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private AppServerService appServerService;
     @Autowired
     private AcquirerService acquirerService;
+    @Value("${app.other.outplatform_url}")
+    protected String outplatform_url;
 
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
@@ -65,11 +69,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String userId = (String) cacheMap.get("userId");
-        logger.info("获取的userId为："+userId);
+        logger.info("获取的userId为：" + userId);
         //String userId = "18325423979";
         String phoneNo = (String) cacheMap.get("phoneNo");//手机号
         String custNo = (String) cacheMap.get("custNo");// 客户号
-        logger.info("获取的客户号："+custNo);
+        logger.info("获取的客户号：" + custNo);
         String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
 
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
@@ -77,18 +81,18 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         validateUserFlagMap.put("channel", channel);
         validateUserFlagMap.put("userId", com.haiercash.payplatform.common.utils.EncryptUtil.simpleEncrypt(userId));//客户编号
         Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
-        if(alidateUserMap == null){
+        if (alidateUserMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         Map alidateUserHeadMap = (HashMap<String, Object>) alidateUserMap.get("head");
         String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
-        if(!"00000".equals(alidateUserHeadMapFlag)){
+        if (!"00000".equals(alidateUserHeadMapFlag)) {
             String retMsg = (String) alidateUserHeadMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         Map alidateUserBodyMap = (HashMap<String, Object>) alidateUserMap.get("body");
         String flag = (String) alidateUserBodyMap.get("payPasswdFlag");
-        logger.info("密码设置标识：flag"+flag);
+        logger.info("密码设置标识：flag" + flag);
         if ("0".equals(flag)) {//0  密码未设置
             logger.info("支付密码未设置，进行密码的设置");
             Map<String, Object> paramsMap = new HashMap<String, Object>();
@@ -173,10 +177,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
         ArrayList<String> listOne = new ArrayList<>();
         ArrayList<String> listTwo = new ArrayList<>();
-        HashMap<String, Object> hashMap = new HashMap<String,Object>();
-        HashMap<String,Object> hashMapOne = new HashMap<String,Object>();
-        HashMap<String,Object> hashMapTwo = new HashMap<String,Object>();
-        String longLatitude="经度"+longitude+"维度"+latitude;
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        HashMap<String, Object> hashMapOne = new HashMap<String, Object>();
+        HashMap<String, Object> hashMapTwo = new HashMap<String, Object>();
+        String longLatitude = "经度" + longitude + "维度" + latitude;
         logger.info("经维度解析前:" + longLatitude);
         String longLatitudeEncrypt = EncryptUtil.simpleEncrypt(longLatitude);
         logger.info("经维度解析后:" + longLatitudeEncrypt);
@@ -204,18 +208,18 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //        hashMap.put("channel", channel);
 //        hashMap.put("channelNo", channelNo);
         Map<String, Object> stringObjectMap = appServerService.updateListRiskInfo(token, hashMap);
-        if(stringObjectMap == null){
+        if (stringObjectMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 //        Map setcustTagHeadMap = (HashMap<String, Object>) stringObjectMap.get("head");
         Map<String, Object> setcustTagMapFlag = (HashMap<String, Object>) stringObjectMap.get("response");
-        Map<String, Object> setcustTagHeadMap = ( Map<String, Object>) setcustTagMapFlag.get("head");
-        String setcustTagHeadMapFlag  =(String) setcustTagHeadMap.get("retFlag");
-        if(!"00000".equals(setcustTagHeadMapFlag)){
+        Map<String, Object> setcustTagHeadMap = (Map<String, Object>) setcustTagMapFlag.get("head");
+        String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
+        if (!"00000".equals(setcustTagHeadMapFlag)) {
             String retMsg = (String) setcustTagHeadMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        cacheMap.put("crdSeq",applSeq);
+        cacheMap.put("crdSeq", applSeq);
         session.set(token, cacheMap);
         return success();
     }
@@ -348,31 +352,39 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         map.put("cardNo", EncryptUtil.simpleEncrypt(cardNo));//银行卡号
         map.put("custName", EncryptUtil.simpleEncrypt(custName));//客户姓名
         map.put("mobile", EncryptUtil.simpleEncrypt(mobile));//预留手机号
-        map.put("verifyNo", verifyNo);//验证码
         map.put("bankCode", bankCode);//银行号
-        map.put("newPayPasswd", EncryptUtil.simpleEncrypt(newPayPasswd));//新支付密码
         map.put("channel", channel);//
         map.put("channelNo", channelNo);//
-        logger.info("实名认证修改密码前的参数==>" + map.toString());
-        Map<String, Object> identifyMap = appServerService.identify(token, map);
-        if (identifyMap == null || "".equals(identifyMap)) {
-            logger.info("修改密码的实名认证接口，返回数据为空" + identifyMap.toString());
+        map.put("verifyNo", verifyNo);//验证码
+        map.put("newPayPasswd", EncryptUtil.simpleEncrypt(newPayPasswd));//新支付密码
+        String url = outplatform_url + "/Outreachplatform/api/chinaPay/identifyByFlag";
+        JSONObject json = new JSONObject();
+        json.put("accountName", custName);
+        json.put("accountNo", cardNo);
+        json.put("bankCode", bankCode);
+        json.put("id", certNo);
+        json.put("cardPhone", mobile);
+        json.put("flag", "1");
+        json.put("channelNo", "payplat");
+        logger.info("实名认证(外联)参数==>" + json.toString());
+        String resData = HttpClient.sendJson(url, json.toString());
+        logger.info("实名认证(外联)响应数据==>" + resData);
+        if (resData == null || "".equals(resData)) {
+            logger.info("修改密码的实名认证(外联)接口，返回数据为空");
             return fail(ConstUtil.FAILED_INFO, ConstUtil.ERROR_INFO);
         }
-        String result = JSONObject.toJSONString(identifyMap);
-        JSONObject jb = JSONObject.parseObject(result);
-        JSONObject head = jb.getJSONObject("head");
-        String retFlag = head.getString("retFlag");
-        String retMsg = head.getString("retMsg");
+        JSONObject jb = JSONObject.parseObject(resData);
+        String retFlag = jb.getString("RET_CODE");
+        String retMsg = jb.getString("RET_MSG");
         if ("00000".equals(retFlag)) {
             Map<String, Object> resultmap = appServerService.updPwdByIdentity(token, map);
             if (resultmap == null || "".equals(resultmap)) {
-                logger.info("实名认证修改密码接口，返回数据为空" + resultmap.toString());
+                logger.info("实名认证修改密码接口，返回数据为空" + resultmap);
                 return fail(ConstUtil.FAILED_INFO, ConstUtil.ERROR_INFO);
             }
-            result = JSONObject.toJSONString(resultmap);
+            String result = JSONObject.toJSONString(resultmap);
             jb = JSONObject.parseObject(result);
-            head = jb.getJSONObject("head");
+            JSONObject head = jb.getJSONObject("head");
             retFlag = head.getString("retFlag");
             retMsg = head.getString("retMsg");
             if ("00000".equals(retFlag)) {
@@ -1064,21 +1076,21 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 String outStsNew = json.getString("outSts");
                 String app_out_advice = json.getString("app_out_advice");
                 if (!"WS".equals(outStsNew)) {
-                    if ("00".equals(outStsNew)) {
+                    if ("01".equals(outStsNew)) {
                         return success(procList);
                     }
                     HashMap<String, Object> param = new HashMap<>();
-                    param.put("operateTime","");//办理时间
-                    param.put("appOutAdvice","【退回】");//外部意见
-                    param.put("appConclusion","");//审批结论标识
-                    param.put("wfiNodeName","退回");//审批状态
-                    param.put("appConclusionDesc",app_out_advice);//审批结论
+                    param.put("operateTime", "");//办理时间
+                    param.put("appOutAdvice", "【退回】");//外部意见
+                    param.put("appConclusion", "");//审批结论标识
+                    param.put("wfiNodeName", "退回");//审批状态
+                    param.put("appConclusionDesc", app_out_advice);//审批结论
                     procList.add(param);
                 }
             }
             return success(procList);
 
-        }else{
+        } else {
             return success(procList);
         }
 
@@ -1182,7 +1194,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Redis为空：" + cacheMap);
-         }
+        }
         String userId = (String) cacheMap.get("userId");//用户ID
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channel", channel);
@@ -1193,7 +1205,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //返回实名认证需要的数据
-    public Map<String, Object> queryCustNameByUId(String token){
+    public Map<String, Object> queryCustNameByUId(String token) {
         if (token == null || "".equals(token)) {
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -1206,8 +1218,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String idNo = (String) cacheMap.get("idNo");//身份证号
         String name = (String) cacheMap.get("name");//客户姓名
         HashMap<Object, Object> map = new HashMap<>();
-        map.put("idNo",idNo);
-        map.put("name",name);
+        map.put("idNo", idNo);
+        map.put("name", name);
         return success(map);
     }
 }

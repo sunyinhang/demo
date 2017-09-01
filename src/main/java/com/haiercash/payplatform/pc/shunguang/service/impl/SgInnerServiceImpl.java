@@ -442,6 +442,9 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         }
         String uidHaier = uid.toString();
         Map<String, Object> cacheMap = session.get(token, Map.class);
+        if(cacheMap == null || "".equals(cacheMap)){
+            cacheMap = new HashMap<String, Object>();
+        }
         cacheMap.put("uidHaier", uidHaier);
         session.set(token, cacheMap);
         String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
