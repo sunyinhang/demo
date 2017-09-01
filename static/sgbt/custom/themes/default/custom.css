@@ -516,8 +516,8 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
 .media-list .item-inner .item-after .badge{ width: 13px; height:13px; background: url(images/right_arrow.png) no-repeat center; background-size: 13px; }
 .media-list .item-inner .item-text{ padding-right:15px; border-bottom: 1px solid #ddd; background-color: #fff; font-size: 0.6rem; height: 1.8rem; line-height: 1.8rem;}
 .media-list .item-inner .item-btns{ padding: 5px 15px; background-color: #fff; }
-.media-list .item-inner .item-btns .row{ -webkit-box-pack: end;-ms-flex-pack: end; -webkit-justify-content: flex-end; justify-content:  flex-end; border: 1px solid;}
-.media-list .item-inner .item-btns .row .col-auto{ margin-left:0.5rem; max-width: 80px; min-width:60px;border: 1px solid;}
+.media-list .item-inner .item-btns .row{ -webkit-box-pack: end;-ms-flex-pack: end; -webkit-justify-content: flex-end; justify-content:  flex-end;}
+.media-list .item-inner .item-btns .row .col-auto{ margin-left:0.5rem; max-width: 80px; min-width:60px;}
 
 /* 弹窗 */
 .modal.modal-in, .modal.modal-out, .modal-button {
