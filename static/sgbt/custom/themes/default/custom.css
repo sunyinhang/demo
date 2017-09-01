@@ -353,17 +353,25 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 @media screen and (orientation:landscape) {
     .loginBg .page{ width:100%; height:100%; background:url(images/login/loginBg.png) center top no-repeat;background-size:100%;}
 }
-.logo{ position:relative; margin:0 auto; width:6.317rem; height:3.067rem; padding-top:15%;}
-.logo img{width:100%;}
+/*.logo{ position:relative; margin:0 auto; width:6.317rem; height:3.067rem; padding-top:15%;}
+.logo img{width:100%;}*/
+.logo {
+    width: 100%;
+    text-align: center;
+    font-size: 1.3rem;
+    margin-top: 35%;
+    color: #d6d6d6;
+    letter-spacing: 0.3rem;
+}
 .loginList{position:relative;margin:0 auto;padding:0px;margin-top:16.5%;width:68%;height:120px;font-size:16px;color:#E0E0E0;}
 .loginListItem{position:relative;margin:0 auto;padding:0px;width:100%;height:60px;border-bottom:1px solid #A6C7E3;}
 .loginListItem ul{position:relative;margin:0px;padding:0px;height:100%;}
 .loginListItem ul li{position:relative;margin:0px;padding:0px;float:left;height:100%;text-align:left;}
 .loginListItem .iconLi{width:15%;}
 .loginListItem .iconLi img{position:absolute;right:0px;bottom:0.3rem;width:49%;}
-.loginListItem .nameLi{width:17%;}
+.loginListItem .nameLi{width:24%;}
 .loginListItem .nameLi span{position:absolute;display:inline-block;right:0px;bottom:0.36rem;height:1rem;line-height:1rem;}
-.loginListItem .inputli{width:68%;}
+.loginListItem .inputli{width:60%;}
 .loginListItem .inputli input{ position:absolute;left:0px;bottom:0px;width:100%; font-size:0.7rem; height:1.72rem;line-height:1.72rem;padding-left:10px;
 color: #fff;text-align:left;background:none; border:none;}
 .remPsd{position:relative;margin:0 auto;padding:0px; left:21px; margin-top:8px;/* margin-bottom:34px; */width:68%;height:18px;font-size:16px;color:#ffffff;}

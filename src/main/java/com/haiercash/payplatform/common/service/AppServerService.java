@@ -137,4 +137,6 @@ public interface AppServerService {
     public Map<String, Object> pLoanTypList(String token, Map<String, Object> paramMap);
     //6.3.5.	+(POST) 外部风险信息采集
     public Map<String, Object> updateListRiskInfo(String token, Map<String, Object> paramMap);
+    //3.4.11(GET) 实名认证
+    public Map<String, Object> identify(String token, Map<String, Object> paramMap);
 }
