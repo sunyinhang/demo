@@ -842,4 +842,13 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("查询贷款品种信息列表，返回数据" + map);
         return map;
     }
+    //3.4.11(GET) 实名认证
+    public Map<String, Object> identify(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/uauth/identify";
+        logger.info("修改密码实名认证，请求地址：" + url);
+        logger.info("修改密码实名认证，请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("修改密码实名认证，返回数据" + map);
+        return map;
+    }
 }
