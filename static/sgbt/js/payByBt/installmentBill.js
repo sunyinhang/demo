@@ -284,6 +284,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                                 },
                                                 success: function(res){
                                                     util.alert('删除成功');
+                                                    vm.onActive(util.tabsIndex(util.vm(vm, vm.tags.tabsKey)));
                                                 }
                                             });
 

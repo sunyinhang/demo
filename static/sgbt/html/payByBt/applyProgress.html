@@ -1,16 +1,16 @@
 <component is="bv-layout" data-container="applyProgress" v-cloak>
     <div class="approvalNode">
-        <img src="./custom/themes/default/images/refuse.png" alt="">
+        <img :src="adviceImage" alt="">
         <div class="nodeStatus">
             <b>审批节点：{{lastItem.appOutAdvice}}</b>
             <p>审批状态：{{lastItem.wfiNodeName}}</p>
-            <p>拒绝原因：{{lastItem.appConclusionDesc}}</p>
+            <p>{{adviceName}}：{{lastItem.appConclusionDesc}}</p>
         </div>
     </div>
     <div class="height10 gray"></div>
     <div class="nodeList">
         <ul>
-            <li v-for="item in items" >
+            <li v-for="(item, index) in items" v-if="index !== 0">
                 <em></em>
                 <span>{{item.wfiNodeName}}</span><!--<b>{{item.appConclusionDesc}}</b>-->
                 <p>{{item.operateTime}}</p>
