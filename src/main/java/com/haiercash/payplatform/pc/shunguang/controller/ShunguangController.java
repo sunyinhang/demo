@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
@@ -242,7 +241,7 @@ public class ShunguangController extends BaseController {
      * @param orderNoMap
      * @return 处理成功json
      */
-    @RequestMapping(value = "/api/payment/shunguang/cancelAppOrder", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/payment/deleteOrderInfo", method = RequestMethod.POST)
     public Map<String, Object> deleteAppOrder(@RequestBody Map<String, Object> orderNoMap) {
         if (StringUtils.isEmpty(orderNoMap.get("orderNo"))) {
             return fail("9004", "系统未接收到订单编号");

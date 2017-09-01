@@ -842,4 +842,13 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("查询贷款品种信息列表，返回数据" + map);
         return map;
     }
+
+    @Override
+    public Map<String, Object> updateListRiskInfo(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/updateListRiskInfo";
+        logger.info("外部风险信息采集，请求地址：" + url);
+        logger.info("外部风险信息采集，请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        return map;
+    }
 }

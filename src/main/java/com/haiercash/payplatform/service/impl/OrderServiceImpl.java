@@ -288,7 +288,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
     public Map<String, Object> cancelOrder(String formId) {
         Map<String, Object> params = new HashMap<>();
         params.put("formId", formId);
-        Map<String, Object> result = HttpUtil.restPostMap(EurekaServer.ORDER + "/api/order/cancel", params);
+        Map<String, Object> result = HttpUtil.restGetMap(EurekaServer.ORDER + "/api/order/cancel?formId="+formId);
         return result;
     }
 

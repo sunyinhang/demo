@@ -731,4 +731,15 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         return (Map<String, Object>) result.get("response");
     }
 
+    @Override
+    public Map<String, Object> saveRiskInfo(Map<String, Object> map) {
+        String url = EurekaServer.ACQUIRER + "/api/appl/saveRiskInfo";
+        logger.info("风险信息采集接口定义请求地址：" + url);
+        logger.info("风险信息采集接口定义请求数据：" + map);
+        Map<String, Object> result = HttpUtil.restPostMap(url, "", map);
+        logger.info("订单合同确认接口返回数据：" + result);
+        return result;
+    }
+
+
 }

@@ -8,6 +8,7 @@ import com.haiercash.payplatform.common.service.InstallmentAccountService;
 import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -30,6 +31,9 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
     private AcquirerService acquirerService;
     @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
+    @Autowired
+    private OrderService orderService;
+
 
     @Override
     public Map<String, Object> queryAllLoanInfo(String token, String channelNo, String channel, Map<String, Object> map) {
@@ -357,11 +361,9 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
 //        String applyTnrTyp = (String) resMap.get("applyTnrTyp");
         String applyTnrTyp = (String) resMap.get("apply_tnr_typ");
 //                appOrder.getApplyTnrTyp();
-
+        logger.info("--日志输出：");
         BigDecimal totalnormint = new  BigDecimal(resMap.get("totalnormint").toString());
-//                appOrder.getTotalnormint();
         BigDecimal totalfeeamt =new  BigDecimal(resMap.get("totalfeeamt").toString());
-//                appOrder.getTotalfeeamt();
         BigDecimal Totalnormint = new BigDecimal(0);
         BigDecimal Totalfeeamt = new BigDecimal(0);
         if("null".equals(totalnormint) || "".equals(totalnormint) || totalnormint == null){
@@ -402,39 +404,4 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         return success(resMap);
     }
 
-
-    //删除订单
-    @Override
-    public Map<String, Object> deleteOrderInfo(String token, String channelNo, String channel, Map<String, Object> map) {
-        //参数非空判断
-        if (token.isEmpty()) {
-            logger.info("token为空");
-            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
-        }
-        if (channel.isEmpty()) {
-            logger.info("channel为空");
-            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
-        }
-        if (channelNo.isEmpty()) {
-            logger.info("channelNo为空");
-            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
-        }
-        if (map.get("orderNo") == null || "".equals(map.get("orderNo"))) {
-            logger.info("orderNo为空");
-            return fail(ConstUtil.ERROR_CODE, "参数orderNo为空!");
-        }
-        //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
-        if(cacheMap == null || "".equals(cacheMap)){
-            logger.info("Redis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        Map req = new HashMap<String,Object>();
-        req.put("channelNo", channelNo);
-        req.put("channel", channel);
-        req.put("orderNo", map.get("orderNo"));
-        logger.info("删除订单接口，请求数据："+req.toString());
-        Map<String, Object> dateAppOrderPerson = appServerService.deleteAppOrder(token, req);
-        return dateAppOrderPerson;
-    }
 }

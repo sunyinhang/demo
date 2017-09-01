@@ -43,10 +43,12 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         logger.info("查询******额度提交接口******开始");
         String retflag = "";
         String retmsg = "";
-
         String payPasswd = (String) param.get("payPasswd");//密码
         String verifyNo = (String) param.get("verifyNo");//验证码
         String edxgflag = (String) param.get("edxgflag");//修改申请提交标识
+        String longitude = (String) param.get("longitude");//经度
+        String latitude = (String) param.get("latitude");//维度
+        String area = (String) param.get("area");//区域
         if (StringUtils.isEmpty(token)) {
             logger.info("token:" + token);
             logger.info("从前端获取的的token为空");
@@ -66,7 +68,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         logger.info("获取的userId为："+userId);
         //String userId = "18325423979";
         String phoneNo = (String) cacheMap.get("phoneNo");//手机号
-
+        String custNo = (String) cacheMap.get("custNo");// 客户号
+        logger.info("获取的客户号："+custNo);
+        String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
 
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
         validateUserFlagMap.put("channelNo", channelNo);// 渠道
@@ -84,16 +88,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         }
         Map alidateUserBodyMap = (HashMap<String, Object>) alidateUserMap.get("body");
         String flag = (String) alidateUserBodyMap.get("payPasswdFlag");
-//        String flag = (String) cacheMap.get("payPasswdFlag");//空
         logger.info("密码设置标识：flag"+flag);
-        //String orderNo = (String) cacheMap.get("orderNo");//空
-        String custNo = (String) cacheMap.get("custNo");// 客户号
-        logger.info("获取的客户号："+custNo);
-        //String custNo = "A0001";
-
-        String crdSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
-        // String n = "3";// 签订注册 + 征信
-        //flag = "0";
         if ("0".equals(flag)) {//0  密码未设置
             logger.info("支付密码未设置，进行密码的设置");
             Map<String, Object> paramsMap = new HashMap<String, Object>();
@@ -113,13 +108,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             JSONObject resultHead = jsonObject.getJSONObject("head");
             String retFlag = resultHead.getString("retFlag");
             String retMsg = resultHead.getString("retMsg");
-            //retFlag = "00000";
             if (!"00000".equals(retFlag)) {
                 logger.info("设置支付密码失败" + retMsg);
                 return fail(retFlag, retMsg);
             }
         } else if ("1".equals(flag)) {// 支付密码验证
-            //n = "1";
             HashMap<String, Object> map = new HashMap<>();
             String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
             String payPasswdEncrypt = EncryptUtil.simpleEncrypt(payPasswd);
@@ -146,78 +139,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("是否设置过支付密码标志无效");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_PARAM_INVALID_MSG);
         }
-        // 3、签订注册 + 征信
-//        HashMap<String, Object> reqSignMap = new HashMap<>();
-//        reqSignMap.put("orderNo", orderNo);
-//        reqSignMap.put("msgCode", verifyNo);
-//        reqSignMap.put("type", n);// 1：征信协议 2：注册协议 3：征信和注册协议
-//        reqSignMap.put("channel", channel);
-//        reqSignMap.put("channelNo", channelNo);
-//        reqSignMap.put("token", token);
-//        String resData = appServerService.updateOrderAgreement(token, reqSignMap);// 订单协议确认
-//        logger.info("顺逛,订单协议确认接口,响应数据：" + resData);
-//        if (StringUtils.isEmpty(resData)) {
-//            logger.info("网络异常，app后台,订单协议确认接口,响应数据为空！");
-//            String resDateMsg = "网络异常，app后台,订单协议确认接口,响应数据为空！";
-//            return fail(ConstUtil.ERROR_CODE, resDateMsg);
-//        }
-//        JSONObject jsonCon = new JSONObject(resData);
-//        JSONObject jsonConHead = jsonCon.getJSONObject("head");
-//        retflag = jsonConHead.getString("retFlag");
-//        retmsg = jsonConHead.getString("retMsg");
-//        if (!"00000".equals(retflag)) {// 订单协议确认接口 失败，返回给前台
-//            logger.info("美分期,校验短信验证码接口及订单提交接口,校验短信验证码失败" + retmsg);
-//            return fail(retflag, retmsg);
-//        }
-//        // 签订合同
-//        Map<String, Object> reqConMap = new HashMap<>();
-//        reqConMap.put("orderNo", orderNo);
-//        reqConMap.put("channel", channel);
-//        reqConMap.put("channelNo", channelNo);
-//        reqConMap.put("token", token);
-//        String retCon = appServerService.updateOrderContract(token, reqConMap);// 订单合同确认
-//        logger.info("订单合同确认接口，响应数据：" + retCon);
-//        if (retCon == null || "".equals(retCon)) {
-//            logger.info("美分期,订单合同确认接口,订单合同确认接口,响应数据为空");
-//            String retConMsg = "美分期,订单合同确认接口,订单合同确认接口,响应数据为空";
-//            return fail(ConstUtil.ERROR_CODE, retConMsg);
-//        }
-//        JSONObject retjsonCon = new JSONObject(retCon);
-//        JSONObject retjsonConHead = retjsonCon.getJSONObject("head");
-//        retflag = retjsonConHead.getString("retFlag");
-//        retmsg = retjsonConHead.getString("retMsg");
-//            if ("00000".equals(retflag)) {
-//                String opType = "1"; // 个人版订单提交给商户确认时传2，其余传1
-//                Map<String, Object> commitmMap = new HashMap<String, Object>();
-//                commitmMap.put("orderNo", orderNo);
-//                commitmMap.put("source", channel);
-//                commitmMap.put("channel", channel);
-//                commitmMap.put("channelNo", channelNo);
-//                commitmMap.put("opType", opType);
-//                commitmMap.put("token", token);
-//                commitmMap.put("msgCode", verifyNo);
-//                commitmMap.put("expectCredit", "expectCredit");
-//                String conData = appServerService.commitAppOrder(token, commitmMap);
-//                logger.info("美分期,订单提交，响应数据：" + conData);
-//                if (conData == null || "".equals(conData)) {
-//                    logger.info("美分期,订单提交接口,响应数据为空");
-//                    String conDataMsg = "美分期,订单提交接口,响应数据为空";
-//                    return fail(ConstUtil.ERROR_CODE, conDataMsg);
-//                }
-//                jsonCon = new JSONObject(conData);
-//                jsonConHead = jsonCon.getJSONObject("head");
-//                retflag = jsonConHead.getString("retFlag");
-//                retmsg = jsonConHead.getString("retMsg");
-//                if (("00000").equals(retflag)) {// 订单提交 成功：00000
-//                    logger.info("美分期,订单提交成功,跳转额度进度查询页面");
-//                } else {
-//                    logger.info("美分期,订单提交失败,跳转个人资料页面");
-//                    return success(retflag);
-//                }
-//            } else {
-//                logger.info("美分期,提交订单失败!");
-//                return fail(retflag, retmsg);
-//            }
         Map<String, Object> mapEd = new HashMap();
         mapEd.put("token", token);
         mapEd.put("channel", channel);
@@ -225,7 +146,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         mapEd.put("custNo", custNo);
         mapEd.put("verifyMobile", phoneNo);//手机号
         mapEd.put("verifyNo", verifyNo);//验证码
-        //String crdSeq = "";
         if ("1".equals(edxgflag)) {//有在途的流水号(修改)
             mapEd.put("flag", "2");
             mapEd.put("applSeq", crdSeq);
@@ -238,18 +158,64 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         String resultEd = JSONObject.toJSONString(edApplInfo);
-        //JSONObject jb = new JSONObject(resultEd);
         JSONObject jb = JSONObject.parseObject(resultEd);
         JSONObject head = jb.getJSONObject("head");
         retflag = head.getString("retFlag");
         retmsg = head.getString("retMsg");
-        //retflag = "00000";
         if (!"00000".equals(retflag)) {
             logger.info("额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
+        String certNo = (String) cacheMap.get("idNo");//身份证号
+        String name = (String) cacheMap.get("name");//姓名
         JSONObject body = jb.getJSONObject("body");
         String applSeq = (String) body.getString("applSeq");
+        //上传风险数据 经纬度
+        ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
+        ArrayList<String> listOne = new ArrayList<>();
+        ArrayList<String> listTwo = new ArrayList<>();
+        HashMap<String, Object> hashMap = new HashMap<String,Object>();
+        HashMap<String,Object> hashMapOne = new HashMap<String,Object>();
+        HashMap<String,Object> hashMapTwo = new HashMap<String,Object>();
+        String longLatitude="经度"+longitude+"维度"+latitude;
+        logger.info("经维度解析前:" + longLatitude);
+        String longLatitudeEncrypt = EncryptUtil.simpleEncrypt(longLatitude);
+        logger.info("经维度解析后:" + longLatitudeEncrypt);
+        listOne.add(longLatitudeEncrypt);
+        hashMapOne.put("idNo", EncryptUtil.simpleEncrypt(certNo));
+        hashMapOne.put("name", EncryptUtil.simpleEncrypt(name));
+        hashMapOne.put("mobile", EncryptUtil.simpleEncrypt(phoneNo));
+        hashMapOne.put("dataTyp", "04");
+        hashMapOne.put("source", "2");
+        hashMapOne.put("applSeq", applSeq);
+        hashMapOne.put("Reserved6", applSeq);
+        hashMapOne.put("content", listOne);
+        listTwo.add(EncryptUtil.simpleEncrypt(area));
+        hashMapTwo.put("idNo", EncryptUtil.simpleEncrypt(certNo));
+        hashMapTwo.put("name", EncryptUtil.simpleEncrypt(name));
+        hashMapTwo.put("mobile", EncryptUtil.simpleEncrypt(phoneNo));
+        hashMapTwo.put("dataTyp", "A504");
+        hashMapTwo.put("source", "2");
+        hashMapTwo.put("applSeq", applSeq);
+        hashMapTwo.put("Reserved6", applSeq);
+        hashMapTwo.put("content", listTwo);
+        arrayList.add(hashMapOne);
+        arrayList.add(hashMapTwo);
+        hashMap.put("list", arrayList);
+//        hashMap.put("channel", channel);
+//        hashMap.put("channelNo", channelNo);
+        Map<String, Object> stringObjectMap = appServerService.updateListRiskInfo(token, hashMap);
+        if(stringObjectMap == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+//        Map setcustTagHeadMap = (HashMap<String, Object>) stringObjectMap.get("head");
+        Map<String, Object> setcustTagMapFlag = (HashMap<String, Object>) stringObjectMap.get("response");
+        Map<String, Object> setcustTagHeadMap = ( Map<String, Object>) setcustTagMapFlag.get("head");
+        String setcustTagHeadMapFlag  =(String) setcustTagHeadMap.get("retFlag");
+        if(!"00000".equals(setcustTagHeadMapFlag)){
+            String retMsg = (String) setcustTagHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
         cacheMap.put("crdSeq",applSeq);
         session.set(token, cacheMap);
         return success();

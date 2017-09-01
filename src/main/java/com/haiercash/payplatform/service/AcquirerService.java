@@ -1,10 +1,10 @@
 package com.haiercash.payplatform.service;
 
-import java.util.Map;
-
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+
+import java.util.Map;
 
 /**
  * acquirer service.
@@ -78,4 +78,19 @@ public interface AcquirerService {
      * @return Map
      */
     Map<String, Object> cancelAppl(String applSeq);
+
+    /**
+     * 去收单推送 风险信息采集接口定义
+     * @param map
+     * @return  Map
+     */
+    public  Map<String, Object> saveRiskInfo(Map<String, Object> map);
+
+//    /**
+//     * 2.1.5	(POST) ACQ-1133贷款申请取消
+//     * @param map
+//     * @return
+//     */
+//    public  Map<String, Object> cancelAppl(Map<String, Object> map);
+
 }

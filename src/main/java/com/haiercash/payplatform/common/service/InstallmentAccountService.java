@@ -17,6 +17,4 @@ public interface InstallmentAccountService {
     public Map<String,Object> queryApplLoanInfo(String token, String channelNo, String channel, Map<String, Object> map);
     //订单详情查询
     public Map<String,Object> queryOrderInfo(String token, String channelNo, String channel, Map<String, Object> map);
-    //6.1.8.	 (DELETE)删除订单
-    public Map<String, Object> deleteOrderInfo(String token, String channelNo, String channel, Map<String, Object> map);
 }

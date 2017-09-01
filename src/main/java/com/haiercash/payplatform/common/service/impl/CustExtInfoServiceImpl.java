@@ -54,7 +54,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         Map<String, Object> allCustExtInfoHeadMap = (HashMap<String, Object>) allCustExtInfo.get("head");
         String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
         String allCustExtreflagMsg =  (String) allCustExtInfoHeadMap.get("retFlag");
-        if("C8602".equals(allCustExtreflagMsg)){//无客户信息，正常
+        if("C8602".equals(allCustExtreflagMsg) || "C1109".equals(allCustExtreflagMsg)){//无客户信息，正常
             return success();
         }
         if(!ifError(allCustExtInfoHeadMap)){
