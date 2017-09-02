@@ -70,8 +70,14 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String orderNo = (String) map.get("orderNo");
         String applSeq = (String) map.get("applSeq");
         String paypwd = (String) map.get("paypwd");
-        String longitude = (String) map.get("longitude");//经度
-        String latitude = (String) map.get("latitude");//维度
+        BigDecimal longitude = new BigDecimal(0);
+        BigDecimal latitude = new BigDecimal(0);
+        if(StringUtils.isEmpty(map.get("longitude"))){
+            longitude = (BigDecimal)map.get("longitude");//经度
+        }
+        if(StringUtils.isEmpty(map.get("latitude"))){
+            latitude = (BigDecimal)map.get("latitude");//维度
+        }
         String area = (String) map.get("area");//区域
         //缓存获取（放开）
         Map<String, Object> cacheMap = session.get(token, Map.class);
@@ -79,12 +85,10 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-
         String key0 = "applSeq" + applSeq;
         if(cacheMap.containsKey(key0)){
             return success();
         }
-
         ObjectMapper objectMapper = new ObjectMapper();
         AppOrder appOrder = null;
         String typCde = "";

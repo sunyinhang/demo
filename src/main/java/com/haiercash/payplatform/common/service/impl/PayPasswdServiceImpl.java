@@ -50,8 +50,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String payPasswd = (String) param.get("payPasswd");//密码
         String verifyNo = (String) param.get("verifyNo");//验证码
         String edxgflag = (String) param.get("edxgflag");//修改申请提交标识
-        String longitude = (String) param.get("longitude");//经度
-        String latitude = (String) param.get("latitude");//维度
+        BigDecimal longitude = new BigDecimal(0);
+        BigDecimal latitude = new BigDecimal(0);
+        if(StringUtils.isEmpty(param.get("longitude"))){
+            longitude = (BigDecimal)param.get("longitude");//经度
+        }
+        if(StringUtils.isEmpty(param.get("latitude"))){
+            latitude = (BigDecimal)param.get("latitude");//维度
+        }
         String area = (String) param.get("area");//区域
         if (StringUtils.isEmpty(token)) {
             logger.info("token:" + token);
