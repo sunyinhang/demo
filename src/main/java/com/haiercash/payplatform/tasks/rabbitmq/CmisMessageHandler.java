@@ -296,7 +296,7 @@ public class CmisMessageHandler {
             } catch (Exception e) {
                 retMsg = e.getMessage();
                 logger.error("实时推送接口(JSON格式)， 出现异常 :" + retMsg, e);
-                throw new RuntimeException();
+//                throw new RuntimeException();
             }
             logger.info("获取实时推送信息，结束");
         }
