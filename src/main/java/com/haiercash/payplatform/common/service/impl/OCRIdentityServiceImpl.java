@@ -99,28 +99,28 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         //获取OCR返回信息进行redis存储
         Object retObj = returnMessage.getRetObj();
         JSONObject cardsResJson = new JSONObject(retObj.toString());
-        if(!StringUtils.isEmpty(cardsResJson.get("name"))){
+        if (!StringUtils.isEmpty(cardsResJson.get("name"))) {
             cacheMap.put("name", (String) cardsResJson.get("name"));//姓名
         }
-        if(!StringUtils.isEmpty(cardsResJson.get("gender"))){
+        if (!StringUtils.isEmpty(cardsResJson.get("gender"))) {
             cacheMap.put("gender", (String) cardsResJson.get("gender"));//性别
         }
-        if(!StringUtils.isEmpty(cardsResJson.get("birthday"))){
+        if (!StringUtils.isEmpty(cardsResJson.get("birthday"))) {
             cacheMap.put("birthday", (String) cardsResJson.get("birthday"));//出生年月日
         }
-        if(!StringUtils.isEmpty(cardsResJson.get("race"))){
+        if (!StringUtils.isEmpty(cardsResJson.get("race"))) {
             cacheMap.put("race", (String) cardsResJson.get("race"));//民族
         }
-        if(!StringUtils.isEmpty(cardsResJson.get("address"))){
+        if (!StringUtils.isEmpty(cardsResJson.get("address"))) {
             cacheMap.put("address", (String) cardsResJson.get("address"));//地址
         }
-        if(!StringUtils.isEmpty(cardsResJson.get("id_card_number"))){
+        if (!StringUtils.isEmpty(cardsResJson.get("id_card_number"))) {
             cacheMap.put("idCard", (String) cardsResJson.get("id_card_number"));//身份证号
         }
-        if(!StringUtils.isEmpty(cardsResJson.get("issued_by"))){
+        if (!StringUtils.isEmpty(cardsResJson.get("issued_by"))) {
             cacheMap.put("issued", (String) cardsResJson.get("issued_by"));//签发机关
         }
-        if(!StringUtils.isEmpty(cardsResJson.get("valid_date"))){
+        if (!StringUtils.isEmpty(cardsResJson.get("valid_date"))) {
             cacheMap.put("validDate", (String) cardsResJson.get("valid_date"));//有效期
         }
 
@@ -349,7 +349,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
         //顺逛传送身份证与客户实名身份证不一致
         String idNoHaier = (String) cacheMap.get("idNoHaier");//
-        if(!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(idCard)){
+        if (!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(idCard)) {
             logger.info("顺逛传送身份证与客户实名身份证不一致");
             return fail(ConstUtil.ERROR_CODE, "身份验证失败");
         }
@@ -456,16 +456,16 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         tagmap.put("idTyp", "20");//证件类型
         tagmap.put("idNo", idCard);//证件号码
         Map tagmapresult = crmManageService.getCustTag("", tagmap);
-        if(!HttpUtil.isSuccess(tagmapresult)){
+        if (!HttpUtil.isSuccess(tagmapresult)) {
             return tagmapresult;
         }
         //
         String userType = (String) cacheMap.get("userType");
         String tagId = "";
-        if("01".equals(userType)){//微店主
+        if ("01".equals(userType)) {//微店主
             tagId = sg_shopkeeper;
         }
-        if("02".equals(userType)){//消费者
+        if ("02".equals(userType)) {//消费者
             tagId = sg_consumer;
         }
         //
@@ -474,25 +474,25 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         for (int i = 0; i < body.size(); i++) {
             Map<String, Object> m = body.get(i);
             String tagid = m.get("tagId").toString();
-            if(tagid.equals(tagId)){
+            if (tagid.equals(tagId)) {
                 b = true;
             }
         }
         //若不存在进行添加  /app/crm/cust/setCustTag
-        if(!b){
+        if (!b) {
             logger.info("打标签");
             Map addtagmap = new HashMap<>();
             addtagmap.put("certNo", idCard);//身份证号
             addtagmap.put("tagId", tagId);//自定义标签ID
             Map addtagmapresult = crmManageService.setCustTag("", addtagmap);
-            if(!HttpUtil.isSuccess(addtagmapresult)){
+            if (!HttpUtil.isSuccess(addtagmapresult)) {
                 return addtagmapresult;
             }
         }
 
         //绑定手机号修改为实名认证手机号
         String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)
-        if(!phone.equals(mobile)){//旧手机号与新手机号不同则修改
+        if (!phone.equals(mobile)) {//旧手机号与新手机号不同则修改
             Map<String, Object> updmobilemap = new HashMap<String, Object>();
             updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
             updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
@@ -501,7 +501,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             updmobilemap.put("channel", channel);
             updmobilemap.put("channelNo", channelNo);
             Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
-            Map updmobileheadjson = (HashMap<String, Object>)updmobileresultmap.get("head");
+            Map updmobileheadjson = (HashMap<String, Object>) updmobileresultmap.get("head");
             String updmobileretflag = (String) updmobileheadjson.get("retFlag");
             if (!"00000".equals(updmobileretflag)) {
                 String retMsg = (String) updmobileheadjson.get("retMsg");
@@ -537,15 +537,22 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             paramMap.put("commonCustNo", null);//共同还款人编号，传null
             logger.info("实名绑卡，上传身份证" + (isA ? "正" : "反") + "面，请求参数：" + paramMap);
             Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
+            JSONObject uploadresult = new JSONObject(uploadresultmap);
+            JSONObject head = uploadresult.getJSONObject("head");
+            String retflag = head.getString("retFlag");
+            if ("00000".equals(retflag)) {
+                logger.info("实名绑卡，上传身份证" + (isA ? "正" : "反") + "面成功");
+            } else {
+                logger.info("实名绑卡，上传身份证" + (isA ? "正" : "反") + "面失败");
+            }
 //            JSONObject uploadheadjson = new JSONObject(uploadresultmap.get("head").toString());
 //            String uploadretFlag = uploadheadjson.getString("retFlag");
 //            if (!"00000".equals(uploadretFlag)) {
 //                String retMsg = uploadheadjson.getString("retMsg");
 //                return fail(ConstUtil.ERROR_CODE, retMsg);
-//            }
-            return uploadresultmap;
+////            }
+//            return uploadresultmap;
         }
-
         logger.info("实名认证***********************结束");
         return success();
     }
@@ -582,7 +589,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
      * @param params
      * @return
      */
-    public Map<String, Object> treatyShowServlet(String token, Map<String,Object> params) throws Exception {
+    public Map<String, Object> treatyShowServlet(String token, Map<String, Object> params) throws Exception {
         String realmName = "";
         String flag = (String) params.get("flag");
         HashMap<String, Object> map = new HashMap<>();
@@ -605,7 +612,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String custNo = cacheMap.get("custNo") + "";
             String applSeq = cacheMap.get("applSeq") + "";
             if (!StringUtils.isEmpty(custNo) && !StringUtils.isEmpty(applSeq)) {
-                realmName =  "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
+                realmName = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
                 logger.info("------------个人借款合同地址---------" + realmName);
                 map.put("realmName", realmName);
             }
@@ -615,7 +622,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
                 String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
                 /// String custNameB = URLEncoder.encode(new String(Base64.encode(custName), "UTF-8"), "UTF-8");
-                realmName = "/app/appserver/edCredit?custName=" + custNameB+"&certNo="+certNo;
+                realmName = "/app/appserver/edCredit?custName=" + custNameB + "&certNo=" + certNo;
                 logger.info("--------------征信查询------------" + realmName);
                 map.put("realmName", realmName);
             }
@@ -647,7 +654,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String phoneNo = (String) cacheMap.get("phoneNo");
-        if(StringUtils.isEmpty(phoneNo)){
+        if (StringUtils.isEmpty(phoneNo)) {
             logger.info("获取手机号为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
