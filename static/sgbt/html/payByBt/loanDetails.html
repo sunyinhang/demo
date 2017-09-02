@@ -1,6 +1,6 @@
 <div class="wrapper loanDetails fullPage-gray" data-container="loanDetails" v-cloak>
     <div class="main-01">
-      <span class="stat">待还款</span><span class="tit">订单状态</span>
+      <span class="stat" v-text="orderStsName"></span><span class="tit">订单状态</span>
     </div>
     <div class="main-02">
       <span class="crdNo">{{repayApplCardNo}}</span><span class="crd">默认还款卡 <em>{{repayAccBankName}}</em></span>

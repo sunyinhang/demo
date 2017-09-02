@@ -13,7 +13,13 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             applyTnrTyp: '',
             xfze: '',
             goodsList: [],
-            ordertotal: ''
+            ordertotal: '',
+            outSts: ''
+        },
+        computed: {
+            orderStsName: function () {
+                return util.trans(this.outSts, '#orderSts');
+            }
         },
         filters: {
             currency: function (val) {
@@ -37,6 +43,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                         vm.applyAmt = data.apply_amt;
                         vm.xfze = data.xfze;
                         vm.ordertotal = data.ordertotal;
+                        vm.outSts = data.outSts;
                     }
                 }
             });

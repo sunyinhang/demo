@@ -18,7 +18,13 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
             repayAmt: '',
             goodsName: '',
             bills: [],
-            zdhkFee: ''
+            zdhkFee: '',
+            outSts: ''
+        },
+        computed: {
+            orderStsName: function () {
+                return util.trans(this.outSts, '#orderSts');
+            }
         },
         filters: {
             currency: function (val) {
@@ -90,6 +96,7 @@ require(['jquery', 'util', 'Const', 'bvLayout'], function($, util, Const) {
                         vm.ordertotal = data.ordertotal;
                         vm.setlTotalAmt = data.setlFeeAmt + data.setlIncAmt + data.setlPrcpAmt
                         vm.repayAmt = data.repayAmt;
+                        vm.outSts = data.outSts
                     }
                 }
             });
