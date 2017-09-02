@@ -215,6 +215,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             appOrderGoods.setGoodsPrice(price);//单价
             appOrderGoods.setGoodsModel(model);//商品类型
             appOrderGoods.setBrandName(topLevel);//商品品牌
+            appOrderGoods.setSkuCode(sku);//sku码
             appOrderGoodsList.add(appOrderGoods);
         }
 

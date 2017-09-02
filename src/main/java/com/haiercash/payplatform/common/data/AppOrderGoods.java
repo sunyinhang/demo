@@ -16,6 +16,7 @@ public class AppOrderGoods {
 	private String cOrderSn;//网单号
 
 	private String brandName;//商品品牌
+	private String skuCode;//sku码
 
 	/**====以下字段为商品管理系统需要的字段====**/
 	@Transient
@@ -230,6 +231,14 @@ public class AppOrderGoods {
 
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
+	}
+
+	public String getSkuCode() {
+		return skuCode;
+	}
+
+	public void setSkuCode(String skuCode) {
+		this.skuCode = skuCode;
 	}
 
 	@Override
