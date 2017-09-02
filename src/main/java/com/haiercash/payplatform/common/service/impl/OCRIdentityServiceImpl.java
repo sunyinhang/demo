@@ -385,9 +385,17 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             certStrDt = vDate.substring(0, 8); //取前8位作为起始日期
             certEndDt = vDate.substring(8);  //剩余的作为截止日期
         }
+
+        if("男".equals(gender)){//10男
+            gender = "10";
+        }
+        if("女".equals(gender)){//20女
+            gender = "20";
+        }
+
         Map<String, Object> ocrMap = new HashMap<String, Object>();
         ocrMap.put("custName", name);
-        ocrMap.put("afterCustName", "");//TODO!!!!  修改后客户姓名
+        ocrMap.put("afterCustName", name);
         ocrMap.put("birthDt", birthDt);
         ocrMap.put("gender", gender);
         ocrMap.put("regAddr", regAddr);
