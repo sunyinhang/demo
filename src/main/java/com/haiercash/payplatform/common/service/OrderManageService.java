@@ -13,4 +13,6 @@ public interface OrderManageService {
     Map<String, Object> getMallOrderNoByApplSeq(String applSeq);
     //OM-1107 根据formId查询订单送货地址详情（单条）
     Map<String, Object> getAddressByFormId(String formId);
+    //根据商城订单号查询订单信息
+    Map<String, Object> getOrderStsByMallOrder(String mallOrderNo);
 }

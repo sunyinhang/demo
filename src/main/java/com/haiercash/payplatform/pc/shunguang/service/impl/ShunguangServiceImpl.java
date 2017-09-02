@@ -11,6 +11,7 @@ import com.haiercash.payplatform.common.data.SgRegions;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CrmService;
 import com.haiercash.payplatform.common.service.HaierDataService;
+import com.haiercash.payplatform.common.service.OrderManageService;
 import com.haiercash.payplatform.common.utils.*;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
@@ -49,6 +50,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     private SgRegionsDao sgRegionsDao;
     @Autowired
     private SgInnerService sgInnerService;
+    @Autowired
+    private OrderManageService orderManageService;
+
 
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
@@ -181,7 +185,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, "贷款申请，必传参数非空校验失败");
         }
 
-        String orderSn = bodyjson.getString("orderSn");//订单号
+        String orderSn = bodyjson.getString("orderSn");//商城订单号
         String loanType = bodyjson.getString("loanType");//贷款品种编码
         String payAmt = bodyjson.getString("payAmt");//订单实付金额
         double payAmount = Double.parseDouble(payAmt);
@@ -227,14 +231,41 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         city = country.substring(0, 4) + "00";//市编码
 
         AppOrder appOrder = new AppOrder();
-        appOrder.setMallOrderNo(orderSn);
+        appOrder.setMallOrderNo(orderSn);//商城订单号
         appOrder.setTypCde(loanType);//贷款品种代码
-        appOrder.setApplyAmt(payAmt);//借款总额  ???  TODO!!!!!
+        appOrder.setApplyAmt(payAmt);//借款总额
         appOrder.setDeliverAddr(detailAddress);//送货地址
         appOrder.setDeliverProvince(province);//送货地址省
         appOrder.setDeliverCity(city);//送货地址市
         appOrder.setDeliverArea(country);//送货地址区
         appOrder.setAppOrderGoodsList(appOrderGoodsList);
+
+
+        //TODO!!!!!根据商城订单号查询订单接口
+        //TODO!!!!!若flag   N  则为新订单   outsts   91(取消)  新单
+        //TODO!!!!!         Y  applseq  formId   outsts 00  90  修改   其他  成功
+        //根据商城订单号查询订单信息
+        Map<String, Object> mallordermap = orderManageService.getOrderStsByMallOrder(orderSn);
+        if(!HttpUtil.isSuccess(mallordermap)){
+            return mallordermap;
+        }
+        Map bodymap = (HashMap<String, Object>)mallordermap.get("body");
+        String formId = (String) bodymap.get("formId");
+        String flag = (String) bodymap.get("flag");
+        String applSeq = (String) bodymap.get("applSeq");
+        String sysSts = (String) bodymap.get("sysSts");
+
+        String f = "0";
+        if("N".equals(flag) || "91".equals(sysSts)){//作为新单处理
+
+        } else if("00".equals(sysSts) || "90".equals(sysSts)) {//作为修改订单处理
+            cachemap.put("updatemallflag", "1");//修改标识
+            cachemap.put("updatemalloderNo", formId);//要修改的订单编号
+        } else {//订单已提交成功
+            f = "1";
+        }
+
+
         //
         cachemap.put("userType", userType);//01:微店主  02:消费者
         cachemap.put("paybackurl", URL);//支付申请回调url
@@ -245,7 +276,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         session.set(token, cachemap);
         logger.info("name:" + custName + "  idNo:" + certNo + "  userId:" + userId);
         Map returnmap = new HashMap<>();
-        String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
+        String backurl = "";
+        if("1".equals(f)){//订单已提交成功
+            backurl = haiercashpay_web_url + "/sgbt/#!/payByBt/loanResult.html?token=" + token + "&applSeq=" +applSeq;;
+        }else{
+            backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
+        }
         returnmap.put("backurl", backurl);
         return success(returnmap);
     }

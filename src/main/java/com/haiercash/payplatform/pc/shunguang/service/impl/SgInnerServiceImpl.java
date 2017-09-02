@@ -206,16 +206,22 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+        String updatemallflag = (String) cacheMap.get("updatemallflag");
 
         String payAmt = "";//申请金额
         String typCde = "";//贷款品种
         String psPerdNo = "";//借款期限
-        if("1".equals(flag)){//待提交返显
+        if("1".equals(flag) || "1".equals(updatemallflag)){//待提交返显
             logger.info("待提交订单*********数据加载");
-            AppOrder appOrder = new AppOrder();
-            if(StringUtils.isEmpty(orderNo)){
-                logger.info("前台传入参数有误");
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+
+            if("1".equals(flag)){
+                if(StringUtils.isEmpty(orderNo)){
+                    logger.info("前台传入参数有误");
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                }
+            }else{
+                logger.info("退回及待提交进行订单修改");
+                orderNo = (String) cacheMap.get("updatemalloderNo");
             }
             //
             AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
@@ -250,7 +256,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
                 //
                 appOrderGoodsList.add(appOrderGoods);
             }
-
+            AppOrder appOrder = new AppOrder();
             appOrder.setMallOrderNo(mallOrderNo);//商城订单号
             appOrder.setAppOrderGoodsList(appOrderGoodsList);
             //根据申请流水号获取送货信息

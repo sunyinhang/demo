@@ -40,4 +40,18 @@ public class OrderManageServiceImpl extends BaseService implements OrderManageSe
         logger.info("根据formId查询订单送货地址详情接口，返回数据" + resultmap);
         return resultmap;
     }
+
+    /**
+     * 根据商城订单号查询订单信息
+     * @param mallOrderNo
+     * @return
+     */
+    @Override
+    public Map<String, Object> getOrderStsByMallOrder(String mallOrderNo){
+        String url = EurekaServer.ORDER + "/api/order/getOrderStsByMallOrder?mallOrderNo=" + mallOrderNo;
+        logger.info("根据商城订单号查询订单信息接口，请求地址：" + url);
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url);
+        logger.info("根据商城订单号查询订单信息接口，返回数据" + resultmap);
+        return resultmap;
+    }
 }

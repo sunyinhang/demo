@@ -224,12 +224,19 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         appOrder.setUserId(userId);//录单用户ID
         appOrder.setChannelNo(channelNo);
         appOrder.setFstPay("0");//首付金额
-        if("1".equals(updflag)){//待提交订单
-            if(StringUtils.isEmpty(orderNo)){
-                logger.info("前台传入参数有误");
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        String updatemallflag = (String) cacheMap.get("updatemallflag");
+        if("1".equals(updflag) || "1".equals(updatemallflag)){//待提交订单
+            if("1".equals(updflag)){
+                if(StringUtils.isEmpty(orderNo)){
+                    logger.info("前台传入参数有误");
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                }
+                appOrder.setOrderNo(orderNo);
+            }else{
+                logger.info("退回及待提交进行订单保存");
+                orderNo = (String) cacheMap.get("updatemalloderNo");
+                appOrder.setOrderNo(orderNo);
             }
-            appOrder.setOrderNo(orderNo);
         }
         logger.info("订单信息：" + appOrder);
 
