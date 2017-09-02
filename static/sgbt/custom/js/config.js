@@ -7,7 +7,9 @@ var __Const = {
     init: {
         auth: 'h5',
         // 定位失败是否允许提交
-        locationFailSubmit: true
+        locationFailSubmit: true,
+        // 查询订单处理结果间隔时间（毫秒）
+        queryOrderInterval: 5000
     },
     rest: {
         baseUrl: window.location.protocol + "//" + window.location.host + '/api/payment',
