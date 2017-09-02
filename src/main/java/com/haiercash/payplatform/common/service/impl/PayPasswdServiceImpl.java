@@ -52,10 +52,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String edxgflag = (String) param.get("edxgflag");//修改申请提交标识
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
-        if(StringUtils.isEmpty(param.get("longitude"))){
+        if(!StringUtils.isEmpty(param.get("longitude"))){
             longitude = (BigDecimal)param.get("longitude");//经度
         }
-        if(StringUtils.isEmpty(param.get("latitude"))){
+        if(!StringUtils.isEmpty(param.get("latitude"))){
             latitude = (BigDecimal)param.get("latitude");//维度
         }
         String area = (String) param.get("area");//区域

@@ -72,10 +72,10 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String paypwd = (String) map.get("paypwd");
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
-        if(StringUtils.isEmpty(map.get("longitude"))){
+        if(!StringUtils.isEmpty(map.get("longitude"))){
             longitude = (BigDecimal)map.get("longitude");//经度
         }
-        if(StringUtils.isEmpty(map.get("latitude"))){
+        if(!StringUtils.isEmpty(map.get("latitude"))){
             latitude = (BigDecimal)map.get("latitude");//维度
         }
         String area = (String) map.get("area");//区域
