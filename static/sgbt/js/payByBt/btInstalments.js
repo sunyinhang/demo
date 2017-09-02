@@ -175,6 +175,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                     // title: '找回支付密码',
                                     url: util.mix('/getPayPsd/getPayPsdWay.html', {
                                         from: 'btInstalments',
+                                        orderNo: orderNo,
                                         edxg: util.gup('edxg')
                                     })
                                 });
@@ -245,12 +246,6 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             }
         },
         mounted: function(){
-            if (util.gup('from') === 'reset') {
-                var param = util.cache('orderNo,applSeq');
-                if (param) {
-                    this.openCheckPassword(param.orderNo, param.applSeq);
-                }
-            }
             //预加载
             if( !util.isEmpty(orderNo)){
                 var url = '/shunguang/initPayApply?flag=1&orderNo='+orderNo;
@@ -277,6 +272,13 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 vm.risk.latitude = result.location.lat;
                 vm.risk.area = result.addressComponent.country + result.addressComponent.province + result.addressComponent.city + result.addressComponent.district;
             });
+
+            if (util.gup('from') === 'reset') {
+                var param = util.cache('orderNo,applSeq');
+                if (param) {
+                    this.openCheckPassword(param.orderNo, param.applSeq);
+                }
+            }
         }
     });
 });

@@ -41,6 +41,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 // title: '设置支付密码',
                                 url: util.mix('/getPayPsd/reset_rembPayPsd.html', {
                                     from: util.gup('from'),
+                                    orderNo: util.gup('orderNo'),
                                     edxg: util.gup('edxg')
                                 }, true)
                             });

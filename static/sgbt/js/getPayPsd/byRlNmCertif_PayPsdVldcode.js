@@ -70,6 +70,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                 // title: '实名认证找回密码',
                                 url: util.mix('/getPayPsd/reset_rlNmPayPsd.html', {
                                     from: util.gup('from'),
+                                    orderNo: util.gup('orderNo'),
                                     edxg: util.gup('edxg')
                                 }, true)
                             });

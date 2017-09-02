@@ -79,6 +79,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                             // title: title,
                                             url: util.mix(url, {
                                                 from: 'reset',
+                                                orderNo: util.gup('orderNo'),
                                                 edxg: util.gup('edxg')
                                             }, true)
                                         });
