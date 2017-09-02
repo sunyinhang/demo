@@ -85,10 +85,10 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String key0 = "applSeq" + applSeq;
-        if(cacheMap.containsKey(key0)){
-            return success();
-        }
+//        String key0 = "applSeq" + applSeq;
+//        if(cacheMap.containsKey(key0)){
+//            return success();
+//        }
         ObjectMapper objectMapper = new ObjectMapper();
         AppOrder appOrder = null;
         String typCde = "";
@@ -237,35 +237,9 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
         logger.info("订单提交，返回数据：" + result);
         //签章成功进行redis存储
-        String key = "applSeq" + applSeq;
-        cacheMap.put(key, key);
-        session.set(token, cacheMap);
-
-        //6.信息推送
-//        if(HttpUtil.isSuccess(result)){//提交订单成功
-//            String uidHaier = (String) cacheMap.get("uidHaier");
-//            //根据applSeq查询商城订单号和网单号
-//            Map m = orderManageService.getMallOrderNoByApplSeq(applSeq);
-//            if(!HttpUtil.isSuccess(m)){
-//                return m;
-//            }
-//            Map ordermap = (HashMap<String, Object>)m.get("body");
-//            String mallOrderNo = (String) ordermap.get("mallOrderNo");
-//
-//            HashMap<Object, Object> bodyinfo = new HashMap<>();
-//            Map sendmap = new HashMap<>();
-//            sendmap.put("outSts", "01");
-//            sendmap.put("applSeq", applSeq);//申请流水号
-//            sendmap.put("idNo", certNo);//身份证号
-//            sendmap.put("orderNo",mallOrderNo);//商城订单编号
-//            bodyinfo.put("body",sendmap);
-//            bodyinfo.put("userid",uidHaier);//集团userid   1000030088
-//            String sgString = com.alibaba.fastjson.JSONObject.toJSONString(bodyinfo);
-//            String tradeCode="Sg-10007";
-//            String encrypt = encrypt(sgString, channelNo,tradeCode);
-//            String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";//TODO!!!!
-//            HttpClient.sendPost(urlOne, encrypt, "utf-8");
-//        }
+//        String key = "applSeq" + applSeq;
+//        cacheMap.put(key, key);
+//        session.set(token, cacheMap);
 
 
         return result;
