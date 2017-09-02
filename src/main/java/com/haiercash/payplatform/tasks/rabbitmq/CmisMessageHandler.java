@@ -12,9 +12,9 @@ import com.haiercash.payplatform.common.utils.RSAUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -31,8 +31,10 @@ import java.util.UUID;
 @Component
 //@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
 public class CmisMessageHandler {
-    private Log logger = LogFactory.getLog(CmisMessageHandler.class);
 
+    private Log logger = LogFactory.getLog(CmisMessageHandler.class);
+    @Value("${app.other.haiershunguang_ts_url}")
+    protected String haiershunguang_ts_url;
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
@@ -49,6 +51,7 @@ public class CmisMessageHandler {
         }
         return true;
     }
+
 
     //消费节点类类活动的消息
     @RabbitHandler
@@ -74,7 +77,7 @@ public class CmisMessageHandler {
                     logger.info(retMsg);
                     return;
                 } else {
-                    if ((!json.contains(tradeCode)) || (!json.contains("outSts"))) {
+                    if ((!json.contains(tradeCode))) {
                         retMsg = "推送数据不是支付平台需要的贷款审批状态查询的信息";
                         logger.info(retMsg);
                         return;
@@ -84,9 +87,13 @@ public class CmisMessageHandler {
                         tradeCode = jsonObj.getString("tradeCode");// 交易码
                         channelNo = jsonObj.getString("channelNo");
                         applSeq = jsonObj.getString("applSeq");
-                        outSts = jsonObj.getString("outSts");// 审批状态
+//                        outSts = jsonObj.getString("outSts");// 审批状态
+                        String msgTyp = jsonObj.getString("msgTyp");//等同于outsts
+                        if ("01".equals(msgTyp)){
+                            outSts = jsonObj.getString("outSts");// 审批状态
+                        }
                         String idNo = jsonObj.getString("idNo");//身份证号
-                        if (StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(outSts)) {
+                        if (StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(applSeq)) {
                             logger.info("获取的参数渠道编码:" + channelNo + " 申请流水号:" + applSeq + " 审批状态:" + outSts);
                             retMsg = "参数为空";
                             return;
@@ -97,9 +104,10 @@ public class CmisMessageHandler {
 
                         //cooperativeBusinessDao.selectBycooperationcoed(channelNo);
 //                        String urlOne = publishDao.selectChannelNoUrl(channelNo);//获取贷款申请URL
-                        String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";//07
+//                        String urlOne="http://mobiletest.ehaier.com:58093/paycenter/json/ious/notify.json";//07
 //                        String url = publishDao.selectChannelNoUrlOne(channelNo);//获取额度申请URL
-                        String url="http://mobiletest.ehaier.com:58093/paycenter/json/ious/limitNotify.json";//05
+//                        String url="http://mobiletest.ehaier.com:58093/paycenter/json/ious/limitNotify.json";//05
+                        String url_ts = haiershunguang_ts_url;
                         HashMap<String, Object> mapidNo = new HashMap<>();
                         HashMap<Object, Object> map = new HashMap<>();
                         HashMap<String, Object> mapinfo = new HashMap<>();
@@ -140,9 +148,9 @@ public class CmisMessageHandler {
                         mapuser.put("userId", userId);
                         Map<String, Object> userByUserid = appServerService.findUserByUserid(null, mapuser);//根据统一认证userid查询用户信息
                         logger.info("根据统一认证userid查询用户信息返回数据是"+userByUserid);
-                       if (userByUserid==null || "".equals(userByUserid)){
-                           return;
-                       }
+                        if (userByUserid==null || "".equals(userByUserid)){
+                            return;
+                        }
                         String s = JSONObject.toJSONString(userByUserid);
                         JSONObject jsonObject1 = JSONObject.parseObject(s);
                         JSONObject head2 = jsonObject1.getJSONObject("head");
@@ -167,12 +175,13 @@ public class CmisMessageHandler {
                         JSONObject body = jsonObject.getJSONObject("body");
                         String appOutAdvice = body.getString("appOutAdvice");//审批意见
                         String apprvCrdAmt = body.getString("apprvCrdAmt");//审批总额度
-                        if ("25".equals(outSts)) {//额度申请被拒
+                        //outSts="27";
+                        if ("43".equals(msgTyp)) {//额度申请被拒    25
                             map.put("outSts", "02");
                             map.put("appOutAdvice", appOutAdvice);//审批意见
                             map.put("apprvCrdAmt", apprvCrdAmt);//审批总额度
                             map.put("userid", externUid);//集团userid  100003008
-                            if (StringUtils.isEmpty(url)) {
+                            if (StringUtils.isEmpty(url_ts)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的额度申请推送地址";
                                 logger.info(retMsg);
                                 return;
@@ -180,13 +189,14 @@ public class CmisMessageHandler {
                             String sgString = JSONObject.toJSONString(map);
                             tradeCode="Sg-10005";
                             String encrypt = encrypt(sgString, channelNo,tradeCode);
-                            result = HttpClient.sendPost(url, encrypt, "utf-8");
-                        } else if ("27".equals(outSts)) {//额度申请通过
+                            logger.info("Sg-10005接口额度申请拒绝的加密数据是"+encrypt);
+                            result = HttpClient.sendPost(url_ts+"/paycenter/json/ious/limitNotify.json", encrypt, "utf-8");
+                        } else if ("42".equals(msgTyp)) {//额度申请通过  27
                             map.put("outSts", "01");
                             map.put("appOutAdvice", appOutAdvice);//审批意见
                             map.put("apprvCrdAmt", apprvCrdAmt);//审批总额度
                             map.put("userid", externUid);//集团userid   1000030088
-                            if (StringUtils.isEmpty(url)) {
+                            if (StringUtils.isEmpty(url_ts)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的额度申请推送地址";
                                 logger.info(retMsg);
                                 return;
@@ -194,8 +204,9 @@ public class CmisMessageHandler {
                             String sgString = JSONObject.toJSONString(map);
                             tradeCode="Sg-10005";
                             String encrypt = encrypt(sgString, channelNo,tradeCode);
-                            result = HttpClient.sendPost(url, encrypt, "utf-8");
-                        }else if ("02".equals(outSts)){//贷款申请被拒
+                            logger.info("Sg-10005接口额度申请通过的加密数据是"+encrypt);
+                            result = HttpClient.sendPost(url_ts+"/paycenter/json/ious/limitNotify.json", encrypt, "utf-8");
+                        }else if ("02".equals(outSts)){//贷款申请被拒  02
                             HashMap<String, Object> maporder = new HashMap<>();
                             maporder.put("applSeq",applSeq);//1265221
                             maporder.put("channel","11");
@@ -214,7 +225,7 @@ public class CmisMessageHandler {
                             map.put("orderNo",mallOrderNo);//订单编号    D17082411290147627
                             bodyinfo.put("body",map);
                             bodyinfo.put("userid",externUid);//集团userid   1000030088
-                            if (StringUtils.isEmpty(urlOne)) {
+                            if (StringUtils.isEmpty(url_ts)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的贷款申请推送地址";
                                 logger.info(retMsg);
                                 return;
@@ -222,8 +233,9 @@ public class CmisMessageHandler {
                             String sgString = JSONObject.toJSONString(bodyinfo);
                             tradeCode="Sg-10007";
                             String encrypt = encrypt(sgString, channelNo,tradeCode);
-                            result = HttpClient.sendPost(urlOne, encrypt, "utf-8");
-                        }else if ("06".equals(outSts)){//贷款申请通过
+                            logger.info("Sg-10007接口贷款申请被拒的加密数据是："+encrypt);
+                            result = HttpClient.sendPost(url_ts+"/paycenter/json/ious/notify.json", encrypt, "utf-8");
+                        }else if ("06".equals(outSts)){//贷款申请通过  06
                             HashMap<String, Object> maporder = new HashMap<>();
                             HashMap<Object, Object> bodyinfo = new HashMap<>();
                             maporder.put("applSeq",applSeq);//1265221
@@ -240,21 +252,22 @@ public class CmisMessageHandler {
                                 return;
                             }
                             mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
-                            map.put("outSts", "01");
-                            map.put("applSeq", applSeq);//申请流水号
+                            map.put("outSts","01");
+                            map.put("applSeq",applSeq);//申请流水号
                             map.put("idNo", idNo);//身份证号
                             map.put("orderNo",mallOrderNo);//订单编号   D17082411290147627
                             bodyinfo.put("body",map);
                             bodyinfo.put("userid",externUid);//集团userid   1000030088
-                            if (StringUtils.isEmpty(urlOne)) {
+                            if (StringUtils.isEmpty(url_ts)) {
                                 retMsg = "渠道编号" + channelNo + "没有相应的贷款申请推送地址";
                                 logger.info(retMsg);
                                 return;
                             }
                             String sgString = JSONObject.toJSONString(bodyinfo);
                             tradeCode="Sg-10007";
-                            String encrypt = encrypt(sgString, channelNo,tradeCode);
-                            result = HttpClient.sendPost(urlOne, encrypt, "utf-8");
+                            String encrypt = encrypt(sgString,channelNo,tradeCode);
+                            logger.info("Sg-10007接口通过状态加密后的数据是;"+encrypt);
+                            result = HttpClient.sendPost(url_ts+"/paycenter/json/ious/notify.json", encrypt, "utf-8");
                         }else {
                             logger.info("推送的这笔单子状态不符合,流水号是"+applSeq);
                             return;
@@ -289,6 +302,8 @@ public class CmisMessageHandler {
             logger.info("获取实时推送信息，结束");
         }
     }
+
+
     private String encrypt(String data, String channelNo,String tradeCode) throws Exception {
         //byte[] bytes = key.getBytes();
         //获取渠道私钥
