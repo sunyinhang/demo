@@ -1076,7 +1076,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 String outStsNew = json.getString("outSts");
                 String app_out_advice = json.getString("app_out_advice");
                 if (!"WS".equals(outStsNew)) {
-                    if ("00".equals(outStsNew)) {
+                    if ("01".equals(outStsNew)) {
                         return success(procList);
                     }
                     HashMap<String, Object> param = new HashMap<>();

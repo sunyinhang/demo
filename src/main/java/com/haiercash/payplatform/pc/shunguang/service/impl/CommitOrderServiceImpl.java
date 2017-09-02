@@ -2,16 +2,17 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
-import com.haiercash.commons.util.*;
 import com.haiercash.payplatform.common.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
-import com.haiercash.payplatform.common.service.*;
+import com.haiercash.payplatform.common.service.AppServerService;
+import com.haiercash.payplatform.common.service.CmisApplService;
+import com.haiercash.payplatform.common.service.GmService;
+import com.haiercash.payplatform.common.service.OrderManageService;
 import com.haiercash.payplatform.common.utils.*;
-import com.haiercash.payplatform.common.utils.EncryptUtil;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.service.AcquirerService;
@@ -25,7 +26,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -70,7 +70,9 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String orderNo = (String) map.get("orderNo");
         String applSeq = (String) map.get("applSeq");
         String paypwd = (String) map.get("paypwd");
-
+        String longitude = (String) map.get("longitude");//经度
+        String latitude = (String) map.get("latitude");//维度
+        String area = (String) map.get("area");//区域
         //缓存获取（放开）
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
@@ -102,7 +104,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
                 || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq)){
             logger.info("channel:" + channel + "  channelNo:" + channelNo + "   token:" + token
-                + "  orderNo:" + orderNo + "  applSeq:" + applSeq);
+                + "  orderNo:" + orderNo + "  applSeq:" + applSeq + "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -171,7 +173,6 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
         logger.info("订单提交，影像上传成功");
 
-        //4.风险信息上送
 
         //5.订单提交
         // 获取订单对象
@@ -181,6 +182,54 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         applSeq = relation.getApplSeq();
+
+        //风险信息上送
+        ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
+        ArrayList<String> listOne = new ArrayList<>();
+        ArrayList<String> listTwo = new ArrayList<>();
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        HashMap<String, Object> hashMapOne = new HashMap<String, Object>();
+        HashMap<String, Object> hashMapTwo = new HashMap<String, Object>();
+        String longLatitude = "经度" + longitude + "维度" + latitude;
+        logger.info("经维度解析前:" + longLatitude);
+        String longLatitudeEncrypt = com.haiercash.commons.util.EncryptUtil.simpleEncrypt(longLatitude);
+        logger.info("经维度解析后:" + longLatitudeEncrypt);
+        listOne.add(longLatitudeEncrypt);
+        hashMapOne.put("idNo", com.haiercash.commons.util.EncryptUtil.simpleEncrypt(certNo));
+        hashMapOne.put("name", com.haiercash.commons.util.EncryptUtil.simpleEncrypt(custName));
+        hashMapOne.put("mobile", com.haiercash.commons.util.EncryptUtil.simpleEncrypt(mobile));
+        hashMapOne.put("dataTyp", "04");
+        hashMapOne.put("source", "2");
+        hashMapOne.put("applSeq", applSeq);
+        hashMapOne.put("Reserved6", applSeq);
+        hashMapOne.put("content", listOne);
+        listTwo.add(com.haiercash.commons.util.EncryptUtil.simpleEncrypt(area));
+        hashMapTwo.put("idNo", com.haiercash.commons.util.EncryptUtil.simpleEncrypt(certNo));
+        hashMapTwo.put("name", com.haiercash.commons.util.EncryptUtil.simpleEncrypt(custName));
+        hashMapTwo.put("mobile", com.haiercash.commons.util.EncryptUtil.simpleEncrypt(mobile));
+        hashMapTwo.put("dataTyp", "A504");
+        hashMapTwo.put("source", "2");
+        hashMapTwo.put("applSeq", applSeq);
+        hashMapTwo.put("Reserved6", applSeq);
+        hashMapTwo.put("content", listTwo);
+        arrayList.add(hashMapOne);
+        arrayList.add(hashMapTwo);
+        hashMap.put("list", arrayList);
+//        hashMap.put("channel", channel);
+//        hashMap.put("channelNo", channelNo);
+        Map<String, Object> stringObjectMap = appServerService.updateListRiskInfo(token, hashMap);
+        if (stringObjectMap == null) {
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+//        Map setcustTagHeadMap = (HashMap<String, Object>) stringObjectMap.get("head");
+        Map<String, Object> setcustTagMapFlag = (HashMap<String, Object>) stringObjectMap.get("response");
+        Map<String, Object> setcustTagHeadMap = (Map<String, Object>) setcustTagMapFlag.get("head");
+        String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
+        if (!"00000".equals(setcustTagHeadMapFlag)) {
+            String retMsg = (String) setcustTagHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+
         Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
         logger.info("订单提交，返回数据：" + result);
         //签章成功进行redis存储

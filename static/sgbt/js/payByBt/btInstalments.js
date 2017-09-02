@@ -11,7 +11,12 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             totalAmt: '', //应还款总额
             payMtd: [],
             applyTnr: '',
-            paypwd: ''
+            paypwd: '',
+            risk: {
+                longitude: '',
+                latitude: '',
+                area: ''
+            }
         },
         filters: {
             currency: function (val) {
@@ -50,7 +55,10 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                         data: {
                                             orderNo: orderNo,
                                             applSeq: applSeq,
-                                            paypwd: $(".pwd-text").val()
+                                            paypwd: $(".pwd-text").val(),
+                                            longitude: vm.risk.longitude,
+                                            latitude: vm.risk.latitude,
+                                            area: vm.risk.area
                                         },
                                         alert: false ,
                                         success: function(res){
@@ -177,14 +185,16 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             },
             payFn: function () {
                 if (!vm.areacode) {
-                    // util.alert('#locationFail');
-                    // TODO: 临时写死370200
-                    // return;
-                    // util.alert('临时固定为青岛市测试');
-                    vm.areacode = '370203';
-                    util.report({
-                        message: '定位失败，使用默认地区'
-                    });
+                    if (Const.init.locationFailSubmit === false) {
+                        util.alert('#locationFail');
+                        return;
+                    } else {
+                        // TODO: 临时写死370203
+                        vm.areacode = '370203';
+                        util.report({
+                            message: '定位失败，使用默认地区'
+                        });
+                    }
                 }
                 if( !util.isEmpty(orderNo)){
                     var data={
@@ -209,6 +219,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                 orderNo: data.orderNo,
                                 applSeq: data.applSeq
                             });
+                            orderNo = data.orderNo;
                             vm.openCheckPassword(data.orderNo, data.applSeq);
                         }
                     }
@@ -260,51 +271,11 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                     }
                 }
             });
-            //获取当前位置
-            var geolocation = new BMap.Geolocation();
-            geolocation.getCurrentPosition(function(r) {
-                var lat=r.latitude;
-                var lng=r.longitude;
-                //关于状态码
-                //BMAP_STATUS_SUCCESS	检索成功。对应数值“0”。
-                //BMAP_STATUS_CITY_LIST	城市列表。对应数值“1”。
-                //BMAP_STATUS_UNKNOWN_LOCATION	位置结果未知。对应数值“2”。
-                //BMAP_STATUS_UNKNOWN_ROUTE	导航结果未知。对应数值“3”。
-                //BMAP_STATUS_INVALID_KEY	非法密钥。对应数值“4”。
-                //BMAP_STATUS_INVALID_REQUEST	非法请求。对应数值“5”。
-                //BMAP_STATUS_PERMISSION_DENIED	没有权限。对应数值“6”。(自 1.1 新增)
-                //BMAP_STATUS_SERVICE_UNAVAILABLE	服务不可用。对应数值“7”。(自 1.1 新增)
-                //BMAP_STATUS_TIMEOUT	超时。对应数值“8”。(自 1.1 新增)
-                if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-                    util.get({
-                        url: 'https://api.map.baidu.com/geocoder/v2/?location=' + lat + ',' + lng + '&output=json&ak=' + Const.params.mapKey,
-                        urlType: 'json',
-                        dataType: 'jsonp',
-                        check: true,
-                        success: function(res) {
-                            if (res.status === 0 && res.result && res.result.addressComponent && res.result.addressComponent.adcode) {
-                                vm.areacode = res.result.addressComponent.adcode;
-                                //console.log(vm.areacode);
-                            }
-                        }
-                    });
-                } else {
-                    // util.loading('close');
-                    util.report({
-                        message: '定位失败',
-                        status: this.getStatus()
-                    });
-                    util.alert('#locationFail');
-                }
-            }, function(e) {
-                // util.loading('close');
-                util.report({
-                    message: '定位失败',
-                    error: e
-                });
-                util.alert('#locationFail');
-            }, {
-                enableHighAccuracy: true
+            app.getCurrentPosition(function (result) {
+                vm.areacode = result.addressComponent.adcode;
+                vm.risk.longitude = result.location.lng;
+                vm.risk.latitude = result.location.lat;
+                vm.risk.area = result.addressComponent.country + result.addressComponent.province + result.addressComponent.city + result.addressComponent.district;
             });
         }
     });

@@ -1,4 +1,4 @@
-require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Const) {
+require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm', 'async!map'], function($, util, Const) {
     //获取密码
     var param=util.cache('payPasswd');
     //获取额度修改的标识
@@ -12,6 +12,11 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
             },
             entity: {
                 phoneNo: ''
+            },
+            risk: {
+                longitude: '',
+                latitude: '',
+                area: ''
             },
             formConfig: {
                 columns: [{
@@ -118,12 +123,20 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                             }
                         },
                         click: function (event, editType, entity) {
+                            if (!vm.risk.area && Const.init.locationFailSubmit === false) {
+                                util.alert('#locationFail');
+                                return;
+                            }
+
                             util.post({
                                 url: '/resetPayPasswd',
                                 data:{
                                     payPasswd: param && param.payPasswd,
                                     verifyNo: entity.verifyNo,
                                     edxgflag: edxg,
+                                    longitude: vm.risk.longitude,
+                                    latitude: vm.risk.latitude,
+                                    area: vm.risk.area
                                 },
                                 success:function(res){
                                     util.redirect({
@@ -155,6 +168,11 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                     }
                     // vm.formConfig.columns[0].head = util.data(res).phoneNo;
                 }
+            });
+            app.getCurrentPosition(function (result) {
+                vm.risk.longitude = result.location.lng;
+                vm.risk.latitude = result.location.lat;
+                vm.risk.area = result.addressComponent.country + result.addressComponent.province + result.addressComponent.city + result.addressComponent.district;
             });
         }
     });
