@@ -293,7 +293,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                                         text: '审批进度',
                                         layout: 'primary',
                                         show: function (item) {
-                                            if( item.order.outSts === '01' || item.order.outSts === '02' || item.order.outSts === '05' || item.order.outSts === '06'
+                                            if( item.order.outSts === '01' || item.order.outSts === '02' || item.order.outSts === '04' || item.order.outSts === '05' || item.order.outSts === '06'
                                                 || item.order.outSts === '20' || item.order.outSts === '22' || item.order.outSts === '24'){
                                                 return true;
                                             }else{
