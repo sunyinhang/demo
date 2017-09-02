@@ -231,6 +231,12 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             String retMsg = (String) resultmapjsonMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
+        Map<String, Object> body = (Map<String, Object>) dateAppOrderPerson.get("body");
+        List<Map<String, Object>> order = (List<Map<String, Object>>) body.get("orders");
+        Map<String, Object> orders = new HashMap<String, Object>();
+        orders.put("orders", order);
+        body.put("orders",orders);
+        dateAppOrderPerson.put("body", body);
         return dateAppOrderPerson;
     }
 
