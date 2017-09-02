@@ -104,7 +104,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
                 || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq)){
             logger.info("channel:" + channel + "  channelNo:" + channelNo + "   token:" + token
-                + "  orderNo:" + orderNo + "  applSeq:" + applSeq + "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area);
+                + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
