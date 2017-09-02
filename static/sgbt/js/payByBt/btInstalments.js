@@ -142,7 +142,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                         });
                                                     }
                                                 });
-                                            }, 10000);
+                                            }, Const.init.queryOrderInterval || 5000);
                                         },
                                         error: function(res){
                                             util.loading('hide');
