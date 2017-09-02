@@ -12,6 +12,7 @@ import com.haiercash.payplatform.common.utils.RSAUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,9 +30,8 @@ import java.util.UUID;
  * @since v1.0.1
  */
 @Component
-//@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
+@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
 public class CmisMessageHandler {
-
     private Log logger = LogFactory.getLog(CmisMessageHandler.class);
     @Value("${app.other.haiershunguang_ts_url}")
     protected String haiershunguang_ts_url;
@@ -51,7 +51,6 @@ public class CmisMessageHandler {
         }
         return true;
     }
-
 
     //消费节点类类活动的消息
     @RabbitHandler

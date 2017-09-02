@@ -22,8 +22,8 @@ spring:
       max-active: 1000
   http.converters.preferred-json-mapper: fastjson
   rabbitmq:
-    #addresses: 10.164.197.208:5672, 10.164.197.228:5672
-    addresses: 10.164.197.54:5672, 10.164.197.55:5672
+    addresses: 10.164.197.208:5672, 10.164.197.228:5672
+#    addresses: 10.164.197.54:5672, 10.164.197.55:5672
     username: admin
     password: admin123
     virtual-host: /
@@ -35,7 +35,7 @@ spring:
 #    exchange: APPMSG_TOPIC_EXCHANGE_DEV    测试
     exchange: APPMSG_TOPIC_EXCHANGE
     queue:
-#      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV  测试
+#      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
       cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
 redis:
   single:
@@ -168,6 +168,7 @@ app:
     appServer_page_url: http://testpm.haiercash.com/
     haierData_url: http://taccount.haier.com
     haiercashpay_web_url: https://testpm.haiercash.com/
+    haiershunguang_ts_url : http://mobiletest.ehaier.com:58093
   shunguang:
     sg_merch_no: 302017001073
     sg_store_no: 302017040270
