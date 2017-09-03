@@ -235,6 +235,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
 
         Map<String, Object> result = commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
+        logger.info("订单提交,客户姓名：" + custName);
         logger.info("订单提交，返回数据：" + result);
         //签章成功进行redis存储
 //        String key = "applSeq" + applSeq;
