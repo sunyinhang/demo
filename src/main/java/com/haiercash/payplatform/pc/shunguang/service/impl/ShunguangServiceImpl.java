@@ -282,6 +282,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }else{
             backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
         }
+        logger.info("支付跳转页面：" + backurl);
         returnmap.put("backurl", backurl);
         return success(returnmap);
     }
