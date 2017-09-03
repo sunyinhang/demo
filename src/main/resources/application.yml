@@ -170,11 +170,11 @@ app:
     haiercashpay_web_url: https://testpm.haiercash.com/
     haiershunguang_ts_url : http://mobiletest.ehaier.com:58093
   shunguang:
-    sg_merch_no: 302017001073
-    sg_store_no: 302017040270
-    sg_user_id: 303197
+    sg_merch_no: EHAIER
+    sg_store_no: SHUNGUANG
+    sg_user_id: SAQDGM01
     sg_typCde: 17098a
-    sg_typLevelTwo: 010014
+    sg_typLevelTwo: 010015
     sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
   redis:

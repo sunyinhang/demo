@@ -1,48 +1,11 @@
 require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 'bvLayout'], function(vue, $, util, Const, bridge) {
     util.init();
 
-    Const.global.f = new Framework7({
-        router: false,
-        modalTitle: '',
-        modalButtonOk: '确定',
-        modalButtonCancel: '取消',
-        modalTemplate: util.heredoc(function() {
-            /*!
-            <div class="modal {{cssClass}} {{#unless buttons}}modal-no-buttons{{/unless}}">
-                <div class="modal-inner">
-                {{#if title}}
-                    <div class="modal-title">{{title}}</div>
-                {{/if}}
-                {{#if text}}
-                    <div class="modal-text">{{text}}</div>
-                {{/if}}
-                {{#if afterText}}
-                    {{afterText}}
-                {{/if}}
-                </div>
-                {{#if buttons}}
-                    <div class="modal-buttons {{#if verticalButtons}}modal-buttons-vertical{{/if}}">
-                {{#each buttons}}
-                    <span class="modal-button {{#if cssClass}}modal-button-{{cssClass}}{{/if}}">{{text}}</span>
-                {{/each}}
-                </div>
-                {{/if}}
-            </div>
-            */
-        })
-        /*pushState: true,
-        onAjaxStart: function (xhr) {
-            Const.global.f.showIndicator();
-        },
-        onAjaxComplete: function (xhr) {
-            Const.global.f.hideIndicator();
-        }*/
-    });
+    util.initPage();
     util.loading();
     setTimeout(function () {
         $('.bv-preloader-container').remove();
-        $('.bv-overlay').remove();
-        $('.agree-popup').removeClass('hide');
+        $('.bv-overlay').hide();
     }, 500);
     $('body').height($(window).height());
     // #!/
@@ -118,6 +81,9 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     });
     $(document).on('click', 'a[href]', function (event) {
         event.preventDefault();
+    });
+    $(document).on('click', '.modal-button,a[href]', function () {
+        util.preloading();
     });
     $('.agree-popup div#content').height($(window).height() - 45);
     $(document).on('open', '.agree-popup', function () {

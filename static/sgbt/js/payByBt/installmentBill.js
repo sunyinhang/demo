@@ -1,39 +1,4 @@
 require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const) {
-    /*var count = 0;
-    var items = [];
-    for (var i=0; i<8; i++) {
-        items.push(
-            {
-                title: '<span class="bv-left">日期</span><span class="bv-right">状态</span>',
-                image: 'custom/themes/default/images/active.png',
-                content: '内容',
-                extra: '<span class="bv-align-right">合计：</span>',
-                data: 'xxxx',
-                operates: [
-                    {
-                        text: '按钮1',
-                        layout: 'primary',
-                        show: function (item) {
-                            return true;
-                        },
-                        click: function (event, item) {
-                            console.log('clicked' + item.data);
-                        }
-                    },
-                    {
-                        text: '按钮2',
-                        show: function (item) {
-                            return true;
-                        },
-                        click: function (event, item) {
-                            console.log('clicked');
-                        }
-                    }
-                ]
-            }
-        );
-    }*/
-
     var currentIndex = util.gup('currentIndex');
     if (currentIndex) {
         currentIndex = util.toNumber(currentIndex);
@@ -47,7 +12,15 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             pageSize: 20,
             tags: {
                 tabsKey: 'installmentBillTabs',
-                listKey: 'installmentBillList'
+                tabsContainerKey: 'installmentBillTabsContainer',
+                tabsContentKey1: 'installmentBillTabsContent1',
+                tabsContentKey2: 'installmentBillTabsContent2',
+                tabsContentKey3: 'installmentBillTabsContent3',
+                tabsContentKey4: 'installmentBillTabsContent4',
+                listKey1: 'installmentBillList1',
+                listKey2: 'installmentBillList2',
+                listKey3: 'installmentBillList3',
+                listKey4: 'installmentBillList4'
             },
             tabsConfig: {
                 layout: 'head',
@@ -71,30 +44,33 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     }
                 ]
             },
-            listConfig: {
+            listConfig1: {
                 type: 'media',
-                /// title: 'xxxx',
                 items: [
                 ],
-                infinite: function () {
-                    var _vm = util.vm(vm , vm.tags.tabsKey);
-                    if (_vm) {
-                        vm.onActive(util.tabsIndex(_vm), true, this);
-                    }
-                    /*var items = [];
-                    for (var i=0; i<10; i++) {
-                        items.push({
-                            title: '标题' + (count*10 + i),
-                            content: '内容'
-                        });
-                    }
-                    count++;
-                    if (count > 3) {
-                        this.load(items, false);
-                    } else {
-                        this.load(items, true);
-                    }*/
-                }
+                refresh: true,
+                infinite: true
+            },
+            listConfig2: {
+                type: 'media',
+                items: [
+                ],
+                refresh: true,
+                infinite: true
+            },
+            listConfig3: {
+                type: 'media',
+                items: [
+                ],
+                refresh: true,
+                infinite: true
+            },
+            listConfig4: {
+                type: 'media',
+                items: [
+                ],
+                refresh: true,
+                infinite: true
             }
         },
         filters: {
@@ -103,6 +79,18 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             }
         },
         methods: {
+            onContentActive: function (index) {
+                util.refresh({
+                    vm: util.vm(this, this.tags.tabsKey),
+                    index: index
+                });
+            },
+            onRefresh: function (index) {
+                this.onActive(index);
+            },
+            onInfinite: function (index) {
+                this.onActive(index, true);
+            },
             onActive: function (index, pagination, _vm) {
                 /*util.refresh({
                     vm: util.vm(vm, vm.tags.listKey),
@@ -110,7 +98,10 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     items: util.clone(items)
                 });*/
                 if (!_vm) {
-                    _vm = util.vm(this, this.tags.listKey);
+                    var _contentVm = util.vm(this, this.tags.tabsContainerKey, this.tags['tabsContentKey' + (index + 1)]);
+                    if (_contentVm) {
+                        _vm = util.vm(_contentVm, this.tags['listKey' + (index + 1)]);
+                    }
                 }
                 if (!pagination) {
                     this.pageNo = 1;
@@ -130,7 +121,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                         },
                         error: function () {
                             util.refresh({
-                                vm: util.vm(vm, vm.tags.listKey),
+                                vm: _vm,
                                 items: []
                             });
                         }
@@ -148,7 +139,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                         },
                         error: function () {
                             util.refresh({
-                                vm: util.vm(vm, vm.tags.listKey),
+                                vm: _vm,
                                 items: []
                             });
                         }
@@ -166,7 +157,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                         },
                         error: function () {
                             util.refresh({
-                                vm: util.vm(vm, vm.tags.listKey),
+                                vm: _vm,
                                 items: []
                             });
                         }
@@ -185,7 +176,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                         },
                         error: function () {
                             util.refresh({
-                                vm: util.vm(vm, vm.tags.listKey),
+                                vm: _vm,
                                 items: []
                             });
                         }
@@ -354,7 +345,7 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
                     }
                     if (!pagination) {
                         util.refresh({
-                            vm: util.vm(vm, vm.tags.listKey),
+                            vm: _vm,
                             items: items
                         });
                     } else {
@@ -370,11 +361,12 @@ require(['jquery', 'util', 'Const', 'bvTabs', 'bvList'], function($, util, Const
             }
         },
         mounted: function () {
+            util.initPage('swiper');
+            util.refresh({
+                vm: util.vm(this, this.tags.tabsKey),
+                content: this.tabsConfig.currentIndex
+            });
             this.onActive(this.tabsConfig.currentIndex);
-            /*util.refresh({
-                vm: util.vm(this, this.tags.listKey),
-                items: util.clone(items)
-            });*/
         }
     });
 });

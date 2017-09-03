@@ -35,12 +35,16 @@
         loader.style('/mobile/js/framework/css/framework7.ios.colors.min.css');
         loader.style('/mobile/themes/default/main.css');
         loader.style('custom/themes/default/custom.css');
-        loader.script('/mobile/common/version.js');
-        loader.script('custom/js/config.js');
-        loader.script('/mobile/js/require/require.min.js', function () {
-            loader.script('/mobile/common/config.js');
-            loader.script('custom/js/init.js');
-            loader.script('custom/js/app.js');
+        loader.script('/mobile/common/version.js', function () {
+            loader.script('custom/js/config.js', function () {
+                loader.script('/mobile/js/require/require.min.js', function () {
+                    loader.script('/mobile/common/config.js', function () {
+                        loader.script('custom/js/init.js', function () {
+                            loader.script('custom/js/app.js');
+                        });
+                    });
+                });
+            });
         });
     }
 </script>
