@@ -272,7 +272,7 @@ public class CmisMessageHandler {
                             return;
                         }
                         //result = HttpClient.sendPost(url, json, "utf-8");
-                        logger.info("推送第三方通知，推送URL地址: " + channelUrl + " \n返回结果：" + result);
+                        logger.info("推送第三方通知，推送URL地址: " + url_ts + " \n返回结果：" + result);
                         if ("".equals(result) || result == null) {
                             retMsg = "推送地址：" + channelUrl + "的响应数据为空！";
                             throw new Exception(retMsg);
@@ -298,7 +298,7 @@ public class CmisMessageHandler {
                 logger.error("实时推送接口(JSON格式)， 出现异常 :" + retMsg, e);
 //                throw new RuntimeException();
             }
-            logger.info("获取实时推送信息，结束");
+            logger.info("获取实时推送信息，结束，成功的流水号是："+applSeq);
         }
     }
 
