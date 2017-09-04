@@ -3,7 +3,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         container: 'applyIn',
         data: {
             config:{
-                whetherRedirect: 'true',
+                whetherRedirect: false,
                 imgSrc: 'custom/themes/default/images/amtNotTopBg.png',
                 title: '顺逛白条',
                 whether: false,

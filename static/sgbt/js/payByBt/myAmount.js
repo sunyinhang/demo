@@ -10,7 +10,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
                 amtNum: 'amtNum',
                 numUnit: true,
                 num: '',
-                whetherBtn: true,
+                whetherBtn: false,
                 activBtn: 'activAmuntBtn',
                 btnText: '去购物'
             },
