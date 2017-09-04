@@ -53,8 +53,8 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private OrderManageService orderManageService;
-    @Value("${app.shunguang.sg_typLevelTwo}")
-    protected String sg_typLevelTwo;
+//    @Value("${app.shunguang.sg_typLevelTwo}")
+//    protected String sg_typLevelTwo;
 
     /**
      * 订单提交
