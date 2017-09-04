@@ -298,7 +298,7 @@ public class CmisMessageHandler {
                             }
 
                         }else {
-                            logger.info("推送的这笔单子状态不符合,流水号是"+applSeq);
+                            logger.info("推送的这笔单子状态不符合,流水号是"+applSeq+"状态是："+outSts);
                             return;
                         }
                         //result = HttpClient.sendPost(url, json, "utf-8");
