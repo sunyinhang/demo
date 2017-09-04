@@ -11,7 +11,7 @@ info:
   version: ${application.version}
 spring:
   application:
-    name: payplatform_test
+    name: payplatform
   ignoreUnresolvablePlaceholders: true
   redis:
     host: 10.164.194.123
