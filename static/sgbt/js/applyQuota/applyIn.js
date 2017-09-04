@@ -10,7 +10,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
                 subTitle: '可用总额度',
                 amtNum: 'amtSitu',
                 num: '额度输出中...',
-                whetherBtn: true,
+                whetherBtn: false,
                 activBtn: 'goGrayBtn',
                 btnText: '去购物'
             }
