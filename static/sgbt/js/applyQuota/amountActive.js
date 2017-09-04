@@ -4,7 +4,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         data: {
             stateConfig:{
                 imgSrc: 'custom/themes/default/images/amtNotTopBg.png',
-                title: '顺逛白条',
+                // title: '顺逛白条',
                 amtNum: 'amtNum',
                 //num: '暂无',
                 whetherBtn: true,

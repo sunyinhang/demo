@@ -5,7 +5,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             config:{
                 whetherRedirect: false,
                 imgSrc: 'custom/themes/default/images/amtNotTopBg.png',
-                title: '顺逛白条',
+                // title: '顺逛白条',
                 whether: false,
                 subTitle: '可用总额度',
                 amtNum: 'amtSitu',
