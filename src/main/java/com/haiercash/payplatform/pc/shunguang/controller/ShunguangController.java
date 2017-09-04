@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
@@ -181,9 +182,9 @@ public class ShunguangController extends BaseController {
 //        map1.put("cooprCode","");
 //        map1.put("channelNo","46");
 //        map1.put("applSeq","1703608");
-////        map1.put("outSts","27");
+//        map1.put("outSts","06");
 //        map1.put("idNo","371102198011105713");
-//        map1.put("msgTyp","25");
+//        map1.put("msgTyp","01");
 //        map1.put("tradeCode","100022");
 //        String s = JSON.toJSONString(map1);
 //        cmisMseeageHandler.consumeNodeMessage(s);
