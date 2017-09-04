@@ -1,6 +1,8 @@
 require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 'bvLayout'], function(vue, $, util, Const, bridge) {
     util.init();
 
+    util.script('hm');
+
     util.initPage();
     util.loading();
     setTimeout(function () {

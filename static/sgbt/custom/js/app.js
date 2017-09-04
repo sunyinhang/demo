@@ -195,6 +195,7 @@ function initRedirect (flag) {
 }
 function getCurrentPosition (callback) {
     //获取当前位置
+    util.loading();
     var geolocation = new BMap.Geolocation();
     geolocation.getCurrentPosition(function(r) {
         var lat=r.latitude;
@@ -220,23 +221,43 @@ function getCurrentPosition (callback) {
                         callback(res.result);
                         //console.log(vm.areacode);
                     }
+                },
+                complete: function () {
+                    util.loading('hide');
                 }
             });
         } else {
-            // util.loading('close');
+            util.loading('hide');
             util.report({
                 message: '定位失败',
                 status: this.getStatus()
             });
-            util.alert('#locationFail');
+            util.confirm({
+                message: '定位失败，是否重试？',
+                yes: function () {
+                    getCurrentPosition(callback);
+                },
+                no: function () {
+                    util.alert('#locationFail');
+                }
+            });
         }
     }, function(e) {
-        // util.loading('close');
+        util.loading('hide');
         util.report({
             message: '定位失败',
             error: e
         });
-        util.alert('#locationFail');
+        util.confirm({
+            message: '定位失败，是否重试？',
+            yes: function () {
+                getCurrentPosition(callback);
+            },
+            no: function () {
+                util.alert('#locationFail');
+            }
+        });
+        // util.alert('#locationFail');
     }, {
         enableHighAccuracy: true
     });

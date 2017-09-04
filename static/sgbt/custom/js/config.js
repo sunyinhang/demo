@@ -9,7 +9,9 @@ var __Const = {
         // 定位失败是否允许提交
         locationFailSubmit: false,
         // 查询订单处理结果间隔时间（毫秒）
-        queryOrderInterval: 5000
+        queryOrderInterval: 5000,
+        // 是否开启百度统计
+        hm: true
     },
     rest: {
         baseUrl: window.location.protocol + "//" + window.location.host + '/api/payment',
@@ -38,7 +40,9 @@ var __Const = {
         maritalStatusMarried: '20',
         relationTypeCouple: '06',
         // 百度地图api
-        mapKey: 'vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm'
+        mapKey: 'vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm',
+        // 百度统计 生产-f4144477da2d5745fc0a1dc12b2631bb
+        hmKey: '7e18821d82be100f1703d479460cdb79'
     },
     dicts: {
         education: [
