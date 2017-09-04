@@ -351,7 +351,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String idNoHaier = (String) cacheMap.get("idNoHaier");//
         if (!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(idCard)) {
             logger.info("顺逛传送身份证与客户实名身份证不一致");
-            return fail(ConstUtil.ERROR_CODE, "身份验证失败");
+            return fail(ConstUtil.ERROR_CODE, "顺逛白条实名认证必须和顺逛实名认证一致！");
         }
 
         //4.缓存数据非空判断
