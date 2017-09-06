@@ -4,7 +4,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         data: {
             config:{
                 imgSrc: 'custom/themes/default/images/amtTopBg.png',
-                title: '顺逛白条',
+                // title: '顺逛白条',
                 whether: true,
                 subTitle: '可用总额度',
                 amtNum: 'amtNum',

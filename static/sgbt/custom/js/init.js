@@ -1,6 +1,8 @@
 require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 'bvLayout'], function(vue, $, util, Const, bridge) {
     util.init();
 
+    util.script('hm');
+
     util.initPage();
     util.loading();
     setTimeout(function () {
@@ -93,18 +95,6 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     });
     /*$(document).on('opened', '.agree-popup', function () {
     });*/
-    $('.agree-popup iframe').on('load', function () {
-        /*$(this).width($(window).width() - 10);
-        var width = $(this).width();
-        var height = $('body', $(this).contents()).height();
-        $(this).height(height);
-        var $iframe = $(this);
-        setTimeout(function () {
-            $iframe.height($('body', $iframe.contents()).height());
-        }, 500);*/
-        $(this).height($('html', $(this).contents()).height());
-        util.loading('hide');
-    });
     $(document).on('closed', '.agree-popup', function () {
         $(this).removeAttr('data-title').removeAttr('data-url');
         $('iframe', this).attr('src', 'about:blank');

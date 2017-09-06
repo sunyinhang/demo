@@ -76,7 +76,8 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm', 'async!map'], function
                                                 var data = util.data(res);
                                                 if (data.realmName) {
                                                     util.popup({
-                                                        $element: $('.agree-popup'),
+                                                        // $element: $('.agree-popup'),
+                                                        type: 'agree',
                                                         title: '消费信贷协议',
                                                         url: data.realmName     // '/app/ht/agreement/PersonInfo.html'
                                                     });
@@ -96,7 +97,8 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm', 'async!map'], function
                                                 var data = util.data(res);
                                                 if (data.realmName) {
                                                     util.popup({
-                                                        $element: $('.agree-popup'),
+                                                        type: 'agree',
+                                                        // $element: $('.agree-popup'),
                                                         title: '个人征信查询授权书',
                                                         url: data.realmName     // '/app/ht/agreement/PersonInfo.html'
                                                     });

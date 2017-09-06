@@ -369,12 +369,12 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 .loginListItem ul li{position:relative;margin:0px;padding:0px;float:left;height:100%;text-align:left;}
 .loginListItem .iconLi{width:15%;}
 .loginListItem .iconLi img{position:absolute;right:0px;bottom:0.3rem;width:49%;}
-.loginListItem .nameLi{width:24%;}
+.loginListItem .nameLi{width:30%;}
 .loginListItem .nameLi span{position:absolute;display:inline-block;right:0px;bottom:0.36rem;height:1rem;line-height:1rem;}
-.loginListItem .inputli{width:60%;}
+.loginListItem .inputli{width:55%;}
 .loginListItem .inputli input{ position:absolute;left:0px;bottom:0px;width:100%; font-size:0.7rem; height:1.72rem;line-height:1.72rem;padding-left:10px;
 color: #fff;text-align:left;background:none; border:none;}
-.remPsd{position:relative;margin:0 auto;padding:0px; left:21px; margin-top:8px;/* margin-bottom:34px; */width:68%;height:18px;font-size:16px;color:#ffffff;}
+.remPsd{position:relative;margin:0 auto;padding:0px; margin-top:8px;/* margin-bottom:34px; */width:68%;height:18px;font-size:16px;color:#ffffff;}
 .remPsd input[type='checkBox']{position:absolute;left:0px; right:5px; top:4px;width:16px;height:16px}
 .remPsd span{position:absolute;left:1.25rem;display:inline-block;width:86%;height:.9rem;text-align:left;}
 a.loginBtn:link,a.loginBtn:visited,a.loginBtn:hover{ margin:0 auto; margin-top:1.5rem; padding:0px;width:100%;height:40px;line-height:40px;color:#028CE5;border-radius:0rem;font-size:18px;background:#EBF1F5;border:1px solid #EBF1F5;}

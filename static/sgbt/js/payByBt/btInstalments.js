@@ -25,9 +25,9 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
         },
         methods: {
             chooseCoupon: function () {
-                util.popup({
+                /*util.popup({
                     $element: $('#popup1', vm.$el)
-                });
+                });*/
             },
             openCheckPassword: function (orderNo, applSeq) {
                 util.modal({
