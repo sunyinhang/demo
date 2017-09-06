@@ -233,7 +233,8 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                                         var data = util.data(res);
                                         if (data.realmName) {
                                             util.popup({
-                                                $element: $('.agree-popup'),
+                                                // $element: $('.agree-popup'),
+                                                type: 'agree',
                                                 title: '个人信息使用授权书',
                                                 url: data.realmName     // '/app/ht/agreement/PersonInfo.html'
                                             });

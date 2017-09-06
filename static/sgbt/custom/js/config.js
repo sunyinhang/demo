@@ -1,6 +1,6 @@
 var __baseResourcePath = '/mobile';
 // 支持dev,run
-var __env = 'dev';
+var __env = 'run';
 // 公共js/css版本，进展__env='run'时生效，目的是为了处理缓存
 var __version = '1.0.0';
 var __Const = {
@@ -30,7 +30,7 @@ var __Const = {
     route: {
         baseUrl: window.location.protocol + "//" + window.location.host,
         baseLocation: '/sgbt',
-        imageLocation: '/sgbt/images',
+        // imageLocation: '/sgbt/images',
         versionLocation: '',
         htmlLocation: '/html',
         scriptLocation: (__env === 'run' ? '/run' : '') + '/js'

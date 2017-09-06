@@ -17,26 +17,21 @@
 <body class="bv-theme">
 <div class="statusbar-overlay"></div>
 <div id="mainDiv" class="views"></div>
-<div class="popup popup-about agree-popup" style="display:none;">
-    <div class="content-block">
-        <p id="title"><span>协议标题</span><a href="#" class="close-popup">关闭</a></p>
-        <div id="content">
-            <iframe id="treatyContainer" width="100%" height="100%" frameborder="0"></iframe>
-        </div>
-    </div>
-</div>
 <div class="bv-preloader-container"><span class="bv-preloader"></span></div>
 <div class="bv-overlay"></div>
 <script type="text/javascript" src="/mobile/common/loader.js"></script>
 <script type="text/javascript">
     if (window.loader) {
-        loader.style('/mobile/js/framework/css/framework7.ios.min.css');
-        loader.style('/mobile/js/framework/css/framework7.ios.colors.min.css');
-        loader.style('/mobile/themes/default/main.css');
-        loader.style('custom/themes/default/custom.css');
-        loader.script(['/mobile/common/version.js', 'custom/js/config.js', '/mobile/js/require/require.min.js', '/mobile/common/config.js', 'custom/js/init.js', 'custom/js/app.js']);
+        loader.script(['/mobile/common/version.js', 'custom/js/config.js'], true, function () {
+            loader.style(['/mobile/js/framework/css/framework7.ios.min.css', '/mobile/js/framework/css/framework7.ios.colors.min.css'], true, function () {
+                loader.style(['/mobile/themes/default/main.css', 'custom/themes/default/custom.css'], false, function () {
+                    loader.script(['/mobile/js/require/require.min.js', '/mobile/common/config.js'], false, function () {
+                        loader.script(['custom/js/init.js', 'custom/js/app.js'], true);
+                    });
+                });
+            });
+        });
     }
 </script>
-
 </body>
 </html>
