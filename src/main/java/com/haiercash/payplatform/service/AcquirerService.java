@@ -70,7 +70,7 @@ public interface AcquirerService {
      * @param channelNo     渠道号
      * @return  Map
      */
-    public AppOrder getAppOrderFromAcquirer(String applSeq, String channelNo);
+    AppOrder getAppOrderFromAcquirer(String applSeq, String channelNo);
 
     /**
      * 贷款申请取消.
