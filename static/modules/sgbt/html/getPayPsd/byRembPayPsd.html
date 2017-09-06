@@ -1,0 +1,17 @@
+<div class="wrapper" ms-controller="byRembPayPsd">
+<form ms-validate="@validate">
+	<div class="margt10"></div>
+    <div class="list-group">
+	      <ul>
+	        <li class="padding-inner border-bottom">
+	        	<span class="txt">输入原密码</span>
+	        	<div><input type="text" placeholder="6-20位组合字母，数字，符号" ms-attr="{maxlength: @lengths.payPassword}" ms-duplex="@payPassword" ms-rules="{payPassword: true}"/></div>
+	        </li>
+	      </ul>
+    </div>
+    <div class="main-btn margt28">
+		<a href="javascript:void(0);" class="a-btn" ms-click="@nextFn($event)">确定</a>
+	</div>
+</form>
+</div>
+<script type="text/javascript" src="js/getPayPsd/byRembPayPsd.js"></script>

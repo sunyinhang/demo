@@ -1,0 +1,21 @@
+<div class="wrapper" ms-controller="reset_rembPayPsd">
+<form ms-validate="@validate">
+    <div class="margt10"></div>
+    <div class="list-group">
+          <ul>
+            <li class="padding-inner border-bottom">
+                <span class="txt">输入新密码</span>
+                <div><input type="text" placeholder="6-20位组合字母，数字，符号" id="pw" ms-attr="{maxlength: @lengths.payPassword}" ms-duplex="@payPassword" ms-rules="{payPassword: true}"/></div>
+            </li>
+            <li class="padding-inner">
+                <span class="txt">确认密码</span>
+                <div><input type="text" placeholder="确认密码" ms-duplex="@password2" ms-attr="{maxlength: @lengths.payPassword}" ms-rules='{required:true, equalto:"pw"}' data-required-message="请输入确认密码" data-equalto-message="两次密码不一致"/></div>
+            </li>
+          </ul>
+    </div>
+    <div class="main-btn margt28">
+		<a href="javascript:void(0);" class="a-btn" ms-click="@nextFn($event)">确定</a>
+	</div>
+</form>
+</div>
+<script type="text/javascript" src="js/getPayPsd/reset_rembPayPsd.js"></script>

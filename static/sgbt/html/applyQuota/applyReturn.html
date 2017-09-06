@@ -1,0 +1,13 @@
+<component is="bv-layout" class="bv-align-center fullPage gray" data-container="applyReturn" v-cloak>
+	<quota-state v-bind="config" @on-click="getReasonsFn"></quota-state>
+	<component is="bv-form" v-bind="formConfig"></component>
+</component>
+<script type="text/javascript">
+	require(['jquery', 'util'], function($, util) {
+		util.title('额度被退回');
+		util.script({
+			url: '/applyQuota/applyReturn.js'
+		});
+	});
+</script>
+

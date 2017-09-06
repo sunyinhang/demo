@@ -1,0 +1,40 @@
+<div class="wrapper bg-bd checkIdCardB" ms-controller="checkIdCardB">
+<form ms-validate="@validate">
+    <div class="main-01">
+        <ul class="thumbnail">
+            <li class="realName realNameActive">实名</li>
+            <li class="personal">个人资料</li>
+            <li class="face">人脸识别</li>
+            <li class="password">密码设置</li>
+        </ul>
+        <div class="clear height10"></div>
+    </div>
+    <div class="height7"></div>
+    <div class="main-02 paddt15">
+        <xmp ms-widget="[{is:'ms-PhotoUpgrade', $id: 'identityTag1'}, @config]"></xmp>
+    </div>
+    <div class="main-03">
+        <div class="list-group2 padding-inner">
+              <ul>
+                <li class="border-bottom">
+                    <span class="txt">发证机关</span>
+                    <div>
+                        <input type="text" ms-duplex="@cards.issued_by" ms-rules='{required:true}' data-required-message="发证机关不能为空" readonly>
+                    </div>
+                </li>
+                <li class="border-bottom">
+                    <span class="txt">有效期</span>
+                    <div>
+                        <input type="text" ms-duplex='@cards.valid_date' ms-rules='{required:true}' data-required-message="有效期限不能为空" readonly/>
+                    </div>
+                </li>
+              </ul>
+        </div>
+    </div>
+    <div class="main-btn margt40">
+        <a href="javascript:void(0);" class="a-btn" ms-click="@nextFn($event)">下一步</a>
+    </div>
+</form>
+</div>
+<script type="text/javascript" src="js/applyQuota/checkIdCardB.js"></script>
+

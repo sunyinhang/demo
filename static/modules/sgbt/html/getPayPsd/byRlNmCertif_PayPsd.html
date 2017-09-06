@@ -1,0 +1,26 @@
+<div class="wrapper" ms-controller="byRlNmCertif_PayPsd">
+<form ms-validate="@validate">
+    <div class="margt10"></div>
+    <div class="list-group">
+          <ul>
+            <li class="padding-inner border-bottom">
+                <span class="txt">姓名</span>
+                <div><input type="text" ms-duplex="@cardholder" readonly="true"></div>
+            </li>
+            <li class="padding-inner border-bottom">
+                <span class="txt">身份证</span>
+                <div><input type="text" ms-duplex="@cardID" readonly="true"></div>
+            </li>
+            <li class="padding-inner">
+                <span class="txt">银行卡号</span>
+                <div><input type="text" placeholder="请输入卡号" ms-duplex="@cardnumber" ms-attr="{maxlength: @lengths.bankCard}" ms-rules='{required:true,bankCard:true}' data-required-message="请输入银行卡卡号"></div>
+                <span class="prompt" data-prompt="#cardHolderBind"></span>
+            </li>
+          </ul>
+    </div>
+    <div class="main-btn margt28">
+		<a href="javascript:void(0);" class="a-btn" ms-click="@nextFn($event)">确定</a>
+	</div>
+</form>
+</div>
+<script type="text/javascript" src="js/getPayPsd/byRlNmCertif_PayPsd.js"></script>

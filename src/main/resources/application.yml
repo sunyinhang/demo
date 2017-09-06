@@ -1,22 +1,61 @@
 server:
   port: 8030
+  version:
 logging:
   level:
     org.springframework: WARN
 security:
   sessions: NEVER
+info:
+  name: ${spring.application.name}
+  version: ${application.version}
 spring:
   application:
-    name: appmanage-lh
+    name: payplatform
   ignoreUnresolvablePlaceholders: true
   redis:
-    host: 10.164.194.142
-    port: 6379
+    host: 10.164.194.123
+    port: 10001
+    pool:
+      max-idle: 100
+      min-idle: 10
+      max-active: 1000
   http.converters.preferred-json-mapper: fastjson
+  rabbitmq:
+    addresses: 10.164.197.208:5672, 10.164.197.228:5672
+#    addresses: 10.164.197.54:5672, 10.164.197.55:5672
+    username: admin
+    password: admin123
+    virtual-host: /
+    publisher-confirms: true
+    listener:
+      acknowledge-mode: AUTO  # 消费者开启ack
+      concurrency: 1  # Listener并行处理的消息数量，可以通过增加此数量提高消息处理效率
+    requestedHeartbeat: 60
+#    exchange: APPMSG_TOPIC_EXCHANGE_DEV    测试
+    exchange: APPMSG_TOPIC_EXCHANGE
+    queue:
+#      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
+      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
+redis:
+  single:
+    host: 10.164.194.123
+    port: 10001
+  # cluster:
+  #   address: 192.168.1.17:7001,192.168.1.17:7002,192.168.1.17:7003
+  #   timeout: 300000
+  #   maxRedirections: 6
+  pool:
+    maxWaitMillis: -1
+    maxTotal: 1000
+    maxIdle: 100
+    minIdle: 10
+    testOnBorrow: true
 datasources:
   payplatform:
     datasource:
-      url: jdbc:oracle:thin:@10.164.194.168:1521/haiercash
+      #url: jdbc:oracle:thin:@10.164.194.168:1521/haiercash
+      url: jdbc:oracle:thin:@10.164.197.49:1521/ibank
       username: haiercashpay
       password: haiercashpay
       driverClassName: oracle.jdbc.OracleDriver
@@ -49,18 +88,19 @@ datasources:
       loginPassword: admin
     mybatis:
       dialect: org.apache.ibatis.dialect.OracleDialect
-      basePackage: com.haiercash.commons.dao,com.haiercash.payplatform.dao
-      aliasesPackage: com.haiercash.commons.data,com.haiercash.payplatform.data
-      mapperLocations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/mapping/*.xml
+      basePackage: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
+      aliasesPackage: com.haiercash.commons.data,com.haiercash.payplatform.**.data
+      mapperLocations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
       underscoreToCamelCase: true
 eureka:
   client:
-    register-with-eureka: false #是否注册自身到eureka服务器
+    register-with-eureka: true  #是否注册自身到eureka服务器
     fetch-registry: true        #是否从eureka服务器获取注册信息
     registryFetchIntervalSeconds: 5
     eurekaServiceUrlPollIntervalSeconds: 120
     serviceUrl:
-      defaultZone: http://10.164.197.208:1180/eureka/,http://10.164.197.209:1180/eureka/
+      #defaultZone: http://10.164.197.208:1180/eureka/,http://10.164.197.209:1180/eureka/
+      defaultZone: http://10.164.197.32:1180/eureka/,http://10.164.197.33:1180/eureka/,http://10.164.197.34:1180/eureka/
   instance:
     instanceId: ${spring.application.name}@${spring.cloud.client.ipAddress}:${server.port}(${spring.cloud.client.hostname})
     appname: ${spring.application.name}
@@ -69,15 +109,32 @@ eureka:
     lease-expiration-duration-in-seconds: 2
     secure-port-enabled: false
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
+zuul:
+  ignoredServices: '*'
+  set-content-length: true # 返回长度,微服务没有返回长度或请求 GZip 压缩除外
+  host:
+    socket-timeout-millis: 30000
+  routes:
+    crmForApp:
+      path: /app/appserver/**
+      serviceId: APPSERVERNOAUTHNEW
+      stripPrefix: false
+      sensitive-headers:
 ribbon:
   ConnectTimeout: 3000
   ReadTimeout: 60000
   eureka:
     enabled: true
+common:
+  redis:
+    host: 10.164.194.123
+    port: 10001
+    prefix: "PAYPLATFORM:"
 app:
   instance:
     #  错误码前缀：错误码组成为 前缀（此处定义）+模块代码（controller中定义）+错误码（super.fail中定义）
     errorPrefix: PPF
+    # redisPrefix: PAYPLATFORM
   file:
     # 文件上传路径
     uploadPath: f:\file\upload
@@ -89,7 +146,40 @@ app:
     service:
       open: true
   rest:
-    # profiles:
-      # 配置各系统版本对应关系，如： crm: beta
-
-
+    APPCA: http://APPCA
+    APPMANAGE: http://APPMANAGE
+    APPMSG: http://APPSERVER-MSG
+    APPSERVER: http://APPSERVER
+    APPSERVERNOAUTH: http://APPSERVERNOAUTH
+    APPSERVERNOAUTHNEW: http://APPSERVERNOAUTHNEW
+    CMISPROXY: http://CMISPROXY
+    CRM: http://CRM-PREPARE
+    HCPORTAL: http://HCPORTAL
+    CMISFRONTSERVER: http://CMIS-FRONT-SERVER
+    GM: http://GM
+    UAUTH: http://UAUTH
+    ACQUIRER: http://ACQUIRER
+    ORDER: http://ORDER
+  other:
+    # baseSharePath: /testshare01
+    haierDataImg_url: /testshare01/00/Data/haierData/
+    outplatform_url: http://10.164.194.120:9080
+    face_DataImg_url: /testshare01/crm/image/
+    appServer_page_url: http://testpm.haiercash.com/
+    haierData_url: http://taccount.haier.com
+    haiercashpay_web_url: https://testpm.haiercash.com/
+    haiershunguang_ts_url : http://mobiletest.ehaier.com:58093
+  shunguang:
+    sg_merch_no: EHAIER
+    sg_store_no: SHUNGUANG
+    sg_user_id: SAQDGM01
+    sg_typCde: 17098a
+    sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
+    sg_consumer: dc04a273474a404bafdad48ddb63cce2
+  redis:
+    prefix: PAYPLATFORM
+    # 过期时间，以秒为单位
+    expire: 3600
+  # rediskey:
+    # rediskey: ${common.redis.prefix}__DEMO__
+    # redistimeout: 300

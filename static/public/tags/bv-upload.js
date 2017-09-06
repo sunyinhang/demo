@@ -27,7 +27,9 @@ define([
                 default: function () {
                     return {};
                 }
-            }
+            },
+            onReady: '',
+            onUpload: ''
         },
         data: function () {
             return {
@@ -60,7 +62,11 @@ define([
                 $('img', this.$el).attr('src', this.preview);
             }
             var vm = this;
-            vm.$emit('on-ready', vm.innerEntity, vm.$el);
+            if (util.type(vm.onReady) === 'function') {
+                vm.onReady.call(null, vm.innerEntity, vm.$el);
+            } else {
+                vm.$emit('on-ready', vm.innerEntity, vm.$el);
+            }
             //实例化一个上传对象
             var uploader = new plupload.Uploader({
                 browse_button: $('#browser', vm.$el)[0],
@@ -98,7 +104,11 @@ define([
                     response = $.parseJSON(response);
                 }
 
-                vm.$emit('on-uploaded', vm.innerEntity, $(vm.$el), util.data(response));
+                if (util.type(vm.onUpload) === 'function') {
+                    vm.onUpload.call(null, vm.innerEntity, $(vm.$el), util.data(response));
+                } else {
+                    vm.$emit('on-uploaded', vm.innerEntity, $(vm.$el), util.data(response));
+                }
 
                 var data = util.data(response);
                 vm.innerEntity.originName = data.originName;

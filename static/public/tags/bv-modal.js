@@ -22,7 +22,7 @@ define([
         /****** 模板定义 ******/
         template: util.heredoc(function() {
             /*!
-            <div class="modal-dialog" :class="innerSize">
+            <div class="modal-dialog bv-modal" :class="innerSize">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">

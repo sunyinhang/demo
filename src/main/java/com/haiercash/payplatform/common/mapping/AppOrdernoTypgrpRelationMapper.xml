@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao">
+
+    <select id="selectByOrderNo" resultType="com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation" >
+        select * from APP_ORDERNO_TYPGRP_RELATION where order_no = #{orderNo, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByApplSeq" resultType="com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation" >
+        select * from APP_ORDERNO_TYPGRP_RELATION where appl_seq= #{applSeq, jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByOrderNo">
+        <![CDATA[
+			delete from APP_ORDERNO_TYPGRP_RELATION
+			where order_no = #{orderNo, jdbcType=VARCHAR}
+		]]>
+    </delete>
+
+    <insert id="saveAppOrdernoTypgrpRelation" parameterType="com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation">
+        insert into APP_ORDERNO_TYPGRP_RELATION(
+            ORDER_NO,
+            TYP_GRP,
+            APPL_SEQ,
+            FACE_TYP_CDE,
+            FACE_VALUE,
+            APPLY_FACE_SUCC,
+            APPLY_FACE_COUNT,
+            APPLY_FACE_VALUE,
+            COM_APPLY_FACE_SUCC,
+            COM_APPLY_FACE_VALUE,
+            COM_APPLY_FACE_COUNT,
+            IS_CONFIRM_AGREEMENT,
+            IS_CONFIRM_CONTRACT,
+            IS_CUST_INFO_COMPLETE,
+            COMMON_CUST_NO,
+            INSERT_TIME,
+            CUST_NO,
+            CHANNEL,
+            CHANNEL_NO,
+            STATE
+        )values(
+            #{orderNo,jdbcType=VARCHAR},
+            #{typGrp,jdbcType=VARCHAR},
+            #{applSeq,jdbcType=VARCHAR},
+            #{faceTypCde,jdbcType=VARCHAR},
+            #{faceValue,jdbcType=VARCHAR},
+            #{applyFaceSucc,jdbcType=VARCHAR},
+            #{applyFaceCount,jdbcType=VARCHAR},
+            #{applyFaceValue,jdbcType=VARCHAR},
+            #{comApplyFaceSucc,jdbcType=VARCHAR},
+            #{comApplyFaceCount,jdbcType=VARCHAR},
+            #{comApplyFaceValue,jdbcType=VARCHAR},
+            #{isConfirmAgreement,jdbcType=VARCHAR},
+            #{isConfirmContract,jdbcType=VARCHAR},
+            #{isCustInfoComplete,jdbcType=VARCHAR},
+            #{commonCustNo,jdbcType=VARCHAR},
+            #{insertTime,jdbcType=VARCHAR},
+            #{custNo,jdbcType=VARCHAR},
+            #{channel,jdbcType=VARCHAR},
+            #{channelNo,jdbcType=VARCHAR},
+            #{state,jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

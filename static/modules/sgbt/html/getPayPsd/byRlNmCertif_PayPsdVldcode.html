@@ -1,0 +1,25 @@
+<div class="wrapper bg-bd byRlNmCertif_PayPsdVldcode Vldcode" ms-controller="byRlNmCertif_PayPsdVldcode">
+    <div class="margt10"></div>
+    <div class="pd-inner">
+        <div class="bg-bd-01">
+            请输入手机<span style="padding: 0 0.5rem;">{{@mobile | card3}}****{{@mobile | card4}}</span>收到的短信校验码
+        </div>
+        <div class="bg-bd-02">
+            <div class="bg-bd-02-1">
+                <input type="text" placeholder="请输入验证码" ms-attr="{maxlength: @lengths.verifyNo}" ms-duplex="@verifyNo" ms-rules='{required: true}' data-required-message="请输入短信验证码" />
+            </div>
+            <div class="bg-bd-02-2">
+                <input type="button" class="a-send"  ms-click='@sendValidCodeFn($event)' value="发送验证码">
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="bg-bd-03">
+            <input type="checkbox" class="agree" ms-duplex-checked="@agreement" ms-rules='{checkAgree: true}' data-checkAgree-message="请同意海尔金融消费相关协议">
+            我同意<a href="javascript:void(0)" ms-click="@showTreatyCover = true">海尔消费金融账户开通相关协议</a>
+        </div>
+    </div>
+    <div class="main-btn margt28">
+		<a href="javascript:void(0);" class="a-btn" ms-click="@nextFn($event)">确定</a>
+	</div>
+</div>
+<script type="text/javascript" src="js/getPayPsd/byRlNmCertif_PayPsdVldcode.js"></script>

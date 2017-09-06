@@ -80,6 +80,7 @@ define([
             return {
                 innerClass: this.clazz,
                 innerStyle: this.css,
+                innerTitle: this.title,
                 innerEditType: this.editType,
                 innerVisible: true,
                 innerLayout: '',
@@ -87,7 +88,7 @@ define([
                 innerLayoutClass: '',
                 innerColumns: [],
                 innerEntity: {},
-                innerInitEntity: util.mix(this.entityDefaults, this.innerEntity) || {},
+                innerInitEntity: util.mix(this.entityDefaults, this.initEntity) || {},
                 // 主键
                 innerKeys: {},
                 // 是否自定义保存
@@ -536,11 +537,11 @@ define([
                         <button type="button" class="close" data-dismiss="modal">
                             &times;
                         </button>
-                        <h4 class="modal-title" v-text="title"></h4>
+                        <h4 class="modal-title" v-text="innerTitle"></h4>
                     </div>
                     <h4 class="form-title" v-show="innerLayout === 'body'">
-                        <a href="javascript:;" @click="innerVisible = !innerVisible" v-if="collapse"><i class="iconfont" :class="innerVisible ? 'icon-more' : 'icon-gt'"></i><span v-text="title"></span></a>
-                        <span v-text="title" v-if="!collapse"></span>
+                        <a href="javascript:;" @click="innerVisible = !innerVisible" v-if="collapse"><i class="iconfont" :class="innerVisible ? 'icon-more' : 'icon-gt'"></i><span v-text="innerTitle"></span></a>
+                        <span v-text="innerTitle" v-if="!collapse"></span>
                         <span class="pull-right" v-show="innerHeaderOperates.length > 0">
                             <button v-for="el in innerHeaderOperates" type="button" class="btn" v-if="el.text"
                                     v-bind="{id: el.id, 'data-loading-text': el.loading || ''}" :class="el.clazz || 'btn-default'"

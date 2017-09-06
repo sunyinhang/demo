@@ -1,15 +1,17 @@
 package com.haiercash.payplatform;
 
 import com.haiercash.commons.properties.RestProfileProperties;
+import com.haiercash.payplatform.common.config.EurekaServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -29,10 +31,11 @@ import org.springframework.web.client.RestTemplate;
 @ServletComponentScan
 @ComponentScan(basePackages = {"com.haiercash.commons", "com.haiercash.payplatform"})
 @EnableEurekaClient
+@EnableZuulProxy
 @EnableScheduling
 @Configuration
 @EnableAutoConfiguration
-@EnableConfigurationProperties({RestProfileProperties.class})
+@EnableConfigurationProperties({RestProfileProperties.class, EurekaServer.class})
 public class Application extends SpringBootServletInitializer {
     @LoadBalanced
     @Bean
@@ -51,4 +54,5 @@ public class Application extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);
     }
+
 }

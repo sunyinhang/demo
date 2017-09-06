@@ -1,0 +1,25 @@
+<component class="fullPage-gray" is="bv-layout-nav" data-container="installmentBill" v-cloak>
+    <component is="bv-tabs" slot="nav" :key="tags.tabsKey" @on-active="onActive" v-bind="tabsConfig"></component>
+    <component is="bv-tabs-container" :key="tags.tabsContainerKey" slot="content">
+        <component is="bv-tabs-content" :key="tags.tabsContentKey1" @on-active="onContentActive(0)">
+            <component is="bv-list" :key="tags.listKey1" v-bind="listConfig1" @on-refresh="onRefresh(0)" @on-infinite="onInfinite(0)"></component>
+        </component>
+        <component is="bv-tabs-content" :key="tags.tabsContentKey2" @on-active="onContentActive(1)">
+            <component is="bv-list" :key="tags.listKey2" v-bind="listConfig2" @on-refresh="onRefresh(1)" @on-infinite="onInfinite(1)"></component>
+        </component>
+        <component is="bv-tabs-content" :key="tags.tabsContentKey3" @on-active="onContentActive(2)">
+            <component is="bv-list" :key="tags.listKey3" v-bind="listConfig3" @on-refresh="onRefresh(2)" @on-infinite="onInfinite(2)"></component>
+        </component>
+        <component is="bv-tabs-content" :key="tags.tabsContentKey4" @on-active="onContentActive(3)">
+            <component is="bv-list" :key="tags.listKey4" v-bind="listConfig4" @on-refresh="onRefresh(3)" @on-infinite="onInfinite(3)"></component>
+        </component>
+    </component>
+</component>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        util.title('分期账单');
+        util.script({
+            url: '/payByBt/installmentBill.js'
+        });
+    });
+</script>

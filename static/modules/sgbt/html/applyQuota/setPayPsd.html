@@ -1,0 +1,36 @@
+<div class="wrapper bg-bd" ms-controller="setPayPsd">
+<form ms-validate="@validate">
+    <div class="main-01">
+        <ul class="thumbnail">
+            <li class="realName realNameActive">实名</li>
+            <li class="personal personalActive">个人资料</li>
+            <li class="face faceActive">人脸识别</li>
+            <li class="password passwordActive">密码设置</li>
+        </ul>
+        <div class="clear height10"></div>
+    </div>
+    <div class="height7"></div>
+    <div class="main-02 margt40">
+        <div class="list-circle width80">
+              <ul>
+                <li>
+                    <span class="txt">支付密码</span>
+                    <div>
+                        <input type="password" id="pw" ms-attr="{maxlength: @lengths.payPassword}" ms-duplex="@payPassword" ms-rules="{payPassword: true}">
+                    </div>
+                </li>
+                <li class="margt20" style="background: #eee url('images/pwd2.png') no-repeat 24px center; background-size: 0.8rem;">
+                    <span class="txt">确认密码</span>
+                    <div>
+                        <input type="password" ms-duplex="@password2" ms-attr="{maxlength: @lengths.payPassword}" ms-rules='{required:true, equalto:"pw"}' data-required-message="请输入确认密码" data-equalto-message="两次密码不一致">
+                    </div>
+                </li>
+              </ul>
+        </div>
+    </div>
+    <div class="main-btn margt40">
+        <a href="javascript:void(0);" class="a-btn" ms-click="@nextFn($event)">下一步</a>
+    </div>  
+</form>   
+</div>
+<script type="text/javascript" src="js/applyQuota/setPayPsd.js"></script>

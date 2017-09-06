@@ -76,6 +76,8 @@ define([
         },
         watch: {
             innerCurrentIndex: function (val, oldVal) {
+                this.$emit('on-active', this, this.innerCurrentIndex);
+
                 this.localCurrentSelected = this.tabs[this.innerCurrentIndex];
                 this.calc();
 
@@ -175,9 +177,9 @@ define([
                         var diff = vm.localLeftTabsWidth + currentElementWidth - vm.localContainerWidth;
 
                         if (diff > -1 * vm.innerMarginLeft) {
-                            vm.innerMarginLeft = -1 * diff;
+                            vm.innerMarginLeft = -1 * diff + 30;
                         } else if (currentElementLeft < 0) {
-                            vm.innerMarginLeft = -1 * vm.localLeftTabsWidth;
+                            vm.innerMarginLeft = -1 * vm.localLeftTabsWidth + 30;
                         }
 
                     } else {
@@ -189,7 +191,7 @@ define([
             prev: function() {
                 var innerMarginLeft = this.innerMarginLeft + this.localContainerWidth;
                 if (innerMarginLeft > 0) {
-                    innerMarginLeft = 0;
+                    innerMarginLeft = 30;
                 }
                 this.innerMarginLeft = innerMarginLeft;
                 /*if (this.innerMarginLeft > this.localContainerWidth - 80) {
@@ -201,7 +203,7 @@ define([
             next: function() {
                 var innerMarginLeft = this.innerMarginLeft - this.localContainerWidth;
                 if (-1 * innerMarginLeft > this.localNavWidth - this.localContainerWidth + this.localLastTabsWidth) {
-                    innerMarginLeft = this.localContainerWidth - this.localNavWidth;
+                    innerMarginLeft = this.localContainerWidth - this.localNavWidth + 30;
                 }
                 this.innerMarginLeft = innerMarginLeft;
                 /*if (this.innerMarginLeft + this.localContainerWidth * 2 - 80 >= this.localNavWidth) {
@@ -281,9 +283,7 @@ define([
                 <div class="tab-content" v-if="type !== 'inline'">
                     <component is="bv-tabs-pane" v-for="(el, index) in tabs" :key="el.id" v-bind="{id: el.id, 'data-active': index === innerCurrentIndex, timestamp: el.timestamp, target: el.target, prop: el.prop}" v-show="index === innerCurrentIndex"></component>
                 </div>
-                <div class="tab-content" v-if="type === 'inline'">
-                    <slot name="tabContent"></slot>
-                </div>
+                <slot name="tabContent" v-if="type === 'inline'"></slot>
             </div>
             */
         })
