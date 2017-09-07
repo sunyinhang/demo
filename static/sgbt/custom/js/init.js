@@ -87,7 +87,9 @@ require(['vue', 'jquery', 'util', 'Const', 'bridge', 'framework', 'validation', 
     $(document).on('click', '.modal-button,a[href]', function () {
         util.preloading();
     });
-    $('.agree-popup div#content').height($(window).height() - 45);
+    $(document).on('click', '#navBack', function () {
+        history.back();
+    });
     $(document).on('open', '.agree-popup', function () {
         util.loading();
         $('#title span', this).text( $(this).attr('data-title'));
