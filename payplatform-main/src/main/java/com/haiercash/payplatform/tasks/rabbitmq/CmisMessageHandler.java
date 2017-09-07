@@ -1,13 +1,13 @@
 package com.haiercash.payplatform.tasks.rabbitmq;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bestvike.lang.Base64Utils;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.PublishDao;
 import com.haiercash.payplatform.common.dao.SgtsLogDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgtsLog;
 import com.haiercash.payplatform.common.service.AppServerService;
-import com.haiercash.payplatform.common.utils.Base64Utils;
 import com.haiercash.payplatform.common.utils.DesUtil;
 import com.haiercash.payplatform.common.utils.HttpClient;
 import com.haiercash.payplatform.common.utils.RSAUtils;

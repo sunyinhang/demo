@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.CustExtInfoService;
@@ -25,7 +24,11 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 
 @Service
@@ -471,7 +474,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         outImag.close();
         inputStream.close();
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5Hex(IOUtils.toByteArray(is));
+        String MD5 = DigestUtils.md5Hex(is);
         is.close();
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channel", channel);

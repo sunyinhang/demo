@@ -1,14 +1,16 @@
 package com.haiercash.payplatform.common.data;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
  * Created by Administrator on 2017/9/3.
  */
 @Entity
-@Table(name="Sgts_Log")
+@Table(name = "Sgts_Log")
 public class SgtsLog {
+    @Id
     private String logId; // 日志id
     private String applSeq; // 申请流水号
     private String channelNo; // 渠道编码

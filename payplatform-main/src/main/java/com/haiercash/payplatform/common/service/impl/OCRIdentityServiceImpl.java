@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
@@ -536,7 +535,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
             //获取MD5码
             boolean isA = "certImagePathA".equals(entry.getKey());
-            String md5Code = DigestUtils.md5Hex(IOUtils.toByteArray(is));
+            String md5Code = DigestUtils.md5Hex(is);
             paramMap.put("token", token);
             paramMap.put("md5", md5Code);//文件md5码
             paramMap.put("custNo", custNo);
