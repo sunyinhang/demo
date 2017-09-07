@@ -1,0 +1,4 @@
+rootProject.name = 'payplatform'
+include 'bestvike-core'
+include 'payplatform-base'
+include 'payplatform-main'
