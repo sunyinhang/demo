@@ -114,13 +114,13 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
 
         //根据用户中心token获取统一认证userId
-//        String userId = sgInnerService.getuserId(token);
-//        if(StringUtils.isEmpty(userId)){
-//            logger.info("根据用户中心token获取统一认证userId失败");
-//            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
-//        }
+        String userId = sgInnerService.getuserId(token);
+        if(StringUtils.isEmpty(userId)){
+            logger.info("根据用户中心token获取统一认证userId失败");
+            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
+        }
         //TODO!!!!
-        String userId = cacheMap.get("userId").toString();
+        //String userId = cacheMap.get("userId").toString();
 
         //根据userId获取客户编号
         logger.info("获取客户实名信息");

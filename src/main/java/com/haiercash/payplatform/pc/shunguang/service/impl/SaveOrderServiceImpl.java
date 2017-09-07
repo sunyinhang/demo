@@ -110,13 +110,13 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
 
         //根据token获取统一认证userid
-//        String userId = sgInnerService.getuserId(token);
-//        if(StringUtils.isEmpty(userId)){
-//            logger.info("根据用户中心token获取统一认证userId失败");
-//            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
-//        }
+        String userId = sgInnerService.getuserId(token);
+        if(StringUtils.isEmpty(userId)){
+            logger.info("根据用户中心token获取统一认证userId失败");
+            return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
+        }
         //TODO!!!!
-        String userId = cacheMap.get("userId").toString();
+        //String userId = cacheMap.get("userId").toString();
 
         //获取客户信息
         logger.info("订单保存，根据userId获取客户信息");
@@ -147,8 +147,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             return tagmapresult;
         }
         //TODO!!!!
-        //String userType = (String) cacheMap.get("userType");
-        String userType = "01";
+        String userType = (String) cacheMap.get("userType");
+        //String userType = "01";
         String tagId = "";
         if("01".equals(userType)){//微店主
             tagId = sg_shopkeeper;
