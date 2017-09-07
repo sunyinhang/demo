@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
+import com.bestvike.lang.Base64Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.config.EurekaServer;

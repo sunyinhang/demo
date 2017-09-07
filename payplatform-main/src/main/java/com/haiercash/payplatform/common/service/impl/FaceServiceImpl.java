@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.common.service.impl;
 
-import com.amazonaws.util.IOUtils;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.service.AppServerService;
 import com.haiercash.payplatform.common.service.FaceService;
@@ -144,7 +143,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
 //        String fileName = UUID.randomUUID().toString().replaceAll("-", "");
 //        filePath = filePath.append(fileName).append(".jpg"); // 测试打开
 //        InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-//        String md5Code = DigestUtils.md5Hex(IOUtils.toByteArray(is));
+//        String md5Code = DigestUtils.md5Hex(is);
         StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(ConstUtil.ATTACHTYPE_DOC065)
                 .append(File.separator);// File.separator
         createDir(String.valueOf(filePath));
@@ -160,7 +159,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         inputStream1.close();
 
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5Hex(IOUtils.toByteArray(is));
+        String MD5 = DigestUtils.md5Hex(is);
         is.close();
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -185,7 +184,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         //通过人脸分数判断人脸识别是否通过
         File file = new File(String.valueOf(filePath));
         InputStream instream = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5code = DigestUtils.md5Hex(IOUtils.toByteArray(instream));
+        String MD5code = DigestUtils.md5Hex(instream);
         Map<String, Object> checkMap = new HashMap<String, Object>();
         checkMap.put("faceValue", score);//人脸分数
         checkMap.put("typCde", typCde);// 贷款品种 从redis中获取
@@ -294,7 +293,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         inputStream.close();
 
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5Hex(IOUtils.toByteArray(is));
+        String MD5 = DigestUtils.md5Hex(is);
         is.close();
         //
         Map<String, Object> paramMap = new HashMap<String, Object>();

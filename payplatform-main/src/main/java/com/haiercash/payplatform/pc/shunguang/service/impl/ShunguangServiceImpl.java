@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
+import com.bestvike.lang.Base64Utils;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
