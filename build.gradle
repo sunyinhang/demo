@@ -38,13 +38,13 @@ allprojects {
         compile('org.springframework.cloud:spring-cloud-starter-oauth2')
         compile('org.springframework.session:spring-session')
         //linq
-        compile("com.bestvike:linq:1.0.1")
+        compile('com.bestvike:linq:1.0.1')
         //json
-        compile("com.alibaba:fastjson:1.2.38")
-        compile("org.json:json:20170516")
+        compile('com.alibaba:fastjson:1.2.38')
+        compile('org.json:json:20170516')
         //数据库
-        compile("com.alibaba:druid:1.1.3")
-        compile("com.oracle:ojdbc6:11g")
+        compile('com.alibaba:druid:1.1.3')
+        compile('com.oracle:ojdbc6:11g')
         //==运行时==
         runtime('org.springframework.boot:spring-boot-devtools')
         //==编译时==
