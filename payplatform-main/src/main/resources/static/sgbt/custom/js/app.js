@@ -217,7 +217,11 @@ function getCurrentPosition (callback) {
                 dataType: 'jsonp',
                 check: true,
                 success: function(res) {
-                    if (res.status === 0 && res.result && res.result.addressComponent && res.result.addressComponent.adcode) {
+                    if(res.result.addressComponent.province === "山东省" || res.result.addressComponent.province === "新疆省"){
+                        util.alert('#notInService');
+                        $(".content-block p a").attr("disabled",true);
+                        $(".main-btn a").attr("disabled",true);
+                    }else if (res.status === 0 && res.result && res.result.addressComponent && res.result.addressComponent.adcode) {
                         callback(res.result);
                         //console.log(vm.areacode);
                     }

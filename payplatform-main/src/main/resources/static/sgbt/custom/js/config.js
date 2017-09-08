@@ -169,7 +169,8 @@ var __Const = {
         btDescribe: '“顺逛白条”是顺逛商城联合海尔消费金融为用户提供的一款“先消费，后付款”的线上消费分期产品',
         cardMatch: '请先输入银行卡号,卡类型会自动匹配！',
         payPwdInform: '支付密码输入错误，请重新输入！',
-        payPwdError: '支付密码不能为空'
+        payPwdError: '支付密码不能为空',
+        notInService:'您所在地区暂未开通此项服务'
     },
     lengths: {
         userId: 11,
