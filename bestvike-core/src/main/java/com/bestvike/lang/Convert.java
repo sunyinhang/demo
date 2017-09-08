@@ -325,7 +325,7 @@ public final class Convert {
 
         try {
             String shortClassName = getShortClassName(clazz.getName());
-            return invoke(value, StringUtils.uncapitalize(shortClassName) + "Value");
+            return invoke(value, StringUtils.decapitalize(shortClassName) + "Value");
         } catch (Exception ignored) {
         }
 
