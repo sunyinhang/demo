@@ -85,7 +85,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                                                                 util.loading('hide', 'paying');
                                                                 clearInterval(t);
                                                                 util.cache({
-                                                                    $error: data.app_out_advice || '支付结果未知'
+                                                                    $error: data.app_out_advice
                                                                 });
                                                                 util.redirect({
                                                                     url: util.mix('/payByBt/payFail.html', {
