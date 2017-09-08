@@ -217,7 +217,7 @@ function getCurrentPosition (callback) {
                 dataType: 'jsonp',
                 check: true,
                 success: function(res) {
-                    if(res.result.addressComponent.province === "山东省" || res.result.addressComponent.province === "新疆省"){
+                    if(res.result.addressComponent.province === "西藏省" || res.result.addressComponent.province === "新疆省"){
                         util.alert('#notInService');
                         $("#nextBtnValcode").attr("disabled",true);
                         $("#btnPayByBt").attr("disabled",true);
