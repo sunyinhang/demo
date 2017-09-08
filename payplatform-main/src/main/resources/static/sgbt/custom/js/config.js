@@ -1,6 +1,6 @@
 var __baseResourcePath = '/mobile';
 // 支持dev,run
-var __env = 'run';
+var __env = 'dev';
 // 公共js/css版本，进展__env='run'时生效，目的是为了处理缓存
 var __version = '1.0.0';
 var __Const = {

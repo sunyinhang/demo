@@ -1,20 +1,18 @@
 <component is="bv-layout" class="bv-align-center fullPage-gray" data-container="myAmount" v-cloak>
     <quota-state v-bind="config" @on-click="goShopFn"></quota-state>
-    <div class="amountInfo">
-        <div class="myBill">
-            <ul class="bill"  data-redirect="/payByBt/installmentBill.html">
-                <li class="li1">我的账单</li>
-                <li class="li2">本月应还：</li>
-                <li class="li3 liorg">{{(mounthAmount == ''? 0 : mounthAmount )| currency}}</li>
-            </ul>
+    <div class="amountInfo" data-redirect="/payByBt/installmentBill.html">
+        <div class="myBill">我的账单</div>
+        <div class="myBillNum">
+            <span>本月应还</span>
+            <span class="t-orange">{{(mounthAmount == ''? 0 : mounthAmount )| currency}}</span>
         </div>
-        <div class="line"></div>
-        <div class="myQuota">
-            <ul class="bill">
-                <li class="li1">我的额度</li>
-                <li class="li2">可用额度：</li>
-                <li class="li3 liblue">{{crdNorAvailAmt | currency}}</li>
-            </ul>
+    </div>
+    <div class="line"></div>
+    <div class="amountInfo">
+        <div class="myBill">我的额度</div>
+        <div class="myBillNum">
+            <span>可用额度</span>
+            <span class="t-blue">{{(crdNorAvailAmt == ''? 0 : crdNorAvailAmt )| currency}}</span>
         </div>
     </div>
 </component>

@@ -140,6 +140,8 @@ body{margin:0 auto;max-width:750px;}
 .height10{ height: 0.5rem;}
 .border-bottom{ border-bottom: 1px solid #ddd; }
 .orange{ background-color: orange;}
+.t-orange{ color: #fea151;}
+.t-blue{ color: #27a9fd;}
 
 /*faceCamera*/
 .bv-theme .faceCamera .file-container{width: 100%; height: 20rem; background-color: #fff; color: #999;}
@@ -195,9 +197,13 @@ a.amtAppyModiBtn:link,a.amtAppyModiBtn:visited,a.amtAppyModiBtn:hover{display: b
 
 .amountTop{position:relative;margin:0 auto;width:100%;height:11rem;background:url(images/amtTopBg.png) left top no-repeat;background-size:100%;}
 .cusContent{position:relative;margin:0 auto;width:100%;}
-.amountInfo{ padding-top:1.1rem;padding-bottom:1.1rem;background:#fff;display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex;  }
-.line{ width:1px; height:3.8rem; background:url(images/amtSutiPoint.png) top right repeat-y;}
-.myBill,.myQuota{ cursor:pointer; margin:0 auto;position:relative; width:50%; height:3.8rem; text-align: center; -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1;+}
+.amountInfo{ cursor:pointer; height:5rem; background:#fff url("images/right_arrow.png") no-repeat 96% center; background-size:0.7rem;display: box; display: -webkit-box; display: flexbox; display: flex; display: -webkit-flex; -webkit-box-align:center;-webkit-align-items:center;align-items:center;  }
+.line{ width:100%; height:1px; background:url(images/amtSutiPoint.png) repeat;}
+.myBill,.myQuota{ -webkit-box-flex:1; box-flex:1; -webkit-flex:1; flex:1; padding-left: 1.8rem; text-align: left; font-size: 0.8rem;}
+.myBillNum{ margin-right: 7%; padding: 0 1rem;}
+.myBillNum span{ display: block; line-height: 1.4rem;}
+.myBillNum span:first-child{ font-size:0.75rem; color: #999;}
+.myBillNum span:last-child{ font-size:0.9rem;}
 .bill { margin:0 auto;width:50%; text-align: left;}
 .bill li.li1{height:1.4rem;line-height:1.4rem;font-size:.85rem;color:#333;}
 .bill li.li2{height:1.1rem;line-height:1.1rem;font-size:.7rem;color:#999;}

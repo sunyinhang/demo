@@ -5,8 +5,10 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             stateConfig:{
                 imgSrc: 'custom/themes/default/images/amtNotTopBg.png',
                 // title: '顺逛白条',
+                whether: true ,
+                subTitle: '可用总额度',
                 amtNum: 'amtNum',
-                //num: '暂无',
+                num: '暂无',
                 whetherBtn: true,
                 activBtn: 'activAmuntBtn',
                 btnText: '激活额度'
