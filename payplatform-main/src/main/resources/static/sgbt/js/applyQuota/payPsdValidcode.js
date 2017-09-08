@@ -114,6 +114,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm', 'async!map'], function
                 operates: [
                     {
                         text: '下一步',
+                        id: 'nextBtnValcode',
                         layout: 'primary',
                         validate: {
                             after: function (event, editType, entity) {
