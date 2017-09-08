@@ -9,6 +9,7 @@ public class BusinessException extends RuntimeException {
     private String retMsg;
 
     public BusinessException(String retFlag, String retMsg) {
+        super(retFlag + ":" + retMsg);
         this.retFlag = retFlag;
         this.retMsg = retMsg;
     }
