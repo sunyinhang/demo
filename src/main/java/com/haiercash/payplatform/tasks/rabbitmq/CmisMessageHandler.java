@@ -204,7 +204,7 @@ public class CmisMessageHandler {
                                 String encrypt = encrypt(sgString, channelNo,tradeCode);
                                 logger.info("Sg-10005接口额度申请拒绝的加密数据是"+encrypt);
                                 result = HttpClient.sendPost(url_ts+"/paycenter/json/ious/limitNotify.json", encrypt, "utf-8");
-
+                                System.out.println("Sg-10005接口额度申请推送拒绝返回的数据是："+result);
                             } else if ("42".equals(msgTyp)) {//额度申请通过  27
                             map.put("outSts", "01");
                             map.put("appOutAdvice", appOutAdvice);//审批意见
@@ -222,6 +222,7 @@ public class CmisMessageHandler {
                             logger.info("Sg-10005接口额度申请通过的加密数据是"+encrypt);
                             logger.info("Sg-10005接口额度申请推送通过的地址是："+url_ts+"/paycenter/json/ious/limitNotify.json");
                             result = HttpClient.sendPost(url_ts+"/paycenter/json/ious/limitNotify.json", encrypt, "utf-8");
+                            System.out.print("Sg-10005接口额度申请推送通过返回的数据是：" + result);
                         }else if ("02".equals(outSts)){//贷款申请被拒  02
                             HashMap<String, Object> maporder = new HashMap<>();
                             maporder.put("applSeq",applSeq);//1265221
@@ -252,6 +253,7 @@ public class CmisMessageHandler {
                             String encrypt = encrypt(sgString, channelNo,tradeCode);
                             logger.info("Sg-10007接口贷款申请被拒的加密数据是："+encrypt);
                             result = HttpClient.sendPost(url_ts+"/paycenter/json/ious/notify.json", encrypt, "utf-8");
+                            System.out.print("Sg-10007推送接口被拒绝返回的数据是："+result);
                         }else if ("06".equals(outSts) || "24".equals(outSts) || "04".equals(outSts)){//贷款申请通过  06
                             HashMap<String, Object> maporder = new HashMap<>();
                             HashMap<Object, Object> bodyinfo = new HashMap<>();
@@ -426,12 +428,12 @@ public class CmisMessageHandler {
     private String encrypt(String data, String channelNo,String tradeCode) throws Exception {
         //byte[] bytes = key.getBytes();
         //获取渠道私钥
-        logger.info("获取渠道" + channelNo + "私钥");
+        logger.info("获取渠道" + channelNo + "公钥");
         CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
         if (cooperativeBusiness == null) {
-            throw new RuntimeException("渠道" + channelNo + "私钥获取失败");
+            throw new RuntimeException("渠道" + channelNo + "公钥获取失败");
         }
-        String publicKey = cooperativeBusiness.getRsapublic();//获取私钥
+        String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 //        if ("MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==".equals(publicKey)){
 //            System.out.print("参数一致");
 //        }

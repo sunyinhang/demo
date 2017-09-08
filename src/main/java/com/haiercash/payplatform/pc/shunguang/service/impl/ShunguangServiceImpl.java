@@ -568,7 +568,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         JSONObject jsonObject = new JSONObject(head1);
         String retMsg1 = (String) jsonObject.get("retMsg");
         if ("01".equals(retMsg1)) {
-            logger.info("没有额度申请");
+            logger.info("没有额度申请(根据集团userId查询统一认证userId为空)");
             HashMap<Object, Object> map1 = new HashMap<>();
             map1.put("outSts", "01");
             return success(map1);
@@ -585,8 +585,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (!HttpUtil.isSuccess(mapcache)) {
             Map<String, Object> head = (Map) mapcache.get("head");
             String retFlag = (String) head.get("retFlag");
-            if ("A1183".equals(retFlag)) {
-                logger.info("没有额度申请");
+            if ("A1183".equals(retFlag)) {//实名认证信息查询失败！未知的实名信息
+                logger.info("没有额度申请(实名认证信息查询失败)");
                 HashMap<Object, Object> map1 = new HashMap<>();
                 map1.put("outSts", "01");
                 return success(map1);
@@ -662,7 +662,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                     logger.info("返回顺逛数据：" + mapone);
                     return success(mapone);
                 } else {
-                    logger.info("APP返回的状态与顺逛无法对应"+outSts);
+                    logger.info("APP接口返回的状态是:"+outSts+"    ,与顺逛无法对应");
                     //String retmsgo = "当前返回的状态不符合";
                     return fail(ConstUtil.ERROR_CODE, outSts);
                 }
@@ -984,7 +984,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         return success(mapone);
     }
 
-    public Map<String, Object> getUserId(String userId) {// Sg-10006借口专用   根据集团userId查统一认证userId
+    public Map<String, Object> getUserId(String userId) {// Sg-10006接口专用   根据集团userId查统一认证userId
         HashMap<String, Object> map = new HashMap<>();
         map.put("externUid", EncryptUtil.simpleEncrypt(userId));
         //map.put("channel", "11");
@@ -1008,7 +1008,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         return success(mapone);
     }
 
-    public Map<String, Object> getUserIdif(String userId) {// Sg-10006借口专用   根据集团userId查统一认证userId
+    public Map<String, Object> getUserIdif(String userId) {//根据集团userId查统一认证userId
         HashMap<String, Object> map = new HashMap<>();
         map.put("externUid", EncryptUtil.simpleEncrypt(userId));
         //map.put("channel", "11");

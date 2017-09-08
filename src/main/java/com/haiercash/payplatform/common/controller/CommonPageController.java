@@ -227,7 +227,7 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/paymentPwdConfirm", method = RequestMethod.POST)
-    public Map<String, Object> paymentPwdConfirm(@RequestBody Map<String,Object> map) {
+    public Map<String, Object> paymentPwdConfirm(@RequestBody Map<String, Object> map) {
         return payPasswdService.paymentPwdConfirm(super.getToken(), super.getChannel(), super.getChannelNo(), map);
     }
 
@@ -253,7 +253,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryLoanDetailInfo", method = RequestMethod.GET)
     public Map<String, Object> queryLoanDetailInfo(@RequestParam(value = "applSeq") String applSeq) {
-        return payPasswdService.queryLoanDetailInfo(super.getToken(),applSeq);
+        return payPasswdService.queryLoanDetailInfo(super.getToken(), applSeq);
     }
 
 
@@ -264,7 +264,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApplListBySeq", method = RequestMethod.GET)
     public Map<String, Object> queryApplListBySeq(@RequestParam(value = "applSeq") String applSeq) {
-        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo(),applSeq);
+        return payPasswdService.queryApplListBySeq(super.getToken(), super.getChannel(), super.getChannelNo(), applSeq);
     }
 
 
@@ -275,7 +275,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApplAmtBySeqAndOrederNo", method = RequestMethod.GET)
     public Map<String, Object> queryApplAmtBySeqAndOrederNo(@RequestParam(value = "applSeq") String applSeq) {
-        return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(), super.getChannel(), super.getChannelNo(),applSeq);
+        return payPasswdService.queryApplAmtBySeqAndOrederNo(super.getToken(), super.getChannel(), super.getChannelNo(), applSeq);
     }
 
     /**
@@ -295,7 +295,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryApprovalProcessInfo", method = RequestMethod.GET)
     public Map<String, Object> queryApprProcessByCust(@RequestParam Map<String, Object> params) {
-        return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+        return payPasswdService.approvalProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo(), params);
     }
 
     /**
@@ -305,7 +305,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/queryDkProcessInfo", method = RequestMethod.GET)
     public Map<String, Object> queryDkProcessInfo(@RequestParam Map<String, Object> params) {
-        return payPasswdService.queryDkProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+        return payPasswdService.queryDkProcessInfo(super.getToken(), super.getChannel(), super.getChannelNo(), params);
     }
 
     /**
@@ -316,7 +316,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/saveAllCustExtInfo", method = RequestMethod.POST)
     public Map<String, Object> saveAllCustExtInfo(@RequestBody Map<String, Object> params) throws Exception {
-        return custExtInfoService.saveAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+        return custExtInfoService.saveAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo(), params);
     }
 
     /**
@@ -341,7 +341,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/attachDelete", method = RequestMethod.POST)
     public Map<String, Object> attachDelete(@RequestBody Map<String, Object> params) throws Exception {
-        return custExtInfoService.attachDelete(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+        return custExtInfoService.attachDelete(super.getToken(), super.getChannel(), super.getChannelNo(), params);
     }
 
     /**
@@ -363,7 +363,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/isRegister", method = RequestMethod.POST)
     public Map<String, Object> isRegister(@RequestBody Map<String, Object> params) throws Exception {
-        return registerService.isRegister(super.getToken(), super.getChannel(), super.getChannelNo(),params);
+        return registerService.isRegister(super.getToken(), super.getChannel(), super.getChannelNo(), params);
     }
 
     /**
@@ -446,7 +446,7 @@ public class CommonPageController extends BaseController {
         return payPasswdService.getPersonalCenterInfo(super.getToken(), super.getChannelNo(), super.getChannel());
     }
 
-        /**
+    /**
      * 影像下载(暂时无用)
      *
      * @return
@@ -462,7 +462,7 @@ public class CommonPageController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/queryCustNameByUId", method = RequestMethod.GET)
-    public Map<String, Object> queryCustNameByUId(){
+    public Map<String, Object> queryCustNameByUId() {
         return payPasswdService.queryCustNameByUId(super.getToken());
     }
 

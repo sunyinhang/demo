@@ -314,6 +314,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     //实名认证
     public Map<String, Object> realAuthentication(Map<String, Object> map) throws Exception {
         logger.info("实名认证*********************开始");
+        String idCard=null;
+        String idNoHaier=null;
         //1.前台参数获取
         String token = (String) map.get("token");
         String verifyNo = (String) map.get("verifyNo");
@@ -344,12 +346,23 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String validDate = (String) cacheMap.get("validDate");//有效期
         String certOrga = (String) cacheMap.get("issued");//扫描身份证签发机关
         String ethnic = (String) cacheMap.get("race");//扫描民族
-        String idCard = (String) cacheMap.get("idCard");//扫描身份证号
+        idCard = (String) cacheMap.get("idCard");//扫描身份证号
         String userId = (String) cacheMap.get("userId");//userId
-
+        if (!StringUtils.isEmpty(idCard)) {
+            idCard.toUpperCase();
+        }else {
+            logger.info("扫描身份证号为空");
+            return fail(ConstUtil.ERROR_CODE,"扫描身份证号为空");
+        }
         //顺逛传送身份证与客户实名身份证不一致
-        String idNoHaier = (String) cacheMap.get("idNoHaier");//
-        if (!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(idCard)) {
+        idNoHaier = (String) cacheMap.get("idNoHaier");//顺逛传送
+        if (!StringUtils.isEmpty(idNoHaier)){
+            idNoHaier.toUpperCase();
+        }else {
+            logger.info("顺逛传送的身份证号为空："+idNoHaier);
+            return fail(ConstUtil.ERROR_CODE,"顺逛传送的身份证号为空");
+        }
+        if (!idNoHaier.equals(idCard)) {
             logger.info("顺逛传送身份证与客户实名身份证不一致");
             return fail(ConstUtil.ERROR_CODE, "顺逛白条实名认证必须和顺逛实名认证一致！");
         }
