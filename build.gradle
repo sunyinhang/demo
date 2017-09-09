@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.5.6.RELEASE'
+        springBootVersion = '1.3.7.RELEASE'
         // project的额外属性，这里用于定义profile属性，模拟maven的profile
         //多环境配置
         if (project.hasProperty('profile')) {
@@ -29,7 +29,7 @@ configurations.all {
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
+apply plugin: 'spring-boot'
 apply plugin: "io.spring.dependency-management"
 
 group = 'com.haiercash'
@@ -67,7 +67,7 @@ jar {
 
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.SR3'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Brixton.RELEASE'
     }
 }
 
@@ -88,7 +88,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter")
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-data-redis")
+    compile("org.springframework.boot:spring-boot-starter-redis")
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile('org.springframework.cloud:spring-cloud-starter-ribbon')
@@ -106,7 +106,6 @@ dependencies {
     compile("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final")
 //    compile("org.hibernate:ejb3-persistence:3.3.2.Beta1")
     compile("cglib:cglib-nodep:3.2.2")
-    compile("com.amazonaws:aws-java-sdk:1.10.16")
     compile("org.javassist:javassist:3.20.0-GA")
     compile("ognl:ognl:3.1.4")
     compile("org.aspectj:aspectjrt:1.8.9")
@@ -130,6 +129,7 @@ dependencies {
     // compile("com.haiercash:mybatis:3.4.0.8")
 
     // fastjson
+    compile("redis.clients:jedis:2.8.1")
     compile("com.alibaba:fastjson:1.2.12")
 //    compile("com.haiercash:util:1.1.25-SNAPSHOT")
 //    compile(":mybatis-spring-boot-autoconfigure-1.1.1:")
