@@ -278,7 +278,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map returnmap = new HashMap<>();
         String backurl = "";
         if("1".equals(f)){//订单已提交成功
-            backurl = haiercashpay_web_url + "/sgbt/#!/payByBt/loanResult.html?token=" + token + "&applSeq=" +applSeq;;
+            backurl = haiercashpay_web_url + "sgbt/#!/payByBt/loanResult.html?token=" + token + "&applSeq=" +applSeq;;
         }else{
             backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
         }
@@ -464,9 +464,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String bankName = ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
 
         //顺逛传送身份证与客户实名身份证不一致
+        if (!StringUtils.isEmpty(idNoHaier)){
+            idNoHaier = idNoHaier.toUpperCase();
+        }
+        certNo = certNo.toUpperCase();
+        logger.info("接收到的身份证："+ idNoHaier + "    实名身份证：" + certNo);
         if(!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(certNo)){
             logger.info("顺逛传送身份证与客户实名身份证不一致");
-            return fail(ConstUtil.ERROR_CODE, "身份验证失败");
+            return fail(ConstUtil.ERROR_CODE, "顺逛白条实名认证必须和顺逛实名认证一致！");
         }
 
         cachemap.put("custNo", custNo);//客户编号
