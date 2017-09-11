@@ -313,6 +313,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     //实名认证
     public Map<String, Object> realAuthentication(Map<String, Object> map) throws Exception {
         logger.info("实名认证*********************开始");
+
         //1.前台参数获取
         String token = (String) map.get("token");
         String verifyNo = (String) map.get("verifyNo");
@@ -345,14 +346,23 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String ethnic = (String) cacheMap.get("race");//扫描民族
         String idCard = (String) cacheMap.get("idCard");//扫描身份证号
         String userId = (String) cacheMap.get("userId");//userId
-
+        if (!StringUtils.isEmpty(idCard)) {
+            idCard=idCard.toUpperCase();
+            logger.info("扫描的身份证号码是"+idCard);
+        }else {
+            logger.info("扫描身份证号为空");
+            return fail(ConstUtil.ERROR_CODE,"扫描身份证号为空");
+        }
         //顺逛传送身份证与客户实名身份证不一致
         String idNoHaier = (String) cacheMap.get("idNoHaier");//
-        if (!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(idCard)) {
+        if (!StringUtils.isEmpty(idNoHaier)){
+            idNoHaier=idNoHaier.toUpperCase();
+            logger.info("顺逛传送身份证号是："+idNoHaier);
+        }
+        if (!StringUtils.isEmpty(idNoHaier) && !idCard.equals(idNoHaier)) {
             logger.info("顺逛传送身份证与客户实名身份证不一致");
             return fail(ConstUtil.ERROR_CODE, "顺逛白条实名认证必须和顺逛实名认证一致！");
         }
-
         //4.缓存数据非空判断
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
                 || StringUtils.isEmpty(regAddr) || StringUtils.isEmpty(validDate) || StringUtils.isEmpty(certOrga)
@@ -499,22 +509,22 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
         //绑定手机号修改为实名认证手机号
         String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)
-        if (!phone.equals(mobile)) {//旧手机号与新手机号不同则修改
-            Map<String, Object> updmobilemap = new HashMap<String, Object>();
-            updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
-            updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
-            updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
-            updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
-            updmobilemap.put("channel", channel);
-            updmobilemap.put("channelNo", channelNo);
-            Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
-            Map updmobileheadjson = (HashMap<String, Object>) updmobileresultmap.get("head");
-            String updmobileretflag = (String) updmobileheadjson.get("retFlag");
-            if (!"00000".equals(updmobileretflag)) {
-                String retMsg = (String) updmobileheadjson.get("retMsg");
-                return fail(ConstUtil.ERROR_CODE, retMsg);
-            }
-        }
+//        if (!phone.equals(mobile)) {//旧手机号与新手机号不同则修改
+//            Map<String, Object> updmobilemap = new HashMap<String, Object>();
+//            updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
+//            updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
+//            updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
+//            updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
+//            updmobilemap.put("channel", channel);
+//            updmobilemap.put("channelNo", channelNo);
+//            Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
+//            Map updmobileheadjson = (HashMap<String, Object>) updmobileresultmap.get("head");
+//            String updmobileretflag = (String) updmobileheadjson.get("retFlag");
+//            if (!"00000".equals(updmobileretflag)) {
+//                String retMsg = (String) updmobileheadjson.get("retMsg");
+//                return fail(ConstUtil.ERROR_CODE, retMsg);
+//            }
+//        }
 
         cacheMap.put("phoneNo", mobile);
         session.set(token, cacheMap);
@@ -561,6 +571,24 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 //            return uploadresultmap;
         }
         logger.info("实名认证***********************结束");
+
+        if (!phone.equals(mobile)) {//旧手机号与新手机号不同则修改
+            Map<String, Object> updmobilemap = new HashMap<String, Object>();
+            updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
+            updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
+            updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
+            updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
+            updmobilemap.put("channel", channel);
+            updmobilemap.put("channelNo", channelNo);
+            Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
+            Map updmobileheadjson = (HashMap<String, Object>) updmobileresultmap.get("head");
+            String updmobileretflag = (String) updmobileheadjson.get("retFlag");
+            if (!"00000".equals(updmobileretflag)) {
+                String retMsg = (String) updmobileheadjson.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+        }
+        logger.info("绑定手机号***********************结束");
         return success();
     }
 
