@@ -320,33 +320,43 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         paySsMap.put("apprvAmt", payAmt);
         paySsMap.put("channel", channel);
         paySsMap.put("channelNo", channelNo);
+        boolean boo = false;
         Map<String, Object> payssresultMap = appServerService.getBatchPaySs(token, paySsMap);
         if (!HttpUtil.isSuccess(payssresultMap) ) {//额度校验失败
-            String retmsg = (String) ((HashMap<String, Object>)(payssresultMap.get("head"))).get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retmsg);
-        }
-        //{head={retFlag=00000, retMsg=处理成功}, body={info=[{psPerdNo=12, instmAmt=259.0}, {psPerdNo=6, instmAmt=518.0}]}}
-        String result = JSONObject.toJSONString(payssresultMap);
-        JSONObject custBody = JSONObject.parseObject(result).getJSONObject("body");
-        JSONArray jsonarray = custBody.getJSONArray("info");
-
-        if(!"1".equals(flag)){//待提交
-            for (int i = 0; i < jsonarray.size(); i++) {
-                Object object = jsonarray.get(0);
-                JSONObject json = JSONObject.parseObject(JSONObject.toJSONString(object));
-                //instmAmt = json.getString("instmAmt");
-                psPerdNo = json.getString("psPerdNo");
-                break;
+            String retflag = (String) ((HashMap<String, Object>)(payssresultMap.get("head"))).get("retFlag");
+            if("A1101".equals(retflag)){//贷款类型为天
+                boo = true;
+            }else {
+                String retmsg = (String) ((HashMap<String, Object>) (payssresultMap.get("head"))).get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retmsg);
             }
         }
-
-
+        if(!boo){
+            //{head={retFlag=00000, retMsg=处理成功}, body={info=[{psPerdNo=12, instmAmt=259.0}, {psPerdNo=6, instmAmt=518.0}]}}
+            String result = JSONObject.toJSONString(payssresultMap);
+            JSONObject custBody = JSONObject.parseObject(result).getJSONObject("body");
+            JSONArray jsonarray = custBody.getJSONArray("info");
+            if (!"1".equals(flag)) {//待提交
+                for (int i = 0; i < jsonarray.size(); i++) {
+                    Object object = jsonarray.get(0);
+                    JSONObject json = JSONObject.parseObject(JSONObject.toJSONString(object));
+                    //instmAmt = json.getString("instmAmt");
+                    psPerdNo = json.getString("psPerdNo");
+                    break;
+                }
+            }
+        }
         //还款试算获取金额
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", payAmt);
-        payMap.put("applyTnrTyp", psPerdNo);
-        payMap.put("applyTnr", psPerdNo);
+        if(boo){
+            payMap.put("applyTnrTyp", "D");
+            payMap.put("applyTnr", "30");
+        }else {
+                payMap.put("applyTnrTyp", psPerdNo);
+                payMap.put("applyTnr", psPerdNo);
+        }
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
         Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
@@ -369,6 +379,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         logger.info("白条分期页面加载*******************结束");
         return success(retrunmap);
     }
+
 
     @Override
     public Map<String, Object> gettotalAmt(Map<String, Object> map) {
