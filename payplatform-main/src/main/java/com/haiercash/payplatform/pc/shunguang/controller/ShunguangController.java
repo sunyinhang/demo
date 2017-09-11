@@ -1,13 +1,12 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
-import com.haiercash.payplatform.common.controller.BaseController;
+import com.haiercash.payplatform.controller.BaseController;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.common.utils.ConstUtil;
-import com.haiercash.payplatform.common.utils.HttpUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.OrderService;

@@ -1,7 +1,7 @@
 package com.payplatform.impl;
 
 import com.haiercash.payplatform.Application;
-import com.haiercash.payplatform.common.service.CrmService;
+import com.haiercash.payplatform.service.CrmService;
 import com.payplatform.DemoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
