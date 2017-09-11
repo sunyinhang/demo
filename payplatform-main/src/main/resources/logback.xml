@@ -59,7 +59,7 @@
     <logger name="com.haiercash.commons" level="debug">
         <appender-ref ref="STDOUT"/>
     </logger>-->
-    <logger name="com.haiercash.payplatform.common.config.RequestInterceptor" level="debug">
+    <logger name="com.haiercash.payplatform.config.RequestInterceptor" level="debug">
         <appender-ref ref="VISIT_ASYNC"/>
         <!--<appender-ref ref="STDOUT"/>-->
     </logger>

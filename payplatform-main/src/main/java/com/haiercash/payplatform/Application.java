@@ -1,7 +1,7 @@
 package com.haiercash.payplatform;
 
 import com.haiercash.commons.properties.RestProfileProperties;
-import com.haiercash.payplatform.common.config.EurekaServer;
+import com.haiercash.payplatform.config.EurekaServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

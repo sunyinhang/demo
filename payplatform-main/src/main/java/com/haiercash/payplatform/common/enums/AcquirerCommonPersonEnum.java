@@ -3,8 +3,8 @@ package com.haiercash.payplatform.common.enums;
 import java.util.Map;
 
 import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
-import com.haiercash.payplatform.common.utils.FormatUtil;
-import com.haiercash.payplatform.common.utils.ReflactUtils;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.payplatform.utils.ReflactUtils;
 
 /**
  * enum for common person.

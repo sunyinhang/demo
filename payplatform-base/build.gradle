@@ -1,3 +1,5 @@
 dependencies {
     compile project(':bestvike-core')
+
+    compile('com.haiercash:util:2.0.44-SNAPSHOT')
 }
