@@ -193,78 +193,131 @@ function initRedirect (flag) {
         });
     }
 }
-function getCurrentPosition (callback) {
+// type: a-高德b-百度
+function getCurrentPosition (type, callback) {
     //获取当前位置
     util.loading();
-    var geolocation = new BMap.Geolocation();
-    geolocation.getCurrentPosition(function(r) {
-        var lat=r.latitude;
-        var lng=r.longitude;
-        //关于状态码
-        //BMAP_STATUS_SUCCESS	检索成功。对应数值“0”。
-        //BMAP_STATUS_CITY_LIST	城市列表。对应数值“1”。
-        //BMAP_STATUS_UNKNOWN_LOCATION	位置结果未知。对应数值“2”。
-        //BMAP_STATUS_UNKNOWN_ROUTE	导航结果未知。对应数值“3”。
-        //BMAP_STATUS_INVALID_KEY	非法密钥。对应数值“4”。
-        //BMAP_STATUS_INVALID_REQUEST	非法请求。对应数值“5”。
-        //BMAP_STATUS_PERMISSION_DENIED	没有权限。对应数值“6”。(自 1.1 新增)
-        //BMAP_STATUS_SERVICE_UNAVAILABLE	服务不可用。对应数值“7”。(自 1.1 新增)
-        //BMAP_STATUS_TIMEOUT	超时。对应数值“8”。(自 1.1 新增)
-        if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-            util.get({
-                url: 'https://api.map.baidu.com/geocoder/v2/?location=' + lat + ',' + lng + '&output=json&ak=' + Const.params.mapKey,
-                urlType: 'json',
-                dataType: 'jsonp',
-                check: true,
-                success: function(res) {
-                    if( res.result.addressComponent.province == '西藏省' || res.result.addressComponent.province == '新疆省'){
-                        util.alert('#notInService');
-                        $("#nextBtnValcode").attr("disabled",true);
-                        $("#btnPayByBt").attr("disabled",true);
-                    }else if (res.status === 0 && res.result && res.result.addressComponent && res.result.addressComponent.adcode) {
-                        callback(res.result);
-                        //console.log(vm.areacode);
-                    }
-                },
-                complete: function () {
-                    util.loading('hide');
-                }
+    if (!type) {
+        type = 'a';
+    }
+    if (type === 'a') {
+        AMap.plugin(['AMap.Geolocation', 'AMap.Geocoder'], function() {
+            var geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,
+                timeout: 10000,
+                convert: false
             });
-        } else {
+            geolocation.getCurrentPosition(function (status, result) {
+                util.loading('hide');
+                if (status === 'complete' && result.status === 1) {
+                    console.log(result);
+                    callback({
+                        longitude: result.position && result.position.lng,
+                        latitude: result.position && result.position.lat,
+                        areaCode: result.addressComponent && result.addressComponent.adcode,
+                        address: result.formattedAddress // && (result.addressComponent.province + result.addressComponent.city + result.addressComponent.district + result.addressComponent.township)
+                    });
+                } else {
+                    util.report({
+                        message: '定位失败',
+                        status: status,
+                        result: result
+                    });
+                    util.confirm({
+                        message: '#locationRetry',
+                        yes: function () {
+                            getCurrentPosition(type, callback);
+                        },
+                        no: function () {
+                            util.alert('#locationFail');
+                        }
+                    });
+                }
+                /*if (status === 'complete' && result.status === 1) {
+                 var geocoder = new AMap.Geocoder();
+                 geocoder.getAddress([result.position.lng, result.position.lat], function(status, result) {
+                 console.log(result)
+                 if (status === 'complete' && result.info === 'OK') {
+                 console.log(result);
+                 }
+                 });
+                 }*/
+            });
+        });
+    } else if (type === 'b') {
+        var geolocation = new BMap.Geolocation();
+        geolocation.getCurrentPosition(function(r) {
+            var lat=r.latitude;
+            var lng=r.longitude;
+            //关于状态码
+            //BMAP_STATUS_SUCCESS	检索成功。对应数值“0”。
+            //BMAP_STATUS_CITY_LIST	城市列表。对应数值“1”。
+            //BMAP_STATUS_UNKNOWN_LOCATION	位置结果未知。对应数值“2”。
+            //BMAP_STATUS_UNKNOWN_ROUTE	导航结果未知。对应数值“3”。
+            //BMAP_STATUS_INVALID_KEY	非法密钥。对应数值“4”。
+            //BMAP_STATUS_INVALID_REQUEST	非法请求。对应数值“5”。
+            //BMAP_STATUS_PERMISSION_DENIED	没有权限。对应数值“6”。(自 1.1 新增)
+            //BMAP_STATUS_SERVICE_UNAVAILABLE	服务不可用。对应数值“7”。(自 1.1 新增)
+            //BMAP_STATUS_TIMEOUT	超时。对应数值“8”。(自 1.1 新增)
+            if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+                util.get({
+                    url: 'https://api.map.baidu.com/geocoder/v2/?location=' + lat + ',' + lng + '&output=json&ak=' + Const.params.mapKey,
+                    urlType: 'json',
+                    dataType: 'jsonp',
+                    check: true,
+                    success: function(res) {
+                        if (res.status === 0 && res.result && res.result.addressComponent && res.result.addressComponent.adcode) {
+                            console.log(res.result)
+                            callback({
+                                // res.result
+                                longitude: res.result.location && res.result.location.lng,
+                                latitude: res.result.location && res.result.location.lat,
+                                areaCode: res.result.addressComponent && res.result.addressComponent.adcode,
+                                address: res.result.formatted_address // addressComponent && (res.result.addressComponent.province + res.result.addressComponent.city + res.result.addressComponent.district + res.result.addressComponent.township)
+                            });
+                            //console.log(vm.areacode);
+                        }
+                    },
+                    complete: function () {
+                        util.loading('hide');
+                    }
+                });
+            } else {
+                util.loading('hide');
+                util.report({
+                    message: '定位失败',
+                    status: this.getStatus()
+                });
+                util.confirm({
+                    message: '定位失败，是否重试？',
+                    yes: function () {
+                        getCurrentPosition(type, callback);
+                    },
+                    no: function () {
+                        util.alert('#locationFail');
+                    }
+                });
+            }
+        }, function(e) {
             util.loading('hide');
             util.report({
                 message: '定位失败',
-                status: this.getStatus()
+                error: e
             });
             util.confirm({
                 message: '定位失败，是否重试？',
                 yes: function () {
-                    getCurrentPosition(callback);
+                    getCurrentPosition(type, callback);
                 },
                 no: function () {
                     util.alert('#locationFail');
                 }
             });
-        }
-    }, function(e) {
-        util.loading('hide');
-        util.report({
-            message: '定位失败',
-            error: e
+            // util.alert('#locationFail');
+        }, {
+            enableHighAccuracy: true
         });
-        util.confirm({
-            message: '定位失败，是否重试？',
-            yes: function () {
-                getCurrentPosition(callback);
-            },
-            no: function () {
-                util.alert('#locationFail');
-            }
-        });
-        // util.alert('#locationFail');
-    }, {
-        enableHighAccuracy: true
-    });
+    }
 }
 window.app = {
     cacheArea: cacheArea,

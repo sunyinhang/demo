@@ -1,4 +1,4 @@
-require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, Const) {
+require(['jquery', 'util', 'Const', 'bvLayout', 'async!amap'], function($, util, Const) {
 
     //获取重新提交的订单号
     var orderNo = util.gup('orderNo');
@@ -10,8 +10,10 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
             payAmt: '', //支付总额
             totalAmt: '', //应还款总额
             payMtd: [],
-            applyTnr: '',
+            applyTnr: '',//借款期限
+            applyTnrTyp: '',//借款类型
             paypwd: '',
+
             risk: {
                 longitude: '',
                 latitude: '',
@@ -202,12 +204,14 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                         flag: '1',
                         orderNo: orderNo ,
                         applyTnr: vm.applyTnr,
-                        areaCode: vm.areacode
+                        areaCode: vm.areacode,
+                        applyTnrTyp: vm.applyTnrTyp
                     }
                 }else{
                     var data={
                         applyTnr: vm.applyTnr,
-                        areaCode: vm.areacode
+                        areaCode: vm.areacode,
+                        applyTnrTyp: vm.applyTnrTyp
                     }
                 }
                 util.post({
@@ -237,7 +241,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                 $(e.target).addClass('selected');
                 vm.applyTnr = applyTnr;
                 util.get({
-                    url: '/shunguang/gettotalAmt?applyTnr='+applyTnr ,
+                    url: '/shunguang/gettotalAmt?applyTnr='+ applyTnr +'&applyTnrTyp='+applyTnrTyp,
                     success: function (res) {
                         var data = util.data(res);
                         vm.totalAmt = data.totalAmt
@@ -258,6 +262,7 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                     var data = util.data(res);
                     vm.payAmt = data.payAmt;
                     vm.totalAmt = data.totalAmt;
+                    vm.applyTnrTyp = data.applyTnrTyp;
                     vm.payMtd = data.payMtd;
                     if(!util.isEmpty(data.applyTnr)){
                         vm.applyTnr = data.applyTnr;
@@ -266,11 +271,11 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!map'], function($, util, 
                     }
                 }
             });
-            app.getCurrentPosition(function (result) {
-                vm.areacode = result.addressComponent.adcode;
-                vm.risk.longitude = result.location.lng;
-                vm.risk.latitude = result.location.lat;
-                vm.risk.area = result.addressComponent.country + result.addressComponent.province + result.addressComponent.city + result.addressComponent.district;
+            app.getCurrentPosition('a', function (result) {
+                vm.areacode = result.areaCode;
+                vm.risk.longitude = result.longitude;
+                vm.risk.latitude = result.latitude;
+                vm.risk.area = result.address;
             });
 
             if (util.gup('from') === 'reset') {

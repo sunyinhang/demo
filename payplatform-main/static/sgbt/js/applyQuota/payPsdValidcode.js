@@ -1,4 +1,4 @@
-require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm', 'async!map'], function($, util, Const) {
+require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm', 'async!amap'], function($, util, Const) {
     //获取密码
     var param=util.cache('payPasswd');
     //获取额度修改的标识
@@ -172,10 +172,10 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm', 'async!map'], function
                     // vm.formConfig.columns[0].head = util.data(res).phoneNo;
                 }
             });
-            app.getCurrentPosition(function (result) {
-                vm.risk.longitude = result.location.lng;
-                vm.risk.latitude = result.location.lat;
-                vm.risk.area = result.addressComponent.country + result.addressComponent.province + result.addressComponent.city + result.addressComponent.district;
+            app.getCurrentPosition('a', function (result) {
+                vm.risk.longitude = result.longitude;
+                vm.risk.latitude = result.latitude;
+                vm.risk.area = result.address;
             });
         }
     });

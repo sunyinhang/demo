@@ -41,6 +41,8 @@ var __Const = {
         relationTypeCouple: '06',
         // 百度地图api
         mapKey: 'vUz58Gv8yMI0LuDeIzE37GnETZlLhAGm',
+        // 高德地图
+        amapKey: 'a8fe94076e7563b79dd6f4235338ef85',
         // 百度统计 生产-f4144477da2d5745fc0a1dc12b2631bb
         hmKey: '7e18821d82be100f1703d479460cdb79'
     },
@@ -157,6 +159,7 @@ var __Const = {
         error404: '网络通讯异常',
         error405: '网络通讯异常',
         error408: '请求超时',
+        locationRetry: '定位失败，是否重试？',
         locationFail: '获取地理位置失败，无法继续操作，请确认GPS定位是否打开或网络是否正常！',
         agreement: '请先同意相关协议',
         cardDescribe: '此卡为默认放款卡和还款卡,如果想更换默认还款卡，可以在个人中心-个人资料-银行卡中绑定并设置',

@@ -1,0 +1,12 @@
+<component is="bv-layout" data-container="checkLocation">
+    <component is="bv-form" :key="tags.formKey1" v-bind="formConfig1"></component>
+    <component is="bv-form" :key="tags.formKey2" v-bind="formConfig2"></component>
+</component>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        util.title('地理位置');
+        util.script({
+            url: '/check/location.js'
+        });
+    });
+</script>
