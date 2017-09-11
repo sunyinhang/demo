@@ -659,7 +659,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 mapone.put("applSeq", body.get("applSeq"));//申请流水号
                 String outSts = body.get("outSts").toString();
                 //outSts="01";
-                if ("01".equals(outSts)) {//APP 审批中  01
+                if ("01".equals(outSts) || "22".equals(outSts)) {//APP 审批中  01
                     mapone.put("outSts", "02");//顺逛 审批中  02
                     logger.info("返回顺逛数据：" + mapone);
                     return success(mapone);
