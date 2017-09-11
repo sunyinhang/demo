@@ -181,7 +181,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //获取订单金额  总利息 金额
         logger.info("订单保存，获取订单金额，总利息金额");
-        applyTnrTyp = applyTnr;
+        //applyTnrTyp = applyTnr;
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", appOrder.getTypCde());
         payMap.put("apprvAmt", appOrder.getApplyAmt());

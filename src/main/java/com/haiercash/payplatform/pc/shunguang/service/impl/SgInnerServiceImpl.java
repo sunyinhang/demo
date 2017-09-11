@@ -331,7 +331,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             }
         }
-        if(!boo){
+        if(!boo){//贷款类型按月
             //{head={retFlag=00000, retMsg=处理成功}, body={info=[{psPerdNo=12, instmAmt=259.0}, {psPerdNo=6, instmAmt=518.0}]}}
             String result = JSONObject.toJSONString(payssresultMap);
             JSONObject custBody = JSONObject.parseObject(result).getJSONObject("body");
@@ -350,12 +350,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", payAmt);
-        if(boo){
+        if(boo){//贷款类型按天
             payMap.put("applyTnrTyp", "D");
             payMap.put("applyTnr", "30");
         }else {
-                payMap.put("applyTnrTyp", psPerdNo);
-                payMap.put("applyTnr", psPerdNo);
+            payMap.put("applyTnrTyp", psPerdNo);
+            payMap.put("applyTnr", psPerdNo);
         }
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
@@ -373,8 +373,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
 
 
         retrunmap.put("payAmt", payAmt);
-        retrunmap.put("payMtd", ((HashMap<String, Object>)(payssresultMap.get("body"))).get("info"));
         retrunmap.put("totalAmt", totalAmt);
+        if(boo){//贷款类型按天
+            retrunmap.put("payMtd", "");
+        }else{
+            retrunmap.put("payMtd", ((HashMap<String, Object>)(payssresultMap.get("body"))).get("info"));
+        }
 
         logger.info("白条分期页面加载*******************结束");
         return success(retrunmap);
@@ -388,6 +392,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
         String applyTnr = (String) map.get("applyTnr");
+        String applyTnrTyp = (String) map.get("applyTnrTyp");
 
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
@@ -411,7 +416,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", payAmt);
-        payMap.put("applyTnrTyp", applyTnr);
+        payMap.put("applyTnrTyp", applyTnrTyp);
         payMap.put("applyTnr", applyTnr);
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
