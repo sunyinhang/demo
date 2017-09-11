@@ -210,7 +210,7 @@ function getCurrentPosition (type, callback) {
             geolocation.getCurrentPosition(function (status, result) {
                 util.loading('hide');
                 if (status === 'complete' && result.status === 1) {
-                    console.log(result);
+                    //console.log(result);
                     callback({
                         longitude: result.position && result.position.lng,
                         latitude: result.position && result.position.lat,
@@ -267,7 +267,7 @@ function getCurrentPosition (type, callback) {
                     check: true,
                     success: function(res) {
                         if (res.status === 0 && res.result && res.result.addressComponent && res.result.addressComponent.adcode) {
-                            console.log(res.result)
+                            //console.log(res.result)
                             callback({
                                 // res.result
                                 longitude: res.result.location && res.result.location.lng,

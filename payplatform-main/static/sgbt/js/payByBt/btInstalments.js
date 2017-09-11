@@ -1,4 +1,4 @@
-require(['jquery', 'util', 'Const', 'bvLayout', 'async!amap'], function($, util, Const) {
+require(['jquery', 'util', 'Const', 'bvLayout', 'async!bmap'], function($, util, Const) {
 
     //获取重新提交的订单号
     var orderNo = util.gup('orderNo');
@@ -247,6 +247,15 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!amap'], function($, util,
                         vm.totalAmt = data.totalAmt
                     }
                 });
+            },
+            //分期方式
+            showPeriods: function(amt,no){
+                if(amt == '0' && no == '30'){
+                    return '30天免息'
+                }else{
+                    return amt + '元*'+ no +'期'
+                }
+
             }
         },
         mounted: function(){
@@ -263,15 +272,21 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!amap'], function($, util,
                     vm.payAmt = data.payAmt;
                     vm.totalAmt = data.totalAmt;
                     vm.applyTnrTyp = data.applyTnrTyp;
-                    vm.payMtd = data.payMtd;
-                    if(!util.isEmpty(data.applyTnr)){
-                        vm.applyTnr = data.applyTnr;
+                    if(data.payMtd === ''){
+                        vm.applyTnrTyp = 'D';
+                        vm.applyTnr = '30';
+                        vm.payMtd = [{psPerdNo: "30", instmAmt: "0"}];
                     }else{
-                        vm.applyTnr = data.payMtd[0].psPerdNo;
+                        vm.payMtd = data.payMtd;
+                        if(!util.isEmpty(data.applyTnr)){
+                            vm.applyTnr = data.applyTnr;
+                        }else{
+                            vm.applyTnr = data.payMtd[0].psPerdNo;
+                        }
                     }
                 }
             });
-            app.getCurrentPosition('a', function (result) {
+            app.getCurrentPosition('b', function (result) {
                 vm.areacode = result.areaCode;
                 vm.risk.longitude = result.longitude;
                 vm.risk.latitude = result.latitude;

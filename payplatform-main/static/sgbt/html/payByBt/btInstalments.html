@@ -22,7 +22,7 @@
 			<ul>
 				<li class="fenqi"  v-for="(item, index) in payMtd" :class="{selected: applyTnr === item.psPerdNo}" @click="changePeriodFn($event,item.psPerdNo)">
 					<div class="b-text">
-						<span class="fq">{{item.instmAmt | currency}}元*{{item.psPerdNo}}期</span>
+						<span class="fq">{{showPeriods(item.instmAmt,item.psPerdNo)}}</span>
 						<!--<span class="lx">0手续费</span>-->
 					</div>
 				</li>
