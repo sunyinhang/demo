@@ -52,11 +52,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String edxgflag = (String) param.get("edxgflag");//修改申请提交标识
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
-        if(!StringUtils.isEmpty(param.get("longitude"))){
-            longitude = (BigDecimal)param.get("longitude");//经度
+        if (!StringUtils.isEmpty(param.get("longitude"))) {
+            longitude = (BigDecimal) param.get("longitude");//经度
         }
-        if(!StringUtils.isEmpty(param.get("latitude"))){
-            latitude = (BigDecimal)param.get("latitude");//维度
+        if (!StringUtils.isEmpty(param.get("latitude"))) {
+            latitude = (BigDecimal) param.get("latitude");//维度
         }
         String area = (String) param.get("area");//区域
         if (StringUtils.isEmpty(token)) {
@@ -1085,6 +1085,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     if ("01".equals(outStsNew)) {
                         return success(procList);
                     }
+                    procList.clear();
                     HashMap<String, Object> param = new HashMap<>();
                     param.put("operateTime", "");//办理时间
                     param.put("appOutAdvice", "【退回】");//外部意见
@@ -1093,9 +1094,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     param.put("appConclusionDesc", app_out_advice);//审批结论
                     procList.add(param);
                 }
+                return success(procList);
+            } else {
+                logger.info("查询贷款详情接口失败！失败码：" + code + ",错误信息：" + message);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            return success(procList);
-
         } else {
             return success(procList);
         }
