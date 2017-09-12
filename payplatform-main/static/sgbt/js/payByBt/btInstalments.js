@@ -238,8 +238,9 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!bmap'], function($, util,
             changePeriodFn: function(e,applyTnr){
                 $('.fenqi').removeClass('selected');
                 $(e.target).parent().addClass('selected');
+                vm.applyTnrTyp = vm.applyTnr;
                 util.get({
-                    url: '/shunguang/gettotalAmt?applyTnr='+ vm.applyTnr +'&applyTnrTyp='+ vm.applyTnr,  //非30天免息的时候借款期限和借款类型相等
+                    url: '/shunguang/gettotalAmt?applyTnr='+ vm.applyTnr +'&applyTnrTyp='+ vm.applyTnrTyp,  //非30天免息的时候借款期限和借款类型相等
                     success: function (res) {
                         var data = util.data(res);
                         vm.totalAmt = data.totalAmt
