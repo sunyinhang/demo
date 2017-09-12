@@ -237,10 +237,16 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!bmap'], function($, util,
             //选择期数
             changePeriodFn: function(e,applyTnr){
                 $('.fenqi').removeClass('selected');
-                $(e.target).parent().addClass('selected');
-                vm.applyTnrTyp = vm.applyTnr;
+                $(e.target).addClass('selected');
+                $(e.target).parents().addClass('selected');
+                vm.applyTnr = applyTnr;
+                if(applyTnr == '30'){
+                    vm.applyTnrTyp = 'D';
+                }else{
+                    vm.applyTnrTyp = applyTnr;
+                }
                 util.get({
-                    url: '/shunguang/gettotalAmt?applyTnr='+ vm.applyTnr +'&applyTnrTyp='+ vm.applyTnrTyp,  //非30天免息的时候借款期限和借款类型相等
+                    url: '/shunguang/gettotalAmt?applyTnr='+ applyTnr +'&applyTnrTyp='+ vm.applyTnrTyp,  //非30天免息的时候借款期限和借款类型相等
                     success: function (res) {
                         var data = util.data(res);
                         vm.totalAmt = data.totalAmt
@@ -270,12 +276,18 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!bmap'], function($, util,
                     var data = util.data(res);
                     vm.payAmt = data.payAmt;
                     vm.totalAmt = data.totalAmt;
-                    vm.applyTnrTyp = data.applyTnrTyp;
                     if(data.payMtd === ''){
-                        vm.applyTnrTyp = 'D';
-                        vm.applyTnr = '30';
-                        vm.payMtd = [{psPerdNo: "30", instmAmt: "0"}];
+                        if( util.isEmpty(vm.applyTnr) && util.isEmpty(vm.applyTnrTyp)){
+                            vm.applyTnrTyp = 'D';
+                            vm.applyTnr = '30';
+                            vm.payMtd = [{psPerdNo: "30", instmAmt: "0"}];
+                        }else{
+                            vm.applyTnrTyp = data.applyTnrTyp;
+                            vm.applyTnr = data.applyTnr;
+                            vm.payMtd = [{psPerdNo: "30", instmAmt: "0"}];
+                        }
                     }else{
+                        vm.applyTnrTyp = data.applyTnrTyp;
                         vm.payMtd = data.payMtd;
                         if(!util.isEmpty(data.applyTnr)){
                             vm.applyTnr = data.applyTnr;
