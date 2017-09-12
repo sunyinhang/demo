@@ -238,10 +238,8 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!bmap'], function($, util,
             changePeriodFn: function(e,applyTnr){
                 $('.fenqi').removeClass('selected');
                 $(e.target).parent().addClass('selected');
-                $(e.target).addClass('selected');
-                vm.applyTnr = applyTnr;
                 util.get({
-                    url: '/shunguang/gettotalAmt?applyTnr='+ applyTnr +'&applyTnrTyp='+applyTnrTyp,
+                    url: '/shunguang/gettotalAmt?applyTnr='+ vm.applyTnr +'&applyTnrTyp='+ vm.applyTnrTyp,
                     success: function (res) {
                         var data = util.data(res);
                         vm.totalAmt = data.totalAmt
