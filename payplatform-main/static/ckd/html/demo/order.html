@@ -1,0 +1,14 @@
+<component is="bv-layout" data-container="demoOrder">
+    <component is="bv-form" :key="tags.formKey" :entity="entity.order" v-bind="formConfig"></component>
+    <component is="bv-form" :key="tags.form1Key" :entity="entity.goods1" v-bind="formConfig1"></component>
+    <component is="bv-form" :key="tags.form2Key" :entity="entity.goods2" v-bind="formConfig2"></component>
+    <component is="bv-form" :key="tags.formOperateKey" v-bind="formOperate"></component>
+</component>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        ///util.title('');
+        util.script({
+            url: '/demo/order.js'
+        });
+    });
+</script>

@@ -1,0 +1,11 @@
+<component is="bv-layout" class="bv-align-center fullPage gray" data-container="applyFail" v-cloak>
+	<quota-state v-bind="config"></quota-state>
+</component>
+<script type="text/javascript">
+	require(['jquery', 'util'], function($, util) {
+		util.title('额度申请失败');
+		util.script({
+			url: '/applyQuota/applyFail.js'
+		});
+	});
+</script>

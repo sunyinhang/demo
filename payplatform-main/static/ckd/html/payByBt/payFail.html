@@ -1,0 +1,26 @@
+<!--<div class='wrapper paySuccess fullPage-gray' data-controller='payFail'>
+	<div class="main01">
+		<img src="./custom/themes/default/images/payByBt/fail.png" alt="">
+	</div>
+	<div class="main02">
+		<b>支付失败</b>
+		<a href="javascript:void(0);" class="a-btn" @click="payFailFn">重新支付</a>
+	</div>
+</div>-->
+<div class='wrapper paySuccess fullPage-gray' data-container='payFail' v-cloak>
+	<div class="main01">
+		<img src="./custom/themes/default/images/payByBt/fail.png" alt="">
+	</div>
+	<div class="main02">
+		<b>支付失败<span v-text="'：' + error" v-if="error"></span></b>
+		<a href="javascript:void(0);" class="a-btn" @click="payFailFn">重新提交</a>
+	</div>
+</div>
+<script type="text/javascript">
+	require(['jquery', 'util'], function($, util) {
+		util.title('支付失败');
+		util.script({
+			url: '/payByBt/payFail.js'
+		});
+	});
+</script>

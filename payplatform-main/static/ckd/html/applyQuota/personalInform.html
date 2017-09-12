@@ -1,0 +1,15 @@
+<component is="bv-layout" data-container="personalInform" v-cloak>
+    <component is="tab-applyQuota" active="realName personal"></component>
+    <form>
+        <component is="bv-accordion" :entity="entity" :key="tags.accordionKey" v-bind="config"></component>
+        <component is="bv-form" :entity="entity" :key="tags.formKey" v-bind="operateConfig"></component>
+    </form>
+</component>
+<script type="text/javascript">
+    require(['jquery', 'util'], function($, util) {
+        util.title('个人资料');
+        util.script({
+            url: '/applyQuota/personalInform.js'
+        });
+    });
+</script>
