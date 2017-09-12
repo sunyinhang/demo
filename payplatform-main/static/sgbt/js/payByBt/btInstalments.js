@@ -287,12 +287,13 @@ require(['jquery', 'util', 'Const', 'bvLayout', 'async!bmap'], function($, util,
                             vm.payMtd = [{psPerdNo: "30", instmAmt: "0"}];
                         }
                     }else{
-                        vm.applyTnrTyp = data.applyTnrTyp;
                         vm.payMtd = data.payMtd;
                         if(!util.isEmpty(data.applyTnr)){
                             vm.applyTnr = data.applyTnr;
+                            vm.applyTnrTyp = data.applyTnrTyp;
                         }else{
                             vm.applyTnr = data.payMtd[0].psPerdNo;
+                            vm.applyTnrTyp = vm.applyTnr;
                         }
                     }
                 }
