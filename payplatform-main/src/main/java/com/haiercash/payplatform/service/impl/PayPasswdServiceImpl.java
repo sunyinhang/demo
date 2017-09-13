@@ -52,11 +52,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String edxgflag = (String) param.get("edxgflag");//修改申请提交标识
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
-        if(!StringUtils.isEmpty(param.get("longitude"))){
-            longitude = (BigDecimal)param.get("longitude");//经度
+        if (!StringUtils.isEmpty(param.get("longitude"))) {
+            longitude = (BigDecimal) param.get("longitude");//经度
         }
-        if(!StringUtils.isEmpty(param.get("latitude"))){
-            latitude = (BigDecimal)param.get("latitude");//维度
+        if (!StringUtils.isEmpty(param.get("latitude"))) {
+            latitude = (BigDecimal) param.get("latitude");//维度
         }
         String area = (String) param.get("area");//区域
         if (StringUtils.isEmpty(token)) {
@@ -506,37 +506,37 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String applyTnrTyp = json.getString("apply_tnr_typ");
             String totfee = "";
             String apprvTotal = "";
-            if (!"D".equals(applyTnrTyp) && !"d".equals(applyTnrTyp) && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
-                String psNormIntAmtStr = String.valueOf(json.get("totalnormint"));//总利息金额
-                if (StringUtils.isEmpty(psNormIntAmtStr)) {
-                    psNormIntAmt = new BigDecimal(0);
-                } else {
-                    psNormIntAmt = new BigDecimal(psNormIntAmtStr);
-                }
-                String feeAmtStr = String.valueOf(json.get("totalfeeamt"));//费用总额
-                if (StringUtils.isEmpty(feeAmtStr)) {
-                    feeAmt = new BigDecimal(0);
-                } else {
-                    feeAmt = new BigDecimal(feeAmtStr);
-                }
-//                String apprvAmtStr = String.valueOf(json.get("apprvAmt"));//贷款审批金额
-                String apprvAmtStr = String.valueOf(json.get("apply_amt"));//申请金额（元）
-                if (StringUtils.isEmpty(apprvAmtStr)) {
-                    apprvAmt = new BigDecimal(0);
-                } else {
-                    apprvAmt = new BigDecimal(apprvAmtStr);
-                }
-
-                BigDecimal tot = new BigDecimal(0);
-                tot = psNormIntAmt.add(feeAmt);//总利息+总费用
-                totfee = tot.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
-                json.put("totfee", totfee);
-                BigDecimal total = new BigDecimal(0);
-                total = tot.add(apprvAmt);//总利息+总费用+贷款审批金额
-                apprvTotal = total.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
-                json.put("ordertotal", apprvTotal);
-
+            //if (!"D".equals(applyTnrTyp) && !"d".equals(applyTnrTyp) && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
+            String psNormIntAmtStr = String.valueOf(json.get("totalnormint"));//总利息金额
+            if (StringUtils.isEmpty(psNormIntAmtStr)) {
+                psNormIntAmt = new BigDecimal(0);
+            } else {
+                psNormIntAmt = new BigDecimal(psNormIntAmtStr);
             }
+            String feeAmtStr = String.valueOf(json.get("totalfeeamt"));//费用总额
+            if (StringUtils.isEmpty(feeAmtStr)) {
+                feeAmt = new BigDecimal(0);
+            } else {
+                feeAmt = new BigDecimal(feeAmtStr);
+            }
+//                String apprvAmtStr = String.valueOf(json.get("apprvAmt"));//贷款审批金额
+            String apprvAmtStr = String.valueOf(json.get("apply_amt"));//申请金额（元）
+            if (StringUtils.isEmpty(apprvAmtStr)) {
+                apprvAmt = new BigDecimal(0);
+            } else {
+                apprvAmt = new BigDecimal(apprvAmtStr);
+            }
+
+            BigDecimal tot = new BigDecimal(0);
+            tot = psNormIntAmt.add(feeAmt);//总利息+总费用
+            totfee = tot.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
+            json.put("totfee", totfee);
+            BigDecimal total = new BigDecimal(0);
+            total = tot.add(apprvAmt);//总利息+总费用+贷款审批金额
+            apprvTotal = total.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
+            json.put("ordertotal", apprvTotal);
+
+            //}
             String outStsNew = json.getString("outSts");
             if (!"WS".equals(outStsNew)) {
                 if (outStsNew.equals("1")) {
@@ -1085,6 +1085,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     if ("01".equals(outStsNew)) {
                         return success(procList);
                     }
+                    procList.clear();
                     HashMap<String, Object> param = new HashMap<>();
                     param.put("operateTime", "");//办理时间
                     param.put("appOutAdvice", "【退回】");//外部意见
@@ -1093,9 +1094,11 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     param.put("appConclusionDesc", app_out_advice);//审批结论
                     procList.add(param);
                 }
+                return success(procList);
+            } else {
+                logger.info("查询贷款详情接口失败！失败码：" + code + ",错误信息：" + message);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            return success(procList);
-
         } else {
             return success(procList);
         }

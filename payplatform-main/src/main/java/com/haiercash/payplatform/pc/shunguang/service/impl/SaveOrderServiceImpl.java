@@ -80,9 +80,9 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String areaCode = (String) map.get("areaCode");//区编码
         //非空判断
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
-                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(areaCode)){
+                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp) || StringUtils.isEmpty(areaCode)){
             logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
-                       + "   applyTnr:" + applyTnr + "   updflag:" + updflag + "  orderNo:" + orderNo
+                       + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp + "   updflag:" + updflag + "  orderNo:" + orderNo
                        + "   areaCode:" + areaCode);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -181,7 +181,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //获取订单金额  总利息 金额
         logger.info("订单保存，获取订单金额，总利息金额");
-        applyTnrTyp = applyTnr;
+        //applyTnrTyp = applyTnr;
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", appOrder.getTypCde());
         payMap.put("apprvAmt", appOrder.getApplyAmt());
