@@ -16,6 +16,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
             },
             mounthAmount: '',
             crdNorAvailAmt: '',
+            crdComAvailAnt:''
         },
         filters: {
             currency: function (val) {
@@ -37,21 +38,14 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         },
         mounted: function(){
             util.post({
-                url: '/getPersonalCenterInfo',
+                url: '/billCheck',
                 success: function(res){
                     var data = util.data(res);
+                    console.log(data)
                     if(!util.isEmpty(data)){
-                        vm.mounthAmount = data.mounthAmount;
-                    }
-                }
-            });
-            util.post({
-                url: '/edCheck',
-                success: function(res){
-                    var data = util.data(res);
-                    if(!util.isEmpty(data)){
+                        vm.crdNorAvailAmt = data.crdNorAvailAmt;
+                        vm.crdComAvailAnt = data.crdComAvailAnt;
                         vm.config.num = data.crdComAvailAnt;
-                        vm.crdNorAvailAmt = data.crdAmt;
                     }
                 }
             });

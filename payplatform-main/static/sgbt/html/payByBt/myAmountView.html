@@ -1,24 +1,22 @@
-<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="myAmount" v-cloak>
+<component is="bv-layout" class="bv-align-center fullPage-gray" data-container="myAmountView" v-cloak>
     <quota-state v-bind="config" @on-click="goShopFn"></quota-state>
-    <div class="amountInfo">
-        <div class="myBill">我的账单</div>
-        <div class="myBillNum">
-            <span>本月应还</span>
-            <span class="t-orange">{{(mounthAmount == ''? 0 : mounthAmount )| currency}}</span>
-        </div>
+    <div class="amountInfoNo">
+        <div class="myBill">消费可用额度</div>
+        <span class="myBillNum t-orange">
+           {{(crdComAvailAnt == ''? 0 : crdComAvailAnt )| currency}}
+        </span>
     </div>
     <div class="line"></div>
-    <div class="amountInfo">
-        <div class="myBill">我的额度</div>
-        <div class="myBillNum">
-            <span>总额度</span>
-            <span class="t-blue">{{(crdNorAvailAmt == ''? 0 : crdNorAvailAmt )| currency}}</span>
-        </div>
+    <div class="amountInfoNo">
+        <div class="myBill">现金可用额度</div>
+        <span class="myBillNum t-blue">
+           {{(crdNorAvailAmt == ''? 0 : crdNorAvailAmt )| currency}}
+        </span>
     </div>
 </component>
 <script type="text/javascript">
     require(['jquery', 'util'], function($, util) {
-        util.title('我的额度');
+        util.title('可用额度详情');
         util.script({
             url: '/payByBt/myAmountView.js'
         });
