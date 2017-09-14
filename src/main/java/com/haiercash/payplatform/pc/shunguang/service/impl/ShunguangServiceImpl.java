@@ -482,7 +482,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             cachemap.put("idCard", certNo);//身份证号
             cachemap.put("idType", certType);
             session.set(token, cachemap);
-            return success();
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/quotaMerge.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            return success(returnmap);
         }
     }
 
