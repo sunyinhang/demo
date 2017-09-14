@@ -558,7 +558,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String flag = "";
+        String flag = "";//页面跳转标识
         //获取自主支付可用额度金额
         String crdNorAvailAmt = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
