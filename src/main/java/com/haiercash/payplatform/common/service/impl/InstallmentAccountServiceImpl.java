@@ -409,6 +409,27 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             ordertotal =  total.divide(new BigDecimal(1) , 2,BigDecimal.ROUND_HALF_UP) + "";
             resMap.put("ordertotal", ordertotal);
             resMap.put("xfze",xfzeStr);
+        }else if(( applyTnrTyp != null && !"".equals(applyTnrTyp))&&("D".equals(applyTnrTyp) || "d".equals(applyTnrTyp) ) ){
+            String xfzeStr = String.valueOf(xfzeBig);//息费总额
+            if (xfzeStr.equals("null")){
+                xfze = new BigDecimal(0);
+            }else{
+                xfze = new BigDecimal(xfzeStr);
+            }
+//            Integer applyAmtStr = (Integer)resMap.get("apply_amt");
+            BigDecimal applyAmtStr = new  BigDecimal(resMap.get("apply_amt").toString());
+//            String applyAmtStr = (String) resMap.get("apply_amt");
+//                    appOrder.getApplyAmt();//借款总额
+            if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null){
+                applyAmt = new BigDecimal(0);
+            }else{
+                applyAmt = applyAmtStr;
+            }
+            BigDecimal total = new BigDecimal(0);
+            total = xfze.add(applyAmt);
+            ordertotal =  total + "";
+            resMap.put("ordertotal", ordertotal);
+            resMap.put("xfze",xfzeStr);
         }
         return success(resMap);
     }
