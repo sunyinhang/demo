@@ -551,7 +551,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", uidLocal);//内部userId
-        edMap.put("channel", "11");
+        edMap.put("channel", channel);
         edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
         if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
