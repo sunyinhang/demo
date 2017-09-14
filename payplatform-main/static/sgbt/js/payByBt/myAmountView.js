@@ -41,7 +41,6 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
                 url: '/edCheck',
                 success: function(res){
                     var data = util.data(res);
-                    console.log(data)
                     if(!util.isEmpty(data)){
                         vm.crdNorAvailAmt = data.crdNorAvailAmt;
                         vm.crdComAvailAnt = data.crdComAvailAnt;
