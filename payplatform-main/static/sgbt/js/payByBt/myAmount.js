@@ -6,7 +6,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
                 imgSrc: 'custom/themes/default/images/amtTopBg.png',
                 // title: '顺逛白条',
                 whether: true,
-                subTitle: '可用总额度',
+                subTitle: '可用额度',
                 amtNum: 'amtNum',
                 numUnit: true,
                 num: '',
@@ -50,8 +50,8 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
                 success: function(res){
                     var data = util.data(res);
                     if(!util.isEmpty(data)){
-                        vm.config.num = data.crdAmt;
-                        vm.crdNorAvailAmt = data.crdComAvailAnt
+                        vm.config.num = data.crdComAvailAnt;
+                        vm.crdNorAvailAmt = data.crdAmt;
                     }
                 }
             });
