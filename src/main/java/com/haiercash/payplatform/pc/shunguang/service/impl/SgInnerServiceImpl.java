@@ -285,9 +285,11 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             typCde = (String) bodyLoanDetail.get("typ_cde");//贷款品种
             String applyTnr = (String) bodyLoanDetail.get("apply_tnr");//借款期限
             String applyTnrTyp = (String) bodyLoanDetail.get("apply_tnr_typ");//借款期限类型
+            String fst_pay = bodyLoanDetail.get("fst_pay").toString();//首付金额
 
             appOrder.setTypCde(typCde);//贷款品种代码
             appOrder.setApplyAmt(payAmt);//借款总额
+            appOrder.setFstPay(fst_pay);//首付金额
 
             cacheMap.put("apporder", appOrder);
             session.set(token, cacheMap);

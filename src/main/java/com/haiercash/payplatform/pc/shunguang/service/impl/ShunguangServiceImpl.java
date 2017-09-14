@@ -201,6 +201,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String ordermessage = bodyjson.get("ordermessage").toString();//网单信息
         JSONArray jsonArray = new JSONArray(ordermessage);
         List<AppOrderGoods> appOrderGoodsList = new ArrayList<AppOrderGoods>();
+        Double totalcOrderAmt = 0.0;
         for (int j = 0; j < jsonArray.length(); j++) {
             JSONObject jsonm = new JSONObject(jsonArray.get(j).toString());
             String cOrderSn = (String) jsonm.get("cOrderSn");//网单编号
@@ -212,6 +213,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String cOrderAmt = (String) jsonm.get("cOrderAmt");//网单金额
             String cOrderPayAmt = (String) jsonm.get("cOrderPayAmt");//网单实付金额
 
+            totalcOrderAmt = totalcOrderAmt + Double.parseDouble(cOrderAmt);
+
             AppOrderGoods appOrderGoods = new AppOrderGoods();
             appOrderGoods.setcOrderSn(cOrderSn);//
             appOrderGoods.setGoodsName(model);//商品名称
@@ -222,6 +225,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             appOrderGoods.setSkuCode(sku);//sku码
             appOrderGoodsList.add(appOrderGoods);
         }
+        //首付金额
+        Double fstPay = totalcOrderAmt - Double.parseDouble(payAmt);
 
         //
 
@@ -239,6 +244,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         appOrder.setDeliverCity(city);//送货地址市
         appOrder.setDeliverArea(country);//送货地址区
         appOrder.setAppOrderGoodsList(appOrderGoodsList);
+        appOrder.setFstPay(fstPay.toString());//首付金额
 
 
         //TODO!!!!!根据商城订单号查询订单接口
