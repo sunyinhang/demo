@@ -1,6 +1,6 @@
 require(['jquery', 'util', 'Const'], function($, util, Const) {
     var vm = util.bind({
-        container: 'myAmount',
+        container: 'myAmountView',
         data: {
             config:{
                 imgSrc: 'custom/themes/default/images/amtTopBg.png',
