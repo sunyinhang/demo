@@ -287,7 +287,16 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> edCheck() {
         return payPasswdService.edCheck(super.getToken());
     }
-
+    /**
+     * @Title billCheck
+     * @Description: 个人中心信息(账单查询)
+     * @author yu jianwei
+     * @date 2017/9/14 13:13
+     */
+    @RequestMapping(value = "/api/payment/billCheck", method = RequestMethod.POST)
+    public Map<String, Object> billCheck() {
+        return payPasswdService.billCheck(super.getToken());
+    }
     /**
      * 根据流水号查询额度审批进度
      *
