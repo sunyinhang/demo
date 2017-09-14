@@ -45,7 +45,13 @@ public interface ShunguangService {
      * @throws Exception
      */
     Map<String, Object> edApply(Map<String, Object> map) throws Exception;
-
+    /**
+     * @Title approveStatus
+     * @Description: 额度校验 审批状态判断
+     * @author yu jianwei
+     * @date 2017/9/14 16:34
+     */
+    Map<String, Object> approveStatus(Map<String, Object> map) throws Exception;
 
     /**
      * 7.白条额度申请状态查询    Sg-10006    checkEdAppl
