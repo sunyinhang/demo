@@ -115,21 +115,7 @@ public class ShunguangController extends BaseController {
         }
         return shunguangService.edApply(map);
     }
-    /**6. 额度校验 审批状态判断
-     * @Title approveStatus
-     * @Description: 额度校验 审批状态判断
-     * @author yu jianwei
-     * @date 2017/9/14 16:34
-     */
-    @RequestMapping(value = "/api/payment/shunguang/approveStatus", method = RequestMethod.POST)
-    public Map<String, Object> approveStatus(@RequestBody Map<String, Object> map) throws Exception {
-        // 参数非空校验
-        Map<String, Object> confirmMsg = confirmData(map);
-        if (!HttpUtil.isSuccess(confirmMsg)) {
-            return confirmMsg;
-        }
-        return shunguangService.approveStatus(map);
-    }
+
 
     /**
      * 7.白条额度申请状态查询    Sg-10006

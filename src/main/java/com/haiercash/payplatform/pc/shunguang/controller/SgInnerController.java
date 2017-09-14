@@ -2,15 +2,12 @@ package com.haiercash.payplatform.pc.shunguang.controller;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.controller.BaseController;
-import com.haiercash.payplatform.common.utils.ConstUtil;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -40,6 +37,7 @@ public class SgInnerController extends BaseController {
 
     /**
      * 登录
+     *
      * @param map
      * @return
      * @throws Exception
@@ -51,6 +49,7 @@ public class SgInnerController extends BaseController {
 
     /**
      * 白条分期页面加载
+     *
      * @param map
      * @return
      */
@@ -61,16 +60,18 @@ public class SgInnerController extends BaseController {
 
     /**
      * 获取应还款总额
+     *
      * @param params
      * @return
      */
     @RequestMapping(value = "/api/payment/shunguang/gettotalAmt", method = RequestMethod.GET)
     public Map<String, Object> gettotalAmt(@RequestParam Map<String, Object> params) {
-        return  sgInnerService.gettotalAmt(super.initParam(params));
+        return sgInnerService.gettotalAmt(super.initParam(params));
     }
 
     /**
      * 订单保存
+     *
      * @param map
      * @return
      */
@@ -80,17 +81,19 @@ public class SgInnerController extends BaseController {
     }
 
     /**
-     *订单提交
+     * 订单提交
+     *
      * @param map
      * @return
      */
     @RequestMapping(value = "/api/payment/shunguang/commitOrder", method = RequestMethod.POST)
-    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) throws Exception{
+    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) throws Exception {
         return commitOrderService.commitOrder(super.initParam(map));
     }
 
     /**
      * 额度回调url
+     *
      * @return
      */
     @RequestMapping(value = "/api/payment/shunguang/getedbackurl", method = RequestMethod.GET)
@@ -100,10 +103,24 @@ public class SgInnerController extends BaseController {
 
     /**
      * 贷款回调url
+     *
      * @return
      */
     @RequestMapping(value = "/api/payment/shunguang/getpaybackurl", method = RequestMethod.GET)
     public Map<String, Object> getpaybackurl() {
         return sgInnerService.getpaybackurl();
+    }
+
+    /**
+     * 6. 额度校验 审批状态判断
+     *
+     * @Title approveStatus
+     * @Description: 额度校验 审批状态判断
+     * @author yu jianwei
+     * @date 2017/9/14 16:34
+     */
+    @RequestMapping(value = "/api/payment/shunguang/approveStatus", method = RequestMethod.POST)
+    public Map<String, Object> approveStatus() throws Exception {
+        return sgInnerService.approveStatus(super.getToken());
     }
 }

@@ -523,5 +523,53 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         return success(m);
     }
 
-
+    /**
+     * @Title approveStatus
+     * @Description:额度检验 审批状态判断
+     * @author yu jianwei
+     * @date 2017/9/14 16:07
+     */
+    public Map<String, Object> approveStatus(String token) throws Exception {
+        if (StringUtils.isEmpty(token)) {
+            logger.info("获取token失败token:" + token);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cachemap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cachemap)) {
+            logger.info("Redis获取缓存失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String channel = super.getChannel();//系统标识
+        String channelNo = super.getChannelNo();//渠道编码
+        String uidLocal = String.valueOf(cachemap.get("userId"));
+        if (StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(channel) ||StringUtils.isEmpty(uidLocal)) {
+            logger.info("获取的数据为空：uidLocal=" + uidLocal+ "  ,channel=" + channel + "  ,channelNO=" + channelNo);
+            String retMsg = "获取的数据为空";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map returnmap = new HashMap<String, Object>();
+        //6.查询客户额度
+        Map<String, Object> edMap = new HashMap<String, Object>();
+        edMap.put("userId", uidLocal);//内部userId
+        edMap.put("channel", "11");
+        edMap.put("channelNo", channelNo);
+        Map edresult = appServerService.checkEdAppl(token, edMap);
+        if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
+            String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        //获取自主支付可用额度金额
+        String crdNorAvailAmt = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
+        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
+            //跳转有额度页面
+            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
+            return success(returnmap);
+        }
+        String outSts = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("outSts");
+        logger.info("页面跳转flag：" + outSts);
+        returnmap.put("flag", outSts);
+        return success(returnmap);
+    }
 }
