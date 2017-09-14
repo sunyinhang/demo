@@ -390,7 +390,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 //注册成功
                 uidLocal = usermap.get("body").toString();//统一认证内userId
                 phoneNo = custPhoneNo;//统一认绑定手机号
-                //
 //                //验证并绑定集团用户
 //                Map<String, Object> bindMap = new HashMap<String, Object>();
 //                bindMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
