@@ -1,6 +1,6 @@
 <component is="bv-layout" class="bv-align-center fullPage-gray" data-container="myAmount" v-cloak>
     <quota-state v-bind="config" @on-click="goShopFn"></quota-state>
-    <div class="amountInfo" data-redirect="/payByBt/installmentBill.html">
+    <div class="amountInfo">
         <div class="myBill">我的账单</div>
         <div class="myBillNum">
             <span>本月应还</span>
@@ -20,7 +20,7 @@
     require(['jquery', 'util'], function($, util) {
         util.title('我的额度');
         util.script({
-            url: '/payByBt/myAmount.js'
+            url: '/payByBt/myAmountView.js'
         });
     });
 </script>
