@@ -507,15 +507,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         logger.info("额度申请接口请求数据：" + params);
         JSONObject json = new JSONObject(params);
-        if (StringUtils.isEmpty(json.get("token"))) {
-            logger.info("额度申请**必传参数非空校验失败");
-            return fail(ConstUtil.ERROR_CODE, "额度申请，必传参数非空校验失败");
-        }
-
         String token = (String) json.get("token");
         if (StringUtils.isEmpty(token)) {
-            logger.info("获取token失败token:" + token);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            logger.info("额度申请**必传参数非空校验失败");
+            return fail(ConstUtil.ERROR_CODE, "额度申请，必传参数非空校验失败");
         }
         Map<String, Object> cachemap = session.get(token, Map.class);
         if (StringUtils.isEmpty(cachemap)) {
