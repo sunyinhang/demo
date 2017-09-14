@@ -38,7 +38,7 @@ require(['jquery', 'util', 'Const'], function($, util, Const) {
         },
         mounted: function(){
             util.post({
-                url: '/billCheck',
+                url: '/edCheck',
                 success: function(res){
                     var data = util.data(res);
                     console.log(data)
