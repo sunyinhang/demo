@@ -950,7 +950,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String channelNo = super.getChannelNo();//渠道编码
         String idTyp = "20";//证件类型  身份证：20
         if (StringUtils.isEmpty(idNo) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
-            logger.info("获取的数据为空：idNo=" + idNo + "  ,channel=" + channel + "  ,channelNO" + channelNo);
+            logger.info("获取的数据为空：idNo=" + idNo + "  ,channel=" + channel + "  ,channelNO=" + channelNo);
             String retMsg = "获取的数据为空";
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
@@ -982,6 +982,65 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             jb.put("crdNorAvailAmt", crdNorAvailAmt);
             jb.put("crdAmt", crdAmt);
             jb.put("crdComAmt", crdComAmt);
+            // jb.put("crdComAvailAntSum", crdComAvailAntSum);
+            cacheMap.put("crdNorAvailAmt", crdNorAvailAmt);//存储redis
+            cacheMap.put("crdComAvailAnt", crdComAvailAnt);
+            session.set(token, cacheMap);
+            return success(jb);
+        } else {
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+    }
+
+    /**
+     * @Title billCheck
+     * @Description: 账单查询
+     * @author yu jianwei
+     * @date 2017/9/14 12:29
+     */
+    public Map<String, Object> billCheck(String token) {
+        if (StringUtils.isEmpty(token)) {
+            logger.info("获取token失败token:" + token);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cacheMap)) {
+            logger.info("Redis获取缓存失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String userId = (String) cacheMap.get("userId");//用户Id
+        String channel = super.getChannel();//系统标识
+        String channelNo = super.getChannelNo();//渠道编码
+        String crdNorAvailAmt = String.valueOf(cacheMap.get("crdNorAvailAmt"));// 自主支付可用额度金额(现金)
+        String crdComAvailAnt = String.valueOf(cacheMap.get("crdComAvailAnt"));// 剩余额度（受托支付可用额度金额）
+        if (StringUtils.isEmpty(userId) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(crdNorAvailAmt) || StringUtils.isEmpty(crdComAvailAnt)) {
+            logger.info("获取的数据为空：userId=" + userId + "  ,channel=" + channel + "  ,channelNO=" + channelNo + "  ,crdNorAvailAmt=" + crdNorAvailAmt + "  ,crdComAvailAnt=" + crdComAvailAnt);
+            String retMsg = "获取的数据为空";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        HashMap<String, Object> billCheckMap = new HashMap<>();
+        billCheckMap.put("channel", channel);
+        billCheckMap.put("channelNo", channelNo);
+        billCheckMap.put("userId", userId);
+        Map<String, Object> billCheck = appServerService.getBillCheck(token, billCheckMap);// 获取额度剩余额度=crdComAvailAnt+crdNorAvailAmt
+        if (StringUtils.isEmpty(billCheck)) {
+            logger.info("调用接口返回的数据为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        String limit = JSONObject.toJSONString(billCheck);
+        //JSONObject jsonObject = new JSONObject(limit);
+        JSONObject jsonObject = JSONObject.parseObject(limit);
+        JSONObject head = jsonObject.getJSONObject("head");
+        String retFlag = (String) head.get("retFlag");
+        String retMsg = (String) head.get("retMsg");
+        if ("00000".equals(retFlag)) {
+            JSONObject limitRes = jsonObject.getJSONObject("body");
+            String mounthAmount = limitRes.getString("mounthAmount");//每月待还
+            //crdComAvailAntSum = crdComAvailAnt+crdNorAvailAmt;可用额度
+            JSONObject jb = new JSONObject();
+            jb.put("mounthAmount", mounthAmount);
+            jb.put("crdNorAvailAmt", crdNorAvailAmt);
+            jb.put("crdComAvailAnt", crdComAvailAnt);
             // jb.put("crdComAvailAntSum", crdComAvailAntSum);
             return success(jb);
         } else {

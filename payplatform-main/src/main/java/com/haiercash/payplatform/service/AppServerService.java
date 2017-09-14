@@ -61,6 +61,8 @@ public interface AppServerService {
     public Map<String, Object> checkZdhkMoney(String token,Map<String, Object> paramMap);
     // 3.1.16.(GET)额度查询
     public Map<String,Object> getEdCheck(String token,Map<String, Object> paramMap);
+    //6.1.133.	(GET)获取个人中心信息
+    public Map<String,Object> getBillCheck(String token,Map<String, Object> paramMap);
     //(GET)根据流水号查询额度审批进度
     public Map<String,Object> approvalProcessInfo(String token, Map<String, Object> paramMap);
     //3.4.20.	(GET) 根据集团用户ID查询用户信息

@@ -459,6 +459,15 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("额度查询接口返回数据：" + edCheckmap);
         return edCheckmap;
     }
+    //6.1.133.	(GET)获取个人中心信息
+    public Map<String, Object> getBillCheck(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/getPersonalCenterInfo";
+        logger.info("个人中心信息接口请求地址：" + url);
+        logger.info("个人中心信息接口请求参数：" + paramMap);
+        Map<String, Object> billCheckMap = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("个人中心信息返回数据：" + billCheckMap);
+        return billCheckMap;
+    }
 
     //(GET)根据流水号查询额度审批进度
     public Map<String, Object> approvalProcessInfo(String token, Map<String, Object> paramMap) {
