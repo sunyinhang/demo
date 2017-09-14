@@ -558,24 +558,33 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
+        String flag = "";
         //获取自主支付可用额度金额
         String crdNorAvailAmt = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
-            //跳转有额度页面
-            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
-            returnmap.put("backurl", backurl);
-            logger.info("页面跳转到：" + backurl);
+            flag = "04";  //跳转有额度页面
+            logger.info("=============跳转有额度页面=============");
+//            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
+//            returnmap.put("backurl", backurl);
+            returnmap.put("flag", flag);
             return success(returnmap);
         }
         //审批状态判断
         String outSts = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("outSts");
-        logger.info("审批判断页面跳转码"+outSts);
+        logger.info("审批判断页面跳转码" + outSts);
         if ("22".equals(outSts)) {//审批被退回
             String crdSeq = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdSeq");
             cachemap.put("crdSeq", crdSeq);
             session.set(token, cachemap);
+            flag = "03";
+        } else if ("25".equals(outSts)) {//审批被拒绝
+            flag = "02";
+        } else if ("01".equals(outSts)) {//额度正在审批中
+            flag = "01";
+        } else {//没有额度
+            flag = "03";
         }
-        returnmap.put("flag", outSts);
+        returnmap.put("flag", flag);
         return success(returnmap);
     }
 }
