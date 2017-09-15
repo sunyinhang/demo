@@ -69,6 +69,7 @@ allprojects {
             expand(project.properties)
         }
     }
+    compileJava.dependsOn(processResources)
 }
 
 buildscript {
