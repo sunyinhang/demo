@@ -623,12 +623,12 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
     background:url(images/applyQuota/applyInRT.png) no-repeat center;
     background-size: 40%;
 }
-@media only screen and (max-width:320px){
+
+@media screen and (device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2){
     .applyInBody .applyIn_img div{
         display: inline-block;
         width:49%;
         height:3rem;
-
         font-size: .6rem;
     }
     .applyInBody .applyIn_img div span{
