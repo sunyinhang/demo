@@ -39,7 +39,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                         click: function (event, editType, entity) {
                             util.upload({
                                 url: util.mix('/uploadFacePic', {
-                                    edflag: 1 //是不是额度申请
+                                    edflag: 1 //区别是额度申请的人脸还是贷款的人脸（美分期）
                                 }),
                                 data: util.form('faceImg', entity.upload.faceImg),
                                 success: function (res) {
