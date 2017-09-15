@@ -96,10 +96,21 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
             goShopFn: function(){
                 //TODO
             },
-            activeAmountFn: function(param){
+            /*activeAmountFn: function(param){
                 util.redirect({
                     // title: '实名',
                     url: '/applyQuota/checkIdCard.html'
+                });
+            },*/
+            activeAmountFn: function(param){
+                util.post({
+                    url: "/creditLineApply",
+                    success: function (res) {
+                        var data = util.data(res);
+                        if (data) {
+                            initRedirect(data.flag);
+                        }
+                    }
                 });
             },
             goShopMyAmountFn: function(){
