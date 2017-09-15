@@ -63,6 +63,12 @@ allprojects {
         testCompile('org.springframework.boot:spring-boot-starter-test')
         testCompile('org.springframework.security:spring-security-test')
     }
+
+    processResources {
+        filesMatching("**/application.properties") {
+            expand(project.properties)
+        }
+    }
 }
 
 buildscript {
