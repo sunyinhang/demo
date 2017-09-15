@@ -578,7 +578,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             String crdSeq = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdSeq");
             cachemap.put("crdSeq", crdSeq);
             session.set(token, cachemap);
-            flag = "03";
+            flag = "05";
         } else if ("25".equals(outSts)) {//审批被拒绝
             flag = "02";
         } else if ("01".equals(outSts)) {//额度正在审批中
