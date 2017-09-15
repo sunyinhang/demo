@@ -480,7 +480,62 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(certNo)) {
             logger.info("顺逛传送身份证与客户实名身份证不一致");
             return fail(ConstUtil.ERROR_CODE, "顺逛白条实名认证必须和顺逛实名认证一致！");
-        } else {
+        }
+        cachemap.put("custNo", custNo);//客户编号
+        cachemap.put("name", custName);//客户姓名
+        cachemap.put("cardNo", cardNo);//银行卡号
+        cachemap.put("bankCode", bankNo);//银行代码
+        cachemap.put("bankName", bankName);//银行名称
+        cachemap.put("idNo", certNo);//身份证号
+        cachemap.put("idCard", certNo);//身份证号
+        cachemap.put("idType", certType);
+        session.set(token, cachemap);
+        //6.查询客户额度
+        Map<String, Object> edMap = new HashMap<String, Object>();
+        edMap.put("userId", uidLocal);//内部userId
+        edMap.put("channel", "11");
+        edMap.put("channelNo", channelNo);
+        Map edresult = appServerService.checkEdAppl(token, edMap);
+        if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
+            String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        //获取自主支付可用额度金额
+        String crdNorAvailAmt = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
+        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
+            //跳转有额度页面
+            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
+            return success(returnmap);
+        }
+        //审批状态判断
+        String outSts = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("outSts");
+        if ("01".equals(outSts)) {//额度正在审批中
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
+            return success(returnmap);
+        } else if ("22".equals(outSts)) {//审批被退回
+            String crdSeq = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdSeq");
+            cachemap.put("crdSeq", crdSeq);
+            session.set(token, cachemap);
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
+            return success(returnmap);
+        } else if ("25".equals(outSts)) {//审批被拒绝
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
+            return success(returnmap);
+        } else {//没有额度  额度激活
+            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
+            returnmap.put("backurl", backurl);
+            logger.info("页面跳转到：" + backurl);
+            return success(returnmap);
+        }
+        /* else {
             cachemap.put("custNo", custNo);//客户编号
             cachemap.put("name", custName);//客户姓名
             cachemap.put("cardNo", cardNo);//银行卡号
@@ -493,7 +548,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/quotaMerge.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
-        }
+        }*/
     }
 
     //7.白条额度申请状态查询    Sg-10006    checkEdAppl
