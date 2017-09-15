@@ -37,6 +37,9 @@ spring:
     queue:
 #      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
       cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
+  http:
+    encoding:
+      force: true
 redis:
   single:
     host: 10.164.194.123
