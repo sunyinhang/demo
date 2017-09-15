@@ -12,3 +12,6 @@ jar {
     baseName = project.name
     version = project.releasePublish ? project.version : "${project.version}-SNAPSHOT"
 }
+springBoot {
+    classifier = 'exec'
+}
