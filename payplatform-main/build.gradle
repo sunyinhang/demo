@@ -1,0 +1,17 @@
+dependencies {
+    compile project(':payplatform-base')
+
+    compile('com.bestvike:bv-mybatis:3.4.0-SNAPSHOT')
+    compile('com.bestvike:bv-jxls-poi:1.0.9-SNAPSHOT')
+    compile('com.bestvike:bv-jxls-reader:2.0.2-SNAPSHOT')
+}
+ext {
+    releasePublish = project.hasProperty('release')
+}
+jar {
+    baseName = project.name
+    version = project.releasePublish ? project.version : "${project.version}-SNAPSHOT"
+}
+springBoot {
+    classifier = 'exec'
+}

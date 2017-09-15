@@ -1,0 +1,74 @@
+package com.haiercash.payplatform.utils;
+
+public abstract class CmisTradeCode {
+    public static final String TRADECODE_USER_REGIST = "100002";
+    public static final String TRADECODE_USER_LOGIN = "100003";
+    public static final String TRADECODE_CUSTOMERINFO = "100004";
+    public static final String TRADECODE_USER_COLD = "100005";
+    public static final String TRADECODE_SET_LOGINPASSWORD = "100006";
+    public static final String TRADECODE_UPDATE_LOGINPASSWORD = "100007";
+    public static final String TRADECODE_CHECK_TRADEPASSWORD = "100008";
+    public static final String TRADECODE_REALNAME = "100009";
+    public static final String TRADECODE_ED_APPLAY = "100010";
+    public static final String TRADECODE_CUSTOMER_CHECK = "100011";
+    public static final String TRADECODE_EDAPP_CHECK = "100012";
+    public static final String TRADECODE_REALNAME_CHECK = "100013";
+    public static final String TRADECODE_HKNO_UPDATE = "100014";
+    public static final String TRADECODE_EDAPPLAY_COMMIT = "100030";
+    public static final String TRADECODE_ED_CHECK = "100016";
+    public static final String TRADECODE_EDAPPLAY_PROGRESS = "100017";
+    public static final String TRADECODE_DKAPPLAY = "100018";
+    public static final String TRADECODE_DKCOLUMN_CHECK = "100020";
+    public static final String TRADECODE_DKINFO_CHECK = "100021";
+    public static final String TRADECODE_DKRES_SEND = "100022";
+    public static final String TRADECODE_MDINFO_CHECK = "100023";
+    public static final String TRADECODE_MESSAGE_SEND = "100024";
+    public static final String TRADECODE_RETURN_APPLAY = "100025";
+    public static final String TRADECODE_DK_CANCEL = "100026";
+    public static final String TRADECODE_COUNT_REGIST = "100027";
+    public static final String TRADECODE_LOGIN_CHECK = "100028";
+    public static final String TRADECODE_HKINFO_CHECK = "100029";
+    public static final String TRADECODE_ZDHK_APPLAY = "100031";
+    public static final String TRADECODE_HKSS = "100032";
+    public static final String TRADECODE_ZDHKPROGRESS_CHECK = "100033";
+    public static final String TRADECODE_ZDHKSS = "100034";
+    public static final String TRADECODE_DKINFO_CHECK2 = "100035";
+    public static final String TRADECODE_HKLOG_CHECK = "100036";
+    public static final String TRADECODE_MESSAGE_CHECK = "100037";
+    public static final String TRADECODE_WEIXIN_REDBOX = "100038";
+    public static final String TRADECODE_NEWADD_SHOP = "1000039";
+    public static final String TRADECODE_ZDHK_APPLAYS = "100040";
+    public static final String TRADECODE_SEND_BAOWEN = "100041";
+    public static final String TRADECODE_CHECK_MENDIAN = "100042";
+    public static final String TRADECODE_GETQUHUO_CODE = "100043";
+    public static final String TRADECODE_CHECK_QUHUOCODE = "100044";
+    public static final String TRADECODE_WHITE_LIST = "100045";
+    public static final String TRADECODE_EDAPPLAY_UPDATE_WITH_BZ = "100015";
+    public static final String TRADECODE_WHITE_LIST2 = "100047";
+    public static final String TRADECODE_BLACK_CHECK = "100048";
+    public static final String TRADECODE_CUSTOMERLOGNAME_CHECK = "100049";
+    public static final String TRADECODE_EDAPPLY_CANCEL = "100050";
+    public static final String TRADECODE_SHANGHU_ADDANDUPDATE = "100051";
+    public static final String TRADECODE_SHANGHU_ZHGL = "100052";
+    public static final String TRADECODE_ZHGLY_INFO = "100053";
+    public static final String TRADECODE_WWRISK = "100054";
+    public static final String TRADECODE_FTP_ADD = "100055";
+    public static final String TRADECODE_FTP_UPDATE = "100056";
+    public static final String TRADECODE_FTP_CHECK = "100057";
+    public static final String TRADECODE_ZZHK = "100058";
+    public static final String TRADECODE_CHECKDKXQ_BYAPPLSEQ = "100059";
+    public static final String TRADECODE_HKSS_BYAPPLSEQ = "100060";
+    public static final String TRADECODE_LCGJ_CHECK = "100061";
+    public static final String TRADECODE_GETPRODUCTCODE_BYMENDIAN = "100062";
+    public static final String TRADECODE_YWINFO_BYLDNUM = "100063";
+    public static final String TRADECODE_GETHKJH_BYIDNO = "100064";
+    public static final String TRADECODE_MESSAGE_SEND2 = "100065";
+    public static final String TRADECODE_USER_MANAGE = "100066";
+    public static final String TRADECODE_QDJJ = "100001";
+    public static final String TRADECODE_PAYMENT = "100071";
+    public static final String TRADECODE_HSSYS_ZDHKSS = "serv10000100040";
+    public static final String TRADECODE_HSSYS_QKCHECK = "serv10000100043";
+
+    public CmisTradeCode() {
+    }
+}
