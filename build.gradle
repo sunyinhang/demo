@@ -5,7 +5,16 @@ allprojects {
 
     version = '1.0.4'
     sourceCompatibility = 1.8
-
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+            resources {
+                srcDirs 'src/main/java'
+            }
+        }
+    }
     repositories {
         mavenLocal()
         maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
