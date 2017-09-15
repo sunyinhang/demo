@@ -74,9 +74,26 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         }else{
             //查询贷款品种类型
         }
+        String userId = (String)cacheMap.get("userId");
+
+        //5.查询实名信息
+        Map<String, Object> custMap = new HashMap<String, Object>();
+        custMap.put("userId", userId);//内部userId
+        custMap.put("channel", "11");
+        custMap.put("channelNo", channelNo);
+        Map custresult = appServerService.queryPerCustInfo(token, custMap);
+        String custretflag = ((HashMap<String, Object>) (custresult.get("head"))).get("retFlag").toString();
+        if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
+            String custretMsg = ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, custretMsg);
+        }
+        if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
+            logger.info("token:" + token);
+            resultparamMap.put("flag", "6");//实名认证 页面
+            return success(resultparamMap);
+        }
         //TODO 总入口需查询客户信息数据
         String custNo = (String)cacheMap.get("custNo");
-        String userId = (String)cacheMap.get("userId");
         String custName = (String)cacheMap.get("name");
         String idNumber = (String)cacheMap.get("idCard"); //身份证
         String userType = (String) cacheMap.get("userType");//01 微店主    02 普通用户
