@@ -567,11 +567,11 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
     padding: 0;
 }
 /*applyIn改进*/
-.applyInBody{flex-direction:column;  height:66%; background:#fff url(images/applyQuota/applyInground.png) no-repeat 100% 100%;}
+.applyInBody{ height:66%; background:#fff url(images/applyQuota/applyInground.png) no-repeat 100% 100%;}
 .applyInBody div p{margin:0;}
 .applyInBody span{position:relative;top:-0.4rem; width:100%;text-align: center;font-size: 0.7rem;color:#32BEFF;}
 .applyInBody .applyIn_p{line-height: 1rem;height:2rem; font-size: 0.7rem;background-color: #fafafa;color:#ABABAB;padding:0.7rem 0.6rem;margin:0;text-align: left;}
-.applyInBody .applyIn_img{ flex: 1; width:96%;background: url(images/applyQuota/applyInwire.png) center; margin:0.8rem 0.8rem 0.2rem 0.5rem;}
+.applyInBody .applyIn_img{  width:96%;background: url(images/applyQuota/applyInwire.png) center; margin:0.8rem 0.8rem 0.2rem 0.5rem;}
 .applyInBody .applyIn_img div{ display: inline-block;width:49%;height:5rem;margin-top:1rem;}
 .applyInBody .applyIn-LT p{width:100%;height:100%; background:url(images/applyQuota/applyInLT.png) no-repeat center;background-size: 40%;}
 .applyInBody .applyIn-LB p{width:100%;height:100%; background:url(images/applyQuota/applyInLB.png) no-repeat center;background-size: 40%;}
