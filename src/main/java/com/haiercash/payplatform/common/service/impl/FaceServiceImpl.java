@@ -216,21 +216,12 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             if("N".equals(checkbodyjson.get("isRetry")) &&
                     "N".equals(checkbodyjson.get("isOK")) &&
                     "N".equals(checkbodyjson.get("isResend"))){
-//                List<String> str = new ArrayList<String>();
-//                Map<String, Object> bodyMap = DataConverUtil.jsonToMap(String.valueOf(checkbodyjson));
-//                List<Map<String, Object>> attachList = (List<Map<String, Object>>) bodyMap.get("attachList");
-//                for (Map<String, Object> map : attachList) {
-//                    if (ConstUtil.ATTACHTYPE_APP01.equals(map.get("docCde"))) {
-//                        String docCde = (String) map.get("docCde");
-//                        String docDesc = (String) map.get("docDesc");
-//                        str.add(docCde);
-//                        str.add(docDesc);
-//                    }
-//                }
                 //跳转到手持身份证
-                Map<String, Object> m = new HashMap<String, Object>();
-                m.put("faceFlag", "2");
-                return success(m);
+//                Map<String, Object> m = new HashMap<String, Object>();
+//                m.put("faceFlag", "2");
+//                return success(m);
+                logger.info("您人脸识别失败多次，暂时不允许继续申请，谢谢您的关注");
+                return fail(ConstUtil.ERROR_CODE,"您人脸识别失败多次，暂时不允许继续申请，谢谢您的关注");
             }else{
                 //可以继续做人脸，跳转到人脸页面
                 Map<String, Object> m = new HashMap<String, Object>();
