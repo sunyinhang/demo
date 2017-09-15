@@ -10,7 +10,7 @@
     <div class="height10 gray"></div>
     <div class="nodeList">
         <ul>
-            <li v-for="item in items" v-if="index !== 0">
+            <li v-for="(item,index) in items" v-if="index !== 0">
                 <em></em>
                 <span>{{item.wfiNodeName}}</span><!--<b>{{item.appConclusionDesc}}</b>-->
                 <p>{{item.operateTime}}</p>
