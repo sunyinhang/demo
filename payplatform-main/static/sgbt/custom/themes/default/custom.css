@@ -631,6 +631,16 @@ a.payBlueBtn:link,a.payBlueBtn:visited,a.payBlueBtn:hover{float:right;padding:0p
         height:3.2rem;
         font-size: .6rem;
     }
+    .applyInBody .applyIn_p{
+        line-height: .7rem;
+        height:1.5rem;
+        font-size: 0.5rem;
+        background-color: #fafafa;
+        color:#ABABAB;
+        padding:0.7rem 0.6rem;
+        margin:0;
+        text-align: left;
+    }
     .applyInBody .applyIn_img div span{
         font-size: 0.3rem;
     }
