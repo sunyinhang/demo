@@ -26,6 +26,7 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                 operates: [
                     {
                         text: '下一步',
+                        id: 'faceNext',
                         layout: 'primary',
                         validate: {
                             before: function (event, editType, entity) {
@@ -59,12 +60,15 @@ require(['jquery', 'util', 'Const', 'bvUpload', 'bvForm'], function($, util, Con
                                             back: false
                                         });
                                     } else if (data.faceFlag === '2') {
-                                        //人脸识别失败，跳转手持身份证
+                                        /*//人脸识别失败，跳转手持身份证
                                         util.redirect({
                                             // title: '手持身份证',
                                             url: '/applyQuota/handholdIdCard.html',
                                             back: false
-                                        });
+                                        });*/
+                                        util.alert('您人脸识别失败多次，暂时不允许继续申请，谢谢您的关注');
+                                        $('#faceNext').attr('disabled','true');
+
                                     } else if (data.faceFlag === '3') {
                                         //人脸识别失败，再拍摄一遍
                                         util.alert('#faceCapture');
