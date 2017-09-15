@@ -40,6 +40,8 @@ spring:
   http:
     encoding:
       force: true
+    multipart:
+      max-file-size: 10MB
 redis:
   single:
     host: 10.164.194.123
