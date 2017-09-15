@@ -158,7 +158,7 @@ require(['jquery', 'util', 'Const','bvForm'], function($, util, Const) {
                             success: function(res){
                                 var data = util.data(res);
                                 if(!util.isEmpty(data)){
-                                    vm.config.num = data.crdComAvailAnt;
+                                    vm.config4.num = data.crdComAvailAnt;
                                     vm.crdNorAvailAmt = data.crdAmt;
                                 }
                             }
