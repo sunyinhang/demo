@@ -1,0 +1,43 @@
+<component is="bv-layout" class="bv-align-center fullPage gray" data-container="quotaMerge" v-cloak>
+	<div id="applyIn" style="display: none">
+		<quota-state v-bind="config"  @on-redirect="redirectFn"></quota-state>
+		<static-text></static-text>
+	</div>
+	<div id="applyFail" style="display: none">
+		<quota-state v-bind="config2"></quota-state>
+	</div>
+	<div id="amountNot" style="display: none">
+		<quota-state v-bind="config3" @on-click="activeAmountFn"></quota-state>
+	</div>
+	<div id="myAmount" style="display: none">
+		<quota-state v-bind="config4" @on-click="goShopMyAmountFn"></quota-state>
+		<div class="amountInfo" data-redirect="/payByBt/installmentBill.html">
+			<div class="myBill">我的账单</div>
+			<div class="myBillNum">
+				<span>本月应还</span>
+				<span class="t-orange">{{(mounthAmount == ''? 0 : mounthAmount )| currency}}</span>
+			</div>
+		</div>
+		<div class="line"></div>
+		<div class="amountInfo" data-redirect="/payByBt/myAmountView.html">
+			<div class="myBill">我的额度</div>
+			<div class="myBillNum">
+				<span>总额度</span>
+				<span class="t-blue">{{(crdNorAvailAmt == ''? 0 : crdNorAvailAmt )| currency}}</span>
+			</div>
+		</div>
+	</div>
+	<div id="applyReturn" style="display: none">
+		<quota-state v-bind="config5" @on-click="getReasonsFn"></quota-state>
+		<component is="bv-form" v-bind="formConfig"></component>
+	</div>
+</component>
+<script type="text/javascript">
+	require(['jquery', 'util'], function($, util) {
+		util.title('额度输出中');
+		util.script({
+			url: '/applyQuota/quotaMerge.js'
+		});
+	});
+</script>
+
