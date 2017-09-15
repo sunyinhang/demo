@@ -34,7 +34,7 @@ import java.util.Map;
  * Created by yuanli on 2017/8/9.
  */
 @Service
-public class SgInnerServiceImpl extends BaseService implements SgInnerService{
+public class SgInnerServiceImpl extends BaseService implements SgInnerService {
     @Autowired
     private Session session;
     @Autowired
@@ -62,8 +62,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String token = (String) map.get("token");
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
-        if(StringUtils.isEmpty(uidLocal) || StringUtils.isEmpty(password) || StringUtils.isEmpty(token)
-                || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
+        if (StringUtils.isEmpty(uidLocal) || StringUtils.isEmpty(password) || StringUtils.isEmpty(token)
+                || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("userId:" + uidLocal + "   token:" + token + "   channelNo:" + channelNo + "   channel:" + channel);
             logger.info("前台获取请求参数有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
@@ -76,7 +76,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         }
         //获取会员uid
         String uidHaier = (String) cacheMap.get("uidHaier");
-        if(StringUtils.isEmpty(uidHaier)){
+        if (StringUtils.isEmpty(uidHaier)) {
             logger.info("uidHaier:" + uidHaier);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -85,13 +85,13 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
         paramMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));
         paramMap.put("password", EncryptUtil.simpleEncrypt(password));
-        Map<String,Object> usermap = appServerService.validateAndBindHaierUser(token, paramMap);
-        if(!HttpUtil.isSuccess(usermap)){
-            String retMsg = (String) ((HashMap<String, Object>)(usermap.get("head"))).get("retMsg");
+        Map<String, Object> usermap = appServerService.validateAndBindHaierUser(token, paramMap);
+        if (!HttpUtil.isSuccess(usermap)) {
+            String retMsg = (String) ((HashMap<String, Object>) (usermap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         //获取绑定手机号
-        String phoneNo = (String) ((HashMap<String, Object>)(usermap.get("body"))).get("mobile");
+        String phoneNo = (String) ((HashMap<String, Object>) (usermap.get("body"))).get("mobile");
         cacheMap.put("userId", uidLocal);//统一认证userId
         cacheMap.put("phoneNo", phoneNo);//绑定手机号
         //4.token绑定
@@ -107,25 +107,25 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         Map<String, Object> custMap = new HashMap<String, Object>();
         custMap.put("userId", uidLocal);//内部userId
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
-        String custretflag = (String) ((HashMap<String, Object>)(custresult.get("head"))).get("retFlag");
-        if(!"00000".equals(custretflag) && !"C1220".equals(custretflag)){//查询实名信息失败
-            String custretMsg = (String) ((HashMap<String, Object>)(custresult.get("head"))).get("retMsg");
+        String custretflag = (String) ((HashMap<String, Object>) (custresult.get("head"))).get("retFlag");
+        if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
+            String custretMsg = (String) ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
-        if("C1220".equals(custretflag)){//C1120  客户信息不存在  跳转无额度页面
+        if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
             session.set(token, cacheMap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
         }
-        String certType = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("certType");//证件类型
-        String certNo = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("certNo");//身份证号
-        String custNo = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("custNo");//客户编号
-        String custName = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("custName");//客户名称
-        String cardNo = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("cardNo");//银行卡号
-        String bankNo = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankNo");//银行代码
-        String bankName = (String) ((HashMap<String, Object>)(custresult.get("body"))).get("acctBankName");//银行名称
+        String certType = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("certType");//证件类型
+        String certNo = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("certNo");//身份证号
+        String custNo = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("custNo");//客户编号
+        String custName = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("custName");//客户名称
+        String cardNo = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("cardNo");//银行卡号
+        String bankNo = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankNo");//银行代码
+        String bankName = (String) ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankName");//银行名称
 
 //        cacheMap.put("custNo", custNo);//客户编号
 //        cacheMap.put("name", custName);//客户姓名
@@ -150,13 +150,13 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         edMap.put("channel", "11");
         edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
-        if (!HttpUtil.isSuccess(edresult) ) {//额度校验失败
-            String retmsg = (String) ((HashMap<String, Object>)(edresult.get("head"))).get("retMsg");
+        if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
+            String retmsg = (String) ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         //获取自主支付可用额度金额
-        String crdNorAvailAmt = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdNorAvailAmt");
-        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt) ){
+        String crdNorAvailAmt = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
+        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
             //跳转有额度页面
             String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
             map.put("backurl", backurl);
@@ -164,26 +164,26 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             return success(map);
         }
         //审批状态判断
-        String outSts = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("outSts");
-        if("01".equals(outSts)) {//额度正在审批中
+        String outSts = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("outSts");
+        if ("01".equals(outSts)) {//额度正在审批中
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
-        }else if("22".equals(outSts)) {//审批被退回
-            String crdSeq = (String) ((HashMap<String, Object>)(edresult.get("body"))).get("crdSeq");
+        } else if ("22".equals(outSts)) {//审批被退回
+            String crdSeq = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdSeq");
             cacheMap.put("crdSeq", crdSeq);
             session.set(token, cacheMap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
-        }else if("25".equals(outSts)) {//审批被拒绝
+        } else if ("25".equals(outSts)) {//审批被拒绝
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
-        }else {//没有额度  额度激活
+        } else {//没有额度  额度激活
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
@@ -211,21 +211,21 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String payAmt = "";//申请金额
         String typCde = "";//贷款品种
         String psPerdNo = "";//借款期限
-        if("1".equals(flag) || "1".equals(updatemallflag)){//待提交返显
+        if ("1".equals(flag) || "1".equals(updatemallflag)) {//待提交返显
             logger.info("待提交订单*********数据加载");
 
-            if("1".equals(flag)){
-                if(StringUtils.isEmpty(orderNo)){
+            if ("1".equals(flag)) {
+                if (StringUtils.isEmpty(orderNo)) {
                     logger.info("前台传入参数有误");
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                 }
-            }else{
+            } else {
                 logger.info("退回及待提交进行订单修改");
                 orderNo = (String) cacheMap.get("updatemalloderNo");
             }
             //
             AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
-            if(AppOrdernoTypgrpRelation == null){
+            if (AppOrdernoTypgrpRelation == null) {
                 logger.info("没有获取到订单信息");
                 return fail(ConstUtil.ERROR_CODE, "没有获取到订单信息");
             }
@@ -234,10 +234,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             logger.info("得到申请流水号：" + applseq);
             //根据applSeq查询商城订单号和网单号
             Map m = orderManageService.getMallOrderNoByApplSeq(applseq);
-            if(!HttpUtil.isSuccess(m)){
+            if (!HttpUtil.isSuccess(m)) {
                 return m;
             }
-            Map ordermap = (HashMap<String, Object>)m.get("body");
+            Map ordermap = (HashMap<String, Object>) m.get("body");
             String mallOrderNo = (String) ordermap.get("mallOrderNo");
             List<Map<String, Object>> body = (List<Map<String, Object>>) ordermap.get("goodsList");
             List<AppOrderGoods> appOrderGoodsList = new ArrayList<AppOrderGoods>();
@@ -261,10 +261,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             appOrder.setAppOrderGoodsList(appOrderGoodsList);
             //根据申请流水号获取送货信息
             Map mapAddress = orderManageService.getAddressByFormId(orderNo);
-            if(!HttpUtil.isSuccess(mapAddress)){
-                return  mapAddress;
+            if (!HttpUtil.isSuccess(mapAddress)) {
+                return mapAddress;
             }
-            Map adAddrmap = (HashMap<String, Object>)mapAddress.get("body");
+            Map adAddrmap = (HashMap<String, Object>) mapAddress.get("body");
             String adAddr = (String) adAddrmap.get("adAddr");//送货详细地址
             String adProvince = (String) adAddrmap.get("adProvince");//送货地址省
             String adCity = (String) adAddrmap.get("adCity");//送货地址市
@@ -277,7 +277,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
 
             //查询订单详情
             Map<String, Object> mapLoanDetail = acquirerService.getOrderFromAcquirer(applseq, channel, channelNo, null, null, "2");
-            if(!HttpUtil.isSuccess(mapLoanDetail)){
+            if (!HttpUtil.isSuccess(mapLoanDetail)) {
                 return mapLoanDetail;
             }
             Map bodyLoanDetail = (HashMap<String, Object>) mapLoanDetail.get("body");
@@ -302,7 +302,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
             try {
                 appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
                 logger.info("appOrder0:" + appOrder);
-                if(appOrder == null){
+                if (appOrder == null) {
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
                 }
             } catch (IOException e) {
@@ -322,16 +322,16 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         paySsMap.put("channelNo", channelNo);
         boolean boo = false;
         Map<String, Object> payssresultMap = appServerService.getBatchPaySs(token, paySsMap);
-        if (!HttpUtil.isSuccess(payssresultMap) ) {//额度校验失败
-            String retflag = (String) ((HashMap<String, Object>)(payssresultMap.get("head"))).get("retFlag");
-            if("A1101".equals(retflag)){//贷款类型为天
+        if (!HttpUtil.isSuccess(payssresultMap)) {//额度校验失败
+            String retflag = (String) ((HashMap<String, Object>) (payssresultMap.get("head"))).get("retFlag");
+            if ("A1101".equals(retflag)) {//贷款类型为天
                 boo = true;
-            }else {
+            } else {
                 String retmsg = (String) ((HashMap<String, Object>) (payssresultMap.get("head"))).get("retMsg");
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             }
         }
-        if(!boo){//贷款类型按月
+        if (!boo) {//贷款类型按月
             //{head={retFlag=00000, retMsg=处理成功}, body={info=[{psPerdNo=12, instmAmt=259.0}, {psPerdNo=6, instmAmt=518.0}]}}
             String result = JSONObject.toJSONString(payssresultMap);
             JSONObject custBody = JSONObject.parseObject(result).getJSONObject("body");
@@ -350,18 +350,18 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", payAmt);
-        if(boo){//贷款类型按天
+        if (boo) {//贷款类型按天
             payMap.put("applyTnrTyp", "D");
             payMap.put("applyTnr", "30");
-        }else {
+        } else {
             payMap.put("applyTnrTyp", psPerdNo);
             payMap.put("applyTnr", psPerdNo);
         }
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
-        Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
-        if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
-            String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
+        Map<String, Object> payresultMap = appServerService.getPaySs(token, payMap);
+        if (!HttpUtil.isSuccess(payresultMap)) {//额度校验失败
+            String retmsg = (String) ((HashMap<String, Object>) (payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         String payresult = JSONObject.toJSONString(payresultMap);
@@ -374,10 +374,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
 
         retrunmap.put("payAmt", payAmt);
         retrunmap.put("totalAmt", totalAmt);
-        if(boo){//贷款类型按天
+        if (boo) {//贷款类型按天
             retrunmap.put("payMtd", "");
-        }else{
-            retrunmap.put("payMtd", ((HashMap<String, Object>)(payssresultMap.get("body"))).get("info"));
+        } else {
+            retrunmap.put("payMtd", ((HashMap<String, Object>) (payssresultMap.get("body"))).get("info"));
         }
 
         logger.info("白条分期页面加载*******************结束");
@@ -404,7 +404,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         try {
             appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
             logger.info("appOrder0:" + appOrder);
-            if(appOrder == null){
+            if (appOrder == null) {
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
         } catch (IOException e) {
@@ -420,9 +420,9 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         payMap.put("applyTnr", applyTnr);
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
-        Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
-        if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
-            String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
+        Map<String, Object> payresultMap = appServerService.getPaySs(token, payMap);
+        if (!HttpUtil.isSuccess(payresultMap)) {//额度校验失败
+            String retmsg = (String) ((HashMap<String, Object>) (payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         String payresult = JSONObject.toJSONString(payresultMap);
@@ -453,18 +453,18 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         //{"error_description":"Invalid access token: asadada","error":"invalid_token"}
         //{"user_id":1000030088,"phone_number":"18525369183","phone_number_verified":true,"created_at":1499304958000,"updated_at":1502735413000}
         org.json.JSONObject userjson = new org.json.JSONObject(userjsonstr);
-        if(!userjson.has("user_id")){
+        if (!userjson.has("user_id")) {
             logger.info("没有获取到客户信息");
             return userId;
         }
         Object uid = userjson.get("user_id");//会员id
-        if(StringUtils.isEmpty(uid)){
+        if (StringUtils.isEmpty(uid)) {
             String error = userjson.get("error").toString();
             return userId;
         }
         String uidHaier = uid.toString();
         Map<String, Object> cacheMap = session.get(token, Map.class);
-        if(cacheMap == null || "".equals(cacheMap)){
+        if (cacheMap == null || "".equals(cacheMap)) {
             cacheMap = new HashMap<String, Object>();
         }
         cacheMap.put("uidHaier", uidHaier);
@@ -474,14 +474,14 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         String head = resultMap.get("head").toString();
         Map<String, Object> headMap = HttpUtil.json2Map(head);
         String retFlag = headMap.get("retFlag").toString();
-        if("00000".equals(retFlag)) {
+        if ("00000".equals(retFlag)) {
             //集团uid已在统一认证做过绑定
             String body = resultMap.get("body").toString();
             //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
             org.json.JSONObject bodyMap = new org.json.JSONObject(body);
             userId = bodyMap.get("userId").toString();
             return userId;
-        }else{
+        } else {
             logger.info("会员验证失败");
             return userId;
         }
@@ -523,5 +523,68 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService{
         return success(m);
     }
 
-
+    /**
+     * @Title approveStatus
+     * @Description:额度检验 审批状态判断
+     * @author yu jianwei
+     * @date 2017/9/14 16:07
+     */
+    public Map<String, Object> approveStatus(String token) throws Exception {
+        if (StringUtils.isEmpty(token)) {
+            logger.info("获取token失败token:" + token);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> cachemap = session.get(token, Map.class);
+        if (StringUtils.isEmpty(cachemap)) {
+            logger.info("Redis获取缓存失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String channel = super.getChannel();//系统标识
+        String channelNo = super.getChannelNo();//渠道编码
+        String uidLocal = String.valueOf(cachemap.get("userId"));
+        if (StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(uidLocal)) {
+            logger.info("获取的数据为空：uidLocal=" + uidLocal + "  ,channel=" + channel + "  ,channelNO=" + channelNo);
+            String retMsg = "获取的数据为空";
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map returnmap = new HashMap<String, Object>();
+        //6.查询客户额度
+        Map<String, Object> edMap = new HashMap<String, Object>();
+        edMap.put("userId", uidLocal);//内部userId
+        edMap.put("channel", channel);
+        edMap.put("channelNo", channelNo);
+        Map edresult = appServerService.checkEdAppl(token, edMap);
+        if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
+            String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        String flag = "";//页面跳转标识
+        //获取自主支付可用额度金额
+        String crdNorAvailAmt = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
+        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
+            flag = "04";  //跳转有额度页面
+            logger.info("=============跳转有额度页面=============");
+//            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
+//            returnmap.put("backurl", backurl);
+            returnmap.put("flag", flag);
+            return success(returnmap);
+        }
+        //审批状态判断
+        String outSts = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("outSts");
+        logger.info("审批判断页面跳转码" + outSts);
+        if ("22".equals(outSts)) {//审批被退回
+            String crdSeq = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdSeq");
+            cachemap.put("crdSeq", crdSeq);
+            session.set(token, cachemap);
+            flag = "03";
+        } else if ("25".equals(outSts)) {//审批被拒绝
+            flag = "02";
+        } else if ("01".equals(outSts)) {//额度正在审批中
+            flag = "01";
+        } else {//没有额度
+            flag = "03";
+        }
+        returnmap.put("flag", flag);
+        return success(returnmap);
+    }
 }

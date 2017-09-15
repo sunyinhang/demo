@@ -48,4 +48,12 @@ public interface SgInnerService {
      * @return
      */
     Map<String, Object> getpaybackurl();
+    /**
+     * @Title approveStatus
+     * @Description: 额度校验 审批状态判断
+     * @author yu jianwei
+     * @date 2017/9/14 16:34
+     */
+    Map<String, Object> approveStatus(String token) throws Exception;
+
 }

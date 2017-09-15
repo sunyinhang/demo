@@ -21,10 +21,36 @@
 
 
     <select id="selectcount" resultType="java.lang.Integer">
-        select count(1) from Sgts_Log where appl_seq=#{applSeq} and remark ='00000'
+        select count(1) from Sgts_Log where appl_seq=#{applSeq} and remark ='1'
     </select>
 
     <select id="selectcounts" resultType="java.lang.Integer">
         select count(1) from Sgts_Log where appl_seq=#{applSeq, jdbcType=VARCHAR} and out_sts=#{outSts, jdbcType=VARCHAR} and tscount =3
+    </select>
+
+    <select id="selectappl" resultType="java.lang.Integer">
+        select count(1) from Sgts_Log where appl_seq=#{applSeq, jdbcType=VARCHAR} and out_sts=#{outSts, jdbcType=VARCHAR}  and remark=0 and tscount &lt;3
+    </select>
+
+    <select id="selectapplq" resultType="java.lang.Integer">
+        select count(1) from Sgts_Log where appl_seq=#{applSeq, jdbcType=VARCHAR} and out_sts=#{outSts,jdbcType=VARCHAR}
+    </select>
+
+    <select id="updateBySeq" resultType="java.lang.Integer">
+        update Sgts_Log set remark='1' where appl_seq=#{applSeq, jdbcType=VARCHAR} and out_sts=#{outSts,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectappltyp" resultType="java.lang.Integer">
+       select count(1) from Sgts_Log where appl_seq=#{applSeq, jdbcType=VARCHAR} and msg_typ=#{msgTyp,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="updateBytyp" resultType="java.lang.Integer">
+        update Sgts_Log set remark='1' where appl_seq=#{applSeq, jdbcType=VARCHAR} and msg_typ=#{msgTyp,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="selectmsgtyp" resultType="java.lang.Integer">
+        select count(1) from Sgts_Log where appl_seq=#{applSeq, jdbcType=VARCHAR} and msg_typ=#{msgTyp, jdbcType=VARCHAR}  and remark=0 and tscount &lt;3
     </select>
 </mapper>
