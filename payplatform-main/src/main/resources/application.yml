@@ -20,7 +20,7 @@ spring:
       max-idle: 100
       min-idle: 10
       max-active: 1000
-  http.converters.preferred-json-mapper: fastjson
+  http.converters.preferred-json-mapper: fastjson-payplatform
   rabbitmq:
     addresses: 10.164.197.208:5672, 10.164.197.228:5672
 #    addresses: 10.164.197.54:5672, 10.164.197.55:5672
@@ -37,6 +37,11 @@ spring:
     queue:
 #      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
       cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
+  http:
+    encoding:
+      force: true
+    multipart:
+      max-file-size: 10MB
 redis:
   single:
     host: 10.164.194.123

@@ -631,7 +631,11 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         map.put("custName", custName);// 客户姓名
         map.put("custIdCode", custIdCode);// 客户身份证号
         map.put("applseq", applseq);// 请求流水号
-        map.put("signType", "SHUNGUANG_H5");// 签章类型
+        if("17099a".equals(typCde)){//不同的贷款品种对应不同的签章类型
+            map.put("signType", "SHUNGUANG_H5_V2");// 签章类型
+        }else{
+            map.put("signType", "SHUNGUANG_H5");// 签章类型
+        }
         map.put("flag", "0");//1 代表合同  0 代表 协议
         map.put("orderJson", orderJson.toString());
         map.put("sysFlag", "11");// 系统标识：支付平台

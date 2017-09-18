@@ -3,9 +3,18 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'org.springframework.boot'
 
-    version = '1.0.1'
+    version = '1.0.5'
     sourceCompatibility = 1.8
-
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+            resources {
+                srcDirs 'src/main/java'
+            }
+        }
+    }
     repositories {
         mavenLocal()
         maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
@@ -54,6 +63,13 @@ allprojects {
         testCompile('org.springframework.boot:spring-boot-starter-test')
         testCompile('org.springframework.security:spring-security-test')
     }
+
+    processResources {
+        filesMatching("**/application.properties") {
+            expand(project.properties)
+        }
+    }
+    compileJava.dependsOn(processResources)
 }
 
 buildscript {

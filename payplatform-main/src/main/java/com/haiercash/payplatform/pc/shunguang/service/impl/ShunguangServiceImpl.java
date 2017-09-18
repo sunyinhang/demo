@@ -204,6 +204,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String ordermessage = bodyjson.get("ordermessage").toString();//网单信息
         JSONArray jsonArray = new JSONArray(ordermessage);
         List<AppOrderGoods> appOrderGoodsList = new ArrayList<AppOrderGoods>();
+        Double totalcOrderAmt = 0.0;
         for (int j = 0; j < jsonArray.length(); j++) {
             JSONObject jsonm = new JSONObject(jsonArray.get(j).toString());
             String cOrderSn = (String) jsonm.get("cOrderSn");//网单编号
@@ -215,6 +216,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String cOrderAmt = (String) jsonm.get("cOrderAmt");//网单金额
             String cOrderPayAmt = (String) jsonm.get("cOrderPayAmt");//网单实付金额
 
+            totalcOrderAmt = totalcOrderAmt + Double.parseDouble(cOrderAmt);
+
             AppOrderGoods appOrderGoods = new AppOrderGoods();
             appOrderGoods.setcOrderSn(cOrderSn);//
             appOrderGoods.setGoodsName(model);//商品名称
@@ -225,6 +228,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             appOrderGoods.setSkuCode(sku);//sku码
             appOrderGoodsList.add(appOrderGoods);
         }
+        //首付金额
+        Double fstPay = totalcOrderAmt - Double.parseDouble(payAmt);
 
         //
 
@@ -242,6 +247,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         appOrder.setDeliverCity(city);//送货地址市
         appOrder.setDeliverArea(country);//送货地址区
         appOrder.setAppOrderGoodsList(appOrderGoodsList);
+        appOrder.setFstPay(fstPay.toString());//首付金额
 
 
         //TODO!!!!!根据商城订单号查询订单接口
@@ -388,7 +394,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 //注册成功
                 uidLocal = usermap.get("body").toString();//统一认证内userId
                 phoneNo = custPhoneNo;//统一认绑定手机号
-                //
 //                //验证并绑定集团用户
 //                Map<String, Object> bindMap = new HashMap<String, Object>();
 //                bindMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
@@ -475,6 +480,25 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(certNo)) {
             logger.info("顺逛传送身份证与客户实名身份证不一致");
             return fail(ConstUtil.ERROR_CODE, "顺逛白条实名认证必须和顺逛实名认证一致！");
+        }
+        cachemap.put("custNo", custNo);//客户编号
+        cachemap.put("name", custName);//客户姓名
+        cachemap.put("cardNo", cardNo);//银行卡号
+        cachemap.put("bankCode", bankNo);//银行代码
+        cachemap.put("bankName", bankName);//银行名称
+        cachemap.put("idNo", certNo);//身份证号
+        cachemap.put("idCard", certNo);//身份证号
+        cachemap.put("idType", certType);
+        session.set(token, cachemap);
+        //6.查询客户额度
+        Map<String, Object> edMap = new HashMap<String, Object>();
+        edMap.put("userId", uidLocal);//内部userId
+        edMap.put("channel", "11");
+        edMap.put("channelNo", channelNo);
+        Map edresult = appServerService.checkEdAppl(token, edMap);
+        if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
+            String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, retmsg);
         } else {
             cachemap.put("custNo", custNo);//客户编号
             cachemap.put("name", custName);//客户姓名

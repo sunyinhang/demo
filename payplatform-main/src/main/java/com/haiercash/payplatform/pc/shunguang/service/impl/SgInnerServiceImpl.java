@@ -285,9 +285,11 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             typCde = (String) bodyLoanDetail.get("typ_cde");//贷款品种
             String applyTnr = (String) bodyLoanDetail.get("apply_tnr");//借款期限
             String applyTnrTyp = (String) bodyLoanDetail.get("apply_tnr_typ");//借款期限类型
+            String fst_pay = bodyLoanDetail.get("fst_pay").toString();//首付金额
 
             appOrder.setTypCde(typCde);//贷款品种代码
             appOrder.setApplyAmt(payAmt);//借款总额
+            appOrder.setFstPay(fst_pay);//首付金额
 
             cacheMap.put("apporder", appOrder);
             session.set(token, cacheMap);
@@ -576,7 +578,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             String crdSeq = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdSeq");
             cachemap.put("crdSeq", crdSeq);
             session.set(token, cachemap);
-            flag = "03";
+            flag = "05";
         } else if ("25".equals(outSts)) {//审批被拒绝
             flag = "02";
         } else if ("01".equals(outSts)) {//额度正在审批中

@@ -223,7 +223,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         appOrder.setIdNo(certNo);//客户证件号码
         appOrder.setUserId(userId);//录单用户ID
         appOrder.setChannelNo(channelNo);
-        appOrder.setFstPay("0");//首付金额
+        //appOrder.setFstPay("0");//首付金额
         String updatemallflag = (String) cacheMap.get("updatemallflag");
         if("1".equals(updflag) || "1".equals(updatemallflag)){//待提交订单
             if("1".equals(updflag)){
