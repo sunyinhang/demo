@@ -11,7 +11,7 @@ import java.util.Map;
 @RestController
 public class EchoController extends BaseController {
 
-    public EchoController(String moduleNo) {
+    public EchoController() {
         super("00");
     }
 
