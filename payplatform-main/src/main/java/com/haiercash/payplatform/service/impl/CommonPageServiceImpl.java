@@ -50,11 +50,12 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String certNo = (String) cacheMap.get("certNo");
 
         Map result = new HashMap();
+        String url = "";
         //征信协议展示
         if("1".equals(flag)){
             String name = new String(Base64.encode(custName.getBytes()), "UTF-8");
             name= URLEncoder.encode(name,"UTF-8");
-            String url = "/app/appserver/edCredit?custName=" + name + "&certNo=" + certNo;
+            url = "/app/appserver/edCredit?custName=" + name + "&certNo=" + certNo;
             result.put("url", url);
         }
         //签章协议展示
@@ -64,9 +65,10 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 logger.info("applseq:" + applseq);
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            String url = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applseq;
+            url = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applseq;
             result.put("url", url);
         }
+        logger.info("合同跳转url：" + url);
         return success(result);
     }
 }
