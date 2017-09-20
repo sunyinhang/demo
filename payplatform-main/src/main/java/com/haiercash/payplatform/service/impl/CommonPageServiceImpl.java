@@ -53,8 +53,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         //征信协议展示
         if("1".equals(flag)){
             String name = new String(Base64.encode(custName.getBytes()), "UTF-8");
+            name= URLEncoder.encode(name,"UTF-8");
             String url = appServer_page_url + "app/appserver/edCredit?custName=" + name + "&certNo=" + certNo;
-            url= URLEncoder.encode(url,"UTF-8");
             result.put("url", url);
         }
         //签章协议展示
