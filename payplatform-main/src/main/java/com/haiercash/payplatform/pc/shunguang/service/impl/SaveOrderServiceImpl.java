@@ -326,6 +326,9 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         //3.订单保存
         Map<String, Object> ordermap = saveAppOrderInfo(appOrder);
         cacheMap.put("ordermap", ordermap);
+        cacheMap.put("custName", custName);
+        cacheMap.put("custNo", custNo);
+        cacheMap.put("certNo", certNo);
         session.set(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败

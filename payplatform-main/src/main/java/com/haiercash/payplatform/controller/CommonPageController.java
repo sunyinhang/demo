@@ -46,6 +46,8 @@ public class CommonPageController extends BaseController {
     private RegisterService registerService;
     @Autowired
     private InstallmentAccountService InstallmentAccountService;
+    @Autowired
+    private CommonPageService commonPageService;
     /**
      * OCR获取身份信息
      *
@@ -479,4 +481,15 @@ public class CommonPageController extends BaseController {
     public void report(@RequestBody String error) {
         logger.error(error);
     }
+
+    /**
+     * 合同展示（1.签章合同   2.征信合同 ）
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/showcontract", method = RequestMethod.GET)
+    public Map<String, Object> contract(@RequestParam Map<String, Object> params) throws Exception{
+        return commonPageService.showcontract(params);
+    }
+
 }
