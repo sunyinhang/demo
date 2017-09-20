@@ -54,7 +54,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if("1".equals(flag)){
             String name = new String(Base64.encode(custName.getBytes()), "UTF-8");
             name= URLEncoder.encode(name,"UTF-8");
-            String url = appServer_page_url + "app/appserver/edCredit?custName=" + name + "&certNo=" + certNo;
+            String url = "/app/appserver/edCredit?custName=" + name + "&certNo=" + certNo;
             result.put("url", url);
         }
         //签章协议展示
@@ -64,7 +64,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 logger.info("applseq:" + applseq);
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            String url = appServer_page_url + "app/appserver/contract?custNo=" + custNo + "&applseq=" + applseq;
+            String url = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applseq;
             result.put("url", url);
         }
         return success(result);
