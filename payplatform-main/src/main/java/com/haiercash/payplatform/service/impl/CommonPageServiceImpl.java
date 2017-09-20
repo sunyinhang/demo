@@ -67,6 +67,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             String url = appServer_page_url + "app/appserver/contract?custNo=" + custNo + "&applseq=" + applseq;
             result.put("url", url);
         }
-        return success(map);
+        return success(result);
     }
 }
