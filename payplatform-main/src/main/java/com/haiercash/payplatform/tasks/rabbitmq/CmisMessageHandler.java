@@ -253,7 +253,7 @@ public class CmisMessageHandler {
                             logger.info("Sg-10007接口贷款申请被拒的加密数据是："+encrypt);
                             result = HttpClient.sendPost(url_ts+"/paycenter/json/ious/notify.json", encrypt, "utf-8");
                             System.out.print("Sg-10007推送接口被拒绝返回的数据是："+result);
-                        }else if ("06".equals(outSts) || "24".equals(outSts) || "04".equals(outSts)){//贷款申请通过  06
+                        }else if ("04".equals(outSts) || "05".equals(outSts) || "06".equals(outSts) || "23".equals(outSts) || "24".equals(outSts)){//贷款申请通过 // 04   05    06   23   24    成功
                             HashMap<String, Object> maporder = new HashMap<>();
                             HashMap<Object, Object> bodyinfo = new HashMap<>();
                             maporder.put("applSeq",applSeq);//1265221
@@ -406,14 +406,14 @@ public class CmisMessageHandler {
                 tscount=tscount+1;
                 System.out.print(tscount);
                 sgtsLogDao.updateed(tscount,applSeq,msgTyp);
-                retMsg = "推送地址：" ;
+                retMsg = "推送地址："+url_ts ;
                 throw new Exception(retMsg);
             }else if (!StringUtils.isEmpty(tscount)){
                 if (tscount<3){
                     tscount++;
                     sgtsLog.setTscount(tscount);
                     sgtsLogDao.updateed(tscount,applSeq,msgTyp);
-                    retMsg = "推送地址：";
+                    retMsg = "推送地址："+url_ts;
                     throw new Exception(retMsg);
                 }else {
                     return;

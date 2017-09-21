@@ -8,16 +8,16 @@
     <select id="selectApplSeq" resultType="java.lang.Integer">
      select tscount from Sgts_Log where appl_seq=#{applSeq,jdbcType=VARCHAR} and out_sts=#{outSts,jdbcType=VARCHAR}
     </select>
-    <select id="update" resultType="java.lang.Integer">
+    <update id="update" >
         update Sgts_Log set tscount=#{tscount, jdbcType=INTEGER} where appl_seq=#{applSeq, jdbcType=VARCHAR} and out_sts=#{outsts,jdbcType=VARCHAR}
-    </select>
+    </update>
 
     <select id="selectApplSeqed" resultType="java.lang.Integer">
        select tscount from Sgts_Log where appl_seq=#{applSeq,jdbcType=VARCHAR} and msg_typ=#{msgTyp,jdbcType=VARCHAR}
     </select>
-    <select id="updateed" resultType="java.lang.Integer">
+    <update id="updateed">
         update Sgts_Log set tscount=#{tscount, jdbcType=INTEGER} where appl_seq=#{applSeq, jdbcType=VARCHAR} and msg_typ=#{msgTyp,jdbcType=VARCHAR}
-    </select>
+    </update>
 
 
     <select id="selectcount" resultType="java.lang.Integer">
