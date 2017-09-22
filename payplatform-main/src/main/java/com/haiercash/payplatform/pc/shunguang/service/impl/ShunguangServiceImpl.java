@@ -480,25 +480,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (!StringUtils.isEmpty(idNoHaier) && !idNoHaier.equals(certNo)) {
             logger.info("顺逛传送身份证与客户实名身份证不一致");
             return fail(ConstUtil.ERROR_CODE, "顺逛白条实名认证必须和顺逛实名认证一致！");
-        }
-        cachemap.put("custNo", custNo);//客户编号
-        cachemap.put("name", custName);//客户姓名
-        cachemap.put("cardNo", cardNo);//银行卡号
-        cachemap.put("bankCode", bankNo);//银行代码
-        cachemap.put("bankName", bankName);//银行名称
-        cachemap.put("idNo", certNo);//身份证号
-        cachemap.put("idCard", certNo);//身份证号
-        cachemap.put("idType", certType);
-        session.set(token, cachemap);
-        //6.查询客户额度
-        Map<String, Object> edMap = new HashMap<String, Object>();
-        edMap.put("userId", uidLocal);//内部userId
-        edMap.put("channel", "11");
-        edMap.put("channelNo", channelNo);
-        Map edresult = appServerService.checkEdAppl(token, edMap);
-        if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
-            String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();
-            return fail(ConstUtil.ERROR_CODE, retmsg);
         } else {
             cachemap.put("custNo", custNo);//客户编号
             cachemap.put("name", custName);//客户姓名
