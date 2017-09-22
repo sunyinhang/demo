@@ -80,10 +80,9 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String areaCode = (String) map.get("areaCode");//区编码
         //非空判断
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
-                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp) || StringUtils.isEmpty(areaCode)){
+                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp)){
             logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
-                       + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp + "   updflag:" + updflag + "  orderNo:" + orderNo
-                       + "   areaCode:" + areaCode);
+                       + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp + "   updflag:" + updflag + "  orderNo:" + orderNo);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -261,27 +260,34 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //1.录单校验（所在城市开通服务）
         //获取市代码
-        logger.info("获取业务发生地省市区");
-        Map<String, Object > citymap = new HashMap<String, Object>();
-        citymap.put("areaCode", areaCode);
-        citymap.put("flag", "parent");
-        citymap.put("channel", channel);
-        citymap.put("channelNo", channelNo);
-        String cityCode = this.getCode(token, citymap);
-        if(StringUtils.isEmpty(cityCode)){
-            logger.info("获取市编码失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
-        //获取省代码
-        Map<String, Object > provincemap = new HashMap<String, Object>();
-        provincemap.put("areaCode", cityCode);
-        provincemap.put("flag", "parent");
-        provincemap.put("channel", channel);
-        provincemap.put("channelNo", channelNo);
-        String provinceCode = this.getCode(token, provincemap);
-        if(StringUtils.isEmpty(provinceCode)){
-            logger.info("获取省编码失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        String cityCode = "";
+        String provinceCode = "";
+        if(StringUtils.isEmpty(areaCode)){
+            cityCode = "370000";
+            provinceCode = "370200";
+        }else{
+            logger.info("获取业务发生地省市区");
+            Map<String, Object > citymap = new HashMap<String, Object>();
+            citymap.put("areaCode", areaCode);
+            citymap.put("flag", "parent");
+            citymap.put("channel", channel);
+            citymap.put("channelNo", channelNo);
+            cityCode = this.getCode(token, citymap);
+            if(StringUtils.isEmpty(cityCode)){
+                logger.info("获取市编码失败");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            //获取省代码
+            Map<String, Object > provincemap = new HashMap<String, Object>();
+            provincemap.put("areaCode", cityCode);
+            provincemap.put("flag", "parent");
+            provincemap.put("channel", channel);
+            provincemap.put("channelNo", channelNo);
+            provinceCode = this.getCode(token, provincemap);
+            if(StringUtils.isEmpty(provinceCode)){
+                logger.info("获取省编码失败");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
         }
         //录单校验
         logger.info("进行录单校验");
