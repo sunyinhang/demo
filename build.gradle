@@ -57,9 +57,10 @@ allprojects {
         //==运行时==
         runtime('org.springframework.boot:spring-boot-devtools')
         //==编译时==
-        compileOnly('org.springframework.boot:spring-boot-configuration-processor')
         compileOnly('org.projectlombok:lombok')
+        compileOnly('org.springframework.boot:spring-boot-configuration-processor')
         //==测试时==
+        testCompile('org.projectlombok:lombok')
         testCompile('org.springframework.boot:spring-boot-starter-test')
         testCompile('org.springframework.security:spring-security-test')
     }
