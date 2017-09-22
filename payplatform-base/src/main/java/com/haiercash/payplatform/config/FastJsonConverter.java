@@ -13,7 +13,10 @@ import org.json.JSONObject;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -33,7 +36,6 @@ public class FastJsonConverter extends FastJsonHttpMessageConverter {
         ValueFilter valueFilter = (object, name, value) -> {
             if (value == null)
                 return null;
-
             String type = value.getClass().getSimpleName();
             switch (type) {
                 case "BigDecimal":
@@ -61,5 +63,11 @@ public class FastJsonConverter extends FastJsonHttpMessageConverter {
         SerializeConfig.getGlobalInstance().put(PaginationList.class, new PaginationJsonSerializer());
         SerializeConfig.getGlobalInstance().put(JSONObject.class, new JSONObjectSerializer());
         this.setFastJsonConfig(fastJsonConfig);
+    }
+
+    @Override
+    protected void addDefaultHeaders(HttpHeaders headers, Object o, MediaType contentType) throws IOException {
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        super.addDefaultHeaders(headers, o, contentType);
     }
 }
