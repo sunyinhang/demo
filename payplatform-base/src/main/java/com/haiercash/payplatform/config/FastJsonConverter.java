@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 @ConditionalOnClass({JSON.class, FastJsonHttpMessageConverter.class})
 @ConditionalOnProperty(
         name = {"spring.http.converters.preferred-json-mapper"},
-        havingValue = "fastjson-payplatform",
+        havingValue = "fastjson-default",
         matchIfMissing = true
 )
 public class FastJsonConverter extends FastJsonHttpMessageConverter {
