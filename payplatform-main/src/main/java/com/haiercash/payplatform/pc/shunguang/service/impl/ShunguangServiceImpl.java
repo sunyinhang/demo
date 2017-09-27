@@ -258,7 +258,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (!HttpUtil.isSuccess(mallordermap)) {
             return mallordermap;
         }
-        Map bodymap = (HashMap<String, Object>) mallordermap.get("body");
+        Map bodymap = (Map<String, Object>) mallordermap.get("body");
         String formId = (String) bodymap.get("formId");
         String flag = (String) bodymap.get("flag");
         String applSeq = (String) bodymap.get("applSeq");
@@ -1031,7 +1031,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (!HttpUtil.isSuccess(m)) {
             return m;
         }
-        Map bodyMap = (HashMap<String, Object>) m.get("body");
+        Map bodyMap = (Map<String, Object>) m.get("body");
         String isRegister = bodyMap.get("isRegister").toString();
         if (!"Y".equals(isRegister)) {//未注册
             return fail(ConstUtil.ERROR_CODE, "账号未注册");

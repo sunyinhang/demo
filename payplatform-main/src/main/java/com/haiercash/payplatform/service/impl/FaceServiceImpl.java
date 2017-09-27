@@ -175,7 +175,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         //paramMap.put("applSeq", applSeq);
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
-        Map uploadheadjson = (HashMap<String, Object>) uploadresultmap.get("head");
+        Map uploadheadjson = (Map<String, Object>) uploadresultmap.get("head");
         String uploadretFlag = (String) uploadheadjson.get("retFlag");
         if(!"00000".equals(uploadretFlag)){
             String retMsg = (String) uploadheadjson.get("retMsg");
@@ -202,7 +202,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         checkMap.put("channel", channel);
         checkMap.put("channelNo", channelNo);
         Map<String, Object> checkresultmap = appServerService.faceCheckByFaceValue(token, checkMap);
-        Map checkheadjson = (HashMap<String, Object>)checkresultmap.get("head");
+        Map checkheadjson = (Map<String, Object>)checkresultmap.get("head");
         String checkretFlag = (String) checkheadjson.get("retFlag");
         String checkretMsg = (String) checkheadjson.get("retMsg");
         if("00000".equals(checkretFlag)){
@@ -211,7 +211,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             Map m = validateUserFlag(userId, token, channel, channelNo, cacheMap);
             return m;
         }else{
-            Map checkbodyjson = (HashMap<String, Object>) checkresultmap.get("body");
+            Map checkbodyjson = (Map<String, Object>) checkresultmap.get("body");
             if("N".equals(checkbodyjson.get("isRetry")) &&
                     "N".equals(checkbodyjson.get("isOK")) &&
                     "N".equals(checkbodyjson.get("isResend"))){
@@ -299,7 +299,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         //paramMap.put("applSeq", applSeq);
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
-        Map uploadheadjson = (HashMap<String, Object>)(uploadresultmap.get("head"));
+        Map uploadheadjson = (Map<String, Object>)(uploadresultmap.get("head"));
         String uploadretFlag = (String) uploadheadjson.get("retFlag");
         if(!"00000".equals(uploadretFlag)){
             String retMsg = (String) uploadheadjson.get("retMsg");
@@ -415,7 +415,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         pwdmap.put("channel", channelNo);
         pwdmap.put("channelNo", channelNo);
         Map<String, Object> resultmap = appServerService.validateUserFlag(token, pwdmap);
-        Map headjson = (HashMap<String, Object>) resultmap.get("head");
+        Map headjson = (Map<String, Object>) resultmap.get("head");
         String retFlag = (String) headjson.get("retFlag");
         String retMsg = (String) headjson.get("retMsg");
         if(!"00000".equals(retFlag)){
@@ -423,7 +423,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         }
 
         logger.info("上传手持身份证**********************成功");
-        Map bodyjson = (HashMap<String, Object>) resultmap.get("body");
+        Map bodyjson = (Map<String, Object>) resultmap.get("body");
         String payPasswdFlag = (String) bodyjson.get("payPasswdFlag");
         if (payPasswdFlag.equals("1")) {// 1：已设置
             cacheMap.put("payPasswdFlag", "1");

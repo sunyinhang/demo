@@ -90,13 +90,13 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if (alidateUserMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map alidateUserHeadMap = (HashMap<String, Object>) alidateUserMap.get("head");
+        Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
         String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
         if (!"00000".equals(alidateUserHeadMapFlag)) {
             String retMsg = (String) alidateUserHeadMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        Map alidateUserBodyMap = (HashMap<String, Object>) alidateUserMap.get("body");
+        Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
         String flag = (String) alidateUserBodyMap.get("payPasswdFlag");
         logger.info("密码设置标识：flag" + flag);
         if ("0".equals(flag)) {//0  密码未设置
@@ -217,8 +217,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if (stringObjectMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-//        Map setcustTagHeadMap = (HashMap<String, Object>) stringObjectMap.get("head");
-        Map<String, Object> setcustTagMapFlag = (HashMap<String, Object>) stringObjectMap.get("response");
+//        Map setcustTagHeadMap = (Map<String, Object>) stringObjectMap.get("head");
+        Map<String, Object> setcustTagMapFlag = (Map<String, Object>) stringObjectMap.get("response");
         Map<String, Object> setcustTagHeadMap = (Map<String, Object>) setcustTagMapFlag.get("head");
         String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
         if (!"00000".equals(setcustTagHeadMapFlag)) {
@@ -1224,7 +1224,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if (stringObjectMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) stringObjectMap.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if (!"00000".equals(resultmapFlag)) {
             resultparamMap.put("flag", "1");//校验码错误或已经失效
@@ -1239,7 +1239,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if (landparamreturnMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map landparamreturnHeadMap = (HashMap<String, Object>) landparamreturnMap.get("head");
+        Map landparamreturnHeadMap = (Map<String, Object>) landparamreturnMap.get("head");
         String reFlag = (String) landparamreturnHeadMap.get("retFlag");
         if (!"00000".equals(reFlag)) {
             String retMsg = (String) landparamreturnHeadMap.get("retMsg");

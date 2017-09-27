@@ -94,13 +94,13 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         if (dateAppOrderPerson == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) dateAppOrderPerson.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) dateAppOrderPerson.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if (!"00000".equals(resultmapFlag)) {
             String retMsg = (String) resultmapjsonMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        Map resultmapbodyMap = (HashMap<String, Object>) dateAppOrderPerson.get("body");
+        Map resultmapbodyMap = (Map<String, Object>) dateAppOrderPerson.get("body");
         List<Map> ordersList = (List) resultmapbodyMap.get("orders");
         Map<String, Object> orders = new HashMap<String, Object>();
         orders.put("orders", ordersList);
@@ -161,7 +161,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         if (dateAppOrderPerson == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) dateAppOrderPerson.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) dateAppOrderPerson.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if (!"00000".equals(resultmapFlag)) {
             String retMsg = (String) resultmapjsonMap.get("retMsg");
@@ -225,7 +225,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         if (dateAppOrderPerson == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) dateAppOrderPerson.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) dateAppOrderPerson.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if (!"00000".equals(resultmapFlag)) {
             String retMsg = (String) resultmapjsonMap.get("retMsg");
@@ -301,7 +301,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         if (dateAppOrderPerson == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) dateAppOrderPerson.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) dateAppOrderPerson.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if (!"00000".equals(resultmapFlag)) {
             String retMsg = (String) resultmapjsonMap.get("retMsg");

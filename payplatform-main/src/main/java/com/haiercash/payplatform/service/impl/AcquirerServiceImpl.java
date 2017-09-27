@@ -663,7 +663,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
                 Map<String, Object> crmMap = HttpUtil.json2Map(crmJson);
                 ArrayList<Map<String, Object>> crmList = (ArrayList<Map<String, Object>>) crmMap.get("body");
                 if (crmList != null && crmList.size() > 0) {
-                    HashMap<String, Object> o = (HashMap<String, Object>) crmList.get(0);
+                    Map<String, Object> o = (Map<String, Object>) crmList.get(0);
                     String storeName = o.get("storeName").toString();
                     acquirer.put("saler_name", StringUtils.isEmpty(storeName) ? acquirer.get("saler_name") : storeName);
                 }

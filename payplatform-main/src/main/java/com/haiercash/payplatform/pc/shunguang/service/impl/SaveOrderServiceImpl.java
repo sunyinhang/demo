@@ -681,7 +681,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             hm.put("mtdCde", order.getMtdCde());
             Map<String, Object> hkss_json = cmisApplService.getHkssReturnMap(hm, super.getGateUrl(), super.getToken());
             logger.info("还款试算service返回hkss:" + hkss_json);
-            Map<String, Object> hkssBodyMap = (HashMap<String, Object>) hkss_json.get("body");
+            Map<String, Object> hkssBodyMap = (Map<String, Object>) hkss_json.get("body");
             Map<String, Object> first = (Map) ((List) hkssBodyMap.get("mx")).get(0);//获取第0期的费用
             hkssFirstEd = new BigDecimal(String.valueOf(first.get("instmAmt")));
         }
