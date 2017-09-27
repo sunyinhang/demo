@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.service;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.Map;
 
 /**
@@ -141,4 +143,6 @@ public interface AppServerService {
     public Map<String, Object> updateListRiskInfo(String token, Map<String, Object> paramMap);
     //3.4.11(GET) 实名认证
     public Map<String, Object> identify(String token, Map<String, Object> paramMap);
+    //根据申请流水号查询是否做过魔蝎认证
+    public Map<String, Object> getMoxieByApplseq(String token, Map<String, Object> paramMap);
 }

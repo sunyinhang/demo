@@ -2,19 +2,19 @@ package com.haiercash.payplatform.pc.qiaorong.controller;
 
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
-import com.haiercash.commons.controller.BaseController;
+import com.haiercash.payplatform.controller.BaseController;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
+import static com.haiercash.payplatform.utils.CmisUtil.success;
 
 /**
  * Created by yuanli on 2017/9/12.
  */
+@RestController
 public class QiaorongController extends BaseController {
     public Log logger = LogFactory.getLog(getClass());
     private static String MODULE_NO = "04";
@@ -42,7 +42,7 @@ public class QiaorongController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/qiaorong/checkFourKeys", method = RequestMethod.POST)
     public Map<String, Object> checkFourKeys(@RequestBody Map<String, Object> map) {
-        return qiaorongService.checkFourKeys(map);
+        return qiaorongService.checkFourKeys(super.initParam(map));
     }
 
 }
