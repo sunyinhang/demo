@@ -80,7 +80,7 @@ public abstract class CmisUtil {
         return headMap;
     }
 
-    public static HashMap<String, Object> makeBodyMap(HashMap<String, Object> map) {
+    public static Map<String, Object> makeBodyMap(Map<String, Object> map) {
         Calendar tradeDate = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         map.put("signTime", sdf.format(tradeDate.getTime()));
@@ -88,7 +88,7 @@ public abstract class CmisUtil {
         return map;
     }
 
-    private static HashMap<String, Object> makeParamMap(String tradeCode, String tradeType, HashMap<String, Object> map) {
+    private static HashMap<String, Object> makeParamMap(String tradeCode, String tradeType, Map<String, Object> map) {
         HashMap requestMap = new HashMap();
         requestMap.put("head", makeHeadMap(tradeCode, tradeType, map));
         requestMap.put("body", makeBodyMap(map));
@@ -101,7 +101,7 @@ public abstract class CmisUtil {
         return makeParamMap(tradeCode, "", map);
     }
 
-    public static Map<String, Object> getCmisResponse(String tradeCode, String token, String tradeType, HashMap<String, Object> map) {
+    public static Map<String, Object> getCmisResponse(String tradeCode, String token, String tradeType, Map<String, Object> map) {
         HashMap requestMap = makeParamMap(tradeCode, tradeType, map);
         logger.debug("Cmis request:");
         logger.debug(new JSONObject(requestMap));
@@ -113,7 +113,7 @@ public abstract class CmisUtil {
         return responseMap;
     }
 
-    public static Map<String, Object> getCmisResponse(String tradeCode, String token, HashMap<String, Object> map) {
+    public static Map<String, Object> getCmisResponse(String tradeCode, String token, Map<String, Object> map) {
         return getCmisResponse(tradeCode, token, "", map);
     }
 

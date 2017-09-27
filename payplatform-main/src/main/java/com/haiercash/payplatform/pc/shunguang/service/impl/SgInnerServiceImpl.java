@@ -237,7 +237,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             if (!HttpUtil.isSuccess(m)) {
                 return m;
             }
-            Map ordermap = (HashMap<String, Object>) m.get("body");
+            Map ordermap = (Map<String, Object>) m.get("body");
             String mallOrderNo = (String) ordermap.get("mallOrderNo");
             List<Map<String, Object>> body = (List<Map<String, Object>>) ordermap.get("goodsList");
             List<AppOrderGoods> appOrderGoodsList = new ArrayList<AppOrderGoods>();
@@ -264,7 +264,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             if (!HttpUtil.isSuccess(mapAddress)) {
                 return mapAddress;
             }
-            Map adAddrmap = (HashMap<String, Object>) mapAddress.get("body");
+            Map adAddrmap = (Map<String, Object>) mapAddress.get("body");
             String adAddr = (String) adAddrmap.get("adAddr");//送货详细地址
             String adProvince = (String) adAddrmap.get("adProvince");//送货地址省
             String adCity = (String) adAddrmap.get("adCity");//送货地址市
@@ -280,7 +280,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             if (!HttpUtil.isSuccess(mapLoanDetail)) {
                 return mapLoanDetail;
             }
-            Map bodyLoanDetail = (HashMap<String, Object>) mapLoanDetail.get("body");
+            Map bodyLoanDetail = (Map<String, Object>) mapLoanDetail.get("body");
             payAmt = bodyLoanDetail.get("apply_amt").toString();//借款金额
             typCde = (String) bodyLoanDetail.get("typ_cde");//贷款品种
             String applyTnr = (String) bodyLoanDetail.get("apply_tnr");//借款期限
