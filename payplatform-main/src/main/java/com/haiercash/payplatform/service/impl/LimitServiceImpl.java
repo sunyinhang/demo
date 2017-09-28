@@ -82,9 +82,9 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
-        String custretflag = ((HashMap<String, Object>) (custresult.get("head"))).get("retFlag").toString();
+        String custretflag = ((Map<String, Object>) (custresult.get("head"))).get("retFlag").toString();
         if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
-            String custretMsg = ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg").toString();
+            String custretMsg = ((Map<String, Object>) (custresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面

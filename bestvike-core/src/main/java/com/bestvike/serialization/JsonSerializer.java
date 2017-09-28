@@ -2,6 +2,7 @@ package com.bestvike.serialization;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public final class JsonSerializer {
      * @return 序列化后的json
      */
     public static String serialize(Object obj) {
-        return JSON.toJSONString(obj);
+        return JSON.toJSONString(obj, SerializerFeature.WriteDateUseDateFormat);
     }
 
     /**
