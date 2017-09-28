@@ -104,13 +104,13 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String uuid = UUID.randomUUID().toString().replace("-", "");
         resultMap.put("token", uuid);//token
 
-
         cachemap.put("name", appOrderMapCmis.get("CUST_NAME"));
-        cachemap.put("phone", appOrderMapCmis.get("INDIV_MOBILE"));
-        cachemap.put("idNo", appOrderMapCmis.get("ID_NO"));
-        cachemap.put("applseq", applseq);
+        cachemap.put("phoneNo", appOrderMapCmis.get("INDIV_MOBILE"));
+        cachemap.put("idCard", appOrderMapCmis.get("ID_NO"));
+        cachemap.put("applSeq", applseq);
         cachemap.put("totalamount", appOrderMapCmis.get("APPLY_AMT"));
         cachemap.put("typCde", typCde);//
+        cachemap.put("userId", appOrderMapCmis.get("INDIV_MOBILE"));
         session.set(uuid, cachemap);
 
 
@@ -139,11 +139,11 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         //获取数据
         String name = (String) cacheMap.get("name");
-        String phone = (String) cacheMap.get("phone");
-        String idNo = (String) cacheMap.get("idNo");//身份证
+        String phone = (String) cacheMap.get("phoneNo");
+        String idNo = (String) cacheMap.get("idCard");//身份证
         String cardnumber = (String) cacheMap.get("cardnumber");//银行卡
         String totalamount = cacheMap.get("totalamount").toString();
-        String applseq = (String) cacheMap.get("applseq");
+        String applseq = (String) cacheMap.get("applSeq");
         String typCde = (String) cacheMap.get("typCde");
         //1.新增并验证实名信息
         Map<String, Object> identityMap = new HashMap<String, Object>();
@@ -169,6 +169,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map identitybodyjson = (HashMap<String, Object>) identityresultmap.get("body");
         //信息保存
         String custNo = (String) identitybodyjson.get("custNo");
+        cacheMap.put("custNo", custNo);
+        session.set(token, cacheMap);
 
         //2.判断是否已注册
         Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -188,7 +190,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map resultmapbodyMap = (Map<String, Object>) registerMap.get("body");
         String isRegister = (String)resultmapbodyMap.get("isRegister");
         if("N".equals(isRegister)){
-            returnmap.put("flag","01");
+            returnmap.put("flag","01");//跳转注册页面
             return success(returnmap);//跳转注册页面
         }
         if(!"Y".equals(isRegister)){
@@ -237,16 +239,16 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
                 //判断是否做过公积金网银
                 if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
                     logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-                    returnmap.put("flag", "05");
+                    returnmap.put("flag", "05");//跳转合同
                     return success(returnmap);//跳转合同展示页面
                 }else{//未做过公积金、网银认证  跳转魔蝎认证页面
                     logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
-                    returnmap.put("flag", "04");
+                    returnmap.put("flag", "04");//跳转魔蝎认证
                     return success(returnmap);//跳转魔蝎页面
                 }
             }else{
                 logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-                returnmap.put("flag", "05");
+                returnmap.put("flag", "05");//跳转合同
                 return success(returnmap);//跳转合同展示页面
             }
 
@@ -258,14 +260,145 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             //跳转替代影像
             logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
             returnmap.put("flag", "03");// 手持身份证
-            return success(map);
+            return success(returnmap);
         }else if("10".equals(code)){//10：未通过人脸识别，可以再做人脸识别
             //可以做人脸识别
             logger.info("未通过人脸识别，可以再做人脸识别");
             returnmap.put("flag", "02");// 人脸识别
-            return success(map);
+            return success(returnmap);
         }
 
+        return returnmap;
+    }
+
+    /*
+    注册
+     */
+    @Override
+    public Map<String, Object> register(Map<String, Object> map) {
+        String token = super.getToken();
+        String channel = super.getChannel();
+        String channelNo = super.getChannelNo();
+        String password = (String) map.get("password");
+        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(password)){
+            logger.info("前台传入参数有误");
+            logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo + "  password" + password);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map<String, Object> returnmap = new HashMap<String, Object>();
+        //缓存数据获取
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+
+        String phone = (String) cacheMap.get("phoneNo");
+        //注册
+        Map<String, Object> registermap = new HashMap<String, Object>();
+        registermap.put("mobile", EncryptUtil.simpleEncrypt(phone));
+        registermap.put("password", EncryptUtil.simpleEncrypt(password));
+        registermap.put("deviceId", EncryptUtil.simpleEncrypt(UUID.randomUUID().toString().replace("-", "")));
+
+        String url = EurekaServer.UAUTH + "/app/uauth/saveUauthUsers";
+        logger.info("用户注册接口, 请求地址：" + url);
+        logger.info("用户注册接口, 请求数据：" + registermap);
+        Map<String, Object> resultregistermap = HttpUtil.restPostMap(url, registermap);
+        logger.info("用户注册接口, 返回数据：" + resultregistermap);
+
+        //Map resultregistermap = appServerService.saveUauthUsers(token, registermap);
+        Map headmap = (Map<String, Object>) resultregistermap.get("head");
+        String retFlag = (String) headmap.get("retFlag");
+        if (!"00000".equals(retFlag)) {
+            String retMsg = (String) headmap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+
+        //
+        String name = (String) cacheMap.get("name");
+        String idNo = (String) cacheMap.get("idCard");//身份证
+        String totalamount = cacheMap.get("totalamount").toString();
+        String applseq = (String) cacheMap.get("applSeq");
+        String typCde = (String) cacheMap.get("typCde");
+        String custNo = (String) cacheMap.get("custNo");
+
+        //3.手机号已注册，判断是否需要人脸识别
+        Map<String, Object> faceparamMap = new HashMap<String, Object>();
+        faceparamMap.put("typCde", typCde);
+        faceparamMap.put("source", channel);
+        faceparamMap.put("custNo", custNo);
+        faceparamMap.put("name", name);
+        faceparamMap.put("idNumber", idNo);
+        faceparamMap.put("token", token);
+        faceparamMap.put("channel", channel);
+        faceparamMap.put("channelNo", channelNo);
+        Map<String, Object> resultmap = appServerService.ifNeedFaceChkByTypCde(token, faceparamMap);
+        JSONObject headjson = new JSONObject(resultmap.get("head"));
+        String faceretFlag = headjson.getString("retFlag");
+        String retMsg = headjson.getString("retMsg");
+        if(!"00000".equals(faceretFlag)){
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        JSONObject body = new JSONObject(resultmap.get("body"));
+        String code = body.getString("code"); //结果标识码
+        if("00".equals(code)){//人脸识别通过
+            logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
+            double amount = Double.parseDouble(totalamount);
+
+            Map<String, Object> moxiemap = new HashMap<String, Object>();
+            moxiemap.put("applseq", applseq);
+            Map<String, Object> mapmoxie = appServerService.getMoxieByApplseq(token, moxiemap);
+            JSONObject headjsonmoxie = new JSONObject(mapmoxie.get("head"));
+            String retFlagmoxie = headjsonmoxie.getString("retFlag");
+            String retMsgmoxie = headjsonmoxie.getString("retMsg");
+            if(!"00000".equals(retFlagmoxie)){
+                return fail(ConstUtil.ERROR_CODE, retMsgmoxie);
+            }
+            JSONObject bodymoxie = new JSONObject(mapmoxie.get("body"));
+            String isFundFlag = (String) bodymoxie.get("isFund");
+            String isBankFlag = (String) bodymoxie.get("isBank");
+            String isCarrierFlag = (String) bodymoxie.get("isCarrier");
+
+            //判断金额是否需要做魔蝎
+            if(amount >= limitAmount){
+                //判断是否做过公积金网银
+                if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
+                    logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+                    returnmap.put("flag", "05");//跳转合同
+                    return success(returnmap);//跳转合同展示页面
+                }else{//未做过公积金、网银认证  跳转魔蝎认证页面
+                    logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
+                    returnmap.put("flag", "04");//跳转魔蝎认证
+                    return success(returnmap);//跳转魔蝎页面
+                }
+            }else{
+                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+                returnmap.put("flag", "05");//跳转合同
+                return success(returnmap);//跳转合同展示页面
+            }
+
+        }else if("01".equals(code)){//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+            //终止
+            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
+            return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
+        }else if("02".equals(code)){//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+            //跳转替代影像
+            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
+            returnmap.put("flag", "03");// 手持身份证
+            return success(returnmap);
+        }else if("10".equals(code)){//10：未通过人脸识别，可以再做人脸识别
+            //可以做人脸识别
+            logger.info("未通过人脸识别，可以再做人脸识别");
+            returnmap.put("flag", "02");// 人脸识别
+            return success(returnmap);
+        }
+
+
+        return returnmap;
+    }
+
+    @Override
+    public Map<String, Object> isNeedMoxie(Map<String, Object> map) {
         return null;
     }
 
