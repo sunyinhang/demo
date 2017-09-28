@@ -208,6 +208,11 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         if("00000".equals(checkretFlag)){
             //人脸识别成功
             //判断是否已经设置过支付密码
+            if("33".equals(channelNo)){//如果是乔融则不进行支付密码校验
+                Map<String, Object> m = new HashMap<String, Object>();
+                m.put("faceFlag", "0");
+                return success(m);
+            }
             Map m = validateUserFlag(userId, token, channel, channelNo, cacheMap);
             return m;
         }else{

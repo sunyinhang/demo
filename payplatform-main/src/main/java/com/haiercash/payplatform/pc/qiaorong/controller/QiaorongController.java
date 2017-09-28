@@ -45,4 +45,20 @@ public class QiaorongController extends BaseController {
         return qiaorongService.checkFourKeys(super.initParam(map));
     }
 
+    /**
+     * 注册
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/qiaorong/register", method = RequestMethod.POST)
+    public Map<String, Object> register(@RequestBody Map<String, Object> map) {
+        return qiaorongService.register(super.initParam(map));
+    }
+
+    @RequestMapping(value = "/api/payment/qiaorong/isNeedMoxie", method = RequestMethod.GET)
+    public Map<String, Object> isNeedMoxie(@RequestParam Map<String, Object> map){
+        return qiaorongService.isNeedMoxie(map);
+    }
+
+
 }

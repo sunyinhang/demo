@@ -15,4 +15,14 @@ public interface QiaorongService {
     四要素验证
      */
     Map<String, Object> checkFourKeys(Map<String, Object> map);
+
+    /*
+    注册
+     */
+    Map<String, Object> register(Map<String, Object> map);
+
+    /*
+    是否需要魔蝎验证
+     */
+    Map<String, Object> isNeedMoxie(Map<String, Object> map);
 }
