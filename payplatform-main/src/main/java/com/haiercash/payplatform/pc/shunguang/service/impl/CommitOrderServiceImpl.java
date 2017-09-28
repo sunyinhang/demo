@@ -398,7 +398,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             apporder.setExpectCredit(expectCredit);//期望额度
             Map<String, Object> result = cmisApplService.commitBussiness(apporder.getApplSeq(), apporder);
             logger.debug("订单提交commitBussiness方法返回：" + result);
-            return success(result);
+            return result;
         }
         else {
             return fail("05", "订单提交类型不正确");
