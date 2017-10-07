@@ -2,6 +2,7 @@ package com.haiercash.payplatform;
 
 import com.haiercash.commons.properties.RestProfileProperties;
 import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.ribbon.RestTemplateEx;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,19 +41,16 @@ public class Application extends SpringBootServletInitializer {
     @LoadBalanced
     @Bean
     RestTemplate restTemplate() {
-        return new RestTemplate();
+        return new RestTemplateEx();
     }
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
-        context.addApplicationListener((ApplicationListener<ContextClosedEvent>) event -> {
-            System.out.println("应用程序正常退出...");
-        });
+        context.addApplicationListener((ApplicationListener<ContextClosedEvent>) event -> System.out.println("应用程序正常退出..."));
     }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);
     }
-
 }

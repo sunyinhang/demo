@@ -58,13 +58,13 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         if(registerMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) registerMap.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if(!"00000".equals(resultmapFlag)){
             String retMsg = (String) resultmapjsonMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        Map resultmapbodyMap = (HashMap<String, Object>) registerMap.get("body");
+        Map resultmapbodyMap = (Map<String, Object>) registerMap.get("body");
         String isRegister = (String)resultmapbodyMap.get("isRegister");
         if("N".equals(isRegister)){
             resultparamMap.put("flag","1");//还未注册

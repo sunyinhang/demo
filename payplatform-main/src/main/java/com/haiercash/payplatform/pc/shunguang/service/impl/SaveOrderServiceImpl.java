@@ -190,7 +190,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         payMap.put("channelNo", channelNo);
         Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
         if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
-            String retmsg = (String) ((HashMap<String, Object>)(payresultMap.get("head"))).get("retMsg");
+            String retmsg = (String) ((Map<String, Object>)(payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         String payresult = com.alibaba.fastjson.JSONObject.toJSONString(payresultMap);
@@ -250,10 +250,10 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         ispassmap.put("channelNo", channelNo);
         Map<String, Object> ispassresult = appServerService.getCustIsPass(token, ispassmap);
         if (!HttpUtil.isSuccess(ispassresult) ) {//准入资格校验失败
-            String retmsg = (String) ((HashMap<String, Object>)(ispassresult.get("head"))).get("retMsg");
+            String retmsg = (String) ((Map<String, Object>)(ispassresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String isPass = (String) ((HashMap<String, Object>)(ispassresult.get("body"))).get("isPass");
+        String isPass = (String) ((Map<String, Object>)(ispassresult.get("body"))).get("isPass");
         if("-1".equals(isPass)){
             return fail(ConstUtil.ERROR_CODE, "没有准入资格");
         }
@@ -299,7 +299,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         ordercheakmap.put("channelNo", channelNo);
         Map<String, Object> ordercheakresult = appServerService.getCustInfoAndEdInfoPerson(token, ordercheakmap);
         if (!HttpUtil.isSuccess(ordercheakresult) ) {//录单校验失败
-            String retmsg = (String) ((HashMap<String, Object>)(ordercheakresult.get("head"))).get("retMsg");
+            String retmsg = (String) ((Map<String, Object>)(ordercheakresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
 
@@ -315,10 +315,10 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         queryordermap.put("channelNo", channelNo);
         Map<String, Object> queryorderresult = appServerService.queryBeyondContral(token, queryordermap);
         if (!HttpUtil.isSuccess(queryorderresult) ) {//是否允许申请贷款失败
-            String retmsg = (String) ((HashMap<String, Object>)(queryorderresult.get("head"))).get("retMsg");
+            String retmsg = (String) ((Map<String, Object>)(queryorderresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String flag = (String) ((HashMap<String, Object>)(queryorderresult.get("body"))).get("flag");
+        String flag = (String) ((Map<String, Object>)(queryorderresult.get("body"))).get("flag");
         if(!"Y".equals(flag)){
             return fail(ConstUtil.ERROR_CODE, "不允许申请贷款");
         }
@@ -336,7 +336,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             Map resultHead = (LinkedHashMap<String, Object>)(ordermap.get("head"));
             String retmsg = resultHead.get("retMsg").toString();
             //String retmsg = resultHead.getRetMsg();
-            //String retmsg = (String) ((HashMap<String, Object>)(ordermap.get("head"))).get("retMsg");
+            //String retmsg = (String) ((Map<String, Object>)(ordermap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
 
@@ -347,7 +347,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String cityCode = "";
         // 根据区号获取市
         Map<String, Object> result = appServerService.getAreaInfo(token, citymap);
-        String retFlag = (String) ((HashMap<String, Object>)result.get("head")).get("retFlag");
+        String retFlag = (String) ((Map<String, Object>)result.get("head")).get("retFlag");
         if (!"00000".equals(retFlag)) {
             return cityCode;
         }
@@ -681,7 +681,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             hm.put("mtdCde", order.getMtdCde());
             Map<String, Object> hkss_json = cmisApplService.getHkssReturnMap(hm, super.getGateUrl(), super.getToken());
             logger.info("还款试算service返回hkss:" + hkss_json);
-            Map<String, Object> hkssBodyMap = (HashMap<String, Object>) hkss_json.get("body");
+            Map<String, Object> hkssBodyMap = (Map<String, Object>) hkss_json.get("body");
             Map<String, Object> first = (Map) ((List) hkssBodyMap.get("mx")).get(0);//获取第0期的费用
             hkssFirstEd = new BigDecimal(String.valueOf(first.get("instmAmt")));
         }

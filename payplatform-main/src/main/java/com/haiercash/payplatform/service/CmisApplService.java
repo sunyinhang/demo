@@ -58,7 +58,7 @@ public class CmisApplService extends BaseService {
      * @param token
      * @return
      */
-    public Map<String, Object> getHkssReturnMap(HashMap map, String gateUrl, String token) {
+    public Map<String, Object> getHkssReturnMap(Map map, String gateUrl, String token) {
         /**
          * 查询贷款品种详情
          */
@@ -118,19 +118,19 @@ public class CmisApplService extends BaseService {
             logger.debug("发现异常被执行：==" + e.getMessage());
         }
         logger.debug("还款试算cmis查询结果result.get('response')==" + result.get("response"));
-        HashMap<String, Object> responseMap = (HashMap<String, Object>) result.get("response");
-        HashMap<String, Object> headMap = (HashMap<String, Object>) responseMap.get("head");
+        Map<String, Object> responseMap = (Map<String, Object>) result.get("response");
+        Map<String, Object> headMap = (Map<String, Object>) responseMap.get("head");
         String retFlag = String.valueOf(headMap.get("retFlag"));
         String retMsg = String.valueOf(headMap.get("retMsg"));
         if (!"00000".equals(retFlag)) {
             return fail("99", "还款试算接口异常：" + retMsg);
         }
-        HashMap<String, Object> bodyMap = (HashMap<String, Object>) responseMap.get("body");
+        Map<String, Object> bodyMap = (Map<String, Object>) responseMap.get("body");
         logger.debug("=======" + result);
         HashMap<String, Object> returnmap = new HashMap<String, Object>();
         System.out.println(result);
         List relist = new ArrayList();
-        HashMap<String, Object> payList = (HashMap<String, Object>) bodyMap.get("payList");
+        Map<String, Object> payList = (Map<String, Object>) bodyMap.get("payList");
         List<HashMap<String, Object>> mx = (List<HashMap<String, Object>>) payList.get("mx");
         if (mx != null) {
             // 初始化第0期的费用为0
@@ -138,7 +138,7 @@ public class CmisApplService extends BaseService {
             BigDecimal deductAmt = BigDecimal.ZERO;//斩头息费
             BigDecimal actualArriveAmt = BigDecimal.ZERO;//实际到账金额
             logger.debug("===还款试算的还款计划列表:" + mx);
-            for (HashMap<String, Object> hm : mx) {
+            for (Map<String, Object> hm : mx) {
                 HashMap<String, Object> newhm = new HashMap<String, Object>();
                 if (Convert.toInteger(hm.get("psPerdNo")) == 0) {
                     logger.debug("===第0期:" + hm);

@@ -258,7 +258,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (!HttpUtil.isSuccess(mallordermap)) {
             return mallordermap;
         }
-        Map bodymap = (HashMap<String, Object>) mallordermap.get("body");
+        Map bodymap = (Map<String, Object>) mallordermap.get("body");
         String formId = (String) bodymap.get("formId");
         String flag = (String) bodymap.get("flag");
         String applSeq = (String) bodymap.get("applSeq");
@@ -389,7 +389,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier)); //海尔集团userId
             //paramMap.put("userName", EncryptUtil.simpleEncrypt(userName == null ? "" : userName));
             Map usermap = appServerService.saveUauthUsersByHaier(paramMap);
-            String userretFlag = ((HashMap<String, Object>) (usermap.get("head"))).get("retFlag").toString();
+            String userretFlag = ((Map<String, Object>) (usermap.get("head"))).get("retFlag").toString();
             if ("00000".equals(userretFlag)) {
                 //注册成功
                 uidLocal = usermap.get("body").toString();//统一认证内userId
@@ -413,7 +413,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 return success(returnmap);
             } else {
                 //注册失败
-                String userretmsg = ((HashMap<String, Object>) (usermap.get("head"))).get("retMsg").toString();
+                String userretmsg = ((Map<String, Object>) (usermap.get("head"))).get("retMsg").toString();
                 return fail(ConstUtil.ERROR_CODE, userretmsg);
             }
         } else if ("00000".equals(retFlag)) {
@@ -450,9 +450,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
-        String custretflag = ((HashMap<String, Object>) (custresult.get("head"))).get("retFlag").toString();
+        String custretflag = ((Map<String, Object>) (custresult.get("head"))).get("retFlag").toString();
         if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
-            String custretMsg = ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg").toString();
+            String custretMsg = ((Map<String, Object>) (custresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
@@ -464,13 +464,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         }
-        String certType = ((HashMap<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
-        String certNo = ((HashMap<String, Object>) (custresult.get("body"))).get("certNo").toString();//身份证号
-        String custNo = ((HashMap<String, Object>) (custresult.get("body"))).get("custNo").toString();//客户编号
-        String custName = ((HashMap<String, Object>) (custresult.get("body"))).get("custName").toString();//客户名称
-        String cardNo = ((HashMap<String, Object>) (custresult.get("body"))).get("cardNo").toString();//银行卡号
-        String bankNo = ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankNo").toString();//银行代码
-        String bankName = ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
+        String certType = ((Map<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
+        String certNo = ((Map<String, Object>) (custresult.get("body"))).get("certNo").toString();//身份证号
+        String custNo = ((Map<String, Object>) (custresult.get("body"))).get("custNo").toString();//客户编号
+        String custName = ((Map<String, Object>) (custresult.get("body"))).get("custName").toString();//客户名称
+        String cardNo = ((Map<String, Object>) (custresult.get("body"))).get("cardNo").toString();//银行卡号
+        String bankNo = ((Map<String, Object>) (custresult.get("body"))).get("acctBankNo").toString();//银行代码
+        String bankName = ((Map<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
         //顺逛传送身份证与客户实名身份证不一致
         if (!StringUtils.isEmpty(idNoHaier)) {
             idNoHaier = idNoHaier.toUpperCase();
@@ -1031,7 +1031,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (!HttpUtil.isSuccess(m)) {
             return m;
         }
-        Map bodyMap = (HashMap<String, Object>) m.get("body");
+        Map bodyMap = (Map<String, Object>) m.get("body");
         String isRegister = bodyMap.get("isRegister").toString();
         if (!"Y".equals(isRegister)) {//未注册
             return fail(ConstUtil.ERROR_CODE, "账号未注册");
@@ -1059,9 +1059,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
-        String custretflag = ((HashMap<String, Object>) (custresult.get("head"))).get("retFlag").toString();
+        String custretflag = ((Map<String, Object>) (custresult.get("head"))).get("retFlag").toString();
         if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
-            String custretMsg = ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg").toString();
+            String custretMsg = ((Map<String, Object>) (custresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
@@ -1076,13 +1076,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
-        String certType = ((HashMap<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
-        String certNo = ((HashMap<String, Object>) (custresult.get("body"))).get("certNo").toString();//身份证号
-        String custNo = ((HashMap<String, Object>) (custresult.get("body"))).get("custNo").toString();//客户编号
-        String custName = ((HashMap<String, Object>) (custresult.get("body"))).get("custName").toString();//客户名称
-        String cardNo = ((HashMap<String, Object>) (custresult.get("body"))).get("cardNo").toString();//银行卡号
-        String bankNo = ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankNo").toString();//银行代码
-        String bankName = ((HashMap<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
+        String certType = ((Map<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
+        String certNo = ((Map<String, Object>) (custresult.get("body"))).get("certNo").toString();//身份证号
+        String custNo = ((Map<String, Object>) (custresult.get("body"))).get("custNo").toString();//客户编号
+        String custName = ((Map<String, Object>) (custresult.get("body"))).get("custName").toString();//客户名称
+        String cardNo = ((Map<String, Object>) (custresult.get("body"))).get("cardNo").toString();//银行卡号
+        String bankNo = ((Map<String, Object>) (custresult.get("body"))).get("acctBankNo").toString();//银行代码
+        String bankName = ((Map<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
 
 
         cachemap.put("custNo", custNo);//客户编号
@@ -1115,11 +1115,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
         if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
-            String retmsg = ((HashMap<String, Object>) (edresult.get("head"))).get("retMsg").toString();
+            String retmsg = ((Map<String, Object>) (edresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         //获取自主支付可用额度金额
-        String crdNorAvailAmt = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
+        String crdNorAvailAmt = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
             //跳转有额度页面
             String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
@@ -1127,13 +1127,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return success(returnmap);
         }
         //审批状态判断
-        String outSts = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("outSts");
+        String outSts = (String) ((Map<String, Object>) (edresult.get("body"))).get("outSts");
         if ("01".equals(outSts)) {//额度正在审批中
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else if ("22".equals(outSts)) {//审批被退回
-            String crdSeq = (String) ((HashMap<String, Object>) (edresult.get("body"))).get("crdSeq");
+            String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
             cachemap.put("crdSeq", crdSeq);
             session.set(token, cachemap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;

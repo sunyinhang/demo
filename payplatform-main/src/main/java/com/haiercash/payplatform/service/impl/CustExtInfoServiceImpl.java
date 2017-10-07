@@ -54,7 +54,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String typCde = "" ;//贷款品种
 
         Map<String, Object> allCustExtInfo = getAllCustExtInfo(token, channel, channelNo);
-        Map<String, Object> allCustExtInfoHeadMap = (HashMap<String, Object>) allCustExtInfo.get("head");
+        Map<String, Object> allCustExtInfoHeadMap = (Map<String, Object>) allCustExtInfo.get("head");
         String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
         String allCustExtreflagMsg =  (String) allCustExtInfoHeadMap.get("retFlag");
         if("C8602".equals(allCustExtreflagMsg) || "C1109".equals(allCustExtreflagMsg)){//无客户信息，正常
@@ -73,7 +73,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("channelNo", channelNo);
         paramMap.put("typCde",typCde);
         Map<String, Object> pLoanTypImagesMap = appServerService.pLoanTypImages(token,paramMap);
-        Map pLoanTypImagesHeadMap = (HashMap<String, Object>) pLoanTypImagesMap.get("head");
+        Map pLoanTypImagesHeadMap = (Map<String, Object>) pLoanTypImagesMap.get("head");
         String resultmapFlag = (String) pLoanTypImagesHeadMap.get("retFlag");
         String pLoanTypImagesretMsg = (String) pLoanTypImagesHeadMap.get("retMsg");
         if(!ifError(pLoanTypImagesHeadMap)){
@@ -96,7 +96,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             paramYXMap.put("channel", channel);
             paramYXMap.put("channelNo", channelNo);
             Map<String, Object> stringObjectMap = appServerService.attachTypeSearchPerson(token, paramYXMap);
-            Map<String, Object> stringObjectMapHeadMap = (HashMap<String, Object>) stringObjectMap.get("head");
+            Map<String, Object> stringObjectMapHeadMap = (Map<String, Object>) stringObjectMap.get("head");
             String stringObjectMapMsg = (String) stringObjectMapHeadMap.get("retMsg");
             if(!ifError(stringObjectMapHeadMap)){
                 return fail(ConstUtil.ERROR_CODE, stringObjectMapMsg);
@@ -111,13 +111,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                     paramYXbyIDMap.put("channel", channel);
                     paramYXbyIDMap.put("channelNo", channelNo);
                     Map<String, Object> filePathByFileId = appServerService.getFilePathByFileId(token, paramYXbyIDMap);
-                    Map<String, Object> filePathByFileIdHeadMap = (HashMap<String, Object>) filePathByFileId.get("head");
+                    Map<String, Object> filePathByFileIdHeadMap = (Map<String, Object>) filePathByFileId.get("head");
                     String filePathByFileIdMsg = (String) filePathByFileIdHeadMap.get("retMsg");
 
                     if(!ifError(filePathByFileIdHeadMap)){
                         return fail(ConstUtil.ERROR_CODE, filePathByFileIdMsg);
                     }
-                    Map<String, Object> bodyJSONObjectMap = (HashMap<String, Object>) filePathByFileId.get("body");
+                    Map<String, Object> bodyJSONObjectMap = (Map<String, Object>) filePathByFileId.get("body");
 //                JSONObject bodyJSONObject = new JSONObject(filePathByFileId.get("body"));
                     String filePath = (String) bodyJSONObjectMap.get("filePath");
                     if (filePath == null || "".equals(filePath)){
@@ -149,7 +149,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //                continue;
 //            }
         }
-        resultMap.put("CustExtInfoMap",(HashMap<String, Object>) allCustExtInfo.get("body"));
+        resultMap.put("CustExtInfoMap",(Map<String, Object>) allCustExtInfo.get("body"));
         resultMap.put("docList",resultList);
         return success(resultMap);
     }
@@ -199,7 +199,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //            String retMsg = ConstUtil.ERROR_INFO;
 //            return fail(ConstUtil.ERROR_CODE, retMsg);
 //        }
-//        Map resultmapjsonMap = (HashMap<String, Object>) resultmap.get("head");
+//        Map resultmapjsonMap = (Map<String, Object>) resultmap.get("head");
 //        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
 //        if(!"00000".equals(resultmapFlag)){
 //            String retMsg = (String) resultmapjsonMap.get("retMsg");
@@ -298,7 +298,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         if(stringObjectMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) stringObjectMap.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if(!"00000".equals(resultmapFlag)){
             String retMsg = (String) resultmapjsonMap.get("retMsg");
@@ -320,7 +320,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         if(CustFCiCustContactMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map CustFCiCustContactHeadMap = (HashMap<String, Object>) CustFCiCustContactMap.get("head");
+        Map CustFCiCustContactHeadMap = (Map<String, Object>) CustFCiCustContactMap.get("head");
         String CustFCiCustContactHeadMapFlag = (String) CustFCiCustContactHeadMap.get("retFlag");
         if(!"00000".equals(CustFCiCustContactHeadMapFlag)){
             String retMsg = (String) CustFCiCustContactHeadMap.get("retMsg");
@@ -342,7 +342,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         if(CustFCiCustContactTwoMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map CustFCiCustContactTwoMapHeadMap = (HashMap<String, Object>) CustFCiCustContactTwoMap.get("head");
+        Map CustFCiCustContactTwoMapHeadMap = (Map<String, Object>) CustFCiCustContactTwoMap.get("head");
         String CustFCiCustContactTwoMapHeadMapFlag = (String) CustFCiCustContactTwoMapHeadMap.get("retFlag");
         if(!"00000".equals(CustFCiCustContactTwoMapHeadMapFlag)){
             String retMsg = (String) CustFCiCustContactTwoMapHeadMap.get("retMsg");
@@ -367,13 +367,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         if(saveCustFCiCustContactMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map saveCustFCiCustContactMapHeadMap = (HashMap<String, Object>) saveCustFCiCustContactMap.get("head");
+        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
         String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
         if(!"00000".equals(saveCustFCiCustContactMapHeadFlag)){
             String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        Map saveCustFCiCustContactMapBodyMap = (HashMap<String, Object>) saveCustFCiCustContactMap.get("body");
+        Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
         if(code != null && !"".equals(code)){
             logger.info("*********人脸识别标识码："+code);
@@ -386,13 +386,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 if(alidateUserMap == null){
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                 }
-                Map alidateUserHeadMap = (HashMap<String, Object>) alidateUserMap.get("head");
+                Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
                 String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
                 if(!"00000".equals(alidateUserHeadMapFlag)){
                     String retMsg = (String) alidateUserHeadMap.get("retMsg");
                     return fail(ConstUtil.ERROR_CODE, retMsg);
                 }
-                Map alidateUserBodyMap = (HashMap<String, Object>) alidateUserMap.get("body");
+                Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
                 String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
                 if(payPasswdFlag == null || "".equals(payPasswdFlag)){
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -488,7 +488,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("id", request.getParameter("id"));//删除的id
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
-        Map uploadheadjson = (HashMap<String, Object>) uploadresultmap.get("head");
+        Map uploadheadjson = (Map<String, Object>) uploadresultmap.get("head");
         String uploadretFlag = (String) uploadheadjson.get("retFlag");
         /*if(!"00000".equals(uploadretFlag)){
             String retMsg = (String) uploadheadjson.get("retMsg");
@@ -522,7 +522,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         Map<String, Object> uploadresultmap = appServerService.attachDelete(token, params);
         Map uploadheadjson = HttpUtil.json2Map( uploadresultmap.get("head").toString());
 //        HttpUtil.json2DeepMap(uploadresultmap.get("head"));
-//        Map uploadheadjson = (HashMap<String, Object>) uploadresultmap.get("head");
+//        Map uploadheadjson = (Map<String, Object>) uploadresultmap.get("head");
         String uploadretFlag = (String) uploadheadjson.get("retFlag");
         if(!"00000".equals(uploadretFlag)){
             String retMsg = (String) uploadheadjson.get("retMsg");

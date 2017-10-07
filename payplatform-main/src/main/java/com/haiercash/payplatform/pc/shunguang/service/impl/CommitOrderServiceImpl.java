@@ -227,8 +227,8 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         if (stringObjectMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-//        Map setcustTagHeadMap = (HashMap<String, Object>) stringObjectMap.get("head");
-        Map<String, Object> setcustTagMapFlag = (HashMap<String, Object>) stringObjectMap.get("response");
+//        Map setcustTagHeadMap = (Map<String, Object>) stringObjectMap.get("head");
+        Map<String, Object> setcustTagMapFlag = (Map<String, Object>) stringObjectMap.get("response");
         Map<String, Object> setcustTagHeadMap = (Map<String, Object>) setcustTagMapFlag.get("head");
         String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
         if (!"00000".equals(setcustTagHeadMapFlag)) {
@@ -399,6 +399,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             Map<String, Object> result = cmisApplService.commitBussiness(apporder.getApplSeq(), apporder);
             logger.debug("订单提交commitBussiness方法返回：" + result);
             return result;
+            //return success(result);
         }
         else {
             return fail("05", "订单提交类型不正确");
@@ -428,11 +429,11 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("信贷系统额度查询失败");
             return true;
         }
-        HashMap<String, Object> responseMap = (HashMap<String, Object>) result.get("response");
+        Map<String, Object> responseMap = (Map<String, Object>) result.get("response");
         if (!CmisUtil.getIsSucceed(result)) {
             return true;
         }
-        HashMap<String, Object> bodyMap = (HashMap<String, Object>) responseMap.get("body");
+        Map<String, Object> bodyMap = (Map<String, Object>) responseMap.get("body");
         applyAmt = String.valueOf(StringUtils.isEmpty("applyAmt") ? 0 : applyAmt);
         String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAmt")) ? 0 : bodyMap.get("crdComAvailAmt"));
         logger.info("可用额度:" + crdComAvailAmt);

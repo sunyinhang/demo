@@ -82,9 +82,9 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
-        String custretflag = ((HashMap<String, Object>) (custresult.get("head"))).get("retFlag").toString();
+        String custretflag = ((Map<String, Object>) (custresult.get("head"))).get("retFlag").toString();
         if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
-            String custretMsg = ((HashMap<String, Object>) (custresult.get("head"))).get("retMsg").toString();
+            String custretMsg = ((Map<String, Object>) (custresult.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
@@ -126,19 +126,19 @@ public class LimitServiceImpl extends BaseService implements LimitService{
         if(stringObjectMap == null){
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) stringObjectMap.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if(!"00000".equals(resultmapFlag)){
             String retMsg = (String) resultmapjsonMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        Map resultmapbodyMap = (HashMap<String, Object>) stringObjectMap.get("body");
+        Map resultmapbodyMap = (Map<String, Object>) stringObjectMap.get("body");
         String SMRZ = (String) resultmapbodyMap.get("SMRZ");//实名认证信息
         String GRJBXX = (String) resultmapbodyMap.get("GRJBXX");//个人基本信息
         String DWXX = (String) resultmapbodyMap.get("DWXX");//单位信息
         String JZXX = (String) resultmapbodyMap.get("JZXX");//居住信息
         String LXRXX = (String) resultmapbodyMap.get("LXRXX");//联系人信息
-        Map BCYXMap =   (HashMap<String, Object>) resultmapbodyMap.get("BCYX");//必传影像信息
+        Map BCYXMap =   (Map<String, Object>) resultmapbodyMap.get("BCYX");//必传影像信息
         String BCYX =  (String) BCYXMap.get("BCYX");
         if("N".equals(SMRZ)){
         //没有做过实名认证，跳转实名认证页面
@@ -152,7 +152,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
             if(custTag == null){
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            Map custTagHeadMap = (HashMap<String, Object>) custTag.get("head");
+            Map custTagHeadMap = (Map<String, Object>) custTag.get("head");
             String custTagHeadMapHeadFlag = (String) custTagHeadMap.get("retFlag");
             if(!"00000".equals(custTagHeadMapHeadFlag)){
                 String retMsg = (String) custTagHeadMap.get("retMsg");
@@ -174,7 +174,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
                 if(setcustTag == null){
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                 }
-                Map setcustTagHeadMap = (HashMap<String, Object>) custTag.get("head");
+                Map setcustTagHeadMap = (Map<String, Object>) custTag.get("head");
                 String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
                 if(!"00000".equals(setcustTagHeadMapFlag)){
                     String retMsg = (String) custTagHeadMap.get("retMsg");
@@ -197,13 +197,13 @@ public class LimitServiceImpl extends BaseService implements LimitService{
                 if(saveCustFCiCustContactMap == null){
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                 }
-                Map saveCustFCiCustContactMapHeadMap = (HashMap<String, Object>) saveCustFCiCustContactMap.get("head");
+                Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
                 String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
                 if(!"00000".equals(saveCustFCiCustContactMapHeadFlag)){
                     String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
                     return fail(ConstUtil.ERROR_CODE, retMsg);
                 }
-                Map saveCustFCiCustContactMapBodyMap = (HashMap<String, Object>) saveCustFCiCustContactMap.get("body");
+                Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
                 String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
                 if(code != null && !"".equals(code)){
                     logger.info("*********人脸识别标识码："+code);
@@ -216,13 +216,13 @@ public class LimitServiceImpl extends BaseService implements LimitService{
                         if(alidateUserMap == null){
                             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                         }
-                        Map alidateUserHeadMap = (HashMap<String, Object>) alidateUserMap.get("head");
+                        Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
                         String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
                         if(!"00000".equals(alidateUserHeadMapFlag)){
                             String retMsg = (String) alidateUserHeadMap.get("retMsg");
                             return fail(ConstUtil.ERROR_CODE, retMsg);
                         }
-                        Map alidateUserBodyMap = (HashMap<String, Object>) alidateUserMap.get("body");
+                        Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
                         String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
                         if(payPasswdFlag == null || "".equals(payPasswdFlag)){
                             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);

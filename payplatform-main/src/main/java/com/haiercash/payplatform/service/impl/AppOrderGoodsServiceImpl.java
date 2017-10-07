@@ -181,13 +181,13 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
             } else {
                 logger.info("商品管理==》新增商品接收到的返回结果为：" + jsonMap);
                 //处理成功，获取头部信息
-                Map<String, Object> headMap = (HashMap<String, Object>) jsonMap.get("head");
+                Map<String, Object> headMap = (Map<String, Object>) jsonMap.get("head");
                 String flag = String.valueOf(headMap.get("retFlag"));
                 String msg = String.valueOf(headMap.get("retMsg"));
                 if (!"00000".equals(flag)) {
                     return RestUtil.fail(flag, msg);
                 }
-                Map<String, Object> bodyMap = (HashMap<String, Object>) jsonMap.get("body");
+                Map<String, Object> bodyMap = (Map<String, Object>) jsonMap.get("body");
                 String goodsCode = String.valueOf(bodyMap.get("goodsCode"));
                 appOrderGoods.setGoodsCode(goodsCode);
                 logger.info("商品信息为：" + appOrderGoods.toString());
