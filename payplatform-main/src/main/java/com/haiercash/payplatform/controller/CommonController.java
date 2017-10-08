@@ -85,8 +85,8 @@ public class CommonController extends BaseController {
             Map jsonRequest = (Map) jsonObject.get("request");
             Map jsonbody = (Map) jsonRequest.get("body");
             xmllog.info("************进入收单系统************");
-            String acquirerUrl = EurekaServer.getACQUIRER();
-            String cmisfrontUrl = EurekaServer.getCMISFRONTSERVER();
+            String acquirerUrl = EurekaServer.ACQUIRER;
+            String cmisfrontUrl = EurekaServer.CMISFRONTSERVER;
             String url = StringUtils.EMPTY;
             switch (tradeCode) {
                 case "100001":
