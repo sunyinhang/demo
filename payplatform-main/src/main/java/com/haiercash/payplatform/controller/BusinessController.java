@@ -21,9 +21,8 @@ import com.haiercash.payplatform.utils.RSAUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -53,7 +52,7 @@ public class BusinessController extends BaseController {
         super("10");
     }
 
-    @RequestMapping(value = "/api/HaiercashPayApplyForJson", method = RequestMethod.POST)
+    @PostMapping(value = "/api/HaiercashPayApplyForJson")
     public String doPost(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         String retFlag = null;
         String retMsg = null;
@@ -87,7 +86,7 @@ public class BusinessController extends BaseController {
             xmllog.info("************进入收单系统************");
             String acquirerUrl = EurekaServer.ACQUIRER;
             String cmisfrontUrl = EurekaServer.CMISFRONTSERVER;
-            String url = StringUtils.EMPTY;
+            String url;
             switch (tradeCode) {
                 case "100001":
                     url = acquirerUrl + "api/appl/saveLcAppl";
@@ -104,6 +103,8 @@ public class BusinessController extends BaseController {
                         url = acquirerUrl + "api/appl/commitAppl";
                     } else if ("2".equals(flag)) {//合同提交
                         url = cmisfrontUrl;
+                    } else {
+                        throw new BusinessException(ConstUtil.ERROR_CODE, "错误的操作标识");
                     }
                     break;
                 case "100030":
@@ -112,9 +113,9 @@ public class BusinessController extends BaseController {
 
                         //1、查询额度申请信息
                         xmllog.info("外围渠道" + channleNo + ",查询额度申请信息开始");
-                        String userName = "";//申请人姓名
-                        String idno = "";//申请人手机号
-                        String phone = "";//手机号
+                        String userName;//申请人姓名
+                        String idno;//申请人手机号
+                        String phone;//手机号
                         QueryLimitMessage queryLimitMessage = new QueryLimitMessage();
                         queryLimitMessage.setApplSeq(applSeq);
                         //额度申请信息查询接口
@@ -131,7 +132,7 @@ public class BusinessController extends BaseController {
                             phone = (String) ((List) map.get("indivMobile")).get(0);
                         } else {
                             xmllog.info("申请号为：" + applSeq + "额度申请信息不存在！");
-                            throw new BusinessException(ConstUtil.ERROR_PARAM_INVALID_CODE, "额度申请提交，失败！");
+                            throw new BusinessException(ConstUtil.ERROR_CODE, "额度申请提交，失败！");
                         }
                         xmllog.info("外围渠道" + channleNo + ",查询额度申请信息结束");
 
@@ -157,6 +158,7 @@ public class BusinessController extends BaseController {
                         reqZXJson.put("sysFlag", "11");// 系统标识：支付平台
                         //征信
                         xmllog.info("外围渠道" + channleNo + ",征信签名，请求报文：" + reqZXJson.toString());
+
 
                         String resZX = restTemplate.postForObject(caUrl, reqZXJson, String.class);// 征信签名请求
                         xmllog.info("外围渠道" + channleNo + ",征信签名，响应报文：" + resZX);
@@ -262,7 +264,6 @@ public class BusinessController extends BaseController {
                 channelTradeLogDao.insert(channelTradeLog);
             } catch (Exception e) {
                 xmllog.error("HaiercashPayApplyForJson Post occur sqlException:" + e.getMessage(), e);
-                e.printStackTrace();
             }
             xmllog.info("HaiercashPayApplyForJson，结束");
             return ret;
