@@ -18,6 +18,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
@@ -38,9 +39,15 @@ import org.springframework.web.client.RestTemplate;
 @EnableAutoConfiguration
 @EnableConfigurationProperties({RestProfileProperties.class, EurekaServer.class})
 public class Application extends SpringBootServletInitializer {
+    @Primary
     @LoadBalanced
     @Bean
     RestTemplate restTemplate() {
+        return new RestTemplateEx();
+    }
+
+    @Bean(name = "restTemplateNormal")
+    RestTemplate restTemplateNormal() {
         return new RestTemplateEx();
     }
 
