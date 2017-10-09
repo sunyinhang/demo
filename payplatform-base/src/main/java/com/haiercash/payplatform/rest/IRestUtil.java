@@ -7,12 +7,12 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2017-10-08.
  */
-public interface IRestUtil<T extends IRestResponse> {
-    T getCore(String api, Map<String, ?> uriVariables, MultiValueMap<String, String> headers);
+public interface IRestUtil<TResponse extends IRestResponse> {
+    TResponse getCore(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers);
 
-    T deleteCore(String api, Map<String, ?> uriVariables, MultiValueMap<String, String> headers);
+    TResponse deleteCore(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers);
 
-    T postCore(String api, Object request, MultiValueMap<String, String> headers);
+    TResponse postCore(String url, Object request, MultiValueMap<String, String> headers);
 
-    T putCore(String api, Object request, MultiValueMap<String, String> headers);
+    TResponse putCore(String url, Object request, MultiValueMap<String, String> headers);
 }
