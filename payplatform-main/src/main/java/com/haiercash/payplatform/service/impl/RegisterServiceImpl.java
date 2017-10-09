@@ -86,19 +86,19 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
      * @date 2017/10/9 9:48
      */
     @Override
-    public Map<String, Object> saveUauthUsers(String token,Map<String, Object> params) throws Exception {
+    public Map<String, Object> saveUauthUsers(String token, Map<String, Object> params) throws Exception {
         Map returnmap = new HashMap<String, Object>();//返回的map
         params.put("mobile", EncryptUtil.simpleEncrypt(String.valueOf(params.get("mobile"))));
-        params.put("password",EncryptUtil.simpleEncrypt(String.valueOf(params.get("password"))));
-        Map usermap = appServerService.saveUauthUsers(token,params);
+        params.put("password", EncryptUtil.simpleEncrypt(String.valueOf(params.get("password"))));
+        Map usermap = appServerService.saveUauthUsers(token, params);
         String userretFlag = String.valueOf(((Map<String, Object>) (usermap.get("head"))).get("retFlag"));
         if ("00000".equals(userretFlag)) {
             //注册成功
             String uidLocal = usermap.get("body").toString();//统一认证内userId
-            returnmap.put("flag","1");//注册成功
+            returnmap.put("flag", "1");//注册成功
             return success(returnmap);
         } else if ("U0143".equals(userretFlag)) {
-            returnmap.put("flag","2");
+            returnmap.put("flag", "2");
             return success(returnmap);//用户已注册
         } else {
             //注册失败

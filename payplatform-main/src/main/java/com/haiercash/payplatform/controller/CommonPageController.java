@@ -48,6 +48,7 @@ public class CommonPageController extends BaseController {
     private InstallmentAccountService InstallmentAccountService;
     @Autowired
     private CommonPageService commonPageService;
+
     /**
      * OCR获取身份信息
      *
@@ -145,6 +146,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 上传替代影像
+     *
      * @param faceImg
      * @param request
      * @param response
@@ -289,6 +291,7 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> edCheck() {
         return payPasswdService.edCheck(super.getToken());
     }
+
     /**
      * @Title billCheck
      * @Description: 个人中心信息(账单查询)
@@ -299,6 +302,7 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> billCheck() {
         return payPasswdService.billCheck(super.getToken());
     }
+
     /**
      * 根据流水号查询额度审批进度
      *
@@ -440,6 +444,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 获取绑定手机号
+     *
      * @return
      */
     @RequestMapping(value = "/api/payment/getPhoneNo", method = RequestMethod.GET)
@@ -470,6 +475,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 查询返回实名认证需要的数据
+     *
      * @return
      */
     @RequestMapping(value = "/api/payment/queryCustNameByUId", method = RequestMethod.GET)
@@ -484,13 +490,15 @@ public class CommonPageController extends BaseController {
 
     /**
      * 合同展示（1.签章合同   2.征信合同 ）
+     *
      * @param params
      * @return
      */
     @RequestMapping(value = "/api/payment/showcontract", method = RequestMethod.GET)
-    public Map<String, Object> contract(@RequestParam Map<String, Object> params) throws Exception{
+    public Map<String, Object> contract(@RequestParam Map<String, Object> params) throws Exception {
         return commonPageService.showcontract(params);
     }
+
     /**
      * @Title saveUauthUsers
      * @Description: 用户注册
@@ -498,8 +506,8 @@ public class CommonPageController extends BaseController {
      * @date 2017/10/9 9:45
      */
     @RequestMapping(value = "/api/payment/saveUauthUsers", method = RequestMethod.POST)
-    public Map<String, Object> saveUauthUsers(@RequestBody Map<String, Object> params) throws Exception{
-        return registerService.saveUauthUsers(super.getToken(),params);
+    public Map<String, Object> saveUauthUsers(@RequestBody Map<String, Object> params) throws Exception {
+        return registerService.saveUauthUsers(super.getToken(), params);
     }
 
 }
