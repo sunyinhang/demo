@@ -94,7 +94,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String userretFlag = String.valueOf(((Map<String, Object>) (usermap.get("head"))).get("retFlag"));
         if ("00000".equals(userretFlag)) {
             //注册成功
-            String uidLocal = usermap.get("body").toString();//统一认证内userId
+//            String uidLocal = usermap.get("body").toString();//统一认证内userId
             returnmap.put("flag", "1");//注册成功
             return success(returnmap);
         } else if ("U0143".equals(userretFlag)) {
