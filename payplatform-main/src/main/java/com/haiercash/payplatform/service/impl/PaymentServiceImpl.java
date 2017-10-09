@@ -30,6 +30,7 @@ import com.haiercash.payplatform.utils.XstreamBuild;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ import java.util.Map;
  * @author <a href="mailto:suyang@haiercash.com">suyang</a>
  * @version Revision: 1.0 Date: 2015年12月23日 下午2:35:14
  */
+@Service
 public class PaymentServiceImpl implements PaymentServiceInterface {
     private Log logger = LogFactory.getLog(PaymentServiceImpl.class);
 

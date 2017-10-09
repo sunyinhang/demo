@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * eureka server list.
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * @author Liu qingxiang
  * @since v1.0.1
  */
-@Component
+@Configuration
 @ConfigurationProperties(prefix = "app.rest")
 public class EurekaServer {
     public static String APPCA;

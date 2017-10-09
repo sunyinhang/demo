@@ -34,8 +34,8 @@ import java.util.Map;
  * Created by 许崇雷 on 2017-10-07.
  */
 @RestController
-public class CommonController extends BaseController {
-    private Log xmllog = LogFactory.getLog(CommonController.class);
+public class BusinessController extends BaseController {
+    private Log xmllog = LogFactory.getLog(BusinessController.class);
 
     @Autowired
     private CooperativeBusinessDao cooperativeBusinessDao;
@@ -49,7 +49,7 @@ public class CommonController extends BaseController {
     @Autowired
     private RestTemplate restTemplate;
 
-    public CommonController(String moduleNo) {
+    public BusinessController() {
         super("10");
     }
 
