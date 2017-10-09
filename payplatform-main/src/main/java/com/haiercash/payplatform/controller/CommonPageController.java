@@ -491,5 +491,15 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> contract(@RequestParam Map<String, Object> params) throws Exception{
         return commonPageService.showcontract(params);
     }
+    /**
+     * @Title saveUauthUsers
+     * @Description: 用户注册
+     * @author yu jianwei
+     * @date 2017/10/9 9:45
+     */
+    @RequestMapping(value = "/api/payment/saveUauthUsers", method = RequestMethod.POST)
+    public Map<String, Object> saveUauthUsers(@RequestBody Map<String, Object> params) throws Exception{
+        return registerService.saveUauthUsers(super.getToken(),params);
+    }
 
 }

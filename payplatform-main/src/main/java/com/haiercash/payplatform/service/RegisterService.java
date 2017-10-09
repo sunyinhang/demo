@@ -9,4 +9,5 @@ import java.util.Map;
 public interface RegisterService {
     //判断用户是否注册
     public Map<String, Object> isRegister(String token, String channel, String channelNo,Map<String, Object> params) throws Exception;
+    public Map<String, Object> saveUauthUsers(String token,Map<String, Object> params) throws Exception;
 }
