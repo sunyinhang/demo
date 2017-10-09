@@ -1,13 +1,10 @@
 package com.haiercash.payplatform.common.entity;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.List;
 
 @Data
-@ToString
 public class ReturnMessage {
     private String code;
     private String message;

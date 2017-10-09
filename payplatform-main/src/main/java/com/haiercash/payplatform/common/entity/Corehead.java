@@ -22,7 +22,6 @@ package com.haiercash.payplatform.common.entity;
 
 import com.haiercash.payplatform.common.consts.BusinessConstance;
 import lombok.Data;
-import lombok.ToString;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,7 +38,6 @@ import java.util.UUID;
  * @version Revision: 1.0  Date: 2015年12月23日 下午4:59:25
  */
 @Data
-@ToString
 public class Corehead {
     private String tradeCode;
     private String serno;

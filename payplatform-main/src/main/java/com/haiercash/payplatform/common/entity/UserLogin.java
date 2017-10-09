@@ -22,7 +22,6 @@ package com.haiercash.payplatform.common.entity;
 
 
 import lombok.Data;
-import lombok.ToString;
 
 /**
  * DESCRIPTION:客户登录
@@ -35,7 +34,6 @@ import lombok.ToString;
  * @version Revision: 1.0  Date: 2015年12月24日 上午9:44:34
  */
 @Data
-@ToString
 public class UserLogin {
     private String userName;
     private String passWord;
