@@ -52,14 +52,14 @@ public class MoxieServiceImpl extends BaseService implements MoxieService {
 
         //根据省份证查询客户信息
         Map<String,Object> mapCust = appServerService.getCustInfoByCertNo("", identityMap);
-        Map<String, Object> mapcrm = HttpUtil.json2Map(mapCust.get("head").toString());
+        Map<String, Object> mapcrm = (Map) mapCust.get("head");
         String retFlag = (String) mapcrm.get("retFlag");
         if(!"00000".equals(retFlag)){
             logger.info("CRM查询客户信息失败");
             return;
         }
 
-        Map<String, Object> m = HttpUtil.json2Map(mapCust.get("body").toString());
+        Map<String, Object> m = (Map) mapCust.get("body");
 
         String custName = m.get("custName").toString();//得到客户姓名
         String mobile = m.get("mobile").toString();//mobile
