@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 许崇雷 on 2016/5/23.
@@ -54,5 +55,15 @@ public final class JsonSerializer {
      */
     public static <T> List<T> deserializeArray(String json, Class<T> clazz) {
         return JSON.parseArray(json, clazz);
+    }
+
+    /**
+     * 反序列化
+     *
+     * @param json 字符串
+     * @return Map 实例
+     */
+    public static Map<String, Object> deserializeMap(String json) {
+        return JSON.parseObject(json);
     }
 }
