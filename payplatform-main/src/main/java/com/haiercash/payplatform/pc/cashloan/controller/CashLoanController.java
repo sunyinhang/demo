@@ -1,0 +1,46 @@
+package com.haiercash.payplatform.pc.cashloan.controller;
+
+import com.bestvike.lang.StringUtils;
+import com.haiercash.payplatform.controller.BaseController;
+import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
+import com.haiercash.payplatform.utils.ConstUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Map;
+
+/**
+ * Created by 许崇雷 on 2017-10-10.
+ */
+@RestController
+public class CashLoanController extends BaseController {
+
+    @Autowired
+    private CashLoanService cashLoanService;
+
+    public CashLoanController() {
+        super("21");
+    }
+
+    @RequestMapping(value = "/api/activity", method = RequestMethod.GET)
+    public Map<String, Object> activity() throws ServletException, IOException {
+        String channelNo = this.getChannelNo();
+        if (StringUtils.isEmpty(channelNo))
+            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "渠道不能为空");
+        return cashLoanService.getActivityUrl();
+    }
+
+
+    @RequestMapping(value = "/api/activityLogin", method = RequestMethod.POST)
+    public Map<String, Object> activityLogin(@RequestBody Map<String, Object> params) {
+        String channelNo = this.getChannelNo();
+        if (StringUtils.isEmpty(channelNo))
+            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "渠道号不能为空");
+        return this.cashLoanService.joinActivity(params);
+    }
+}
