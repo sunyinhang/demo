@@ -11,7 +11,7 @@ import javax.persistence.Table;
  */
 @Data
 @Entity
-@Table(name = "APP_ENTRY_SETTING")
+@Table(name = "ENTRY_SETTING")
 public class EntrySetting {
     @Id
     private String channelNo;
