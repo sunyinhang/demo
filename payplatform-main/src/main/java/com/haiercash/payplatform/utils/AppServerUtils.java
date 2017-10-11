@@ -12,10 +12,10 @@ public class AppServerUtils {
     public String getAppServerUrl() {
         String channelNo = RequestContext.data().getChannelNo();
         switch (channelNo) {
-            case "11":
-            case "23":
-                return EurekaServer.APPSERVER;
-
+            case "33":  //乔融
+                return EurekaServer.APPSERVERNOAUTH;
+            case "46": //顺逛白条
+                return EurekaServer.APPSERVERNOAUTHNEW;
             default:
                 return EurekaServer.APPSERVERNOAUTHNEW;
         }
