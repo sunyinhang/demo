@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.pc.cashloan.service.impl;
 
 import com.bestvike.lang.StringUtils;
+import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.ActivityPageSettingDao;
 import com.haiercash.payplatform.common.data.ActivityPageSetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
@@ -15,8 +16,10 @@ import com.haiercash.payplatform.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -24,6 +27,9 @@ import java.util.Objects;
 public class CashLoanServiceImpl extends BaseService implements CashLoanService {
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private Session redisSession;
 
     @Autowired
     private AppServerService appServerService;
@@ -50,7 +56,11 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String loginType = setting.getLoginType();
         switch (loginType) {
             case "01":
-                return success("/login");//跳转到登录页
+                String token = UUID.randomUUID().toString();
+                this.redisSession.hset("__MAP_CHANEL_", token, channelNo);
+                Map<String, Object> map = new HashMap<>();
+                map.put("url", "/login");
+                return success(map);//跳转到登录页
 
             case "02":
                 String thirdToken = this.getToken();
