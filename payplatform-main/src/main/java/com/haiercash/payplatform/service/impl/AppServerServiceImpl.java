@@ -887,4 +887,13 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("根据申请流水号查询是否做过魔蝎认证，返回数据" + map);
         return map;
     }
+
+    public Map<String, Object> updateRiskInfo(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/updateRiskInfo";
+        logger.info("外部风险信息采集接口，请求地址：" + url);
+        logger.info("外部风险信息采集接口，请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("外部风险信息采集接口，返回数据：" + map);
+        return map;
+    }
 }

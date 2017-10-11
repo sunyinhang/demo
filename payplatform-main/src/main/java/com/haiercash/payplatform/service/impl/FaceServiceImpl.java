@@ -311,6 +311,10 @@ public class FaceServiceImpl extends BaseService implements FaceService{
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
+        if("33".equals(channelNo)){
+            return success();
+        }
+
         //上传替代影像成功
         //判断是否已经设置过支付密码
         Map<String, Object> m = validateUserFlag(userId, token, channel, channelNo, cacheMap);

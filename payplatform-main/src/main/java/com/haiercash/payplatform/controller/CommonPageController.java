@@ -159,7 +159,6 @@ public class CommonPageController extends BaseController {
 
     /**
      * 上传替代影像
-     *
      * @param faceImg
      * @param request
      * @param response
@@ -491,7 +490,6 @@ public class CommonPageController extends BaseController {
 
     /**
      * 获取绑定手机号
-     *
      * @return
      */
     @RequestMapping(value = "/api/payment/getPhoneNo", method = RequestMethod.GET)
@@ -522,7 +520,6 @@ public class CommonPageController extends BaseController {
 
     /**
      * 查询返回实名认证需要的数据
-     *
      * @return
      */
     @RequestMapping(value = "/api/payment/queryCustNameByUId", method = RequestMethod.GET)
@@ -536,8 +533,7 @@ public class CommonPageController extends BaseController {
     }
 
     /**
-     * 合同展示（1.签章合同   2.征信合同 ）
-     *
+     * 合同展示（1.签章合同   2.征信合同  3.注册协议）
      * @param params
      * @return
      */
