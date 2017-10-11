@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.pc.cashloan.service;
 
-import com.haiercash.payplatform.common.data.AppEntrySetting;
+import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by 许崇雷 on 2017-10-11.
  */
 public interface ThirdTokenVerifyService {
-    ThirdTokenVerifyResult verify(AppEntrySetting setting, String token);
+    ThirdTokenVerifyResult verify(EntrySetting setting, String token);
 
     /**
      * 从后台查询第三方用户的信息

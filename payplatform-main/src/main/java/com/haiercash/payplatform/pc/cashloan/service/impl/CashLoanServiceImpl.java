@@ -2,8 +2,8 @@ package com.haiercash.payplatform.pc.cashloan.service.impl;
 
 import com.bestvike.lang.StringUtils;
 import com.haiercash.commons.redis.Session;
-import com.haiercash.payplatform.common.dao.AppEntrySettingDao;
-import com.haiercash.payplatform.common.data.AppEntrySetting;
+import com.haiercash.payplatform.common.dao.EntrySettingDao;
+import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
@@ -38,13 +38,13 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     private ThirdTokenVerifyService thirdTokenVerifyService;
 
     @Autowired
-    private AppEntrySettingDao appEntrySettingDao;
+    private EntrySettingDao entrySettingDao;
 
     @Override
     public Map<String, Object> getActivityUrl() {
         String channelNo = this.getChannelNo();
         this.logger.info("开始活动跳转 channelNo:" + channelNo);
-        AppEntrySetting setting = this.appEntrySettingDao.selectByPrimaryKey(channelNo);
+        EntrySetting setting = this.entrySettingDao.selectByPrimaryKey(channelNo);
         String url = setting.getActivityUrl();
         return success(url);
     }
@@ -52,7 +52,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     @Override
     public Map<String, Object> joinActivity(Map<String, Object> params) {
         String channelNo = this.getChannelNo();
-        AppEntrySetting setting = this.appEntrySettingDao.selectByPrimaryKey(channelNo);
+        EntrySetting setting = this.entrySettingDao.selectByPrimaryKey(channelNo);
         String loginType = setting.getLoginType();
         switch (loginType) {
             case "01":
@@ -75,7 +75,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
     }
 
-    private Map<String, Object> joinActivityRedirect(Map<String, Object> params, AppEntrySetting setting) {
+    private Map<String, Object> joinActivityRedirect(Map<String, Object> params, EntrySetting setting) {
         logger.info("白条额度申请接口*******************开始");
         String channelNo = this.getChannelNo();
         String thirdToken = this.getToken();

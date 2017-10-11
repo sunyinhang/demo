@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "APP_ENTRY_SETTING")
-public class AppEntrySetting {
+public class EntrySetting {
     @Id
     private String channelNo;
     private String activityUrl;//活动页地址
