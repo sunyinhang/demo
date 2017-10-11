@@ -3,7 +3,7 @@ package com.haiercash.payplatform.pc.cashloan.service.impl;
 import com.bestvike.lang.Convert;
 import com.bestvike.lang.StringUtils;
 import com.bestvike.serialization.JsonSerializer;
-import com.haiercash.payplatform.common.data.ActivityPageSetting;
+import com.haiercash.payplatform.common.data.AppEntrySetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.service.AppServerService;
@@ -29,7 +29,7 @@ public class HaierThirdTokenVerifyService extends BaseService implements ThirdTo
     private AppServerService appServerService;
 
     @Override
-    public ThirdTokenVerifyResult verify(ActivityPageSetting setting, String token) {
+    public ThirdTokenVerifyResult verify(AppEntrySetting setting, String token) {
         String verifyUrl = setting.getVerifyUrlThird();
         logger.info("验证海尔 token:" + verifyUrl);
         //验证客户信息

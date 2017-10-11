@@ -11,8 +11,8 @@ import javax.persistence.Table;
  */
 @Data
 @Entity
-@Table(name = "ACTIVITY_PAGE_SETTING")
-public class ActivityPageSetting {
+@Table(name = "APP_ENTRY_SETTING")
+public class AppEntrySetting {
     @Id
     private String channelNo;
     private String activityUrl;//活动页地址
