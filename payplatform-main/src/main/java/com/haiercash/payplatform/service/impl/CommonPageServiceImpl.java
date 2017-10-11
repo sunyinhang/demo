@@ -68,6 +68,13 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             url = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applseq;
             result.put("url", url);
         }
+        //注册协议展示
+        if("3".equals(flag)){
+            String name = new String(Base64.encode(custName.getBytes()), "UTF-8");
+            name= URLEncoder.encode(name,"UTF-8");
+            url = "/app/appserver/register?custName=" + name;
+            result.put("url", url);
+        }
         logger.info("合同跳转url：" + url);
         return success(result);
     }

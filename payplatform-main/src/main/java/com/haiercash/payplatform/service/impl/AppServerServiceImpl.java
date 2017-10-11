@@ -18,6 +18,18 @@ import java.util.Map;
 public class AppServerServiceImpl extends BaseService implements AppServerService {
     public Log logger = LogFactory.getLog(getClass());
 
+    private static String appserverurl;
+    private void getAppServerUrl(Map<String, Object> params){
+        appserverurl = EurekaServer.APPSERVERNOAUTHNEW;
+        String channelNo = (String) params.get("channelNo");
+        if("33".equals(channelNo)){
+            appserverurl = EurekaServer.APPSERVERNOAUTH;
+        }
+        if("46".equals(channelNo)){
+            appserverurl = EurekaServer.APPSERVERNOAUTHNEW;
+        }
+    }
+
 //    @Value("${app.rest.APPSERVER}")
 //    protected String appserverurl;
 
@@ -212,7 +224,8 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params) {
-        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/ifNeedFaceChkByTypCde";
+        getAppServerUrl(params);
+        String url = appserverurl + "/app/appserver/ifNeedFaceChkByTypCde";
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求地址：" + url);
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求数据：" + params);
         Map<String, Object> resultmap = HttpUtil.restGetMap(url, token, params);
@@ -870,13 +883,13 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
 
-    @Override
-    public Map<String, Object> getMoxieByApplseq(String token, Map<String, Object> paramMap) {
-        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/getMoxieByApplseq";
-        logger.info("根据申请流水号查询是否做过魔蝎认证，请求地址：" + url);
-        logger.info("根据申请流水号查询是否做过魔蝎认证，请求数据：" + paramMap);
-        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        logger.info("根据申请流水号查询是否做过魔蝎认证，返回数据" + map);
+    public Map<String, Object> updateRiskInfo(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/updateRiskInfo";
+        logger.info("外部风险信息采集接口，请求地址：" + url);
+        logger.info("外部风险信息采集接口，请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("外部风险信息采集接口，返回数据：" + map);
         return map;
     }
+
 }

@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.pc.qiaorong.service;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.Map;
 
 /**
@@ -25,4 +27,24 @@ public interface QiaorongService {
     是否需要魔蝎验证
      */
     Map<String, Object> isNeedMoxie(Map<String, Object> map);
+
+    /*
+    根据流水号查询魔蝎验证
+     */
+    Map<String, Object> getMoxieByApplseq(Map<String, Object> map);
+
+    /*
+    查询往魔蝎传送的信息
+     */
+    Map<String, Object> getMoxieInfo(Map<String, Object> map);
+
+    /*
+    合同签订
+     */
+    Map<String, Object> loanContract(Map<String, Object> map);
+
+    /*
+    CA签章
+     */
+    Map<String, Object> cacontract(Map<String, Object> map) throws Exception;
 }
