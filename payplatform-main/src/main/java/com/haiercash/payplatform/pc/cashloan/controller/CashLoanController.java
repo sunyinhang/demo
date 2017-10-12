@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -27,10 +28,10 @@ public class CashLoanController extends BaseController {
     }
 
     @RequestMapping(value = "/api/payment/activity", method = RequestMethod.GET)
-    public Map<String, Object> activity() throws ServletException, IOException {
+    public ModelAndView activity() throws ServletException, IOException {
         String channelNo = this.getChannelNo();
         if (StringUtils.isEmpty(channelNo))
-            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "渠道不能为空");
+            return new ModelAndView("forward:/error");
         return cashLoanService.getActivityUrl();
     }
 
@@ -42,4 +43,6 @@ public class CashLoanController extends BaseController {
             return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "渠道号不能为空");
         return this.cashLoanService.joinActivity();
     }
+
+
 }

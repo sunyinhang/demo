@@ -3,7 +3,7 @@ package com.haiercash.payplatform.service;
 import java.util.Map;
 
 /**
- * 注册相关接口
+ * 注册登陆相关接口
  * Created by ljy on 2017/8/17.
  */
 public interface RegisterService {
@@ -11,4 +11,7 @@ public interface RegisterService {
     public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
 
     public Map<String, Object> saveUauthUsers(String token, Map<String, Object> params) throws Exception;
+
+    //用户登陆
+    public Map<String, Object> validateUsers(String token,  String channel, String channelNo,Map<String, Object> params) throws Exception;
 }

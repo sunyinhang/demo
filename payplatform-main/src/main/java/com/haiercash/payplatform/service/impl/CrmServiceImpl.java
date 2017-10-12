@@ -69,4 +69,20 @@ public class CrmServiceImpl extends BaseService implements CrmService{
         return HttpUtil.json2DeepMap(jsonStr);
     }
 
+    @Override
+    public Map<String, Object> validateUsers(String userId, String password) {
+        if (StringUtils.isEmpty(userId))
+            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户账号不能为空");
+        if (StringUtils.isEmpty(password))
+            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户密码不能为空");
+        String url = EurekaServer.UAUTH + "/app/uauth/validateUsers?userId=" + userId + "&password=" + password;
+        String jsonStr = HttpUtil.restGet(url);
+        logger.debug("CRM validateUsers :" + jsonStr);
+        if (StringUtils.isEmpty(jsonStr)) {
+            logger.error("登录验证信息失败！");
+            return fail(RestUtil.ERROR_INTERNAL_CODE, RestUtil.ERROR_INTERNAL_MSG);
+        }
+        return HttpUtil.json2DeepMap(jsonStr);
+    }
+
 }

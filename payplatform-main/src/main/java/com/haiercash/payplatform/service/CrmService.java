@@ -40,4 +40,13 @@ public interface CrmService {
      * @return
      */
     Map<String, Object> queryMerchCustInfo(String custName, String certNo);
+
+    /**
+     * (GET)登录验证
+     *
+     * @param userId
+     * @param password
+     * @return
+     */
+    Map<String, Object> validateUsers(String userId, String password);
 }

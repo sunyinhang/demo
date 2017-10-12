@@ -510,4 +510,15 @@ public class CommonPageController extends BaseController {
         return registerService.saveUauthUsers(super.getToken(), params);
     }
 
+    /**
+     * @Title validateUsers
+     * @Description: 用户登陆
+     * @author ljy
+     * @date 2017/10/12 9:45
+     */
+    @RequestMapping(value = "/api/payment/validateUsers", method = RequestMethod.POST)
+    public Map<String, Object> validateUsers(@RequestBody Map<String, Object> params) throws Exception {
+        return registerService.validateUsers(super.getToken(),  super.getChannel(), super.getChannelNo(),params);
+    }
+
 }

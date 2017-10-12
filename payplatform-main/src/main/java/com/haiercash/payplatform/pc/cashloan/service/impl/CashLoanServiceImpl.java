@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,22 +49,22 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     protected String haiercashpay_web_url;
 
     @Override
-    public Map<String, Object> getActivityUrl() {
+    public ModelAndView getActivityUrl() {
         String channelNo = this.getChannelNo();
         this.logger.info("开始活动跳转 channelNo:" + channelNo);
         EntrySetting setting = this.entrySettingDao.selectBychanelNo(channelNo);
-        if(setting == null){
-            return fail(ConstUtil.ERROR_CODE, "没有配置相应渠道数据！");
+        if (setting == null) {
+            return new ModelAndView("forward:/error");
         }
         String url = haiercashpay_web_url + setting.getActivityUrl();
-        return success(url);
+        return new ModelAndView("forward:" + url);
     }
 
     @Override
     public Map<String, Object> joinActivity() {
         String channelNo = this.getChannelNo();
         EntrySetting setting = this.entrySettingDao.selectBychanelNo(channelNo);
-        if(setting == null){
+        if (setting == null) {
             return fail(ConstUtil.ERROR_CODE, "没有配置相应渠道数据！");
         }
         String loginType = setting.getLoginType();
@@ -71,8 +72,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             case "01":
                 Map cachemap = new HashMap<String, Object>();
                 String token = UUID.randomUUID().toString();
-                cachemap.put("token",token);
-                this.redisSession.set(token,cachemap);
+                cachemap.put("token", token);
+                this.redisSession.set(token, cachemap);
                 Map<String, Object> map = new HashMap<>();
 //                map.put("url", "/login");
                 map.put("flag", "1");
@@ -113,14 +114,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //从后台查询用户信息
         Map<String, Object> userInfo = thirdTokenVerifyService.queryUserInfoFromAppServer(thirdInfo.getUserId());
         String retFlag = HttpUtil.getReturnCode(userInfo);
-        if (Objects.equals(retFlag, "00000")){
+        if (Objects.equals(retFlag, "00000")) {
             //集团uid已在统一认证做过绑定
             String body = userInfo.get("body").toString();
             //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
             JSONObject bodyMap = new JSONObject(body);
             uidLocal = bodyMap.get("userId").toString();//统一认证内userId
             phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
-        }else if (Objects.equals(retFlag, "U0157")) {//U0157：未查到该集团用户的信息
+        } else if (Objects.equals(retFlag, "U0157")) {//U0157：未查到该集团用户的信息
             //向后台注册用户信息
             Map<String, Object> registerResult = thirdTokenVerifyService.registerUserToAppServer(thirdInfo.getUserId(), thirdInfo.getPhoneNo());
             String registerResultFlag = HttpUtil.getReturnCode(registerResult);
@@ -130,23 +131,23 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录
 //        this.redisSession.hset(thirdToken, cachemap);
-                this.redisSession.set(thirdToken,cachemap);
+                this.redisSession.set(thirdToken, cachemap);
 //        String backurl = haiercashpay_web_url + "sgbt/#!/login/login.html?token=" + token;
                 returnmap.put("flag", "2");//跳转登陆绑定页
                 returnmap.put("token", thirdToken);
                 return success(returnmap);
-            }else{
+            } else {
                 //注册失败
-                String userretmsg =  HttpUtil.getRetMsg(registerResult);
+                String userretmsg = HttpUtil.getRetMsg(registerResult);
                 return fail(ConstUtil.ERROR_CODE, userretmsg);
             }
-        }else{
+        } else {
             throw new BusinessException(HttpUtil.getReturnCode(userInfo), HttpUtil.getRetMsg(userInfo));
         }
 
         cachemap.put("userId", uidLocal);//统一认证userId
         cachemap.put("phoneNo", phoneNo);//绑定手机号
-        redisSession.set(thirdToken, cachemap);
+//        redisSession.set(thirdToken, cachemap);
 
         logger.info("进行token绑定");
         //4.token绑定
@@ -202,6 +203,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         cachemap.put("idType", certType);
         redisSession.set(thirdToken, cachemap);
         returnmap.put("flag", "4");//额度激活
+
         returnmap.put("token", thirdToken);
         return success(returnmap);
     }
