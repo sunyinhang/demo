@@ -14,6 +14,7 @@ import com.haiercash.payplatform.utils.BusinessException;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import java.util.UUID;
 /**
  * Created by 许崇雷 on 2017-10-10.
  */
+@Service
 public class CashLoanServiceImpl extends BaseService implements CashLoanService {
     @Autowired
     private RestTemplate restTemplate;
@@ -44,7 +46,10 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     public Map<String, Object> getActivityUrl() {
         String channelNo = this.getChannelNo();
         this.logger.info("开始活动跳转 channelNo:" + channelNo);
-        EntrySetting setting = this.entrySettingDao.selectByPrimaryKey(channelNo);
+        EntrySetting setting = this.entrySettingDao.selectBychanelNo(channelNo);
+        if(setting == null){
+            return fail(ConstUtil.ERROR_CODE, "没有配置相应渠道数据！");
+        }
         String url = setting.getActivityUrl();
         return success(url);
     }
@@ -52,7 +57,10 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     @Override
     public Map<String, Object> joinActivity(Map<String, Object> params) {
         String channelNo = this.getChannelNo();
-        EntrySetting setting = this.entrySettingDao.selectByPrimaryKey(channelNo);
+        EntrySetting setting = this.entrySettingDao.selectBychanelNo(channelNo);
+        if(setting == null){
+            return fail(ConstUtil.ERROR_CODE, "没有配置相应渠道数据！");
+        }
         String loginType = setting.getLoginType();
         switch (loginType) {
             case "01":
