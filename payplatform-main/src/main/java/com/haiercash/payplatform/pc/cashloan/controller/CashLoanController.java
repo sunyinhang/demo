@@ -27,7 +27,7 @@ public class CashLoanController extends BaseController {
         super("21");
     }
 
-    @RequestMapping(value = "/api/activity", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/payment/activity", method = RequestMethod.GET)
     public Map<String, Object> activity() throws ServletException, IOException {
         String channelNo = this.getChannelNo();
         if (StringUtils.isEmpty(channelNo))
@@ -36,7 +36,7 @@ public class CashLoanController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/api/activityLogin", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/payment/activityLogin", method = RequestMethod.POST)
     public Map<String, Object> activityLogin(@RequestBody Map<String, Object> params) {
         String channelNo = this.getChannelNo();
         if (StringUtils.isEmpty(channelNo))
