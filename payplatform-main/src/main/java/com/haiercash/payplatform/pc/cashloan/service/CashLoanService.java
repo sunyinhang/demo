@@ -8,5 +8,5 @@ import java.util.Map;
 public interface CashLoanService {
     Map<String, Object>  getActivityUrl( );
 
-    Map<String, Object> joinActivity(Map<String, Object> params);
+    Map<String, Object> joinActivity();
 }

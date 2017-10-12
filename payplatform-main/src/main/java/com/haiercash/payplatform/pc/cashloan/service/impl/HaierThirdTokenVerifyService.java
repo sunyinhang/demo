@@ -11,7 +11,6 @@ import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.utils.BusinessException;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,8 +63,8 @@ public class HaierThirdTokenVerifyService extends BaseService implements ThirdTo
         if (StringUtils.isEmpty(response))
             throw new BusinessException(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
         Map<String, Object> map = JsonSerializer.deserializeMap(response);
-        if (!HttpUtil.isSuccess(map))
-            throw new BusinessException(HttpUtil.getReturnCode(map), HttpUtil.getRetMsg(map));
+//        if (!HttpUtil.isSuccess(map))
+//            throw new BusinessException(HttpUtil.getReturnCode(map), HttpUtil.getRetMsg(map));
         return map;
     }
 
@@ -82,8 +81,8 @@ public class HaierThirdTokenVerifyService extends BaseService implements ThirdTo
         param.put("externUid", EncryptUtil.simpleEncrypt(outUserId));
         param.put("mobile", EncryptUtil.simpleEncrypt(phoneNo));
         Map<String, Object> response = appServerService.saveUauthUsersByHaier(param);
-        if (!HttpUtil.isSuccess(response))
-            throw new BusinessException(HttpUtil.getReturnCode(response), HttpUtil.getRetMsg(response));
+//        if (!HttpUtil.isSuccess(response))
+//            throw new BusinessException(HttpUtil.getReturnCode(response), HttpUtil.getRetMsg(response));
         return response;
     }
 }
