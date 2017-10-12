@@ -14,6 +14,7 @@ import com.haiercash.payplatform.utils.BusinessException;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,6 +43,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     @Autowired
     private EntrySettingDao entrySettingDao;
 
+    @Value("${app.other.haiercashpay_web_url}")
+    protected String haiercashpay_web_url;
+
     @Override
     public Map<String, Object> getActivityUrl() {
         String channelNo = this.getChannelNo();
@@ -50,7 +54,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if(setting == null){
             return fail(ConstUtil.ERROR_CODE, "没有配置相应渠道数据！");
         }
-        String url = setting.getActivityUrl();
+        String url = haiercashpay_web_url + setting.getActivityUrl();
         return success(url);
     }
 
