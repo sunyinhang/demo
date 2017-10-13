@@ -10,7 +10,6 @@ import com.haiercash.payplatform.utils.EncryptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,8 +91,8 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     @Override
     public Map<String, Object> saveUauthUsers(String token, Map<String, Object> params) throws Exception {
         Map returnmap = new HashMap<String, Object>();//返回的map
-        params.put("mobile", URLEncoder.encode(EncryptUtil.simpleEncrypt(String.valueOf(params.get("mobile"))),"UTF-8"));
-        params.put("password", URLEncoder.encode(EncryptUtil.simpleEncrypt(String.valueOf(params.get("password"))),"UTF-8"));
+        params.put("mobile", EncryptUtil.simpleEncrypt(String.valueOf(params.get("mobile"))));
+        params.put("password", EncryptUtil.simpleEncrypt(String.valueOf(params.get("password"))));
         Map usermap = appServerService.saveUauthUsers(token, params);
         String userretFlag = String.valueOf(((Map<String, Object>) (usermap.get("head"))).get("retFlag"));
         if ("00000".equals(userretFlag)) {
@@ -137,7 +136,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String password =  String.valueOf(params.get("password"));
 //        params.put("mobile", EncryptUtil.simpleEncrypt(mobile));
 //        params.put("password", EncryptUtil.simpleEncrypt(password));
-        Map usermap =crmService.validateUsers( URLEncoder.encode(EncryptUtil.simpleEncrypt(mobile),"UTF-8"),URLEncoder.encode(EncryptUtil.simpleEncrypt(password),"UTF-8"));
+        Map usermap =crmService.validateUsers(EncryptUtil.simpleEncrypt(mobile),EncryptUtil.simpleEncrypt(password));
         String userretFlag = String.valueOf(((Map<String, Object>) (usermap.get("head"))).get("retFlag"));
         if ("00000".equals(userretFlag)) {
 
