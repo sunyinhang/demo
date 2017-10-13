@@ -20,6 +20,11 @@ public class EchoController extends BaseController {
         super("00");
     }
 
+    @GetMapping("/api/echo")
+    public Map<String, Object> echoGet(String value) {
+        return success("hello world!" + value);
+    }
+
     @GetMapping("/api/echo/get")
     public Map<String, Object> echoGet(String value, String a) {
         System.out.println(a);
