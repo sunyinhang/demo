@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.bestvike.lang.Convert;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
