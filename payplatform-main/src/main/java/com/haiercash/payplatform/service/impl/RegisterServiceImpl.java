@@ -126,7 +126,8 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 //        Map<String, Object> gettigIDMap = new HashMap<String, Object>();
 //        Map<String, Object> settigIDMap = new HashMap<String, Object>();
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
-        String typCde = "" ;//贷款品种
+        //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!
+        String typCde = "17044a" ;//贷款品种
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
