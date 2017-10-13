@@ -1,10 +1,10 @@
 package com.haiercash.payplatform.rest.cmisacq;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.bestvike.lang.StringUtils;
-import com.haiercash.payplatform.rest.IRestResponse;
+import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.utils.ConstUtil;
 import lombok.Data;
-import lombok.ToString;
 
 import java.util.Objects;
 
@@ -12,7 +12,7 @@ import java.util.Objects;
  * Created by 许崇雷 on 2017-10-08.
  */
 @Data
-public class CmisAcqResponse<TBody> implements IRestResponse<CmisAcqResponseHead, TBody> {
+public class CmisAcqResponse<TBody> implements IResponse<TBody> {
     private CmisAcqResponseRoot<TBody> response;
 
     public static <TBody> CmisAcqResponse<TBody> create(String retFlag, String retMsg) {
@@ -26,6 +26,7 @@ public class CmisAcqResponse<TBody> implements IRestResponse<CmisAcqResponseHead
         return response;
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public boolean isSuccess(boolean needBody) {
         String retFlag = this.getRetFlag();
@@ -33,6 +34,7 @@ public class CmisAcqResponse<TBody> implements IRestResponse<CmisAcqResponseHead
         return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public String getRetFlag() {
         CmisAcqResponseHead head = this.getHead();
@@ -41,6 +43,7 @@ public class CmisAcqResponse<TBody> implements IRestResponse<CmisAcqResponseHead
         return head.getRetFlag();
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public String getRetMsg() {
         CmisAcqResponseHead head = this.getHead();
@@ -49,6 +52,7 @@ public class CmisAcqResponse<TBody> implements IRestResponse<CmisAcqResponseHead
         return head.getRetMsg();
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public CmisAcqResponseHead getHead() {
         CmisAcqResponseRoot response = this.response;
@@ -57,6 +61,7 @@ public class CmisAcqResponse<TBody> implements IRestResponse<CmisAcqResponseHead
         return response.getHead();
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public TBody getBody() {
         CmisAcqResponseRoot<TBody> response = this.response;
