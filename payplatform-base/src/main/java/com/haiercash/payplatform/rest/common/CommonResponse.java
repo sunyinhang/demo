@@ -1,7 +1,8 @@
 package com.haiercash.payplatform.rest.common;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.bestvike.lang.StringUtils;
-import com.haiercash.payplatform.rest.IRestResponse;
+import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.utils.ConstUtil;
 import lombok.Data;
 
@@ -11,8 +12,8 @@ import java.util.Objects;
  * Created by 许崇雷 on 2017-10-08.
  */
 @Data
-public class CommonResponse<TBody> implements IRestResponse<CommonResponseHead, TBody> {
-    private  CommonResponseHead head;
+public class CommonResponse<TBody> implements IResponse<TBody> {
+    private CommonResponseHead head;
     private TBody body;
 
     public static <TBody> CommonResponse<TBody> create(String retFlag, String retMsg) {
@@ -24,6 +25,7 @@ public class CommonResponse<TBody> implements IRestResponse<CommonResponseHead, 
         return response;
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public boolean isSuccess(boolean needBody) {
         String retFlag = this.getRetFlag();
@@ -31,6 +33,7 @@ public class CommonResponse<TBody> implements IRestResponse<CommonResponseHead, 
         return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public String getRetFlag() {
         CommonResponseHead head = this.getHead();
@@ -39,6 +42,7 @@ public class CommonResponse<TBody> implements IRestResponse<CommonResponseHead, 
         return head.getRetFlag();
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public String getRetMsg() {
         CommonResponseHead head = this.getHead();
@@ -54,6 +58,6 @@ public class CommonResponse<TBody> implements IRestResponse<CommonResponseHead, 
 
     @Override
     public TBody getBody() {
-       return this.body;
+        return this.body;
     }
 }
