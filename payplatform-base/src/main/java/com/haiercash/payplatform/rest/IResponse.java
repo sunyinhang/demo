@@ -12,6 +12,8 @@ public interface IResponse<TBody> {
 
     String getRetMsg();
 
+    String getSerNo();
+
     Object getHead();
 
     TBody getBody();

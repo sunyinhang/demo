@@ -51,6 +51,12 @@ public class CommonResponse<TBody> implements IResponse<TBody> {
         return head.getRetMsg();
     }
 
+    @JSONField(serialize = false, deserialize = false)
+    @Override
+    public String getSerNo() {
+        return null;
+    }
+
     @Override
     public CommonResponseHead getHead() {
         return this.head;

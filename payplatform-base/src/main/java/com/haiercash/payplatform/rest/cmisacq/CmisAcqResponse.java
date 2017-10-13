@@ -54,6 +54,15 @@ public class CmisAcqResponse<TBody> implements IResponse<TBody> {
 
     @JSONField(serialize = false, deserialize = false)
     @Override
+    public String getSerNo() {
+        CmisAcqResponseHead head = this.getHead();
+        if (head == null)
+            return StringUtils.EMPTY;
+        return head.getSerno();
+    }
+
+    @JSONField(serialize = false, deserialize = false)
+    @Override
     public CmisAcqResponseHead getHead() {
         CmisAcqResponseRoot response = this.response;
         if (response == null)
