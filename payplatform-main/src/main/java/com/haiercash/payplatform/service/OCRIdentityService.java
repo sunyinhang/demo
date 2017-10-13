@@ -32,6 +32,10 @@ public interface OCRIdentityService {
     //实名认证
     public Map<String, Object> realAuthentication(Map<String, Object> map) throws Exception;
 
+    //实名认证(标准现金贷)
+    public Map<String, Object> realAuthenticationForXjd(Map<String, Object> map) throws Exception;
+
+
     //支付密码设置
     //public Map<String, Object> resetPayPasswd(String token, String payPasswd);
 

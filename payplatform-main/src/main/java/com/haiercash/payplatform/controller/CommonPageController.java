@@ -131,6 +131,19 @@ public class CommonPageController extends BaseController {
     }
 
     /**
+     * 实名绑卡(标准化现金贷)
+     *
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/realAuthenticationForXjd", method = RequestMethod.POST)
+    public Map<String, Object> realAuthenticationForXjd(@RequestBody Map<String, Object> map) throws Exception {
+        return ocrIdentityService.realAuthenticationForXjd(super.initParam(map));
+    }
+
+
+    /**
      * 人脸识别
      *
      * @param faceImg
