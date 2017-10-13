@@ -17,6 +17,9 @@ public class CmisAcqUtil {
     private static final RestUtil REST_UTIL = new RestUtil();
     private static final ParameterizedTypeImpl MAP_STRING_OBJECT_TYPE = ParameterizedTypeImpl.make(Map.class, new Type[]{String.class, Object.class}, null);
 
+    private CmisAcqUtil() {
+    }
+
     private static Type getMapType() {
         return MAP_STRING_OBJECT_TYPE;
     }
