@@ -26,4 +26,116 @@ public class EurekaServer {
     public static String APPSERVER;
     public static String APPSERVERNOAUTH;
     public static String APPSERVERNOAUTHNEW;
+
+    public static String getAPPCA() {
+        return APPCA;
+    }
+
+    public static void setAPPCA(String APPCA) {
+        EurekaServer.APPCA = APPCA;
+    }
+
+    public static String getAPPMSG() {
+        return APPMSG;
+    }
+
+    public static void setAPPMSG(String APPMSG) {
+        EurekaServer.APPMSG = APPMSG;
+    }
+
+    public static String getAPPMANAGE() {
+        return APPMANAGE;
+    }
+
+    public static void setAPPMANAGE(String APPMANAGE) {
+        EurekaServer.APPMANAGE = APPMANAGE;
+    }
+
+    public static String getCMISPROXY() {
+        return CMISPROXY;
+    }
+
+    public static void setCMISPROXY(String CMISPROXY) {
+        EurekaServer.CMISPROXY = CMISPROXY;
+    }
+
+    public static String getCMISFRONTSERVER() {
+        return CMISFRONTSERVER;
+    }
+
+    public static void setCMISFRONTSERVER(String CMISFRONTSERVER) {
+        EurekaServer.CMISFRONTSERVER = CMISFRONTSERVER;
+    }
+
+    public static String getCRM() {
+        return CRM;
+    }
+
+    public static void setCRM(String CRM) {
+        EurekaServer.CRM = CRM;
+    }
+
+    public static String getGM() {
+        return GM;
+    }
+
+    public static void setGM(String GM) {
+        EurekaServer.GM = GM;
+    }
+
+    public static String getUAUTH() {
+        return UAUTH;
+    }
+
+    public static void setUAUTH(String UAUTH) {
+        EurekaServer.UAUTH = UAUTH;
+    }
+
+    public static String getHCPORTAL() {
+        return HCPORTAL;
+    }
+
+    public static void setHCPORTAL(String HCPORTAL) {
+        EurekaServer.HCPORTAL = HCPORTAL;
+    }
+
+    public static String getACQUIRER() {
+        return ACQUIRER;
+    }
+
+    public static void setACQUIRER(String ACQUIRER) {
+        EurekaServer.ACQUIRER = ACQUIRER;
+    }
+
+    public static String getORDER() {
+        return ORDER;
+    }
+
+    public static void setORDER(String ORDER) {
+        EurekaServer.ORDER = ORDER;
+    }
+
+    public static String getAPPSERVER() {
+        return APPSERVER;
+    }
+
+    public static void setAPPSERVER(String APPSERVER) {
+        EurekaServer.APPSERVER = APPSERVER;
+    }
+
+    public static String getAPPSERVERNOAUTH() {
+        return APPSERVERNOAUTH;
+    }
+
+    public static void setAPPSERVERNOAUTH(String APPSERVERNOAUTH) {
+        EurekaServer.APPSERVERNOAUTH = APPSERVERNOAUTH;
+    }
+
+    public static String getAPPSERVERNOAUTHNEW() {
+        return APPSERVERNOAUTHNEW;
+    }
+
+    public static void setAPPSERVERNOAUTHNEW(String APPSERVERNOAUTHNEW) {
+        EurekaServer.APPSERVERNOAUTHNEW = APPSERVERNOAUTHNEW;
+    }
 }
