@@ -30,7 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestInterceptor {
     public Log logger = LogFactory.getLog(this.getClass());
 
-    @Pointcut("execution(* com.haiercash..*.*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    @Pointcut("execution(* com.haiercash..*.*(..)) && (@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
+            " || @annotation(org.springframework.web.bind.annotation.GetMapping)" +
+            " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)" +
+            " || @annotation(org.springframework.web.bind.annotation.PostMapping)" +
+            " || @annotation(org.springframework.web.bind.annotation.PutMapping))")
     private void doRequestPointcut() {
     }
 

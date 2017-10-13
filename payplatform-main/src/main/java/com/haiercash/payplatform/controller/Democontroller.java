@@ -1,47 +1,92 @@
 package com.haiercash.payplatform.controller;
 
-import com.haiercash.commons.redis.Session;
-import com.haiercash.payplatform.utils.ConstUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import com.haiercash.payplatform.rest.IResponse;
+import com.haiercash.payplatform.rest.common.CommonRestUtil;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * demo controller.
+ *
  * @author Liu qingxiang
  * @since v1.0.0
  */
 @RestController
 public class Democontroller extends BaseController {
-
     public Democontroller() {
         super("01");
     }
 
-    @Autowired
-    private Session session;
-
-    // TODO: 测试程序
-    @RequestMapping(value = "/api/demo/allCache", method = RequestMethod.GET)
-    public Map<String, Object> allCache() {
-        String token = httpServletRequest.getHeader("token");
-        if (token == null || "".equals(token)) {
-            logger.info("token为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        return (Map<String, Object>) session.get(token, Map.class);
+    @GetMapping("/api/test/get")
+    public Object testGet() {
+        String url = "http://payplatform-develop-tim/api/echo/get?value=哈哈&c=&a=b==";
+        IResponse<DemoBean> response = CommonRestUtil.getForObject(url, DemoBean.class);
+        response.assertSuccess(true);
+        DemoBean bean = response.getBody();
+        System.out.println(bean);
+        //=====
+        Map<String, Object> params = new HashMap<>();
+        params.put("value", "哈哈&c=");
+        params.put("a", "b==");
+        url = "http://payplatform-develop-tim/api/echo/get";
+        IResponse<Map> response2 = CommonRestUtil.getForMap(url, params);
+        response2.assertSuccess(true);
+        Map map = response2.getBody();
+        System.out.println(map);
+        return response2;
     }
 
-    @RequestMapping(value = "/api/demo/set", method = RequestMethod.GET)
-    public String setCache() {
-        session.set("demo", "demo123", 5);
-        return session.get("demo", String.class);
+    @GetMapping("/api/test/delete")
+    public Object testDelete() {
+        String url = "http://payplatform-develop-tim/api/echo/delete";
+        Map<String, Object> params = new HashMap<>();
+        params.put("value", "世界哈哈66你好==");
+        IResponse<DemoBean> response = CommonRestUtil.deleteForObject(url, DemoBean.class, params);
+        response.assertSuccess(true);
+        DemoBean bean = response.getBody();
+        System.out.println(bean);
+        //=====
+        IResponse<Map> response2 = CommonRestUtil.deleteForMap(url, params);
+        response2.assertSuccess(true);
+        Map map = response2.getBody();
+        System.out.println(map);
+        return response2;
     }
-    @RequestMapping(value = "/api/demo/get", method = RequestMethod.GET)
-    public String getCache() {
-        return "login.html";
+
+    @GetMapping("/api/test/post")
+    public Object testPost() {
+        String url = "http://payplatform-develop-tim/api/echo/post";
+        Map<String, Object> params = new HashMap<>();
+        params.put("value", "&a=世界哈哈66你好==");
+        IResponse<DemoBean> response = CommonRestUtil.postForObject(url, params, DemoBean.class);
+        response.assertSuccess(true);
+        DemoBean bean = response.getBody();
+        System.out.println(bean);
+        //=====
+        IResponse<Map> response2 = CommonRestUtil.postForMap(url, params);
+        response2.assertSuccess(true);
+        Map map = response2.getBody();
+        System.out.println(map);
+        return response2;
+    }
+
+    @GetMapping("/api/test/put")
+    public Object testPut() {
+        String url = "http://payplatform-develop-tim/api/echo/put";
+        Map<String, Object> params = new HashMap<>();
+        params.put("value", "&a=世界哈哈66你好==");
+        IResponse<DemoBean> response = CommonRestUtil.putForObject(url, params, DemoBean.class);
+        response.assertSuccess(true);
+        DemoBean bean = response.getBody();
+        System.out.println(bean);
+        //=====
+        IResponse<Map> response2 = CommonRestUtil.putForMap(url, params);
+        response2.assertSuccess(true);
+        Map map = response2.getBody();
+        System.out.println(map);
+        return response2;
     }
 }
