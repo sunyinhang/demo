@@ -520,5 +520,14 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> validateUsers(@RequestBody Map<String, Object> params) throws Exception {
         return registerService.validateUsers(super.getToken(),  super.getChannel(), super.getChannelNo(),params);
     }
-
+    /**
+     * @Title  custUpdatePwd
+     * @Description: 客户登录密码设置、修改（验证码）
+     * @author yu jianwei
+     * @date 2017/10/13 15:26
+     */
+    @RequestMapping(value = "/api/payment/custUpdatePwd", method = RequestMethod.POST)
+    public Map<String, Object> custUpdatePwd(@RequestBody Map<String, Object> params) throws Exception {
+        return registerService.custUpdatePwd(super.getToken(), params);
+    }
 }
