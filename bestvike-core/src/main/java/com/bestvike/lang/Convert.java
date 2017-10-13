@@ -260,6 +260,15 @@ public final class Convert {
         return str == null ? StringUtils.EMPTY : str;
     }
 
+    public static String toStringHuman(Object value) {
+        if (value == null)
+            return StringUtils.EMPTY;
+        if (value instanceof Date)
+            return DateUtils.toDateTimeString((Date) value);
+        String strValue = value.toString();
+        return strValue == null ? StringUtils.EMPTY : strValue;
+    }
+
     public static Date toDate(Object value) {
         if (value instanceof Date)
             return (Date) value;
@@ -417,6 +426,15 @@ public final class Convert {
     public static String nullString(Object value) {
         try {
             String str = toString(value);
+            return StringUtils.isEmpty(str) ? null : str;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String nullStringHuman(Object value) {
+        try {
+            String str = toStringHuman(value);
             return StringUtils.isEmpty(str) ? null : str;
         } catch (Exception e) {
             return null;
@@ -584,6 +602,15 @@ public final class Convert {
     public static String defaultString(Object value, String defaultValue) {
         try {
             String str = toString(value);
+            return StringUtils.isEmpty(str) ? defaultValue : str;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public static String defaultStringHuman(Object value, String defaultValue) {
+        try {
+            String str = toStringHuman(value);
             return StringUtils.isEmpty(str) ? defaultValue : str;
         } catch (Exception e) {
             return defaultValue;
