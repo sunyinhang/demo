@@ -189,9 +189,16 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             resultparamMap.put("flag", "6");//实名认证 页面
             return success(resultparamMap);
         }
-        String custNo = (String)cacheMap.get("custNo");
-        String custName = (String)cacheMap.get("name");
-        String idNumber = (String)cacheMap.get("idCard"); //身份证
+        String custNo = ((Map<String, Object>) (custresult.get("body"))).get("custNo").toString();
+        String custName = ((Map<String, Object>) (custresult.get("body"))).get("custName").toString();
+        String idNumber = ((Map<String, Object>) (custresult.get("body"))).get("cardNo").toString();
+        cacheMap.put("custNo", custNo);
+        cacheMap.put("name", custName);
+        cacheMap.put("idCard", idNumber);
+        session.set(token, cacheMap);
+//        String custNo = (String)cacheMap.get("custNo");
+//        String custName = (String)cacheMap.get("name");
+//        String idNumber = (String)cacheMap.get("idCard"); //身份证
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channelNo",channelNo);
         paramMap.put("tag",tag);//标签

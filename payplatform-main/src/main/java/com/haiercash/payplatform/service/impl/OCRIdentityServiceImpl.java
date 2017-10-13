@@ -741,16 +741,6 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("扫描身份证号为空");
             return fail(ConstUtil.ERROR_CODE,"扫描身份证号为空");
         }
-        //顺逛传送身份证与客户实名身份证不一致
-        String idNoHaier = (String) cacheMap.get("idNoHaier");//
-        if (!StringUtils.isEmpty(idNoHaier)){
-            idNoHaier=idNoHaier.toUpperCase();
-            logger.info("顺逛传送身份证号是："+idNoHaier);
-        }
-        if (!StringUtils.isEmpty(idNoHaier) && !idCard.equals(idNoHaier)) {
-            logger.info("顺逛传送身份证与客户实名身份证不一致");
-            return fail(ConstUtil.ERROR_CODE, "顺逛白条实名认证必须和顺逛实名认证一致！");
-        }
         //4.缓存数据非空判断
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
                 || StringUtils.isEmpty(regAddr) || StringUtils.isEmpty(validDate) || StringUtils.isEmpty(certOrga)
