@@ -4,6 +4,7 @@ import com.bestvike.collection.EnumerationUtils;
 import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.config.HttpMessageConvertersAutoConfiguration;
 import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
+import com.haiercash.payplatform.diagnostics.TraceID;
 import com.haiercash.payplatform.filter.RequestContext;
 import com.netflix.config.DynamicBooleanProperty;
 import com.netflix.config.DynamicPropertyFactory;
@@ -90,6 +91,7 @@ public class RestTemplateEx extends RestTemplate {
 
         //如果启用上下文 Headers 传递且存在上下文.则将 Headers 放入 ribbonRequest.已有的 Headers 不会被覆盖,敏感 Headers 不会被放入
         private static void putContextHeaders(ClientHttpRequest ribbonRequest) throws IOException {
+            ribbonRequest.getHeaders().put(TraceID.NAME, Collections.singletonList(TraceID.current()));//调用链 ID
             if (!RestTemplateConfig.ROUTE_HEADERS_ENABLED || !RequestContext.exists())
                 return;
             HttpServletRequest sourceRequest = RequestContext.get().getRequest();
