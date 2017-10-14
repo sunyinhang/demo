@@ -24,6 +24,7 @@ public final class TraceID {
     private static final char[] IP_LAST_BIT_SEPARATOR = new char[]{'.'};
     private static final String IP_LAST_BIT;
     private static final DynamicStringProperty PROPERTY_APPLICATION_NAME = DynamicPropertyFactory.getInstance().getStringProperty("spring.application.name", StringUtils.EMPTY);
+    private static final int LEN_APPLICATION_NAME = 3;
     private static String APPLICATION_NAME;
 
     static {
@@ -46,15 +47,17 @@ public final class TraceID {
      * @return 调用链 ID
      */
     public static String generate() {
-        if (StringUtils.isEmpty(APPLICATION_NAME))
-            APPLICATION_NAME = Convert.toString(PROPERTY_APPLICATION_NAME.get()).toUpperCase();
+        if (StringUtils.isEmpty(APPLICATION_NAME)) {
+            String appName = Convert.toString(PROPERTY_APPLICATION_NAME.get());
+            APPLICATION_NAME = (appName.length() < LEN_APPLICATION_NAME ? appName : appName.substring(0, LEN_APPLICATION_NAME)).toUpperCase();
+        }
         StringBuilder builder = new StringBuilder(25);
         builder.append(DateUtils.toString(DateUtils.now(), DATE_FORMAT))//年月日时分秒毫秒
                 .append("-")
                 .append(APPLICATION_NAME)
-                .append("(")
+                .append("-")
                 .append(IP_LAST_BIT)//IP 地址最后一个数字 0-255
-                .append(")-")
+                .append("-")
                 .append(Sequence.getAndIncrement());//序号
         return builder.toString();
     }
