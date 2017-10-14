@@ -127,7 +127,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 //        Map<String, Object> settigIDMap = new HashMap<String, Object>();
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
         //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!
-        String typCde = "17044a" ;//贷款品种
+        String typCde = "" ;//贷款品种
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -192,10 +192,11 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         }
         String custNo = ((Map<String, Object>) (custresult.get("body"))).get("custNo").toString();
         String custName = ((Map<String, Object>) (custresult.get("body"))).get("custName").toString();
-        String idNumber = ((Map<String, Object>) (custresult.get("body"))).get("cardNo").toString();
+//        String idNumber = ((Map<String, Object>) (custresult.get("body"))).get("cardNo").toString();
+        String idNumber = ((Map<String, Object>) (custresult.get("body"))).get("certNo").toString();
         cacheMap.put("custNo", custNo);
         cacheMap.put("name", custName);
-        cacheMap.put("idCard", idNumber);
+        cacheMap.put("idCard", idNumber);//身份证号
         session.set(token, cacheMap);
 //        String custNo = (String)cacheMap.get("custNo");
 //        String custName = (String)cacheMap.get("name");
