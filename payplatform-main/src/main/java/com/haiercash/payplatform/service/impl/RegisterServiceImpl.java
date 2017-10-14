@@ -204,7 +204,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channelNo",channelNo);
         paramMap.put("tag",tag);//标签
-        paramMap.put("businessType","XJD");//业务类型 现金贷：XJD   商品分期：SPFQ      额度激活：EDJH    提额：TE   额度申请：EDSQ   个人信息维护：GRXX
+        paramMap.put("businessType","EDJH");//业务类型 现金贷：XJD   商品分期：SPFQ      额度激活：EDJH    提额：TE   额度申请：EDSQ   个人信息维护：GRXX
         paramMap.put("channel",channel);//渠道号
         paramMap.put("isOrder","N");//是否为订单
         paramMap.put("orderNo","");//订单编号
