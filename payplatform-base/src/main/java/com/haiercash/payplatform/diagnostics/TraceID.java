@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.diagnostics;
 
-import com.bestvike.collection.ThreadLocalHashPool;
 import com.bestvike.lang.Convert;
 import com.bestvike.lang.DateUtils;
 import com.bestvike.lang.StringUtils;
@@ -8,11 +7,10 @@ import com.bestvike.net.HostInfo;
 import com.haiercash.payplatform.filter.RequestContext;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
-import lombok.Data;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Calendar;
-import java.util.concurrent.atomic.AtomicLong;
+import java.time.LocalDate;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by 许崇雷 on 2017-10-14.
@@ -83,25 +81,24 @@ public final class TraceID {
         private Sequence() {
         }
 
-        private static final ThreadLocalHashPool<CurrentDate, AtomicLong> POOL = ThreadLocalHashPool.withInitial(a -> new AtomicLong(1));
+        private static final ReentrantLock lock = new ReentrantLock();
+        private static LocalDate Last_Date;
+        private static long Counter = 1;
 
         private static long getAndIncrement() {
-            return POOL.get(new CurrentDate()).getAndIncrement();
-        }
-    }
-
-    //当前日期-年月日
-    @Data
-    private static class CurrentDate {
-        private int year;
-        private int month;
-        private int day;
-
-        private CurrentDate() {
-            Calendar now = Calendar.getInstance();
-            this.year = now.get(Calendar.YEAR);
-            this.month = now.get(Calendar.MONTH) + 1;
-            this.day = now.get(Calendar.DAY_OF_MONTH);
+            lock.lock();
+            try {
+                LocalDate now = LocalDate.now();
+                if (now.equals(Last_Date)) {
+                    return Counter++;
+                } else {
+                    Last_Date = now;
+                    Counter = 1;
+                    return Counter++;
+                }
+            } finally {
+                lock.unlock();
+            }
         }
     }
 }
