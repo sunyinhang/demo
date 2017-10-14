@@ -78,7 +78,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 //                map.put("url", "/login");
                 map.put("flag", "1");
                 map.put("token", token);
-                return success(map);//跳转到注册页
+                return success(map);//跳转到登陆页
 
             case "02":
                 String thirdToken = this.getToken();

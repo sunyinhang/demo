@@ -171,6 +171,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String tag = "SHH";
         String userId = mobile;
         cacheMap.put("userId",userId);
+        cacheMap.put("phoneNo",mobile);
         session.set(token, cacheMap);
 
 //        String userId = (String)cacheMap.get("userId");
