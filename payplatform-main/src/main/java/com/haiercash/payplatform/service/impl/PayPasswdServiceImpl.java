@@ -64,11 +64,20 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("从前端获取的的token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        if (StringUtils.isEmpty(payPasswd) || StringUtils.isEmpty(verifyNo)) {
-            logger.info("payPasswd:" + payPasswd + "verifyNo" + verifyNo);
-            logger.info("从前端获取的参数为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        if("46".equals(channelNo)){
+            if (StringUtils.isEmpty(payPasswd) || StringUtils.isEmpty(verifyNo)) {
+                logger.info("payPasswd:" + payPasswd + "verifyNo" + verifyNo);
+                logger.info("从前端获取的参数为空");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            }
+        }else{
+            if (StringUtils.isEmpty(payPasswd)) {
+                logger.info("payPasswd:" + payPasswd );
+                logger.info("从前端获取的参数为空");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            }
         }
+
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
