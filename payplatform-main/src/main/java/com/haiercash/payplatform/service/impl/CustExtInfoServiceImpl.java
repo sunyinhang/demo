@@ -293,6 +293,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             paramMap.put("localResid", "10");//户口性质   本地城镇
             paramMap.put("mthInc", 5000);//月收入
             paramMap.put("position", "03");//职务   基层
+        }else{
+            //（标准化现金贷字段）
+            paramMap.put("positionType", params.get("positionType"));// 工作性质
         }
         Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
         if(stringObjectMap == null){
@@ -354,6 +357,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             typCde = sg_typCde;//贷款品种
         }else{
             //查询贷款品种类型
+            //TODO !!!!!!!!!!!!!!!
+            typCde = "17044a";
         }
         ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
         ifNeedFaceChkByTypCdeMap.put("source",channel);
