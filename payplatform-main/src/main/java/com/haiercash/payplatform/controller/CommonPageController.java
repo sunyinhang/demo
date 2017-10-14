@@ -194,7 +194,7 @@ public class CommonPageController extends BaseController {
 
 
     /**
-     * 获取客户个人扩展信息
+     * 获取客户个人扩展信息（包含影像）
      *
      * @return
      * @throws Exception
@@ -202,6 +202,17 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/getAllCustExtInfo", method = RequestMethod.POST)
     public Map<String, Object> getAllCustExtInfo() throws Exception {
         return custExtInfoService.getAllCustExtInfoAndDocCde(super.getToken(), super.getChannel(), super.getChannelNo());
+    }
+
+    /**
+     * 获取客户个人扩展信息
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/getAllCustExtInfoNoXx", method = RequestMethod.POST)
+    public Map<String, Object> getAllCustExtInfoNoXx() throws Exception {
+        return custExtInfoService.getAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
     /**
