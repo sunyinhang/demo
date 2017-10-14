@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.ribbon;
 
 import com.bestvike.collection.EnumerationUtils;
+import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.config.HttpMessageConvertersAutoConfiguration;
 import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
 import com.haiercash.payplatform.filter.RequestContext;
@@ -113,7 +114,7 @@ public class RestTemplateEx extends RestTemplate {
         private static final List<String> SYSTEM_IGNORE_HEADERS = Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Content-Type", "Content-Length", "Cookie", "Set-Cookie", "Authorization", "Connection", "Host", "User-Agent");
         private static final DynamicBooleanProperty ROUTE_HEADERS_ENABLED_PROPERTY = DynamicPropertyFactory.getInstance().getBooleanProperty("ribbon.route-headers-enabled", false);
         private static final DynamicStringListProperty USER_IGNORE_HEADERS_PROPERTY = new DynamicStringListProperty("ribbon.ignore-headers", (String) null);
-        private static final DynamicStringProperty PREFERRED_JSON_MAPPER = DynamicPropertyFactory.getInstance().getStringProperty(HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY, org.apache.commons.lang.StringUtils.EMPTY);
+        private static final DynamicStringProperty PREFERRED_JSON_MAPPER = DynamicPropertyFactory.getInstance().getStringProperty(HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY, StringUtils.EMPTY);
 
         private static boolean INITED;                                      //是否已初始化
         private static boolean ROUTE_HEADERS_ENABLED;                       //是否启用传递 Headers
