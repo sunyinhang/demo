@@ -133,25 +133,30 @@ public class MoxieServiceImpl extends BaseService implements MoxieService {
 
     @Override
     public Map getMoxieByApplseq(String applseq) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        MoxieInfo moxieFund = moxieInfoDao.getMoxieInfo(applseq, "01");//公积金
-        MoxieInfo moxieBank = moxieInfoDao.getMoxieInfo(applseq, "02");//网银
-        MoxieInfo moxieCarrier = moxieInfoDao.getMoxieInfo(applseq, "03");//运营商
-        map.put("isFund","N");
-        map.put("isBank","N");
-        map.put("isCarrier","N");
-        //查询是否做公积金
-        if(moxieFund != null){
-            map.put("isFund","Y");
-        }
-        //是否做过网银
-        if(moxieBank != null){
-            map.put("isBank","Y");
-        }
-        //是否做过运营商
-        if(moxieCarrier != null){
-            map.put("isCarrier","Y");
-        }
-        return map;
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        MoxieInfo moxieFund = moxieInfoDao.getMoxieInfo(applseq, "01");//公积金
+//        MoxieInfo moxieBank = moxieInfoDao.getMoxieInfo(applseq, "02");//网银
+//        MoxieInfo moxieCarrier = moxieInfoDao.getMoxieInfo(applseq, "03");//运营商
+//        map.put("isFund","N");
+//        map.put("isBank","N");
+//        map.put("isCarrier","N");
+//        //查询是否做公积金
+//        if(moxieFund != null){
+//            map.put("isFund","Y");
+//        }
+//        //是否做过网银
+//        if(moxieBank != null){
+//            map.put("isBank","Y");
+//        }
+//        //是否做过运营商
+//        if(moxieCarrier != null){
+//            map.put("isCarrier","Y");
+//        }
+
+        Map paramMap = new HashMap<>();
+        paramMap.put("applseq", applseq);
+        Map moxiemap = appServerService.getMoxieByApplseq("", paramMap);
+        Map bodyMap = (Map) moxiemap.get("body");
+        return bodyMap;
     }
 }

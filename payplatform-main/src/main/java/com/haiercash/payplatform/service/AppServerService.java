@@ -145,4 +145,6 @@ public interface AppServerService {
     public Map<String, Object> identify(String token, Map<String, Object> paramMap);
     //风险信息采集
     public Map<String, Object> updateRiskInfo(String token, Map<String, Object> paramMap);
+    //查询是否做过魔蝎
+    public Map<String, Object> getMoxieByApplseq(String token, Map<String, Object> paramMap);
 }

@@ -4,12 +4,11 @@ import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
 import com.haiercash.payplatform.controller.BaseController;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
+import com.haiercash.payplatform.utils.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-
-import static com.haiercash.payplatform.utils.CmisUtil.success;
 
 /**
  * Created by yuanli on 2017/9/12.

@@ -78,4 +78,5 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         logger.info("合同跳转url：" + url);
         return success(result);
     }
+
 }
