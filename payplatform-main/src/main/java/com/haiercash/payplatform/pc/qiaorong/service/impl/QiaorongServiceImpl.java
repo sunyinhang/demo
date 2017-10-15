@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
+import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
@@ -43,6 +45,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     private MoxieService moxieService;
     @Autowired
     private CooperativeBusinessDao cooperativeBusinessDao;
+    @Autowired
+    private SignContractInfoDao signContractInfoDao;
     @Value("${app.other.moxie_apikey}")
     protected String moxie_apikey;
     @Value("${app.other.haiercashpay_web_url}")
@@ -300,6 +304,10 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
             double amount = Double.parseDouble(totalamount);
 
+            logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+            returnmap.put("flag", "05");//跳转合同
+            return success(returnmap);//跳转合同展示页面
+
 //            Map<String, Object> moxiemap = new HashMap<String, Object>();
 //            moxiemap.put("applseq", applseq);
 //            Map<String, Object> mapmoxie = appServerService.getMoxieByApplseq(token, moxiemap);
@@ -309,28 +317,28 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 //            if(!"00000".equals(retFlagmoxie)){
 //                return fail(ConstUtil.ERROR_CODE, retMsgmoxie);
 //            }
-            Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
-            String isFundFlag = (String) bodymoxie.get("isFund");
-            String isBankFlag = (String) bodymoxie.get("isBank");
-            String isCarrierFlag = (String) bodymoxie.get("isCarrier");
-
-            //判断金额是否需要做魔蝎
-            if(amount >= limitAmount){
-                //判断是否做过公积金网银
-                if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
-                    logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-                    returnmap.put("flag", "05");//跳转合同
-                    return success(returnmap);//跳转合同展示页面
-                }else{//未做过公积金、网银认证  跳转魔蝎认证页面
-                    logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
-                    returnmap.put("flag", "04");//跳转魔蝎认证
-                    return success(returnmap);//跳转魔蝎页面
-                }
-            }else{
-                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-                returnmap.put("flag", "05");//跳转合同
-                return success(returnmap);//跳转合同展示页面
-            }
+//            Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
+//            String isFundFlag = (String) bodymoxie.get("isFund");
+//            String isBankFlag = (String) bodymoxie.get("isBank");
+//            String isCarrierFlag = (String) bodymoxie.get("isCarrier");
+//
+//            //判断金额是否需要做魔蝎
+//            if(amount >= limitAmount){
+//                //判断是否做过公积金网银
+//                if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
+//                    logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+//                    returnmap.put("flag", "05");//跳转合同
+//                    return success(returnmap);//跳转合同展示页面
+//                }else{//未做过公积金、网银认证  跳转魔蝎认证页面
+//                    logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
+//                    returnmap.put("flag", "04");//跳转魔蝎认证
+//                    return success(returnmap);//跳转魔蝎页面
+//                }
+//            }else{
+//                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+//                returnmap.put("flag", "05");//跳转合同
+//                return success(returnmap);//跳转合同展示页面
+//            }
 
         }else if("01".equals(code)){//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
             //终止
@@ -460,29 +468,33 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
             double amount = Double.parseDouble(totalamount);
 
+            logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+            returnmap.put("flag", "05");//跳转合同
+            return success(returnmap);//跳转合同展示页面
 
-            Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
-            String isFundFlag = (String) bodymoxie.get("isFund");
-            String isBankFlag = (String) bodymoxie.get("isBank");
-            String isCarrierFlag = (String) bodymoxie.get("isCarrier");
 
-            //判断金额是否需要做魔蝎
-            if(amount >= limitAmount){
-                //判断是否做过公积金网银
-                if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
-                    logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-                    returnmap.put("flag", "05");//跳转合同
-                    return success(returnmap);//跳转合同展示页面
-                }else{//未做过公积金、网银认证  跳转魔蝎认证页面
-                    logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
-                    returnmap.put("flag", "04");//跳转魔蝎认证
-                    return success(returnmap);//跳转魔蝎页面
-                }
-            }else{
-                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-                returnmap.put("flag", "05");//跳转合同
-                return success(returnmap);//跳转合同展示页面
-            }
+//            Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
+//            String isFundFlag = (String) bodymoxie.get("isFund");
+//            String isBankFlag = (String) bodymoxie.get("isBank");
+//            String isCarrierFlag = (String) bodymoxie.get("isCarrier");
+//
+//            //判断金额是否需要做魔蝎
+//            if(amount >= limitAmount){
+//                //判断是否做过公积金网银
+//                if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
+//                    logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+//                    returnmap.put("flag", "05");//跳转合同
+//                    return success(returnmap);//跳转合同展示页面
+//                }else{//未做过公积金、网银认证  跳转魔蝎认证页面
+//                    logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
+//                    returnmap.put("flag", "04");//跳转魔蝎认证
+//                    return success(returnmap);//跳转魔蝎页面
+//                }
+//            }else{
+//                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+//                returnmap.put("flag", "05");//跳转合同
+//                return success(returnmap);//跳转合同展示页面
+//            }
 
         }else if("01".equals(code)){//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
             //终止
@@ -527,29 +539,32 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 
         double amount = Double.parseDouble(totalamount);
 
+        logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+        returnmap.put("flag", "05");//跳转合同
+        return success(returnmap);//跳转合同展示页面
 
-        Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
-        String isFundFlag = (String) bodymoxie.get("isFund");
-        String isBankFlag = (String) bodymoxie.get("isBank");
-        String isCarrierFlag = (String) bodymoxie.get("isCarrier");
-
-        //判断金额是否需要做魔蝎
-        if(amount >= limitAmount){
-            //判断是否做过公积金网银
-            if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
-                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-                returnmap.put("flag", "05");//跳转合同
-                return success(returnmap);//跳转合同展示页面
-            }else{//未做过公积金、网银认证  跳转魔蝎认证页面
-                logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
-                returnmap.put("flag", "04");//跳转魔蝎认证
-                return success(returnmap);//跳转魔蝎页面
-            }
-        }else{
-            logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-            returnmap.put("flag", "05");//跳转合同
-            return success(returnmap);//跳转合同展示页面
-        }
+//        Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
+//        String isFundFlag = (String) bodymoxie.get("isFund");
+//        String isBankFlag = (String) bodymoxie.get("isBank");
+//        String isCarrierFlag = (String) bodymoxie.get("isCarrier");
+//
+//        //判断金额是否需要做魔蝎
+//        if(amount >= limitAmount){
+//            //判断是否做过公积金网银
+//            if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
+//                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+//                returnmap.put("flag", "05");//跳转合同
+//                return success(returnmap);//跳转合同展示页面
+//            }else{//未做过公积金、网银认证  跳转魔蝎认证页面
+//                logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
+//                returnmap.put("flag", "04");//跳转魔蝎认证
+//                return success(returnmap);//跳转魔蝎页面
+//            }
+//        }else{
+//            logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+//            returnmap.put("flag", "05");//跳转合同
+//            return success(returnmap);//跳转合同展示页面
+//        }
 
     }
 
@@ -643,6 +658,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String typCde = (String) cacheMap.get("typCde");
         String custNo = (String) cacheMap.get("custNo");
         String phone = (String) cacheMap.get("phoneNo");
+        String callbackUrl = (String) cacheMap.get("callbackUrl");
 
         //短信验证码校验
         Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -704,15 +720,21 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         JSONObject orderJson = new JSONObject();// 订单信息json串
         orderJson.put("order", order.toString());
 
+        SignContractInfo signContractInfo = signContractInfoDao.getSignContractInfo(typCde);
+        if(signContractInfo == null){
+            return fail(ConstUtil .ERROR_CODE, "贷款品种"+ typCde +"没有配置签章类型");
+        }
+        String signType = signContractInfo.getSigntype();//签章类型
         Map contractmap = new HashMap();//
         contractmap.put("custName", name);// 客户姓名
         contractmap.put("custIdCode", idNo);// 客户身份证号
         contractmap.put("applseq", applseq);// 请求流水号
-        if("17057a".equals(typCde)){//不同的贷款品种对应不同的签章类型
-            contractmap.put("signType", "DOUZIPERSONAL");// 签章类型
-        }else if("17105a".equals(typCde)){
-            contractmap.put("signType", "DOUZIBUSINESS");// 签章类型
-        }
+        contractmap.put("signType", signType);// 签章类型
+//        if("17057a".equals(typCde)){//不同的贷款品种对应不同的签章类型
+//            contractmap.put("signType", "DOUZIPERSONAL");// 签章类型
+//        }else if("17105a".equals(typCde)){
+//            contractmap.put("signType", "DOUZIBUSINESS");// 签章类型
+//        }
         contractmap.put("flag", "0");//1 代表合同  0 代表 协议
         contractmap.put("orderJson", orderJson.toString());
         contractmap.put("sysFlag", "11");// 系统标识：支付平台
@@ -797,16 +819,16 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             riskmap.put("token", token);
             riskmap.put("channel", channel);
             riskmap.put("channelNo", channelNo);
-            appServerService.updateRiskInfo("", map);
+            appServerService.updateRiskInfo("", riskmap);
         }
 
 
         //7.接口回调
-        String callbackUrl3 = "";
-        String backurl = callbackUrl3 + "?applseq=" + applseq;
+        //String callbackUrl3 = "";
+        String backurl = callbackUrl + "?applseq=" + applseq;
         logger.info("乔融豆子*******签章回调地址：" + backurl);
-//        String resData = HttpClient.sendGetUrl(backurl);
-//        logger.info("乔融豆子*******签章回调接口返回数据："+resData);
+        String resData = HttpClient.sendGetUrl(backurl);
+        logger.info("乔融豆子*******签章回调接口返回数据："+resData);
 //        if(resData == null || "".equals(resData)){
 //            return fail("18", "回调接口调用失败");
 //        }

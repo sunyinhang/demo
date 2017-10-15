@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.utils;
 
+import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.filter.RequestContext;
 import lombok.experimental.UtilityClass;
@@ -9,8 +10,15 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class AppServerUtils {
-    public String getAppServerUrl() {
+    public static String getAppServerUrl() {
+        if(!RequestContext.exists()){
+            return EurekaServer.APPSERVERNOAUTHNEW;
+        }
         String channelNo = RequestContext.data().getChannelNo();
+        if(StringUtils.isEmpty(channelNo)){
+            return EurekaServer.APPSERVERNOAUTHNEW;
+        }
+
         switch (channelNo) {
             case "33":  //乔融
                 return EurekaServer.APPSERVERNOAUTH;
