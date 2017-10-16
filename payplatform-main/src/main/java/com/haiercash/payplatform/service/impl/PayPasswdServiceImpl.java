@@ -1069,13 +1069,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
 //        String applSeq = (String) params.get("applSeq");//申请流水号
-        String applSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
+        Integer crdSeq = (Integer) cacheMap.get("crdSeq");
         //String   applSeq = "1097515";
-        if (StringUtils.isEmpty(applSeq)) {
-            logger.info("请求的数据为空：applSeq=" + applSeq);
+        if (StringUtils.isEmpty(crdSeq)) {
+            logger.info("请求的数据为空：applSeq=" + crdSeq);
             String retmsg = "请求的数据为空：applSeq";
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
+        String applSeq =  Integer.toString(crdSeq);//在途的申请流水号
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("applSeq", applSeq);
         paramMap.put("channel", channel);
