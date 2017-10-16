@@ -293,9 +293,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             paramMap.put("localResid", "10");//户口性质   本地城镇
             paramMap.put("mthInc", 5000);//月收入
             paramMap.put("position", "03");//职务   基层
-        }else{
-            //（标准化现金贷字段）
-            paramMap.put("positionType", params.get("positionType"));// 工作性质
         }
         Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
         if(stringObjectMap == null){
@@ -355,10 +352,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
         if("46".equals(channelNo)){
             typCde = sg_typCde;//贷款品种
-        }else{
-            //查询贷款品种类型
-            //TODO !!!!!!!!!!!!!!!
-            typCde = "17044a";
         }
         ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
         ifNeedFaceChkByTypCdeMap.put("source",channel);
@@ -578,6 +571,224 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         Map<String, Object> uploadresultmap = appServerService.attachPic(token, paramMap);
 
         return uploadresultmap;
+    }
+
+    @Override
+    public Map<String, Object> saveAllCustExtInfoForXjd(String token, String channel, String channelNo,Map<String, Object> params) throws Exception {
+        logger.info("*********保存个人扩展信息**************开始");
+        String typCde = "" ;//贷款品种
+        Map<String, Object> redisMap = null;
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> custparamMap_one = new HashMap<String, Object>();
+        Map<String, Object> custparamMap_two = new HashMap<String, Object>();
+        Map<String, Object> resultparamMap = new HashMap<String, Object>();
+        Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
+        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if(cacheMap == null || "".equals(cacheMap)){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+
+        //判断联系人信息管控
+        String contactMobile_one = (String) params.get("contactMobile_one");
+        String contactMobile_two = (String) params.get("contactMobile_two");
+        if(contactMobile_one != null && !"".equals(contactMobile_one) && contactMobile_two != null && !"".equals(contactMobile_two)){
+            if(contactMobile_one.equals(contactMobile_two)){
+                logger.info("两个联系人手机号不能重复");
+                return fail(ConstUtil.ERROR_CODE, "联系人手机号不能重复!");
+            }
+        }else{
+            logger.info("联系人手机号为空");
+            return fail(ConstUtil.ERROR_CODE, "联系人手机号为空!");
+        }
+        String positionType = (String) params.get("positionType");//从业性质
+        logger.info("positionType="+positionType);
+        if(positionType == null || "".equals(positionType)){
+            logger.info("positionType为空");
+            return fail(ConstUtil.ERROR_CODE, "参数positionType为空!");
+        }
+
+        //总入口需查询客户信息数据
+        String custNo = (String)cacheMap.get("custNo");
+        String userid = (String)cacheMap.get("userId");
+        String name = (String)cacheMap.get("name");//姓名
+        String idNumber = (String)cacheMap.get("idCard"); //身份证
+//        String userid = "1231231";
+//        String custNo = "B201706011214031809670";
+//        String name = "张三丰";
+//        String idNumber = "232302198201012540";
+        if(custNo == null || "".equals(custNo)){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String liveAddress_code = (String) params.get("liveAddress_code");//现居住省市区编码
+        String[] liveAddress_code_split = liveAddress_code.split(",");
+        String officeAddress_code = (String) params.get("officeAddress_code");//单位省市区编码
+        String[] officeAddress_split = officeAddress_code.split(",");
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("channel", channel);
+        paramMap.put("custNo", custNo);
+        paramMap.put("maritalStatus", params.get("maritalStatus"));//婚姻状况
+        paramMap.put("liveProvince", liveAddress_code_split[0]);// 现住房地址（省）
+        paramMap.put("liveCity", liveAddress_code_split[1]);// 现住房地址（市）
+        paramMap.put("liveArea", liveAddress_code_split[2]);// 现住房地址（区）
+        paramMap.put("liveAddr", params.get("liveAddr"));// 现住房详细地址
+        paramMap.put("dataFrom", channelNo);// 数据来源
+        //CRM 为额度激活填写默认值
+//            paramMap.put("education", "20");// 最高学历   大专
+//            paramMap.put("liveInfo", "99");//现居住情况    其他
+//            paramMap.put("localResid", "10");//户口性质   本地城镇
+//            paramMap.put("mthInc", 5000);//月收入
+//            paramMap.put("position", "03");//职务   基层
+            //（标准化现金贷字段）
+        paramMap.put("positionType", positionType);// 工作性质
+        if("10".equals(positionType)){//受薪人士
+            paramMap.put("officeName", params.get("officeName"));// 工作单位
+            paramMap.put("officeProvince", officeAddress_split[0]);// 单位地址（省）
+            paramMap.put("officeCity", officeAddress_split[1]);// 单位地址（市）
+            paramMap.put("officeArea", officeAddress_split[2]);// 单位地址（区）
+            paramMap.put("officeAddr", params.get("officeAddr"));// 单位详细地址
+            paramMap.put("officeTel", params.get("officeTel"));// 单位电话
+        }else if ("20".equals(positionType)){//自雇人士
+
+        }else if("50".equals(positionType)){    //其他
+        //参数无
+        }else{
+            logger.info("从业性质positionType传参有误！");
+            return fail(ConstUtil.ERROR_CODE, "从业性质positionType传参有误！  positionType="+positionType);
+        }
+//        }
+        Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
+        if(stringObjectMap == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
+        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
+        if(!"00000".equals(resultmapFlag)){
+            String retMsg = (String) resultmapjsonMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        logger.info("*********保存个人扩展信息**************结束");
+        logger.info("*********保存联系人一**************开始");
+        Integer id_one = (Integer) params.get("id_one");
+        if ( id_one !=null   && !"null".equals(id_one)) {
+            custparamMap_one.put("id", id_one);// 联系人ID
+        }
+        custparamMap_one.put("channelNo", channelNo);// 渠道
+        custparamMap_one.put("channel", channel);
+        custparamMap_one.put("custNo", custNo);//客户编号
+        custparamMap_one.put("relationType",params.get("relationType_one"));//联系人关系
+        custparamMap_one.put("contactName", params.get("contactName_one"));//联系人名称
+        custparamMap_one.put("contactMobile", params.get("contactMobile_one"));//联系人手机
+        Map<String, Object> CustFCiCustContactMap = appServerService.saveCustFCiCustContact(token, custparamMap_one);
+        if(CustFCiCustContactMap == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map CustFCiCustContactHeadMap = (Map<String, Object>) CustFCiCustContactMap.get("head");
+        String CustFCiCustContactHeadMapFlag = (String) CustFCiCustContactHeadMap.get("retFlag");
+        if(!"00000".equals(CustFCiCustContactHeadMapFlag)){
+            String retMsg = (String) CustFCiCustContactHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        logger.info("*********保存联系人一**************结束");
+        logger.info("*********保存联系人二**************开始");
+        Integer id_two = (Integer) params.get("id_two");
+        if ( id_two !=null   && !"null".equals(id_two)) {
+            custparamMap_two.put("id", id_two);// 联系人ID
+        }
+        custparamMap_two.put("channelNo", channelNo);// 渠道
+        custparamMap_two.put("channel", channel);
+        custparamMap_two.put("custNo",custNo);//客户编号
+        custparamMap_two.put("relationType",params.get("relationType_two"));//联系人关系
+        custparamMap_two.put("contactName", params.get("contactName_two"));//联系人名称
+        custparamMap_two.put("contactMobile", params.get("contactMobile_two"));//联系人手机
+        Map<String, Object> CustFCiCustContactTwoMap = appServerService.saveCustFCiCustContact(token, custparamMap_two);
+        if(CustFCiCustContactTwoMap == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map CustFCiCustContactTwoMapHeadMap = (Map<String, Object>) CustFCiCustContactTwoMap.get("head");
+        String CustFCiCustContactTwoMapHeadMapFlag = (String) CustFCiCustContactTwoMapHeadMap.get("retFlag");
+        if(!"00000".equals(CustFCiCustContactTwoMapHeadMapFlag)){
+            String retMsg = (String) CustFCiCustContactTwoMapHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        logger.info("*********保存联系人二**************结束");
+        logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
+        //查询贷款品种类型
+        //TODO !!!!!!!!!!!!!!!
+        typCde = "17044a";
+
+        ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
+        ifNeedFaceChkByTypCdeMap.put("source",channel);
+        ifNeedFaceChkByTypCdeMap.put("custNo",custNo);
+        ifNeedFaceChkByTypCdeMap.put("name",name);
+        ifNeedFaceChkByTypCdeMap.put("idNumber",idNumber);
+        ifNeedFaceChkByTypCdeMap.put("isEdAppl","");
+        ifNeedFaceChkByTypCdeMap.put("channel",channel);
+        ifNeedFaceChkByTypCdeMap.put("channelNo",channelNo);
+        Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
+        if(saveCustFCiCustContactMap == null){
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
+        String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
+        if(!"00000".equals(saveCustFCiCustContactMapHeadFlag)){
+            String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
+        String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
+        if(code != null && !"".equals(code)){
+            logger.info("*********人脸识别标识码："+code);
+            if("00".equals(code)){// 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
+//                resultparamMap.put("faceFlag", "1");
+                validateUserFlagMap.put("channelNo", channelNo);// 渠道
+                validateUserFlagMap.put("channel", channel);
+                validateUserFlagMap.put("userId",EncryptUtil.simpleEncrypt(userid));//客户编号
+                Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
+                if(alidateUserMap == null){
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                }
+                Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
+                String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
+                if(!"00000".equals(alidateUserHeadMapFlag)){
+                    String retMsg = (String) alidateUserHeadMap.get("retMsg");
+                    return fail(ConstUtil.ERROR_CODE, retMsg);
+                }
+                Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
+                String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
+                if(payPasswdFlag == null || "".equals(payPasswdFlag)){
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                }
+                if("1".equals(payPasswdFlag)){//1.已设置支付密码
+                    resultparamMap.put("flag", "1");
+                }else{//没有设置支付密码
+                    resultparamMap.put("flag", "2");
+                }
+            }else if("01".equals(code)){// 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                resultparamMap.put("flag", "3");
+            }else if("02".equals(code)){// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                resultparamMap.put("flag", "4");
+            }else{//跳转人脸识别
+                resultparamMap.put("flag", "5");
+            }
+
+        }
+        return success(resultparamMap) ;
     }
 
 }

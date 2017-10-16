@@ -358,6 +358,18 @@ public class CommonPageController extends BaseController {
         return custExtInfoService.saveAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo(), params);
     }
 
+
+    /**
+     * 保存客户个人扩展信息(现金贷)
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/saveAllCustExtInfoForXjd", method = RequestMethod.POST)
+    public Map<String, Object> saveAllCustExtInfoForXjd(@RequestBody Map<String, Object> params) throws Exception {
+        return custExtInfoService.saveAllCustExtInfoForXjd(super.getToken(), super.getChannel(), super.getChannelNo(), params);
+    }
+
     /**
      * 扩展信息上传影像
      *
