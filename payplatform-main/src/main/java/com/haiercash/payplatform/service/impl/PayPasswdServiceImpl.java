@@ -184,7 +184,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String certNo = (String) cacheMap.get("idCard");//身份证号
+        String certNo = (String) cacheMap.get("idNo");//身份证号
         String name = (String) cacheMap.get("name");//姓名
         JSONObject body = jb.getJSONObject("body");
         String applSeq = (String) body.getString("applSeq");
@@ -1069,14 +1069,13 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
 //        String applSeq = (String) params.get("applSeq");//申请流水号
-        Integer crdSeq = (Integer) cacheMap.get("crdSeq");
+        String applSeq = (String) cacheMap.get("crdSeq");//在途的申请流水号
         //String   applSeq = "1097515";
-        if (StringUtils.isEmpty(crdSeq)) {
-            logger.info("请求的数据为空：applSeq=" + crdSeq);
+        if (StringUtils.isEmpty(applSeq)) {
+            logger.info("请求的数据为空：applSeq=" + applSeq);
             String retmsg = "请求的数据为空：applSeq";
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String applSeq =  Integer.toString(crdSeq);//在途的申请流水号
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("applSeq", applSeq);
         paramMap.put("channel", channel);

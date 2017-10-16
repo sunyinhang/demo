@@ -391,7 +391,8 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                     return fail(ConstUtil.ERROR_CODE, (String) head.get("retMsg"));
                 }
                 Map<String, Object> body = (Map) edApplProgress.get("body");
-                String crdSeq =  (String) body.get("applSeq");
+                Integer crdSeqInt =  (Integer) body.get("applSeq");
+                String crdSeq = Integer.toString(crdSeqInt);
                 cacheMap.put("crdSeq",crdSeq);
                 session.set(token, cacheMap);
                 String outSts = body.get("outSts").toString();
