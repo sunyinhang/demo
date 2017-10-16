@@ -62,10 +62,10 @@ public final class URLSerializer {
         if (iterator.hasNext()) {
             current = iterator.next();
             builder.append(Convert.toString(current.getKey())).append("=").append(encode(Convert.toString(current.getValue()), charsetName));
-        }
-        while (iterator.hasNext()) {
-            current = iterator.next();
-            builder.append("&").append(Convert.toString(current.getKey())).append("=").append(encode(Convert.toString(current.getValue()), charsetName));
+            while (iterator.hasNext()) {
+                current = iterator.next();
+                builder.append("&").append(Convert.toString(current.getKey())).append("=").append(encode(Convert.toString(current.getValue()), charsetName));
+            }
         }
         return builder.toString();
     }
