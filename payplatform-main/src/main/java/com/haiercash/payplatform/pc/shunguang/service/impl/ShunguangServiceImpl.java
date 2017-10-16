@@ -1095,7 +1095,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("idType", certType);
         session.set(token, cachemap);
 
-        // 查询有无额度 by lihua
+         // 查询有无额度 by lihua
         HashMap<String, Object> edCheckmap = new HashMap<>();
         edCheckmap.put("idNo", certNo);
         edCheckmap.put("channel", "11");
