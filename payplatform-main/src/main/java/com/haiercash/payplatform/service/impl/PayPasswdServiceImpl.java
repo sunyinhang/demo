@@ -184,7 +184,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String certNo = (String) cacheMap.get("idNo");//身份证号
+        String certNo = (String) cacheMap.get("idCard");//身份证号
         String name = (String) cacheMap.get("name");//姓名
         JSONObject body = jb.getJSONObject("body");
         String applSeq = (String) body.getString("applSeq");
