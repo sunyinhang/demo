@@ -54,15 +54,15 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String typCde = "" ;//贷款品种
 
         Map<String, Object> allCustExtInfo = getAllCustExtInfo(token, channel, channelNo);
-        Map<String, Object> allCustExtInfoHeadMap = (Map<String, Object>) allCustExtInfo.get("head");
-        String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
-        String allCustExtreflagMsg =  (String) allCustExtInfoHeadMap.get("retFlag");
-        if("C8602".equals(allCustExtreflagMsg) || "C1109".equals(allCustExtreflagMsg)){//无客户信息，正常
-            return success();
-        }
-        if(!ifError(allCustExtInfoHeadMap)){
-            return fail(ConstUtil.ERROR_CODE, allCustExtInfotMsg);
-        }
+//        Map<String, Object> allCustExtInfoHeadMap = (Map<String, Object>) allCustExtInfo.get("head");
+//        String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
+//        String allCustExtreflagMsg =  (String) allCustExtInfoHeadMap.get("retFlag");
+//        if("C8602".equals(allCustExtreflagMsg) || "C1109".equals(allCustExtreflagMsg)){//无客户信息，正常
+//            return success();
+//        }
+//        if(!ifError(allCustExtInfoHeadMap)){
+//            return fail(ConstUtil.ERROR_CODE, allCustExtInfotMsg);
+//        }
         if("46".equals(channelNo)){
             typCde = sg_typCde;//贷款品种
         }else{
@@ -206,6 +206,17 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //            return fail(ConstUtil.ERROR_CODE, retMsg);
 //        }
 //        logger.info("查询个人扩展信息***********************结束");
+
+        Map<String, Object> allCustExtInfoHeadMap = (Map<String, Object>) resultmap.get("head");
+        String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
+        String allCustExtreflagMsg =  (String) allCustExtInfoHeadMap.get("retFlag");
+        if("C8602".equals(allCustExtreflagMsg) || "C1109".equals(allCustExtreflagMsg)){//无客户信息，正常
+            return success();
+        }
+        if(!ifError(allCustExtInfoHeadMap)){
+            return fail(ConstUtil.ERROR_CODE, allCustExtInfotMsg);
+        }
+
         return resultmap;
     }
 
