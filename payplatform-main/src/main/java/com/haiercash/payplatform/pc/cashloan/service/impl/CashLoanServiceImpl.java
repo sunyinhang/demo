@@ -23,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -70,13 +69,13 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String loginType = setting.getLoginType();
         switch (loginType) {
             case "01":
-                Map cachemap = new HashMap<String, Object>();
-                String token = UUID.randomUUID().toString();
-                cachemap.put("token", token);
-                this.redisSession.set(token, cachemap);
+//                Map cachemap = new HashMap<String, Object>();
+//                String token = UUID.randomUUID().toString();
+//                cachemap.put("token", token);
+//                this.redisSession.set(token, cachemap);
                 Map<String, Object> map = new HashMap<>();
                 map.put("flag", "1");
-                map.put("token", token);
+//                map.put("token", token);
                 return success(map);//跳转到登陆页
 
             case "02":

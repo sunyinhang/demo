@@ -418,6 +418,17 @@ public class CommonPageController extends BaseController {
     }
 
     /**
+     * 判断用户是否注册 不需要token
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/isRegisterNotoken", method = RequestMethod.POST)
+    public Map<String, Object> isRegisterNotoken(@RequestBody Map<String, Object> params) throws Exception {
+        return registerService.isRegisterNotoken( super.getChannel(), super.getChannelNo(), params);
+    }
+
+    /**
      * 登陆密码设置
      *
      * @return
@@ -543,7 +554,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/saveUauthUsers", method = RequestMethod.POST)
     public Map<String, Object> saveUauthUsers(@RequestBody Map<String, Object> params) throws Exception {
-        return registerService.saveUauthUsers(super.getToken(), params);
+        return registerService.saveUauthUsers("",params);
     }
 
     /**
@@ -554,7 +565,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/validateUsers", method = RequestMethod.POST)
     public Map<String, Object> validateUsers(@RequestBody Map<String, Object> params) throws Exception {
-        return registerService.validateUsers(super.getToken(),  super.getChannel(), super.getChannelNo(),params);
+        return registerService.validateUsers(super.getChannel(), super.getChannelNo(),params);
     }
     /**
      * @Title  custUpdatePwd
@@ -564,6 +575,6 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/custUpdatePwd", method = RequestMethod.POST)
     public Map<String, Object> custUpdatePwd(@RequestBody Map<String, Object> params) throws Exception {
-        return registerService.custUpdatePwd(super.getToken(), params);
+        return registerService.custUpdatePwd(params);
     }
 }

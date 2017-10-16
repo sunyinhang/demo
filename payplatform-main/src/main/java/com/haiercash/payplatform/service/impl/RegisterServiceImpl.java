@@ -83,6 +83,59 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         return success(resultparamMap);
     }
 
+
+    @Override
+    public Map<String, Object> isRegisterNotoken(String channel, String channelNo, Map<String, Object> params) throws Exception {
+        logger.info("*********判断用户是否注册**************开始");
+        Map<String, Object> resultparamMap = new HashMap<String, Object>();
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        if (params.get("userId") == null || "".equals(params.get("userId"))) {
+            logger.info("userId为空");
+            return fail(ConstUtil.ERROR_CODE, "参数userId为空!");
+        }
+        String userIdEncrypt = EncryptUtil.simpleEncrypt((String) params.get("userId"));
+        //缓存数据获取
+//        Map<String, Object> cacheMap = session.get(token, Map.class);
+//        if(cacheMap == null || "".equals(cacheMap)){
+//            logger.info("Redis数据获取失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+//        }
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("channel", channel);
+        paramMap.put("mobile", userIdEncrypt);
+        Map<String, Object> registerMap = appServerService.isRegister("", paramMap);
+        if (registerMap == null) {
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
+        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
+        if (!"00000".equals(resultmapFlag)) {
+            String retMsg = (String) resultmapjsonMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map resultmapbodyMap = (Map<String, Object>) registerMap.get("body");
+        String isRegister = (String) resultmapbodyMap.get("isRegister");
+        if ("N".equals(isRegister)) {
+            resultparamMap.put("flag", "1");//还未注册
+        }
+        if ("Y".equals(isRegister)) {
+            resultparamMap.put("flag", "2");//已注册
+        }
+        if ("C".equals(isRegister)) {
+            resultparamMap.put("flag", "3");//手机号已被占用
+        }
+
+        return success(resultparamMap);
+    }
+
     /**
      * @Title
      * @Description:
@@ -90,7 +143,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
      * @date 2017/10/9 9:48
      */
     @Override
-    public Map<String, Object> saveUauthUsers(String token, Map<String, Object> params) throws Exception {
+    public Map<String, Object> saveUauthUsers(String token ,Map<String, Object> params) throws Exception {
         Map returnmap = new HashMap<String, Object>();//返回的map
         String mobile = Convert.toString(params.get("mobile"));
         String password = Convert.toString(params.get("password"));
@@ -120,19 +173,12 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     }
 
     @Override
-    public Map<String, Object> validateUsers(String token,  String channel, String channelNo,Map<String, Object> params) throws Exception {
+    public Map<String, Object> validateUsers(String channel, String channelNo,Map<String, Object> params) throws Exception {
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
-//        Map<String, Object> gettigIDMap = new HashMap<String, Object>();
-//        Map<String, Object> settigIDMap = new HashMap<String, Object>();
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
         //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!
         String typCde = "" ;//贷款品种
-        //参数非空判断
-        if (token.isEmpty()) {
-            logger.info("token为空");
-            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
-        }
         if (channel.isEmpty()) {
             logger.info("channel为空");
             return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
@@ -144,22 +190,22 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         Map returnmap = new HashMap<String, Object>();//返回的map
         String mobile =  String.valueOf(params.get("mobile"));
         String password =  String.valueOf(params.get("password"));
-//        params.put("mobile", EncryptUtil.simpleEncrypt(mobile));
-//        params.put("password", EncryptUtil.simpleEncrypt(password));
         Map usermap =crmService.validateUsers(EncryptUtil.simpleEncrypt(mobile),EncryptUtil.simpleEncrypt(password));
         String userretFlag = String.valueOf(((Map<String, Object>) (usermap.get("head"))).get("retFlag"));
-        if ("00000".equals(userretFlag)) {
-
-        }else{
+        if (!"00000".equals(userretFlag)) {
             String userretmsg = ((Map<String, Object>) (usermap.get("head"))).get("retMsg").toString();
             return fail(ConstUtil.ERROR_CODE, userretmsg);
         }
-        //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
-        if(cacheMap == null || "".equals(cacheMap)){
-            logger.info("Redis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
+        Map tokenMap = (Map<String, Object>)((Map<String, Object>) (usermap.get("body"))).get("token");
+        String token = String.valueOf(tokenMap.get("access_token"));
+        Map cacheMap = new HashMap<String, Object>();
+        cacheMap.put("token", token);
+//        //缓存数据获取
+//        Map<String, Object> cacheMap = session.get(token, Map.class);
+//        if(cacheMap == null || "".equals(cacheMap)){
+//            logger.info("Redis数据获取失败");
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+//        }
 /*        if("46".equals(channelNo)){
             typCde = sg_typCde;//贷款品种
             tag = "SHH";
@@ -173,7 +219,6 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         cacheMap.put("userId",userId);
         cacheMap.put("phoneNo",mobile);
         session.set(token, cacheMap);
-
 //        String userId = (String)cacheMap.get("userId");
         //5.查询实名信息
         Map<String, Object> custMap = new HashMap<String, Object>();
@@ -189,6 +234,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
             logger.info("token:" + token);
             resultparamMap.put("flag", "6");//实名认证 页面
+            resultparamMap.put("token", token);
             return success(resultparamMap);
         }
         String custNo = ((Map<String, Object>) (custresult.get("body"))).get("custNo").toString();
@@ -302,6 +348,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 resultparamMap.put("flag", "7");//跳转完善个人扩展信息页面
             }
         }
+        resultparamMap.put("token", token);
         return success(resultparamMap);
     }
 
@@ -312,13 +359,13 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
      * @date 2017/10/13 15:36
      */
     @Override
-    public Map<String, Object> custUpdatePwd(String token, Map<String, Object> params) throws Exception {
+    public Map<String, Object> custUpdatePwd( Map<String, Object> params) throws Exception {
         Map returnmap = new HashMap<String, Object>();//返回的map
         Map<String, Object> landparamMap = new HashMap<String, Object>();
         landparamMap.put("userId", EncryptUtil.simpleEncrypt(String.valueOf(params.get("userId"))));
         landparamMap.put("verifyNo", EncryptUtil.simpleEncrypt(String.valueOf(params.get("verifyNo"))));
         landparamMap.put("newPassword", EncryptUtil.simpleEncrypt(String.valueOf(params.get("newPassword"))));
-        Map<String, Object> landparamreturnMap = appServerService.custUpdatePwd(token, landparamMap);
+        Map<String, Object> landparamreturnMap = appServerService.custUpdatePwd("", landparamMap);
         if (landparamreturnMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
