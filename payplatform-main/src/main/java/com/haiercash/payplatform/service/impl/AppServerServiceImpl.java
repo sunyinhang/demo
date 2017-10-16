@@ -250,7 +250,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/payPasswd";
         logger.info("支付密码设置接口的请求地址：" + url);
         logger.info("支付密码设置接口的请求数据：" + paramMap);
-        Map<String, Object> restputmap = HttpUtil.restPutMap(url, token, paramMap);
+        Map<String, Object> restputmap = HttpUtil.restPutMap(url, paramMap);
         logger.info("支付密码设置接口返回数据：" + restputmap);
         return restputmap;
     }

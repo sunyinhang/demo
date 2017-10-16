@@ -75,7 +75,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 cachemap.put("token", token);
                 this.redisSession.set(token, cachemap);
                 Map<String, Object> map = new HashMap<>();
-//                map.put("url", "/login");
                 map.put("flag", "1");
                 map.put("token", token);
                 return success(map);//跳转到登陆页

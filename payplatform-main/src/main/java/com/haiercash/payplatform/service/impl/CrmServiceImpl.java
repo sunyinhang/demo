@@ -1,12 +1,12 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.RestUtil;
-import com.haiercash.payplatform.service.BaseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -76,6 +76,15 @@ public class CrmServiceImpl extends BaseService implements CrmService{
         if (StringUtils.isEmpty(password))
             return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户密码不能为空");
         String url = EurekaServer.UAUTH + "/app/uauth/validateUsers?userId=" + userId + "&password=" + password;
+
+//        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/customerLogin";
+//        Map paramMap = new HashMap<String, Object>();
+//        paramMap.put("channel",getChannel());
+//        paramMap.put("channelNo",getChannelNo());
+//        paramMap.put("userId",userId);
+//        paramMap.put("password",password);
+//        Map<String, Object> map = HttpUtil.restPutMap(url,paramMap);
+////        Map<String, Object> map = HttpUtil.restPutMap(url, "", paramMap);
         String jsonStr = HttpUtil.restGet(url);
         logger.debug("CRM validateUsers :" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {

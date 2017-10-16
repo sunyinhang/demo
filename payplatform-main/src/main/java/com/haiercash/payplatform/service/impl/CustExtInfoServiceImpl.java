@@ -668,8 +668,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }else if("50".equals(positionType)){    //其他
         //参数无
         }else{
-            logger.info("从业性质positionType传参有误！");
-            return fail(ConstUtil.ERROR_CODE, "从业性质positionType传参有误！  positionType="+positionType);
+            logger.info("从业性质positionType传参有误！ positionType="+positionType);
+            return fail(ConstUtil.ERROR_CODE, "从业性质传参有误！");
         }
 //        }
         Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
