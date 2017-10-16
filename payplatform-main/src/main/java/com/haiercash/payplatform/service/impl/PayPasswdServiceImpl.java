@@ -1060,7 +1060,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     //根据流水号查询额度审批进度
     public Map<String, Object> approvalProcessInfo(String token, String channel, String channelNo, Map<String, Object> params) {
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
-            logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
+            logger.info("获取的参数为空token=" + token + "  ,channel=" + channel + "  ,channelNo=" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> cacheMap = session.get(token, Map.class);

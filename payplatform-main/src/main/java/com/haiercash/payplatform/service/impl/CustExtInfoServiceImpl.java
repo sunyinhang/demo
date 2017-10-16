@@ -649,11 +649,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("liveAddr", params.get("liveAddr"));// 现住房详细地址
         paramMap.put("dataFrom", channelNo);// 数据来源
         //CRM 为额度激活填写默认值
-//            paramMap.put("education", "20");// 最高学历   大专
-//            paramMap.put("liveInfo", "99");//现居住情况    其他
-//            paramMap.put("localResid", "10");//户口性质   本地城镇
-//            paramMap.put("mthInc", 5000);//月收入
-//            paramMap.put("position", "03");//职务   基层
+        paramMap.put("education", "20");// 最高学历   大专
+        paramMap.put("liveInfo", "99");//现居住情况    其他
+        paramMap.put("localResid", "10");//户口性质   本地城镇
+        paramMap.put("mthInc", 5000);//月收入
+        paramMap.put("position", "03");//职务   基层
             //（标准化现金贷字段）
         paramMap.put("positionType", positionType);// 工作性质
         if("10".equals(positionType)){//受薪人士
