@@ -105,7 +105,8 @@ public class RestTemplateEx extends RestTemplate {
                 return;
             HttpServletRequest sourceRequest = RequestContext.get().getRequest();
 
-            //添加请求 Header
+            //添加请求 Header, channelno->channel_no
+            ribbonRequest.getHeaders().put("channel_no", Collections.singletonList(RequestContext.data().getChannelNo()));
             Enumeration<String> headerNames = sourceRequest.getHeaderNames();
             while (headerNames.hasMoreElements()) {
                 String headerName = headerNames.nextElement();
