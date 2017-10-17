@@ -18,9 +18,25 @@ public interface IResponse<TBody> {
 
     TBody getBody();
 
+    default boolean isSuccess() {
+        return this.isSuccess(false);
+    }
+
+    default boolean isSuccessBody() {
+        return this.isSuccess(true);
+    }
+
     default void assertSuccess(boolean needBody) {
         if (this.isSuccess(needBody))
             return;
         throw new BusinessException(this.getRetFlag(), this.getRetMsg());
+    }
+
+    default void assertSuccess() {
+        this.assertSuccess(false);
+    }
+
+    default void assertSuccessBody(boolean needBody) {
+        this.assertSuccess(true);
     }
 }
