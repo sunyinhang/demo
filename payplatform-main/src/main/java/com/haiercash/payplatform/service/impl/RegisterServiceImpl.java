@@ -192,7 +192,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String mobile = String.valueOf(params.get("mobile"));
         String password = String.valueOf(params.get("password"));
         IResponse<Map> response = crmService.validateUsers(EncryptUtil.simpleEncrypt(mobile), EncryptUtil.simpleEncrypt(password));
-        if (!response.isSuccessBody()) {
+        if (!response.isSuccessNeedBody()) {
             return fail(ConstUtil.ERROR_CODE, response.getRetMsg());
         }
         Map tokenMap = (Map) response.getBody().get("token");

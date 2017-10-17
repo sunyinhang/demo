@@ -22,7 +22,7 @@ public interface IResponse<TBody> {
         return this.isSuccess(false);
     }
 
-    default boolean isSuccessBody() {
+    default boolean isSuccessNeedBody() {
         return this.isSuccess(true);
     }
 
@@ -36,7 +36,7 @@ public interface IResponse<TBody> {
         this.assertSuccess(false);
     }
 
-    default void assertSuccessBody(boolean needBody) {
+    default void assertSuccessNeedBody() {
         this.assertSuccess(true);
     }
 }
