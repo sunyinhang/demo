@@ -405,6 +405,8 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 }else {//审批中
                     resultparamMap.put("flag", "8");// 审批中
                 }
+            }else if("".equals(flag)){
+                resultparamMap.put("flag", "9");//通过  我的额度
             }
 
         }
