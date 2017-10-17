@@ -673,7 +673,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 map.put("realmName", realmName);
             }
         } else if ("person".equals(flag)) {
-            realmName = "/app/ht/agreement/PersonInfo.html";
+//            realmName = "/app/ht/agreement/PersonInfo.html";
+            realmName = "/static/agreement/PersonInfo.html";
             logger.info("----------个人信息协议-----------" + realmName);
             map.put("realmName", realmName);
         }
