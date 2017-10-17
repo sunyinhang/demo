@@ -12,6 +12,7 @@ import com.netflix.config.DynamicStringListProperty;
 import com.netflix.config.DynamicStringProperty;
 import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.AbstractClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -70,6 +71,14 @@ public class RestTemplateEx extends RestTemplate {
     protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback, ResponseExtractor<T> responseExtractor) throws RestClientException {
         this.init();
         return super.doExecute(url, method, new RequestCallbackWrapper(requestCallback), responseExtractor);
+    }
+
+    @Override
+    protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
+        ClientHttpRequest clientHttpRequest = super.createRequest(url, method);
+        return clientHttpRequest instanceof AbstractClientHttpRequest
+                ? new ClientRequestWrapper((AbstractClientHttpRequest) clientHttpRequest)
+                : clientHttpRequest;
     }
 
     //请求回调包装器

@@ -1,16 +1,13 @@
 package com.haiercash.payplatform.filter;
 
 import com.bestvike.collection.ArrayUtils;
-import com.bestvike.collection.EnumerationUtils;
-import com.bestvike.collection.IteratorUtils;
 import com.bestvike.lang.StringUtils;
-import com.bestvike.linq.Linq;
 import com.haiercash.payplatform.diagnostics.TraceID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.IOException;
 import java.util.Enumeration;
-import java.util.List;
 
 /**
  * 请求包装器
@@ -18,10 +15,11 @@ import java.util.List;
  * @author 许崇雷
  * @date 2017/6/29
  */
-final class DispatcherRequestWrapper extends HttpServletRequestWrapper {
+public final class DispatcherRequestWrapper extends HttpServletRequestWrapper {
     private String traceID;
+    private DispatcherInputStreamWrapper inputStream;
 
-    DispatcherRequestWrapper(HttpServletRequest request) {
+    public DispatcherRequestWrapper(HttpServletRequest request) {
         super(request);
         this.init();
     }
@@ -32,12 +30,10 @@ final class DispatcherRequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public Enumeration<String> getHeaderNames() {
-        List<String> headerNames = EnumerationUtils.toList(super.getHeaderNames());
-        boolean contains = Linq.asEnumerable(headerNames).any(headerName -> StringUtils.equalsIgnoreCase(headerName, TraceID.NAME));
-        if (!contains)
-            headerNames.add(TraceID.NAME);
-        return IteratorUtils.toEnumeration(headerNames.iterator());
+    public DispatcherInputStreamWrapper getInputStream() throws IOException {
+        if (this.inputStream == null)
+            this.inputStream = new DispatcherInputStreamWrapper(this, super.getInputStream());
+        return this.inputStream;
     }
 
     @Override

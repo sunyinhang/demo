@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.filter;
 
+import com.haiercash.payplatform.diagnostics.IncomingLog;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -36,12 +37,18 @@ public final class DispatcherFilter implements Filter {
         }
 
         //非转发 (not forward)
-        HttpServletRequest httpRequest = new DispatcherRequestWrapper((HttpServletRequest) request);
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        DispatcherRequestWrapper httpRequest = new DispatcherRequestWrapper((HttpServletRequest) request);
+        DispatcherResponseWrapper httpResponse = new DispatcherResponseWrapper((HttpServletResponse) response);
         RequestContext.begin(httpRequest, httpResponse);
+        IncomingLog.writeRequestLog(httpRequest);
+        long begin = System.currentTimeMillis();
         try {
             chain.doFilter(httpRequest, httpResponse);
+        } catch (Exception e) {
+            IncomingLog.writeError(httpRequest, e, System.currentTimeMillis() - begin);
+            throw e;
         } finally {
+            IncomingLog.writeResponseLog(httpRequest, httpResponse, System.currentTimeMillis() - begin);
             RequestContext.end();
         }
     }
