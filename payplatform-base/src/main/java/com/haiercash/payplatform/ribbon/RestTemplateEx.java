@@ -110,8 +110,8 @@ public class RestTemplateEx extends RestTemplate {
             Enumeration<String> headerNames = sourceRequest.getHeaderNames();
             while (headerNames.hasMoreElements()) {
                 String headerName = headerNames.nextElement();
-                //不覆盖
-                if (ribbonRequest.getHeaders().containsKey(headerName) || RestTemplateConfig.IGNORE_HEADERS.containsKey(headerName))
+                //移除 channelno, 不覆盖
+                if (StringUtils.equalsIgnoreCase(headerName, "channelno") || ribbonRequest.getHeaders().containsKey(headerName) || RestTemplateConfig.IGNORE_HEADERS.containsKey(headerName))
                     continue;
                 //设置 headerName headerValues
                 List<String> headerValues = EnumerationUtils.toList(sourceRequest.getHeaders(headerName));
