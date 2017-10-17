@@ -739,10 +739,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存联系人二**************结束");
         logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
-        //查询贷款品种类型
-        //TODO !!!!!!!!!!!!!!!
-        typCde = "17044a";
-
+        //默认贷款品种类型
+        typCde = "17021a";
         ifNeedFaceChkByTypCdeMap.put("typCde",typCde);
         ifNeedFaceChkByTypCdeMap.put("source",channel);
         ifNeedFaceChkByTypCdeMap.put("custNo",custNo);

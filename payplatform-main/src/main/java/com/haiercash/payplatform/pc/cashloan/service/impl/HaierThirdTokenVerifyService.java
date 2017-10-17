@@ -37,7 +37,7 @@ public class HaierThirdTokenVerifyService extends BaseService implements ThirdTo
             throw new BusinessException(ConstUtil.ERROR_CODE, "登陆已过期");
         //读取 user_id
         Map map = JsonSerializer.deserialize(responseEntity.getBody(), Map.class);
-        String userId = Convert.toString(map.get("user_id"));
+        String  userId= Convert.toString(map.get("user_id"));
         String phoneNumber = Convert.toString(map.get("phone_number"));
         String error = Convert.toString(map.get("error"));
         if (StringUtils.isEmpty(userId))
