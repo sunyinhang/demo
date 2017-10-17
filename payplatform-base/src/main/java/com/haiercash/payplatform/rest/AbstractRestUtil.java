@@ -4,6 +4,8 @@ import com.bestvike.collection.MapUtils;
 import com.bestvike.lang.Convert;
 import com.bestvike.lang.ThrowableUtils;
 import com.haiercash.payplatform.utils.ConstUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
     private static final String ERROR_NULL_MSG = "外部服务未返回任何数据";
     private static final String ERROR_UNKNOWN = ConstUtil.ERROR_CODE;
     private static final String ERROR_UNKNOWN_MSG = "通信异常:%s";
+    private Log logger = LogFactory.getLog(AbstractRestUtil.class);
     private Class<?> responseRawType;//TResponse 的非泛型类型
 
     public AbstractRestUtil() {
@@ -66,6 +69,7 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
                     ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
                     : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
         } catch (Exception e) {
+            this.logger.error(ThrowableUtils.getString(e));
             return this.createResponse(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
         }
     }
@@ -86,6 +90,7 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
                     ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
                     : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
         } catch (Exception e) {
+            this.logger.error(ThrowableUtils.getString(e));
             return this.createResponse(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
         }
     }
@@ -102,6 +107,7 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
                     ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
                     : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
         } catch (Exception e) {
+            this.logger.error(ThrowableUtils.getString(e));
             return this.createResponse(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
         }
     }
@@ -118,6 +124,7 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
                     ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
                     : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
         } catch (Exception e) {
+            this.logger.error(ThrowableUtils.getString(e));
             return this.createResponse(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
         }
     }
