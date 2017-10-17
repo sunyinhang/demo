@@ -1,8 +1,10 @@
 package com.haiercash.payplatform.ribbon;
 
 import com.bestvike.collection.EnumerationUtils;
+import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.config.HttpMessageConvertersAutoConfiguration;
 import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
+import com.haiercash.payplatform.diagnostics.TraceID;
 import com.haiercash.payplatform.filter.RequestContext;
 import com.netflix.config.DynamicBooleanProperty;
 import com.netflix.config.DynamicPropertyFactory;
@@ -10,6 +12,7 @@ import com.netflix.config.DynamicStringListProperty;
 import com.netflix.config.DynamicStringProperty;
 import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.AbstractClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -70,6 +73,14 @@ public class RestTemplateEx extends RestTemplate {
         return super.doExecute(url, method, new RequestCallbackWrapper(requestCallback), responseExtractor);
     }
 
+    @Override
+    protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
+        ClientHttpRequest clientHttpRequest = super.createRequest(url, method);
+        return clientHttpRequest instanceof AbstractClientHttpRequest
+                ? new ClientRequestWrapper((AbstractClientHttpRequest) clientHttpRequest)
+                : clientHttpRequest;
+    }
+
     //请求回调包装器
     private static class RequestCallbackWrapper implements RequestCallback {
         private final RequestCallback requestCallback;
@@ -89,6 +100,7 @@ public class RestTemplateEx extends RestTemplate {
 
         //如果启用上下文 Headers 传递且存在上下文.则将 Headers 放入 ribbonRequest.已有的 Headers 不会被覆盖,敏感 Headers 不会被放入
         private static void putContextHeaders(ClientHttpRequest ribbonRequest) throws IOException {
+            ribbonRequest.getHeaders().put(TraceID.NAME, Collections.singletonList(TraceID.current()));//调用链 ID
             if (!RestTemplateConfig.ROUTE_HEADERS_ENABLED || !RequestContext.exists())
                 return;
             HttpServletRequest sourceRequest = RequestContext.get().getRequest();
@@ -113,7 +125,7 @@ public class RestTemplateEx extends RestTemplate {
         private static final List<String> SYSTEM_IGNORE_HEADERS = Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Content-Type", "Content-Length", "Cookie", "Set-Cookie", "Authorization", "Connection", "Host", "User-Agent");
         private static final DynamicBooleanProperty ROUTE_HEADERS_ENABLED_PROPERTY = DynamicPropertyFactory.getInstance().getBooleanProperty("ribbon.route-headers-enabled", false);
         private static final DynamicStringListProperty USER_IGNORE_HEADERS_PROPERTY = new DynamicStringListProperty("ribbon.ignore-headers", (String) null);
-        private static final DynamicStringProperty PREFERRED_JSON_MAPPER = DynamicPropertyFactory.getInstance().getStringProperty(HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY, org.apache.commons.lang.StringUtils.EMPTY);
+        private static final DynamicStringProperty PREFERRED_JSON_MAPPER = DynamicPropertyFactory.getInstance().getStringProperty(HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY, StringUtils.EMPTY);
 
         private static boolean INITED;                                      //是否已初始化
         private static boolean ROUTE_HEADERS_ENABLED;                       //是否启用传递 Headers

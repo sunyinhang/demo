@@ -62,10 +62,10 @@ public final class URLSerializer {
         if (iterator.hasNext()) {
             current = iterator.next();
             builder.append(Convert.toString(current.getKey())).append("=").append(encode(Convert.toString(current.getValue()), charsetName));
-        }
-        while (iterator.hasNext()) {
-            current = iterator.next();
-            builder.append("&").append(Convert.toString(current.getKey())).append("=").append(encode(Convert.toString(current.getValue()), charsetName));
+            while (iterator.hasNext()) {
+                current = iterator.next();
+                builder.append("&").append(Convert.toString(current.getKey())).append("=").append(encode(Convert.toString(current.getValue()), charsetName));
+            }
         }
         return builder.toString();
     }
@@ -119,7 +119,7 @@ public final class URLSerializer {
                     iskey = true;
                     //冲刷
                     if (key.length() > 0)
-                        map.put(key.toString().toLowerCase(), decode(value.toString(), charsetName));
+                        map.put(key.toString(), decode(value.toString(), charsetName));
                     key.setLength(0);
                     value.setLength(0);
                     break;
@@ -133,7 +133,7 @@ public final class URLSerializer {
         }
         //冲刷
         if (key.length() > 0)
-            map.put(key.toString().toLowerCase(), decode(value.toString(), charsetName));
+            map.put(key.toString(), decode(value.toString(), charsetName));
         return map;
     }
 

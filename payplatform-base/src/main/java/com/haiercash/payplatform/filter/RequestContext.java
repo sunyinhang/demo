@@ -88,7 +88,6 @@ public final class RequestContext {
         return !(testContext == null && contexts.get() == null);
     }
 
-
     /**
      * 释放当前线程的请求上下文
      */
