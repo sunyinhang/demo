@@ -648,8 +648,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         String liveAddress_code = (String) params.get("liveAddress_code");//现居住省市区编码
         String[] liveAddress_code_split = liveAddress_code.split(",");
-        String officeAddress_code = (String) params.get("officeAddress_code");//单位省市区编码
-        String[] officeAddress_split = officeAddress_code.split(",");
+//        String officeAddress_code = (String) params.get("officeAddress_code");//单位省市区编码
+//        String[] officeAddress_split = officeAddress_code.split(",");
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", channel);
         paramMap.put("custNo", custNo);
@@ -669,14 +669,14 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("positionType", positionType);// 工作性质
         if("10".equals(positionType)){//受薪人士
             paramMap.put("officeName", params.get("officeName"));// 工作单位
-            paramMap.put("officeProvince", officeAddress_split[0]);// 单位地址（省）
-            paramMap.put("officeCity", officeAddress_split[1]);// 单位地址（市）
-            paramMap.put("officeArea", officeAddress_split[2]);// 单位地址（区）
-            paramMap.put("officeAddr", params.get("officeAddr"));// 单位详细地址
+//            paramMap.put("officeProvince", officeAddress_split[0]);// 单位地址（省）
+//            paramMap.put("officeCity", officeAddress_split[1]);// 单位地址（市）
+//            paramMap.put("officeArea", officeAddress_split[2]);// 单位地址（区）
+//            paramMap.put("officeAddr", params.get("officeAddr"));// 单位详细地址
             paramMap.put("officeTel", params.get("officeTel"));// 单位电话
-        }else if ("20".equals(positionType)){//自雇人士
+        }/*else if ("20".equals(positionType)){//自雇人士
 
-        }else if("50".equals(positionType)){    //其他
+        }*/else if("50".equals(positionType)){    //其他
         //参数无
         }else{
             logger.info("从业性质positionType传参有误！ positionType="+positionType);
