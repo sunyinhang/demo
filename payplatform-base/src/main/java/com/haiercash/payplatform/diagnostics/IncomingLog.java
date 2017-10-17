@@ -26,13 +26,7 @@ public final class IncomingLog {
         StringBuilder builder = new StringBuilder();
         builder.append(Environment.NewLine).append("-------------------------------------------------->>").append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("]").append(Environment.NewLine);
-        //
-        builder.append("Request Method:").append(Environment.NewLine);
-        builder.append("    ").append(method).append(Environment.NewLine);
-        //
-        builder.append("Request Path:").append(Environment.NewLine);
-        builder.append("    ").append(request.getServletPath()).append(Environment.NewLine);
+        builder.append("[").append(TraceID.current()).append("]").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Request Headers:").append(Environment.NewLine);
         writeHeaders(builder, request);

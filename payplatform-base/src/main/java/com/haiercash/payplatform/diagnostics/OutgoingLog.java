@@ -27,19 +27,13 @@ public final class OutgoingLog {
         StringBuilder builder = new StringBuilder();
         builder.append(Environment.NewLine).append("--------------------------------------------------").append(Environment.NewLine);
         String method = request.getMethod().name().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(Environment.NewLine);
-        //
-        builder.append("Request Method:").append(Environment.NewLine);
-        builder.append("    ").append(method).append(Environment.NewLine);
-        //
-        builder.append("Request Path:").append(Environment.NewLine);
-        builder.append("    ").append(request.getURI().getPath()).append(Environment.NewLine);
+        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getURI().toString()).append(Environment.NewLine);
         //
         builder.append("Request Headers:").append(Environment.NewLine);
         writeHeaders(builder, request.getHeaders());
         //
-        builder.append("Request URI:").append(Environment.NewLine);
-        builder.append("    ").append(request.getURI().toString()).append(Environment.NewLine);
+        builder.append("Request Path:").append(Environment.NewLine);
+        builder.append("    ").append(request.getURI().getPath()).append(Environment.NewLine);
         //
         builder.append("Request Query:").append(Environment.NewLine);
         String queryString = request.getURI().getRawQuery();
@@ -47,7 +41,8 @@ public final class OutgoingLog {
             builder.append("    ").append(queryString).append(Environment.NewLine);
         //
         builder.append("Request Params:").append(Environment.NewLine);
-        writeParams(builder, URLSerializer.urlToMap(request.getURI().getRawQuery(), CharsetNames.UTF_8));
+        if (StringUtils.isNotEmpty(queryString))
+            writeParams(builder, URLSerializer.urlToMap(queryString, CharsetNames.UTF_8));
         //
         if (method.equals("POST") || method.equals("PUT")) {
             builder.append("Request Body:").append(Environment.NewLine);
