@@ -25,7 +25,7 @@ public final class OutgoingLog {
 
     public static StringBuilder writeRequestLog(ClientRequestWrapper request) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("--------------------------------------------------").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append("-------------------------调用服务-------------------------").append(Environment.NewLine);
         String method = request.getMethod().name().toUpperCase();//转大写
         builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getURI().toString()).append(Environment.NewLine);
         //

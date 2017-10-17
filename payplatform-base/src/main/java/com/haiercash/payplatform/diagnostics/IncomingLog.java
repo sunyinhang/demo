@@ -24,9 +24,9 @@ public final class IncomingLog {
 
     public static void writeRequestLog(DispatcherRequestWrapper request) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("-------------------------------------------------->>").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append("-------------------------收到请求------------------------->>").append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("]").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
+        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Request Headers:").append(Environment.NewLine);
         writeHeaders(builder, request);
@@ -51,7 +51,7 @@ public final class IncomingLog {
 
     public static void writeResponseLog(DispatcherRequestWrapper request, DispatcherResponseWrapper response, long tookMs) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("<<--------------------------------------------------").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append("<<-------------------------返回响应-------------------------").append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
         builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
@@ -70,7 +70,7 @@ public final class IncomingLog {
 
     public static void writeError(DispatcherRequestWrapper request, Exception e, long tookMs) {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("<<--------------------------------------------------").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append("<<-------------------------返回响应(异常)-------------------------").append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
         builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
