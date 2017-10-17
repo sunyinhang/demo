@@ -11,10 +11,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class AppServerUtils {
     public static String getAppServerUrl() {
+        //消息推送适用
         if(!RequestContext.exists()){
             return EurekaServer.APPSERVERNOAUTHNEW;
         }
+        //
         String channelNo = RequestContext.data().getChannelNo();
+        //
         if(StringUtils.isEmpty(channelNo)){
             return EurekaServer.APPSERVERNOAUTHNEW;
         }
