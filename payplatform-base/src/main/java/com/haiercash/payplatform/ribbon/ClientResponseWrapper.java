@@ -40,7 +40,7 @@ public final class ClientResponseWrapper implements ClientHttpResponse {
     @Override
     public ClientInputStreamWrapper getBody() throws IOException {
         if (this.inputStream == null)
-            this.inputStream = new ClientInputStreamWrapper(this, this.clientHttpResponse.getBody());
+            this.inputStream = new ClientInputStreamWrapper(this.clientHttpResponse.getBody());
         return this.inputStream;
     }
 

@@ -32,7 +32,7 @@ public final class DispatcherRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public DispatcherInputStreamWrapper getInputStream() throws IOException {
         if (this.inputStream == null)
-            this.inputStream = new DispatcherInputStreamWrapper(this, super.getInputStream());
+            this.inputStream = new DispatcherInputStreamWrapper(super.getInputStream());
         return this.inputStream;
     }
 
