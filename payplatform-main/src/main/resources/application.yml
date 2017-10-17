@@ -128,6 +128,7 @@ zuul:
 ribbon:
   ConnectTimeout: 3000
   ReadTimeout: 60000
+  route-headers-enabled: false
   eureka:
     enabled: true
 common:
