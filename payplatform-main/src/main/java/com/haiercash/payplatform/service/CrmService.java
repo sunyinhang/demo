@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.service;
 
+import com.haiercash.payplatform.rest.IResponse;
+
 import java.util.Map;
 
 /**
@@ -48,5 +50,5 @@ public interface CrmService {
      * @param password
      * @return
      */
-    Map<String, Object> validateUsers(String userId, String password);
+    IResponse<Map> validateUsers(String userId, String password);
 }
