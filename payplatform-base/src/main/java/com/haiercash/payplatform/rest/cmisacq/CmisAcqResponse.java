@@ -28,14 +28,6 @@ public class CmisAcqResponse<TBody> implements IResponse<TBody> {
 
     @JSONField(serialize = false, deserialize = false)
     @Override
-    public boolean isSuccess(boolean needBody) {
-        String retFlag = this.getRetFlag();
-        boolean retFlagOK = Objects.equals(retFlag, ConstUtil.SUCCESS_CODE) || Objects.equals(retFlag, ConstUtil.SUCCESS_CODE2);
-        return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
-    }
-
-    @JSONField(serialize = false, deserialize = false)
-    @Override
     public String getRetFlag() {
         CmisAcqResponseHead head = this.getHead();
         if (head == null)
@@ -77,5 +69,13 @@ public class CmisAcqResponse<TBody> implements IResponse<TBody> {
         if (response == null)
             return null;
         return response.getBody();
+    }
+
+    @JSONField(serialize = false, deserialize = false)
+    @Override
+    public boolean isSuccess(boolean needBody) {
+        String retFlag = this.getRetFlag();
+        boolean retFlagOK = Objects.equals(retFlag, ConstUtil.SUCCESS_CODE) || Objects.equals(retFlag, ConstUtil.SUCCESS_CODE2);
+        return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
     }
 }

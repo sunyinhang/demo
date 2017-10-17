@@ -27,14 +27,6 @@ public class CommonResponse<TBody> implements IResponse<TBody> {
 
     @JSONField(serialize = false, deserialize = false)
     @Override
-    public boolean isSuccess(boolean needBody) {
-        String retFlag = this.getRetFlag();
-        boolean retFlagOK = Objects.equals(retFlag, ConstUtil.SUCCESS_CODE) || Objects.equals(retFlag, ConstUtil.SUCCESS_CODE2);
-        return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
-    }
-
-    @JSONField(serialize = false, deserialize = false)
-    @Override
     public String getRetFlag() {
         CommonResponseHead head = this.getHead();
         if (head == null)
@@ -65,5 +57,13 @@ public class CommonResponse<TBody> implements IResponse<TBody> {
     @Override
     public TBody getBody() {
         return this.body;
+    }
+
+    @JSONField(serialize = false, deserialize = false)
+    @Override
+    public boolean isSuccess(boolean needBody) {
+        String retFlag = this.getRetFlag();
+        boolean retFlagOK = Objects.equals(retFlag, ConstUtil.SUCCESS_CODE) || Objects.equals(retFlag, ConstUtil.SUCCESS_CODE2);
+        return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
     }
 }
