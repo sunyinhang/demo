@@ -2,6 +2,7 @@ package com.haiercash.payplatform.pc.cashloan.service.impl;
 
 import com.bestvike.collection.CollectionUtils;
 import com.bestvike.lang.StringUtils;
+import com.bestvike.linq.Linq;
 import com.bestvike.reflect.GenericType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
@@ -133,18 +134,18 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         List<LoanType> loanTypeList = new ArrayList<>();
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/pub/gm/getLoanDic";
         for (ChannelStoreRelation relation : relations) {
-            Map params = new HashMap();
+            Map<String, String> params = new HashMap<>();
             params.put("merchantCode", relation.getMerchantCode());
             params.put("storeCode", relation.getStoreCode());
             IResponse<List<LoanType>> loanTypes = CommonRestUtil.getForObject(url, new GenericType<List<LoanType>>() {
-            });
+            }, params);
             loanTypes.assertSuccessNeedBody();
             loanTypeList.addAll(loanTypes.getBody());
         }
-//        List
-
-
-        return null;
+        List<LoanType> distinctLoanTypes = Linq.asEnumerable(loanTypeList).distinct().toList();//去重
+        CommonResponse<List<LoanType>> response = CommonResponse.success();
+        response.setBody(distinctLoanTypes);
+        return response;
     }
 
     /**
@@ -177,8 +178,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
     private Map<String, Object> joinActivityRedirect(EntrySetting setting) {
         logger.info("申请接口*******************开始");
-        Map cachemap = new HashMap<String, Object>();
-        Map returnmap = new HashMap<String, Object>();//返回的map
+        Map<String, Object> cachemap = new HashMap<String, Object>();
+        Map<String, Object> returnmap = new HashMap<String, Object>();//返回的map
         String channelNo = this.getChannelNo();
         String thirdToken = this.getToken();
         String verifyUrl = setting.getVerifyUrlThird() + thirdToken;
@@ -240,7 +241,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         bindMap.put("token", thirdToken);
         bindMap.put("channel", "11");
         bindMap.put("channelNo", channelNo);
-        Map bindresult = appServerService.saveThirdPartToken(bindMap);
+        Map<String, Object> bindresult = appServerService.saveThirdPartToken(bindMap);
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -295,16 +296,16 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         Map<String, Object> mapcache = appServerService.checkEdAppl(thirdToken, cacheedmap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
-            Map<String, Object> head = (Map) mapcache.get("head");
+            Map<String, Object> head = (Map<String, Object>) mapcache.get("head");
             String _retFlag_ = (String) head.get("retFlag");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         Object head2 = mapcache.get("head");
-        Map<String, Object> retinfo = (Map) head2;
+        Map<String, Object> retinfo = (Map<String, Object>) head2;
         String retFlag_ = (String) retinfo.get("retFlag");
         String retMsg_ = (String) retinfo.get("retMsg");
         if ("00000".equals(retFlag_)) {
-            Map<String, Object> headinfo = (Map) (mapcache.get("body"));
+            Map<String, Object> headinfo = (Map<String, Object>) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
             //applType="2";
@@ -414,12 +415,12 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 edCheckmap.put("channelNo", channelNo);
                 edCheckmap.put("idTyp", certType);
                 Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, edCheckmap);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
-                Map<String, Object> head = (Map) edApplProgress.get("head");
+                Map<String, Object> head = (Map<String, Object>) edApplProgress.get("head");
                 if (!"00000".equals(head.get("retFlag"))) {
                     logger.info("额度申请进度查询（最新的进度 根据idNo查询）,错误信息：" + head.get("retMsg"));
                     return fail(ConstUtil.ERROR_CODE, (String) head.get("retMsg"));
                 }
-                Map<String, Object> body = (Map) edApplProgress.get("body");
+                Map<String, Object> body = (Map<String, Object>) edApplProgress.get("body");
                 Integer crdSeqInt = (Integer) body.get("applSeq");
                 String crdSeq = Integer.toString(crdSeqInt);
                 cachemap.put("crdSeq", crdSeq);
