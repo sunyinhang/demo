@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.rest;
+package com.bestvike.reflect;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.util.Assert;
@@ -8,10 +8,10 @@ import java.lang.reflect.Type;
 /**
  * Created by 许崇雷 on 2017-10-10.
  */
-public class ParameterizedTypeRef<T> extends ParameterizedTypeReference<T> {
+public class GenericTypeReference<T> extends ParameterizedTypeReference<T> {
     private final Type type;
 
-    public ParameterizedTypeRef(Type type) {
+    public GenericTypeReference(Type type) {
         super();
         Assert.notNull(type, "type can not be null.");
         this.type = type;
@@ -24,7 +24,7 @@ public class ParameterizedTypeRef<T> extends ParameterizedTypeReference<T> {
 
     @Override
     public boolean equals(Object obj) {
-        return this == obj || obj instanceof org.springframework.core.ParameterizedTypeReference && this.type.equals(((ParameterizedTypeRef) obj).type);
+        return this == obj || obj instanceof org.springframework.core.ParameterizedTypeReference && this.type.equals(((GenericTypeReference) obj).type);
     }
 
     @Override
@@ -34,6 +34,6 @@ public class ParameterizedTypeRef<T> extends ParameterizedTypeReference<T> {
 
     @Override
     public String toString() {
-        return "ParameterizedTypeRef<" + this.type + ">";
+        return "GenericTypeReference<" + this.type + ">";
     }
 }

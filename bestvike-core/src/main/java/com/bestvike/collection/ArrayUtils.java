@@ -2,6 +2,7 @@ package com.bestvike.collection;
 
 import org.springframework.util.Assert;
 
+import java.lang.reflect.Type;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -10,6 +11,11 @@ import java.util.Iterator;
  * @date 2017/6/7
  */
 public class ArrayUtils extends org.apache.commons.lang3.ArrayUtils {
+    /**
+     * 空的类型数组
+     */
+    public static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
+
     /**
      * 数组转换为枚举对象
      *

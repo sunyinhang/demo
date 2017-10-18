@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.rest;
+package com.haiercash.payplatform.ribbon;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
