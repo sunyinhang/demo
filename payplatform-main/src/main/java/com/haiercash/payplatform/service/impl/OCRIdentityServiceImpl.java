@@ -635,8 +635,9 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         if("register".equals(flag)){
             if (StringUtils.isEmpty(token)) {
-                String orderNo = "";
-                realmName = "/app/appserver/register?orderNo=" + orderNo;
+                String custName = "";
+                custName =URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                realmName = "/app/appserver/register?custName=" + custName;
                 logger.info("------------注册协议------------" + realmName);
                 map.put("realmName", realmName);
             }else{
