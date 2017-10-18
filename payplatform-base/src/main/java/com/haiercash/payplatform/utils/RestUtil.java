@@ -4,7 +4,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -16,14 +21,12 @@ import java.util.UUID;
 /**
  * Created by use on 2017/7/25.
  */
-public class RestUtil{
+public class RestUtil {
     public static Log logger = LogFactory.getLog(RestUtil.class);
-    private static String SUCCESS_CODE = "00000";
-    private static String SUCCESS_MSG = "处理成功";
-    public static String ERROR_INTERNAL_CODE = "99";
-    public static String ERROR_INTERNAL_MSG = "网络通讯异常";
-    public static String ERROR_UNKNOW_CODE = "98";
-    public static String ERROR_UNKNOW_MSG = "未知错误";
+    private static String SUCCESS_CODE = ConstUtil.SUCCESS_CODE;
+    private static String SUCCESS_MSG = ConstUtil.SUCCESS_MSG;
+    public static String ERROR_INTERNAL_CODE = ConstUtil.ERROR_CODE;
+    public static String ERROR_INTERNAL_MSG = ConstUtil.ERROR_INFO;
     @Autowired
     private RestTemplate restTemplate;
     private static RestUtil restUtil;
@@ -80,7 +83,7 @@ public class RestUtil{
         try {
             ResponseEntity e = restUtil.restTemplate.getForEntity(url, String.class, new Object[0]);
             HttpStatus status = e.getStatusCode();
-            return status.value() == responseCode?(String)e.getBody():null;
+            return status.value() == responseCode ? (String) e.getBody() : null;
         } catch (Exception var4) {
             logger.error("RestGet失败：" + var4.getMessage());
             return null;
@@ -95,7 +98,7 @@ public class RestUtil{
         try {
             ResponseEntity e = restUtil.restTemplate.getForEntity(url, Map.class, new Object[0]);
             HttpStatus status = e.getStatusCode();
-            return status.value() == responseCode?(Map)e.getBody():null;
+            return status.value() == responseCode ? (Map) e.getBody() : null;
         } catch (Exception var4) {
             logger.error("RestGet失败：" + var4.getMessage());
             return null;
@@ -107,17 +110,17 @@ public class RestUtil{
     }
 
     public static String restDeleteString(String url, int responseCode) {
-        return restExchangeString(url, (String)null, HttpMethod.DELETE, responseCode);
+        return restExchangeString(url, (String) null, HttpMethod.DELETE, responseCode);
     }
 
     public static Map<String, Object> restDeleteMap(String url, int responseCode) {
-        return restExchangeMap(url, (Map)null, HttpMethod.DELETE, responseCode);
+        return restExchangeMap(url, (Map) null, HttpMethod.DELETE, responseCode);
     }
 
     public static String restExchangeString(String url, String data, HttpMethod httpMethod, int responseCode) {
         try {
             HttpEntity e = null;
-            if(data != null) {
+            if (data != null) {
                 HttpHeaders responseEntity = new HttpHeaders();
                 MediaType status = MediaType.parseMediaType("application/json; charset=UTF-8");
                 responseEntity.setContentType(status);
@@ -126,7 +129,7 @@ public class RestUtil{
 
             ResponseEntity responseEntity1 = restUtil.restTemplate.exchange(url, httpMethod, e, String.class, new Object[0]);
             HttpStatus status1 = responseEntity1.getStatusCode();
-            return status1.value() == responseCode?(String)responseEntity1.getBody():null;
+            return status1.value() == responseCode ? (String) responseEntity1.getBody() : null;
         } catch (Exception var7) {
             logger.error("RestPut失败：" + var7.getMessage());
             return null;
@@ -136,7 +139,7 @@ public class RestUtil{
     public static Map<String, Object> restExchangeMap(String url, Map<String, Object> data, HttpMethod httpMethod, int responseCode) {
         try {
             HttpEntity e = null;
-            if(data != null) {
+            if (data != null) {
                 HttpHeaders responseEntity = new HttpHeaders();
                 MediaType status = MediaType.parseMediaType("application/json; charset=UTF-8");
                 responseEntity.setContentType(status);
@@ -145,7 +148,7 @@ public class RestUtil{
 
             ResponseEntity responseEntity1 = restUtil.restTemplate.exchange(url, httpMethod, e, Map.class, new Object[0]);
             HttpStatus status1 = responseEntity1.getStatusCode();
-            return status1.value() == responseCode?(Map)responseEntity1.getBody():null;
+            return status1.value() == responseCode ? (Map) responseEntity1.getBody() : null;
         } catch (Exception var7) {
             logger.error("RestPut失败：" + var7.getMessage());
             return null;
@@ -153,19 +156,19 @@ public class RestUtil{
     }
 
     public static String getString(JSONObject jsonObject, String key) {
-        return jsonObject != null && jsonObject.has(key)?String.valueOf(jsonObject.get(key)):null;
+        return jsonObject != null && jsonObject.has(key) ? String.valueOf(jsonObject.get(key)) : null;
     }
 
     public static JSONObject getObject(JSONObject jsonObject, String key) {
-        return jsonObject != null && jsonObject.has(key)?jsonObject.getJSONObject(key):null;
+        return jsonObject != null && jsonObject.has(key) ? jsonObject.getJSONObject(key) : null;
     }
 
     public static String getString(Map<String, Object> map, String key) {
-        return map != null?String.valueOf(map.get(key)):null;
+        return map != null ? String.valueOf(map.get(key)) : null;
     }
 
     public static Map<String, Object> getObject(Map<String, Object> map, String key) {
-        return map != null?(Map)map.get(key):null;
+        return map != null ? (Map) map.get(key) : null;
     }
 
     public static String getGuid() {
@@ -174,7 +177,7 @@ public class RestUtil{
 
     public static String getSerial() {
         Calendar calendar = Calendar.getInstance();
-        return calendar.getTimeInMillis() + String.valueOf((int)(Math.random() * 1000.0D));
+        return calendar.getTimeInMillis() + String.valueOf((int) (Math.random() * 1000.0D));
     }
 
     public static enum Type {
