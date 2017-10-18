@@ -25,6 +25,10 @@ public class CommonResponse<TBody> implements IResponse<TBody> {
         return response;
     }
 
+    public static <TBody> CommonResponse<TBody> success() {
+        return create(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
+    }
+
     @JSONField(serialize = false, deserialize = false)
     @Override
     public String getRetFlag() {

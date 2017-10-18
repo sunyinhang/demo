@@ -26,6 +26,10 @@ public class CmisAcqResponse<TBody> implements IResponse<TBody> {
         return response;
     }
 
+    public static <TBody> CmisAcqResponse<TBody> success() {
+        return create(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
+    }
+
     @JSONField(serialize = false, deserialize = false)
     @Override
     public String getRetFlag() {
