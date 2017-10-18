@@ -2,7 +2,6 @@ package com.haiercash.payplatform.pc.cashloan.service;
 
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.rest.IResponse;
-import com.sun.istack.internal.Nullable;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -39,10 +38,10 @@ public interface CashLoanService {
      *
      * @param setting   渠道配置可以为 null
      * @param channelNo 渠道号
-     * @param custName 姓名
+     * @param custName  姓名
      * @param idType    证件类型 20 身份证,00 手机号
      * @param idNo      身份证或手机号
      * @return 贷款种类列表
      */
-    IResponse<List<String>> getLoanType(@Nullable EntrySetting setting, String channelNo, String custName, String idType, String idNo);
+    IResponse<List<String>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo);
 }
