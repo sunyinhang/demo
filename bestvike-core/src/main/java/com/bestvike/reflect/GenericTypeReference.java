@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.rest;
+package com.bestvike.reflect;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.util.Assert;

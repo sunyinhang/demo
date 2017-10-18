@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.rest;
+package com.bestvike.reflect;
 
 import com.bestvike.collection.ArrayUtils;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
@@ -22,13 +22,17 @@ public abstract class GenericType<T> implements ParameterizedType {
     public GenericType() {
         ParameterizedType superClass = (ParameterizedType) this.getClass().getGenericSuperclass();
         Type type = superClass.getActualTypeArguments()[0];
-        if (type instanceof ParameterizedTypeImpl) {
+        if (type instanceof Class<?>) {
+            this.actualTypeArguments = ArrayUtils.EMPTY_TYPE_ARRAY;
+            this.rawType = (Class<?>) type;
+            this.ownerType = null;
+        } else if (type instanceof ParameterizedTypeImpl) {
             ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) type;
             this.actualTypeArguments = parameterizedType.getActualTypeArguments();
             this.rawType = parameterizedType.getRawType();
             this.ownerType = parameterizedType.getOwnerType();
         } else {
-            throw new RuntimeException("T must be generic type.");
+            throw new RuntimeException("type must be instance of Class or ParameterizedTypeImpl.");
         }
     }
 
@@ -75,9 +79,7 @@ public abstract class GenericType<T> implements ParameterizedType {
             else
                 builder.append(this.ownerType.toString());
             builder.append(".");
-            if (this.ownerType instanceof GenericType)
-                builder.append(this.rawType.getName().replace(((GenericType) this.ownerType).rawType.getName() + "$", ""));
-            else if (this.ownerType instanceof ParameterizedTypeImpl)
+            if (this.ownerType instanceof ParameterizedTypeImpl)
                 builder.append(this.rawType.getName().replace(((ParameterizedTypeImpl) this.ownerType).getRawType().getName() + "$", ""));
             else
                 builder.append(this.rawType.getName());
