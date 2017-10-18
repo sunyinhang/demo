@@ -628,56 +628,74 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String realmName = "";
         String flag = (String) params.get("flag");
         HashMap<String, Object> map = new HashMap<>();
-        if (StringUtils.isEmpty(token)) {
-            logger.info("从前端获取的token：" + token);
-            logger.info("从前端获取的token为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
         if (StringUtils.isEmpty(flag)) {
             logger.info("从前端获取的flag:" + flag);
             logger.info("从前端h获取的flag为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = session.get(token, Map.class);
-        if (cacheMap == null || "".equals(cacheMap)) {
-            logger.info("Jedis获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        if ("contract".equals(flag)) {
-            String custNo = cacheMap.get("custNo") + "";
-            String applSeq = cacheMap.get("applSeq") + "";
-            if (!StringUtils.isEmpty(custNo) && !StringUtils.isEmpty(applSeq)) {
-                realmName = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
-                logger.info("------------个人借款合同地址---------" + realmName);
+        if("register".equals(flag)){
+            if (StringUtils.isEmpty(token)) {
+                String orderNo = "";
+                realmName = "/app/appserver/register?orderNo=" + orderNo;
+                logger.info("------------注册协议------------" + realmName);
                 map.put("realmName", realmName);
-            }
-        } else if ("credit".equals(flag)) {
-            String custName = (String) cacheMap.get("name");
-            String certNo = (String) cacheMap.get("idNo");
-            if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
-                String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
-                /// String custNameB = URLEncoder.encode(new String(Base64.encode(custName), "UTF-8"), "UTF-8");
-                realmName = "/app/appserver/edCredit?custName=" + custNameB + "&certNo=" + certNo;
-                logger.info("--------------征信查询------------" + realmName);
-                map.put("realmName", realmName);
-            }
-        } else if ("register".equals(flag)) {
-            String orderNo = (String) cacheMap.get("orderNo");
-            String custName = (String) cacheMap.get("name");
-            if (!StringUtils.isEmpty(orderNo) || !StringUtils.isEmpty(custName)) {
+            }else{
+                Map<String, Object> cacheMap = session.get(token, Map.class);
+                if (cacheMap == null || "".equals(cacheMap)) {
+                    logger.info("Jedis获取失败");
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+                }
+                String orderNo = (String) cacheMap.get("orderNo");
+                String custName = (String) cacheMap.get("name");
+                if (!StringUtils.isEmpty(orderNo) || !StringUtils.isEmpty(custName)) {
                 if (orderNo == null) {
                     orderNo = "";
                 }
-                realmName = "/app/appserver/register?orderNo=" + orderNo + "&custName=" + URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
-                logger.info("------------注册协议------------" + realmName);
+                    realmName = "/app/appserver/register?orderNo=" + orderNo + "&custName=" + URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                    logger.info("------------注册协议------------" + realmName);
+                    map.put("realmName", realmName);
+            }
+            }
+        }else{
+            if (StringUtils.isEmpty(token)) {
+                logger.info("从前端获取的token：" + token);
+                logger.info("从前端获取的token为空");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+
+            Map<String, Object> cacheMap = session.get(token, Map.class);
+            if (cacheMap == null || "".equals(cacheMap)) {
+                logger.info("Jedis获取失败");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+            if ("contract".equals(flag)) {
+                String custNo = cacheMap.get("custNo") + "";
+                String applSeq = cacheMap.get("applSeq") + "";
+                if (!StringUtils.isEmpty(custNo) && !StringUtils.isEmpty(applSeq)) {
+                    realmName = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
+                    logger.info("------------个人借款合同地址---------" + realmName);
+                    map.put("realmName", realmName);
+                }
+            } else if ("credit".equals(flag)) {
+                String custName = (String) cacheMap.get("name");
+                String certNo = (String) cacheMap.get("idNo");
+                if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
+                    String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                    /// String custNameB = URLEncoder.encode(new String(Base64.encode(custName), "UTF-8"), "UTF-8");
+                    realmName = "/app/appserver/edCredit?custName=" + custNameB + "&certNo=" + certNo;
+                    logger.info("--------------征信查询------------" + realmName);
+                    map.put("realmName", realmName);
+                }
+            }else if ("person".equals(flag)) {
+                realmName = "/app/ht/agreement/PersonInfo.html";
+//            realmName = "/static/agreement/PersonInfo.html";
+                logger.info("----------个人信息协议-----------" + realmName);
                 map.put("realmName", realmName);
             }
-        } else if ("person".equals(flag)) {
-            realmName = "/app/ht/agreement/PersonInfo.html";
-//            realmName = "/static/agreement/PersonInfo.html";
-            logger.info("----------个人信息协议-----------" + realmName);
-            map.put("realmName", realmName);
+
         }
+
+
         return success(map);
     }
 
