@@ -2,14 +2,20 @@ package com.haiercash.payplatform.pc.cashloan.service.impl;
 
 import com.bestvike.lang.StringUtils;
 import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.common.dao.ChannelStoreRelationDao;
 import com.haiercash.payplatform.common.dao.EntrySettingDao;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
+import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.ApplicationContextUtil;
+import com.haiercash.payplatform.utils.BusinessException;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,6 +47,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
     @Autowired
     private EntrySettingDao entrySettingDao;
+
+    @Autowired
+    private ChannelStoreRelationDao channelStoreRelationDao;
 
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
@@ -66,13 +76,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String loginType = setting.getLoginType();
         switch (loginType) {
             case "01":
-//                Map cachemap = new HashMap<String, Object>();
-//                String token = UUID.randomUUID().toString();
-//                cachemap.put("token", token);
-//                this.redisSession.set(token, cachemap);
                 Map<String, Object> map = new HashMap<>();
                 map.put("flag", "1");
-//                map.put("token", token);
                 return success(map);//跳转到登陆页
 
             case "02":
@@ -86,6 +91,60 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 logger.warn(msg);
                 return fail(ConstUtil.ERROR_CODE, msg);
         }
+    }
+
+    /**
+     * 根据channelNo 获取贷款种类,不受配置影响
+     *
+     * @param channelNo
+     * @return 贷款种类列表
+     */
+    @Override
+    public IResponse<List<String>> getLoanTypeByChannelNo(String channelNo) {
+//        Assert.notNull(channelNo,"channelNo can not be null");
+//        List<ChannelStoreRelation> relations= this.channelStoreRelationDao.selectByChanelNo(channelNo);
+//        if(CollectionUtils.isEmpty(relations))
+//            return CommonResponse.create(ConstUtil.ERROR_CODE,"该渠道没有配置任何门店商户");
+//
+//
+//
+//
+//        for (ChannelStoreRelation relation : relations) {
+//            Map params=new HashMap();
+//            params.put("merchantCode",relation.getMerchantCode());
+//            params.put("storeCode",relation.getStoreCode());
+//
+//        }
+//
+        return null;
+    }
+
+    /**
+     * 根据 姓名,证件 获取贷款种类,不受配置影响
+     *
+     * @param custName 姓名
+     * @param idType   证件类型 20 身份证,00 手机号
+     * @param idNo     身份证或手机号
+     * @return 贷款种类列表
+     */
+    @Override
+    public IResponse<List<String>> getLoanTypeByCustInfo(String custName, String idType, String idNo) {
+        return null;
+    }
+
+    /**
+     * 根据配置和参数查询贷款种类
+     *
+     * @param setting   渠道配置可以为 null
+     * @param channelNo 渠道号
+     * @param custName  姓名
+     * @param idType    证件类型 20 身份证,00 手机号
+     * @param idNo      身份证或手机号
+     * @return 贷款种类列表
+     */
+    @Override
+    public IResponse<List<String>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo) {
+        return null;
     }
 
     private Map<String, Object> joinActivityRedirect(EntrySetting setting) {
