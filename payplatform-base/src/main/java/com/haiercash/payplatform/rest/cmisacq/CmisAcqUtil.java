@@ -1,8 +1,9 @@
 package com.haiercash.payplatform.rest.cmisacq;
 
+import com.bestvike.reflect.GenericType;
 import com.haiercash.payplatform.rest.AbstractRestUtil;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.rest.RestTemplateProvider;
+import com.haiercash.payplatform.ribbon.RestTemplateProvider;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
@@ -74,6 +75,56 @@ public class CmisAcqUtil {
     }
 
     public static <TBody> IResponse<TBody> putForObject(String url, Object request, Class<TBody> bodyType, MultiValueMap<String, String> headers) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.putForCore(url, request, bodyType, headers);
+    }
+
+    public static <TBody> IResponse<TBody> getForObject(String url, GenericType<TBody> bodyType) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.getForCore(url, bodyType, null, null);
+    }
+
+    public static <TBody> IResponse<TBody> getForObject(String url, GenericType<TBody> bodyType, Map<String, ?> uriVariables) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.getForCore(url, bodyType, uriVariables, null);
+    }
+
+    public static <TBody> IResponse<TBody> getForObject(String url, GenericType<TBody> bodyType, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.getForCore(url, bodyType, uriVariables, headers);
+    }
+
+    public static <TBody> IResponse<TBody> deleteForObject(String url, GenericType<TBody> bodyType) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.deleteForCore(url, bodyType, null, null);
+    }
+
+    public static <TBody> IResponse<TBody> deleteForObject(String url, GenericType<TBody> bodyType, Map<String, ?> uriVariables) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.deleteForCore(url, bodyType, uriVariables, null);
+    }
+
+    public static <TBody> IResponse<TBody> deleteForObject(String url, GenericType<TBody> bodyType, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.deleteForCore(url, bodyType, uriVariables, headers);
+    }
+
+    public static <TBody> IResponse<TBody> postForObject(String url, Object request, GenericType<TBody> bodyType) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.postForCore(url, request, bodyType, null);
+    }
+
+    public static <TBody> IResponse<TBody> postForObject(String url, Object request, GenericType<TBody> bodyType, MultiValueMap<String, String> headers) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.postForCore(url, request, bodyType, headers);
+    }
+
+    public static <TBody> IResponse<TBody> putForObject(String url, Object request, GenericType<TBody> bodyType) {
+        AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
+        return restUtil.putForCore(url, request, bodyType, null);
+    }
+
+    public static <TBody> IResponse<TBody> putForObject(String url, Object request, GenericType<TBody> bodyType, MultiValueMap<String, String> headers) {
         AbstractRestUtil<IResponse<TBody>> restUtil = getRestUtil();
         return restUtil.putForCore(url, request, bodyType, headers);
     }
