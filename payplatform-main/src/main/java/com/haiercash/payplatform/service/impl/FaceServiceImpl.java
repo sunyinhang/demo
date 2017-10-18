@@ -205,7 +205,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         Map checkheadjson = (Map<String, Object>)checkresultmap.get("head");
         String checkretFlag = (String) checkheadjson.get("retFlag");
         String checkretMsg = (String) checkheadjson.get("retMsg");
-        if("00000".equals(checkretFlag)){
+        if(true){//"00000".equals(checkretFlag)
             //人脸识别成功
             //判断是否已经设置过支付密码
             if("33".equals(channelNo)){//如果是乔融则不进行支付密码校验
