@@ -99,4 +99,13 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         return response;
     }
 
+    @Override
+    public  Map<String, Object>  getBankCard(String custNo) {
+        if (StringUtils.isEmpty(custNo))
+            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "客户编号为空!");
+        String url = EurekaServer.CRM + "/app/crm/cust/getBankCard?custNo="+custNo;
+        Map<String, Object> resultmap = HttpUtil.restGetMap(url);
+        logger.info("获取客户银行卡接口，返回数据" + resultmap);
+        return resultmap;
+    }
 }

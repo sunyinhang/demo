@@ -373,9 +373,6 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                         resultparamMap.put("flag", "7");//跳转完善个人扩展信息页面
                     }
                 }
-
-
-//                return success(map1);
             } else if ("2".equals(applType)) {
                 HashMap<String, Object> edCheckmap = new HashMap<>();
                 edCheckmap.put("idNo", idNumber);

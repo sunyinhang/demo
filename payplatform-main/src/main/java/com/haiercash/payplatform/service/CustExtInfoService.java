@@ -26,4 +26,6 @@ public interface CustExtInfoService {
     public Map<String,Object> attachDelete(String token, String channel, String channelNo, Map<String, Object> params);
     //影像下载
     Map<String,Object> attachPic(String token, String channelNo, String channel, Map<String, Object> map);
+    //获取客户个人银行卡信息
+    public Map<String, Object> getBankCard(String token,String channel,String channelNo) throws Exception;
 }

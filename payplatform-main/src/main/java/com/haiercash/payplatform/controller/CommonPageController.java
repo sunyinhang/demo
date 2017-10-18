@@ -577,4 +577,15 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> custUpdatePwd(@RequestBody Map<String, Object> params) throws Exception {
         return registerService.custUpdatePwd(params);
     }
+
+    /**
+     * @Title  getBankCard
+     * @Description: 根据客户编码获取银行卡信息
+     * @author
+     * @date 2017/10/17 15:26
+     */
+    @RequestMapping(value = "/api/payment/getBankCard", method = RequestMethod.POST)
+    public Map<String, Object> getBankCard() throws Exception {
+        return custExtInfoService.getBankCard(super.getToken(), super.getChannelNo(), super.getChannel());
+    }
 }

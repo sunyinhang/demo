@@ -51,4 +51,15 @@ public interface CrmService {
      * @return
      */
     IResponse<Map> validateUsers(String userId, String password);
+
+    /**
+     * (GET)查询指定客户的所有银行卡（根据客户编号）列表
+     *
+     * @param userId
+     * @param password
+     * @return
+     */
+    Map<String, Object>  getBankCard(String custNo);
+
+
 }

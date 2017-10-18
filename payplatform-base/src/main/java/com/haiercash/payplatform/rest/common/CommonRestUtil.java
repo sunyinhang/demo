@@ -130,7 +130,7 @@ public class CommonRestUtil {
         AbstractRestUtil<IResponse<Map>> restUtil = getRestUtil();
         Type mapType = getMapType();
         return restUtil.putForCore(url, request, mapType, null);
-    }
+}
 
     public static IResponse<Map> putForMap(String url, Object request, MultiValueMap<String, String> headers) {
         AbstractRestUtil<IResponse<Map>> restUtil = getRestUtil();

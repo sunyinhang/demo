@@ -2,11 +2,12 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,11 +25,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -38,6 +35,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     private Session session;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private CrmService crmService;
 //    @Value("${app.other.baseSharePath:}")
 //    protected String baseSharePath;
     @Value("${app.other.face_DataImg_url}")
@@ -799,5 +798,42 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         return success(resultparamMap) ;
     }
+
+    @Override
+    public Map<String, Object> getBankCard(String token, String channel, String channelNo) throws Exception {
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if(cacheMap == null || "".equals(cacheMap)){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String custNo = (String) cacheMap.get("custNo");
+        if (custNo.isEmpty()) {
+            logger.info("custNo为空");
+            return fail(ConstUtil.ERROR_CODE,  ConstUtil.TIME_OUT);
+        }
+        Map<String, Object>  bankCardMap= crmService.getBankCard(custNo);
+        Map updmobileheadjson = (Map<String, Object>) bankCardMap.get("head");
+            String updmobileretflag = (String) updmobileheadjson.get("retFlag");
+            if (!"00000".equals(updmobileretflag)) {
+                String retMsg = (String) updmobileheadjson.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+        return bankCardMap;
+    }
+
 
 }
