@@ -744,5 +744,29 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         return result;
     }
 
+    @Override
+    public Map<String, Object> commitAppl(AppOrder order, String flag, String riskJson) {
+        // 默认申请放款
+        if (StringUtils.isEmpty(flag)) {
+            flag = "2";
+        }
+        Map<String, Object> param = new HashMap<>();
+        param.put("applSeq", order.getApplSeq());
+        param.put("flag", flag);
+        if (!StringUtils.isEmpty(riskJson)) {
+            param.put("riskJson", riskJson);
+        }
+        Map<String, Object> result = AcqUtil
+                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/commitAppl", AcqTradeCode.COMMIT_APPL,
+                        super.getChannel(), super.getChannelNo(), order.getCooprCde(), null, param);
+        if (!CmisUtil.getIsSucceed(result)) {
+            logger.info("收单系统提交贷款申请失败, applSeq:" + order.getApplSeq());
+        } else {
+            logger.info("收单系统提交贷款申请成功, applSeq:" + order.getApplSeq());
+        }
+
+        return (Map<String, Object>) result.get("response");
+    }
+
 
 }

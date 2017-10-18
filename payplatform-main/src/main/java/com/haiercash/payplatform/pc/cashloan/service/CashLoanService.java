@@ -44,4 +44,13 @@ public interface CashLoanService {
      * @return 贷款种类列表
      */
     IResponse<List<String>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo);
+
+    /**
+     * 贷款提交
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> commitOrder(Map<String, Object> map) throws Exception;
+
 }

@@ -27,6 +27,8 @@ public class CmisApplService extends BaseService {
     private Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
+    private AcquirerService acquirerService;
+    @Autowired
     private OrderService orderService;
     @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
@@ -228,17 +230,17 @@ public class CmisApplService extends BaseService {
         if (relation == null) {
             return fail("23", "订单信息不存在");
         }
-//        if ("02".equals(relation.getTypGrp())) {//TODO!!!!现金贷
-//            Map<String, Object> resultMap = acquirerService
-//                    .cashLoan(order, appOrdernoTypgrpRelationRepository.findOne(order.getOrderNo()));
-//            if (!CmisUtil.getIsSucceed(resultMap)) {
-//                return (Map<String, Object>) resultMap.get("response");
-//            }
-//            logger.debug("收单系统接口" + AcqTradeCode.COMMIT_APPL + "开始");
-//            Map<String, Object> result = acquirerService.commitAppl(order, "1", riskJson);
-//            logger.debug("收单系统接口" + AcqTradeCode.COMMIT_APPL + "结束");
-//            return result;
-//        }
+        if ("02".equals(relation.getTypGrp())) {//现金贷
+            Map<String, Object> resultMap = acquirerService
+                    .cashLoan(order, appOrdernoTypgrpRelationDao.selectByOrderNo(order.getOrderNo()));
+            if (!CmisUtil.getIsSucceed(resultMap)) {
+                return (Map<String, Object>) resultMap.get("response");
+            }
+            logger.debug("收单系统接口" + AcqTradeCode.COMMIT_APPL + "开始");
+            Map<String, Object> result = acquirerService.commitAppl(order, "1", null);//
+            logger.debug("收单系统接口" + AcqTradeCode.COMMIT_APPL + "结束");
+            return result;
+        }
         else {
 //            if (!"2".equals(order.getStatus())) {
 //                this.cleanGoodsInfo(order);

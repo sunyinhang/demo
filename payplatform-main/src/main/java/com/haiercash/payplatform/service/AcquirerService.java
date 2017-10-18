@@ -93,4 +93,12 @@ public interface AcquirerService {
 //     */
 //    public  Map<String, Object> cancelAppl(Map<String, Object> map);
 
+    /**
+     * 贷款申请提交.
+     * @param order     订单详情
+     * @param flag      0:贷款取消  1:贷款提交
+     * @param riskJson  风险信息
+     * @return Map
+     */
+    Map<String, Object> commitAppl(AppOrder order, String flag, String riskJson);
 }

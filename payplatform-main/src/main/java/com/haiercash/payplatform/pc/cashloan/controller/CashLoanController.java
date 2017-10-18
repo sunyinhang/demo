@@ -5,6 +5,7 @@ import com.haiercash.payplatform.controller.BaseController;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +43,17 @@ public class CashLoanController extends BaseController {
         if (StringUtils.isEmpty(channelNo))
             return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "渠道号不能为空");
         return this.cashLoanService.joinActivity();
+    }
+
+    /**
+     * 现金贷订单提交
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/cashLoan/commitOrder", method = RequestMethod.POST)
+    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) throws Exception {
+        return cashLoanService.commitOrder(super.initParam(map));
     }
 
 
