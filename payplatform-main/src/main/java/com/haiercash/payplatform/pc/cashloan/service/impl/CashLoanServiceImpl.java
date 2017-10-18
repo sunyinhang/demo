@@ -1,7 +1,9 @@
 package com.haiercash.payplatform.pc.cashloan.service.impl;
 
 import com.bestvike.collection.CollectionUtils;
+import com.bestvike.lang.Convert;
 import com.bestvike.lang.StringUtils;
+import com.bestvike.linq.IEnumerable;
 import com.bestvike.linq.Linq;
 import com.bestvike.reflect.GenericType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +17,8 @@ import com.haiercash.payplatform.common.data.ChannelStoreRelation;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
+import com.haiercash.payplatform.config.CashLoanConfig;
+import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
@@ -75,6 +79,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     private SgInnerService sgInnerService;
     @Autowired
     private CommonPageService commonPageService;
+
+    @Autowired
+    private CashLoanConfig cashLoanConfig;
 
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
@@ -137,11 +144,16 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             Map<String, String> params = new HashMap<>();
             params.put("merchantCode", relation.getMerchantCode());
             params.put("storeCode", relation.getStoreCode());
-            IResponse<List<LoanType>> loanTypes = CommonRestUtil.getForObject(url, new GenericType<List<LoanType>>() {
+            IResponse<List<Map>> loanTypes = CommonRestUtil.getForObject(url, new GenericType<List<Map>>() {
             }, params);
             loanTypes.assertSuccessNeedBody();
-            loanTypeList.addAll(loanTypes.getBody());
+            Linq.asEnumerable(loanTypes.getBody()).select(map -> {
+                LoanType loanType = new LoanType();
+                loanType.setTypCde(Convert.toString(map.get("loanCode")));
+                return loanType;
+            }).forEach(loanTypeList::add);
         }
+        //贷款品种去重
         List<LoanType> distinctLoanTypes = Linq.asEnumerable(loanTypeList).distinct().toList();//去重
         CommonResponse<List<LoanType>> response = CommonResponse.success();
         response.setBody(distinctLoanTypes);
@@ -158,7 +170,40 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
      */
     @Override
     public IResponse<List<LoanType>> getLoanTypeByCustInfo(String custName, String idType, String idNo) {
-        return null;
+        //查询标签
+        String tagUrl = EurekaServer.CRM + "/app/crm/cust/getCustTag";
+        Map<String, Object> params = new HashMap<>();
+        params.put("custName", custName);
+        params.put("idType", idType);
+        params.put("idNo", idNo);
+        IResponse<List<Map>> tagsResponse = CommonRestUtil.getForObject(tagUrl, new GenericType<List<Map>>() {
+        }, params);
+        tagsResponse.assertSuccessNeedBody();
+        List<Map> tags = tagsResponse.getBody();
+        if (CollectionUtils.isEmpty(tags))
+            return CommonResponse.create(ConstUtil.ERROR_CODE, "没有任何标签");
+        IEnumerable<String> userTags = Linq.asEnumerable(tags).select(tagMap -> Convert.toString(tagMap.get("tagId")));
+        //标签跟配置的标签取交集
+        List<String> allowTags = cashLoanConfig.getTagIds();
+        if (CollectionUtils.isEmpty(allowTags))
+            return CommonResponse.create(ConstUtil.ERROR_CODE, "支付平台未配置允许的标签");
+        List<String> intersectTags = userTags.intersect(Linq.asEnumerable(allowTags)).toList();//取交集
+        //根据标签查询贷款品种
+        String loanUrl = EurekaServer.CRM + "/app/crm/cust/getLoanCodeByTagId";
+        List<LoanType> loanTypeList = new ArrayList<>();
+        for (String tagId : intersectTags) {
+            Map<String, Object> args = new HashMap<>();
+            args.put("tagId", tagId);
+            IResponse<List<LoanType>> loanResponse = CommonRestUtil.getForObject(loanUrl, new GenericType<List<LoanType>>() {
+            }, args);
+            loanResponse.assertSuccessNeedBody();
+            loanTypeList.addAll(loanResponse.getBody());
+        }
+        //贷款品种去重
+        List<LoanType> distinctLoanTypes = Linq.asEnumerable(loanTypeList).distinct().toList();//去重
+        CommonResponse<List<LoanType>> response = CommonResponse.success();
+        response.setBody(distinctLoanTypes);
+        return response;
     }
 
     /**
@@ -173,7 +218,16 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
      */
     @Override
     public IResponse<List<LoanType>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo) {
-        return null;
+        if (setting == null)
+            setting = this.entrySettingDao.selectBychanelNo(channelNo);
+        switch (setting.getLoanTypeFrom()) {
+            case "01"://根据 channelNo 取
+                return this.getLoanTypeByChannelNo(channelNo);
+            case "02"://根据客户信息从 crm 取
+                return this.getLoanTypeByCustInfo(custName, idType, idNo);
+            default:
+                return CommonResponse.create(ConstUtil.ERROR_CODE, "该渠道未配置贷款品种的获取方式");
+        }
     }
 
     private Map<String, Object> joinActivityRedirect(EntrySetting setting) {

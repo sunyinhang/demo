@@ -20,5 +20,6 @@ public class EntrySetting {
     private String verifyUrlService;//第三方验证的 service 的bean 目前支持: haierThirdTokenVerifyService
     private String verifyUrlThird;//第三方token 验证地址 举例:  http://xxx/userinfo?access_token=
     private String loginUrl;//登陆地址 举例: http://xx/login.html?token=
+    private String loanTypeFrom;//贷款种类来源 01:channelNo 从后台取  02:根据 custName 从 CRM 取
     private String enabled;//Y 启用 N禁用
 }
