@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.pc.cashloan.service;
 
 import com.haiercash.payplatform.common.data.EntrySetting;
+import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.rest.IResponse;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,7 +22,7 @@ public interface CashLoanService {
      * @param channelNo
      * @return 贷款种类列表
      */
-    IResponse<List<String>> getLoanTypeByChannelNo(String channelNo);
+    IResponse<List<LoanType>> getLoanTypeByChannelNo(String channelNo);
 
     /**
      * 根据 姓名,证件 获取贷款种类,不受配置影响
@@ -31,7 +32,7 @@ public interface CashLoanService {
      * @param idNo     身份证或手机号
      * @return 贷款种类列表
      */
-    IResponse<List<String>> getLoanTypeByCustInfo(String custName, String idType, String idNo);
+    IResponse<List<LoanType>> getLoanTypeByCustInfo(String custName, String idType, String idNo);
 
     /**
      * 根据配置和参数查询贷款种类
@@ -43,7 +44,7 @@ public interface CashLoanService {
      * @param idNo      身份证或手机号
      * @return 贷款种类列表
      */
-    IResponse<List<String>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo);
+    IResponse<List<LoanType>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo);
 
     /**
      * 贷款提交

@@ -1,21 +1,29 @@
 package com.haiercash.payplatform.pc.cashloan.service.impl;
 
+import com.bestvike.collection.CollectionUtils;
 import com.bestvike.lang.StringUtils;
+import com.bestvike.reflect.GenericType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.ChannelStoreRelationDao;
-import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.EntrySettingDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.common.data.ChannelStoreRelation;
 import com.haiercash.payplatform.common.data.EntrySetting;
+import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.rest.common.CommonResponse;
+import com.haiercash.payplatform.rest.common.CommonRestUtil;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.ApplicationContextUtil;
 import com.haiercash.payplatform.utils.BusinessException;
 import com.haiercash.payplatform.utils.ConstUtil;
@@ -25,12 +33,17 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -111,22 +124,26 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
      * @return 贷款种类列表
      */
     @Override
-    public IResponse<List<String>> getLoanTypeByChannelNo(String channelNo) {
-//        Assert.notNull(channelNo,"channelNo can not be null");
-//        List<ChannelStoreRelation> relations= this.channelStoreRelationDao.selectByChanelNo(channelNo);
-//        if(CollectionUtils.isEmpty(relations))
-//            return CommonResponse.create(ConstUtil.ERROR_CODE,"该渠道没有配置任何门店商户");
-//
-//
-//
-//
-//        for (ChannelStoreRelation relation : relations) {
-//            Map params=new HashMap();
-//            params.put("merchantCode",relation.getMerchantCode());
-//            params.put("storeCode",relation.getStoreCode());
-//
-//        }
-//
+    public IResponse<List<LoanType>> getLoanTypeByChannelNo(String channelNo) {
+        Assert.notNull(channelNo, "channelNo can not be null");
+        List<ChannelStoreRelation> relations = this.channelStoreRelationDao.selectByChanelNo(channelNo);
+        if (CollectionUtils.isEmpty(relations))
+            return CommonResponse.create(ConstUtil.ERROR_CODE, "该渠道没有配置任何门店商户");
+
+        List<LoanType> loanTypeList = new ArrayList<>();
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/pub/gm/getLoanDic";
+        for (ChannelStoreRelation relation : relations) {
+            Map params = new HashMap();
+            params.put("merchantCode", relation.getMerchantCode());
+            params.put("storeCode", relation.getStoreCode());
+            IResponse<List<LoanType>> loanTypes = CommonRestUtil.getForObject(url, new GenericType<List<LoanType>>() {
+            });
+            loanTypes.assertSuccessNeedBody();
+            loanTypeList.addAll(loanTypes.getBody());
+        }
+//        List
+
+
         return null;
     }
 
@@ -139,7 +156,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
      * @return 贷款种类列表
      */
     @Override
-    public IResponse<List<String>> getLoanTypeByCustInfo(String custName, String idType, String idNo) {
+    public IResponse<List<LoanType>> getLoanTypeByCustInfo(String custName, String idType, String idNo) {
         return null;
     }
 
@@ -154,7 +171,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
      * @return 贷款种类列表
      */
     @Override
-    public IResponse<List<String>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo) {
+    public IResponse<List<LoanType>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo) {
         return null;
     }
 
@@ -437,11 +454,11 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String paypwd = (String) map.get("paypwd");
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
-        if(!org.springframework.util.StringUtils.isEmpty(map.get("longitude"))){
-            longitude = (BigDecimal)map.get("longitude");//经度
+        if (!org.springframework.util.StringUtils.isEmpty(map.get("longitude"))) {
+            longitude = (BigDecimal) map.get("longitude");//经度
         }
-        if(!org.springframework.util.StringUtils.isEmpty(map.get("latitude"))){
-            latitude = (BigDecimal)map.get("latitude");//维度
+        if (!org.springframework.util.StringUtils.isEmpty(map.get("latitude"))) {
+            latitude = (BigDecimal) map.get("latitude");//维度
         }
         String area = (String) map.get("area");//区域
         //缓存获取（放开）
@@ -457,7 +474,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             logger.info("缓存数据获取");
             appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
             logger.info("提交订单信息appOrder:" + appOrder);
-            if(appOrder == null){
+            if (appOrder == null) {
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
             typCde = appOrder.getTypCde();
@@ -466,8 +483,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         //参数非空校验
-        if(org.springframework.util.StringUtils.isEmpty(channel) || org.springframework.util.StringUtils.isEmpty(channelNo) || org.springframework.util.StringUtils.isEmpty(token)
-                || org.springframework.util.StringUtils.isEmpty(orderNo) || org.springframework.util.StringUtils.isEmpty(applSeq)){
+        if (org.springframework.util.StringUtils.isEmpty(channel) || org.springframework.util.StringUtils.isEmpty(channelNo) || org.springframework.util.StringUtils.isEmpty(token)
+                || org.springframework.util.StringUtils.isEmpty(orderNo) || org.springframework.util.StringUtils.isEmpty(applSeq)) {
             logger.info("channel:" + channel + "  channelNo:" + channelNo + "   token:" + token
                     + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
             logger.info("前台获取数据有误");
@@ -483,7 +500,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
         Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
-        if (!HttpUtil.isSuccess(custInforesult) ) {
+        if (!HttpUtil.isSuccess(custInforesult)) {
             logger.info("订单提交，获取实名信息失败");
             return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
         }
@@ -504,15 +521,15 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         pwdmap.put("channel", channel);
         pwdmap.put("channelNo", channelNo);
         Map<String, Object> resmap = appServerService.validatePayPasswd(token, pwdmap);
-        if(!HttpUtil.isSuccess(resmap)){
+        if (!HttpUtil.isSuccess(resmap)) {
             logger.info("订单提交，支付密码验证失败");
             return fail("error", "支付密码校验失败");
         }
         logger.info("订单提交，支付密码验证成功");
 
         //2.合同签订
-        Map<String, Object> contractmap =  commonPageService.signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
-        if(!HttpUtil.isSuccess(contractmap)){
+        Map<String, Object> contractmap = commonPageService.signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
+        if (!HttpUtil.isSuccess(contractmap)) {
             logger.info("订单提交，合同签订失败");
             return contractmap;
         }
@@ -524,8 +541,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         uploadimgmap.put("applSeq", applSeq);//订单号
         uploadimgmap.put("channel", channel);
         uploadimgmap.put("channelNo", channelNo);
-        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
-        if(!HttpUtil.isSuccess(uploadimgresultmap)){
+        Map<String, Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
+        if (!HttpUtil.isSuccess(uploadimgresultmap)) {
             logger.info("订单提交，影像上传失败失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
