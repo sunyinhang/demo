@@ -48,9 +48,9 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
 
     protected abstract TResponse createResponse(String retFlag, String retMsg);
 
-    protected final ParameterizedTypeRef<TResponse> createResponseTypeRef(Type bodyType) {
-        ParameterizedTypeImpl parameterizedType = ParameterizedTypeImpl.make(this.responseRawType, new Type[]{bodyType}, null);
-        return new ParameterizedTypeRef<>(parameterizedType);
+    protected final GenericTypeReference<TResponse> createResponseTypeReference(Type bodyType) {
+        ParameterizedTypeImpl responseType = ParameterizedTypeImpl.make(this.responseRawType, new Type[]{bodyType}, null);
+        return new GenericTypeReference<>(responseType);
     }
 
     @Override
@@ -62,9 +62,9 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
                     uriBuilder.queryParam(entry.getKey(), Convert.toStringHuman(entry.getValue()));
             }
             URI uri = uriBuilder.build().encode().toUri();
-            ParameterizedTypeRef<TResponse> responseTypeRef = this.createResponseTypeRef(bodyType);
+            GenericTypeReference<TResponse> responseTypeReference = this.createResponseTypeReference(bodyType);
             RestTemplate restTemplate = this.getRestTemplate();
-            ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), responseTypeRef);
+            ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), responseTypeReference);
             return (responseEntity.getStatusCode() == HttpStatus.OK)
                     ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
                     : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
@@ -83,9 +83,9 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
                     uriBuilder.queryParam(entry.getKey(), Convert.toStringHuman(entry.getValue()));
             }
             URI uri = uriBuilder.build().encode().toUri();
-            ParameterizedTypeRef<TResponse> responseTypeRef = this.createResponseTypeRef(bodyType);
+            GenericTypeReference<TResponse> responseTypeReference = this.createResponseTypeReference(bodyType);
             RestTemplate restTemplate = this.getRestTemplate();
-            ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.DELETE, new HttpEntity<>(headers), responseTypeRef);
+            ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.DELETE, new HttpEntity<>(headers), responseTypeReference);
             return (responseEntity.getStatusCode() == HttpStatus.OK)
                     ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
                     : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
@@ -100,9 +100,9 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
         try {
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
             URI uri = uriBuilder.build().encode().toUri();
-            ParameterizedTypeRef<TResponse> responseTypeRef = this.createResponseTypeRef(bodyType);
+            GenericTypeReference<TResponse> responseTypeReference = this.createResponseTypeReference(bodyType);
             RestTemplate restTemplate = this.getRestTemplate();
-            ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(request, headers), responseTypeRef);
+            ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(request, headers), responseTypeReference);
             return (responseEntity.getStatusCode() == HttpStatus.OK)
                     ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
                     : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
@@ -117,9 +117,9 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
         try {
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
             URI uri = uriBuilder.build().encode().toUri();
-            ParameterizedTypeRef<TResponse> responseTypeRef = this.createResponseTypeRef(bodyType);
+            GenericTypeReference<TResponse> responseTypeReference = this.createResponseTypeReference(bodyType);
             RestTemplate restTemplate = this.getRestTemplate();
-            ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(request, headers), responseTypeRef);
+            ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(request, headers), responseTypeReference);
             return (responseEntity.getStatusCode() == HttpStatus.OK)
                     ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
                     : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
