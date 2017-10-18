@@ -10,8 +10,8 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "cmis")
-@PropertySource(value = "classpath:config.yml")
+@ConfigurationProperties
+@PropertySource(value = "classpath:config/cmisConfig.yml")
 public class CmisConfig {
     private String url;
 }
