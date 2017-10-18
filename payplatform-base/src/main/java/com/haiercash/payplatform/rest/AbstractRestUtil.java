@@ -3,6 +3,7 @@ package com.haiercash.payplatform.rest;
 import com.bestvike.collection.MapUtils;
 import com.bestvike.lang.Convert;
 import com.bestvike.lang.ThrowableUtils;
+import com.bestvike.reflect.GenericTypeReference;
 import com.haiercash.payplatform.utils.ConstUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
