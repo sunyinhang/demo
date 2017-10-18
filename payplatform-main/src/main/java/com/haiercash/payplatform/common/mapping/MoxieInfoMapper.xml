@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.payplatform.common.dao.MoxieInfoDao">
+
+    <insert id="saveMoxieInfoDao" parameterType="com.haiercash.payplatform.common.data.MoxieInfo">
+        insert into MOXIE_INFO(
+        ID,
+        TASK_ID,
+        USER_ID,
+        APPLSEQ,
+        IDNO,
+        FLAG,
+        REMARK,
+        CREATE_DATE
+        )values(
+        #{id,jdbcType=VARCHAR},
+        #{taskId,jdbcType=VARCHAR},
+        #{userId,jdbcType=VARCHAR},
+        #{applseq,jdbcType=VARCHAR},
+        #{idno,jdbcType=VARCHAR},
+        #{flag,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},
+        #{createDate,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="getMoxieInfo" resultType="com.haiercash.payplatform.common.data.MoxieInfo" >
+        select * from MOXIE_INFO where APPLSEQ = #{applseq, jdbcType=VARCHAR} AND FLAG = #{flag, jdbcType=VARCHAR}
+    </select>
+
+</mapper>

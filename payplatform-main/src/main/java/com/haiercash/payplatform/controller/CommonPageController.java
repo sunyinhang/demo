@@ -483,7 +483,7 @@ public class CommonPageController extends BaseController {
     }
 
     /**
-     * 合同展示（1.签章合同   2.征信合同 ）
+     * 合同展示（1.签章合同   2.征信合同  3.注册协议）
      * @param params
      * @return
      */
