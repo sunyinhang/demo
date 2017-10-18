@@ -668,10 +668,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("positionType", positionType);// 工作性质
         if("10".equals(positionType)){//受薪人士
             paramMap.put("officeName", params.get("officeName"));// 工作单位
-//            paramMap.put("officeProvince", officeAddress_split[0]);// 单位地址（省）
-//            paramMap.put("officeCity", officeAddress_split[1]);// 单位地址（市）
-//            paramMap.put("officeArea", officeAddress_split[2]);// 单位地址（区）
-//            paramMap.put("officeAddr", params.get("officeAddr"));// 单位详细地址
+            paramMap.put("officeProvince", "990000");// 单位地址（省）
+            paramMap.put("officeCity", "990100");// 单位地址（市）
+            paramMap.put("officeArea", "990101");// 单位地址（区）
+            paramMap.put("officeAddr", "未知");// 单位详细地址
             paramMap.put("officeTel", params.get("officeTel"));// 单位电话
         }/*else if ("20".equals(positionType)){//自雇人士
 
