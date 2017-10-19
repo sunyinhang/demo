@@ -1,7 +1,8 @@
 package com.haiercash.payplatform.service;
 
 import com.haiercash.commons.service.AbstractService;
-import com.haiercash.payplatform.servlet.RequestContext;
+import com.haiercash.payplatform.context.RequestContext;
+import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.RestUtil;
 import com.haiercash.payplatform.utils.ResultHead;
@@ -71,22 +72,22 @@ public class BaseService extends AbstractService {
 
     protected String getModuleNo() {
         return RequestContext.exists()
-                ? RequestContext.data().getEntryModuleNo()
+                ? ThreadContext.getEntryModuleNo()
                 : StringUtils.EMPTY;
     }
 
     @Override
     protected String getToken() {
-        return RequestContext.data().getToken();
+        return ThreadContext.getToken();
     }
 
     @Override
     protected String getChannel() {
-        return RequestContext.data().getChannel();
+        return ThreadContext.getChannel();
     }
 
     @Override
     protected String getChannelNo() {
-        return RequestContext.data().getChannelNo();
+        return ThreadContext.getChannelNo();
     }
 }
