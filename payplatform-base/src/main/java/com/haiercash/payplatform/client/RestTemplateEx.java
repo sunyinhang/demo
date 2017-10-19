@@ -91,14 +91,6 @@ public class RestTemplateEx extends RestTemplate {
             this.requestCallback = requestCallback;
         }
 
-        //执行回调
-        @Override
-        public void doWithRequest(ClientHttpRequest ribbonRequest) throws IOException {
-            if (this.requestCallback != null)
-                this.requestCallback.doWithRequest(ribbonRequest);
-            putContextHeaders(ribbonRequest);
-        }
-
         //放入 Header
         private static void putContextHeaders(ClientHttpRequest ribbonRequest) throws IOException {
             //通用 Header
@@ -127,6 +119,14 @@ public class RestTemplateEx extends RestTemplate {
             }
             //移除无效 Header
             ribbonRequest.getHeaders().remove("channelno");
+        }
+
+        //执行回调
+        @Override
+        public void doWithRequest(ClientHttpRequest ribbonRequest) throws IOException {
+            if (this.requestCallback != null)
+                this.requestCallback.doWithRequest(ribbonRequest);
+            putContextHeaders(ribbonRequest);
         }
     }
 

@@ -60,12 +60,11 @@ public final class TraceID {
 
     //序列号
     private static class Sequence {
-        private Sequence() {
-        }
-
         private static final ReentrantLock lock = new ReentrantLock();
         private static LocalDate Last_Date;
         private static long Counter = 1;
+        private Sequence() {
+        }
 
         private static long getAndIncrement() {
             lock.lock();
