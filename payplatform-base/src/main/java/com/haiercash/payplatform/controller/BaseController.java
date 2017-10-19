@@ -4,7 +4,6 @@ import com.haiercash.commons.controller.AbstractController;
 import com.haiercash.commons.rest.inner.InnerResponseError;
 import com.haiercash.commons.rest.inner.InnerRestUtil;
 import com.haiercash.commons.support.ServiceException;
-import com.haiercash.payplatform.context.RequestContext;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.RestUtil;
