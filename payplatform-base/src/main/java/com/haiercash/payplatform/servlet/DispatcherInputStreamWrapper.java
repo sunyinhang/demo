@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
  * Created by 许崇雷 on 2017-10-16.
  */
 public final class DispatcherInputStreamWrapper extends ServletInputStream {
-    private static final int MAX_DISPLAY = 1024;//最大显示长度,必须小于缓冲区大小
+    private static final int MAX_DISPLAY = 1024 * 2;//最大显示长度,必须小于缓冲区大小
     private static final int BUFFER_SIZE = 1024 * 4;//缓冲区大小
     private static final String BODY_PARSE_FAIL = "内容转换为字符串失败";
     private static final String BODY_HAS_MORE = "(...内容过大，无法显示)";

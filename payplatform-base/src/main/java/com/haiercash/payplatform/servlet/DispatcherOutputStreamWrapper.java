@@ -13,7 +13,7 @@ import java.io.IOException;
  * Created by 许崇雷 on 2017-10-16.
  */
 public final class DispatcherOutputStreamWrapper extends ServletOutputStream {
-    private static final int MAX_DISPLAY = 1024;//最大显示长度
+    private static final int MAX_DISPLAY = 1024 * 2;//最大显示长度
     private static final String BODY_CONVERT_FAIL = "内容转换为字符串失败";
     private static final String BODY_HAS_MORE = "(...内容过大，无法显示)";
     private static final String DEFAULT_CHARSET = CharsetNames.UTF_8;
