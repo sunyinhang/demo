@@ -1,6 +1,9 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.common.entity.LoanType;
+import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
+import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CrmService;
@@ -25,6 +28,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 
 
@@ -37,6 +41,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     private AppServerService appServerService;
     @Autowired
     private CrmService crmService;
+    @Autowired
+    private CashLoanService cashLoanService;
 //    @Value("${app.other.baseSharePath:}")
 //    protected String baseSharePath;
     @Value("${app.other.face_DataImg_url}")
@@ -835,5 +841,97 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         return bankCardMap;
     }
 
+    @Override
+    public  Map<String, Object> getLoanTypeAndBankInfo(String token, String channel, String channelNo) throws Exception {
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return  fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if(cacheMap == null || "".equals(cacheMap)){
+            logger.info("Redis数据获取失败");
+            return  fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String custName = (String) cacheMap.get("name");
+        String idType = (String) cacheMap.get("idType");
+        String idNo = (String) cacheMap.get("idCard");
+        String cardNo = (String) cacheMap.get("cardNo");//默认实名银行卡号
+//        String custName = "赵先鲁";
+//        String idType = "20";
+//        String idNo = "372926198911178630";
+//        String cardNo = (String) cacheMap.get("cardNo");//默认实名银行卡号
+        if (custName.isEmpty()) {
+            logger.info("custName为空");
+            return  fail(ConstUtil.ERROR_CODE,  ConstUtil.TIME_OUT);
+        }
+        if (idType.isEmpty()) {
+            logger.info("idType为空");
+            return  fail(ConstUtil.ERROR_CODE,  ConstUtil.TIME_OUT);
+        }
+        if (idNo.isEmpty()) {
+            logger.info("idNo为空");
+            return  fail(ConstUtil.ERROR_CODE,  ConstUtil.TIME_OUT);
+        }
+        IResponse<List<LoanType>> loanTypeData = cashLoanService.getLoanType(null, channelNo, custName, idType, idNo);
+        return null;
+    }
 
+    @Override
+    public Map<String, Object> getPaySs(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if(cacheMap == null || "".equals(cacheMap)){
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String typCde = (String) params.get("typCde");
+        Integer _apprvAmt = (Integer) params.get("apprvAmt");
+        String applyTnrTyp = (String) params.get("applyTnrTyp");
+        String applyTnr = (String) params.get("applyTnr");
+        String mtdCde = (String) params.get("mtdCde");
+        if (StringUtils.isEmpty(typCde) || StringUtils.isEmpty(_apprvAmt) || StringUtils.isEmpty(applyTnrTyp) ||
+                StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(mtdCde)) {
+            logger.info("typCde=" + typCde + "  apprvAmt=" + _apprvAmt + "  applyTnrTyp=" + applyTnrTyp + "  applyTnr=" + applyTnr + "mtdCde=" + mtdCde);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        BigDecimal apprvAmt = new BigDecimal(_apprvAmt);
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("channel",channel);
+        paramMap.put("channelNo",channelNo);
+        paramMap.put("typCde",typCde);
+        paramMap.put("apprvAmt",apprvAmt);
+        paramMap.put("applyTnrTyp",applyTnrTyp);
+        paramMap.put("applyTnr",applyTnr);
+        paramMap.put("mtdCde",mtdCde);
+        Map<String, Object> paySs = appServerService.getPaySs(token, paramMap);
+        Map<String, Object> head = (Map) paySs.get("head");
+        if (!"00000".equals(head.get("retFlag"))) {
+            logger.info("还款试算,错误信息：" + head.get("retMsg"));
+            return fail(ConstUtil.ERROR_CODE, (String) head.get("retMsg"));
+        }
+        return paySs;
+    }
 }

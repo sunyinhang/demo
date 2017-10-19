@@ -584,4 +584,26 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> getBankCard() throws Exception {
         return custExtInfoService.getBankCard(super.getToken(), super.getChannelNo(), super.getChannel());
     }
+
+    /**
+     * @Title  getLoanType
+     * @Description: 获取贷款品种相关信息及银行卡信息
+     * @author
+     * @date 2017/10/17 15:26
+     */
+    @RequestMapping(value = "/api/payment/getLoanTypeAndBankInfo", method = RequestMethod.POST)
+    public Map<String, Object> getLoanTypeAndBankInfo() throws Exception {
+        return custExtInfoService.getLoanTypeAndBankInfo(super.getToken(), super.getChannelNo(), super.getChannel());
+    }
+
+    /**
+     * @Title  getPaySs
+     * @Description: 还款式算
+     * @author
+     * @date 2017/10/17 15:26
+     */
+    @RequestMapping(value = "/api/payment/getPaySs", method = RequestMethod.POST)
+    public Map<String, Object> getPaySs(@RequestBody Map<String, Object> param) throws Exception {
+        return custExtInfoService.getPaySs(super.getToken(), super.getChannelNo(), super.getChannel(),param);
+    }
 }

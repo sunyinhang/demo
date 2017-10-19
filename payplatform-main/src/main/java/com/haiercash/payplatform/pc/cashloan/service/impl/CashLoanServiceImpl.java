@@ -220,6 +220,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     public IResponse<List<LoanType>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo) {
         if (setting == null)
             setting = this.entrySettingDao.selectBychanelNo(channelNo);
+        if (setting == null)
+            return CommonResponse.create(ConstUtil.ERROR_CODE, "该渠道未配置贷款品种的获取方式");
         switch (setting.getLoanTypeFrom()) {
             case "01"://根据 channelNo 取
                 return this.getLoanTypeByChannelNo(channelNo);

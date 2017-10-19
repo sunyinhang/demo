@@ -28,4 +28,8 @@ public interface CustExtInfoService {
     Map<String,Object> attachPic(String token, String channelNo, String channel, Map<String, Object> map);
     //获取客户个人银行卡信息
     public Map<String, Object> getBankCard(String token,String channel,String channelNo) throws Exception;
+    //获取客户个人银行卡信息及贷款品种信息
+    public  Map<String, Object> getLoanTypeAndBankInfo(String token, String channel, String channelNo) throws Exception;
+    //还款试算
+    public Map<String, Object> getPaySs(String token,String channel,String channelNo, Map<String, Object> params) throws Exception;
 }
