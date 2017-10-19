@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.servlet;
 
-import com.bestvike.collection.ArrayUtils;
 import com.bestvike.io.CharsetNames;
 import org.springframework.util.Assert;
 
@@ -33,15 +32,10 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
 
     protected void cacheStream() {
         try {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int readed = this.inputStream.read(buffer, 0, BUFFER_SIZE);
-            if (readed == -1) {
-                this.cachedBuffer = ArrayUtils.EMPTY_BYTE_ARRAY;
-                this.cachedLength = 0;
-                return;
-            }
-            this.cachedBuffer = buffer;
-            this.cachedLength = readed;
+            int readed;
+            this.cachedBuffer = new byte[BUFFER_SIZE];
+            while ((readed = this.inputStream.read(this.cachedBuffer, this.cachedLength, BUFFER_SIZE - this.cachedLength)) > 0)
+                this.cachedLength += readed;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

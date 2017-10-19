@@ -12,7 +12,7 @@ import java.io.OutputStream;
  * Created by 许崇雷 on 2017-10-16.
  */
 public final class ClientOutputStreamWrapper extends OutputStream {
-    private static final long MAX_DISPLAY = 1024;//最大显示长度
+    private static final int MAX_DISPLAY = 1024;//最大显示长度
     private static final String BODY_CONVERT_FAIL = "内容转换为字符串失败";
     private static final String BODY_HAS_MORE = "(...内容过大，无法显示)";
     private static final String DEFAULT_CHARSET = CharsetNames.UTF_8;
@@ -34,7 +34,7 @@ public final class ClientOutputStreamWrapper extends OutputStream {
     public void write(int b) throws IOException {
         this.outputStream.write(b);
         if (this.cachedStream == null)
-            this.cachedStream = new ByteArrayOutputStream();
+            this.cachedStream = new ByteArrayOutputStream(MAX_DISPLAY);
         if (this.cachedStream.size() >= MAX_DISPLAY) {
             this.hasMore = true;
             return;
