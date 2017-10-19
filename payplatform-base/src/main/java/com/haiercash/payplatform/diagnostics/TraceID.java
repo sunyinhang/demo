@@ -4,7 +4,7 @@ import com.bestvike.lang.Convert;
 import com.bestvike.lang.DateUtils;
 import com.bestvike.lang.StringUtils;
 import com.bestvike.net.HostInfo;
-import com.haiercash.payplatform.filter.RequestContext;
+import com.haiercash.payplatform.servlet.RequestContext;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 

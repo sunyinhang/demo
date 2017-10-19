@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.service;
 
 import com.haiercash.commons.service.AbstractService;
-import com.haiercash.payplatform.filter.RequestContext;
+import com.haiercash.payplatform.servlet.RequestContext;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.RestUtil;
 import com.haiercash.payplatform.utils.ResultHead;

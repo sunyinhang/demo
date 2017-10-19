@@ -1,33 +1,44 @@
-package com.haiercash.payplatform.ribbon;
+package com.haiercash.payplatform.servlet;
 
 import com.bestvike.io.CharsetNames;
 import com.bestvike.lang.StringUtils;
 import org.springframework.util.Assert;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * Created by 许崇雷 on 2017-10-16.
  */
-public final class ClientOutputStreamWrapper extends OutputStream {
+public final class DispatcherOutputStreamWrapper extends ServletOutputStream {
     private static final long MAX_DISPLAY = 1024;//最大显示长度
     private static final String BODY_CONVERT_FAIL = "内容转换为字符串失败";
     private static final String BODY_HAS_MORE = "(...内容过大，无法显示)";
     private static final String DEFAULT_CHARSET = CharsetNames.UTF_8;
-    private final OutputStream outputStream;
+    private final ServletOutputStream outputStream;
     private ByteArrayOutputStream cachedStream;
     private String content;
     private boolean hasMore;
 
-    public ClientOutputStreamWrapper(OutputStream outputStream) {
+    public DispatcherOutputStreamWrapper(ServletOutputStream outputStream) {
         Assert.notNull(outputStream, "outputStream can not be null.");
         this.outputStream = outputStream;
     }
 
     public String getContent() {
         return this.content;
+    }
+
+    @Override
+    public boolean isReady() {
+        return this.outputStream.isReady();
+    }
+
+    @Override
+    public void setWriteListener(WriteListener listener) {
+        this.outputStream.setWriteListener(listener);
     }
 
     @Override

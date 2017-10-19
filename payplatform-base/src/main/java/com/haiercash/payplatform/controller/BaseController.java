@@ -4,7 +4,7 @@ import com.haiercash.commons.controller.AbstractController;
 import com.haiercash.commons.rest.inner.InnerResponseError;
 import com.haiercash.commons.rest.inner.InnerRestUtil;
 import com.haiercash.commons.support.ServiceException;
-import com.haiercash.payplatform.filter.RequestContext;
+import com.haiercash.payplatform.servlet.RequestContext;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;

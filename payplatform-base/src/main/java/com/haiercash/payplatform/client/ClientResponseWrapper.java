@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.ribbon;
+package com.haiercash.payplatform.client;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -4,8 +4,8 @@ import com.bestvike.collection.ArrayUtils;
 import com.bestvike.lang.Environment;
 import com.bestvike.lang.StringUtils;
 import com.bestvike.lang.ThrowableUtils;
-import com.haiercash.payplatform.filter.DispatcherRequestWrapper;
-import com.haiercash.payplatform.filter.DispatcherResponseWrapper;
+import com.haiercash.payplatform.servlet.DispatcherRequestWrapper;
+import com.haiercash.payplatform.servlet.DispatcherResponseWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

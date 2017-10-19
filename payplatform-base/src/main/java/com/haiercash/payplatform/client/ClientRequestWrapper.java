@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.ribbon;
+package com.haiercash.payplatform.client;
 
 import com.haiercash.payplatform.diagnostics.OutgoingLog;
 import org.springframework.http.HttpHeaders;

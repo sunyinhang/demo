@@ -3,7 +3,7 @@ package com.haiercash.payplatform.rest.cmisacq;
 import com.bestvike.reflect.GenericType;
 import com.haiercash.payplatform.rest.AbstractRestUtil;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.ribbon.RestTemplateProvider;
+import com.haiercash.payplatform.client.RestTemplateProvider;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;

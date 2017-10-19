@@ -1,11 +1,11 @@
-package com.haiercash.payplatform.ribbon;
+package com.haiercash.payplatform.client;
 
 import com.bestvike.collection.EnumerationUtils;
 import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.config.HttpMessageConvertersAutoConfiguration;
 import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
 import com.haiercash.payplatform.diagnostics.TraceID;
-import com.haiercash.payplatform.filter.RequestContext;
+import com.haiercash.payplatform.servlet.RequestContext;
 import com.netflix.config.DynamicBooleanProperty;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringListProperty;

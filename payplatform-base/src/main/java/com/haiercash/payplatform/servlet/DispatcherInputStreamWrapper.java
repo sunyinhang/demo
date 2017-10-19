@@ -1,29 +1,30 @@
-package com.haiercash.payplatform.ribbon;
+package com.haiercash.payplatform.servlet;
 
 import com.bestvike.collection.ArrayUtils;
 import com.bestvike.io.CharsetNames;
 import org.springframework.util.Assert;
 
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
  * Created by 许崇雷 on 2017-10-16.
  */
-public final class ClientInputStreamWrapper extends InputStream {
+public final class DispatcherInputStreamWrapper extends ServletInputStream {
     private static final int MAX_DISPLAY = 1024;//最大显示长度,必须小于缓冲区大小
     private static final int BUFFER_SIZE = 1024 * 8;//缓冲区大小
     private static final String BODY_PARSE_FAIL = "内容转换为字符串失败";
     private static final String BODY_HAS_MORE = "(...内容过大，无法显示)";
     private static final Charset DEFAULT_CHARSET = Charset.forName(CharsetNames.UTF_8);
-    private final InputStream inputStream;
+    private final ServletInputStream inputStream;
     private byte[] cachedBuffer;
     private int cachedIndex;
     private int cachedLength;
     private String content;
 
-    public ClientInputStreamWrapper(InputStream inputStream) {
+    public DispatcherInputStreamWrapper(ServletInputStream inputStream) {
         Assert.notNull(inputStream, "inputStream can not be null.");
         this.inputStream = inputStream;
         this.cacheStream();
@@ -65,5 +66,20 @@ public final class ClientInputStreamWrapper extends InputStream {
         return this.cachedIndex == this.cachedLength
                 ? this.inputStream.read()
                 : (this.cachedBuffer[this.cachedIndex++] & 255);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return this.cachedIndex == this.cachedLength && this.inputStream.isFinished();
+    }
+
+    @Override
+    public boolean isReady() {
+        return this.inputStream.isReady();
+    }
+
+    @Override
+    public void setReadListener(ReadListener readListener) {
+        this.inputStream.setReadListener(readListener);
     }
 }

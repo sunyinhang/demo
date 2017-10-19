@@ -2,7 +2,7 @@ package com.haiercash.payplatform.utils;
 
 import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.filter.RequestContext;
+import com.haiercash.payplatform.servlet.RequestContext;
 import lombok.experimental.UtilityClass;
 
 /**

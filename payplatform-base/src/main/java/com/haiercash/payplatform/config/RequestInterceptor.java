@@ -1,8 +1,8 @@
 package com.haiercash.payplatform.config;
 
 import com.haiercash.payplatform.controller.BaseController;
-import com.haiercash.payplatform.filter.RequestContext;
-import com.haiercash.payplatform.filter.RequestContextData;
+import com.haiercash.payplatform.servlet.RequestContext;
+import com.haiercash.payplatform.servlet.RequestContextData;
 import com.haiercash.payplatform.utils.RestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
