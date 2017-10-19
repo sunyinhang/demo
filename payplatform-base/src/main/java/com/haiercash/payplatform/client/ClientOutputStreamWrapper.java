@@ -1,28 +1,27 @@
-package com.haiercash.payplatform.filter;
+package com.haiercash.payplatform.client;
 
 import com.bestvike.io.CharsetNames;
 import com.bestvike.lang.StringUtils;
 import org.springframework.util.Assert;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Created by 许崇雷 on 2017-10-16.
  */
-public final class DispatcherOutputStreamWrapper extends ServletOutputStream {
-    private static final long MAX_CACHE = 1024 * 8;
+public final class ClientOutputStreamWrapper extends OutputStream {
+    private static final long MAX_DISPLAY = 1024;//最大显示长度
     private static final String BODY_CONVERT_FAIL = "内容转换为字符串失败";
     private static final String BODY_HAS_MORE = "(...内容过大，无法显示)";
     private static final String DEFAULT_CHARSET = CharsetNames.UTF_8;
-    private final ServletOutputStream outputStream;
+    private final OutputStream outputStream;
     private ByteArrayOutputStream cachedStream;
     private String content;
     private boolean hasMore;
 
-    public DispatcherOutputStreamWrapper(ServletOutputStream outputStream) {
+    public ClientOutputStreamWrapper(OutputStream outputStream) {
         Assert.notNull(outputStream, "outputStream can not be null.");
         this.outputStream = outputStream;
     }
@@ -32,22 +31,11 @@ public final class DispatcherOutputStreamWrapper extends ServletOutputStream {
     }
 
     @Override
-    public boolean isReady() {
-        return this.outputStream.isReady();
-    }
-
-    @Override
-    public void setWriteListener(WriteListener listener) {
-        this.outputStream.setWriteListener(listener);
-    }
-
-    @Override
     public void write(int b) throws IOException {
         this.outputStream.write(b);
-        if (this.cachedStream == null) {
+        if (this.cachedStream == null)
             this.cachedStream = new ByteArrayOutputStream();
-        }
-        if (this.cachedStream.size() >= MAX_CACHE) {
+        if (this.cachedStream.size() >= MAX_DISPLAY) {
             this.hasMore = true;
             return;
         }

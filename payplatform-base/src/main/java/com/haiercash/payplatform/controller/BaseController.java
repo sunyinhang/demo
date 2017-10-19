@@ -4,7 +4,7 @@ import com.haiercash.commons.controller.AbstractController;
 import com.haiercash.commons.rest.inner.InnerResponseError;
 import com.haiercash.commons.rest.inner.InnerRestUtil;
 import com.haiercash.commons.support.ServiceException;
-import com.haiercash.payplatform.filter.RequestContext;
+import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,26 +53,26 @@ public class BaseController extends AbstractController {
 
     @Override
     protected String getToken() {
-        return RequestContext.data().getToken();
+        return ThreadContext.getToken();
     }
 
     @Override
     protected String getChannel() {
-        return RequestContext.data().getChannel();
+        return ThreadContext.getChannel();
     }
 
     @Override
     protected String getChannelNo() {
-        return RequestContext.data().getChannelNo();
+        return ThreadContext.getChannelNo();
     }
 
     protected Map<String, Object> initParam(Map<String, Object> paramMap) {
         if (paramMap == null) {
             paramMap = new HashMap<>();
         }
-        paramMap.put("token", RequestContext.data().getToken());
-        paramMap.put("channel", RequestContext.data().getChannel());
-        paramMap.put("channelNo", RequestContext.data().getChannelNo());
+        paramMap.put("token", ThreadContext.getToken());
+        paramMap.put("channel", ThreadContext.getChannel());
+        paramMap.put("channelNo", ThreadContext.getChannelNo());
         return paramMap;
     }
 

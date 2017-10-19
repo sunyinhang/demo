@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.diagnostics;
+package com.haiercash.payplatform.trace;
 
 import com.bestvike.collection.ArrayUtils;
 import com.bestvike.io.CharsetNames;
@@ -6,8 +6,9 @@ import com.bestvike.lang.Environment;
 import com.bestvike.lang.StringUtils;
 import com.bestvike.lang.ThrowableUtils;
 import com.bestvike.serialization.URLSerializer;
-import com.haiercash.payplatform.ribbon.ClientRequestWrapper;
-import com.haiercash.payplatform.ribbon.ClientResponseWrapper;
+import com.haiercash.payplatform.client.ClientRequestWrapper;
+import com.haiercash.payplatform.client.ClientResponseWrapper;
+import com.haiercash.payplatform.context.ThreadContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
@@ -21,13 +22,16 @@ import java.util.Map;
  * Created by 许崇雷 on 2017-10-14.
  */
 public final class OutgoingLog {
-    private static Log logger = LogFactory.getLog(OutgoingLog.class);
+    private static final String INVOKE_BEGIN = "----------------调用服务----------------";
+    private static final String INVOKE_SPLIT = "<<-------->>";
+    private static final String INVOKE___END = "----------------------------------------";
+    private static final Log logger = LogFactory.getLog(OutgoingLog.class);
 
     public static StringBuilder writeRequestLog(ClientRequestWrapper request) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("-------------------------调用服务-------------------------").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append(INVOKE_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().name().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getURI().toString()).append(Environment.NewLine);
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getURI().toString()).append(Environment.NewLine);
         //
         builder.append("Request Headers:").append(Environment.NewLine);
         writeHeaders(builder, request.getHeaders());
@@ -50,7 +54,7 @@ public final class OutgoingLog {
             if (StringUtils.isNotEmpty(content))
                 builder.append("    ").append(content).append(Environment.NewLine);
         }
-        builder.append("<<-------------------->>").append(Environment.NewLine);
+        builder.append(INVOKE_SPLIT).append(Environment.NewLine);
         return builder;
     }
 
@@ -64,7 +68,7 @@ public final class OutgoingLog {
             builder.append("    ").append(content).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
-        builder.append("--------------------------------------------------");
+        builder.append(INVOKE___END);
         logger.info(builder.toString());
     }
 
@@ -73,7 +77,7 @@ public final class OutgoingLog {
         builder.append(ThrowableUtils.getString(e)).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
-        builder.append("--------------------------------------------------");
+        builder.append(INVOKE___END);
         logger.info(builder.toString());
     }
 

@@ -11,8 +11,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ApplicationContextUtil implements ApplicationContextAware {
-    private Log log = LogFactory.getLog(ApplicationContextUtil.class);
     private static ApplicationContext applicationContext;
+    private Log log = LogFactory.getLog(ApplicationContextUtil.class);
+
+    //获取applicationContext
+    private static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -22,11 +27,6 @@ public class ApplicationContextUtil implements ApplicationContextAware {
             return;
         ApplicationContextUtil.applicationContext = applicationContext;
         log.info("已初始化 ApplicationContextUtil, 可以获取 bean.");
-    }
-
-    //获取applicationContext
-    private static ApplicationContext getApplicationContext() {
-        return applicationContext;
     }
 
     //通过name获取 Bean.

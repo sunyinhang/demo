@@ -1,23 +1,21 @@
-package com.haiercash.payplatform.diagnostics;
+package com.haiercash.payplatform.trace;
 
 import com.bestvike.lang.Convert;
 import com.bestvike.lang.DateUtils;
 import com.bestvike.lang.StringUtils;
 import com.bestvike.net.HostInfo;
-import com.haiercash.payplatform.filter.RequestContext;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * 调用链 ID 生成器
  * Created by 许崇雷 on 2017-10-14.
  */
 public final class TraceID {
     public static final String NAME = "TraceID";
-    private static final String EMPTY = "not support tracing for internal calls.";
     private static final String DATE_FORMAT = "yyyyMMdd-HHmmss";
     private static final char[] IP_LAST_BIT_SEPARATOR = new char[]{'.'};
     private static final String IP_LAST_BIT;
@@ -60,30 +58,14 @@ public final class TraceID {
         return builder.toString();
     }
 
-    /**
-     * 获取当前请求上下文的调用链 ID
-     *
-     * @return 获取当前请求上下文的调用链 ID
-     */
-    public static String current() {
-        if (!RequestContext.exists())
-            return EMPTY;
-        HttpServletRequest request = RequestContext.get().getRequest();
-        if (request == null)
-            return EMPTY;
-        String traceID = request.getHeader(NAME);
-        return StringUtils.isEmpty(traceID) ? EMPTY : traceID;
-    }
-
-
     //序列号
     private static class Sequence {
-        private Sequence() {
-        }
-
         private static final ReentrantLock lock = new ReentrantLock();
         private static LocalDate Last_Date;
         private static long Counter = 1;
+
+        private Sequence() {
+        }
 
         private static long getAndIncrement() {
             lock.lock();

@@ -1,11 +1,12 @@
-package com.haiercash.payplatform.diagnostics;
+package com.haiercash.payplatform.trace;
 
 import com.bestvike.collection.ArrayUtils;
 import com.bestvike.lang.Environment;
 import com.bestvike.lang.StringUtils;
 import com.bestvike.lang.ThrowableUtils;
-import com.haiercash.payplatform.filter.DispatcherRequestWrapper;
-import com.haiercash.payplatform.filter.DispatcherResponseWrapper;
+import com.haiercash.payplatform.context.ThreadContext;
+import com.haiercash.payplatform.servlet.DispatcherRequestWrapper;
+import com.haiercash.payplatform.servlet.DispatcherResponseWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -20,13 +21,19 @@ import java.util.Map;
  * Created by 许崇雷 on 2017-10-14.
  */
 public final class IncomingLog {
-    private static Log logger = LogFactory.getLog(IncomingLog.class);
+    private static final String REQ_BEGIN = "----------------收到请求-------->>>>>>>>";
+    private static final String REQ___END = "-------------------------------->>>>>>>>";
+    private static final String RES_BEGIN = "<<<<<<<<--------返回响应----------------";
+    private static final String RES___END = "<<<<<<<<--------------------------------";
+    private static final String ERR_BEGIN = "<<<<<<<<--------异常响应----------------";
+    private static final String ERR___END = "<<<<<<<<--------------------------------";
+    private static final Log logger = LogFactory.getLog(IncomingLog.class);
 
     public static void writeRequestLog(DispatcherRequestWrapper request) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("-------------------------收到请求------------------------->>").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append(REQ_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Request Headers:").append(Environment.NewLine);
         writeHeaders(builder, request);
@@ -45,15 +52,15 @@ public final class IncomingLog {
             if (StringUtils.isNotEmpty(content))
                 builder.append("    ").append(content).append(Environment.NewLine);
         }
-        builder.append("-------------------------------------------------->>");
+        builder.append(REQ___END);
         logger.info(builder.toString());
     }
 
     public static void writeResponseLog(DispatcherRequestWrapper request, DispatcherResponseWrapper response, long tookMs) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("<<-------------------------返回响应-------------------------").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append(RES_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Response Headers:").append(Environment.NewLine);
         writeHeaders(builder, response);
@@ -64,21 +71,21 @@ public final class IncomingLog {
             builder.append("    ").append(content).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
-        builder.append("<<--------------------------------------------------");
+        builder.append(RES___END);
         logger.info(builder.toString());
     }
 
     public static void writeError(DispatcherRequestWrapper request, Exception e, long tookMs) {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("<<-------------------------返回响应(异常)-------------------------").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append(ERR_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Error:").append(Environment.NewLine);
         builder.append(ThrowableUtils.getString(e)).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
-        builder.append("<<--------------------------------------------------");
+        builder.append(ERR___END);
         logger.info(builder.toString());
     }
 

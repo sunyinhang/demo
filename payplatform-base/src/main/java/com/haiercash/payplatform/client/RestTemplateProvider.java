@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.ribbon;
+package com.haiercash.payplatform.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,21 +12,13 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class RestTemplateProvider {
+    private static RestTemplate restTemplate;
+    private static RestTemplate restTemplateNormal;
     @Autowired
     private RestTemplate restTemplateInstance;
-
     @Autowired
     @Qualifier("restTemplateNormal")
     private RestTemplate restTemplateNormalInstance;
-
-    @PostConstruct
-    private void init() {
-        restTemplate = this.restTemplateInstance;
-        restTemplateNormal = this.restTemplateNormalInstance;
-    }
-
-    private static RestTemplate restTemplate;
-    private static RestTemplate restTemplateNormal;
 
     //负载均衡的
     public static RestTemplate getRestTemplate() {
@@ -36,5 +28,11 @@ public class RestTemplateProvider {
     //非负载均衡的
     public static RestTemplate getRestTemplateNormal() {
         return restTemplateNormal;
+    }
+
+    @PostConstruct
+    private void init() {
+        restTemplate = this.restTemplateInstance;
+        restTemplateNormal = this.restTemplateNormalInstance;
     }
 }

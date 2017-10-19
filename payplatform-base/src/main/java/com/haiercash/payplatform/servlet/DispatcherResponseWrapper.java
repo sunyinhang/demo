@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.filter;
+package com.haiercash.payplatform.servlet;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;

@@ -5,13 +5,23 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by use on 2017/7/25.
@@ -19,24 +29,18 @@ import java.util.*;
 @Component
 public class HttpUtil {
     private static Log logger = LogFactory.getLog(HttpUtil.class);
+    private static HttpUtil httpUtil;
     @Autowired
     private RestTemplate restTemplate;
-    private static HttpUtil httpUtil;
 
     public HttpUtil() {
-    }
-
-    @PostConstruct
-    public void init() {
-        httpUtil = this;
-        httpUtil.restTemplate = this.restTemplate;
     }
 
     public static HttpHeaders getHeaders(String token) {
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
-        if(!StringUtils.isEmpty(token)) {
+        if (!StringUtils.isEmpty(token)) {
             headers.add("access_token", token);
             //headers.add("Authorization", "Bearer " + token);
         }
@@ -48,21 +52,21 @@ public class HttpUtil {
         HttpHeaders headers = new HttpHeaders();
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
-        if(!StringUtils.isEmpty(token)) {
+        if (!StringUtils.isEmpty(token)) {
             headers.add("access_token", token);
             //headers.add("Authorization", "Bearer " + token);
         }
 
-        if(!StringUtils.isEmpty(map) && map.size() > 0) {
-            if(!StringUtils.isEmpty(map.get("channel"))) {
+        if (!StringUtils.isEmpty(map) && map.size() > 0) {
+            if (!StringUtils.isEmpty(map.get("channel"))) {
                 headers.add("channel", map.get("channel").toString());
             }
 
-            if(!StringUtils.isEmpty(map.get("channelNo"))) {
+            if (!StringUtils.isEmpty(map.get("channelNo"))) {
                 headers.add("channel_no", map.get("channelNo").toString());
             }
 
-            if(!StringUtils.isEmpty(map.get("source"))) {
+            if (!StringUtils.isEmpty(map.get("source"))) {
                 headers.add("source", map.get("source").toString());
             }
         }
@@ -79,7 +83,7 @@ public class HttpUtil {
     }
 
     public static String restGet(String url, String token, Integer responseCode) {
-        return restExchange(HttpMethod.GET, url, token, (String)null, responseCode);
+        return restExchange(HttpMethod.GET, url, token, (String) null, responseCode);
     }
 
     public static String restGet(String url, String token) {
@@ -87,11 +91,11 @@ public class HttpUtil {
     }
 
     public static String restGet(String url) {
-        return restGet(url, (String)null);
+        return restGet(url, (String) null);
     }
 
     public static String restDelete(String url, String token, Integer responseCode) {
-        return restExchange(HttpMethod.DELETE, url, token, (String)null, responseCode);
+        return restExchange(HttpMethod.DELETE, url, token, (String) null, responseCode);
     }
 
     public static String restExchange(HttpMethod method, String url, String token, String data, Integer responseCode) {
@@ -99,7 +103,7 @@ public class HttpUtil {
             HttpHeaders headers = getHeaders(token);
             ResponseEntity e;
             HttpEntity status;
-            if(data != null) {
+            if (data != null) {
                 status = new HttpEntity(data, headers);
                 e = httpUtil.restTemplate.exchange(url, method, status, String.class, new Object[0]);
             } else {
@@ -108,7 +112,7 @@ public class HttpUtil {
             }
 
             HttpStatus status1 = e.getStatusCode();
-            return responseCode != null && status1.value() != responseCode.intValue()?null:(String)e.getBody();
+            return responseCode != null && status1.value() != responseCode.intValue() ? null : (String) e.getBody();
         } catch (Exception var8) {
             logger.error("restExchangeMap失败：" + var8.getMessage());
             return null;
@@ -124,7 +128,7 @@ public class HttpUtil {
     }
 
     public static Map<String, Object> restPostMap(String url, Map<String, Object> data, Integer responseCode) {
-        return restExchangeMap(HttpMethod.POST, url, (String)null, data, responseCode);
+        return restExchangeMap(HttpMethod.POST, url, (String) null, data, responseCode);
     }
 
     public static Map<String, Object> restPostMap(String url, String token, Map<String, Object> data) {
@@ -136,7 +140,7 @@ public class HttpUtil {
     }
 
     public static Map<String, Object> restPostMap(String url, Map<String, Object> data) {
-        return restPostMap(url, (String)null, data, Integer.valueOf(HttpStatus.OK.value()));
+        return restPostMap(url, (String) null, data, Integer.valueOf(HttpStatus.OK.value()));
     }
 
     public static Map<String, Object> restPutMap(String url, String token, Map<String, Object> data, Integer responseCode) {
@@ -144,7 +148,7 @@ public class HttpUtil {
     }
 
     public static Map<String, Object> restPutMap(String url, Map<String, Object> data, Integer responseCode) {
-        return restExchangeMap(HttpMethod.PUT, url, (String)null, data, responseCode);
+        return restExchangeMap(HttpMethod.PUT, url, (String) null, data, responseCode);
     }
 
     public static Map<String, Object> restPutMap(String url, String token, Map<String, Object> data) {
@@ -152,15 +156,15 @@ public class HttpUtil {
     }
 
     public static Map<String, Object> restPutMap(String url, Map<String, Object> data) {
-        return restPutMap(url, (String)null, data, Integer.valueOf(HttpStatus.OK.value()));
+        return restPutMap(url, (String) null, data, Integer.valueOf(HttpStatus.OK.value()));
     }
 
     public static Map<String, Object> restGetMap(String url, String token, int responseCode) {
-        return restExchangeMap(HttpMethod.GET, url, token, (Map)null, Integer.valueOf(responseCode));
+        return restExchangeMap(HttpMethod.GET, url, token, (Map) null, Integer.valueOf(responseCode));
     }
 
     public static Map<String, Object> restGetMap(String url, int responseCode) {
-        return restGetMap(url, (String)null, responseCode);
+        return restGetMap(url, (String) null, responseCode);
     }
 
     //2.新增
@@ -177,6 +181,7 @@ public class HttpUtil {
     public static Map<String, Object> restGetMap(String url) {
         return restGetMap(url, HttpStatus.OK.value());
     }
+
     //1.新增
     public static Map<String, Object> restGetMap(String url, String token, Map<String, Object> map) {
         return restGetMap(url, token, map, HttpStatus.OK.value());
@@ -196,16 +201,16 @@ public class HttpUtil {
             logger.info("request==" + new JSONObject(data));
             ResponseEntity e;
             HttpEntity status;
-            if(data != null) {
+            if (data != null) {
                 status = new HttpEntity(data, headers);
-                if(isOrigin) {
+                if (isOrigin) {
                     e = (new RestTemplate()).exchange(url, method, status, Map.class, new Object[0]);
                 } else {
                     e = httpUtil.restTemplate.exchange(url, method, status, Map.class, new Object[0]);
                 }
             } else {
                 status = new HttpEntity(headers);
-                if(isOrigin) {
+                if (isOrigin) {
                     e = (new RestTemplate()).exchange(url, method, status, Map.class, new Object[0]);
                 } else {
                     e = httpUtil.restTemplate.exchange(url, method, status, Map.class, new Object[0]);
@@ -213,11 +218,11 @@ public class HttpUtil {
             }
 
             HttpStatus status1 = e.getStatusCode();
-            if(responseCode != null && status1.value() != responseCode.intValue()) {
+            if (responseCode != null && status1.value() != responseCode.intValue()) {
                 return null;
             } else {
                 logger.info("response==" + e.getBody());
-                return (Map)e.getBody();
+                return (Map) e.getBody();
             }
         } catch (Exception var9) {
             logger.error("restExchangeMap失败：" + var9.getMessage());
@@ -226,7 +231,7 @@ public class HttpUtil {
     }
 
     public static Map<String, Object> json2Map(String json) {
-        if(json == null) {
+        if (json == null) {
             return null;
         } else {
             JSONObject jo = new JSONObject(json);
@@ -234,12 +239,12 @@ public class HttpUtil {
 
             Object k;
             Object v;
-            for(Iterator var3 = jo.keySet().iterator(); var3.hasNext(); map.put(k.toString(), v)) {
+            for (Iterator var3 = jo.keySet().iterator(); var3.hasNext(); map.put(k.toString(), v)) {
                 k = var3.next();
                 v = jo.get(k.toString());
-                if(v == JSONObject.NULL) {
+                if (v == JSONObject.NULL) {
                     v = "";
-                } else if(v instanceof JSONArray) {
+                } else if (v instanceof JSONArray) {
                     v = json2List(v.toString());
                 }
             }
@@ -249,13 +254,13 @@ public class HttpUtil {
     }
 
     public static List<Map<String, Object>> json2List(String json) {
-        if(json == null) {
+        if (json == null) {
             return null;
         } else {
             ArrayList list = new ArrayList();
             JSONArray ja = new JSONArray(json);
 
-            for(int i = 0; i < ja.length(); ++i) {
+            for (int i = 0; i < ja.length(); ++i) {
                 String subJson = ja.get(i).toString();
                 Map map = json2Map(subJson);
                 list.add(map);
@@ -266,7 +271,7 @@ public class HttpUtil {
     }
 
     public static HashMap<String, Object> json2DeepMap(String json) {
-        if(json == null) {
+        if (json == null) {
             return null;
         } else {
             JSONObject jo = new JSONObject(json);
@@ -274,14 +279,14 @@ public class HttpUtil {
 
             Object k;
             Object v;
-            for(Iterator var3 = jo.keySet().iterator(); var3.hasNext(); map.put(k.toString(), v)) {
+            for (Iterator var3 = jo.keySet().iterator(); var3.hasNext(); map.put(k.toString(), v)) {
                 k = var3.next();
                 v = jo.get(k.toString());
-                if(v == JSONObject.NULL) {
+                if (v == JSONObject.NULL) {
                     v = "";
-                } else if(v instanceof JSONArray) {
+                } else if (v instanceof JSONArray) {
                     v = json2DeepList(v.toString());
-                } else if(v instanceof JSONObject) {
+                } else if (v instanceof JSONObject) {
                     v = json2DeepMap(JSONObject.valueToString(v));
                 }
             }
@@ -291,15 +296,15 @@ public class HttpUtil {
     }
 
     public static List<Object> json2DeepList(String json) {
-        if(json == null) {
+        if (json == null) {
             return null;
         } else {
             ArrayList list = new ArrayList();
             JSONArray ja = new JSONArray(json);
 
-            for(int i = 0; i < ja.length(); ++i) {
+            for (int i = 0; i < ja.length(); ++i) {
                 String subJson = ja.get(i).toString();
-                if(subJson.startsWith("{") && subJson.endsWith("}")) {
+                if (subJson.startsWith("{") && subJson.endsWith("}")) {
                     HashMap map = json2DeepMap(subJson);
                     list.add(map);
                 } else {
@@ -317,15 +322,15 @@ public class HttpUtil {
     }
 
     public static String getReturnCode(Map<String, Object> map) {
-        if(map == null) {
+        if (map == null) {
             return "";
         } else {
             Map mapHead;
-            if(map.get("head") instanceof Map) {
-                mapHead = (Map)map.get("head");
+            if (map.get("head") instanceof Map) {
+                mapHead = (Map) map.get("head");
             } else {
-                if(map.get("head") instanceof ResultHead) {
-                    return ((ResultHead)map.get("head")).getRetFlag();
+                if (map.get("head") instanceof ResultHead) {
+                    return ((ResultHead) map.get("head")).getRetFlag();
                 }
 
                 mapHead = json2Map(map.get("head").toString());
@@ -338,15 +343,15 @@ public class HttpUtil {
     public static Map<String, Object> getHeadMap(Map<String, Object> resultMap) {
         if (resultMap != null && !resultMap.isEmpty()) {
             if (resultMap.get("response") != null) {
-                resultMap = (Map)resultMap.get("response");
+                resultMap = (Map) resultMap.get("response");
             }
 
             if (resultMap.get("head") instanceof Map) {
-                return (Map)resultMap.get("head");
+                return (Map) resultMap.get("head");
             } else if (resultMap.get("head") instanceof ResultHead) {
                 Map<String, Object> map = new HashMap();
-                map.put("retFlag", ((ResultHead)resultMap.get("head")).getRetFlag());
-                map.put("retMsg", ((ResultHead)resultMap.get("head")).getRetMsg());
+                map.put("retFlag", ((ResultHead) resultMap.get("head")).getRetFlag());
+                map.put("retMsg", ((ResultHead) resultMap.get("head")).getRetMsg());
                 return map;
             } else {
                 return null;
@@ -355,7 +360,6 @@ public class HttpUtil {
             return null;
         }
     }
-
 
     public static String getRetMsg(Map<String, Object> resultMap) {
         Map<String, Object> headMap = getHeadMap(resultMap);
@@ -372,6 +376,12 @@ public class HttpUtil {
 
     public static boolean isSuccess(Map<String, Object> map) {
         return getReturnCode(map).equals("00000");
+    }
+
+    @PostConstruct
+    public void init() {
+        httpUtil = this;
+        httpUtil.restTemplate = this.restTemplate;
     }
 
 }

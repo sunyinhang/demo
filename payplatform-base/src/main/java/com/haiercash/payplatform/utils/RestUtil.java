@@ -23,21 +23,15 @@ import java.util.UUID;
  */
 public class RestUtil {
     public static Log logger = LogFactory.getLog(RestUtil.class);
-    private static String SUCCESS_CODE = ConstUtil.SUCCESS_CODE;
-    private static String SUCCESS_MSG = ConstUtil.SUCCESS_MSG;
     public static String ERROR_INTERNAL_CODE = ConstUtil.ERROR_CODE;
     public static String ERROR_INTERNAL_MSG = ConstUtil.ERROR_INFO;
+    private static String SUCCESS_CODE = ConstUtil.SUCCESS_CODE;
+    private static String SUCCESS_MSG = ConstUtil.SUCCESS_MSG;
+    private static RestUtil restUtil;
     @Autowired
     private RestTemplate restTemplate;
-    private static RestUtil restUtil;
 
     public RestUtil() {
-    }
-
-    @PostConstruct
-    public void init() {
-        restUtil = this;
-        restUtil.restTemplate = this.restTemplate;
     }
 
     public static Map<String, Object> success() {
@@ -178,6 +172,12 @@ public class RestUtil {
     public static String getSerial() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTimeInMillis() + String.valueOf((int) (Math.random() * 1000.0D));
+    }
+
+    @PostConstruct
+    public void init() {
+        restUtil = this;
+        restUtil.restTemplate = this.restTemplate;
     }
 
     public static enum Type {
