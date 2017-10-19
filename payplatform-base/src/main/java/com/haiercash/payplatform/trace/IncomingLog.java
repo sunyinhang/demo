@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.diagnostics;
+package com.haiercash.payplatform.trace;
 
 import com.bestvike.collection.ArrayUtils;
 import com.bestvike.lang.Environment;

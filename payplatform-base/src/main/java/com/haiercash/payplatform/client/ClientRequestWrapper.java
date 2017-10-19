@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.client;
 
-import com.haiercash.payplatform.diagnostics.OutgoingLog;
+import com.haiercash.payplatform.trace.OutgoingLog;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.AbstractClientHttpRequest;

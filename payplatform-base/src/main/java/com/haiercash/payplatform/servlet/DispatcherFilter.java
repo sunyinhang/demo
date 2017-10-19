@@ -2,7 +2,7 @@ package com.haiercash.payplatform.servlet;
 
 import com.haiercash.payplatform.context.RequestContext;
 import com.haiercash.payplatform.context.ThreadContext;
-import com.haiercash.payplatform.diagnostics.IncomingLog;
+import com.haiercash.payplatform.trace.IncomingLog;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

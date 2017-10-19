@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.diagnostics;
+package com.haiercash.payplatform.trace;
 
 import com.bestvike.lang.Convert;
 import com.bestvike.lang.DateUtils;
@@ -63,6 +63,7 @@ public final class TraceID {
         private static final ReentrantLock lock = new ReentrantLock();
         private static LocalDate Last_Date;
         private static long Counter = 1;
+
         private Sequence() {
         }
 

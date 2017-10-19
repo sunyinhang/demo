@@ -2,7 +2,7 @@ package com.haiercash.payplatform.context;
 
 import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.controller.BaseController;
-import com.haiercash.payplatform.diagnostics.TraceID;
+import com.haiercash.payplatform.trace.TraceID;
 import org.springframework.util.Assert;
 
 import java.util.Stack;

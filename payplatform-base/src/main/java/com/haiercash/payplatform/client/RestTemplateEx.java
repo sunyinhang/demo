@@ -6,7 +6,7 @@ import com.haiercash.payplatform.config.HttpMessageConvertersAutoConfiguration;
 import com.haiercash.payplatform.context.RequestContext;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
-import com.haiercash.payplatform.diagnostics.TraceID;
+import com.haiercash.payplatform.trace.TraceID;
 import com.netflix.config.DynamicBooleanProperty;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringListProperty;
