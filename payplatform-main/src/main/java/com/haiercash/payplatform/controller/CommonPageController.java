@@ -2,11 +2,24 @@ package com.haiercash.payplatform.controller;
 
 import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.FileUtil;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.rest.IResponse;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.CustExtInfoService;
+import com.haiercash.payplatform.service.FaceService;
+import com.haiercash.payplatform.service.InstallmentAccountService;
+import com.haiercash.payplatform.service.LimitService;
+import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.service.PayPasswdService;
+import com.haiercash.payplatform.service.RegisterService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -159,6 +172,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 上传替代影像
+     *
      * @param faceImg
      * @param request
      * @param response
@@ -424,7 +438,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/isRegisterNotoken", method = RequestMethod.POST)
     public Map<String, Object> isRegisterNotoken(@RequestBody Map<String, Object> params) throws Exception {
-        return registerService.isRegisterNotoken( super.getChannel(), super.getChannelNo(), params);
+        return registerService.isRegisterNotoken(super.getChannel(), super.getChannelNo(), params);
     }
 
     /**
@@ -490,6 +504,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 获取绑定手机号
+     *
      * @return
      */
     @RequestMapping(value = "/api/payment/getPhoneNo", method = RequestMethod.GET)
@@ -520,6 +535,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 查询返回实名认证需要的数据
+     *
      * @return
      */
     @RequestMapping(value = "/api/payment/queryCustNameByUId", method = RequestMethod.GET)
@@ -534,6 +550,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 合同展示（1.签章合同   2.征信合同  3.注册协议）
+     *
      * @param params
      * @return
      */
@@ -550,7 +567,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/saveUauthUsers", method = RequestMethod.POST)
     public Map<String, Object> saveUauthUsers(@RequestBody Map<String, Object> params) throws Exception {
-        return registerService.saveUauthUsers("",params);
+        return registerService.saveUauthUsers("", params);
     }
 
     /**
@@ -561,10 +578,11 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/validateUsers", method = RequestMethod.POST)
     public Map<String, Object> validateUsers(@RequestBody Map<String, Object> params) throws Exception {
-        return registerService.validateUsers(super.getChannel(), super.getChannelNo(),params);
+        return registerService.validateUsers(super.getChannel(), super.getChannelNo(), params);
     }
+
     /**
-     * @Title  custUpdatePwd
+     * @Title custUpdatePwd
      * @Description: 客户登录密码设置、修改（验证码）
      * @author yu jianwei
      * @date 2017/10/13 15:26
@@ -575,7 +593,7 @@ public class CommonPageController extends BaseController {
     }
 
     /**
-     * @Title  getBankCard
+     * @Title getBankCard
      * @Description: 根据客户编码获取银行卡信息
      * @author
      * @date 2017/10/17 15:26
@@ -586,24 +604,24 @@ public class CommonPageController extends BaseController {
     }
 
     /**
-     * @Title  getLoanType
+     * @Title getLoanType
      * @Description: 获取贷款品种相关信息及银行卡信息
      * @author
      * @date 2017/10/17 15:26
      */
     @RequestMapping(value = "/api/payment/getLoanTypeAndBankInfo", method = RequestMethod.POST)
-    public Map<String, Object> getLoanTypeAndBankInfo() throws Exception {
+    public IResponse<Map> getLoanTypeAndBankInfo() throws Exception {
         return custExtInfoService.getLoanTypeAndBankInfo(super.getToken(), super.getChannelNo(), super.getChannel());
     }
 
     /**
-     * @Title  getPaySs
+     * @Title getPaySs
      * @Description: 还款式算
      * @author
      * @date 2017/10/17 15:26
      */
     @RequestMapping(value = "/api/payment/getPaySs", method = RequestMethod.POST)
     public Map<String, Object> getPaySs(@RequestBody Map<String, Object> param) throws Exception {
-        return custExtInfoService.getPaySs(super.getToken(), super.getChannelNo(), super.getChannel(),param);
+        return custExtInfoService.getPaySs(super.getToken(), super.getChannelNo(), super.getChannel(), param);
     }
 }
