@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.servlet;
 
+import com.haiercash.payplatform.context.RequestContext;
+import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.diagnostics.IncomingLog;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -17,9 +19,7 @@ import java.io.IOException;
 
 /**
  * 过滤器
- *
- * @author 许崇雷
- * @date 2017/6/29
+ * Created by 许崇雷 on 2017/6/29.
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -29,27 +29,29 @@ public final class DispatcherFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         //转发 (forward) 保持原始上下文
         if (RequestContext.exists()) {
-            chain.doFilter(request, response);
+            filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
 
         //非转发 (not forward)
-        DispatcherRequestWrapper httpRequest = new DispatcherRequestWrapper((HttpServletRequest) request);
-        DispatcherResponseWrapper httpResponse = new DispatcherResponseWrapper((HttpServletResponse) response);
-        RequestContext.begin(httpRequest, httpResponse);
-        IncomingLog.writeRequestLog(httpRequest);
+        DispatcherRequestWrapper request = new DispatcherRequestWrapper((HttpServletRequest) servletRequest);
+        DispatcherResponseWrapper response = new DispatcherResponseWrapper((HttpServletResponse) servletResponse);
+        RequestContext.init(request, response);
+        ThreadContext.init(request.getHeader("token"), request.getHeader("channel"), request.getHeader("channelno"));
         long begin = System.currentTimeMillis();
+        IncomingLog.writeRequestLog(request);
         try {
-            chain.doFilter(httpRequest, httpResponse);
+            filterChain.doFilter(request, response);
         } catch (Exception e) {
-            IncomingLog.writeError(httpRequest, e, System.currentTimeMillis() - begin);
+            IncomingLog.writeError(request, e, System.currentTimeMillis() - begin);
             throw e;
         } finally {
-            IncomingLog.writeResponseLog(httpRequest, httpResponse, System.currentTimeMillis() - begin);
-            RequestContext.end();
+            IncomingLog.writeResponseLog(request, response, System.currentTimeMillis() - begin);
+            ThreadContext.reset();
+            RequestContext.reset();
         }
     }
 
