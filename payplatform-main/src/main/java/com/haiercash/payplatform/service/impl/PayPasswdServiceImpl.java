@@ -223,17 +223,17 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //        hashMap.put("channel", channel);
 //        hashMap.put("channelNo", channelNo);
         Map<String, Object> stringObjectMap = appServerService.updateListRiskInfo(token, hashMap);
-        if (stringObjectMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
+//        if (stringObjectMap == null) {
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
 //        Map setcustTagHeadMap = (Map<String, Object>) stringObjectMap.get("head");
-        Map<String, Object> setcustTagMapFlag = (Map<String, Object>) stringObjectMap.get("response");
-        Map<String, Object> setcustTagHeadMap = (Map<String, Object>) setcustTagMapFlag.get("head");
-        String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
-        if (!"00000".equals(setcustTagHeadMapFlag)) {
-            String retMsg = (String) setcustTagHeadMap.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
+//        Map<String, Object> setcustTagMapFlag = (Map<String, Object>) stringObjectMap.get("response");
+//        Map<String, Object> setcustTagHeadMap = (Map<String, Object>) setcustTagMapFlag.get("head");
+//        String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
+//        if (!"00000".equals(setcustTagHeadMapFlag)) {
+//            String retMsg = (String) setcustTagHeadMap.get("retMsg");
+//            return fail(ConstUtil.ERROR_CODE, retMsg);
+//        }
         cacheMap.put("crdSeq", applSeq);
         session.set(token, cacheMap);
         return success();
