@@ -8,6 +8,7 @@ import com.bestvike.lang.ThrowableUtils;
 import com.bestvike.serialization.URLSerializer;
 import com.haiercash.payplatform.client.ClientRequestWrapper;
 import com.haiercash.payplatform.client.ClientResponseWrapper;
+import com.haiercash.payplatform.context.ThreadContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +31,7 @@ public final class OutgoingLog {
         StringBuilder builder = new StringBuilder();
         builder.append(Environment.NewLine).append(INVOKE_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().name().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getURI().toString()).append(Environment.NewLine);
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getURI().toString()).append(Environment.NewLine);
         //
         builder.append("Request Headers:").append(Environment.NewLine);
         writeHeaders(builder, request.getHeaders());

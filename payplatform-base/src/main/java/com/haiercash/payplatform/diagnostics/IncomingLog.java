@@ -4,6 +4,7 @@ import com.bestvike.collection.ArrayUtils;
 import com.bestvike.lang.Environment;
 import com.bestvike.lang.StringUtils;
 import com.bestvike.lang.ThrowableUtils;
+import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.servlet.DispatcherRequestWrapper;
 import com.haiercash.payplatform.servlet.DispatcherResponseWrapper;
 import org.apache.commons.logging.Log;
@@ -32,7 +33,7 @@ public final class IncomingLog {
         StringBuilder builder = new StringBuilder();
         builder.append(Environment.NewLine).append(REQ_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Request Headers:").append(Environment.NewLine);
         writeHeaders(builder, request);
@@ -59,7 +60,7 @@ public final class IncomingLog {
         StringBuilder builder = new StringBuilder();
         builder.append(Environment.NewLine).append(RES_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Response Headers:").append(Environment.NewLine);
         writeHeaders(builder, response);
@@ -78,7 +79,7 @@ public final class IncomingLog {
         StringBuilder builder = new StringBuilder();
         builder.append(Environment.NewLine).append(ERR_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
-        builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Error:").append(Environment.NewLine);
         builder.append(ThrowableUtils.getString(e)).append(Environment.NewLine);
