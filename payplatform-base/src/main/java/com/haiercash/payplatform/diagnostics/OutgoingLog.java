@@ -21,11 +21,14 @@ import java.util.Map;
  * Created by 许崇雷 on 2017-10-14.
  */
 public final class OutgoingLog {
-    private static Log logger = LogFactory.getLog(OutgoingLog.class);
+    private static final String INVOKE_BEGIN = "----------------调用服务----------------";
+    private static final String INVOKE_SPLIT = "<<-------->>";
+    private static final String INVOKE___END = "----------------------------------------";
+    private static final Log logger = LogFactory.getLog(OutgoingLog.class);
 
     public static StringBuilder writeRequestLog(ClientRequestWrapper request) throws IOException {
         StringBuilder builder = new StringBuilder();
-        builder.append(Environment.NewLine).append("-------------------------调用服务-------------------------").append(Environment.NewLine);
+        builder.append(Environment.NewLine).append(INVOKE_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().name().toUpperCase();//转大写
         builder.append("[").append(TraceID.current()).append("] ").append(method).append(" ").append(request.getURI().toString()).append(Environment.NewLine);
         //
@@ -50,7 +53,7 @@ public final class OutgoingLog {
             if (StringUtils.isNotEmpty(content))
                 builder.append("    ").append(content).append(Environment.NewLine);
         }
-        builder.append("<<-------------------->>").append(Environment.NewLine);
+        builder.append(INVOKE_SPLIT).append(Environment.NewLine);
         return builder;
     }
 
@@ -64,7 +67,7 @@ public final class OutgoingLog {
             builder.append("    ").append(content).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
-        builder.append("--------------------------------------------------");
+        builder.append(INVOKE___END);
         logger.info(builder.toString());
     }
 
@@ -73,7 +76,7 @@ public final class OutgoingLog {
         builder.append(ThrowableUtils.getString(e)).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
-        builder.append("--------------------------------------------------");
+        builder.append(INVOKE___END);
         logger.info(builder.toString());
     }
 
