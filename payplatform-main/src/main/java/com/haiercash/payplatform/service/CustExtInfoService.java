@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service;
 
+import com.haiercash.payplatform.rest.IResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,7 @@ public interface CustExtInfoService {
     //获取客户个人银行卡信息
     public Map<String, Object> getBankCard(String token,String channel,String channelNo) throws Exception;
     //获取客户个人银行卡信息及贷款品种信息
-    public  Map<String, Object> getLoanTypeAndBankInfo(String token, String channel, String channelNo) throws Exception;
+    public IResponse<Map> getLoanTypeAndBankInfo(String token, String channel, String channelNo) throws Exception;
     //还款试算
     public Map<String, Object> getPaySs(String token,String channel,String channelNo, Map<String, Object> params) throws Exception;
 }
