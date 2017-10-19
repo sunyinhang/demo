@@ -104,9 +104,9 @@ public class RestTemplateEx extends RestTemplate {
             //通用 Header
             if (ThreadContext.exists()) {
                 ribbonRequest.getHeaders().set(TraceID.NAME, ThreadContext.getTraceID());
-                ribbonRequest.getHeaders().set("token", ThreadContext.getTraceID());
-                ribbonRequest.getHeaders().set("channel", ThreadContext.getTraceID());
-                ribbonRequest.getHeaders().set("channel_no", ThreadContext.getTraceID());
+                ribbonRequest.getHeaders().set("token", ThreadContext.getToken());
+                ribbonRequest.getHeaders().set("channel", ThreadContext.getChannel());
+                ribbonRequest.getHeaders().set("channel_no", ThreadContext.getChannelNo());
             }
             //未启用传递 Header 功能
             if (!RestTemplateConfig.ROUTE_HEADERS_ENABLED)
