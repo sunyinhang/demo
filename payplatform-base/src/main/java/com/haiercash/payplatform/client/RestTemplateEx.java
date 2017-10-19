@@ -3,9 +3,10 @@ package com.haiercash.payplatform.client;
 import com.bestvike.collection.EnumerationUtils;
 import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.config.HttpMessageConvertersAutoConfiguration;
+import com.haiercash.payplatform.context.RequestContext;
+import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
 import com.haiercash.payplatform.diagnostics.TraceID;
-import com.haiercash.payplatform.servlet.RequestContext;
 import com.netflix.config.DynamicBooleanProperty;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringListProperty;
@@ -98,25 +99,34 @@ public class RestTemplateEx extends RestTemplate {
             putContextHeaders(ribbonRequest);
         }
 
-        //如果启用上下文 Headers 传递且存在上下文.则将 Headers 放入 ribbonRequest.已有的 Headers 不会被覆盖,敏感 Headers 不会被放入
+        //放入 Header
         private static void putContextHeaders(ClientHttpRequest ribbonRequest) throws IOException {
-            ribbonRequest.getHeaders().put(TraceID.NAME, Collections.singletonList(TraceID.current()));//调用链 ID
-            if (!RestTemplateConfig.ROUTE_HEADERS_ENABLED || !RequestContext.exists())
-                return;
-            HttpServletRequest sourceRequest = RequestContext.get().getRequest();
-
-            //添加请求 Header, channelno->channel_no
-            ribbonRequest.getHeaders().put("channel_no", Collections.singletonList(RequestContext.data().getChannelNo()));
-            Enumeration<String> headerNames = sourceRequest.getHeaderNames();
-            while (headerNames.hasMoreElements()) {
-                String headerName = headerNames.nextElement();
-                //移除 channelno, 不覆盖
-                if (StringUtils.equalsIgnoreCase(headerName, "channelno") || ribbonRequest.getHeaders().containsKey(headerName) || RestTemplateConfig.IGNORE_HEADERS.containsKey(headerName))
-                    continue;
-                //设置 headerName headerValues
-                List<String> headerValues = EnumerationUtils.toList(sourceRequest.getHeaders(headerName));
-                ribbonRequest.getHeaders().put(headerName, headerValues);
+            //通用 Header
+            if (ThreadContext.exists()) {
+                ribbonRequest.getHeaders().set(TraceID.NAME, ThreadContext.getTraceID());
+                ribbonRequest.getHeaders().set("token", ThreadContext.getTraceID());
+                ribbonRequest.getHeaders().set("channel", ThreadContext.getTraceID());
+                ribbonRequest.getHeaders().set("channel_no", ThreadContext.getTraceID());
             }
+            //未启用传递 Header 功能
+            if (!RestTemplateConfig.ROUTE_HEADERS_ENABLED)
+                return;
+            //原始 Header
+            if (RequestContext.exists()) {
+                HttpServletRequest sourceRequest = RequestContext.getRequest();
+                Enumeration<String> headerNames = sourceRequest.getHeaderNames();
+                while (headerNames.hasMoreElements()) {
+                    String headerName = headerNames.nextElement();
+                    //已有或敏感 Header 不覆盖
+                    if (ribbonRequest.getHeaders().containsKey(headerName) || RestTemplateConfig.IGNORE_HEADERS.containsKey(headerName))
+                        continue;
+                    //设置 headerName headerValues
+                    List<String> headerValues = EnumerationUtils.toList(sourceRequest.getHeaders(headerName));
+                    ribbonRequest.getHeaders().put(headerName, headerValues);
+                }
+            }
+            //移除无效 Header
+            ribbonRequest.getHeaders().remove("channelno");
         }
     }
 
