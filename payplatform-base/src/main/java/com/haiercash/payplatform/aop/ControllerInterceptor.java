@@ -12,13 +12,13 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 /**
- * 线程上下文
+ * 控制器拦截器
  * Created by 许崇雷 on 2017-10-19.
  */
 @Aspect
 @Component
-public class ControllerAspect {
-    public Log logger = LogFactory.getLog(this.getClass());
+public class ControllerInterceptor {
+    private final Log logger = LogFactory.getLog(ControllerInterceptor.class);
 
     @Pointcut("execution(* com.haiercash..*.*(..)) && (@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.GetMapping)" +
