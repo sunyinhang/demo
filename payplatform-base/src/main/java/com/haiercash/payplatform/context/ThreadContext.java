@@ -67,19 +67,19 @@ public final class ThreadContext {
         ThreadContextData data = contexts.get();
         data.exists = true;
         data.traceID = traceID;
-        data.token = token;
-        data.channel = channel;
-        data.channelNo = channelNo;
+        data.token = token == null ? StringUtils.EMPTY : token;
+        data.channel = channel == null ? StringUtils.EMPTY : channel;
+        data.channelNo = channelNo == null ? StringUtils.EMPTY : channelNo;
         data.controllerStack.clear();
     }
 
     public static void reset() {
         ThreadContextData data = contexts.get();
         data.exists = false;
-        data.traceID = null;
-        data.token = null;
-        data.channel = null;
-        data.channelNo = null;
+        data.traceID = StringUtils.EMPTY;
+        data.token = StringUtils.EMPTY;
+        data.channel = StringUtils.EMPTY;
+        data.channelNo = StringUtils.EMPTY;
         data.controllerStack.clear();
     }
 
