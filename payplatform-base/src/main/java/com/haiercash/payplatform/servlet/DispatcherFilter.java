@@ -41,8 +41,8 @@ public final class DispatcherFilter implements Filter {
         DispatcherResponseWrapper response = new DispatcherResponseWrapper((HttpServletResponse) servletResponse);
         RequestContext.init(request, response);
         ThreadContext.init(request.getHeader("token"), request.getHeader("channel"), request.getHeader("channelno"));
-        long begin = System.currentTimeMillis();
         IncomingLog.writeRequestLog(request);
+        long begin = System.currentTimeMillis();
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
