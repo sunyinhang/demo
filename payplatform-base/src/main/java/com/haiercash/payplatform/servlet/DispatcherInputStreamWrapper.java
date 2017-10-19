@@ -30,7 +30,7 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
         this.parseBody();
     }
 
-    protected void cacheStream() {
+    private void cacheStream() {
         try {
             int readed;
             this.cachedBuffer = new byte[BUFFER_SIZE];
@@ -41,7 +41,7 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
         }
     }
 
-    protected void parseBody() {
+    private void parseBody() {
         try {
             this.content = this.cachedLength > MAX_DISPLAY
                     ? (new String(this.cachedBuffer, 0, MAX_DISPLAY, DEFAULT_CHARSET) + BODY_HAS_MORE)

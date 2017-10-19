@@ -29,7 +29,7 @@ public final class ClientInputStreamWrapper extends InputStream {
         this.parseBody();
     }
 
-    protected void cacheStream() {
+    private void cacheStream() {
         try {
             int readed;
             this.cachedBuffer = new byte[BUFFER_SIZE];
@@ -40,7 +40,7 @@ public final class ClientInputStreamWrapper extends InputStream {
         }
     }
 
-    protected void parseBody() {
+    private void parseBody() {
         try {
             this.content = this.cachedLength > MAX_DISPLAY
                     ? (new String(this.cachedBuffer, 0, MAX_DISPLAY, DEFAULT_CHARSET) + BODY_HAS_MORE)
