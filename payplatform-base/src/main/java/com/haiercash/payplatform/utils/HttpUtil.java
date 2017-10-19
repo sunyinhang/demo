@@ -383,5 +383,4 @@ public class HttpUtil {
         httpUtil = this;
         httpUtil.restTemplate = this.restTemplate;
     }
-
 }
