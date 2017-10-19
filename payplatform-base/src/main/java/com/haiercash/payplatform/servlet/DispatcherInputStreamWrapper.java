@@ -50,7 +50,7 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
     protected void parseBody() {
         try {
             this.content = this.cachedLength > MAX_DISPLAY
-                    ? new String(this.cachedBuffer, 0, MAX_DISPLAY, DEFAULT_CHARSET) + BODY_HAS_MORE
+                    ? (new String(this.cachedBuffer, 0, MAX_DISPLAY, DEFAULT_CHARSET) + BODY_HAS_MORE)
                     : new String(this.cachedBuffer, 0, this.cachedLength, DEFAULT_CHARSET);
         } catch (Exception e) {
             this.content = BODY_PARSE_FAIL;
