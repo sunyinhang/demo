@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.controller;
 
+import com.bestvike.reflect.GenericType;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.common.CommonRestUtil;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,8 @@ import java.util.Map;
  * @since v1.0.0
  */
 @RestController
-public class Democontroller extends BaseController {
-    public Democontroller() {
+public class DemoController extends BaseController {
+    public DemoController() {
         super("01");
     }
 
@@ -61,7 +62,8 @@ public class Democontroller extends BaseController {
         String url = "http://payplatform-develop-tim/api/echo/post";
         Map<String, Object> params = new HashMap<>();
         params.put("value", "&a=世界哈哈66你好==");
-        IResponse<DemoBean> response = CommonRestUtil.postForObject(url, params, DemoBean.class);
+        IResponse<DemoBean> response = CommonRestUtil.postForObject(url, params, new GenericType<DemoBean>() {
+        });
         response.assertSuccess(true);
         DemoBean bean = response.getBody();
         System.out.println(bean);
