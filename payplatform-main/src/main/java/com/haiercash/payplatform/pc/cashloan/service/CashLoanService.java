@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.cashloan.service;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.rest.IResponse;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -47,11 +48,18 @@ public interface CashLoanService {
     IResponse<List<LoanType>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo);
 
     /**
-     * 贷款提交
+     * 现金贷贷款提交
      * @param map
      * @return
      * @throws Exception
      */
     public Map<String, Object> commitOrder(Map<String, Object> map) throws Exception;
+
+    /**
+     * 现金贷订单保存
+     * @param map
+     * @return
+     */
+    Map<String, Object> saveOrder(Map<String, Object> map);
 
 }

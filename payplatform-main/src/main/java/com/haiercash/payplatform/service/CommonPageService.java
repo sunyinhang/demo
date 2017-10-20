@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.service;
 
+import com.haiercash.payplatform.common.data.AppOrder;
+
 import java.util.Map;
 
 /**
@@ -16,17 +18,19 @@ public interface CommonPageService {
      */
     Map<String, Object> commitAppOrder(String orderNo, String applSeq, String opType, String msgCode, String expectCredit, String typGrp);
 
-    /**
-     * 合同签订
-     * @param custName
-     * @param custIdCode
-     * @param applseq
-     * @param phone
-     * @param typCde
-     * @param channelNo
-     * @param token
-     * @return
+    /*
+    合同签订
      */
     Map<String, Object> signContract(String custName, String custIdCode, String applseq, String phone, String typCde,
                                             String channelNo, String token);
+
+    /*
+    订单保存
+     */
+    Map<String, Object> saveAppOrderInfo(AppOrder appOrder);
+
+    /*
+    获取省市编码
+     */
+    String getCode(String token, Map<String, Object> citymap);
 }

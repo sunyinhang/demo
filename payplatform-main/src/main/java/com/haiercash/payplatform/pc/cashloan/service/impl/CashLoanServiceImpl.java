@@ -44,11 +44,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -174,7 +171,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String tagUrl = EurekaServer.CRM + "/app/crm/cust/getCustTag";
         Map<String, Object> params = new HashMap<>();
         params.put("custName", custName);
-        params.put("idType", idType);
+        params.put("idTyp", idType);
         params.put("idNo", idNo);
         IResponse<List<Map>> tagsResponse = CommonRestUtil.getForObject(tagUrl, new GenericType<List<Map>>() {
         }, params);
@@ -500,6 +497,12 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         return success(returnmap);
     }
 
+    /**
+     * 现金贷订单提交
+     * @param map
+     * @return
+     * @throws Exception
+     */
     @Override
     public Map<String, Object> commitOrder(Map<String, Object> map) throws Exception {
         logger.info("订单提交****************开始");
@@ -667,5 +670,214 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         logger.info("订单提交，返回数据：" + result);
 
         return result;
+    }
+
+    /**
+     * 现金贷订单保存
+     * @param map
+     * @return
+     */
+    @Override
+    public Map<String, Object> saveOrder(Map<String, Object> map) {
+        logger.info("现金贷订单保存****************开始");
+        //前端传入参数获取(放开)
+        String token = (String) map.get("token");
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
+        String applyTnr = (String) map.get("applyTnr");//借款期限
+        String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
+        String updflag = (String) map.get("flag");//1.待提交返显
+        String orderNo = (String) map.get("orderNo");//待提交时必传
+        String areaCode = (String) map.get("areaCode");//区编码
+        String applyAmt = (String) map.get("applyAmt");//申请金额
+        String typcde = (String) map.get("typcde");//贷款品种
+
+        //非空判断
+        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
+                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp) || StringUtils.isEmpty(applyAmt)
+                || StringUtils.isEmpty(typcde)){
+            logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
+                    + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp + "   updflag:" + updflag
+                    + "  orderNo:" + orderNo + "   applyAmt:" + applyAmt + "   typcde:" + typcde);
+            logger.info("前台获取数据有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+
+        //appOrder缓存获取（放开）
+        Map<String, Object> cacheMap = redisSession.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String userId = (String) cacheMap.get("userId");
+        //获取客户信息
+        logger.info("订单保存，根据userId获取客户信息");
+        Map<String, Object> custMap = new HashMap<String, Object>();
+        custMap.put("userId", userId);
+        custMap.put("channel", channel);
+        custMap.put("channelNo", channelNo);
+        Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
+        if (!HttpUtil.isSuccess(custInforesult) ) {
+            return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
+        }
+        String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
+        com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
+        String custName = (String) custresult.get("custName");
+        String custNo = (String) custresult.get("custNo");
+        logger.info("客户编号：" +custNo + "   客户姓名：" + custName);
+        String certNo = (String) custresult.get("certNo");
+        String mobile = (String) custresult.get("mobile");
+
+        //获取订单金额  总利息 金额
+        logger.info("订单保存，获取订单金额，总利息金额");
+        //IResponse<List<LoanType>> IResponse= this.getLoanType(null, channelNo, custName, "20", certNo);
+        Map<String, Object> payMap = new HashMap<String, Object>();
+        payMap.put("typCde", typcde);
+        payMap.put("apprvAmt", applyAmt);
+        payMap.put("applyTnrTyp", applyTnrTyp);
+        payMap.put("applyTnr", applyTnr);
+        payMap.put("channel", channel);
+        payMap.put("channelNo", channelNo);
+        Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
+        if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
+            String retmsg = (String) ((Map<String, Object>)(payresultMap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        String payresult = com.alibaba.fastjson.JSONObject.toJSONString(payresultMap);
+        com.alibaba.fastjson.JSONObject payBody = com.alibaba.fastjson.JSONObject.parseObject(payresult).getJSONObject("body");
+        logger.info("payBody:" + payBody);
+        String totalAmt = payBody.get("totalAmt").toString();
+        String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
+        String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
+
+        //获取订单信息
+        logger.info("订单保存，获取订单信息");
+        AppOrder appOrder = new AppOrder();
+        appOrder.setVersion("1");//接口版本号  固定传’1’
+        appOrder.setSource("11");//订单来源
+        appOrder.setChannelNo((String)map.get("channelNo"));//渠道编号
+        appOrder.setApplyTnr(applyTnr);//借款期限
+        appOrder.setApplyTnrTyp(applyTnrTyp);//借款期限类型
+        appOrder.setTotalnormint(totalNormInt);//总利息金额
+        appOrder.setTotalfeeamt(totalFeeAmt);//费用总额
+        appOrder.setMerchNo("EHAIER");//商户编号  TODO!!!
+        appOrder.setCooprCde("SHUNGUANG");//门店编号  TODO!!!
+        appOrder.setCrtUsr("SAQDGM01");//销售代表用户ID  TODO!!!!
+        appOrder.setTypGrp("02");//贷款类型  01:商品贷  02  现金贷
+        appOrder.setSource(ConstUtil.SOURCE);//订单来源
+        appOrder.setWhiteType("SHH");//白名单类型
+        appOrder.setFormType("10");//10:线下订单   20:线上订单
+        appOrder.setCustNo(custNo);//客户编号
+        appOrder.setCustName(custName);//客户姓名
+        appOrder.setIdTyp("20");//证件类型
+        appOrder.setIdNo(certNo);//客户证件号码
+        appOrder.setUserId(userId);//录单用户ID
+        appOrder.setChannelNo(channelNo);
+        if("1".equals(updflag)){
+            appOrder.setOrderNo(orderNo);
+        }
+
+        //0.准入资格校验
+        logger.info("进行准入资格校验");
+        Map<String, Object> ispassmap = new HashMap<String, Object>();
+        ispassmap.put("custName", custName);//姓名
+        ispassmap.put("certNo", certNo);//身份证
+        ispassmap.put("phonenumber", mobile);//手机号
+        ispassmap.put("userId", userId);//登录用户名
+        ispassmap.put("channel", channel);
+        ispassmap.put("channelNo", channelNo);
+        Map<String, Object> ispassresult = appServerService.getCustIsPass(token, ispassmap);
+        if (!HttpUtil.isSuccess(ispassresult) ) {//准入资格校验失败
+            String retmsg = (String) ((Map<String, Object>)(ispassresult.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        String isPass = (String) ((Map<String, Object>)(ispassresult.get("body"))).get("isPass");
+        if("-1".equals(isPass)){
+            return fail(ConstUtil.ERROR_CODE, "没有准入资格");
+        }
+
+        //1.录单校验（所在城市开通服务）
+        //获取市代码
+        String cityCode = "";
+        String provinceCode = "";
+        if(org.springframework.util.StringUtils.isEmpty(areaCode)){
+            cityCode = "370000";
+            provinceCode = "370200";
+        }else{
+            logger.info("获取业务发生地省市区");
+            Map<String, Object > citymap = new HashMap<String, Object>();
+            citymap.put("areaCode", areaCode);
+            citymap.put("flag", "parent");
+            citymap.put("channel", channel);
+            citymap.put("channelNo", channelNo);
+            cityCode = commonPageService.getCode(token, citymap);
+            if(org.springframework.util.StringUtils.isEmpty(cityCode)){
+                logger.info("获取市编码失败");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            //获取省代码
+            Map<String, Object > provincemap = new HashMap<String, Object>();
+            provincemap.put("areaCode", cityCode);
+            provincemap.put("flag", "parent");
+            provincemap.put("channel", channel);
+            provincemap.put("channelNo", channelNo);
+            provinceCode = commonPageService.getCode(token, provincemap);
+            if(org.springframework.util.StringUtils.isEmpty(provinceCode)){
+                logger.info("获取省编码失败");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+        }
+        //录单校验
+        logger.info("进行录单校验");
+        Map<String, Object> ordercheakmap = new HashMap<String, Object>();
+        ordercheakmap.put("userId", userId);
+        ordercheakmap.put("provinceCode", provinceCode);
+        ordercheakmap.put("cityCode", cityCode);
+        ordercheakmap.put("channel", channel);
+        ordercheakmap.put("channelNo", channelNo);
+        Map<String, Object> ordercheakresult = appServerService.getCustInfoAndEdInfoPerson(token, ordercheakmap);
+        if (!HttpUtil.isSuccess(ordercheakresult) ) {//录单校验失败
+            String retmsg = (String) ((Map<String, Object>)(ordercheakresult.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+
+        //2.是否允许申请贷款
+        logger.info("查看是否允许申请贷款");
+        String typCde = appOrder.getTypCde();
+        SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
+        String date = dateFormater.format(new Date());
+        Map<String, Object> queryordermap = new HashMap<String, Object>();
+        queryordermap.put("typCde", typCde);
+        queryordermap.put("date", date);
+        queryordermap.put("channel", channel);
+        queryordermap.put("channelNo", channelNo);
+        Map<String, Object> queryorderresult = appServerService.queryBeyondContral(token, queryordermap);
+        if (!HttpUtil.isSuccess(queryorderresult) ) {//是否允许申请贷款失败
+            String retmsg = (String) ((Map<String, Object>)(queryorderresult.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        String flag = (String) ((Map<String, Object>)(queryorderresult.get("body"))).get("flag");
+        if(!"Y".equals(flag)){
+            return fail(ConstUtil.ERROR_CODE, "不允许申请贷款");
+        }
+
+        //3.订单保存
+        Map<String, Object> ordermap = commonPageService.saveAppOrderInfo(appOrder);
+        cacheMap.put("ordermap", ordermap);
+        cacheMap.put("custName", custName);
+        cacheMap.put("custNo", custNo);
+        cacheMap.put("certNo", certNo);
+        redisSession.set(token, cacheMap);
+        logger.info("订单保存结果：" + ordermap.toString());
+        if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
+            logger.info("订单保存失败");
+            Map resultHead = (LinkedHashMap<String, Object>)(ordermap.get("head"));
+            String retmsg = resultHead.get("retMsg").toString();
+            //String retmsg = resultHead.getRetMsg();
+            //String retmsg = (String) ((Map<String, Object>)(ordermap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+
+        return ordermap;
     }
 }

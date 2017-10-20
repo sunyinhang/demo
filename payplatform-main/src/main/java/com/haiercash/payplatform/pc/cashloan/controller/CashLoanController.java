@@ -56,5 +56,14 @@ public class CashLoanController extends BaseController {
         return cashLoanService.commitOrder(super.initParam(map));
     }
 
+    /**
+     * 订单保存
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/cashLoan/saveOrder", method = RequestMethod.POST)
+    public Map<String, Object> saveOrder(@RequestBody Map<String, Object> map) {
+        return cashLoanService.saveOrder(super.initParam(map));
+    }
 
 }

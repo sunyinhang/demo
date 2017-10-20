@@ -866,6 +866,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("外部风险信息采集，请求地址：" + url);
         logger.info("外部风险信息采集，请求数据：" + paramMap);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("外部风险信息采集，返回数据：" + map);
         return map;
     }
     //3.4.11(GET) 实名认证
