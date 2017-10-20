@@ -611,7 +611,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/getLoanTypeAndBankInfo", method = RequestMethod.POST)
     public IResponse<Map> getLoanTypeAndBankInfo() throws Exception {
-        return custExtInfoService.getLoanTypeAndBankInfo(super.getToken(), super.getChannelNo(), super.getChannel());
+        return custExtInfoService.getLoanTypeAndBankInfo(super.getToken(), super.getChannel(), super.getChannelNo());
     }
 
     /**
