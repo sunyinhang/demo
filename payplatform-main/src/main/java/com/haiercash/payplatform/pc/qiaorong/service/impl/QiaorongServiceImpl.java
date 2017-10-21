@@ -256,30 +256,30 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cacheMap.put("certNo", certNo);
         session.set(token, cacheMap);
 
-        //2.判断是否已注册
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("channelNo",channelNo);
-        paramMap.put("channel",channel);
-        paramMap.put("mobile", EncryptUtil.simpleEncrypt(phone));
-        Map<String, Object> registerMap = appServerService.isRegister(token, paramMap);
-        if(registerMap == null){
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
-        Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
-        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
-        if(!"00000".equals(resultmapFlag)){
-            String retMsg = (String) resultmapjsonMap.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
-        Map resultmapbodyMap = (Map<String, Object>) registerMap.get("body");
-        String isRegister = (String)resultmapbodyMap.get("isRegister");
-        if("N".equals(isRegister)){
-            returnmap.put("flag","01");//跳转注册页面
-            return success(returnmap);//跳转注册页面
-        }
-        if(!"Y".equals(isRegister)){
-            return fail("01", "手机已被注册！请联系客服修改。客服电话：400777");
-        }
+//        //2.判断是否已注册
+//        Map<String, Object> paramMap = new HashMap<String, Object>();
+//        paramMap.put("channelNo",channelNo);
+//        paramMap.put("channel",channel);
+//        paramMap.put("mobile", EncryptUtil.simpleEncrypt(phone));
+//        Map<String, Object> registerMap = appServerService.isRegister(token, paramMap);
+//        if(registerMap == null){
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
+//        Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
+//        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
+//        if(!"00000".equals(resultmapFlag)){
+//            String retMsg = (String) resultmapjsonMap.get("retMsg");
+//            return fail(ConstUtil.ERROR_CODE, retMsg);
+//        }
+//        Map resultmapbodyMap = (Map<String, Object>) registerMap.get("body");
+//        String isRegister = (String)resultmapbodyMap.get("isRegister");
+//        if("N".equals(isRegister)){
+//            returnmap.put("flag","01");//跳转注册页面
+//            return success(returnmap);//跳转注册页面
+//        }
+//        if(!"Y".equals(isRegister)){
+//            return fail("01", "手机已被注册！请联系客服修改。客服电话：400777");
+//        }
 
         //3.手机号已注册，判断是否需要人脸识别
         Map<String, Object> faceparamMap = new HashMap<String, Object>();
