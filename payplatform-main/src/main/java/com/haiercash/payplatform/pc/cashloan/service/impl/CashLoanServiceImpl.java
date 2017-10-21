@@ -755,7 +755,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         AppOrder appOrder = new AppOrder();
         appOrder.setVersion("1");//接口版本号  固定传’1’
         appOrder.setSource("11");//订单来源
-        appOrder.setChannelNo((String)map.get("channelNo"));//渠道编号
+        appOrder.setChannelNo(channelNo);//渠道编号
         appOrder.setApplyTnr(applyTnr);//借款期限
         appOrder.setApplyTnrTyp(applyTnrTyp);//借款期限类型
         appOrder.setTotalnormint(totalNormInt);//总利息金额

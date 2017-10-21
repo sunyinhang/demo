@@ -370,21 +370,21 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return fail("46", "您的每月最高还款额已超过扣款卡的单次最大扣款限额，建议更换还款卡！");
         }
         // 个人版：扫码分期提交给商户(S)，现金贷提交给信贷系统(N)
-        String autoFlag = appOrder.getTypGrp().equals("02") ? "N" : "S";
+        //String autoFlag = appOrder.getTypGrp().equals("02") ? "N" : "S";
 
         String orderNo = "";
         String applSeq = "";
-        if ("02".equals(appOrder.getTypGrp())) {
-//            Map<String, Object> resultResponseMap = acquirerService.cashLoan(appOrder, null);
-//            if (CmisUtil.getIsSucceed(resultResponseMap)) {
-//                Map<String, Object> bodyMap = (Map<String, Object>) ((Map<String, Object>) resultResponseMap
-//                        .get("response")).get("body");
-//                applSeq = (String) bodyMap.get("applSeq");
-//                orderNo = (String) bodyMap.get("applSeq");
-//                this.saveRelation(applSeq, appOrder.getTypGrp(), applSeq, appOrder.getCustNo());
-//            } else {
-//                return (Map<String, Object>) resultResponseMap.get("response");
-//            }
+        if ("02".equals(appOrder.getTypGrp())) {//现金贷
+            Map<String, Object> resultResponseMap = acquirerService.cashLoan(appOrder, null);
+            if (CmisUtil.getIsSucceed(resultResponseMap)) {
+                Map<String, Object> bodyMap = (Map<String, Object>) ((Map<String, Object>) resultResponseMap
+                        .get("response")).get("body");
+                applSeq = (String) bodyMap.get("applSeq");
+                orderNo = (String) bodyMap.get("applSeq");
+                this.saveRelation(applSeq, appOrder.getTypGrp(), applSeq, appOrder.getCustNo());
+            } else {
+                return (Map<String, Object>) resultResponseMap.get("response");
+            }
         } else {
             Map<String, Object> resultMap = orderService.saveOrUpdateAppOrder(appOrder, null);
             logger.info("订单保存结果输出：" + resultMap);
