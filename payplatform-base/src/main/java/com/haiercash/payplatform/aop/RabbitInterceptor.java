@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Aspect
 @Component
-public class RabbitInterceptor {
+public final class RabbitInterceptor {
     private final Log logger = LogFactory.getLog(RabbitInterceptor.class);
 
     @Pointcut("execution(* com.haiercash..*.*(..)) && @annotation(org.springframework.amqp.rabbit.annotation.RabbitHandler)")

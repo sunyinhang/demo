@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Aspect
 @Component
-public class ScheduledInterceptor {
+public final class ScheduledInterceptor {
     private final Log logger = LogFactory.getLog(RabbitInterceptor.class);
 
     @Pointcut("execution(* com.haiercash..*.*(..)) && @annotation(org.springframework.scheduling.annotation.Scheduled)")

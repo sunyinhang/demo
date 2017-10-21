@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Aspect
 @Component
-public class ControllerInterceptor {
+public final class ControllerInterceptor {
     @Pointcut("execution(* com.haiercash..*.*(..)) && (@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.GetMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)" +

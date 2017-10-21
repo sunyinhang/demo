@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * Created by 许崇雷 on 2017-10-11.
  */
 @Component
-public class ApplicationContextUtil implements ApplicationContextAware {
+public final class ApplicationContextUtil implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
     private Log log = LogFactory.getLog(ApplicationContextUtil.class);
 

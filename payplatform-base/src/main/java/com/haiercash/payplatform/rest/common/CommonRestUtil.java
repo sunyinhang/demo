@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2017-10-08.
  */
-public class CommonRestUtil {
+public final class CommonRestUtil {
     private static final RestUtil REST_UTIL = new RestUtil();
     private static final ParameterizedTypeImpl MAP_STRING_OBJECT_TYPE = ParameterizedTypeImpl.make(Map.class, new Type[]{String.class, Object.class}, null);
 

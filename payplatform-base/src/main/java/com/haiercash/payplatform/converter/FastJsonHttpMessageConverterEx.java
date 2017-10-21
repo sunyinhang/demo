@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 /**
  * Created by 许崇雷 on 2017-09-27.
  */
-public class FastJsonHttpMessageConverterEx extends FastJsonHttpMessageConverter {
+public final class FastJsonHttpMessageConverterEx extends FastJsonHttpMessageConverter {
     public FastJsonHttpMessageConverterEx() {
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
         fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteMapNullValue);

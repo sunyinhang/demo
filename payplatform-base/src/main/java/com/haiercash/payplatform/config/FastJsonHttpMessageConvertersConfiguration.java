@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * Created by 许崇雷 on 2017-09-15.
  */
 @Configuration
-class FastJsonHttpMessageConvertersConfiguration {
+public class FastJsonHttpMessageConvertersConfiguration {
     @Configuration
     @ConditionalOnClass({JSON.class, FastJsonHttpMessageConverter.class})
     @ConditionalOnProperty(name = HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY, havingValue = HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY_FASTJSON, matchIfMissing = false)

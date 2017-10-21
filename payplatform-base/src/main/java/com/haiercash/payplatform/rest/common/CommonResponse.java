@@ -12,7 +12,7 @@ import java.util.Objects;
  * Created by 许崇雷 on 2017-10-08.
  */
 @Data
-public class CommonResponse<TBody> implements IResponse<TBody> {
+public final class CommonResponse<TBody> implements IResponse<TBody> {
     private CommonResponseHead head;
     private TBody body;
 

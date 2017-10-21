@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
  * Created by 许崇雷 on 2017-10-09.
  */
 @Component
-public class RestTemplateProvider {
+public final class RestTemplateProvider {
     private static RestTemplate restTemplate;
     private static RestTemplate restTemplateNormal;
     @Autowired
