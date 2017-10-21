@@ -3,10 +3,7 @@ package com.haiercash.payplatform.service.impl;
 import com.bestvike.lang.Convert;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.CrmService;
-import com.haiercash.payplatform.service.RegisterService;
+import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +25,8 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     private AppServerService appServerService;
     @Autowired
     private CrmService crmService;
+    @Autowired
+    private CustExtInfoService custExtInfoService;
 
     @Override
     public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
@@ -179,6 +179,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
+        Map<String, Object> hrparamMap = new HashMap<String, Object>();
         //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!
         String typCde = "";//贷款品种
         if (channel.isEmpty()) {
@@ -199,26 +200,11 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String token = String.valueOf(tokenMap.get("access_token"));
         Map cacheMap = new HashMap<String, Object>();
         cacheMap.put("token", token);
-//        //缓存数据获取
-//        Map<String, Object> cacheMap = session.get(token, Map.class);
-//        if(cacheMap == null || "".equals(cacheMap)){
-//            logger.info("Redis数据获取失败");
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//        }
-/*        if("46".equals(channelNo)){
-            typCde = sg_typCde;//贷款品种
-            tag = "SHH";
-        }else{
-            //查询贷款品种类型
-        }*/
-
-//        String typCde = sg_typCde;//贷款品种
         String tag = "SHH";
         String userId = mobile;
         cacheMap.put("userId", userId);
         cacheMap.put("phoneNo", mobile);
         session.set(token, cacheMap);
-//        String userId = (String)cacheMap.get("userId");
         //5.查询实名信息
         Map<String, Object> custMap = new HashMap<String, Object>();
         custMap.put("userId", userId);//内部userId
@@ -242,7 +228,6 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String bankName = ((Map<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
         String custNo = ((Map<String, Object>) (custresult.get("body"))).get("custNo").toString();
         String custName = ((Map<String, Object>) (custresult.get("body"))).get("custName").toString();
-//        String idNumber = ((Map<String, Object>) (custresult.get("body"))).get("cardNo").toString();
         String idNumber = ((Map<String, Object>) (custresult.get("body"))).get("certNo").toString();
         cacheMap.put("custNo", custNo);
         cacheMap.put("name", custName);
@@ -253,7 +238,25 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         cacheMap.put("bankName", bankName);//银行名称
         cacheMap.put("idType", certType);
         session.set(token, cacheMap);
-
+        //判断用户是否是海尔员工
+        hrparamMap.put("custName",custName);
+        hrparamMap.put("idTyp",certType);
+        hrparamMap.put("idNo",idNumber);
+        Map<String, Object> custWhiteListCmis = custExtInfoService.getCustWhiteListCmis(token, channel, channelNo, hrparamMap);
+        Map updmobileheadjson = (Map<String, Object>) custWhiteListCmis.get("head");
+        String updmobileretflag = (String) updmobileheadjson.get("retFlag");
+        if (!"00000".equals(updmobileretflag)) {
+            String retMsg = (String) updmobileheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        boolean hehyflag = false; //海尔会员标识
+        List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
+        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
+            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工")){
+                hehyflag = true;
+                break;
+            }
+        }
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
         cacheedmap.put("channelNo", channelNo);
@@ -273,9 +276,13 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             Map<String, Object> headinfo = (Map) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
-            //applType="2";
             String retmsg = "01";//未申请
             if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+                if (hehyflag){
+                    resultparamMap.put("flag", "12");//预授信额度
+                    resultparamMap.put("token", token);
+                    return success(resultparamMap);
+                }
                 logger.info("没有额度申请");
                 Map<String, Object> paramMap = new HashMap<String, Object>();
                 paramMap.put("channelNo", channelNo);

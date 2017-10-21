@@ -624,4 +624,15 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> getPaySs(@RequestBody Map<String, Object> param) throws Exception {
         return custExtInfoService.getPaySs(super.getToken(), super.getChannelNo(), super.getChannel(), param);
     }
+
+//    /**
+//     * @Title
+//     * @Description:
+//     * @author
+//     * @date 2017/10/17 15:26
+//     */
+//    @RequestMapping(value = "/api/payment/getCustWhiteListCmis", method = RequestMethod.POST)
+//    public Map<String, Object> getCustWhiteListCmis(@RequestBody Map<String, Object> param) throws Exception {
+//        return custExtInfoService.getCustWhiteListCmis(super.getToken(), super.getChannelNo(), super.getChannel(), param);
+//    }
 }

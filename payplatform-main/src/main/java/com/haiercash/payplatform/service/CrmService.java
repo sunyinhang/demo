@@ -61,5 +61,13 @@ public interface CrmService {
      */
     Map<String, Object>  getBankCard(String custNo);
 
+    /**
+     * 查询白名单列表
+     *
+     * @param params custName certNo
+     * @return
+     */
+    Map<String, Object> getCustWhiteListCmis(Map<String, Object> params);
+
 
 }

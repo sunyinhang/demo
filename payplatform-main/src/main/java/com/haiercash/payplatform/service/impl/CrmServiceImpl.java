@@ -108,4 +108,15 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         logger.info("获取客户银行卡接口，返回数据" + resultmap);
         return resultmap;
     }
+
+    @Override
+    public Map<String, Object> getCustWhiteListCmis(Map<String, Object> params) {
+        String url = EurekaServer.CRM + "/pub/crm/cust/getCustWhiteListFL";
+        Map<String, Object> map =  HttpUtil.restGetMap(url,getToken(),params);
+        if (StringUtils.isEmpty(map)) {
+            logger.error("查询白名单列表！");
+            return fail(RestUtil.ERROR_INTERNAL_CODE, RestUtil.ERROR_INTERNAL_MSG);
+        }
+        return map;
+    }
 }

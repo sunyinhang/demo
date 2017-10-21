@@ -30,11 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -946,4 +942,41 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         return paySs;
     }
+
+    @Override
+    public Map<String, Object> getCustWhiteListCmis(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String custName = (String) params.get("custName");
+        String idTyp = (String) params.get("idTyp");
+        String idNo = (String) params.get("idNo");
+        if (StringUtils.isEmpty(custName) || StringUtils.isEmpty(idTyp) || StringUtils.isEmpty(idNo)) {
+            logger.info("custName=" + custName + "  idTyp=" + idTyp + "  idNo=" + idNo);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("custName",custName);
+        paramMap.put("idTyp",idTyp);
+        paramMap.put("idNo",idNo);
+        Map<String, Object> custWhiteListCmis = crmService.getCustWhiteListCmis(paramMap);
+        return custWhiteListCmis;
+    }
+
 }

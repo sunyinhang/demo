@@ -33,4 +33,6 @@ public interface CustExtInfoService {
     public IResponse<Map> getLoanTypeAndBankInfo(String token, String channel, String channelNo) throws Exception;
     //还款试算
     public Map<String, Object> getPaySs(String token,String channel,String channelNo, Map<String, Object> params) throws Exception;
+    //查询白名单列表
+    public Map<String, Object> getCustWhiteListCmis(String token,String channel,String channelNo, Map<String, Object> params) throws Exception;
 }
