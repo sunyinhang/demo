@@ -203,7 +203,8 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String tag = "SHH";
         String userId = mobile;
         cacheMap.put("userId", userId);
-        cacheMap.put("phoneNo", mobile);
+        String phoneNo = (String) response.getBody().get("mobile");
+        cacheMap.put("phoneNo", phoneNo);
         session.set(token, cacheMap);
         //5.查询实名信息
         Map<String, Object> custMap = new HashMap<String, Object>();
