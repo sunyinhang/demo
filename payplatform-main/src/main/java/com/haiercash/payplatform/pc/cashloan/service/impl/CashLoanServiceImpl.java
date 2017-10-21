@@ -16,12 +16,12 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.ChannelStoreRelation;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.LoanType;
+import com.haiercash.payplatform.common.entity.LoanTypes;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.config.CashLoanConfig;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
-import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.common.CommonResponse;
 import com.haiercash.payplatform.rest.common.CommonRestUtil;
@@ -39,13 +39,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -53,30 +58,17 @@ import java.text.SimpleDateFormat;
 @Service
 public class CashLoanServiceImpl extends BaseService implements CashLoanService {
     @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
     private Session redisSession;
-
     @Autowired
     private AppServerService appServerService;
-
-    @Autowired
-    private ThirdTokenVerifyService thirdTokenVerifyService;
-
     @Autowired
     private EntrySettingDao entrySettingDao;
-
     @Autowired
     private ChannelStoreRelationDao channelStoreRelationDao;
-
     @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
     @Autowired
-    private SgInnerService sgInnerService;
-    @Autowired
     private CommonPageService commonPageService;
-
     @Autowired
     private CashLoanConfig cashLoanConfig;
 
@@ -191,10 +183,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         for (String tagId : intersectTags) {
             Map<String, Object> args = new HashMap<>();
             args.put("tagId", tagId);
-            IResponse<List<LoanType>> loanResponse = CommonRestUtil.getForObject(loanUrl, new GenericType<List<LoanType>>() {
-            }, args);
+            IResponse<LoanTypes> loanResponse = CommonRestUtil.getForObject(loanUrl, LoanTypes.class, args);
             loanResponse.assertSuccessNeedBody();
-            loanTypeList.addAll(loanResponse.getBody());
+            loanTypeList.addAll(loanResponse.getBody().getInfo());
         }
         //贷款品种去重
         List<LoanType> distinctLoanTypes = Linq.asEnumerable(loanTypeList).distinct().toList();//去重
@@ -499,6 +490,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
     /**
      * 现金贷订单提交
+     *
      * @param map
      * @return
      * @throws Exception
@@ -674,6 +666,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
     /**
      * 现金贷订单保存
+     *
      * @param map
      * @return
      */
@@ -693,9 +686,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String typcde = (String) map.get("typcde");//贷款品种
 
         //非空判断
-        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
                 || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp) || StringUtils.isEmpty(applyAmt)
-                || StringUtils.isEmpty(typcde)){
+                || StringUtils.isEmpty(typcde)) {
             logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
                     + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp + "   updflag:" + updflag
                     + "  orderNo:" + orderNo + "   applyAmt:" + applyAmt + "   typcde:" + typcde);
@@ -717,14 +710,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
         Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
-        if (!HttpUtil.isSuccess(custInforesult) ) {
+        if (!HttpUtil.isSuccess(custInforesult)) {
             return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
         }
         String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
         com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
         String custName = (String) custresult.get("custName");
         String custNo = (String) custresult.get("custNo");
-        logger.info("客户编号：" +custNo + "   客户姓名：" + custName);
+        logger.info("客户编号：" + custNo + "   客户姓名：" + custName);
         String certNo = (String) custresult.get("certNo");
         String mobile = (String) custresult.get("mobile");
 
@@ -738,9 +731,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         payMap.put("applyTnr", applyTnr);
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
-        Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
-        if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
-            String retmsg = (String) ((Map<String, Object>)(payresultMap.get("head"))).get("retMsg");
+        Map<String, Object> payresultMap = appServerService.getPaySs(token, payMap);
+        if (!HttpUtil.isSuccess(payresultMap)) {//额度校验失败
+            String retmsg = (String) ((Map<String, Object>) (payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         String payresult = com.alibaba.fastjson.JSONObject.toJSONString(payresultMap);
@@ -773,7 +766,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         appOrder.setIdNo(certNo);//客户证件号码
         appOrder.setUserId(userId);//录单用户ID
         appOrder.setChannelNo(channelNo);
-        if("1".equals(updflag)){
+        if ("1".equals(updflag)) {
             appOrder.setOrderNo(orderNo);
         }
 
@@ -787,12 +780,12 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         ispassmap.put("channel", channel);
         ispassmap.put("channelNo", channelNo);
         Map<String, Object> ispassresult = appServerService.getCustIsPass(token, ispassmap);
-        if (!HttpUtil.isSuccess(ispassresult) ) {//准入资格校验失败
-            String retmsg = (String) ((Map<String, Object>)(ispassresult.get("head"))).get("retMsg");
+        if (!HttpUtil.isSuccess(ispassresult)) {//准入资格校验失败
+            String retmsg = (String) ((Map<String, Object>) (ispassresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String isPass = (String) ((Map<String, Object>)(ispassresult.get("body"))).get("isPass");
-        if("-1".equals(isPass)){
+        String isPass = (String) ((Map<String, Object>) (ispassresult.get("body"))).get("isPass");
+        if ("-1".equals(isPass)) {
             return fail(ConstUtil.ERROR_CODE, "没有准入资格");
         }
 
@@ -800,29 +793,29 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //获取市代码
         String cityCode = "";
         String provinceCode = "";
-        if(org.springframework.util.StringUtils.isEmpty(areaCode)){
+        if (org.springframework.util.StringUtils.isEmpty(areaCode)) {
             cityCode = "370000";
             provinceCode = "370200";
-        }else{
+        } else {
             logger.info("获取业务发生地省市区");
-            Map<String, Object > citymap = new HashMap<String, Object>();
+            Map<String, Object> citymap = new HashMap<String, Object>();
             citymap.put("areaCode", areaCode);
             citymap.put("flag", "parent");
             citymap.put("channel", channel);
             citymap.put("channelNo", channelNo);
             cityCode = commonPageService.getCode(token, citymap);
-            if(org.springframework.util.StringUtils.isEmpty(cityCode)){
+            if (org.springframework.util.StringUtils.isEmpty(cityCode)) {
                 logger.info("获取市编码失败");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
             //获取省代码
-            Map<String, Object > provincemap = new HashMap<String, Object>();
+            Map<String, Object> provincemap = new HashMap<String, Object>();
             provincemap.put("areaCode", cityCode);
             provincemap.put("flag", "parent");
             provincemap.put("channel", channel);
             provincemap.put("channelNo", channelNo);
             provinceCode = commonPageService.getCode(token, provincemap);
-            if(org.springframework.util.StringUtils.isEmpty(provinceCode)){
+            if (org.springframework.util.StringUtils.isEmpty(provinceCode)) {
                 logger.info("获取省编码失败");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
@@ -836,8 +829,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         ordercheakmap.put("channel", channel);
         ordercheakmap.put("channelNo", channelNo);
         Map<String, Object> ordercheakresult = appServerService.getCustInfoAndEdInfoPerson(token, ordercheakmap);
-        if (!HttpUtil.isSuccess(ordercheakresult) ) {//录单校验失败
-            String retmsg = (String) ((Map<String, Object>)(ordercheakresult.get("head"))).get("retMsg");
+        if (!HttpUtil.isSuccess(ordercheakresult)) {//录单校验失败
+            String retmsg = (String) ((Map<String, Object>) (ordercheakresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
 
@@ -852,12 +845,12 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         queryordermap.put("channel", channel);
         queryordermap.put("channelNo", channelNo);
         Map<String, Object> queryorderresult = appServerService.queryBeyondContral(token, queryordermap);
-        if (!HttpUtil.isSuccess(queryorderresult) ) {//是否允许申请贷款失败
-            String retmsg = (String) ((Map<String, Object>)(queryorderresult.get("head"))).get("retMsg");
+        if (!HttpUtil.isSuccess(queryorderresult)) {//是否允许申请贷款失败
+            String retmsg = (String) ((Map<String, Object>) (queryorderresult.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String flag = (String) ((Map<String, Object>)(queryorderresult.get("body"))).get("flag");
-        if(!"Y".equals(flag)){
+        String flag = (String) ((Map<String, Object>) (queryorderresult.get("body"))).get("flag");
+        if (!"Y".equals(flag)) {
             return fail(ConstUtil.ERROR_CODE, "不允许申请贷款");
         }
 
@@ -869,9 +862,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         cacheMap.put("certNo", certNo);
         redisSession.set(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
-        if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
+        if (!HttpUtil.isSuccess(ordermap)) {//订单保存失败
             logger.info("订单保存失败");
-            Map resultHead = (LinkedHashMap<String, Object>)(ordermap.get("head"));
+            Map resultHead = (LinkedHashMap<String, Object>) (ordermap.get("head"));
             String retmsg = resultHead.get("retMsg").toString();
             //String retmsg = resultHead.getRetMsg();
             //String retmsg = (String) ((Map<String, Object>)(ordermap.get("head"))).get("retMsg");
