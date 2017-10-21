@@ -979,4 +979,51 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         return custWhiteListCmis;
     }
 
+    @Override
+    public Map<String, Object> getCustYsxEd(String token, String channel, String channelNo) throws Exception {
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> returnParamMap = new HashMap<String, Object>();
+        //参数非空判断
+        if (token.isEmpty()) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
+        }
+        if (channel.isEmpty()) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (channelNo.isEmpty()) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        //缓存数据获取
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String custName = (String) cacheMap.get("name");
+        String idType = (String) cacheMap.get("idType");
+        String idNo = (String) cacheMap.get("idCard");
+        paramMap.put("custName",custName);
+        paramMap.put("idTyp",idType);
+        paramMap.put("idNo",idNo);
+        Map<String, Object> custWhiteListCmis = getCustWhiteListCmis(token, channel, channelNo, paramMap);
+        Map updmobileheadjson = (Map<String, Object>) custWhiteListCmis.get("head");
+        String updmobileretflag = (String) updmobileheadjson.get("retFlag");
+        if (!"00000".equals(updmobileretflag)) {
+            String retMsg = (String) updmobileheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
+        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
+            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")){
+                String haierCreditInt = custWhiteListCmisList.get(i).get("haierCredit");
+                returnParamMap.put("haierCredit",haierCreditInt);
+                break;
+            }
+        }
+        return success(returnParamMap);
+    }
+
 }

@@ -35,4 +35,6 @@ public interface CustExtInfoService {
     public Map<String, Object> getPaySs(String token,String channel,String channelNo, Map<String, Object> params) throws Exception;
     //查询白名单列表
     public Map<String, Object> getCustWhiteListCmis(String token,String channel,String channelNo, Map<String, Object> params) throws Exception;
+    //查询海尔员工预授信额度
+    public Map<String, Object> getCustYsxEd(String token,String channel,String channelNo) throws Exception;
 }

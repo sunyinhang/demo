@@ -252,7 +252,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         boolean hehyflag = false; //海尔会员标识
         List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
         for (int i = 0; i < custWhiteListCmisList.size(); i++) {
-            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工")){
+            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")){
                 hehyflag = true;
                 break;
             }
@@ -425,6 +425,19 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     @Override
     public Map<String, Object> custUpdatePwd(Map<String, Object> params) throws Exception {
         Map returnmap = new HashMap<String, Object>();//返回的map
+        Map<String, Object> verifyNoMap = new HashMap<String, Object>();
+        verifyNoMap.put("phone", params.get("userId"));
+        verifyNoMap.put("verifyNo", params.get("verifyNo"));
+        verifyNoMap.put("token", getToken());
+        verifyNoMap.put("channel", getChannel());
+        verifyNoMap.put("channelNo", getChannelNo());
+        Map<String, Object> verifyresultmap = appServerService.smsVerify(getToken(), verifyNoMap);
+        Map verifyheadjson = (Map<String, Object>) verifyresultmap.get("head");
+        String verifyretFlag = (String) verifyheadjson.get("retFlag");
+        if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
+            String retMsg = (String) verifyheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
         Map<String, Object> landparamMap = new HashMap<String, Object>();
         landparamMap.put("userId", EncryptUtil.simpleEncrypt(String.valueOf(params.get("userId"))));
         landparamMap.put("verifyNo", EncryptUtil.simpleEncrypt(String.valueOf(params.get("verifyNo"))));
