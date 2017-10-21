@@ -51,7 +51,7 @@ public class QiaorongController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/qiaorong/checkFourKeys", method = RequestMethod.POST)
     public Map<String, Object> checkFourKeys(@RequestBody Map<String, Object> map) {
-        return qiaorongService.checkFourKeys(super.initParam(map));
+        return qiaorongService.checkFourKeys(map);
     }
 
     /**
@@ -61,7 +61,7 @@ public class QiaorongController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/qiaorong/register", method = RequestMethod.POST)
     public Map<String, Object> register(@RequestBody Map<String, Object> map) {
-        return qiaorongService.register(super.initParam(map));
+        return qiaorongService.register(map);
     }
 
     /**
@@ -101,7 +101,7 @@ public class QiaorongController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/qiaorong/loanContract", method = RequestMethod.POST)
     public Map<String, Object> loanContract(@RequestBody Map<String, Object> map) {
-        return qiaorongService.loanContract(super.initParam(map));
+        return qiaorongService.loanContract(map);
     }
 
 }

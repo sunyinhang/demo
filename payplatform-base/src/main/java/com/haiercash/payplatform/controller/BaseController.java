@@ -67,16 +67,6 @@ public class BaseController extends AbstractController {
         return ThreadContext.getChannelNo();
     }
 
-    protected Map<String, Object> initParam(Map<String, Object> paramMap) {
-        if (paramMap == null) {
-            paramMap = new HashMap<>();
-        }
-        paramMap.put("token", ThreadContext.getToken());
-        paramMap.put("channel", ThreadContext.getChannel());
-        paramMap.put("channelNo", ThreadContext.getChannelNo());
-        return paramMap;
-    }
-
     @ResponseBody
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<CommonResponse> handleBusinessException(BusinessException e) {

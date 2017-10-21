@@ -2,8 +2,6 @@ package com.haiercash.payplatform.aop;
 
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.controller.BaseController;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -21,8 +19,6 @@ import java.util.Map;
 @Aspect
 @Component
 public class ControllerInterceptor {
-    private final Log logger = LogFactory.getLog(ControllerInterceptor.class);
-
     @Pointcut("execution(* com.haiercash..*.*(..)) && (@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.GetMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)" +
@@ -46,16 +42,8 @@ public class ControllerInterceptor {
         Object[] args = joinPoint.getArgs();
         Class[] types = methodSignature.getParameterTypes();
         for (int i = 0; i < types.length; i++) {
-            Class clazz = types[i];
-            if (Map.class.isAssignableFrom(clazz)) {
-                Map arg = (Map) args[i];
-                if (arg == null)
-                    arg = new HashMap<String, Object>();
-                arg.put("token", ThreadContext.getToken());
-                arg.put("channel", ThreadContext.getChannel());
-                arg.put("channelNo", ThreadContext.getChannelNo());
-                args[i] = arg;
-            }
+            if (Map.class.isAssignableFrom(types[i]))
+                args[i] = this.putThreadVars((Map) args[i]);
         }
         //执行
         ThreadContext.enterController(controller);//进入
@@ -64,5 +52,14 @@ public class ControllerInterceptor {
         } finally {
             ThreadContext.exitController();//退出
         }
+    }
+
+    private Map putThreadVars(Map mapArg) {
+        if (mapArg == null)
+            mapArg = new HashMap<String, Object>();
+        mapArg.put("token", ThreadContext.getToken());
+        mapArg.put("channel", ThreadContext.getChannel());
+        mapArg.put("channelNo", ThreadContext.getChannelNo());
+        return mapArg;
     }
 }
