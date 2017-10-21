@@ -30,7 +30,7 @@ public abstract class AbstractRestUtil<TResponse extends IResponse> implements I
     private static final String ERROR_NULL = ConstUtil.ERROR_CODE;
     private static final String ERROR_NULL_MSG = "外部服务未返回任何数据";
     private static final String ERROR_UNKNOWN = ConstUtil.ERROR_CODE;
-    private static final String ERROR_UNKNOWN_MSG = "通信异常:%s";
+    private static final String ERROR_UNKNOWN_MSG = "网络通讯异常:%s";
     private Log logger = LogFactory.getLog(AbstractRestUtil.class);
     private Class<?> responseRawType;//TResponse 的非泛型类型
 
