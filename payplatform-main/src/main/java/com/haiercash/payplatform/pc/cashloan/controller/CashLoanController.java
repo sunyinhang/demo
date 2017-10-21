@@ -47,6 +47,7 @@ public class CashLoanController extends BaseController {
 
     /**
      * 现金贷订单提交
+     *
      * @param map
      * @return
      * @throws Exception
@@ -58,12 +59,12 @@ public class CashLoanController extends BaseController {
 
     /**
      * 订单保存
+     *
      * @param map
      * @return
      */
     @RequestMapping(value = "/api/payment/cashLoan/saveOrder", method = RequestMethod.POST)
     public Map<String, Object> saveOrder(@RequestBody Map<String, Object> map) {
-        return cashLoanService.saveOrder(super.initParam(map));
+        return cashLoanService.saveOrder(map);
     }
-
 }
