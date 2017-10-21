@@ -635,4 +635,15 @@ public class CommonPageController extends BaseController {
 //    public Map<String, Object> getCustWhiteListCmis(@RequestBody Map<String, Object> param) throws Exception {
 //        return custExtInfoService.getCustWhiteListCmis(super.getToken(), super.getChannelNo(), super.getChannel(), param);
 //    }
+
+    /**
+     * 3.1.13(GET)查询所有贷款用途列表(APP)
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/getPurpose", method = RequestMethod.GET)
+    public Map<String, Object> getPurpose(@RequestParam Map<String, Object> params) {
+        return commonPageService.getPurpose(params);
+    }
 }

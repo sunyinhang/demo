@@ -889,6 +889,17 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
 
+    //3.1.13(GET)查询所有贷款用途列表(APP)
+    @Override
+    public Map<String, Object> getPurpose(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/crm/cust/getPurpose";
+        logger.info("查询所有贷款用途列表，请求地址：" + url);
+        logger.info("查询所有贷款用途列表，请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("查询所有贷款用途列表，返回数据" + map);
+        return map;
+    }
+
     public Map<String, Object> updateRiskInfo(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/updateRiskInfo";
         logger.info("外部风险信息采集接口，请求地址：" + url);

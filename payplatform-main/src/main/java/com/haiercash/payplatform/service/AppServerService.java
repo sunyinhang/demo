@@ -147,4 +147,6 @@ public interface AppServerService {
     public Map<String, Object> updateRiskInfo(String token, Map<String, Object> paramMap);
     //查询是否做过魔蝎
     public Map<String, Object> getMoxieByApplseq(String token, Map<String, Object> paramMap);
+    //3.1.13(GET)查询所有贷款用途列表(APP)
+    public Map<String, Object> getPurpose (String token, Map<String, Object> paramMap);
 }

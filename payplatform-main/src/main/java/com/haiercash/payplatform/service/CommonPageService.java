@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.service;
 
 import com.haiercash.payplatform.common.data.AppOrder;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -33,4 +34,9 @@ public interface CommonPageService {
     获取省市编码
      */
     String getCode(String token, Map<String, Object> citymap);
+
+    /*
+    查询贷款用途
+     */
+    Map<String, Object> getPurpose(Map<String, Object> params);
 }

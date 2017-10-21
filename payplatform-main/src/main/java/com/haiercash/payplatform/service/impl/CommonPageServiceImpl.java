@@ -420,6 +420,18 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         return cityCode;
     }
 
+    /**
+     * 查询贷款用途
+     * @param params
+     * @return
+     */
+    @Override
+    public Map<String, Object> getPurpose(Map<String, Object> params) {
+        String token = super.getToken();
+        Map<String, Object> resultMap = appServerService.getPurpose(token, params);
+        return resultMap;
+    }
+
 
     /**
      * 把门店信息写入订单
