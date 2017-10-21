@@ -3,13 +3,11 @@ package com.haiercash.payplatform.controller;
 import com.bestvike.lang.StringUtils;
 import com.bestvike.lang.ThrowableUtils;
 import com.haiercash.commons.controller.AbstractController;
-import com.haiercash.commons.rest.inner.InnerRestUtil;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.rest.common.CommonResponse;
 import com.haiercash.payplatform.utils.BusinessException;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.RestUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,9 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Map;
 
 public class BaseController extends AbstractController {
-    @Autowired
-    private InnerRestUtil innerRestUtil;
-
     public BaseController(String moduleNo) {
         super(moduleNo);
     }
