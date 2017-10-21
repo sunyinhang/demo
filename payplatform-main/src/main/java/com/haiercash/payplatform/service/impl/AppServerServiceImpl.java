@@ -764,7 +764,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/customer/getPaySs";
         logger.info("还款试算接口, 请求地址：" + url);
         logger.info("还款试算接口, 请求数据：" + paramMap);
-        Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
+        Map<String, Object> result = HttpUtil.restPostMap(url,token, paramMap);
         logger.info("还款试算接口, 返回数据：" + result);
         return result;
     }
