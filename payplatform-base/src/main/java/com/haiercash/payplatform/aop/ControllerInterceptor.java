@@ -57,9 +57,11 @@ public final class ControllerInterceptor {
     private Map putThreadVars(Map mapArg) {
         if (mapArg == null)
             mapArg = new HashMap<String, Object>();
-        mapArg.put("token", ThreadContext.getToken());
-        mapArg.put("channel", ThreadContext.getChannel());
-        mapArg.put("channelNo", ThreadContext.getChannelNo());
+        if (ThreadContext.exists()) {
+            mapArg.put("token", ThreadContext.getToken());
+            mapArg.put("channel", ThreadContext.getChannel());
+            mapArg.put("channelNo", ThreadContext.getChannelNo());
+        }
         return mapArg;
     }
 }
