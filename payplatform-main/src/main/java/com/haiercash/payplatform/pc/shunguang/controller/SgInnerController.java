@@ -47,7 +47,7 @@ public class SgInnerController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/shunguang/userlogin", method = RequestMethod.POST)
     public Map<String, Object> userlogin(@RequestBody Map<String, Object> map) {
-        return sgInnerService.userlogin(super.initParam(map));
+        return sgInnerService.userlogin(map);
     }
 
     /**
@@ -58,7 +58,7 @@ public class SgInnerController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/shunguang/initPayApply", method = RequestMethod.GET)
     public Map<String, Object> initPayApply(@RequestParam Map<String, Object> map) {
-        return sgInnerService.initPayApply(super.initParam(map));
+        return sgInnerService.initPayApply(map);
     }
 
     /**
@@ -69,7 +69,7 @@ public class SgInnerController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/shunguang/gettotalAmt", method = RequestMethod.GET)
     public Map<String, Object> gettotalAmt(@RequestParam Map<String, Object> params) {
-        return sgInnerService.gettotalAmt(super.initParam(params));
+        return sgInnerService.gettotalAmt(params);
     }
 
     /**
@@ -80,7 +80,7 @@ public class SgInnerController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/shunguang/saveOrder", method = RequestMethod.POST)
     public Map<String, Object> saveOrder(@RequestBody Map<String, Object> map) {
-        return saveOrderService.saveOrder(super.initParam(map));
+        return saveOrderService.saveOrder(map);
     }
 
     /**
@@ -91,7 +91,7 @@ public class SgInnerController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/shunguang/commitOrder", method = RequestMethod.POST)
     public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) throws Exception {
-        return commitOrderService.commitOrder(super.initParam(map));
+        return commitOrderService.commitOrder(map);
     }
 
     /**

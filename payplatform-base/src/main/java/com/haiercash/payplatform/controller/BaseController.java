@@ -1,20 +1,17 @@
 package com.haiercash.payplatform.controller;
 
+import com.bestvike.lang.StringUtils;
+import com.bestvike.lang.ThrowableUtils;
 import com.haiercash.commons.controller.AbstractController;
-import com.haiercash.commons.rest.inner.InnerResponseError;
 import com.haiercash.commons.rest.inner.InnerRestUtil;
-import com.haiercash.commons.support.ServiceException;
 import com.haiercash.payplatform.context.ThreadContext;
+import com.haiercash.payplatform.rest.common.CommonResponse;
+import com.haiercash.payplatform.utils.BusinessException;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -47,91 +44,41 @@ public class BaseController extends AbstractController {
         return RestUtil.success(result);
     }
 
-    public String getModuleNo() {
-        return module;
+    public final String getModuleNo() {
+        return this.module == null ? StringUtils.EMPTY : this.module;
+    }
+
+    protected final String getPrefix() {
+        return this.prefix == null ? StringUtils.EMPTY : this.prefix;
     }
 
     @Override
-    protected String getToken() {
+    protected final String getToken() {
         return ThreadContext.getToken();
     }
 
     @Override
-    protected String getChannel() {
+    protected final String getChannel() {
         return ThreadContext.getChannel();
     }
 
     @Override
-    protected String getChannelNo() {
+    protected final String getChannelNo() {
         return ThreadContext.getChannelNo();
     }
 
-    protected Map<String, Object> initParam(Map<String, Object> paramMap) {
-        if (paramMap == null) {
-            paramMap = new HashMap<>();
-        }
-        paramMap.put("token", ThreadContext.getToken());
-        paramMap.put("channel", ThreadContext.getChannel());
-        paramMap.put("channelNo", ThreadContext.getChannelNo());
-        return paramMap;
-    }
-
-    /**
-     * Controller参数异常
-     * Post、Put、Patch请求@Valid引起
-     */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ResponseEntity<InnerResponseError> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        logger.error(e);
-        BindingResult errors = e.getBindingResult();
-        StringBuilder strBuilder = new StringBuilder();
-        for (FieldError fieldError : errors.getFieldErrors()) {
-            strBuilder.append(fieldError.getDefaultMessage() + "\n");
-        }
-        InnerResponseError innerResponseError = innerRestUtil.buildResponse(this.prefix + this.module + innerRestUtil.ERROR_INTERNAL_CODE, innerRestUtil.ERROR_INTERNAL_MSG);
-        return new ResponseEntity<InnerResponseError>(innerResponseError, HttpStatus.OK);
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<CommonResponse> handleBusinessException(BusinessException e) {
+        CommonResponse response = CommonResponse.create(e.getRetFlag(), e.getRetMsg());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
-     * Controller参数异常
-     * Get请求@RequestParam引起
-     */
-    @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseBody
-    public ResponseEntity<InnerResponseError> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
-        logger.error(e);
-        InnerResponseError innerResponseError = innerRestUtil.buildResponse(this.prefix + this.module + innerRestUtil.ERROR_INTERNAL_CODE, innerRestUtil.ERROR_INTERNAL_MSG);
-        return new ResponseEntity<InnerResponseError>(innerResponseError, HttpStatus.OK);
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    @ResponseBody
-    public ResponseEntity<InnerResponseError> handleUsernameNotFoundException(UsernameNotFoundException e) {
-        logger.error(e);
-        logger.error(e.getCause());
-        InnerResponseError innerResponseError = innerRestUtil.buildResponse(this.prefix + this.module + innerRestUtil.ERROR_INTERNAL_CODE, innerRestUtil.ERROR_INTERNAL_MSG);
-        return new ResponseEntity<InnerResponseError>(innerResponseError, HttpStatus.OK);
-    }
-
-    @ExceptionHandler(ServiceException.class)
-    @ResponseBody
-    public ResponseEntity<InnerResponseError> handleBusinessException(ServiceException e) {
-        logger.error(e);
-        logger.error(e.getCause());
-        InnerResponseError innerResponseError = innerRestUtil.buildResponse(this.prefix + this.module + e.getId(), e.getMessage());
-        return new ResponseEntity<InnerResponseError>(innerResponseError, HttpStatus.OK);
-    }
-
-    /**
-     * 其他未处理的异常
-     */
     @ExceptionHandler(Exception.class)
-    @ResponseBody
-    public ResponseEntity<InnerResponseError> handleException(Exception e) {
-        logger.error(e);
-        logger.error(e.getCause());
-        InnerResponseError innerResponseError = innerRestUtil.buildResponse(this.prefix + this.module + innerRestUtil.ERROR_INTERNAL_CODE, innerRestUtil.ERROR_INTERNAL_MSG);
-        return new ResponseEntity<InnerResponseError>(innerResponseError, HttpStatus.OK);
+    public ResponseEntity<CommonResponse> handleException(Exception e) {
+        this.logger.error(ThrowableUtils.getString(e));
+        CommonResponse response = CommonResponse.create(this.getPrefix() + this.getModuleNo() + ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

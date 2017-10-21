@@ -1,22 +1,17 @@
 package com.haiercash.payplatform.servlet;
 
-import com.bestvike.io.CharsetNames;
+import com.bestvike.io.IOUtils;
+import com.haiercash.payplatform.trace.TraceLogConfig;
 import org.springframework.util.Assert;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * Created by 许崇雷 on 2017-10-16.
  */
 public final class DispatcherInputStreamWrapper extends ServletInputStream {
-    private static final int MAX_DISPLAY = 1024 * 2;//最大显示长度,必须小于缓冲区大小
-    private static final int BUFFER_SIZE = 1024 * 4;//缓冲区大小
-    private static final String BODY_PARSE_FAIL = "内容转换为字符串失败";
-    private static final String BODY_HAS_MORE = "(...内容过大，无法显示)";
-    private static final Charset DEFAULT_CHARSET = Charset.forName(CharsetNames.UTF_8);
     private final ServletInputStream inputStream;
     private byte[] cachedBuffer;
     private int cachedIndex;
@@ -32,10 +27,8 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
 
     private void cacheStream() {
         try {
-            int readed;
-            this.cachedBuffer = new byte[BUFFER_SIZE];
-            while ((readed = this.inputStream.read(this.cachedBuffer, this.cachedLength, BUFFER_SIZE - this.cachedLength)) > 0)
-                this.cachedLength += readed;
+            this.cachedBuffer = new byte[TraceLogConfig.BUFFER_SIZE];
+            this.cachedLength = IOUtils.read(this.inputStream, this.cachedBuffer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -43,11 +36,11 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
 
     private void parseBody() {
         try {
-            this.content = this.cachedLength > MAX_DISPLAY
-                    ? (new String(this.cachedBuffer, 0, MAX_DISPLAY, DEFAULT_CHARSET) + BODY_HAS_MORE)
-                    : new String(this.cachedBuffer, 0, this.cachedLength, DEFAULT_CHARSET);
+            this.content = this.cachedLength > TraceLogConfig.MAX_DISPLAY
+                    ? (new String(this.cachedBuffer, 0, TraceLogConfig.MAX_DISPLAY, TraceLogConfig.DEFAULT_CHARSET) + TraceLogConfig.BODY_OVER_FLOW)
+                    : new String(this.cachedBuffer, 0, this.cachedLength, TraceLogConfig.DEFAULT_CHARSET);
         } catch (Exception e) {
-            this.content = BODY_PARSE_FAIL;
+            this.content = TraceLogConfig.BODY_PARSE_FAIL;
         }
     }
 
@@ -75,5 +68,10 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
     @Override
     public void setReadListener(ReadListener readListener) {
         this.inputStream.setReadListener(readListener);
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.inputStream.close();
     }
 }

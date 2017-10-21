@@ -1,12 +1,10 @@
 package com.haiercash.payplatform.service;
 
 import com.haiercash.commons.service.AbstractService;
-import com.haiercash.payplatform.context.RequestContext;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.RestUtil;
 import com.haiercash.payplatform.utils.ResultHead;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,24 +68,22 @@ public class BaseService extends AbstractService {
         return resultMap;
     }
 
-    protected String getModuleNo() {
-        return RequestContext.exists()
-                ? ThreadContext.getEntryModuleNo()
-                : StringUtils.EMPTY;
+    protected final String getModuleNo() {
+        return ThreadContext.getEntryModuleNo();
     }
 
     @Override
-    protected String getToken() {
+    protected final String getToken() {
         return ThreadContext.getToken();
     }
 
     @Override
-    protected String getChannel() {
+    protected final String getChannel() {
         return ThreadContext.getChannel();
     }
 
     @Override
-    protected String getChannelNo() {
+    protected final String getChannelNo() {
         return ThreadContext.getChannelNo();
     }
 }

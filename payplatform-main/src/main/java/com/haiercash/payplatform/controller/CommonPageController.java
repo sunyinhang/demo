@@ -84,7 +84,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/savaIdentityInfo", method = RequestMethod.POST)
     public Map<String, Object> savaIdentityInfo(@RequestBody Map<String, Object> map) {
-        return ocrIdentityService.savaIdentityInfo(super.initParam(map));
+        return ocrIdentityService.savaIdentityInfo(map);
     }
 
     /**
@@ -95,7 +95,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/getArea", method = RequestMethod.GET)
     public Map<String, Object> getArea(@RequestParam Map<String, Object> params) {
-        return ocrIdentityService.getArea(super.initParam(params));
+        return ocrIdentityService.getArea(params);
     }
 
     /**
@@ -117,7 +117,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/sendMessage", method = RequestMethod.GET)
     public Map<String, Object> sendMessage(@RequestParam Map<String, Object> params) {
-        return ocrIdentityService.sendMessage(super.initParam(params));
+        return ocrIdentityService.sendMessage(params);
     }
 
     /**
@@ -128,7 +128,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/sendMsg", method = RequestMethod.GET)
     public Map<String, Object> sendMsg(@RequestParam Map<String, Object> params) {
-        return ocrIdentityService.sendMsg(super.initParam(params));
+        return ocrIdentityService.sendMsg(params);
     }
 
     /**
@@ -140,7 +140,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/realAuthentication", method = RequestMethod.POST)
     public Map<String, Object> realAuthentication(@RequestBody Map<String, Object> map) throws Exception {
-        return ocrIdentityService.realAuthentication(super.initParam(map));
+        return ocrIdentityService.realAuthentication(map);
     }
 
     /**
@@ -152,7 +152,7 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/realAuthenticationForXjd", method = RequestMethod.POST)
     public Map<String, Object> realAuthenticationForXjd(@RequestBody Map<String, Object> map) throws Exception {
-        return ocrIdentityService.realAuthenticationForXjd(super.initParam(map));
+        return ocrIdentityService.realAuthenticationForXjd(map);
     }
 
 
