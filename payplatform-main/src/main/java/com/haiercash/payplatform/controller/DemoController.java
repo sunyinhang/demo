@@ -41,7 +41,7 @@ public class DemoController extends BaseController {
     }
 
     @GetMapping("/api/test/delete")
-    public Object testDelete() {
+    public IResponse<Map> testDelete() {
         String url = "http://payplatform-develop-tim/api/echo/delete";
         Map<String, Object> params = new HashMap<>();
         params.put("value", "世界哈哈66你好==");
@@ -58,7 +58,7 @@ public class DemoController extends BaseController {
     }
 
     @GetMapping("/api/test/post")
-    public Object testPost() {
+    public IResponse<Map> testPost() {
         String url = "http://payplatform-develop-tim/api/echo/post";
         Map<String, Object> params = new HashMap<>();
         params.put("value", "&a=世界哈哈66你好==");
