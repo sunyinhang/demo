@@ -28,12 +28,7 @@ import com.haiercash.payplatform.rest.common.CommonRestUtil;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.AppServerUtils;
-import com.haiercash.payplatform.utils.ApplicationContextUtil;
-import com.haiercash.payplatform.utils.BusinessException;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,13 +36,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -781,6 +770,25 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         //获取订单信息
         logger.info("订单保存，获取订单信息");
+
+        List<ChannelStoreRelation> relations = this.channelStoreRelationDao.selectByChanelNo(channelNo);
+        if (CollectionUtils.isEmpty(relations))
+            return fail(ConstUtil.ERROR_CODE, "该渠道没有配置任何门店商户");
+
+        String merchNo = "";
+        String cooprCde = "";
+        String crtUsr = "";
+        for (ChannelStoreRelation relation : relations) {
+            merchNo = relation.getMerchantCode();
+            cooprCde = relation.getStoreCode();
+            crtUsr = relation.getStoreCode();
+        }
+
+        if (StringUtils.isEmpty(merchNo) || StringUtils.isEmpty(cooprCde) || StringUtils.isEmpty(crtUsr)) {
+            logger.info("merchNo:" + merchNo + "  cooprCde:" + cooprCde + "   crtUsr:" + crtUsr);
+            return fail(ConstUtil.ERROR_CODE, "请配置商户门店销售代表信息");
+        }
+
         AppOrder appOrder = new AppOrder();
         appOrder.setVersion("1");//接口版本号  固定传’1’
         appOrder.setSource("11");//订单来源
@@ -789,9 +797,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         appOrder.setApplyTnrTyp(applyTnrTyp);//借款期限类型
         appOrder.setTotalnormint(totalNormInt);//总利息金额
         appOrder.setTotalfeeamt(totalFeeAmt);//费用总额
-        appOrder.setMerchNo("EHAIER");//商户编号  TODO!!!
-        appOrder.setCooprCde("SHUNGUANG");//门店编号  TODO!!!
-        appOrder.setCrtUsr("SAQDGM01");//销售代表用户ID  TODO!!!!
+        appOrder.setMerchNo(merchNo);//商户编号
+        appOrder.setCooprCde(cooprCde);//门店编号
+        appOrder.setCrtUsr(crtUsr);//销售代表用户ID
         appOrder.setTypGrp("02");//贷款类型  01:商品贷  02  现金贷
         appOrder.setSource(ConstUtil.SOURCE);//订单来源
         //appOrder.setFormType("10");// 商品贷独有 10:线下订单   20:线上订单

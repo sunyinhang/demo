@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
@@ -9,17 +8,9 @@ import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.common.enums.AcquirerApptEnum;
 import com.haiercash.payplatform.common.enums.AcquirerEnum;
 import com.haiercash.payplatform.common.enums.AcquirerGoodsEnum;
-import com.haiercash.payplatform.service.AppManageService;
-import com.haiercash.payplatform.service.CmisService;
-import com.haiercash.payplatform.service.CommonRepaymentPersonService;
-import com.haiercash.payplatform.service.CrmService;
+import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.*;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.OrderService;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RestUtil;
-import com.haiercash.payplatform.utils.ResultHead;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,11 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * acquirer service impl.
@@ -333,7 +320,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         // 个人版现金贷，以下赋默认值
         if ((channelType == ChannelType.Personal
                 || channelType == ChannelType.EnoughSpend
-                || channelType == ChannelType.BigData)
+                || channelType == ChannelType.BigData
+                || channelType == ChannelType.CashLoan)
                 && "02".equals(apporder.getTypGrp())) {
             apptmap.put("position_opt", ObjectUtils.toString(custExtInfoBodyMap.get("positionType"), "10"));
             apptmap.put("live_year", ObjectUtils.toString(custExtInfoBodyMap.get("liveYear"), "0"));
@@ -384,7 +372,10 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         apptmap.put("pur_sale_cont_no", "");
         apptmap.put("indiv_emp_name", custExtInfoBodyMap.get("officeName"));
         apptmap.put("indiv_branch", ObjectUtils.toString(custExtInfoBodyMap.get("officeDept"), "默认"));
-        apptmap.put("indiv_emp_typ", ObjectUtils.toString(custExtInfoBodyMap.get("officeTyp"), "Z"));
+        apptmap.put("indiv_branch", StringUtils.isEmpty(custExtInfoBodyMap.get("officeDept")) ? "默认" : custExtInfoBodyMap.get("officeDept"));
+        String indiv_branch = (String) apptmap.get("indiv_branch");
+        logger.info("所在部门：" + indiv_branch);
+        apptmap.put("indiv_emp_typ", StringUtils.isEmpty(custExtInfoBodyMap.get("officeTyp")) ? "Z" : custExtInfoBodyMap.get("officeTyp"));
         apptmap.put("indiv_emp_yrs", StringUtils.isEmpty(custExtInfoBodyMap.get("serviceYears")) ? 0 : custExtInfoBodyMap.get("serviceYears"));// custExtInfoBodyMap.get("serviceYears")
         apptmap.put("indiv_emp_province", custExtInfoBodyMap.get("officeProvince"));
         apptmap.put("indiv_emp_city", custExtInfoBodyMap.get("officeCity"));
@@ -438,8 +429,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         }
         apptmap.put("spouse_pay_ind", "");
         apptmap.put("ppty_live_opt", "10");//自有房产地址
-        apptmap.put("ppty_loan_ind", ObjectUtils.toString(custExtInfoBodyMap.get("pptyLoanInd"), "N"));//是否按揭
-        apptmap.put("ppty_righ_name", ObjectUtils.toString(custExtInfoBodyMap.get("pptyRighName"), "无")); //房屋产权人
+        apptmap.put("ppty_loan_ind", StringUtils.isEmpty(custExtInfoBodyMap.get("pptyLoanInd")) ? "N" : custExtInfoBodyMap.get("pptyLoanInd"));//是否按揭
+        apptmap.put("ppty_righ_name", StringUtils.isEmpty(custExtInfoBodyMap.get("pptyRighName")) ? "无" : custExtInfoBodyMap.get("pptyRighName")); //房屋产权人
         apptmap.put("ppty_amt", StringUtils.isEmpty(custExtInfoBodyMap.get("pptyAmt")) ?
                 0 :
                 Double.parseDouble(custExtInfoBodyMap.get("pptyAmt").toString()));//购买价格

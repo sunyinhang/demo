@@ -40,6 +40,10 @@ public enum ChannelType {
      */
     Shunguang(null, "46", null),
     /**
+     * 现金贷
+     */
+    CashLoan(null, "49", null),
+    /**
      * 够花
      */
     EnoughSpend("18", "42", null);
