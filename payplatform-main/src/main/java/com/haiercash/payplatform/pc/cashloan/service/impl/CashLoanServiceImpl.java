@@ -6,6 +6,7 @@ import com.bestvike.lang.StringUtils;
 import com.bestvike.linq.IEnumerable;
 import com.bestvike.linq.Linq;
 import com.bestvike.reflect.GenericType;
+import com.bestvike.serialization.JsonSerializer;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.ChannelStoreRelationDao;
@@ -219,10 +220,10 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String channelNo = this.getChannelNo();
         String thirdToken = this.getToken();
         String verifyUrl = setting.getVerifyUrlThird() + thirdToken;
-        String uidLocal = "";//统一认证userid
-        String phoneNo = "";//统一认证绑定手机号
-        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
-        Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
+        String uidLocal;//统一认证userid
+        String phoneNo;//统一认证绑定手机号
+        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
+        Map<String, Object> validateUserFlagMap = new HashMap<>();
         logger.info("验证第三方 token:" + verifyUrl);
         //验证客户信息
         ThirdTokenVerifyService thirdTokenVerifyService;
@@ -233,7 +234,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
         ThirdTokenVerifyResult thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
         //从后台查询用户信息
-        Map<String, Object> userInfo = thirdTokenVerifyService.queryUserInfoFromAppServer(thirdInfo.getUserId());
+        Map<String, Object> userInfo = this.queryUserInfoFromAppServer(thirdInfo.getUserId());
         String retFlag = HttpUtil.getReturnCode(userInfo);
         if (Objects.equals(retFlag, "00000")) {
             //集团uid已在统一认证做过绑定
@@ -244,16 +245,13 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
         } else if (Objects.equals(retFlag, "U0157")) {//U0157：未查到该集团用户的信息
             //向后台注册用户信息
-            Map<String, Object> registerResult = thirdTokenVerifyService.registerUserToAppServer(thirdInfo.getUserId(), thirdInfo.getPhoneNo());
+            Map<String, Object> registerResult = this.registerUserToAppServer(thirdInfo.getUserId(), thirdInfo.getPhoneNo());
             String registerResultFlag = HttpUtil.getReturnCode(registerResult);
             if ("00000".equals(registerResultFlag)) {
                 uidLocal = registerResult.get("body").toString();//统一认证内userId
                 phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
             } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
-                //跳转登录页面进行登录
-//        this.redisSession.hset(thirdToken, cachemap);
                 this.redisSession.set(thirdToken, cachemap);
-//        String backurl = haiercashpay_web_url + "sgbt/#!/login/login.html?token=" + token;
                 returnmap.put("flag", "2");//跳转登陆绑定页
                 returnmap.put("token", thirdToken);
                 return success(returnmap);
@@ -272,7 +270,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         logger.info("进行token绑定");
         //4.token绑定
-        Map<String, Object> bindMap = new HashMap<String, Object>();
+        Map<String, Object> bindMap = new HashMap<>();
         bindMap.put("userId", uidLocal);//内部userId
         bindMap.put("token", thirdToken);
         bindMap.put("channel", "11");
@@ -478,6 +476,34 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
         returnmap.put("token", thirdToken);
         return success(returnmap);
+    }
+
+
+    /**
+     * 从后台查询第三方用户的信息
+     *
+     * @param outUserId 明文,第三方用户 id
+     * @return
+     */
+    private Map<String, Object> queryUserInfoFromAppServer(String outUserId) {
+        String response = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(outUserId));
+        if (StringUtils.isEmpty(response))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "根据集团用户ID查询用户信息失败");
+        return JsonSerializer.deserializeMap(response);
+    }
+
+    /**
+     * 向后台注册第三方用户
+     *
+     * @param outUserId 明文,第三方用户 id
+     * @param phoneNo   明文,电话
+     * @return
+     */
+    private Map<String, Object> registerUserToAppServer(String outUserId, String phoneNo) {
+        Map<String, Object> param = new HashMap<>(2);
+        param.put("externUid", EncryptUtil.simpleEncrypt(outUserId));
+        param.put("mobile", EncryptUtil.simpleEncrypt(phoneNo));
+        return appServerService.saveUauthUsersByHaier(param);
     }
 
     /**
