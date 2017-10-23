@@ -15,5 +15,6 @@ import java.util.List;
 @ConfigurationProperties
 @PropertySource(value = "classpath:config/cashLoanConfig.yml")
 public class CashLoanConfig {
+    private String activeUrlPrefix;//不要用 / 结尾
     private List<String> tagIds;
 }
