@@ -18,4 +18,5 @@ public class ChannelStoreRelation {
     private String channelNo;
     private String merchantCode;
     private String storeCode;
+    private String salerName;
 }
