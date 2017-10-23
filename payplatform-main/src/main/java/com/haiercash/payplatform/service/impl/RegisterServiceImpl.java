@@ -240,9 +240,9 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         cacheMap.put("idType", certType);
         session.set(token, cacheMap);
         //判断用户是否是海尔员工
-        hrparamMap.put("custName",custName);
-        hrparamMap.put("idTyp",certType);
-        hrparamMap.put("idNo",idNumber);
+        hrparamMap.put("custName", custName);
+        hrparamMap.put("idTyp", certType);
+        hrparamMap.put("idNo", idNumber);
         Map<String, Object> custWhiteListCmis = custExtInfoService.getCustWhiteListCmis(token, channel, channelNo, hrparamMap);
         Map updmobileheadjson = (Map<String, Object>) custWhiteListCmis.get("head");
         String updmobileretflag = (String) updmobileheadjson.get("retFlag");
@@ -251,9 +251,9 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         boolean hehyflag = false; //海尔会员标识
-        List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
+        List<Map<String, String>> custWhiteListCmisList = (List<Map<String, String>>) custWhiteListCmis.get("body");
         for (int i = 0; i < custWhiteListCmisList.size(); i++) {
-            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")){
+            if (custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")) {
                 hehyflag = true;
                 break;
             }
@@ -278,14 +278,14 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
             String outSts_f = (String) headinfo.get("outSts");
-            if("25".equals(outSts_f)){
+            if ("25".equals(outSts_f)) {
                 resultparamMap.put("flag", "10");// 拒绝
                 resultparamMap.put("token", token);
                 return success(resultparamMap);
             }
             String retmsg = "01";//未申请
             if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
-                if (hehyflag){
+                if (hehyflag) {
                     resultparamMap.put("flag", "12");//预授信额度
                     resultparamMap.put("token", token);
                     return success(resultparamMap);
