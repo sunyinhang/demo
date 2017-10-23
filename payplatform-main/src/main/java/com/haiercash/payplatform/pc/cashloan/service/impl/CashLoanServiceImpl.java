@@ -6,7 +6,6 @@ import com.bestvike.lang.StringUtils;
 import com.bestvike.linq.IEnumerable;
 import com.bestvike.linq.Linq;
 import com.bestvike.reflect.GenericType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.ChannelStoreRelationDao;
@@ -36,7 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -492,6 +490,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String orderNo = (String) map.get("orderNo");
         String applSeq = (String) map.get("applSeq");
         String paypwd = (String) map.get("paypwd");
+        String typCde = (String) map.get("typCde");
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
         if (!org.springframework.util.StringUtils.isEmpty(map.get("longitude"))) {
@@ -501,26 +500,38 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             latitude = (BigDecimal) map.get("latitude");//维度
         }
         String area = (String) map.get("area");//区域
+
+        //非空判断
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
+                || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(paypwd)
+                || StringUtils.isEmpty(typCde)) {
+            logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
+                    + "   applSeq:" + applSeq + "   paypwd" + paypwd + "   typCde:" + typCde
+                    + "  orderNo:" + orderNo);
+            logger.info("前台获取数据有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+
         //缓存获取（放开）
         Map<String, Object> cacheMap = redisSession.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-        AppOrder appOrder = null;
-        String typCde = "";
-        try {
-            logger.info("缓存数据获取");
-            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-            logger.info("提交订单信息appOrder:" + appOrder);
-            if (appOrder == null) {
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-            }
-            typCde = appOrder.getTypCde();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        AppOrder appOrder = null;
+//        String typCde = "";
+//        try {
+//            logger.info("缓存数据获取");
+//            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
+//            logger.info("提交订单信息appOrder:" + appOrder);
+//            if (appOrder == null) {
+//                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+//            }
+//            typCde = appOrder.getTypCde();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         //参数非空校验
         if (StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
