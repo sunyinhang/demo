@@ -3,13 +3,10 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.CrmManageService;
-import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
-import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +38,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     private Session session;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private CustExtInfoService custExtInfoService;
 
     @Value("${app.other.haierDataImg_url}")
     protected String haierDataImg_url;
@@ -853,6 +852,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         Map identitybodyjson = (Map<String, Object>) identityresultmap.get("body");
         //信息保存
         String custNo = (String) identitybodyjson.get("custNo");
+        String custName = (String) identitybodyjson.get("custName");
         String cardNo = (String) identitybodyjson.get("cardNo");
         String bankCode = (String) identitybodyjson.get("acctBankNo");
         String bankName = (String) identitybodyjson.get("acctBankName");
@@ -861,6 +861,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String cardPhone = (String) identitybodyjson.get("mobile");
 
         cacheMap.put("custNo", custNo);
+        cacheMap.put("custName", custName);
         cacheMap.put("cardNo", cardNo);
         cacheMap.put("bankCode", bankCode);
         cacheMap.put("bankName", bankName);
@@ -991,7 +992,61 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             }
         }
         logger.info("绑定手机号***********************结束");
-        return success();
+
+        Map<String, Object> hrparamMap = new HashMap<String, Object>();
+        hrparamMap.put("custName",custName);
+        hrparamMap.put("idTyp",idType);
+        hrparamMap.put("idNo",idNo);
+        Map<String, Object> custWhiteListCmis = custExtInfoService.getCustWhiteListCmis(token, channel, channelNo, hrparamMap);
+        Map updmobileheadjson = (Map<String, Object>) custWhiteListCmis.get("head");
+        String updmobileretflag = (String) updmobileheadjson.get("retFlag");
+        if (!"00000".equals(updmobileretflag)) {
+            String retMsg = (String) updmobileheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        boolean hehyflag = false; //海尔会员标识
+        List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
+        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
+            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")){
+                hehyflag = true;
+                break;
+            }
+        }
+        Map<String, Object> resultparamMap = new HashMap<String, Object>();
+        if(hehyflag){
+            Map<String, Object> cacheedmap = new HashMap<>();
+            cacheedmap.put("channel", "11");
+            cacheedmap.put("channelNo", channelNo);
+            cacheedmap.put("userId", userId);
+            Map<String, Object> mapcache = appServerService.checkEdAppl(token, cacheedmap);
+            logger.info("额度申请校验接口返回数据：" + mapcache);
+            if (!HttpUtil.isSuccess(mapcache)) {
+                Map<String, Object> head = (Map) mapcache.get("head");
+                String retFlag = (String) head.get("retFlag");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            Object head2 = mapcache.get("head");
+            Map<String, Object> retinfo = (Map) head2;
+            String retFlag_ = (String) retinfo.get("retFlag");
+            String retMsg_ = (String) retinfo.get("retMsg");
+
+            if ("00000".equals(retFlag_)) {
+                Map<String, Object> headinfo = (Map) (mapcache.get("body"));
+                String applType = (String) headinfo.get("applType");
+                String flag = (String) headinfo.get("flag");
+                String retmsg = "01";//未申请
+                if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+                    resultparamMap.put("flag", "3");//预授信额度
+                } else if ("2".equals(applType)) {
+
+                } else if ("".equals(flag)) {
+                    resultparamMap.put("flag", "2");//通过  我的额度
+                }
+            }
+        }else{
+            resultparamMap.put("flag", "1");//通过  个人扩展信息
+        }
+        return success(resultparamMap);
     }
 
 
