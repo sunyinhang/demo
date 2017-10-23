@@ -27,25 +27,32 @@ import com.haiercash.payplatform.rest.common.CommonRestUtil;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.AppServerUtils;
+import com.haiercash.payplatform.utils.ApplicationContextUtil;
+import com.haiercash.payplatform.utils.BusinessException;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
  */
 @Service
 public class CashLoanServiceImpl extends BaseService implements CashLoanService {
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
     @Autowired
     private Session redisSession;
     @Autowired
@@ -62,15 +69,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     private CashLoanConfig cashLoanConfig;
 
     @Override
-    public ModelAndView getActivityUrl() {
+    public String getActivityUrl() {
         String channelNo = this.getChannelNo();
         this.logger.info("开始活动跳转 channelNo:" + channelNo);
         EntrySetting setting = this.entrySettingDao.selectBychanelNo(channelNo);
         if (setting == null) {
-            return new ModelAndView("forward:/error");
+            return StringUtils.EMPTY;
         }
-        String url = haiercashpay_web_url + setting.getActivityUrl();
-        return new ModelAndView("forward:" + url);
+        return this.cashLoanConfig.getActiveUrlPrefix() + setting.getActivityUrl();
     }
 
     @Override
@@ -208,8 +214,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
     private Map<String, Object> joinActivityRedirect(EntrySetting setting) {
         logger.info("申请接口*******************开始");
-        Map<String, Object> cachemap = new HashMap<String, Object>();
-        Map<String, Object> returnmap = new HashMap<String, Object>();//返回的map
+        Map<String, Object> cachemap = new HashMap<>();
+        Map<String, Object> returnmap = new HashMap<>();//返回的map
         String channelNo = this.getChannelNo();
         String thirdToken = this.getToken();
         String verifyUrl = setting.getVerifyUrlThird() + thirdToken;

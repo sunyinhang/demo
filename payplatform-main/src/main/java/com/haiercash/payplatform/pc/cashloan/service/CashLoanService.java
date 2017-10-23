@@ -3,8 +3,6 @@ package com.haiercash.payplatform.pc.cashloan.service;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.rest.IResponse;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +11,7 @@ import java.util.Map;
  * Created by 许崇雷 on 2017-10-10.
  */
 public interface CashLoanService {
-    ModelAndView getActivityUrl();
+    String getActivityUrl();
 
     Map<String, Object> joinActivity();
 
@@ -49,6 +47,7 @@ public interface CashLoanService {
 
     /**
      * 现金贷贷款提交
+     *
      * @param map
      * @return
      * @throws Exception
@@ -57,6 +56,7 @@ public interface CashLoanService {
 
     /**
      * 现金贷订单保存
+     *
      * @param map
      * @return
      */

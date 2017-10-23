@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.util.Map;
  */
 @RestController
 public class CashLoanController extends BaseController {
-
     @Autowired
     private CashLoanService cashLoanService;
 
@@ -29,10 +27,10 @@ public class CashLoanController extends BaseController {
     }
 
     @RequestMapping(value = "/api/payment/activity", method = RequestMethod.GET)
-    public ModelAndView activity() throws ServletException, IOException {
+    public String activity() throws ServletException, IOException {
         String channelNo = this.getChannelNo();
         if (StringUtils.isEmpty(channelNo))
-            return new ModelAndView("forward:/error");
+            return StringUtils.EMPTY;
         return cashLoanService.getActivityUrl();
     }
 
