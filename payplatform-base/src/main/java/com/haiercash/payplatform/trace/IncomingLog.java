@@ -62,6 +62,9 @@ public final class IncomingLog {
         String method = request.getMethod().toUpperCase();//转大写
         builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
+        builder.append("Response Status:").append(Environment.NewLine);
+        builder.append("    ").append(response.getStatus()).append(Environment.NewLine);
+        //
         builder.append("Response Headers:").append(Environment.NewLine);
         writeHeaders(builder, response);
         //

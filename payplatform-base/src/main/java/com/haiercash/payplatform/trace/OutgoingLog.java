@@ -59,6 +59,9 @@ public final class OutgoingLog {
     }
 
     public static void writeResponseLog(StringBuilder builder, ClientResponseWrapper response, long tookMs) throws IOException {
+        builder.append("Response Status:").append(Environment.NewLine);
+        builder.append("    ").append(response.getRawStatusCode()).append(Environment.NewLine);
+        //
         builder.append("Response Headers:").append(Environment.NewLine);
         writeHeaders(builder, response.getHeaders());
         //
