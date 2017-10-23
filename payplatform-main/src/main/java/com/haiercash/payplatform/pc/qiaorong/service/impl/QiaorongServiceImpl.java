@@ -235,7 +235,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         identityMap.put("mobile", phone); //手机号 √
         identityMap.put("dataFrom", channelNo); //数据来源 √
         identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
-        identityMap.put("userId", phone); //客户userId
+        //identityMap.put("userId", phone); //客户userId
 //        identityMap.put("acctProvince", acctProvince); //开户行省代码
 //        identityMap.put("acctCity", acctCity); //开户行市代码
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
@@ -437,7 +437,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map<String, Object> resultregistermap = HttpUtil.restPostMap(url, registermap);
         logger.info("用户注册接口, 返回数据：" + resultregistermap);
 
-        //Map resultregistermap = appServerService.saveUauthUsers(token, registermap);
         Map headmap = (Map<String, Object>) resultregistermap.get("head");
         String retFlag = (String) headmap.get("retFlag");
         if (!"00000".equals(retFlag)) {
