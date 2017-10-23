@@ -235,7 +235,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         identityMap.put("mobile", phone); //手机号 √
         identityMap.put("dataFrom", channelNo); //数据来源 √
         identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
-        identityMap.put("userId", phone); //客户userId
+        //identityMap.put("userId", phone); //客户userId
 //        identityMap.put("acctProvince", acctProvince); //开户行省代码
 //        identityMap.put("acctCity", acctCity); //开户行市代码
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
@@ -256,30 +256,30 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cacheMap.put("certNo", certNo);
         session.set(token, cacheMap);
 
-        //2.判断是否已注册
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("channelNo",channelNo);
-        paramMap.put("channel",channel);
-        paramMap.put("mobile", EncryptUtil.simpleEncrypt(phone));
-        Map<String, Object> registerMap = appServerService.isRegister(token, paramMap);
-        if(registerMap == null){
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
-        Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
-        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
-        if(!"00000".equals(resultmapFlag)){
-            String retMsg = (String) resultmapjsonMap.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
-        Map resultmapbodyMap = (Map<String, Object>) registerMap.get("body");
-        String isRegister = (String)resultmapbodyMap.get("isRegister");
-        if("N".equals(isRegister)){
-            returnmap.put("flag","01");//跳转注册页面
-            return success(returnmap);//跳转注册页面
-        }
-        if(!"Y".equals(isRegister)){
-            return fail("01", "手机已被注册！请联系客服修改。客服电话：400777");
-        }
+//        //2.判断是否已注册
+//        Map<String, Object> paramMap = new HashMap<String, Object>();
+//        paramMap.put("channelNo",channelNo);
+//        paramMap.put("channel",channel);
+//        paramMap.put("mobile", EncryptUtil.simpleEncrypt(phone));
+//        Map<String, Object> registerMap = appServerService.isRegister(token, paramMap);
+//        if(registerMap == null){
+//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//        }
+//        Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
+//        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
+//        if(!"00000".equals(resultmapFlag)){
+//            String retMsg = (String) resultmapjsonMap.get("retMsg");
+//            return fail(ConstUtil.ERROR_CODE, retMsg);
+//        }
+//        Map resultmapbodyMap = (Map<String, Object>) registerMap.get("body");
+//        String isRegister = (String)resultmapbodyMap.get("isRegister");
+//        if("N".equals(isRegister)){
+//            returnmap.put("flag","01");//跳转注册页面
+//            return success(returnmap);//跳转注册页面
+//        }
+//        if(!"Y".equals(isRegister)){
+//            return fail("01", "手机已被注册！请联系客服修改。客服电话：400777");
+//        }
 
         //3.手机号已注册，判断是否需要人脸识别
         Map<String, Object> faceparamMap = new HashMap<String, Object>();
@@ -437,7 +437,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map<String, Object> resultregistermap = HttpUtil.restPostMap(url, registermap);
         logger.info("用户注册接口, 返回数据：" + resultregistermap);
 
-        //Map resultregistermap = appServerService.saveUauthUsers(token, registermap);
         Map headmap = (Map<String, Object>) resultregistermap.get("head");
         String retFlag = (String) headmap.get("retFlag");
         if (!"00000".equals(retFlag)) {
