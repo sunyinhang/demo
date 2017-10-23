@@ -703,7 +703,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String orderNo = (String) map.get("orderNo");//待提交时必传
         String areaCode = (String) map.get("areaCode");//区编码
         String applyAmt = (String) map.get("applyAmt");//申请金额
-        String typcde = (String) map.get("typcde");//贷款品种
+        String typCde = (String) map.get("typCde");//贷款品种
         String purpose = (String) map.get("purpose");//贷款用途
         String applCardNo = (String) map.get("applCardNo");//放款卡号
         String repayApplCardNo = (String) map.get("repayApplCardNo");//还款卡号
@@ -711,11 +711,11 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //非空判断
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
                 || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp) || StringUtils.isEmpty(applyAmt)
-                || StringUtils.isEmpty(typcde) || StringUtils.isEmpty(purpose) || StringUtils.isEmpty(applCardNo)
+                || StringUtils.isEmpty(typCde) || StringUtils.isEmpty(purpose) || StringUtils.isEmpty(applCardNo)
                 || StringUtils.isEmpty(repayApplCardNo)) {
             logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
                     + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp + "   updflag:" + updflag
-                    + "  orderNo:" + orderNo + "   applyAmt:" + applyAmt + "   typcde:" + typcde
+                    + "  orderNo:" + orderNo + "   applyAmt:" + applyAmt + "   typcde:" + typCde
                     + "  purpose:" + purpose + "  applCardNo:" + applCardNo + "   repayApplCardNo:" + repayApplCardNo);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -750,7 +750,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         logger.info("订单保存，获取订单金额，总利息金额");
         //IResponse<List<LoanType>> IResponse= this.getLoanType(null, channelNo, custName, "20", certNo);
         Map<String, Object> payMap = new HashMap<String, Object>();
-        payMap.put("typCde", typcde);
+        payMap.put("typCde", typCde);
         payMap.put("apprvAmt", applyAmt);
         payMap.put("applyTnrTyp", applyTnrTyp);
         payMap.put("applyTnr", applyTnr);
@@ -812,7 +812,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         appOrder.setPurpose(purpose);//贷款用途
         appOrder.setApplCardNo(applCardNo);// 放款卡号
         appOrder.setRepayApplCardNo(repayApplCardNo);// 还款卡号
-        appOrder.setTypCde(typcde);//贷款品种
+        appOrder.setTypCde(typCde);//贷款品种
         appOrder.setApplyAmt(applyAmt);//借款总额);//借款总额
         //
         if ("1".equals(updflag)) {
@@ -892,7 +892,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         //2.是否允许申请贷款
         logger.info("查看是否允许申请贷款");
-        String typCde = appOrder.getTypCde();
+//        String typCde = appOrder.getTypCde();
         SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
         String date = dateFormater.format(new Date());
         Map<String, Object> queryordermap = new HashMap<String, Object>();
