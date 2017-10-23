@@ -1,17 +1,16 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.haiercash.commons.redis.Session;
-import com.haiercash.payplatform.controller.BaseController;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.controller.BaseController;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.tasks.rabbitmq.CmisMessageHandler;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,7 +197,7 @@ public class ShunguangController extends BaseController {
             return fail(ConstUtil.ERROR_CODE, "交易流水号(applyNo)不能为空");
         }
         if (StringUtils.isEmpty(map.get("channelNo"))) {
-            return fail(ConstUtil.ERROR_CODE, "交易渠道(channleNo)不能为空");
+            return fail(ConstUtil.ERROR_CODE, "交易渠道(channelNo)不能为空");
         }
         if (StringUtils.isEmpty(map.get("tradeCode"))) {
             return fail(ConstUtil.ERROR_CODE, "交易编码(tradeCode)不能为空");
@@ -214,6 +213,7 @@ public class ShunguangController extends BaseController {
 
     /**
      * 额度测试入口
+     *
      * @param map
      * @return
      * @throws Exception
@@ -226,6 +226,7 @@ public class ShunguangController extends BaseController {
 
     /**
      * 贷款测试入口
+     *
      * @param appOrder
      * @return
      * @throws Exception
