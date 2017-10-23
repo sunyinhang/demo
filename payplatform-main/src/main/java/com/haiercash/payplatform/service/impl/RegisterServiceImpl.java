@@ -277,6 +277,12 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             Map<String, Object> headinfo = (Map) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
+            String outSts_f = (String) headinfo.get("outSts");
+            if("25".equals(outSts_f)){
+                resultparamMap.put("flag", "10");// 拒绝
+                resultparamMap.put("token", token);
+                return success(resultparamMap);
+            }
             String retmsg = "01";//未申请
             if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
                 if (hehyflag){
