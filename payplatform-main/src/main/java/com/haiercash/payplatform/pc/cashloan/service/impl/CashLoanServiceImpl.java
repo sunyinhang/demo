@@ -183,10 +183,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         for (String tagId : intersectTags) {
             Map<String, Object> args = new HashMap<>();
             args.put("tagId", tagId);
-            IResponse<List<LoanType>> loanResponse = CommonRestUtil.getForObject(loanUrl, new GenericType<List<LoanType>>() {
-            }, args);
+            IResponse<LoanTypes> loanResponse = CommonRestUtil.getForObject(loanUrl, LoanTypes.class, args);
             loanResponse.assertSuccessNeedBody();
-            loanTypeList.addAll(loanResponse.getBody());
+            loanTypeList.addAll(loanResponse.getBody().getInfo());
         }
         //贷款品种去重
         List<LoanType> distinctLoanTypes = Linq.asEnumerable(loanTypeList).distinct().toList();//去重
@@ -690,10 +689,10 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String repayApplCardNo = (String) map.get("repayApplCardNo");//还款卡号
 
         //非空判断
-        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
                 || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp) || StringUtils.isEmpty(applyAmt)
                 || StringUtils.isEmpty(typcde) || StringUtils.isEmpty(purpose) || StringUtils.isEmpty(applCardNo)
-                || StringUtils.isEmpty(repayApplCardNo)){
+                || StringUtils.isEmpty(repayApplCardNo)) {
             logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
                     + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp + "   updflag:" + updflag
                     + "  orderNo:" + orderNo + "   applyAmt:" + applyAmt + "   typcde:" + typcde
@@ -716,14 +715,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
         Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
-        if (!HttpUtil.isSuccess(custInforesult) ) {
+        if (!HttpUtil.isSuccess(custInforesult)) {
             return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
         }
         String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
         com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
         String custName = (String) custresult.get("custName");
         String custNo = (String) custresult.get("custNo");
-        logger.info("客户编号：" +custNo + "   客户姓名：" + custName);
+        logger.info("客户编号：" + custNo + "   客户姓名：" + custName);
         String certNo = (String) custresult.get("certNo");
         String mobile = (String) custresult.get("mobile");
 
@@ -737,9 +736,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         payMap.put("applyTnr", applyTnr);
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
-        Map<String, Object> payresultMap =  appServerService.getPaySs(token, payMap);
-        if (!HttpUtil.isSuccess(payresultMap) ) {//额度校验失败
-            String retmsg = (String) ((Map<String, Object>)(payresultMap.get("head"))).get("retMsg");
+        Map<String, Object> payresultMap = appServerService.getPaySs(token, payMap);
+        if (!HttpUtil.isSuccess(payresultMap)) {//额度校验失败
+            String retmsg = (String) ((Map<String, Object>) (payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
         String payresult = com.alibaba.fastjson.JSONObject.toJSONString(payresultMap);
@@ -775,7 +774,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         appOrder.setApplCardNo(applCardNo);// 放款卡号
         appOrder.setRepayApplCardNo(repayApplCardNo);// 还款卡号
         //
-        if("1".equals(updflag)){
+        if ("1".equals(updflag)) {
             appOrder.setOrderNo(orderNo);
         }
 
@@ -798,10 +797,10 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             return fail(ConstUtil.ERROR_CODE, "没有准入资格");
         }
 
-        if("SHH".equals(isPass.toUpperCase())){
+        if ("SHH".equals(isPass.toUpperCase())) {
             appOrder.setWhiteType("SHH");//白名单类型
         } else {
-            String level = (String) ((Map<String, Object>)(ispassresult.get("body"))).get("level");
+            String level = (String) ((Map<String, Object>) (ispassresult.get("body"))).get("level");
             appOrder.setWhiteType(level);
         }
 
