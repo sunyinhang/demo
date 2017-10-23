@@ -773,6 +773,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         appOrder.setPurpose(purpose);//贷款用途
         appOrder.setApplCardNo(applCardNo);// 放款卡号
         appOrder.setRepayApplCardNo(repayApplCardNo);// 还款卡号
+        appOrder.setTypCde(typcde);//贷款品种
         //
         if ("1".equals(updflag)) {
             appOrder.setOrderNo(orderNo);
