@@ -2,13 +2,11 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
-import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.*;
 import org.json.JSONObject;
@@ -28,6 +26,8 @@ import java.util.*;
  */
 @Service
 public class CommonPageServiceImpl extends BaseService implements CommonPageService {
+    @Value("${app.other.appServer_page_url}")
+    protected String appServer_page_url;
     @Autowired
     private Session session;
     @Autowired
@@ -45,8 +45,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     @Autowired
     private OrderService orderService;
 
-    @Value("${app.other.appServer_page_url}")
-    protected String appServer_page_url;
     /**
      * 合同展示
      * @param map
@@ -382,6 +380,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 applSeq = (String) bodyMap.get("applSeq");
                 orderNo = (String) bodyMap.get("applSeq");
                 this.saveRelation(applSeq, appOrder.getTypGrp(), applSeq, appOrder.getCustNo());
+                Map responsemap = (Map<String, Object>) resultResponseMap.get("response");
+                Map bodymap = (Map<String, Object>) responsemap.get("body");
+                return success(bodymap);
             } else {
                 return (Map<String, Object>) resultResponseMap.get("response");
             }
@@ -399,7 +400,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             }
         }
 
-        return success();
+        //return success();
     }
 
     @Override

@@ -28,12 +28,7 @@ import com.haiercash.payplatform.rest.common.CommonRestUtil;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.AppServerUtils;
-import com.haiercash.payplatform.utils.ApplicationContextUtil;
-import com.haiercash.payplatform.utils.BusinessException;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,19 +39,15 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
  */
 @Service
 public class CashLoanServiceImpl extends BaseService implements CashLoanService {
+    @Value("${app.other.haiercashpay_web_url}")
+    protected String haiercashpay_web_url;
     @Autowired
     private Session redisSession;
     @Autowired
@@ -71,9 +62,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     private CommonPageService commonPageService;
     @Autowired
     private CashLoanConfig cashLoanConfig;
-
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
 
     @Override
     public ModelAndView getActivityUrl() {
@@ -535,8 +523,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         //参数非空校验
-        if (org.springframework.util.StringUtils.isEmpty(channel) || org.springframework.util.StringUtils.isEmpty(channelNo) || org.springframework.util.StringUtils.isEmpty(token)
-                || org.springframework.util.StringUtils.isEmpty(orderNo) || org.springframework.util.StringUtils.isEmpty(applSeq)) {
+        if (StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
+                || StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(orderNo)) {
             logger.info("channel:" + channel + "  channelNo:" + channelNo + "   token:" + token
                     + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
             logger.info("前台获取数据有误");
