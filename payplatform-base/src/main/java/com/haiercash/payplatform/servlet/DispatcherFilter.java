@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.servlet;
 
+import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.context.RequestContext;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.trace.IncomingLog;
@@ -24,6 +25,14 @@ import java.io.IOException;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public final class DispatcherFilter implements Filter {
+    private static final String NAME_TOKEN = "token";
+    private static final String NAME_CHANNEL = "channel";
+    private static final String NAME_CHANNEL_NO = "channelNo";
+
+    private String getArg(DispatcherRequestWrapper request, String name) {
+        return StringUtils.defaultIfEmpty(request.getHeader(name), request.getParameter(name));
+    }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
@@ -40,7 +49,7 @@ public final class DispatcherFilter implements Filter {
         DispatcherRequestWrapper request = new DispatcherRequestWrapper((HttpServletRequest) servletRequest);
         DispatcherResponseWrapper response = new DispatcherResponseWrapper((HttpServletResponse) servletResponse);
         RequestContext.init(request, response);
-        ThreadContext.init(request.getHeader("token"), request.getHeader("channel"), request.getHeader("channelno"));
+        ThreadContext.init(this.getArg(request, NAME_TOKEN), this.getArg(request, NAME_CHANNEL), this.getArg(request, NAME_CHANNEL_NO));
         IncomingLog.writeRequestLog(request);
         long begin = System.currentTimeMillis();
         try {
