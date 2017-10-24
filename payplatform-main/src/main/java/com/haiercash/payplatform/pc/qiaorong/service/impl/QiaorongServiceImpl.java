@@ -13,10 +13,7 @@ import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.HttpClient;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.payplatform.utils.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -825,7 +822,23 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 //        if(resData == null || "".equals(resData)){
 //            return fail("18", "回调接口调用失败");
 //        }
-        return success();
+
+        //8.订单提交
+        // 调信贷贷款申请接口.
+        HashMap<String, Object> mapSubmit = new HashMap<>();
+        mapSubmit.put("applSeq", applseq);
+        mapSubmit.put("flag", "1");//0：贷款取消  1:申请提交   2：合同提交
+        mapSubmit.put("sysFlag", "11");
+        mapSubmit.put("channel", channelNo);//渠道编码
+        Map<String, Object> responseMap = CmisUtil.getCmisResponse(CmisTradeCode.TRADECODE_DK_CANCEL, null, mapSubmit);
+        logger.info("信贷100026提交接口返回" + responseMap);
+        if (responseMap == null) {
+            logger.info("贷款提交失败,信贷系统贷款提交返回信息为空");
+            return fail(ConstUtil.ERROR_CODE, "贷款提交失败");
+        }
+        Map<String, Object> response = (Map<String, Object>) responseMap.get("response");
+
+        return response;
     }
 
 
