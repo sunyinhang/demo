@@ -21,14 +21,9 @@ import java.util.Map;
  */
 @RestController
 public class CommonPageController extends BaseController {
-    public Log logger = LogFactory.getLog(getClass());
     //模块编码  01
     private static String MODULE_NO = "01";
-
-    public CommonPageController() {
-        super(MODULE_NO);
-    }
-
+    public Log logger = LogFactory.getLog(getClass());
     @Autowired
     private Cache cache;
     @Autowired
@@ -49,6 +44,10 @@ public class CommonPageController extends BaseController {
     private InstallmentAccountService InstallmentAccountService;
     @Autowired
     private CommonPageService commonPageService;
+
+    public CommonPageController() {
+        super(MODULE_NO);
+    }
 
     /**
      * OCR获取身份信息
@@ -480,7 +479,7 @@ public class CommonPageController extends BaseController {
     }
 
     /**
-     * 查询订单详情
+     * 查询订单详情（订单提交之后可查询）
      *
      * @return
      */
