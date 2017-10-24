@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.pc.qiaorong.service.impl;
 
 import com.bestvike.lang.Base64Utils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
@@ -15,17 +14,14 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
 import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.HttpClient;
 import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
-import org.apache.ibatis.mapping.ResultMap;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -35,6 +31,11 @@ import java.util.*;
 @Service
 public class QiaorongServiceImpl extends BaseService implements QiaorongService {
 
+    private static int limitAmount = 30000;
+    @Value("${app.other.moxie_apikey}")
+    protected String moxie_apikey;
+    @Value("${app.other.haiercashpay_web_url}")
+    protected String haiercashpay_web_url;
     @Autowired
     private Session session;
     @Autowired
@@ -47,13 +48,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private SignContractInfoDao signContractInfoDao;
-    @Value("${app.other.moxie_apikey}")
-    protected String moxie_apikey;
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
-
-    private static int limitAmount = 30000;
-
 
     /*
     ca签章
@@ -235,7 +229,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         identityMap.put("mobile", phone); //手机号 √
         identityMap.put("dataFrom", channelNo); //数据来源 √
         identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
-        //identityMap.put("userId", phone); //客户userId
+        identityMap.put("userId", phone); //客户userId
 //        identityMap.put("acctProvince", acctProvince); //开户行省代码
 //        identityMap.put("acctCity", acctCity); //开户行市代码
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
@@ -245,7 +239,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             String retMsg = (String) identityheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        Map identitybodyjson = (HashMap<String, Object>) identityresultmap.get("body");
+        Map identitybodyjson = (Map<String, Object>) identityresultmap.get("body");
         //信息保存
         String custNo = (String) identitybodyjson.get("custNo");
         String custName = (String) identitybodyjson.get("custName");
@@ -669,7 +663,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (stringObjectMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) stringObjectMap.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if (!"00000".equals(resultmapFlag)) {
             return fail(ConstUtil.ERROR_CODE, "短信验证码校验失败");
