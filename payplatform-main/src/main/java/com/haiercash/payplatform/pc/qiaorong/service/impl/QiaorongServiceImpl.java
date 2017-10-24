@@ -229,7 +229,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         identityMap.put("mobile", phone); //手机号 √
         identityMap.put("dataFrom", channelNo); //数据来源 √
         identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
-        identityMap.put("userId", phone); //客户userId
+//        identityMap.put("userId", phone); //客户userId
 //        identityMap.put("acctProvince", acctProvince); //开户行省代码
 //        identityMap.put("acctCity", acctCity); //开户行市代码
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
