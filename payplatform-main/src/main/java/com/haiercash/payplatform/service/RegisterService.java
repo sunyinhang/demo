@@ -21,4 +21,7 @@ public interface RegisterService {
 
     //客户登录密码设置、修改
     public Map<String, Object> custUpdatePwd(Map<String, Object> params) throws Exception;
+
+    //三方联合登陆绑定用户
+    public Map<String, Object> validateAndBindOtherUser(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
 }

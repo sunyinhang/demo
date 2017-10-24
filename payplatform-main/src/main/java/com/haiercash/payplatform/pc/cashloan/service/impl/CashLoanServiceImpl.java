@@ -224,6 +224,10 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         ThirdTokenVerifyResult thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
         //从后台查询用户信息
         Map<String, Object> userInfo = this.queryUserInfoFromAppServer(thirdInfo.getUserId());
+        String userId__ = thirdInfo.getUserId();
+        String phoneNo_ = thirdInfo.getPhoneNo();
+        cachemap.put("uidHaier", userId__);
+        cachemap.put("haieruserId", phoneNo_);
         String retFlag = HttpUtil.getReturnCode(userInfo);
         if (Objects.equals(retFlag, "00000")) {
             //集团uid已在统一认证做过绑定
@@ -242,7 +246,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
                 this.redisSession.set(thirdToken, cachemap);
                 returnmap.put("flag", "2");//跳转登陆绑定页
-                returnmap.put("token", thirdToken);
+//                returnmap.put("token", thirdToken);
                 return success(returnmap);
             } else {
                 //注册失败

@@ -9,6 +9,7 @@ import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -462,5 +463,148 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             returnmap.put("flag", "2");//设置成功
         }
         return success(returnmap);
+    }
+
+    @Override
+    public Map<String, Object> validateAndBindOtherUser(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        String password = (String) params.get("password");
+        if (StringUtils.isEmpty(password)) {
+            logger.info("password:" + password);
+            logger.info("前台获取请求参数有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+        //获取缓存数据
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //获取第三方uid
+        String uidHaier = (String) cacheMap.get("uidHaier");
+        if (StringUtils.isEmpty(uidHaier)) {
+            logger.info("uidHaier:" + uidHaier);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //当前用户userID
+        String uidLocal = (String) cacheMap.get("haieruserId");
+        if (StringUtils.isEmpty(uidLocal)) {
+            logger.info("uidLocal:" + uidLocal);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        //验证并绑定集团用户
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
+        paramMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));
+        paramMap.put("password", EncryptUtil.simpleEncrypt(password));
+        Map<String, Object> usermap = appServerService.validateAndBindHaierUser(token, paramMap);
+        if (!HttpUtil.isSuccess(usermap)) {
+            String retMsg = (String) ((Map<String, Object>) (usermap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        //获取绑定手机号
+        String phoneNo = (String) ((Map<String, Object>) (usermap.get("body"))).get("mobile");
+        cacheMap.put("userId", uidLocal);//统一认证userId
+        cacheMap.put("phoneNo", phoneNo);//绑定手机号
+        //4.token绑定
+        Map<String, Object> bindMap = new HashMap<String, Object>();
+        bindMap.put("userId", uidLocal);//内部userId
+        bindMap.put("token", token);
+        Map bindresult = appServerService.saveThirdPartToken(bindMap);
+        if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        //5.查询实名信息
+        Map<String, Object> custMap = new HashMap<String, Object>();
+        custMap.put("userId", uidLocal);//内部userId
+        Map custresult = appServerService.queryPerCustInfo(token, custMap);
+        String custretflag = (String) ((Map<String, Object>) (custresult.get("head"))).get("retFlag");
+        if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
+            String custretMsg = (String) ((Map<String, Object>) (custresult.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, custretMsg);
+        }
+        if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
+            session.set(token, cacheMap);
+//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+//            map.put("backurl", backurl);
+//            logger.info("页面跳转到：" + backurl);
+            map.put("flag", "1");//  跳转无额度页面
+            return success(map);
+        }
+        String certType = (String) ((Map<String, Object>) (custresult.get("body"))).get("certType");//证件类型
+        String certNo = (String) ((Map<String, Object>) (custresult.get("body"))).get("certNo");//身份证号
+        String custNo = (String) ((Map<String, Object>) (custresult.get("body"))).get("custNo");//客户编号
+        String custName = (String) ((Map<String, Object>) (custresult.get("body"))).get("custName");//客户名称
+        String cardNo = (String) ((Map<String, Object>) (custresult.get("body"))).get("cardNo");//银行卡号
+        String bankNo = (String) ((Map<String, Object>) (custresult.get("body"))).get("acctBankNo");//银行代码
+        String bankName = (String) ((Map<String, Object>) (custresult.get("body"))).get("acctBankName");//银行名称
+
+//        cacheMap.put("custNo", custNo);//客户编号
+//        cacheMap.put("name", custName);//客户姓名
+//        cacheMap.put("cardNo", cardNo);//银行卡号
+//        cacheMap.put("bankCode", bankNo);//银行代码
+//        cacheMap.put("bankName", bankName);//银行名称
+//        cacheMap.put("idNo", certNo);//身份证号
+//        cacheMap.put("idType", certType);
+
+        cacheMap.put("custNo", custNo);//客户编号
+        cacheMap.put("name", custName);//客户姓名
+        cacheMap.put("cardNo", cardNo);//银行卡号
+        cacheMap.put("bankCode", bankNo);//银行代码
+        cacheMap.put("bankName", bankName);//银行名称
+        cacheMap.put("idNo", certNo);//身份证号
+        cacheMap.put("idCard", certNo);//身份证号
+        cacheMap.put("idType", certType);
+        session.set(token, cacheMap);
+        //6.查询客户额度
+        Map<String, Object> edMap = new HashMap<String, Object>();
+        edMap.put("userId", uidLocal);//内部userId
+        edMap.put("channel", "11");
+        edMap.put("channelNo", channelNo);
+        Map edresult = appServerService.checkEdAppl(token, edMap);
+        if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
+            String retmsg = (String) ((Map<String, Object>) (edresult.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        //获取自主支付可用额度金额
+        String crdNorAvailAmt = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
+        if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
+            //跳转有额度页面
+//            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
+//            map.put("backurl", backurl);
+//            logger.info("页面跳转到：" + backurl);
+            map.put("flag", "2");// 跳转有额度页面
+            return success(map);
+        }
+        //审批状态判断
+        String outSts = (String) ((Map<String, Object>) (edresult.get("body"))).get("outSts");
+        if ("01".equals(outSts)) {//额度正在审批中
+//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
+//            map.put("backurl", backurl);
+//            logger.info("页面跳转到：" + backurl);
+            map.put("flag", "3");//额度正在审批中
+            return success(map);
+        } else if ("22".equals(outSts)) {//审批被退回
+            String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
+            cacheMap.put("crdSeq", crdSeq);
+            session.set(token, cacheMap);
+//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
+//            map.put("backurl", backurl);
+//            logger.info("页面跳转到：" + backurl);
+            map.put("flag", "4");//审批被退回
+            return success(map);
+        } else if ("25".equals(outSts)) {//审批被拒绝
+//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
+//            map.put("backurl", backurl);
+//            logger.info("页面跳转到：" + backurl);
+            map.put("flag", "5");//审批被拒绝
+            return success(map);
+        } else {//没有额度  额度激活
+//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
+//            map.put("backurl", backurl);
+//            logger.info("页面跳转到：" + backurl);
+            map.put("flag", "6");//没有额度  额度激活
+            return success(map);
+        }
     }
 }
