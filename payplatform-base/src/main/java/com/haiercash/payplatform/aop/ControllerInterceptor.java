@@ -1,7 +1,11 @@
 package com.haiercash.payplatform.aop;
 
+import com.bestvike.lang.Convert;
+import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.controller.BaseController;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -20,6 +24,11 @@ import java.util.Map;
 @Aspect
 @Component
 public final class ControllerInterceptor {
+    private static final String KEY_TOKEN = "token";
+    private static final String KEY_CHANNEL = "channel";
+    private static final String KEY_CHANNEL_NO = "channelNo";
+    private final Log logger = LogFactory.getLog(ControllerInterceptor.class);
+
     @Pointcut("execution(* com.haiercash..*.*(..)) && (@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.GetMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)" +
@@ -60,9 +69,27 @@ public final class ControllerInterceptor {
         if (mapArg == null)
             mapArg = new HashMap<String, Object>();
         if (ThreadContext.exists()) {
-            mapArg.put("token", ThreadContext.getToken());
-            mapArg.put("channel", ThreadContext.getChannel());
-            mapArg.put("channelNo", ThreadContext.getChannelNo());
+            //Header
+            String tokenHeader = ThreadContext.getToken();
+            String channelHeader = ThreadContext.getChannel();
+            String channelNoHeader = ThreadContext.getChannelNo();
+            //Body
+            String tokenBody = Convert.toString(mapArg.get(KEY_TOKEN));
+            String channelBody = Convert.toString(mapArg.get(KEY_CHANNEL));
+            String channelNoBody = Convert.toString(mapArg.get(KEY_CHANNEL_NO));
+            //Merge
+            String tokenMerge = StringUtils.defaultIfEmpty(tokenHeader, tokenBody);
+            String channelMerge = StringUtils.defaultIfEmpty(channelHeader, channelBody);
+            String channelNoMerge = StringUtils.defaultIfEmpty(channelNoHeader, channelNoBody);
+            //修改
+            ThreadContext.modify(tokenMerge, channelMerge, channelNoMerge);
+            mapArg.put(KEY_TOKEN, tokenMerge);
+            mapArg.put(KEY_CHANNEL, channelMerge);
+            mapArg.put(KEY_CHANNEL_NO, channelNoMerge);
+            //日志
+            this.logger.info(String.format("常用参数(Header) token:%s channel:%s channelNo:%s", tokenHeader, channelHeader, channelNoHeader));
+            this.logger.info(String.format("常用参数(  Body) token:%s channel:%s channelNo:%s", tokenBody, channelBody, channelNoBody));
+            this.logger.info(String.format("常用参数( Merge) token:%s channel:%s channelNo:%s", tokenMerge, channelMerge, channelNoMerge));
         }
         return mapArg;
     }
