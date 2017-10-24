@@ -239,7 +239,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             String retMsg = (String) identityheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        Map identitybodyjson = (HashMap<String, Object>) identityresultmap.get("body");
+        Map identitybodyjson = (Map<String, Object>) identityresultmap.get("body");
         //信息保存
         String custNo = (String) identitybodyjson.get("custNo");
         String custName = (String) identitybodyjson.get("custName");
@@ -663,7 +663,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (stringObjectMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map resultmapjsonMap = (HashMap<String, Object>) stringObjectMap.get("head");
+        Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
         if (!"00000".equals(resultmapFlag)) {
             return fail(ConstUtil.ERROR_CODE, "短信验证码校验失败");
