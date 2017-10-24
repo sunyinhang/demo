@@ -73,6 +73,13 @@ public final class ThreadContext {
         data.controllerStack.clear();
     }
 
+    public static void modify(String token, String channel, String channelNo) {
+        ThreadContextData data = contexts.get();
+        data.token = token == null ? StringUtils.EMPTY : token;
+        data.channel = channel == null ? StringUtils.EMPTY : channel;
+        data.channelNo = channelNo == null ? StringUtils.EMPTY : channelNo;
+    }
+
     public static void reset() {
         ThreadContextData data = contexts.get();
         data.exists = false;
