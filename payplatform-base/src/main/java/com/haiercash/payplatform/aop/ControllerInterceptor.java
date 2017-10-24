@@ -24,10 +24,68 @@ import java.util.Map;
 @Aspect
 @Component
 public final class ControllerInterceptor {
-    private static final String KEY_TOKEN = "token";
-    private static final String KEY_CHANNEL = "channel";
-    private static final String KEY_CHANNEL_NO = "channelNo";
+    private static final String NAME_TOKEN = "token";
+    private static final String NAME_CHANNEL = "channel";
+    private static final String NAME_CHANNEL_NO = "channelNo";
     private final Log logger = LogFactory.getLog(ControllerInterceptor.class);
+
+    private void updateArgs(Class[] paramTypes, String[] paramNames, Object[] args) {
+        if (!ThreadContext.exists())
+            throw new RuntimeException("must init thread context first");
+        //合并参数
+        String token = ThreadContext.getToken();
+        String channel = ThreadContext.getChannel();
+        String channelNo = ThreadContext.getChannelNo();
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            for (int i = 0; i < paramTypes.length; i++) {
+                Class paramType = paramTypes[i];
+                if (!Map.class.isAssignableFrom(paramType))
+                    continue;
+                Map map = (Map) args[i];
+                if (map == null) {
+                    map = new HashMap<String, Object>();
+                    args[i] = map;
+                    continue;
+                }
+                if (StringUtils.isEmpty(token))
+                    token = Convert.toString(map.get(NAME_TOKEN));
+                if (StringUtils.isEmpty(channel))
+                    channel = Convert.toString(map.get(NAME_CHANNEL));
+                if (StringUtils.isEmpty(channelNo))
+                    channelNo = Convert.toString(map.get(NAME_CHANNEL_NO));
+            }
+        }
+        //更新参数
+        ThreadContext.modify(token, channel, channelNo);
+        for (int i = 0; i < paramTypes.length; i++) {
+            Class paramType = paramTypes[i];
+            String paramName = paramNames[i];
+            switch (paramName) {
+                case NAME_TOKEN:
+                    if (CharSequence.class.isAssignableFrom(paramType))
+                        args[i] = token;
+                    break;
+                case NAME_CHANNEL:
+                    if (CharSequence.class.isAssignableFrom(paramType))
+                        args[i] = channel;
+                    break;
+                case NAME_CHANNEL_NO:
+                    if (CharSequence.class.isAssignableFrom(paramType))
+                        args[i] = channelNo;
+                    break;
+                default:
+                    if (Map.class.isAssignableFrom(paramType)) {
+                        Map map = (Map) args[i];
+                        map.put(NAME_TOKEN, token);
+                        map.put(NAME_CHANNEL, channel);
+                        map.put(NAME_CHANNEL_NO, channelNo);
+                    }
+                    break;
+            }
+        }
+        //打印日志
+        this.logger.info(String.format("常用参数 token:%s channel:%s channelNo:%s", token, channel, channelNo));
+    }
 
     @Pointcut("execution(* com.haiercash..*.*(..)) && (@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.GetMapping)" +
@@ -49,13 +107,11 @@ public final class ControllerInterceptor {
         if (!(signature instanceof MethodSignature))
             throw new RuntimeException("join point signature must be " + MethodSignature.class);
         MethodSignature methodSignature = (MethodSignature) signature;
-        //获取参数
+        //更新参数
+        Class[] paramTypes = methodSignature.getParameterTypes();
+        String[] paramNames = methodSignature.getParameterNames();
         Object[] args = joinPoint.getArgs();
-        Class[] argTypes = methodSignature.getParameterTypes();
-        for (int i = 0; i < argTypes.length; i++) {
-            if (Map.class.isAssignableFrom(argTypes[i]))
-                args[i] = this.putThreadVars((Map) args[i]);
-        }
+        this.updateArgs(paramTypes, paramNames, args);
         //执行
         ThreadContext.enterController(controller);//进入
         try {
@@ -63,34 +119,5 @@ public final class ControllerInterceptor {
         } finally {
             ThreadContext.exitController();//退出
         }
-    }
-
-    private Map putThreadVars(Map mapArg) {
-        if (mapArg == null)
-            mapArg = new HashMap<String, Object>();
-        if (ThreadContext.exists()) {
-            //Header
-            String tokenHeader = ThreadContext.getToken();
-            String channelHeader = ThreadContext.getChannel();
-            String channelNoHeader = ThreadContext.getChannelNo();
-            //Body
-            String tokenBody = Convert.toString(mapArg.get(KEY_TOKEN));
-            String channelBody = Convert.toString(mapArg.get(KEY_CHANNEL));
-            String channelNoBody = Convert.toString(mapArg.get(KEY_CHANNEL_NO));
-            //Merge
-            String tokenMerge = StringUtils.defaultIfEmpty(tokenHeader, tokenBody);
-            String channelMerge = StringUtils.defaultIfEmpty(channelHeader, channelBody);
-            String channelNoMerge = StringUtils.defaultIfEmpty(channelNoHeader, channelNoBody);
-            //修改
-            ThreadContext.modify(tokenMerge, channelMerge, channelNoMerge);
-            mapArg.put(KEY_TOKEN, tokenMerge);
-            mapArg.put(KEY_CHANNEL, channelMerge);
-            mapArg.put(KEY_CHANNEL_NO, channelNoMerge);
-            //日志
-            this.logger.info(String.format("常用参数(Header) token:%s channel:%s channelNo:%s", tokenHeader, channelHeader, channelNoHeader));
-            this.logger.info(String.format("常用参数(  Body) token:%s channel:%s channelNo:%s", tokenBody, channelBody, channelNoBody));
-            this.logger.info(String.format("常用参数( Merge) token:%s channel:%s channelNo:%s", tokenMerge, channelMerge, channelNoMerge));
-        }
-        return mapArg;
     }
 }
