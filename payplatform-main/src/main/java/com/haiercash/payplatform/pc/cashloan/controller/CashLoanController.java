@@ -26,7 +26,7 @@ public class CashLoanController extends BaseController {
         super("21");
     }
 
-    @RequestMapping(value = "/api/payment/activity", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/payment/activity", method = RequestMethod.POST)
     public String activity() throws ServletException, IOException {
         String channelNo = this.getChannelNo();
         if (StringUtils.isEmpty(channelNo))
