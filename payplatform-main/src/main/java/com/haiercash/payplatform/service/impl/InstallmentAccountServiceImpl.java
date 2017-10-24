@@ -3,6 +3,7 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.ResultHead;
@@ -464,8 +465,11 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, (String) head.get("retMsg"));
         }
         Map<String, Object> bodyMap = (Map) paySs.get("body");
+        IResponse<Map> loanTypeAndBankInfo = custExtInfoService.getLoanTypeAndBankInfo(token, channel, channelNo);
+        Map loanTypeAndBankInfoMap = loanTypeAndBankInfo.getBody();
         resultMap.put("orderInfoMap", resMap);
         resultMap.put("paySsMap", bodyMap);
+        resultMap.put("typCdeMap", loanTypeAndBankInfoMap);
         logger.info("================resMap:" + resMap);
         return success(resultMap);
     }
