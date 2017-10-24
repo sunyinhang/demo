@@ -2,9 +2,9 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -900,12 +900,24 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
 
+    //6.1.46(POST) 外部风险信息采集
     public Map<String, Object> updateRiskInfo(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/updateRiskInfo";
         logger.info("外部风险信息采集接口，请求地址：" + url);
         logger.info("外部风险信息采集接口，请求数据：" + paramMap);
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         logger.info("外部风险信息采集接口，返回数据：" + map);
+        return map;
+    }
+
+    //6.1.21(GET)查询贷款品种详情
+    @Override
+    public Map<String, Object> pLoanTyp(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/cmis/pLoanTyp";
+        logger.info("查询贷款品种详情，请求地址：" + url);
+        logger.info("查询贷款品种详情，请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("查询贷款品种详情，返回数据" + map);
         return map;
     }
 }

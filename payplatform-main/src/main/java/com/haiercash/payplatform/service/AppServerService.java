@@ -1,7 +1,5 @@
 package com.haiercash.payplatform.service;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.Map;
 
 /**
@@ -149,4 +147,7 @@ public interface AppServerService {
     public Map<String, Object> getMoxieByApplseq(String token, Map<String, Object> paramMap);
     //3.1.13(GET)查询所有贷款用途列表(APP)
     public Map<String, Object> getPurpose (String token, Map<String, Object> paramMap);
+
+    //6.1.21.	(GET)查询贷款品种详情
+    public Map<String, Object> pLoanTyp(String token, Map<String, Object> paramMap);
 }
