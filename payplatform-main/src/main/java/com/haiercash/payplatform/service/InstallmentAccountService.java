@@ -17,4 +17,7 @@ public interface InstallmentAccountService {
     public Map<String,Object> queryApplLoanInfo(String token, String channelNo, String channel, Map<String, Object> map);
     //订单详情查询
     public Map<String,Object> queryOrderInfo(String token, String channelNo, String channel, Map<String, Object> map);
+
+    //贷款详情查询（现金贷）
+    public Map<String, Object> orderQueryXjd(String token, String channelNo, String channel, Map<String, Object> params) throws Exception;
 }

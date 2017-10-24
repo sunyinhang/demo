@@ -2,12 +2,14 @@ package com.haiercash.payplatform.common.dao;
 
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import org.mybatis.mapper.common.BaseMapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * 订单收单关系维护表dao.
  * @author Liu qingxiang
  * @since v1.0.1
  */
+@Repository
 public interface AppOrdernoTypgrpRelationDao extends BaseMapper<AppOrdernoTypgrpRelation>{
 
     /**

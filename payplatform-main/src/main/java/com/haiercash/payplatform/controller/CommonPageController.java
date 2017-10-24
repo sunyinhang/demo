@@ -3,23 +3,11 @@ package com.haiercash.payplatform.controller;
 import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.FileUtil;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.service.CustExtInfoService;
-import com.haiercash.payplatform.service.FaceService;
-import com.haiercash.payplatform.service.InstallmentAccountService;
-import com.haiercash.payplatform.service.LimitService;
-import com.haiercash.payplatform.service.OCRIdentityService;
-import com.haiercash.payplatform.service.PayPasswdService;
-import com.haiercash.payplatform.service.RegisterService;
+import com.haiercash.payplatform.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -655,5 +643,16 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/getPurpose", method = RequestMethod.GET)
     public Map<String, Object> getPurpose(@RequestParam Map<String, Object> params) {
         return commonPageService.getPurpose(params);
+    }
+
+    //    /**
+//     * @Title 贷款详情查询（现金贷）
+//     * @Description:
+//     * @author
+//     * @date 2017/10/21 15:26
+//     */
+    @RequestMapping(value = "/api/payment/orderQueryXjd", method = RequestMethod.POST)
+    public Map<String, Object> orderQueryXjd(@RequestBody Map<String, Object> params) throws Exception {
+        return InstallmentAccountService.orderQueryXjd(super.getToken(), super.getChannelNo(), super.getChannel(), params);
     }
 }

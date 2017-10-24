@@ -3,12 +3,9 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.InstallmentAccountService;
+import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.ResultHead;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -33,6 +30,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private CustExtInfoService custExtInfoService;
 
 
     @Override
@@ -432,6 +431,43 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             resMap.put("xfze",xfzeStr);
         }
         return success(resMap);
+    }
+
+
+    @Override
+    public Map<String, Object> orderQueryXjd(String token, String channelNo, String channel, Map<String, Object> params) throws Exception {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> stringObjectMap = queryOrderInfo(token, channelNo, channel, params);
+        logger.info("stringObjectMap:" + stringObjectMap);
+        ResultHead resultHead = (ResultHead) stringObjectMap.get("head");
+        String retFlag = resultHead.getRetFlag();
+        if (!"00000".equals(retFlag)) {
+            String retMsg = (String) resultHead.getRetMsg();
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map<String, Object> resMap = (Map<String, Object>) stringObjectMap.get("body");
+        Integer apply_amt = (Integer) resMap.get("apply_amt");//借款金额
+        String apply_tnr = (String) resMap.get("apply_tnr");//申请期限
+        String apply_tnr_typ = (String) resMap.get("apply_tnr_typ");//期限类型
+        String typ_cde = (String) resMap.get("typ_cde");//贷款品种
+        String mtd_cde = (String) resMap.get("mtd_cde");//还款方式
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("typCde", typ_cde);
+        map.put("apprvAmt", apply_amt);
+        map.put("applyTnrTyp", apply_tnr_typ);
+        map.put("applyTnr", apply_tnr);
+        map.put("mtdCde", mtd_cde);
+        Map<String, Object> paySs = custExtInfoService.getPaySs(token, channel, channelNo, map);
+        Map<String, Object> head = (Map) paySs.get("head");
+        if (!"00000".equals(head.get("retFlag"))) {
+            logger.info("还款试算,错误信息：" + head.get("retMsg"));
+            return fail(ConstUtil.ERROR_CODE, (String) head.get("retMsg"));
+        }
+        Map<String, Object> bodyMap = (Map) paySs.get("body");
+        resultMap.put("orderInfoMap", resMap);
+        resultMap.put("paySsMap", bodyMap);
+        logger.info("================resMap:" + resMap);
+        return success(resultMap);
     }
 
 }
