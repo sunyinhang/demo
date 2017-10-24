@@ -3,6 +3,7 @@ package com.haiercash.payplatform.aop;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.controller.BaseController;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -35,14 +36,15 @@ public final class ControllerInterceptor {
             throw new RuntimeException(String.format("%s must extends %s", target.getClass(), BaseController.class));
         BaseController controller = (BaseController) target;
         //获取方法
-        if (!(joinPoint.getSignature() instanceof MethodSignature))
+        Signature signature = joinPoint.getSignature();
+        if (!(signature instanceof MethodSignature))
             throw new RuntimeException("join point signature must be " + MethodSignature.class);
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        MethodSignature methodSignature = (MethodSignature) signature;
         //获取参数
         Object[] args = joinPoint.getArgs();
-        Class[] types = methodSignature.getParameterTypes();
-        for (int i = 0; i < types.length; i++) {
-            if (Map.class.isAssignableFrom(types[i]))
+        Class[] argTypes = methodSignature.getParameterTypes();
+        for (int i = 0; i < argTypes.length; i++) {
+            if (Map.class.isAssignableFrom(argTypes[i]))
                 args[i] = this.putThreadVars((Map) args[i]);
         }
         //执行
