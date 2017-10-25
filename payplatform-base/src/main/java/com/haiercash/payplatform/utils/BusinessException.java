@@ -1,10 +1,12 @@
 package com.haiercash.payplatform.utils;
 
+import lombok.Data;
+
 /**
  * Created by use on 2017/8/15.
  */
+@Data
 public class BusinessException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
     private String retFlag;
     private String retMsg;
 
@@ -12,25 +14,5 @@ public class BusinessException extends RuntimeException {
         super(retFlag + ":" + retMsg);
         this.retFlag = retFlag;
         this.retMsg = retMsg;
-    }
-
-    public String getRetFlag() {
-        return this.retFlag;
-    }
-
-    public void setRetFlag(String retFlag) {
-        this.retFlag = retFlag;
-    }
-
-    public String getRetMsg() {
-        return this.retMsg;
-    }
-
-    public void setRetMsg(String retMsg) {
-        this.retMsg = retMsg;
-    }
-
-    public String toString() {
-        return "BusinessException{retFlag=\'" + this.retFlag + '\'' + ", retMsg=\'" + this.retMsg + '\'' + '}';
     }
 }
