@@ -1,5 +1,8 @@
 package com.haiercash.payplatform.utils;
 
+import com.haiercash.payplatform.config.EurekaServer;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,24 +10,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.haiercash.payplatform.config.EurekaServer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StringUtils;
-
 public abstract class CmisUtil {
-    public static Log logger = LogFactory.getLog(CmisUtil.class);
     private static String SUCCESS_CODE = "00000";
     private static String SUCCESS_CODE2 = "0000";
     private static String SUCCESS_MSG = "处理成功";
-    public static String ERROR_INTERNAL_CODE = "99";
-    public static String ERROR_INTERNAL_MSG = "网络通讯异常";
 
     @Value("${app.rest.HCPORTAL}")
-    public static String hcportal;
-    public CmisUtil() {
+    private static String hcportal;
+
+    private CmisUtil() {
     }
 
     public static Map<String, Object> success() {
@@ -48,17 +42,19 @@ public abstract class CmisUtil {
         return resultMap;
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     @Deprecated
     public static boolean isSuccess(Map<String, Object> resultMap) {
-        return resultMap != null && resultMap.get("head") != null && ((Map)resultMap.get("head")).get("retFlag") != null?((Map)resultMap.get("head")).get("retFlag").equals(SUCCESS_CODE) || ((Map)resultMap.get("head")).get("retFlag").equals(SUCCESS_CODE2):false;
+        return resultMap != null && resultMap.get("head") != null && ((Map) resultMap.get("head")).get("retFlag") != null ? ((Map) resultMap.get("head")).get("retFlag").equals(SUCCESS_CODE) || ((Map) resultMap.get("head")).get("retFlag").equals(SUCCESS_CODE2) : false;
     }
 
     public static HashMap<String, Object> makeHeadMap(String tradeCode, String tradeType, Map<String, Object> params) {
         HashMap headMap = new HashMap();
         headMap.put("tradeCode", tradeCode);
-        headMap.put("serno", (new Date()).getTime() + "" + (int)(Math.random() * 100.0D));
-        if(StringUtils.isEmpty(params.get("sysFlag"))) {
+        headMap.put("serno", (new Date()).getTime() + "" + (int) (Math.random() * 100.0D));
+        if (StringUtils.isEmpty(params.get("sysFlag"))) {
             headMap.put("sysFlag", "04");
         } else {
             headMap.put("sysFlag", params.get("sysFlag"));
@@ -70,7 +66,7 @@ public abstract class CmisUtil {
         headMap.put("tradeDate", sdf.format(tradeDate.getTime()));
         sdf.applyPattern("HH:mm:ss");
         headMap.put("tradeTime", sdf.format(tradeDate.getTime()));
-        if(StringUtils.isEmpty(params.get("channelNo"))) {
+        if (StringUtils.isEmpty(params.get("channelNo"))) {
             headMap.put("channelNo", "05");
         } else {
             headMap.put("channelNo", params.get("channelNo"));
@@ -103,13 +99,8 @@ public abstract class CmisUtil {
 
     public static Map<String, Object> getCmisResponse(String tradeCode, String token, String tradeType, Map<String, Object> map) {
         HashMap requestMap = makeParamMap(tradeCode, tradeType, map);
-        logger.debug("Cmis request:");
-        logger.debug(new JSONObject(requestMap));
         //Map responseMap = HttpUtil.restPostMap(hcportal + "/pub/cmisfront", requestMap);
-        Map<String, Object> responseMap = HttpUtil
-                .restPostMap(EurekaServer.CMISFRONTSERVER + "/pub/cmisfront", "", requestMap);
-        logger.debug("Cmis response:");
-        logger.debug(new JSONObject(responseMap));
+        Map<String, Object> responseMap = HttpUtil.restPostMap(EurekaServer.CMISFRONTSERVER + "/pub/cmisfront", "", requestMap);
         return responseMap;
     }
 
@@ -129,8 +120,8 @@ public abstract class CmisUtil {
 
     public static boolean getIsSucceed(Map<String, Object> response) {
         try {
-            Map e = (Map)response.get("response");
-            Map mapHead = (Map)e.get("head");
+            Map e = (Map) response.get("response");
+            Map mapHead = (Map) e.get("head");
             return mapHead.get("retFlag").equals(SUCCESS_CODE) || mapHead.get("retFlag").equals(SUCCESS_CODE2);
         } catch (Exception var3) {
             return false;
@@ -139,9 +130,9 @@ public abstract class CmisUtil {
 
     public static String getErrMsg(Map<String, Object> response) {
         try {
-            Map e = (Map)response.get("response");
-            Map mapHead = (Map)e.get("head");
-            return (String)mapHead.get("retMsg");
+            Map e = (Map) response.get("response");
+            Map mapHead = (Map) e.get("head");
+            return (String) mapHead.get("retMsg");
         } catch (Exception var3) {
             return "";
         }
@@ -149,8 +140,8 @@ public abstract class CmisUtil {
 
     public static Map<String, Object> getBody(Map<String, Object> response) {
         try {
-            Map e = (Map)response.get("response");
-            return (Map)e.get("body");
+            Map e = (Map) response.get("response");
+            return (Map) e.get("body");
         } catch (Exception var2) {
             return new HashMap();
         }
@@ -159,7 +150,7 @@ public abstract class CmisUtil {
     public static Map<String, Object> getDataMap(Map<String, Object> response, String key) {
         try {
             Map e = getBody(response);
-            return (Map)e.get(key);
+            return (Map) e.get(key);
         } catch (Exception var3) {
             return new HashMap();
         }

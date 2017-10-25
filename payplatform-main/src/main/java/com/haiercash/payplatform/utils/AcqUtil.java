@@ -1,8 +1,6 @@
 package com.haiercash.payplatform.utils;
 
 import com.haiercash.commons.util.DateUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 
@@ -18,22 +16,20 @@ import static com.haiercash.payplatform.utils.ConstUtil.SUCCESS_CODE2;
  * 请求收单
  */
 public class AcqUtil {
-    private static Log logger = LogFactory.getLog(AcqUtil.class);
-
-    public AcqUtil() {
+    private AcqUtil() {
     }
 
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
         HashMap headMap = new HashMap();
         Date now = new Date();
-        headMap.put("serno", now.getTime() + "" + (int)(Math.random() * 100.0D));
+        headMap.put("serno", now.getTime() + "" + (int) (Math.random() * 100.0D));
         headMap.put("tradeDate", DateUtil.formatDate(now, "yyyy-MM-dd"));
         headMap.put("tradeTime", DateUtil.formatDate(now, "HH:mm:ss"));
         headMap.put("tradeCode", tradeCode);
         headMap.put("sysFlag", sysFlag);
         headMap.put("channelNo", channelNo);
-        headMap.put("cooprCode", StringUtils.isEmpty(cooprCode)?"":cooprCode);
-        headMap.put("tradeType", StringUtils.isEmpty(tradeType)?"":tradeType);
+        headMap.put("cooprCode", StringUtils.isEmpty(cooprCode) ? "" : cooprCode);
+        headMap.put("tradeType", StringUtils.isEmpty(tradeType) ? "" : tradeType);
         return headMap;
     }
 
@@ -44,9 +40,7 @@ public class AcqUtil {
         HashMap requestMap = new HashMap();
         requestMap.put("request", completeMap);
         String requestJson = JSONObject.valueToString(requestMap);
-        logger.info("==>ACQ  url:" + url + ", 请求参数:" + requestJson);
         String returnJson = HttpUtil.restPost(url, "", requestJson, 200);
-        logger.info("<==ACQ  返回参数:" + returnJson);
         return HttpUtil.json2DeepMap(returnJson);
     }
 
@@ -57,8 +51,8 @@ public class AcqUtil {
 
     public static boolean getIsSucceed(Map<String, Object> response) {
         try {
-            Map<String, Object> mapRes = (Map)response.get("response");
-            Map<String, Object> mapHead = (Map)mapRes.get("head");
+            Map<String, Object> mapRes = (Map) response.get("response");
+            Map<String, Object> mapHead = (Map) mapRes.get("head");
             return mapHead.get("retFlag").equals(SUCCESS_CODE) || mapHead.get("retFlag").equals(SUCCESS_CODE2);
         } catch (Exception var3) {
             return false;
