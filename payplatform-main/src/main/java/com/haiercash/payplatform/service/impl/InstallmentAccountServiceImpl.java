@@ -457,6 +457,12 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         map.put("apprvAmt", apply_amt);
         map.put("applyTnrTyp", apply_tnr_typ);
         map.put("applyTnr", apply_tnr);
+        //TODO   后期改动
+        if ("01".equals(mtd_cde)) {
+            mtd_cde = "M0002";
+        } else if ("02".equals(mtd_cde)) {
+            mtd_cde = "M0001";
+        }
         map.put("mtdCde", mtd_cde);
         Map<String, Object> paySs = custExtInfoService.getPaySs(token, channel, channelNo, map);
         Map<String, Object> head = (Map) paySs.get("head");
