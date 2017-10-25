@@ -38,13 +38,13 @@ public final class ThreadContext {
     }
 
     public static BaseController getEntryController() {
-        ThreadContextData data = new ThreadContextData();
-        return data.controllerStack.empty() ? null : data.controllerStack.firstElement();
+        Stack<BaseController> controllerStack = contexts.get().controllerStack;
+        return controllerStack.empty() ? null : controllerStack.firstElement();
     }
 
     public static BaseController getExecutingController() {
-        ThreadContextData data = new ThreadContextData();
-        return data.controllerStack.empty() ? null : data.controllerStack.lastElement();
+        Stack<BaseController> controllerStack = contexts.get().controllerStack;
+        return controllerStack.empty() ? null : controllerStack.lastElement();
     }
 
     public static String getEntryModuleNo() {
