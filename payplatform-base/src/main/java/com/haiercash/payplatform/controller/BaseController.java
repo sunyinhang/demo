@@ -21,11 +21,11 @@ public class BaseController extends AbstractController {
     }
 
     protected Map<String, Object> fail(String retFlag, String retMsg) {
-        return RestUtil.fail(ConstUtil.APP_CODE + module + retFlag, retMsg);
+        return RestUtil.fail(ConstUtil.APP_CODE + this.getModuleNo() + retFlag, retMsg);
     }
 
     protected Map<String, Object> fail(String retFlag, String retMsg, Object result) {
-        Map<String, Object> resultMap = RestUtil.fail(ConstUtil.APP_CODE + module + retFlag, retMsg);
+        Map<String, Object> resultMap = RestUtil.fail(ConstUtil.APP_CODE + this.getModuleNo() + retFlag, retMsg);
         resultMap.put("body", result);
         return resultMap;
     }
@@ -40,10 +40,6 @@ public class BaseController extends AbstractController {
 
     public final String getModuleNo() {
         return this.module == null ? StringUtils.EMPTY : this.module;
-    }
-
-    protected final String getPrefix() {
-        return this.prefix == null ? StringUtils.EMPTY : this.prefix;
     }
 
     @Override
@@ -72,7 +68,7 @@ public class BaseController extends AbstractController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponse> handleException(Exception e) {
         this.logger.error(ThrowableUtils.getString(e));
-        CommonResponse response = CommonResponse.create(this.getPrefix() + this.getModuleNo() + ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        CommonResponse response = CommonResponse.create(ConstUtil.APP_CODE + this.getModuleNo() + ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
