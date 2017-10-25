@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.bestvike.lang.Convert;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
@@ -927,11 +928,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String typCde = (String) params.get("typCde");
-        Integer _apprvAmt = (Integer) params.get("apprvAmt");
-        String applyTnrTyp = (String) params.get("applyTnrTyp");
-        String applyTnr = (String) params.get("applyTnr");
-        String mtdCde = (String) params.get("mtdCde");
+        String typCde = Convert.toString(params.get("typCde"));
+        Integer _apprvAmt = Convert.toInteger(params.get("apprvAmt"));
+        String applyTnrTyp = Convert.toString(params.get("applyTnrTyp"));
+        String applyTnr = Convert.toString(params.get("applyTnr"));
+        String mtdCde = Convert.toString(params.get("mtdCde"));
         if (StringUtils.isEmpty(typCde) || StringUtils.isEmpty(_apprvAmt) || StringUtils.isEmpty(applyTnrTyp) ||
                 StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(mtdCde)) {
             logger.info("typCde=" + typCde + "  apprvAmt=" + _apprvAmt + "  applyTnrTyp=" + applyTnrTyp + "  applyTnr=" + applyTnr + "mtdCde=" + mtdCde);
