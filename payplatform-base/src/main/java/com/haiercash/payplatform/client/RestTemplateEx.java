@@ -96,9 +96,12 @@ public class RestTemplateEx extends RestTemplate {
             //通用 Header
             if (ThreadContext.exists()) {
                 ribbonRequest.getHeaders().set(TraceID.NAME, ThreadContext.getTraceID());
-                ribbonRequest.getHeaders().set("token", ThreadContext.getToken());
-                ribbonRequest.getHeaders().set("channel", ThreadContext.getChannel());
-                ribbonRequest.getHeaders().set("channel_no", ThreadContext.getChannelNo());
+                if (!ribbonRequest.getHeaders().containsKey(RestTemplateConfig.NAME_TOKEN))
+                    ribbonRequest.getHeaders().set(RestTemplateConfig.NAME_TOKEN, ThreadContext.getToken());
+                if (!ribbonRequest.getHeaders().containsKey(RestTemplateConfig.NAME_CHANNEL))
+                    ribbonRequest.getHeaders().set(RestTemplateConfig.NAME_CHANNEL, ThreadContext.getChannel());
+                if (!ribbonRequest.getHeaders().containsKey(RestTemplateConfig.NAME_CHANNEL_NO))
+                    ribbonRequest.getHeaders().set(RestTemplateConfig.NAME_CHANNEL_NO, ThreadContext.getChannelNo());
             }
             //未启用传递 Header 功能
             if (!RestTemplateConfig.ROUTE_HEADERS_ENABLED)
@@ -118,7 +121,7 @@ public class RestTemplateEx extends RestTemplate {
                 }
             }
             //移除无效 Header
-            ribbonRequest.getHeaders().remove("channelno");
+            ribbonRequest.getHeaders().remove(RestTemplateConfig.NAME_CHANNEL_NO_DEL);
         }
 
         //执行回调
@@ -132,6 +135,10 @@ public class RestTemplateEx extends RestTemplate {
 
     //配置信息
     private static class RestTemplateConfig {
+        private static final String NAME_TOKEN = "token";
+        private static final String NAME_CHANNEL = "channel";
+        private static final String NAME_CHANNEL_NO = "channel_no";
+        private static final String NAME_CHANNEL_NO_DEL = "channelNo";
         private static final Object PRESENT = new Object();
         private static final List<String> SYSTEM_IGNORE_HEADERS = Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Content-Type", "Content-Length", "Cookie", "Set-Cookie", "Authorization", "Connection", "Host", "User-Agent");
         private static final DynamicBooleanProperty ROUTE_HEADERS_ENABLED_PROPERTY = DynamicPropertyFactory.getInstance().getBooleanProperty("ribbon.route-headers-enabled", false);
