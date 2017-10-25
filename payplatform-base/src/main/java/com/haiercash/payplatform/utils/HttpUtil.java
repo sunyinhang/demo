@@ -369,11 +369,11 @@ public class HttpUtil {
     }
 
     public static boolean isSuccess(String json) {
-        return getReturnCode(json).equals("00000");
+        return getReturnCode(json).equals(ConstUtil.SUCCESS_CODE);
     }
 
     public static boolean isSuccess(Map<String, Object> map) {
-        return getReturnCode(map).equals("00000");
+        return getReturnCode(map).equals(ConstUtil.SUCCESS_CODE);
     }
 
     @PostConstruct

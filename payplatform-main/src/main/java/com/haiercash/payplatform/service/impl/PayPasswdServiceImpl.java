@@ -5,14 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.HttpClient;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1126,7 +1126,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         paramMap.put("channelNo", channelNo);
         Map<String, Object> result = AcqUtil.getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/getApprovalProcess", "ACQ-1151", super.getChannel(), super.getChannelNo(), null, null, paramMap);
         logger.info("根据流水号查询额度贷款进度,请求参数：" + paramMap);
-        if (!CmisUtil.getIsSucceed(result)) {
+        if (!CmisUtil.isSuccess(result)) {
             logger.info("调用收单系统查询贷款审批进度失败, 返回结果：" + result);
             return (Map<String, Object>) result.get("response");
         }

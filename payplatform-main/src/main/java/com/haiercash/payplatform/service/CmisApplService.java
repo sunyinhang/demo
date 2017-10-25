@@ -1,12 +1,15 @@
 package com.haiercash.payplatform.service;
 
 import com.bestvike.lang.Convert;
-import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.utils.AcqTradeCode;
+import com.haiercash.payplatform.utils.CmisTradeCode;
+import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author 尹君
@@ -233,7 +240,7 @@ public class CmisApplService extends BaseService {
         if ("02".equals(relation.getTypGrp())) {//现金贷
             Map<String, Object> resultMap = acquirerService
                     .cashLoan(order, appOrdernoTypgrpRelationDao.selectByOrderNo(order.getOrderNo()));
-            if (!CmisUtil.getIsSucceed(resultMap)) {
+            if (!CmisUtil.isSuccess(resultMap)) {
                 return (Map<String, Object>) resultMap.get("response");
             }
             logger.debug("收单系统接口" + AcqTradeCode.COMMIT_APPL + "开始");

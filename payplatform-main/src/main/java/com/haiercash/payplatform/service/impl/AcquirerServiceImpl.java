@@ -9,8 +9,24 @@ import com.haiercash.payplatform.common.enums.AcquirerApptEnum;
 import com.haiercash.payplatform.common.enums.AcquirerEnum;
 import com.haiercash.payplatform.common.enums.AcquirerGoodsEnum;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppManageService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisService;
+import com.haiercash.payplatform.service.CommonRepaymentPersonService;
+import com.haiercash.payplatform.service.CrmService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.AcqTradeCode;
+import com.haiercash.payplatform.utils.AcqUtil;
+import com.haiercash.payplatform.utils.BusinessException;
+import com.haiercash.payplatform.utils.ChannelType;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.IdCardUtils;
+import com.haiercash.payplatform.utils.ReflactUtils;
+import com.haiercash.payplatform.utils.RestUtil;
+import com.haiercash.payplatform.utils.ResultHead;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +39,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * acquirer service impl.
@@ -549,7 +569,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         logger.info("向收单系统发起贷款申请, 参数:" + acquirer);
         Map<String, Object> result = AcqUtil
                 .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcAppl", headMap, acquirer);
-        if (AcqUtil.getIsSucceed(result)) {
+        if (AcqUtil.isSuccess(result)) {
             logger.info("更新订单，收单系统保存贷款详情成功, applSeq:" + order.getApplSeq()
                     + ",返回结果:" + result);
         } else {
@@ -691,7 +711,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         if (acqResponse == null || acqResponse.isEmpty()) {
             return null;
         }
-        if (!CmisUtil.getIsSucceed(acqResponse)) {
+        if (!CmisUtil.isSuccess(acqResponse)) {
             return null;
         }
         Map<String, Object> acqBody = (Map<String, Object>) ((Map<String, Object>) acqResponse.get("response"))
@@ -716,7 +736,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         if (result == null || result.isEmpty()) {
             return fail(RestUtil.ERROR_INTERNAL_CODE, "收单系统通信失败！");
         }
-        if (!CmisUtil.getIsSucceed(result)) {
+        if (!CmisUtil.isSuccess(result)) {
             logger.info("收单系统取消贷款申请失败, applSeq:" + applSeq);
         } else {
             logger.info("收单系统取消贷款申请成功, applSeq:" + applSeq);
@@ -750,7 +770,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         Map<String, Object> result = AcqUtil
                 .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/commitAppl", AcqTradeCode.COMMIT_APPL,
                         super.getChannel(), super.getChannelNo(), order.getCooprCde(), null, param);
-        if (!CmisUtil.getIsSucceed(result)) {
+        if (!CmisUtil.isSuccess(result)) {
             logger.info("收单系统提交贷款申请失败, applSeq:" + order.getApplSeq());
         } else {
             logger.info("收单系统提交贷款申请成功, applSeq:" + order.getApplSeq());

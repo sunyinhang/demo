@@ -7,8 +7,19 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.CmisTradeCode;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RestUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +30,11 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by yuanli on 2017/9/20.
@@ -374,7 +389,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String applSeq = "";
         if ("02".equals(appOrder.getTypGrp())) {//现金贷
             Map<String, Object> resultResponseMap = acquirerService.cashLoan(appOrder, null);
-            if (CmisUtil.getIsSucceed(resultResponseMap)) {
+            if (CmisUtil.isSuccess(resultResponseMap)) {
                 Map<String, Object> bodyMap = (Map<String, Object>) ((Map<String, Object>) resultResponseMap
                         .get("response")).get("body");
                 applSeq = (String) bodyMap.get("applSeq");
@@ -1017,7 +1032,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return true;
         }
         Map<String, Object> responseMap = (Map<String, Object>) result.get("response");
-        if (!CmisUtil.getIsSucceed(result)) {
+        if (!CmisUtil.isSuccess(result)) {
             return true;
         }
         Map<String, Object> bodyMap = (Map<String, Object>) responseMap.get("body");

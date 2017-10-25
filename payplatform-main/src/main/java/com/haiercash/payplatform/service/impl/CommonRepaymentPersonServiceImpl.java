@@ -1,16 +1,16 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.common.enums.AcquirerCommonPersonEnum;
+import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonRepaymentPersonService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.RestUtil;
-import com.haiercash.payplatform.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +48,7 @@ public class CommonRepaymentPersonServiceImpl extends BaseService implements Com
         if (acqResponse == null || acqResponse.isEmpty()) {
             return fail(RestUtil.ERROR_INTERNAL_CODE, "收单系统通信失败");
         }
-        if (!AcqUtil.getIsSucceed(acqResponse)) {
+        if (!AcqUtil.isSuccess(acqResponse)) {
             Map<String, Object> responseMap = (Map<String, Object>) acqResponse.get("response");
             Map<String, Object> headMap = (Map<String, Object>) responseMap.get("head");
             return fail((String) headMap.get("retFlag"), (String) headMap.get("retMsg"));
@@ -121,7 +121,7 @@ public class CommonRepaymentPersonServiceImpl extends BaseService implements Com
         if (acqResponse == null || acqResponse.isEmpty()) {
             return fail(RestUtil.ERROR_INTERNAL_CODE, "收单系统通信失败！");
         }
-        if (!AcqUtil.getIsSucceed(acqResponse)) {
+        if (!AcqUtil.isSuccess(acqResponse)) {
             return fail("22", "删除共同还款人失败!");
         }
         return success();
