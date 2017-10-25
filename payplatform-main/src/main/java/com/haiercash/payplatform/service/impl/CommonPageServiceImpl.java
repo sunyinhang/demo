@@ -7,19 +7,8 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.service.GmService;
-import com.haiercash.payplatform.service.OrderService;
-import com.haiercash.payplatform.utils.CmisTradeCode;
-import com.haiercash.payplatform.utils.CmisUtil;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RestUtil;
+import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.utils.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,11 +19,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by yuanli on 2017/9/20.
@@ -329,6 +314,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         appOrder.setProPurAmt("0");// 商品总额，默认为0
         appOrder.setIsCustInfoCompleted("N");// 个人信息是否完整 默认为N 否
 
+        // 计算首付比例
+        this.calcFstPct(appOrder);
         // 把门店信息写入订单
         this.updateStoreInfo(appOrder, super.getToken());
         // 把销售代表信息写入订单
@@ -1202,4 +1189,21 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         return mobile;
     }
 
+
+    public void calcFstPct(AppOrder order) {
+        if (org.springframework.util.StringUtils.isEmpty(order.getFstPay())) {
+            order.setFstPay("0.0");
+            order.setFstPct("0.0");
+        } else if (!org.springframework.util.StringUtils.isEmpty(order.getProPurAmt())) {
+            // 首付
+            BigDecimal fstPay_big = new BigDecimal(order.getFstPay());
+            BigDecimal propurAmt_big = new BigDecimal(order.getProPurAmt());
+            BigDecimal fstPct_big = BigDecimal.ZERO;
+            if (propurAmt_big.compareTo(BigDecimal.ZERO) != 0) {
+                fstPct_big = fstPay_big.divide(propurAmt_big, 4, BigDecimal.ROUND_HALF_UP);
+            }
+            order.setFstPct(fstPct_big.toString());
+        }
+        logger.info("首付金额：" + order.getFstPay() + "首付比例：" + order.getFstPct());
+    }
 }
