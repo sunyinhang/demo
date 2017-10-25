@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.rest.cmisacq;
 
+import com.haiercash.payplatform.servlet.ErrorHandler;
 import lombok.Data;
 
 /**
@@ -10,4 +11,8 @@ public final class CmisAcqResponseHead {
     private String retFlag;
     private String retMsg;
     private String serno;
+
+    public void setRetFlag(String retFlag) {
+        this.retFlag = ErrorHandler.getRetFlag(retFlag);
+    }
 }

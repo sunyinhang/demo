@@ -1,36 +1,17 @@
 package com.haiercash.payplatform.utils;
 
-import java.io.Serializable;
+import com.haiercash.payplatform.servlet.ErrorHandler;
+import lombok.Data;
 
 /**
  * Created by use on 2017/7/25.
  */
-public class ResultHead implements Serializable {
-    private static final long serialVersionUID = 1L;
+@Data
+public final class ResultHead {
     private String retFlag;
     private String retMsg;
 
-    public ResultHead() {
-    }
-
-    public ResultHead(String retFlag, String retMsg) {
-        this.retFlag = retFlag;
-        this.retMsg = retMsg;
-    }
-
-    public String getRetFlag() {
-        return this.retFlag;
-    }
-
     public void setRetFlag(String retFlag) {
-        this.retFlag = retFlag;
-    }
-
-    public String getRetMsg() {
-        return this.retMsg;
-    }
-
-    public void setRetMsg(String retMsg) {
-        this.retMsg = retMsg;
+        this.retFlag = ErrorHandler.getRetFlag(retFlag);
     }
 }
