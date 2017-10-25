@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.pc.qiaorong.service.impl;
 
 import com.bestvike.lang.Base64Utils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
@@ -14,18 +13,12 @@ import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.DesUtil;
-import com.haiercash.payplatform.utils.HttpClient;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RSAUtils;
-import org.apache.ibatis.mapping.ResultMap;
+import com.haiercash.payplatform.utils.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -35,6 +28,11 @@ import java.util.*;
 @Service
 public class QiaorongServiceImpl extends BaseService implements QiaorongService {
 
+    private static int limitAmount = 30000;
+    @Value("${app.other.moxie_apikey}")
+    protected String moxie_apikey;
+    @Value("${app.other.haiercashpay_web_url}")
+    protected String haiercashpay_web_url;
     @Autowired
     private Session session;
     @Autowired
@@ -47,13 +45,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private SignContractInfoDao signContractInfoDao;
-    @Value("${app.other.moxie_apikey}")
-    protected String moxie_apikey;
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
-
-    private static int limitAmount = 30000;
-
 
     /*
     ca签章
@@ -258,30 +249,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         logger.info("userflag:1" );
         session.set(token, cacheMap);
 
-//        //2.判断是否已注册
-//        Map<String, Object> paramMap = new HashMap<String, Object>();
-//        paramMap.put("channelNo",channelNo);
-//        paramMap.put("channel",channel);
-//        paramMap.put("mobile", EncryptUtil.simpleEncrypt(phone));
-//        Map<String, Object> registerMap = appServerService.isRegister(token, paramMap);
-//        if(registerMap == null){
-//            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-//        }
-//        Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
-//        String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
-//        if(!"00000".equals(resultmapFlag)){
-//            String retMsg = (String) resultmapjsonMap.get("retMsg");
-//            return fail(ConstUtil.ERROR_CODE, retMsg);
-//        }
-//        Map resultmapbodyMap = (Map<String, Object>) registerMap.get("body");
-//        String isRegister = (String)resultmapbodyMap.get("isRegister");
-//        if("N".equals(isRegister)){
-//            returnmap.put("flag","01");//跳转注册页面
-//            return success(returnmap);//跳转注册页面
-//        }
-//        if(!"Y".equals(isRegister)){
-//            return fail("01", "手机已被注册！请联系客服修改。客服电话：400777");
-//        }
 
         //3.手机号已注册，判断是否需要人脸识别
         Map<String, Object> faceparamMap = new HashMap<String, Object>();
@@ -492,29 +459,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
         returnmap.put("flag", "05");//跳转合同
         return success(returnmap);//跳转合同展示页面
-
-//        Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
-//        String isFundFlag = (String) bodymoxie.get("isFund");
-//        String isBankFlag = (String) bodymoxie.get("isBank");
-//        String isCarrierFlag = (String) bodymoxie.get("isCarrier");
-//
-//        //判断金额是否需要做魔蝎
-//        if(amount >= limitAmount){
-//            //判断是否做过公积金网银
-//            if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
-//                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-//                returnmap.put("flag", "05");//跳转合同
-//                return success(returnmap);//跳转合同展示页面
-//            }else{//未做过公积金、网银认证  跳转魔蝎认证页面
-//                logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
-//                returnmap.put("flag", "04");//跳转魔蝎认证
-//                return success(returnmap);//跳转魔蝎页面
-//            }
-//        }else{
-//            logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-//            returnmap.put("flag", "05");//跳转合同
-//            return success(returnmap);//跳转合同展示页面
-//        }
 
     }
 
