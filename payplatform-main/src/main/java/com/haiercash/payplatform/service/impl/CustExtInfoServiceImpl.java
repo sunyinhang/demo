@@ -952,6 +952,12 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("apprvAmt", apprvAmt);
         paramMap.put("applyTnrTyp", applyTnrTyp);
         paramMap.put("applyTnr", applyTnr);
+        //TODO   后期改动
+        if ("01".equals(mtdCde)) {
+            mtdCde = "M0002";
+        } else if ("02".equals(mtdCde)) {
+            mtdCde = "M0001";
+        }
         paramMap.put("mtdCde", mtdCde);
         Map<String, Object> paySs = appServerService.getPaySs(token, paramMap);
         Map<String, Object> head = (Map) paySs.get("head");
