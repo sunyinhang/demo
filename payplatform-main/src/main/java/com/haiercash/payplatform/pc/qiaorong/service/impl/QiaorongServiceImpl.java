@@ -830,6 +830,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         mapSubmit.put("flag", "1");//0：贷款取消  1:申请提交   2：合同提交
         mapSubmit.put("sysFlag", "11");
         mapSubmit.put("channel", channelNo);//渠道编码
+        logger.info("申请流水号：" + applseq + "进行订单提交");
         Map<String, Object> responseMap = CmisUtil.getCmisResponse(CmisTradeCode.TRADECODE_DK_CANCEL, null, mapSubmit);
         logger.info("信贷100026提交接口返回" + responseMap);
         if (responseMap == null) {
