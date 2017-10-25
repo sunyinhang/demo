@@ -818,7 +818,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         appOrder.setRepayApplCardNo(repayApplCardNo);// 还款卡号
         appOrder.setTypCde(typCde);//贷款品种
         appOrder.setApplyAmt(applyAmt);//借款总额);//借款总额
-        appOrder.setFstPay("0.00");//首付比例
+        appOrder.setFstPct("0.00");//首付比例
         appOrder.setFstPay("0");//首付金额
         //
         if ("1".equals(updflag)) {
