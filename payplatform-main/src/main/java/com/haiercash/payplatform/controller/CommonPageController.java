@@ -644,12 +644,12 @@ public class CommonPageController extends BaseController {
         return commonPageService.getPurpose(params);
     }
 
-    //    /**
-//     * @Title 贷款详情查询（现金贷）
-//     * @Description:
-//     * @author
-//     * @date 2017/10/21 15:26
-//     */
+    /**
+     * @Title 贷款详情查询（现金贷）
+     * @Description:
+     * @author
+     * @date 2017/10/21 15:26
+     */
     @RequestMapping(value = "/api/payment/orderQueryXjd", method = RequestMethod.POST)
     public Map<String, Object> orderQueryXjd(@RequestBody Map<String, Object> params) throws Exception {
         return InstallmentAccountService.orderQueryXjd(super.getToken(), super.getChannelNo(), super.getChannel(), params);

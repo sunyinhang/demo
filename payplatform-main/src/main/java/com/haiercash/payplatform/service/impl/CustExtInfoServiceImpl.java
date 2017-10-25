@@ -621,10 +621,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-
         //判断联系人信息管控
         String contactMobile_one = (String) params.get("contactMobile_one");
         String contactMobile_two = (String) params.get("contactMobile_two");
+        //预授信额度flag
+        String preAmountFlag = (String) params.get("preAmountFlag");
         if (contactMobile_one != null && !"".equals(contactMobile_one) && contactMobile_two != null && !"".equals(contactMobile_two)) {
             if (contactMobile_one.equals(contactMobile_two)) {
                 logger.info("两个联系人手机号不能重复");
@@ -796,6 +797,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                 }
                 if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
+                    if ("1".equals(preAmountFlag)) {
+                        cacheMap.put("preAmountFlag", preAmountFlag);
+                        session.set(token, cacheMap);
+                        resultparamMap.put("flag", "6");//跳转借款页面
+                    }
                     resultparamMap.put("flag", "1");
                 } else {//没有设置支付密码
                     resultparamMap.put("flag", "2");

@@ -2,11 +2,11 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpClient;
-import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -430,16 +430,21 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         if(!"00000".equals(retFlag)){
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-
         logger.info("上传手持身份证**********************成功");
         Map bodyjson = (Map<String, Object>) resultmap.get("body");
         String payPasswdFlag = (String) bodyjson.get("payPasswdFlag");
         if (payPasswdFlag.equals("1")) {// 1：已设置
-            cacheMap.put("payPasswdFlag", "1");
-            session.set(token, cacheMap);
-            logger.info("已设置支付密码，跳转支付密码验证页面");
             Map<String, Object> m = new HashMap<String, Object>();
-            m.put("faceFlag", "1");
+            String preAmountFlag = (String) cacheMap.get("preAmountFlag");
+            if ("1".equals(preAmountFlag)) {
+                logger.info("已设置支付密码，跳转借款页面");
+                m.put("faceFlag", "4");
+            } else {
+                cacheMap.put("payPasswdFlag", "1");
+                session.set(token, cacheMap);
+                logger.info("已设置支付密码，跳转支付密码验证页面");
+                m.put("faceFlag", "1");
+            }
             return success(m);
         }else{//未设置支付密码
             cacheMap.put("payPasswdFlag", "0");
