@@ -460,7 +460,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         //TODO   后期改动
         if ("01".equals(mtd_cde)) {
             mtd_cde = "M0002";
-        } else if ("02".equals(mtd_cde)) {
+        } else if ("13".equals(mtd_cde)) {
             mtd_cde = "M0001";
         }
         map.put("mtdCde", mtd_cde);
