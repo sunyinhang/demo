@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.pc.qiaorong.service.impl;
 
 import com.bestvike.lang.Base64Utils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
@@ -13,12 +14,18 @@ import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.DesUtil;
+import com.haiercash.payplatform.utils.HttpClient;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
+import org.apache.ibatis.mapping.ResultMap;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -28,11 +35,6 @@ import java.util.*;
 @Service
 public class QiaorongServiceImpl extends BaseService implements QiaorongService {
 
-    private static int limitAmount = 30000;
-    @Value("${app.other.moxie_apikey}")
-    protected String moxie_apikey;
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
     @Autowired
     private Session session;
     @Autowired
@@ -45,6 +47,13 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private SignContractInfoDao signContractInfoDao;
+    @Value("${app.other.moxie_apikey}")
+    protected String moxie_apikey;
+    @Value("${app.other.haiercashpay_web_url}")
+    protected String haiercashpay_web_url;
+
+    private static int limitAmount = 30000;
+
 
     /*
     ca签章
@@ -245,6 +254,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cacheMap.put("custNo", custNo);
         cacheMap.put("custName", custName);
         cacheMap.put("certNo", certNo);
+        cacheMap.put("userflag", "1");
+        logger.info("userflag:1" );
         session.set(token, cacheMap);
 
 //        //2.判断是否已注册
@@ -299,47 +310,18 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             returnmap.put("flag", "05");//跳转合同
             return success(returnmap);//跳转合同展示页面
 
-//            Map<String, Object> moxiemap = new HashMap<String, Object>();
-//            moxiemap.put("applseq", applseq);
-//            Map<String, Object> mapmoxie = appServerService.getMoxieByApplseq(token, moxiemap);
-//            Map headjsonmoxie = (Map) mapmoxie.get("head");
-//            String retFlagmoxie = (String) headjsonmoxie.get("retFlag");
-//            String retMsgmoxie = (String) headjsonmoxie.get("retMsg");
-//            if(!"00000".equals(retFlagmoxie)){
-//                return fail(ConstUtil.ERROR_CODE, retMsgmoxie);
-//            }
-//            Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
-//            String isFundFlag = (String) bodymoxie.get("isFund");
-//            String isBankFlag = (String) bodymoxie.get("isBank");
-//            String isCarrierFlag = (String) bodymoxie.get("isCarrier");
-//
-//            //判断金额是否需要做魔蝎
-//            if(amount >= limitAmount){
-//                //判断是否做过公积金网银
-//                if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
-//                    logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-//                    returnmap.put("flag", "05");//跳转合同
-//                    return success(returnmap);//跳转合同展示页面
-//                }else{//未做过公积金、网银认证  跳转魔蝎认证页面
-//                    logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
-//                    returnmap.put("flag", "04");//跳转魔蝎认证
-//                    return success(returnmap);//跳转魔蝎页面
-//                }
-//            }else{
-//                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-//                returnmap.put("flag", "05");//跳转合同
-//                return success(returnmap);//跳转合同展示页面
-//            }
-
         }else if("01".equals(code)){//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
             //终止
             logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
             return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
         }else if("02".equals(code)){//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
             //跳转替代影像
-            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
-            returnmap.put("flag", "03");// 手持身份证
-            return success(returnmap);
+            //终止
+            logger.info("人脸识别，剩余次数为0，录单终止");
+            return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
+//            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
+//            returnmap.put("flag", "03");// 手持身份证
+//            return success(returnmap);
         }else if("10".equals(code)){//10：未通过人脸识别，可以再做人脸识别
             //可以做人脸识别
             logger.info("未通过人脸识别，可以再做人脸识别");
@@ -462,39 +444,17 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             returnmap.put("flag", "05");//跳转合同
             return success(returnmap);//跳转合同展示页面
 
-
-//            Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
-//            String isFundFlag = (String) bodymoxie.get("isFund");
-//            String isBankFlag = (String) bodymoxie.get("isBank");
-//            String isCarrierFlag = (String) bodymoxie.get("isCarrier");
-//
-//            //判断金额是否需要做魔蝎
-//            if(amount >= limitAmount){
-//                //判断是否做过公积金网银
-//                if("Y".equals(isFundFlag) || "Y".equals(isBankFlag)){//已做过公积金、网银认证  跳转合同展示
-//                    logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-//                    returnmap.put("flag", "05");//跳转合同
-//                    return success(returnmap);//跳转合同展示页面
-//                }else{//未做过公积金、网银认证  跳转魔蝎认证页面
-//                    logger.info("已经通过了人脸识别（得分合格），跳转魔蝎");
-//                    returnmap.put("flag", "04");//跳转魔蝎认证
-//                    return success(returnmap);//跳转魔蝎页面
-//                }
-//            }else{
-//                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-//                returnmap.put("flag", "05");//跳转合同
-//                return success(returnmap);//跳转合同展示页面
-//            }
-
         }else if("01".equals(code)){//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
             //终止
             logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
             return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
         }else if("02".equals(code)){//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
             //跳转替代影像
-            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
-            returnmap.put("flag", "03");// 手持身份证
-            return success(returnmap);
+            logger.info("人脸识别，剩余次数为0，录单终止");
+            return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
+//            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
+//            returnmap.put("flag", "03");// 手持身份证
+//            return success(returnmap);
         }else if("10".equals(code)){//10：未通过人脸识别，可以再做人脸识别
             //可以做人脸识别
             logger.info("未通过人脸识别，可以再做人脸识别");
@@ -649,6 +609,11 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String custNo = (String) cacheMap.get("custNo");
         String phone = (String) cacheMap.get("phoneNo");
         String callbackUrl = (String) cacheMap.get("callbackUrl");
+        String userflag = (String) cacheMap.get("userflag");
+        if(!"1".equals(userflag)){//未进行过四要素验证
+            return fail(ConstUtil.ERROR_CODE, "请先进行四要素验证");
+        }
+
 
         //短信验证码校验
         Map<String, Object> paramMap = new HashMap<String, Object>();
