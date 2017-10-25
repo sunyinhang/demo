@@ -198,7 +198,6 @@ public class HttpUtil {
     public static Map<String, Object> restExchangeMap(HttpMethod method, boolean isOrigin, String url, String token, Map<String, Object> data, Integer responseCode) {
         try {
             HttpHeaders headers = getHeaders(token, data);
-            logger.info("request==" + new JSONObject(data));
             ResponseEntity e;
             HttpEntity status;
             if (data != null) {
@@ -221,7 +220,6 @@ public class HttpUtil {
             if (responseCode != null && status1.value() != responseCode.intValue()) {
                 return null;
             } else {
-                logger.info("response==" + e.getBody());
                 return (Map) e.getBody();
             }
         } catch (Exception var9) {
