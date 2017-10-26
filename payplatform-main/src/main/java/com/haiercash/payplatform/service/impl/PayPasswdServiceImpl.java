@@ -1300,4 +1300,40 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         map.put("name", name);
         return success(map);
     }
+
+
+    @Override
+    public Map<String, Object> resetPayPasswdForHaier(String token, String channelNo, String channel, Map<String, Object> param) {
+        logger.info("支付密码未设置，进行密码的设置");
+        String payPasswd = (String) param.get("payPasswd");//密码
+        Map<String, Object> cacheMap = session.get(token, Map.class);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Jedis获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String userId = (String) cacheMap.get("userId");
+        logger.info("获取的userId为：" + userId);
+        Map<String, Object> paramsMap = new HashMap<String, Object>();
+        paramsMap.put("userId", EncryptUtil.simpleEncrypt(userId));
+        paramsMap.put("payPasswd", EncryptUtil.simpleEncrypt(payPasswd));
+        paramsMap.put("channel", channel);
+        paramsMap.put("channelNo", channelNo);
+        //paramsMap.put("access_token", token);
+        Map<String, Object> map = appServerService.resetPayPasswd(token, paramsMap);
+        if (StringUtils.isEmpty(map)) {
+            logger.info("设置支付密码失败，app后台返回数据为空");
+            String resultMsg = "设置支付密码失败，app后台返回数据为空";
+            return fail(ConstUtil.ERROR_CODE, resultMsg);
+        }
+        String result = JSONObject.toJSONString(map);
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        JSONObject resultHead = jsonObject.getJSONObject("head");
+        String retFlag = resultHead.getString("retFlag");
+        String retMsg = resultHead.getString("retMsg");
+        if (!"00000".equals(retFlag)) {
+            logger.info("设置支付密码失败" + retMsg);
+            return fail(retFlag, retMsg);
+        }
+        return success();
+    }
 }

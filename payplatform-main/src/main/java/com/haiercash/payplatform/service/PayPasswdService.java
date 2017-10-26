@@ -34,6 +34,7 @@ public interface PayPasswdService {
 
     //查询额度
     public Map<String, Object> edCheck(String token);
+
     //账单查询
     public Map<String, Object> billCheck(String token);
 
@@ -48,8 +49,11 @@ public interface PayPasswdService {
 
     //获取个人中心信息
     public Map<String, Object> getPersonalCenterInfo(String token, String channelNo, String channel);
+
     //返回实名认证需要的数据
     public Map<String, Object> queryCustNameByUId(String token);
 
+    //海尔员工设置支付密码
+    public Map<String, Object> resetPayPasswdForHaier(String token, String channelNo, String channel, Map<String, Object> map);
 }
 

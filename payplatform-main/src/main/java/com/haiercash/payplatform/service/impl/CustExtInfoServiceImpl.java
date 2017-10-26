@@ -935,16 +935,16 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String typCde = Convert.toString(params.get("typCde"));
-        Integer _apprvAmt = Convert.toInteger(params.get("apprvAmt"));
+        BigDecimal apprvAmt = Convert.toDecimal(params.get("apprvAmt"));
         String applyTnrTyp = Convert.toString(params.get("applyTnrTyp"));
         String applyTnr = Convert.toString(params.get("applyTnr"));
         String mtdCde = Convert.toString(params.get("mtdCde"));
-        if (StringUtils.isEmpty(typCde) || StringUtils.isEmpty(_apprvAmt) || StringUtils.isEmpty(applyTnrTyp) ||
+        if (StringUtils.isEmpty(typCde) || StringUtils.isEmpty(apprvAmt) || StringUtils.isEmpty(applyTnrTyp) ||
                 StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(mtdCde)) {
-            logger.info("typCde=" + typCde + "  apprvAmt=" + _apprvAmt + "  applyTnrTyp=" + applyTnrTyp + "  applyTnr=" + applyTnr + "mtdCde=" + mtdCde);
+            logger.info("typCde=" + typCde + "  apprvAmt=" + apprvAmt + "  applyTnrTyp=" + applyTnrTyp + "  applyTnr=" + applyTnr + "mtdCde=" + mtdCde);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        BigDecimal apprvAmt = new BigDecimal(_apprvAmt);
+//        BigDecimal apprvAmt = new BigDecimal(_apprvAmt);
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);

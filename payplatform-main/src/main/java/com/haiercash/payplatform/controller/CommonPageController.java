@@ -654,4 +654,15 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> orderQueryXjd(@RequestBody Map<String, Object> params) throws Exception {
         return InstallmentAccountService.orderQueryXjd(super.getToken(), super.getChannelNo(), super.getChannel(), params);
     }
+
+    /**
+     * 海尔员工支付密码设置
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/resetPayPasswdForHaier", method = RequestMethod.POST)
+    public Map<String, Object> resetPayPasswdForHaier(@RequestBody Map<String, Object> map) {
+        return payPasswdService.resetPayPasswdForHaier(super.getToken(), super.getChannelNo(), super.getChannel(), map);
+    }
+
 }
