@@ -3,7 +3,7 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.common.CommonResponse;
-import com.haiercash.payplatform.rest.common.CommonRestUtil;
+import com.haiercash.payplatform.rest.common.CommonRestUtils;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.AppServerUtils;
@@ -90,7 +90,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         paramMap.put("password", password);
         paramMap.put("deviceType", "H5");
         paramMap.put("type", "login");
-        IResponse<Map> response = CommonRestUtil.putForMap(url, paramMap);
+        IResponse<Map> response = CommonRestUtils.putForMap(url, paramMap);
         logger.debug("App validateUsers :" + response);
         if (StringUtils.isEmpty(response)) {
             logger.error("登录验证信息失败！");

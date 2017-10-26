@@ -11,7 +11,7 @@ import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
-import com.haiercash.payplatform.rest.RestTemplateUtil;
+import com.haiercash.payplatform.rest.RestTemplateUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.utils.BusinessException;
@@ -55,7 +55,7 @@ public class CommonThirdTokenVerifyService extends BaseService implements ThirdT
         logger.info("验证token url:" + verifyUrl);
         HttpHeaders headers = new HttpHeaders();
         headers.set("token", tokenEncripted);
-        String response = RestTemplateUtil.postForString(verifyUrl, null, headers);
+        String response = RestTemplateUtils.postForString(verifyUrl, null, headers);
         if (StringUtils.isEmpty(response))
             throw new BusinessException(ConstUtil.ERROR_CODE, "验证 token 未返回任何数据");
 

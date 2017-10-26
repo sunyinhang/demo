@@ -3,7 +3,7 @@ package com.haiercash.payplatform.utils;
 /**
  * Created by use on 2017/7/25.
  */
-public class ConstUtil {
+public final class ConstUtil {
     public static final String ERROR_CODE = "99";
     public static final String SUCCESS_CODE = "00000";
     public static final String SUCCESS_CODE2 = "0000";

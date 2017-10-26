@@ -24,11 +24,16 @@ import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.common.CommonResponse;
-import com.haiercash.payplatform.rest.common.CommonRestUtil;
+import com.haiercash.payplatform.rest.common.CommonRestUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.AppServerUtils;
+import com.haiercash.payplatform.utils.ApplicationContextUtils;
+import com.haiercash.payplatform.utils.BusinessException;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +41,13 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -115,7 +126,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             Map<String, String> params = new HashMap<>();
             params.put("merchantCode", relation.getMerchantCode());
             params.put("storeCode", relation.getStoreCode());
-            IResponse<List<Map>> loanTypes = CommonRestUtil.getForObject(url, new GenericType<List<Map>>() {
+            IResponse<List<Map>> loanTypes = CommonRestUtils.getForObject(url, new GenericType<List<Map>>() {
             }, params);
             loanTypes.assertSuccessNeedBody();
             Linq.asEnumerable(loanTypes.getBody()).select(map -> {
@@ -147,7 +158,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         params.put("custName", custName);
         params.put("idTyp", idType);
         params.put("idNo", idNo);
-        IResponse<List<Map>> tagsResponse = CommonRestUtil.getForObject(tagUrl, new GenericType<List<Map>>() {
+        IResponse<List<Map>> tagsResponse = CommonRestUtils.getForObject(tagUrl, new GenericType<List<Map>>() {
         }, params);
         tagsResponse.assertSuccessNeedBody();
         List<Map> tags = tagsResponse.getBody();
@@ -165,7 +176,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         for (String tagId : intersectTags) {
             Map<String, Object> args = new HashMap<>();
             args.put("tagId", tagId);
-            IResponse<LoanTypes> loanResponse = CommonRestUtil.getForObject(loanUrl, LoanTypes.class, args);
+            IResponse<LoanTypes> loanResponse = CommonRestUtils.getForObject(loanUrl, LoanTypes.class, args);
             loanResponse.assertSuccessNeedBody();
             loanTypeList.addAll(loanResponse.getBody().getInfo());
         }
@@ -217,7 +228,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //验证客户信息
         ThirdTokenVerifyService thirdTokenVerifyService;
         try {
-            thirdTokenVerifyService = ApplicationContextUtil.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
+            thirdTokenVerifyService = ApplicationContextUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
         } catch (Exception e) {
             throw new BusinessException(ConstUtil.ERROR_CODE, "错误的 thirdTokenVerifyService 名称:'" + setting.getVerifyUrlService() + "'");
         }

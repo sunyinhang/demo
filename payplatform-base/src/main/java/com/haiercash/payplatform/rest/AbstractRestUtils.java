@@ -24,17 +24,17 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2017-10-08.
  */
-public abstract class AbstractRestUtil<TResponse extends IResponse> implements IRestUtil<TResponse> {
+public abstract class AbstractRestUtils<TResponse extends IResponse> implements IRestUtils<TResponse> {
     private static final String ERROR_SERVER = ConstUtil.ERROR_CODE;
     private static final String ERROR_SERVER_MSG = "外部服务发生错误:HTTP-%s";
     private static final String ERROR_NULL = ConstUtil.ERROR_CODE;
     private static final String ERROR_NULL_MSG = "外部服务未返回任何数据";
     private static final String ERROR_UNKNOWN = ConstUtil.ERROR_CODE;
     private static final String ERROR_UNKNOWN_MSG = "网络通讯异常:%s";
-    private Log logger = LogFactory.getLog(AbstractRestUtil.class);
+    private Log logger = LogFactory.getLog(AbstractRestUtils.class);
     private Class<?> responseRawType;//TResponse 的非泛型类型
 
-    public AbstractRestUtil() {
+    public AbstractRestUtils() {
         ParameterizedType superClass = (ParameterizedType) this.getClass().getGenericSuperclass();
         Type firstActualTypeArgument = superClass.getActualTypeArguments()[0];
         if (firstActualTypeArgument instanceof Class)

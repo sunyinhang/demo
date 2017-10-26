@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
  * Created by 许崇雷 on 2017-10-11.
  */
 @Component
-public final class ApplicationContextUtil implements ApplicationContextAware {
+public final class ApplicationContextUtils implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
-    private Log log = LogFactory.getLog(ApplicationContextUtil.class);
+    private Log log = LogFactory.getLog(ApplicationContextUtils.class);
 
     //获取applicationContext
     private static ApplicationContext getApplicationContext() {
@@ -23,10 +23,10 @@ public final class ApplicationContextUtil implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) {
         if (applicationContext == null)
             return;
-        if (ApplicationContextUtil.applicationContext != null)
+        if (ApplicationContextUtils.applicationContext != null)
             return;
-        ApplicationContextUtil.applicationContext = applicationContext;
-        log.info("已初始化 ApplicationContextUtil, 可以获取 bean.");
+        ApplicationContextUtils.applicationContext = applicationContext;
+        log.info("已初始化 ApplicationContextUtils, 可以获取 bean.");
     }
 
     //通过name获取 Bean.

@@ -17,10 +17,10 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2017-10-21.
  */
-public final class RestTemplateUtil {
+public final class RestTemplateUtils {
     private static final String ERROR_SERVER_MSG = "外部系统发生错误:HTTP-%s";
 
-    private RestTemplateUtil() {
+    private RestTemplateUtils() {
     }
 
     private static RestTemplate getRestTemplate() {

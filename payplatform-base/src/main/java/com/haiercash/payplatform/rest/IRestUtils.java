@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2017-10-08.
  */
-public interface IRestUtil<TResponse extends IResponse> {
+public interface IRestUtils<TResponse extends IResponse> {
     TResponse getForCore(String url, Type bodyType, Map<String, ?> uriVariables, MultiValueMap<String, String> headers);
 
     IResponse deleteForCore(String url, Type bodyType, Map<String, ?> uriVariables, MultiValueMap<String, String> headers);
