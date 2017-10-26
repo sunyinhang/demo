@@ -3,6 +3,7 @@ package com.bestvike.lang;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
+import com.bestvike.serialization.JsonSerializer;
 
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class BeanUtils {
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> beanToMap(Object bean) {
-        return bean instanceof Map ? (Map<String, Object>) bean : (JSONObject) JSON.toJSON(bean);
+        return bean instanceof Map ? (Map<String, Object>) bean : (JSONObject) JSON.toJSON(bean, JsonSerializer.getGlobalConfig().getSerializeConfig());
     }
 
     /**
