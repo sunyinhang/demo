@@ -24,7 +24,7 @@ import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.common.CommonResponse;
-import com.haiercash.payplatform.rest.common.CommonRestUtil;
+import com.haiercash.payplatform.rest.common.CommonRestUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
@@ -126,7 +126,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             Map<String, String> params = new HashMap<>();
             params.put("merchantCode", relation.getMerchantCode());
             params.put("storeCode", relation.getStoreCode());
-            IResponse<List<Map>> loanTypes = CommonRestUtil.getForObject(url, new GenericType<List<Map>>() {
+            IResponse<List<Map>> loanTypes = CommonRestUtils.getForObject(url, new GenericType<List<Map>>() {
             }, params);
             loanTypes.assertSuccessNeedBody();
             Linq.asEnumerable(loanTypes.getBody()).select(map -> {
@@ -158,7 +158,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         params.put("custName", custName);
         params.put("idTyp", idType);
         params.put("idNo", idNo);
-        IResponse<List<Map>> tagsResponse = CommonRestUtil.getForObject(tagUrl, new GenericType<List<Map>>() {
+        IResponse<List<Map>> tagsResponse = CommonRestUtils.getForObject(tagUrl, new GenericType<List<Map>>() {
         }, params);
         tagsResponse.assertSuccessNeedBody();
         List<Map> tags = tagsResponse.getBody();
@@ -176,7 +176,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         for (String tagId : intersectTags) {
             Map<String, Object> args = new HashMap<>();
             args.put("tagId", tagId);
-            IResponse<LoanTypes> loanResponse = CommonRestUtil.getForObject(loanUrl, LoanTypes.class, args);
+            IResponse<LoanTypes> loanResponse = CommonRestUtils.getForObject(loanUrl, LoanTypes.class, args);
             loanResponse.assertSuccessNeedBody();
             loanTypeList.addAll(loanResponse.getBody().getInfo());
         }

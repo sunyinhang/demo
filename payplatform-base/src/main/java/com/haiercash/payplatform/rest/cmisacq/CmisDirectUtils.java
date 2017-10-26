@@ -14,11 +14,11 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2017-10-09.
  */
-public final class CmisDirectUtil {
+public final class CmisDirectUtils {
     private static final RestUtils REST_UTIL = new RestUtils();
     private static final ParameterizedTypeImpl MAP_STRING_OBJECT_TYPE = ParameterizedTypeImpl.make(Map.class, new Type[]{String.class, Object.class}, null);
 
-    private CmisDirectUtil() {
+    private CmisDirectUtils() {
     }
 
     private static Type getMapType() {
