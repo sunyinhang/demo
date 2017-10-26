@@ -6,7 +6,7 @@ import com.bestvike.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
-import com.haiercash.payplatform.rest.RestTemplateUtil;
+import com.haiercash.payplatform.rest.RestTemplateUtils;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.utils.BusinessException;
 import com.haiercash.payplatform.utils.ConstUtil;
@@ -26,7 +26,7 @@ public class HaierThirdTokenVerifyService extends BaseService implements ThirdTo
         Map<String, Object> param = new HashMap<>();
         param.put("access_token", token);
         //验证客户信息
-        String response = RestTemplateUtil.getForString(verifyUrl, param);
+        String response = RestTemplateUtils.getForString(verifyUrl, param);
         if (StringUtils.isEmpty(response))
             throw new BusinessException(ConstUtil.ERROR_CODE, "验证 token 未返回任何数据");
 
