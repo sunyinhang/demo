@@ -10,7 +10,7 @@ import java.util.stream.StreamSupport;
  * @author 许崇雷
  * @date 2017/6/8
  */
-public class IterableUtils {
+public final class IterableUtils {
     /**
      * iterable 转换为 List
      *

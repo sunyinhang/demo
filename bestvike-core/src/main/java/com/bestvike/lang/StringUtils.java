@@ -12,7 +12,7 @@ import java.util.List;
  * @author 许崇雷
  * @date 2017/5/26
  */
-public class StringUtils extends org.apache.commons.lang3.StringUtils {
+public final class StringUtils extends org.apache.commons.lang3.StringUtils {
     /**
      * 获取 "\r" 字符串
      */

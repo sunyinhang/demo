@@ -13,7 +13,7 @@ import java.util.Map;
  * @author 许崇雷
  * @date 2017/7/13
  */
-public class BeanUtils {
+public final class BeanUtils {
     /**
      * bean 转换为 map
      *

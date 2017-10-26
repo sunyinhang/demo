@@ -10,7 +10,7 @@ import java.util.Iterator;
  * @author 许崇雷
  * @date 2017/6/7
  */
-public class ArrayUtils extends org.apache.commons.lang3.ArrayUtils {
+public final class ArrayUtils extends org.apache.commons.lang3.ArrayUtils {
     /**
      * 空的类型数组
      */
