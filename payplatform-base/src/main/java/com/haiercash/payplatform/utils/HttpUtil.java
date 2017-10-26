@@ -1,21 +1,19 @@
 package com.haiercash.payplatform.utils;
 
+import com.haiercash.payplatform.client.RestTemplateProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,14 +24,14 @@ import java.util.Map;
 /**
  * Created by use on 2017/7/25.
  */
-@Component
-public class HttpUtil {
-    private static Log logger = LogFactory.getLog(HttpUtil.class);
-    private static HttpUtil httpUtil;
-    @Autowired
-    private RestTemplate restTemplate;
+public final class HttpUtil {
+    private static final Log logger = LogFactory.getLog(HttpUtil.class);
 
-    public HttpUtil() {
+    private HttpUtil() {
+    }
+
+    private static RestTemplate getRestTemplate() {
+        return RestTemplateProvider.getRestTemplate();
     }
 
     public static HttpHeaders getHeaders(String token) {
@@ -105,10 +103,10 @@ public class HttpUtil {
             HttpEntity status;
             if (data != null) {
                 status = new HttpEntity(data, headers);
-                e = httpUtil.restTemplate.exchange(url, method, status, String.class, new Object[0]);
+                e = getRestTemplate().exchange(url, method, status, String.class, new Object[0]);
             } else {
                 status = new HttpEntity(headers);
-                e = httpUtil.restTemplate.exchange(url, method, status, String.class, new Object[0]);
+                e = getRestTemplate().exchange(url, method, status, String.class, new Object[0]);
             }
 
             HttpStatus status1 = e.getStatusCode();
@@ -123,20 +121,12 @@ public class HttpUtil {
         return restExchangeMap(HttpMethod.POST, url, token, data, responseCode);
     }
 
-    public static Map<String, Object> restPostMapOrigin(String url, String token, Map<String, Object> data, Integer responseCode) {
-        return restExchangeMapOrigin(HttpMethod.POST, url, token, data, responseCode);
-    }
-
     public static Map<String, Object> restPostMap(String url, Map<String, Object> data, Integer responseCode) {
         return restExchangeMap(HttpMethod.POST, url, (String) null, data, responseCode);
     }
 
     public static Map<String, Object> restPostMap(String url, String token, Map<String, Object> data) {
         return restPostMap(url, token, data, Integer.valueOf(HttpStatus.OK.value()));
-    }
-
-    public static Map<String, Object> restPostMapOrigin(String url, String token, Map<String, Object> data) {
-        return restPostMapOrigin(url, token, data, Integer.valueOf(HttpStatus.OK.value()));
     }
 
     public static Map<String, Object> restPostMap(String url, Map<String, Object> data) {
@@ -167,7 +157,6 @@ public class HttpUtil {
         return restGetMap(url, (String) null, responseCode);
     }
 
-    //2.新增
     public static Map<String, Object> restGetMap(String url, String token, Map<String, Object> map, int responseCode) {
         // map放入url
         String param = map.entrySet().stream()
@@ -182,13 +171,8 @@ public class HttpUtil {
         return restGetMap(url, HttpStatus.OK.value());
     }
 
-    //1.新增
     public static Map<String, Object> restGetMap(String url, String token, Map<String, Object> map) {
         return restGetMap(url, token, map, HttpStatus.OK.value());
-    }
-
-    public static Map<String, Object> restExchangeMapOrigin(HttpMethod method, String url, String token, Map<String, Object> data, Integer responseCode) {
-        return restExchangeMap(method, true, url, token, data, responseCode);
     }
 
     public static Map<String, Object> restExchangeMap(HttpMethod method, String url, String token, Map<String, Object> data, Integer responseCode) {
@@ -205,14 +189,14 @@ public class HttpUtil {
                 if (isOrigin) {
                     e = (new RestTemplate()).exchange(url, method, status, Map.class, new Object[0]);
                 } else {
-                    e = httpUtil.restTemplate.exchange(url, method, status, Map.class, new Object[0]);
+                    e = getRestTemplate().exchange(url, method, status, Map.class, new Object[0]);
                 }
             } else {
                 status = new HttpEntity(headers);
                 if (isOrigin) {
                     e = (new RestTemplate()).exchange(url, method, status, Map.class, new Object[0]);
                 } else {
-                    e = httpUtil.restTemplate.exchange(url, method, status, Map.class, new Object[0]);
+                    e = getRestTemplate().exchange(url, method, status, Map.class, new Object[0]);
                 }
             }
 
@@ -374,11 +358,5 @@ public class HttpUtil {
 
     public static boolean isSuccess(Map<String, Object> map) {
         return getReturnCode(map).equals(ConstUtil.SUCCESS_CODE);
-    }
-
-    @PostConstruct
-    public void init() {
-        httpUtil = this;
-        httpUtil.restTemplate = this.restTemplate;
     }
 }
