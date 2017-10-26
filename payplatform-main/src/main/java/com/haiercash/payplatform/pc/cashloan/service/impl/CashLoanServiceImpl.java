@@ -543,20 +543,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        AppOrder appOrder = null;
-//        String typCde = "";
-//        try {
-//            logger.info("缓存数据获取");
-//            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-//            logger.info("提交订单信息appOrder:" + appOrder);
-//            if (appOrder == null) {
-//                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-//            }
-//            typCde = appOrder.getTypCde();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+
 
         //参数非空校验
         if (StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)

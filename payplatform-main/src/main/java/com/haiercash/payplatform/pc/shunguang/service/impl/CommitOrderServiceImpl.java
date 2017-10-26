@@ -3,26 +3,26 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 import com.bestvike.lang.Base64Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
-import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
+import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
-import org.json.JSONObject;
+import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by yuanli on 2017/8/9.
@@ -51,8 +51,8 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     private OrderManageService orderManageService;
     @Autowired
     private CommonPageService commonPageService;
-//    @Value("${app.shunguang.sg_typLevelTwo}")
-//    protected String sg_typLevelTwo;
+    @Autowired
+    private SignContractInfoDao signContractInfoDao;
 
     /**
      * 订单提交
@@ -117,8 +117,6 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("根据用户中心token获取统一认证userId失败");
             return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
         }
-        //TODO!!!!
-        //String userId = cacheMap.get("userId").toString();
 
         //根据userId获取客户编号
         logger.info("获取客户实名信息");
@@ -155,7 +153,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         logger.info("订单提交，支付密码验证成功");
 
         //2.合同签订
-        Map<String, Object> contractmap =  signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
+        Map<String, Object> contractmap = commonPageService.signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
         if(!HttpUtil.isSuccess(contractmap)){
             logger.info("订单提交，合同签订失败");
             return contractmap;
@@ -271,76 +269,4 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     }
 
 
-    //合同签订
-    public Map<String, Object> signContract(String custName, String custIdCode, String applseq, String phone, String typCde,
-                                            String channelNo, String token) {
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("typCdeList", typCde);
-        Map<String, Object> loanmap = appServerService.pLoanTypList(token, paramMap);
-        if(!HttpUtil.isSuccess(loanmap)){
-            return loanmap;
-        }
-        List<Map<String, Object>> loanbody = (List<Map<String, Object>>) loanmap.get("body");
-        String typLevelTwo = "";
-        for (int i = 0; i < loanbody.size(); i++) {
-            Map<String, Object> m = loanbody.get(i);
-            typLevelTwo = m.get("levelTwo").toString();
-        }
-        logger.info("贷款品种小类：" + typLevelTwo);
-        //合同签订
-        JSONObject order = new JSONObject();
-        order.put("custName", custName);// 客户姓名
-        order.put("idNo", custIdCode);// 客户身份证号
-        order.put("indivMobile", phone);// 客户手机号码
-        order.put("applseq", applseq);// 请求流水号
-        order.put("typLevelTwo", typLevelTwo);// typLevelTwo 贷款品种小类
-        order.put("typCde", typCde);// 贷款品种代码
-
-        JSONObject orderJson = new JSONObject();// 订单信息json串
-        orderJson.put("order", order.toString());
-
-        Map map = new HashMap();// 征信
-        map.put("custName", custName);// 客户姓名
-        map.put("custIdCode", custIdCode);// 客户身份证号
-        map.put("applseq", applseq);// 请求流水号
-        if("17099a".equals(typCde)){//不同的贷款品种对应不同的签章类型
-            map.put("signType", "SHUNGUANG_H5_V2");// 签章类型
-        }else{
-            map.put("signType", "SHUNGUANG_H5");// 签章类型
-        }
-        map.put("flag", "0");//1 代表合同  0 代表 协议
-        map.put("orderJson", orderJson.toString());
-        map.put("sysFlag", "11");// 系统标识：支付平台
-        map.put("channelNo", channelNo);
-        Map camap = appServerService.caRequest(null, map);
-
-        //征信签章
-        JSONObject orderZX = new JSONObject();
-        orderZX.put("custName", custName);// 客户姓名
-        orderZX.put("idNo", custIdCode);// 客户身份证号
-        orderZX.put("indivMobile", phone);// 客户手机号码
-        orderZX.put("applseq", applseq);// 请求流水号
-
-        JSONObject orderZXJson = new JSONObject();// 订单信息json串
-        orderZXJson.put("order", orderZX.toString());
-
-        Map reqZXJson = new HashMap();// 征信
-        reqZXJson.put("custName", custName);// 客户姓名
-        reqZXJson.put("custIdCode", custIdCode);// 客户身份证号
-        reqZXJson.put("applseq", applseq);// 请求流水号
-        reqZXJson.put("signType", "credit");// 签章类型
-        reqZXJson.put("flag", "0");//1 代表合同  0 代表 协议
-        reqZXJson.put("orderJson", orderZXJson.toString());
-        reqZXJson.put("sysFlag", "11");// 系统标识：支付平台
-        map.put("channelNo", channelNo);
-        Map zxmap = appServerService.caRequest(token, reqZXJson);
-
-        //合同与征信签章都成功
-        if(HttpUtil.isSuccess(camap) && HttpUtil.isSuccess(zxmap)){
-            logger.info("订单提交，签章成功");
-            return success();
-        } else {
-            return fail(ConstUtil.ERROR_CODE, "签章失败");
-        }
-    }
 }

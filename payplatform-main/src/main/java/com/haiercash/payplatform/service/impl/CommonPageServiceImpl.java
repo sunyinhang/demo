@@ -233,7 +233,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     }
 
     @Override
-    public Map<String, Object> signContract(String custName, String custIdCode, String applseq, String phone, String typCde, String channelNo, String token) {
+    //合同签订
+    public Map<String, Object> signContract(String custName, String custIdCode, String applseq, String phone, String typCde,
+                                            String channelNo, String token) {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("typCdeList", typCde);
         Map<String, Object> loanmap = appServerService.pLoanTypList(token, paramMap);
@@ -264,41 +266,46 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return fail(ConstUtil .ERROR_CODE, "贷款品种"+ typCde +"没有配置签章类型");
         }
         String signType = signContractInfo.getSigntype();//签章类型
-        Map map = new HashMap();// 征信
+        Map map = new HashMap();// 合同
         map.put("custName", custName);// 客户姓名
         map.put("custIdCode", custIdCode);// 客户身份证号
         map.put("applseq", applseq);// 请求流水号
         map.put("signType", signType);// 签章类型
-
         map.put("flag", "0");//1 代表合同  0 代表 协议
         map.put("orderJson", orderJson.toString());
         map.put("sysFlag", "11");// 系统标识：支付平台
         map.put("channelNo", channelNo);
         Map camap = appServerService.caRequest(null, map);
 
-        //征信签章
-        JSONObject orderZX = new JSONObject();
-        orderZX.put("custName", custName);// 客户姓名
-        orderZX.put("idNo", custIdCode);// 客户身份证号
-        orderZX.put("indivMobile", phone);// 客户手机号码
-        orderZX.put("applseq", applseq);// 请求流水号
+        if ("46".equals(channelNo)) {//46：顺逛走征信
+            //征信签章
+            JSONObject orderZX = new JSONObject();
+            orderZX.put("custName", custName);// 客户姓名
+            orderZX.put("idNo", custIdCode);// 客户身份证号
+            orderZX.put("indivMobile", phone);// 客户手机号码
+            orderZX.put("applseq", applseq);// 请求流水号
 
-        JSONObject orderZXJson = new JSONObject();// 订单信息json串
-        orderZXJson.put("order", orderZX.toString());
+            JSONObject orderZXJson = new JSONObject();// 订单信息json串
+            orderZXJson.put("order", orderZX.toString());
 
-        Map reqZXJson = new HashMap();// 征信
-        reqZXJson.put("custName", custName);// 客户姓名
-        reqZXJson.put("custIdCode", custIdCode);// 客户身份证号
-        reqZXJson.put("applseq", applseq);// 请求流水号
-        reqZXJson.put("signType", "credit");// 签章类型
-        reqZXJson.put("flag", "0");//1 代表合同  0 代表 协议
-        reqZXJson.put("orderJson", orderZXJson.toString());
-        reqZXJson.put("sysFlag", "11");// 系统标识：支付平台
-        map.put("channelNo", channelNo);
-        Map zxmap = appServerService.caRequest(token, reqZXJson);
+            Map reqZXJson = new HashMap();// 征信
+            reqZXJson.put("custName", custName);// 客户姓名
+            reqZXJson.put("custIdCode", custIdCode);// 客户身份证号
+            reqZXJson.put("applseq", applseq);// 请求流水号
+            reqZXJson.put("signType", "credit");// 签章类型
+            reqZXJson.put("flag", "0");//1 代表合同  0 代表 协议
+            reqZXJson.put("orderJson", orderZXJson.toString());
+            reqZXJson.put("sysFlag", "11");// 系统标识：支付平台
+            map.put("channelNo", channelNo);
+            Map zxmap = appServerService.caRequest(token, reqZXJson);
+            if (!HttpUtil.isSuccess(zxmap)) {
+                return fail(ConstUtil.ERROR_CODE, "征信签章失败");
+            }
+        }
+
 
         //合同与征信签章都成功
-        if(HttpUtil.isSuccess(camap) && HttpUtil.isSuccess(zxmap)){
+        if (HttpUtil.isSuccess(camap)) {
             logger.info("订单提交，签章成功");
             return success();
         } else {
