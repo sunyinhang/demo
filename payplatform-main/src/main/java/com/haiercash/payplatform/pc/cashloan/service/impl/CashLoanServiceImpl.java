@@ -28,12 +28,7 @@ import com.haiercash.payplatform.rest.common.CommonRestUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.AppServerUtils;
-import com.haiercash.payplatform.utils.ApplicationContextUtils;
-import com.haiercash.payplatform.utils.BusinessException;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,13 +36,7 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -783,7 +772,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         for (ChannelStoreRelation relation : relations) {
             merchNo = relation.getMerchantCode();
             cooprCde = relation.getStoreCode();
-            crtUsr = relation.getStoreCode();
+            crtUsr = relation.getSalerName();
         }
 
         if (StringUtils.isEmpty(merchNo) || StringUtils.isEmpty(cooprCde) || StringUtils.isEmpty(crtUsr)) {
