@@ -883,6 +883,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String idType = (String) cacheMap.get("idType");
         String idNo = (String) cacheMap.get("idCard");
         String cardNo = (String) cacheMap.get("cardNo");//默认实名银行卡号
+        String bankCode = (String) cacheMap.get("bankCode");//银行卡代码
         if (custName.isEmpty()) {
             logger.info("custName为空");
             return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -911,6 +912,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         CommonResponse<Map> response = CommonResponse.success();
         Map<String, Object> map = new HashMap<>();
         map.put("cardNo", cardNo);
+        map.put("bankCode", bankCode);
         map.put("loanTypes", loanTypeData.getBody());
 //0
         response.setBody(map);
