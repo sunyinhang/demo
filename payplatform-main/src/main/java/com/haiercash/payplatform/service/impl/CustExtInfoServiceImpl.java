@@ -811,6 +811,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             } else if ("02".equals(code)) {// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
                 resultparamMap.put("flag", "4");
             } else {//跳转人脸识别
+                if ("1".equals(preAmountFlag)) {
+                    cacheMap.put("preAmountFlag", preAmountFlag);
+                    session.set(token, cacheMap);
+                }
                 resultparamMap.put("flag", "5");
             }
 
