@@ -222,12 +222,12 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             throw new BusinessException(ConstUtil.ERROR_CODE, "错误的 thirdTokenVerifyService 名称:'" + setting.getVerifyUrlService() + "'");
         }
         ThirdTokenVerifyResult thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
-        //从后台查询用户信息
-        Map<String, Object> userInfo = this.queryUserInfoFromAppServer(thirdInfo.getUserId());
         String userId__ = thirdInfo.getUserId();
         String phoneNo_ = thirdInfo.getPhoneNo();
         cachemap.put("uidHaier", userId__);
         cachemap.put("haieruserId", phoneNo_);
+        //从后台查询用户信息
+        Map<String, Object> userInfo = this.queryUserByExternUid(channelNo, userId__);
         String retFlag = HttpUtil.getReturnCode(userInfo);
         if (Objects.equals(retFlag, "00000")) {
             //集团uid已在统一认证做过绑定
@@ -236,9 +236,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             JSONObject bodyMap = new JSONObject(body);
             uidLocal = bodyMap.get("userId").toString();//统一认证内userId
             phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
-        } else if (Objects.equals(retFlag, "U0157")) {//U0157：未查到该集团用户的信息
+        } else if (Objects.equals(retFlag, "U0178")) {//U0157：未查到该用户的信息
             //向后台注册用户信息
-            Map<String, Object> registerResult = this.registerUserToAppServer(thirdInfo.getUserId(), thirdInfo.getPhoneNo());
+            Map<String, Object> registerResult = this.saveUserByExternUid(thirdInfo.getUserId(), thirdInfo.getPhoneNo(), phoneNo_);
             String registerResultFlag = HttpUtil.getReturnCode(registerResult);
             if ("00000".equals(registerResultFlag)) {
                 uidLocal = registerResult.get("body").toString();//统一认证内userId
@@ -922,6 +922,42 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         return ordermap;
+    }
+
+    private Map<String, Object> queryUserByExternUid(String externCompanyNo, String externUid) {
+        Map<String, Object> map = new HashMap<>();
+        String externCompanyNo_ = EncryptUtil.simpleEncrypt(externCompanyNo);
+        String externUid_ = EncryptUtil.simpleEncrypt(externUid);
+        map.put("externCompanyNo", externCompanyNo_);
+        map.put("externUid", externUid_);
+        Map<String, Object> stringObjectMap = appServerService.queryUserByExternUid(this.getToken(), map);
+//        String response = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(outUserId));
+        if (stringObjectMap == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "根据第三方（非海尔集团）id查询用户信息失败");
+        return stringObjectMap;
+    }
+
+
+    private Map<String, Object> saveUserByExternUid(String externCompanyNo, String externUid, String linkMobile) {
+        Map<String, Object> map = new HashMap<>();
+        String externCompanyNo_ = EncryptUtil.simpleEncrypt(externCompanyNo);
+        String externUid_ = EncryptUtil.simpleEncrypt(externUid);
+        String linkMobile_ = EncryptUtil.simpleEncrypt(linkMobile);
+        map.put("externCompanyNo", externCompanyNo_);
+        map.put("externUid", externUid_);
+        map.put("linkMobile", linkMobile_);
+        Map<String, Object> stringObjectMap = appServerService.saveUserByExternUid(this.getToken(), map);
+        if (stringObjectMap == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "根据第三方（非海尔集团）id查询用户信息失败");
+        return stringObjectMap;
+    }
+
+    @Override
+    public Map<String, Object> validateAndBindUserByExternUid(Map<String, Object> map) {
+        Map<String, Object> stringObjectMap = appServerService.validateAndBindUserByExternUid(this.getToken(), map);
+        if (stringObjectMap == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "验证并绑定第三方（非海尔集团）用户失败");
+        return stringObjectMap;
     }
 
 }

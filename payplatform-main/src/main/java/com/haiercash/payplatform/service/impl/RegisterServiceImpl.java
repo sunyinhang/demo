@@ -2,6 +2,7 @@ package com.haiercash.payplatform.service.impl;
 
 import com.bestvike.lang.Convert;
 import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.ConstUtil;
@@ -28,6 +29,8 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     private CrmService crmService;
     @Autowired
     private CustExtInfoService custExtInfoService;
+    @Autowired
+    private CashLoanService cashLoanService;
 
     @Override
     public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
@@ -494,10 +497,11 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         }
         //验证并绑定集团用户
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
-        paramMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));
+        paramMap.put("mobile", EncryptUtil.simpleEncrypt(uidLocal));
         paramMap.put("password", EncryptUtil.simpleEncrypt(password));
-        Map<String, Object> usermap = appServerService.validateAndBindHaierUser(token, paramMap);
+        paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
+        paramMap.put("externCompanyNo", EncryptUtil.simpleEncrypt(channelNo));
+        Map<String, Object> usermap = cashLoanService.validateAndBindUserByExternUid(paramMap);
         if (!HttpUtil.isSuccess(usermap)) {
             String retMsg = (String) ((Map<String, Object>) (usermap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);

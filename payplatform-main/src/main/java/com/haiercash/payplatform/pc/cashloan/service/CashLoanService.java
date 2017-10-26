@@ -62,4 +62,14 @@ public interface CashLoanService {
      */
     Map<String, Object> saveOrder(Map<String, Object> map);
 
+
+    /**
+     * 验证并绑定第三方（非海尔集团）用户
+     *
+     * @param map
+     * @return
+     */
+    Map<String, Object> validateAndBindUserByExternUid(Map<String, Object> map);
+
+
 }

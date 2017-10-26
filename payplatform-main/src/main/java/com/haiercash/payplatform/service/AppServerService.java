@@ -147,7 +147,16 @@ public interface AppServerService {
     public Map<String, Object> getMoxieByApplseq(String token, Map<String, Object> paramMap);
     //3.1.13(GET)查询所有贷款用途列表(APP)
     public Map<String, Object> getPurpose (String token, Map<String, Object> paramMap);
-
     //6.1.21.	(GET)查询贷款品种详情
     public Map<String, Object> pLoanTyp(String token, Map<String, Object> paramMap);
+
+    //根据第三方（非海尔集团）id查询用户信息
+    public Map<String, Object> queryUserByExternUid(String token, Map<String, Object> paramMap);
+
+    //(POST)第三方（非海尔集团）注册统一认证账户
+    public Map<String, Object> saveUserByExternUid(String token, Map<String, Object> paramMap);
+
+    //(POST) 验证并绑定第三方（非海尔集团）用户
+    public Map<String, Object> validateAndBindUserByExternUid(String token, Map<String, Object> paramMap);
+
 }

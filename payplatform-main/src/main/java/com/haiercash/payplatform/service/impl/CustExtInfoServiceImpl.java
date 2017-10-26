@@ -674,6 +674,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("mthInc", 5000);//月收入
         paramMap.put("position", "03");//职务   基层
         //（标准化现金贷字段）
+        paramMap.put("providerNum", 0);// 供养人数
         paramMap.put("positionType", positionType);// 工作性质
         if ("10".equals(positionType)) {//受薪人士
             paramMap.put("officeName", params.get("officeName"));// 工作单位

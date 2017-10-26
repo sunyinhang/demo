@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 /**
  * Created by 许崇雷 on 2017-10-18.
  */
@@ -23,6 +25,7 @@ public class LoanType {
     private String mtdDesc;//还款方式描述
     private String typLvlCde;//如果存在，即提供 贷款品种所属小类代码		否	如果存在，即提供
     private String typLvlDesc;//如果存在，即提供 贷款品种所属小类名称			否	如果存在，即提供
+    private List<LoanTypeProperty> pLoanTypMtd;
 
     @Override
     public boolean equals(Object o) {

@@ -920,4 +920,31 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("查询贷款品种详情，返回数据" + map);
         return map;
     }
+
+    //1.36(GET) 根据统一认证userid查询用户信息(查集团userId)
+    public Map<String, Object> queryUserByExternUid(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.UAUTH + "/app/uauth/queryUserByExternUid";
+        logger.info("根据第三方（非海尔集团）id查询用户信息,请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("根据第三方（非海尔集团）id查询用户信息,返回信息：" + map);
+        return map;
+    }
+
+    //(POST)第三方（非海尔集团）注册统一认证账户
+    public Map<String, Object> saveUserByExternUid(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.UAUTH + "/app/uauth/saveUserByExternUid";
+        logger.info("第三方（非海尔集团）注册统一认证账户,请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("第三方（非海尔集团）注册统一认证账户,返回信息：" + map);
+        return map;
+    }
+
+    //(POST) 验证并绑定第三方（非海尔集团）用户
+    public Map<String, Object> validateAndBindUserByExternUid(String token, Map<String, Object> paramMap) {
+        String url = EurekaServer.UAUTH + "/app/uauth/validateAndBindUserByExternUid";
+        logger.info("验证并绑定第三方（非海尔集团）用户,请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("验证并绑定第三方（非海尔集团）用户,返回信息：" + map);
+        return map;
+    }
 }
