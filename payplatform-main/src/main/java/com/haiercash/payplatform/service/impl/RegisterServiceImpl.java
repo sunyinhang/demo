@@ -553,6 +553,25 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         cacheMap.put("idCard", certNo);//身份证号
         cacheMap.put("idType", certType);
         session.set(token, cacheMap);
+        //判断用户是否是海尔员工
+        hrparamMap.put("custName", custName);
+        hrparamMap.put("idTyp", certType);
+        hrparamMap.put("idNo", certNo);
+        Map<String, Object> custWhiteListCmis = custExtInfoService.getCustWhiteListCmis(token, channel, channelNo, hrparamMap);
+        Map updmobileheadjson = (Map<String, Object>) custWhiteListCmis.get("head");
+        String updmobileretflag = (String) updmobileheadjson.get("retFlag");
+        if (!"00000".equals(updmobileretflag)) {
+            String retMsg = (String) updmobileheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        boolean hehyflag = false; //海尔会员标识
+        List<Map<String, String>> custWhiteListCmisList = (List<Map<String, String>>) custWhiteListCmis.get("body");
+        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
+            if (custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")) {
+                hehyflag = true;
+                break;
+            }
+        }
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", uidLocal);//内部userId
@@ -581,11 +600,10 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             }
             String retmsg = "01";//未申请
             if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
-//                if (hehyflag) {
-//                    resultparamMap.put("flag", "12");//预授信额度
-//                    resultparamMap.put("token", token);
-//                    return success(resultparamMap);
-//                }
+                if (hehyflag) {
+                    map.put("flag", "12");//预授信额度
+                    return success(map);
+                }
                 logger.info("没有额度申请");
                 Map<String, Object> checkparamMap = new HashMap<String, Object>();
                 checkparamMap.put("channelNo", channelNo);
@@ -713,7 +731,6 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             } else if ("".equals(flag)) {
                 map.put("flag", "9");//通过  我的额度
             }
-
         }
         map.put("token", token);
         return success(map);
