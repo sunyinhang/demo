@@ -739,7 +739,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     //6.1.146.	(POST) 上传影像到信贷系统
     @Override
     public Map<String, Object> uploadImg2CreditDep(String token, Map<String, Object> paramMap) {
-        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/uploadImg2CreditDep";
+        String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/apporder/uploadImg2CreditDep";
         logger.info("上传影像到信贷系统接口, 请求地址：" + url);
         logger.info("上传影像到信贷系统接口, 请求数据：" + paramMap);
         Map<String, Object> result = HttpUtil.restPostMap(url, paramMap);
