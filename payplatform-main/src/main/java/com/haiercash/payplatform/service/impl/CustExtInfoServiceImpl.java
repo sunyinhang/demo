@@ -678,18 +678,18 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("positionType", positionType);// 工作性质
         if ("10".equals(positionType)) {//受薪人士
             paramMap.put("officeName", params.get("officeName"));// 工作单位
-            paramMap.put("officeProvince", "370000");// 单位地址（省）990000
-            paramMap.put("officeCity", "370200");// 单位地址（市） 990100
-            paramMap.put("officeArea", "370212");// 单位地址（区）990101
+            paramMap.put("officeProvince", "990000");// 单位地址（省）990000  370000
+            paramMap.put("officeCity", "990100");// 单位地址（市） 990100   370200
+            paramMap.put("officeArea", "990101");// 单位地址（区）990101  370212
             paramMap.put("officeAddr", "未知");// 单位详细地址
             paramMap.put("officeTel", params.get("officeTel"));// 单位电话
         }/*else if ("20".equals(positionType)){//自雇人士
 
         }*/ else if ("50".equals(positionType)) {    //其他 默认值
             paramMap.put("officeName", "未知");// 工作单位
-            paramMap.put("officeProvince", "370000");// 单位地址（省）990000
-            paramMap.put("officeCity", "370200");// 单位地址（市）990100
-            paramMap.put("officeArea", "370212");// 单位地址（区）990101
+            paramMap.put("officeProvince", "990000");// 单位地址（省）990000
+            paramMap.put("officeCity", "990100");// 单位地址（市）990100
+            paramMap.put("officeArea", "990101");// 单位地址（区）990101
             paramMap.put("officeAddr", "未知");// 单位详细地址
             paramMap.put("officeTel", "13800000000");// 单位电话
         } else {
