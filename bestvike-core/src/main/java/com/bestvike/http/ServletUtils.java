@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author 许崇雷
  * @date 2017/6/2
  */
-public class ServletUtils {
+public final class ServletUtils {
     //未知
     private static final String UNKNOWN = "unknown";
 

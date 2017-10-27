@@ -4,5 +4,5 @@ package com.bestvike.collection;
  * @author 许崇雷
  * @date 2017/6/7
  */
-public class ListUtils extends org.apache.commons.collections.ListUtils {
+public final class ListUtils extends org.apache.commons.collections.ListUtils {
 }

@@ -8,6 +8,4 @@ public final class HttpMessageConvertersAutoConfiguration {
     public static final String PREFERRED_MAPPER_PROPERTY_JACKSON = "jackson";
     public static final String PREFERRED_MAPPER_PROPERTY_GSON = "gson";
     public static final String PREFERRED_MAPPER_PROPERTY_FASTJSON = "fastjson";
-
-    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 }

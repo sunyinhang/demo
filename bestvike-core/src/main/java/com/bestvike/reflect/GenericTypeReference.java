@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 /**
  * Created by 许崇雷 on 2017-10-10.
  */
-public class GenericTypeReference<T> extends ParameterizedTypeReference<T> {
+public final class GenericTypeReference<T> extends ParameterizedTypeReference<T> {
     private final Type type;
 
     public GenericTypeReference(Type type) {

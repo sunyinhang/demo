@@ -13,7 +13,7 @@ import java.util.List;
  * @author 许崇雷
  * @date 2017/6/7
  */
-public class HostInfo {
+public final class HostInfo {
     private static final HostInfo instance = new HostInfo();
     private String hostName;
     private String[] macAddress;

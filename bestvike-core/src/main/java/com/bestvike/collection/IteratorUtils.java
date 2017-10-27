@@ -13,7 +13,7 @@ import java.util.List;
  * @author 许崇雷
  * @date 2017/6/8
  */
-public class IteratorUtils {
+public final class IteratorUtils {
     /**
      * 迭代器转为枚举器
      *

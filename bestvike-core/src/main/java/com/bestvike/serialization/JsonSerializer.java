@@ -2,8 +2,12 @@ package com.bestvike.serialization;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.ValueFilter;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +17,20 @@ import java.util.Map;
  * 字段上加注解控制行为 @JSONField
  */
 public final class JsonSerializer {
+    private static final FastJsonConfig GLOBAL_CONFIG;
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    static {
+        GLOBAL_CONFIG = new FastJsonConfig();
+        GLOBAL_CONFIG.setDateFormat(DATE_FORMAT);
+        GLOBAL_CONFIG.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat, SerializerFeature.SortField);
+        GLOBAL_CONFIG.setSerializeFilters(new CommonValueFilter());
+    }
+
+    public static FastJsonConfig getGlobalConfig() {
+        return GLOBAL_CONFIG;
+    }
+
     /**
      * 序列化
      *
@@ -20,7 +38,12 @@ public final class JsonSerializer {
      * @return 序列化后的json
      */
     public static String serialize(Object obj) {
-        return JSON.toJSONString(obj, SerializerFeature.WriteDateUseDateFormat);
+        return JSON.toJSONString(obj,
+                getGlobalConfig().getSerializeConfig(),
+                getGlobalConfig().getSerializeFilters(),
+                getGlobalConfig().getDateFormat(),
+                Feature.of(getGlobalConfig().getFeatures()),
+                getGlobalConfig().getSerializerFeatures());
     }
 
     /**
@@ -65,5 +88,35 @@ public final class JsonSerializer {
      */
     public static Map<String, Object> deserializeMap(String json) {
         return JSON.parseObject(json);
+    }
+
+    //序列化过滤器
+    private static final class CommonValueFilter implements ValueFilter {
+        @Override
+        public Object process(Object object, String name, Object value) {
+            if (value == null)
+                return null;
+            String type = value.getClass().getSimpleName();
+            switch (type) {
+                case "BigDecimal":
+                    BigDecimal valueD = (BigDecimal) value;
+                    if (valueD.compareTo(BigDecimal.valueOf(1.0E16D)) >= 0)
+                        return String.valueOf(value);
+                    break;
+                case "Integer":
+                    Integer valueN = (Integer) value;
+                    if (valueN > 1000000000)
+                        return String.valueOf(value);
+                    break;
+                case "Long":
+                    Long valueL = (Long) value;
+                    if (valueL > 1000000000L)
+                        return String.valueOf(value);
+                    break;
+                default:
+                    break;
+            }
+            return value;
+        }
     }
 }

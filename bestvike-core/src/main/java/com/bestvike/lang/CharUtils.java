@@ -6,5 +6,5 @@ package com.bestvike.lang;
  * @author 许崇雷
  * @date 2017/6/2
  */
-public class CharUtils extends org.apache.commons.lang3.CharUtils {
+public final class CharUtils extends org.apache.commons.lang3.CharUtils {
 }

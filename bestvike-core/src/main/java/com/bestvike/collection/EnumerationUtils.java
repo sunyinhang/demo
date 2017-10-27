@@ -13,7 +13,7 @@ import java.util.List;
  * @author 许崇雷
  * @date 2017/7/4
  */
-public class EnumerationUtils {
+public final class EnumerationUtils {
     /**
      * 枚举器转为迭代器
      *

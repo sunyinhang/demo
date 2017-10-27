@@ -12,7 +12,7 @@ import java.util.Date;
  * Created by 许崇雷 on 2016/6/17.
  * 类型转换
  */
-public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
+public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
     private static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     private static final String YYYY_MM_DD_HH_MM_SS_SSS = "yyyy-MM-dd HH:mm:ss.SSS";

@@ -4,7 +4,7 @@ package com.bestvike.threading;
  * @author 许崇雷
  * @date 2017/5/26
  */
-public class ThreadUtils {
+public final class ThreadUtils {
     /**
      * 休眠制定的毫秒数,如果失败直接返回
      *

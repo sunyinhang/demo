@@ -4,7 +4,7 @@ package com.bestvike.lang;
  * @author 许崇雷
  * @date 2017/5/26
  */
-public class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
+public final class ObjectUtils extends org.apache.commons.lang3.ObjectUtils {
     /**
      * 是否为 null 或空
      *
