@@ -234,8 +234,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         Map<String, Object> body = (Map<String, Object>) dateAppOrderPerson.get("body");
         List<Map<String, Object>> order = (List<Map<String, Object>>) body.get("orders");
         Map<String, Object> orders = new HashMap<String, Object>();
-        orders.put("orders", order);
-        body.put("orders",orders);
+//        orders.put("orders", order);
+        body.put("orders", order);
         dateAppOrderPerson.put("body", body);
         return dateAppOrderPerson;
     }
