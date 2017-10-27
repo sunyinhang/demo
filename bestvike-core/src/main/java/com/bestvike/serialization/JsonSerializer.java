@@ -23,7 +23,21 @@ public final class JsonSerializer {
     static {
         GLOBAL_CONFIG = new FastJsonConfig();
         GLOBAL_CONFIG.setDateFormat(DATE_FORMAT);
-        GLOBAL_CONFIG.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat, SerializerFeature.SortField);
+        GLOBAL_CONFIG.setFeatures(
+                Feature.AutoCloseSource,
+                Feature.InternFieldNames,
+                Feature.UseBigDecimal,
+                Feature.AllowUnQuotedFieldNames,
+                Feature.AllowSingleQuotes,
+                Feature.AllowArbitraryCommas,
+                Feature.SortFeidFastMatch,
+                Feature.IgnoreNotMatch);
+        GLOBAL_CONFIG.setSerializerFeatures(
+                SerializerFeature.QuoteFieldNames,
+                SerializerFeature.SkipTransientField,
+                SerializerFeature.SortField,
+                SerializerFeature.WriteEnumUsingName,
+                SerializerFeature.WriteDateUseDateFormat);
         GLOBAL_CONFIG.setSerializeFilters(new CommonValueFilter());
     }
 

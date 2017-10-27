@@ -1,5 +1,6 @@
 package com.bestvike.serialization;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,7 +12,10 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class Person {
+    @JSONField(ordinal = 1)
     private long uid;
+    @JSONField(ordinal = 2)
     private String name;
+    @JSONField(ordinal = 3)
     private Date birthday;
 }

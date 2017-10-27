@@ -13,6 +13,7 @@ import java.util.Objects;
  */
 @Data
 public final class CmisAcqResponse<TBody> implements IResponse<TBody> {
+    @JSONField(ordinal = 1)
     private CmisAcqResponseRoot<TBody> response;
 
     public static <TBody> CmisAcqResponse<TBody> create(String retFlag, String retMsg) {

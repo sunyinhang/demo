@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.rest.cmisacq;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 /**
@@ -7,6 +8,9 @@ import lombok.Data;
  */
 @Data
 public final class CmisAcqResponseRoot<TBody> {
+    @JSONField(ordinal = 1)
     private CmisAcqResponseHead head;
+
+    @JSONField(ordinal = 2)
     private TBody body;
 }

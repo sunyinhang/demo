@@ -13,7 +13,10 @@ import java.util.Objects;
  */
 @Data
 public final class CommonResponse<TBody> implements IResponse<TBody> {
+    @JSONField(ordinal = 1)
     private CommonResponseHead head;
+
+    @JSONField(ordinal = 2)
     private TBody body;
 
     public static <TBody> CommonResponse<TBody> create(String retFlag, String retMsg) {
