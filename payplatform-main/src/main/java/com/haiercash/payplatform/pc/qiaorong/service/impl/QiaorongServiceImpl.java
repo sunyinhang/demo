@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -86,7 +87,9 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cachemap.put("callbackUrl", callbackUrl);
         session.set(uuid, cachemap);
 
-        String backurl = haiercashpay_web_url + "qr/#!/installment.html?token=" + uuid + "&applseq=" + applSeq;
+        String date = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+
+        String backurl = haiercashpay_web_url + "qr/#!/installment.html?token=" + uuid + "&applseq=" + applSeq + "&date=" + date;
         logger.info("签章跳转页面地址：" + backurl);
         Map ResultMap = new HashMap();
         ResultMap.put("backurl", backurl);
