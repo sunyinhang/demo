@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.client;
 
 import com.bestvike.io.IOUtils;
-import com.haiercash.payplatform.trace.TraceLogConfig;
+import com.haiercash.payplatform.trace.TraceConfig;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public final class ClientInputStreamWrapper extends InputStream {
 
     private void cacheStream() {
         try {
-            this.cachedBuffer = TraceLogConfig.BUFFER.get();
+            this.cachedBuffer = TraceConfig.BUFFER.get();
             this.cachedLength = IOUtils.read(this.inputStream, this.cachedBuffer);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -35,11 +35,11 @@ public final class ClientInputStreamWrapper extends InputStream {
 
     private void parseBody() {
         try {
-            this.content = this.cachedLength > TraceLogConfig.MAX_DISPLAY
-                    ? (new String(this.cachedBuffer, 0, TraceLogConfig.MAX_DISPLAY, TraceLogConfig.DEFAULT_CHARSET) + TraceLogConfig.BODY_OVER_FLOW)
-                    : new String(this.cachedBuffer, 0, this.cachedLength, TraceLogConfig.DEFAULT_CHARSET);
+            this.content = this.cachedLength > TraceConfig.DISPLAY_SIZE
+                    ? (new String(this.cachedBuffer, 0, TraceConfig.DISPLAY_SIZE, TraceConfig.DEFAULT_CHARSET) + TraceConfig.BODY_OVER_FLOW)
+                    : new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET);
         } catch (Exception e) {
-            this.content = TraceLogConfig.BODY_PARSE_FAIL;
+            this.content = TraceConfig.BODY_PARSE_FAIL;
         }
     }
 
