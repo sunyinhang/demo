@@ -30,7 +30,7 @@ public final class ClientOutputStreamWrapper extends OutputStream {
     public void write(int b) throws IOException {
         this.outputStream.write(b);
         if (this.cachedBuffer == null)
-            this.cachedBuffer = new byte[TraceLogConfig.MAX_DISPLAY];
+            this.cachedBuffer = TraceLogConfig.BUFFER.get();
         if (this.cachedLength >= TraceLogConfig.MAX_DISPLAY) {
             this.overFlow = true;
             return;
@@ -61,5 +61,6 @@ public final class ClientOutputStreamWrapper extends OutputStream {
     public void close() throws IOException {
         this.flush();
         this.outputStream.close();
+        this.cachedBuffer = null;
     }
 }

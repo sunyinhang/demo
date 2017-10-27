@@ -27,7 +27,7 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
 
     private void cacheStream() {
         try {
-            this.cachedBuffer = new byte[TraceLogConfig.BUFFER_SIZE];
+            this.cachedBuffer = TraceLogConfig.BUFFER.get();
             this.cachedLength = IOUtils.read(this.inputStream, this.cachedBuffer);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -73,5 +73,6 @@ public final class DispatcherInputStreamWrapper extends ServletInputStream {
     @Override
     public void close() throws IOException {
         this.inputStream.close();
+        this.cachedBuffer = null;
     }
 }
