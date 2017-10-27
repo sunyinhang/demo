@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.rest.cmisacq;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.haiercash.payplatform.servlet.ErrorHandler;
 import lombok.Data;
 
@@ -8,8 +9,13 @@ import lombok.Data;
  */
 @Data
 public final class CmisAcqResponseHead {
+    @JSONField(ordinal = 1)
     private String retFlag;
+
+    @JSONField(ordinal = 2)
     private String retMsg;
+
+    @JSONField(ordinal = 3)
     private String serno;
 
     public void setRetFlag(String retFlag) {
