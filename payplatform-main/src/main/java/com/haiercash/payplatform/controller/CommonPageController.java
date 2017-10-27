@@ -655,4 +655,14 @@ public class CommonPageController extends BaseController {
         return payPasswdService.resetPayPasswdForHaier(super.getToken(), super.getChannelNo(), super.getChannel(), map);
     }
 
+    /**
+     * 第三方用户绑定页面
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/validateAndBindOtherUser", method = RequestMethod.POST)
+    public Map<String, Object> validateAndBindOtherUser(@RequestBody Map<String, Object> map) throws Exception {
+        return registerService.validateAndBindOtherUser(super.getToken(), super.getChannel(), super.getChannelNo(), map);
+    }
+
 }
