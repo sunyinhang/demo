@@ -33,17 +33,30 @@ import java.util.UUID;
 @Service
 public class FaceServiceImpl extends BaseService implements FaceService{
     public Log logger = LogFactory.getLog(getClass());
-    @Autowired
-    private Session session;
-    @Autowired
-    private AppServerService appServerService;
-
     @Value("${app.other.outplatform_url}")
     protected String outplatform_url;
     @Value("${app.other.face_DataImg_url}")
     protected String face_DataImg_url;
     @Value("${app.other.haierDataImg_url}")
     protected String haierDataImg_url;
+    @Autowired
+    private Session session;
+    @Autowired
+    private AppServerService appServerService;
+
+    public static void createDir(String destDirName) {
+        File dir = new File(destDirName);
+        if (dir.exists()) {
+            return;
+        }
+        if (!destDirName.endsWith(File.separator)) {
+            destDirName = destDirName + File.separator;
+        }
+        // 创建目录
+        if (dir.mkdirs()) {
+            return;
+        }
+    }
 
     //人脸识别
     @Override
@@ -205,7 +218,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         Map checkheadjson = (Map<String, Object>)checkresultmap.get("head");
         String checkretFlag = (String) checkheadjson.get("retFlag");
         String checkretMsg = (String) checkheadjson.get("retMsg");
-        if(true){//"00000".equals(checkretFlag)
+        if ("00000".equals(checkretFlag)) {//
             //人脸识别成功
             //判断是否已经设置过支付密码
             if("33".equals(channelNo)){//如果是乔融则不进行支付密码校验
@@ -401,20 +414,6 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         }
 
         return success();
-    }
-
-    public static void createDir(String destDirName) {
-        File dir = new File(destDirName);
-        if (dir.exists()) {
-            return;
-        }
-        if (!destDirName.endsWith(File.separator)) {
-            destDirName = destDirName + File.separator;
-        }
-        // 创建目录
-        if (dir.mkdirs()) {
-            return;
-        }
     }
 
     private Map<String, Object> validateUserFlag(String userId, String token, String channel, String channelNo, Map cacheMap){
