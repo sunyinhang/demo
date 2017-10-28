@@ -447,7 +447,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         Map<String, Object> resMap = (Map<String, Object>) stringObjectMap.get("body");
-        Integer apply_amt = (Integer) resMap.get("apply_amt");//借款金额
+        Double apply_amt = (Double) resMap.get("apply_amt");//借款金额
         String apply_tnr = (String) resMap.get("apply_tnr");//申请期限
         String apply_tnr_typ = (String) resMap.get("apply_tnr_typ");//期限类型
         String typ_cde = (String) resMap.get("typ_cde");//贷款品种
