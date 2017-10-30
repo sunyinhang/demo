@@ -386,6 +386,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
             // 现金贷
             AppOrdernoTypgrpRelation relation = null;
+            String orderno = appOrder.getOrderNo();
+            logger.info("订单编号为：" + orderno);
             if (!StringUtils.isEmpty(appOrder.getOrderNo())) {//待提交
                 relation = appOrdernoTypgrpRelationDao.selectByOrderNo(appOrder.getOrderNo());
                 if (relation == null) {
