@@ -1265,7 +1265,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         logger.info("*********获取个人信息中心**************开始");
 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
-            logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
+            logger.info("获取的参数为空token:" + token + "  ,channel:" + channel + "  ,channelNO:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> cacheMap = session.get(token, Map.class);
