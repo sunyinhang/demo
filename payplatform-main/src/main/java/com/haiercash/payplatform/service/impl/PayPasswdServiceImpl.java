@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.rest.RestTemplateUtils;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -13,6 +12,7 @@ import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.HttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -382,7 +382,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         json.put("flag", "1");
         json.put("channelNo", "payplat");
         logger.info("实名认证(外联)参数==>" + json.toString());
-        String resData = RestTemplateUtils.postForString(url, json.toString());
+        String resData = HttpClient.sendJson(url, json.toString());
         logger.info("实名认证(外联)响应数据==>" + resData);
         if (resData == null || "".equals(resData)) {
             logger.info("修改密码的实名认证(外联)接口，返回数据为空");

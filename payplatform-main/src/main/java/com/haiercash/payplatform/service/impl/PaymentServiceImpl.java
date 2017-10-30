@@ -24,8 +24,8 @@ import com.haiercash.payplatform.common.entity.Corehead;
 import com.haiercash.payplatform.common.entity.QueryLimitMessage;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.config.CmisConfig;
-import com.haiercash.payplatform.rest.RestTemplateUtils;
 import com.haiercash.payplatform.service.PaymentServiceInterface;
+import com.haiercash.payplatform.utils.HttpClient;
 import com.haiercash.payplatform.utils.XstreamBuild;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,7 +62,7 @@ public class PaymentServiceImpl implements PaymentServiceInterface {
         String requestXml = xstreamBuild.bulidCorerequestXml(queryLimitMessage,
                 corehead);
 
-        String response = RestTemplateUtils.postForString(cmisConfig.getUrl(), requestXml);
+        String response = HttpClient.sendPost(cmisConfig.getUrl(), requestXml, "utf-8");
         logger.info(response);
         Map map = (Map) xstreamBuild.bulidCoreresponseBean(response);
         List head = (List) map.get("head");
