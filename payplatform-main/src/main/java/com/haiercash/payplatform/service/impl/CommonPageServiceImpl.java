@@ -385,11 +385,13 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if ("02".equals(appOrder.getTypGrp())) {//现金贷
 
             // 现金贷
-            AppOrdernoTypgrpRelation relation = appOrdernoTypgrpRelationDao.selectByOrderNo(appOrder.getOrderNo());
-            if (relation == null) {
-                return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "要更新的订单不存在！");
+            AppOrdernoTypgrpRelation relation = null;
+            if (!StringUtils.isEmpty(appOrder.getOrderNo())) {//待提交
+                relation = appOrdernoTypgrpRelationDao.selectByOrderNo(appOrder.getOrderNo());
+                if (relation == null) {
+                    return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "要更新的订单不存在！");
+                }
             }
-
             // 收单系统获取订单详情
             //AppOrder appOrder0 = acquirerService.getAppOrderFromAcquirer(relation.getApplSeq(), super.getChannelNo());
 

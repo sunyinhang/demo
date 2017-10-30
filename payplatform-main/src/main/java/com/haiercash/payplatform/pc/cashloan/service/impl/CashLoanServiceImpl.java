@@ -809,8 +809,10 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 //        appOrder.setFstPay("0");//首付金额
 
         //
-        if ("1".equals(updflag)) {
+        if ("1".equals(updflag)) {//待提交
             appOrder.setOrderNo(orderNo);
+        } else {//新增
+            appOrder.setOrderNo("");
         }
 
         //0.准入资格校验
@@ -914,7 +916,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap)) {//订单保存失败
             logger.info("订单保存失败");
-            Map resultHead = (LinkedHashMap<String, Object>) (ordermap.get("head"));
+            Map resultHead = (Map<String, Object>) (ordermap.get("head"));
             String retmsg = resultHead.get("retMsg").toString();
             //String retmsg = resultHead.getRetMsg();
             //String retmsg = (String) ((Map<String, Object>)(ordermap.get("head"))).get("retMsg");
