@@ -9,24 +9,8 @@ import com.haiercash.payplatform.common.enums.AcquirerApptEnum;
 import com.haiercash.payplatform.common.enums.AcquirerEnum;
 import com.haiercash.payplatform.common.enums.AcquirerGoodsEnum;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.AppManageService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.CmisService;
-import com.haiercash.payplatform.service.CommonRepaymentPersonService;
-import com.haiercash.payplatform.service.CrmService;
-import com.haiercash.payplatform.service.OrderService;
-import com.haiercash.payplatform.utils.AcqTradeCode;
-import com.haiercash.payplatform.utils.AcqUtil;
-import com.haiercash.payplatform.utils.BusinessException;
-import com.haiercash.payplatform.utils.ChannelType;
-import com.haiercash.payplatform.utils.CmisUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.IdCardUtils;
-import com.haiercash.payplatform.utils.ReflactUtils;
-import com.haiercash.payplatform.utils.RestUtil;
-import com.haiercash.payplatform.utils.ResultHead;
+import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.utils.*;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,11 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * acquirer service impl.
@@ -534,6 +514,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
             }
             acquirer = (Map<String, Object>) responseMap.get("body");
             acquirer.put("tradeType", "2");// 修改
+            acquirer.put("applSeq", relation.getApplSeq());
         }
         acquirer.put("applCde", "");
 

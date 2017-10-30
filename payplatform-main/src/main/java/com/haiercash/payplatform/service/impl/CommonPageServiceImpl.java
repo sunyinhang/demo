@@ -315,6 +315,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
     @Override
     public Map<String, Object> saveAppOrderInfo(AppOrder appOrder) {
+
         appOrder.setApplyDt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         appOrder.setIsConfirmAgreement("0");// 0-未确认
         appOrder.setIsConfirmContract("0");// 0-未确认
@@ -382,7 +383,17 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String orderNo = "";
         String applSeq = "";
         if ("02".equals(appOrder.getTypGrp())) {//现金贷
-            Map<String, Object> resultResponseMap = acquirerService.cashLoan(appOrder, null);
+
+            // 现金贷
+            AppOrdernoTypgrpRelation relation = appOrdernoTypgrpRelationDao.selectByOrderNo(appOrder.getOrderNo());
+            if (relation == null) {
+                return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "要更新的订单不存在！");
+            }
+
+            // 收单系统获取订单详情
+            //AppOrder appOrder0 = acquirerService.getAppOrderFromAcquirer(relation.getApplSeq(), super.getChannelNo());
+
+            Map<String, Object> resultResponseMap = acquirerService.cashLoan(appOrder, relation);
             if (CmisUtil.isSuccess(resultResponseMap)) {
                 Map<String, Object> bodyMap = (Map<String, Object>) ((Map<String, Object>) resultResponseMap
                         .get("response")).get("body");
