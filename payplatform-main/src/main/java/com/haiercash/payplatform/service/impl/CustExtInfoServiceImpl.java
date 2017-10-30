@@ -802,6 +802,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                         cacheMap.put("preAmountFlag", preAmountFlag);
                         session.set(token, cacheMap);
                         resultparamMap.put("flag", "6");//跳转借款页面
+                        return success(resultparamMap);
                     }
                     resultparamMap.put("flag", "1");
                 } else {//没有设置支付密码
