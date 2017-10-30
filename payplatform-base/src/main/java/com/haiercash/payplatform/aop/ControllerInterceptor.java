@@ -15,6 +15,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,6 +31,7 @@ import java.util.Map;
  */
 @Aspect
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public final class ControllerInterceptor {
     private static final String NAME_TOKEN = "token";
     private static final String NAME_CHANNEL = "channel";
