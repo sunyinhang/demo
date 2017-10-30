@@ -238,7 +238,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
         } else if (Objects.equals(retFlag, "U0178")) {//U0157：未查到该用户的信息
             //向后台注册用户信息
-            Map<String, Object> registerResult = this.saveUserByExternUid(thirdInfo.getUserId(), thirdInfo.getPhoneNo(), phoneNo_);
+            Map<String, Object> registerResult = this.saveUserByExternUid(this.getChannelNo(), userId__, phoneNo_);
             String registerResultFlag = HttpUtil.getReturnCode(registerResult);
             if ("00000".equals(registerResultFlag)) {
                 uidLocal = registerResult.get("body").toString();//统一认证内userId
