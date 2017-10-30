@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.bestvike.lang.Convert;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
@@ -447,11 +448,11 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         Map<String, Object> resMap = (Map<String, Object>) stringObjectMap.get("body");
-        Double apply_amt = (Double) resMap.get("apply_amt");//借款金额
-        String apply_tnr = (String) resMap.get("apply_tnr");//申请期限
-        String apply_tnr_typ = (String) resMap.get("apply_tnr_typ");//期限类型
-        String typ_cde = (String) resMap.get("typ_cde");//贷款品种
-        String mtd_cde = (String) resMap.get("mtd_cde");//还款方式
+        Double apply_amt = Convert.toDouble(resMap.get("apply_amt"));//借款金额
+        String apply_tnr = Convert.toString(resMap.get("apply_tnr"));//申请期限
+        String apply_tnr_typ = Convert.toString(resMap.get("apply_tnr_typ"));//期限类型
+        String typ_cde = Convert.toString(resMap.get("typ_cde"));//贷款品种
+        String mtd_cde = Convert.toString(resMap.get("mtd_cde"));//还款方式
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("typCde", typ_cde);
         map.put("apprvAmt", apply_amt);
