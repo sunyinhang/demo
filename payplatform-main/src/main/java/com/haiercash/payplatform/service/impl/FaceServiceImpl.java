@@ -1,12 +1,12 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.rest.RestTemplateUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpClient;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,7 +21,11 @@ import sun.misc.BASE64Encoder;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -124,7 +128,7 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         json.put("filestreamname", filestreamname);//文件名
         json.put("organization", "02");//机构号(国政通)
         //xmllog.info("调用外联人脸识别接口，请求数据：" + json.toString());
-        String resData = HttpClient.sendJson(url, json.toString());
+        String resData = RestTemplateUtils.postForString(url, json.toString());
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
         //resData = "{\"code\":\"0000\",\"message\":\"{\\\"user_check_result\\\":\\\"3\\\",\\\"msg\\\":\\\"比对服务处理成功\\\",\\\"requestId\\\":\\\"d77b77852fe728c13b7114dbd5c448d9\\\",\\\"code\\\":\\\"1001\\\",\\\"entity\\\":{\\\"score\\\":\\\"83.23\\\",\\\"desc\\\":\\\"是同一个人\\\"}}\",\"data\":null}";
         //{"code":"0000","data":[],"message":"{\"msg\":\"账号密码不匹配\",\"code\":\"-1\"}"}
