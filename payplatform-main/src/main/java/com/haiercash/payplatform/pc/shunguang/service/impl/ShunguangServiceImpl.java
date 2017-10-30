@@ -9,16 +9,19 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgRegions;
+import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
+import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
+import com.haiercash.payplatform.rest.RestTemplateUtils;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.HaierDataService;
 import com.haiercash.payplatform.service.OrderManageService;
-import com.haiercash.payplatform.utils.*;
-import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
-import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.DesUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -28,7 +31,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * shunguang service impl.
@@ -118,7 +127,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
         String url = this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData";
         logger.info("推送外联风险信息，请求地址：" + url);
-        String resData = HttpClient.sendJson(url, (new JSONObject(requestParams)).toString());
+        String resData = RestTemplateUtils.postForString(url, new JSONObject(requestParams).toString());
         logger.info("推送外联风险信息，返回数据：" + resData);
         JSONObject result = new JSONObject(resData);
         if (!"0000".equals(result.get("code"))) {
@@ -1095,7 +1104,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("idType", certType);
         session.set(token, cachemap);
 
-         // 查询有无额度 by lihua
+        // 查询有无额度 by lihua
         HashMap<String, Object> edCheckmap = new HashMap<>();
         edCheckmap.put("idNo", certNo);
         edCheckmap.put("channel", "11");
