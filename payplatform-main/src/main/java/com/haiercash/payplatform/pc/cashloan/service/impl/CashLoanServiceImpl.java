@@ -693,7 +693,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String updflag = (String) map.get("flag");//1.待提交返显
         String orderNo = (String) map.get("orderNo");//待提交时必传
         String areaCode = (String) map.get("areaCode");//区编码
-        String applyAmt = (String) map.get("applyAmt");//申请金额
+        String applyAmt = Convert.toString(map.get("applyAmt"));//申请金额
         String typCde = (String) map.get("typCde");//贷款品种
         String purpose = (String) map.get("purpose");//贷款用途
         String applCardNo = (String) map.get("applCardNo");//放款卡号
