@@ -51,6 +51,8 @@ allprojects {
         //json
         compile('com.alibaba:fastjson:1.2.38')
         compile('org.json:json:20170516')
+        //xml
+        compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml')
         //数据库
         compile('com.alibaba:druid:1.1.3')
         compile('com.oracle:ojdbc6:11g')

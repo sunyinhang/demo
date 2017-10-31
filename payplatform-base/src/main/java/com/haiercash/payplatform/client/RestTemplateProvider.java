@@ -13,26 +13,36 @@ import javax.annotation.PostConstruct;
 @Component
 public final class RestTemplateProvider {
     private static RestTemplate restTemplate;
-    private static RestTemplate restTemplateNormal;
+    private static RestTemplate restTemplateJson;
+    private static RestTemplate restTemplateXml;
     @Autowired
     private RestTemplate restTemplateInstance;
     @Autowired
-    @Qualifier("restTemplateNormal")
-    private RestTemplate restTemplateNormalInstance;
+    @Qualifier("restTemplateJson")
+    private RestTemplate restTemplateJsonInstance;
+    @Autowired
+    @Qualifier("restTemplateXml")
+    private RestTemplate restTemplateXmlInstance;
 
     //负载均衡的
     public static RestTemplate getRestTemplate() {
         return restTemplate;
     }
 
-    //非负载均衡的
-    public static RestTemplate getRestTemplateNormal() {
-        return restTemplateNormal;
+    //非负载均衡 Json
+    public static RestTemplate getRestTemplateJson() {
+        return restTemplateJson;
+    }
+
+    //非负载均衡 Xml
+    public static RestTemplate getRestTemplateXml() {
+        return restTemplateXml;
     }
 
     @PostConstruct
     private void init() {
         restTemplate = this.restTemplateInstance;
-        restTemplateNormal = this.restTemplateNormalInstance;
+        restTemplateJson = this.restTemplateJsonInstance;
+        restTemplateXml = this.restTemplateXmlInstance;
     }
 }
