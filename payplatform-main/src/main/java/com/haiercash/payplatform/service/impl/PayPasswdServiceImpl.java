@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -12,7 +13,6 @@ import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.HttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,15 +64,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("从前端获取的的token为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        if("46".equals(channelNo)){
+        if ("46".equals(channelNo)) {
             if (StringUtils.isEmpty(payPasswd) || StringUtils.isEmpty(verifyNo)) {
                 logger.info("payPasswd:" + payPasswd + "verifyNo" + verifyNo);
                 logger.info("从前端获取的参数为空");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
             }
-        }else{
+        } else {
             if (StringUtils.isEmpty(payPasswd)) {
-                logger.info("payPasswd:" + payPasswd );
+                logger.info("payPasswd:" + payPasswd);
                 logger.info("从前端获取的参数为空");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
             }
@@ -373,16 +373,16 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         map.put("verifyNo", verifyNo);//验证码
         map.put("newPayPasswd", EncryptUtil.simpleEncrypt(newPayPasswd));//新支付密码
         String url = outplatform_url + "/Outreachplatform/api/chinaPay/identifyByFlag";
-        JSONObject json = new JSONObject();
-        json.put("accountName", custName);
-        json.put("accountNo", cardNo);
-        json.put("bankCode", bankCode);
-        json.put("id", certNo);
-        json.put("cardPhone", mobile);
-        json.put("flag", "1");
-        json.put("channelNo", "payplat");
-        logger.info("实名认证(外联)参数==>" + json.toString());
-        String resData = HttpClient.sendJson(url, json.toString());
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("accountName", custName);
+        jsonMap.put("accountNo", cardNo);
+        jsonMap.put("bankCode", bankCode);
+        jsonMap.put("id", certNo);
+        jsonMap.put("cardPhone", mobile);
+        jsonMap.put("flag", "1");
+        jsonMap.put("channelNo", "payplat");
+        logger.info("实名认证(外联)参数==>" + jsonMap.toString());
+        String resData = JsonClientUtils.postForString(url, jsonMap);
         logger.info("实名认证(外联)响应数据==>" + resData);
         if (resData == null || "".equals(resData)) {
             logger.info("修改密码的实名认证(外联)接口，返回数据为空");

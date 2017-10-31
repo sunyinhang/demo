@@ -20,13 +20,11 @@
 package com.haiercash.payplatform.utils;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -96,72 +94,4 @@ public class HttpClient {
         }
         return result;
     }
-
-    /**
-     * DESCRIPTION:发送JSON @author xuchao @date 2015年6月12日 sendPost 方法 @param
-     * url @param param @return @return String @throws
-     */
-    public static String sendJson(String url, String param) {
-        try {
-
-            URL add_url = new URL(url);
-
-            HttpURLConnection connection = (HttpURLConnection) add_url.openConnection();
-
-            connection.setDoInput(true);
-
-            connection.setDoOutput(true);
-
-            connection.setRequestMethod("POST");
-
-            connection.setUseCaches(false);
-
-            connection.setInstanceFollowRedirects(true);
-            connection.setRequestProperty("Accept", "application/json"); // 设置接收数据的格式
-            connection.setRequestProperty("Content-Type", "application/json;charset=utf-8"); // 设置发送数据的格式
-
-            connection.connect();
-
-            DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-
-            out.write(param.getBytes("utf-8"));
-
-            out.flush();
-
-            out.close();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            String lines;
-
-            StringBuffer sbf = new StringBuffer();
-
-            while ((lines = reader.readLine()) != null) {
-
-                lines = new String(lines.getBytes(), "utf-8");
-
-                sbf.append(lines);
-
-            }
-
-            System.out.println(sbf);
-
-            reader.close();
-
-            // 断开连接
-
-            connection.disconnect();
-            return sbf.toString();
-
-        } catch (MalformedURLException e) {
-            e.getMessage();
-            e.printStackTrace();
-
-        } catch (IOException e) {
-            e.getMessage();
-            e.printStackTrace();
-
-        }
-        return null;
-    }
-}    
+}
