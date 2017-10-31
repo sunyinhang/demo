@@ -1,6 +1,5 @@
 server:
   port: 8030
-  version:
   connection-timeout: 6000
 logging:
   level:
@@ -13,7 +12,6 @@ info:
 spring:
   application:
     name: payplatform-develop
-  ignoreUnresolvablePlaceholders: true
   redis:
     host: 10.164.194.123
     port: 10001
@@ -21,25 +19,24 @@ spring:
       max-idle: 100
       min-idle: 10
       max-active: 1000
-  http.converters.preferred-json-mapper: fastjson
-  http.converters.preferred-xml-mapper: jackson
   rabbitmq:
     addresses: 10.164.197.208:5672, 10.164.197.228:5672
-#    addresses: 10.164.197.54:5672, 10.164.197.55:5672
     username: admin
     password: admin123
     virtual-host: /
     publisher-confirms: true
     listener:
-      acknowledge-mode: AUTO  # 消费者开启ack
-      concurrency: 1  # Listener并行处理的消息数量，可以通过增加此数量提高消息处理效率
+      simple:
+        acknowledge-mode: auto # 消费者开启ack
+        concurrency: 1 # Listener并行处理的消息数量，可以通过增加此数量提高消息处理效率
     requestedHeartbeat: 60
-#    exchange: APPMSG_TOPIC_EXCHANGE_DEV    测试
     exchange: APPMSG_TOPIC_EXCHANGE
     queue:
-#      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
       cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
   http:
+    converters:
+      preferred-json-mapper: fastjson
+      preferred-xml-mapper: jackson
     encoding:
       force: true
     multipart:
