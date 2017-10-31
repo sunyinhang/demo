@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class FastJsonHttpMessageConvertersConfiguration {
     @Configuration
     @ConditionalOnClass({JSON.class, FastJsonHttpMessageConverter.class})
-    @ConditionalOnProperty(name = HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY, havingValue = HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY_FASTJSON, matchIfMissing = false)
+    @ConditionalOnProperty(name = HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY, havingValue = HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_FASTJSON, matchIfMissing = false)
     protected static class FastJsonHttpMessageConverterConfiguration {
         @Bean
         @ConditionalOnMissingBean(value = FastJsonHttpMessageConverterEx.class)

@@ -22,6 +22,7 @@ spring:
       min-idle: 10
       max-active: 1000
   http.converters.preferred-json-mapper: fastjson
+  http.converters.preferred-xml-mapper: jackson
   rabbitmq:
     addresses: 10.164.197.208:5672, 10.164.197.228:5672
 #    addresses: 10.164.197.54:5672, 10.164.197.55:5672

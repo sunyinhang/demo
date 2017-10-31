@@ -196,7 +196,7 @@ public final class CmisDirectUtils {
 
         @Override
         protected RestTemplate getRestTemplate() {
-            return RestTemplateProvider.getRestTemplateNormal();
+            return RestTemplateProvider.getRestTemplateJson();
         }
 
         @Override

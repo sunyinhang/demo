@@ -26,7 +26,7 @@ public final class ApplicationContextUtils implements ApplicationContextAware {
         if (ApplicationContextUtils.applicationContext != null)
             return;
         ApplicationContextUtils.applicationContext = applicationContext;
-        log.info("已初始化 ApplicationContextUtils, 可以获取 bean.");
+        log.info("ApplicationContextUtils inited");
     }
 
     //通过name获取 Bean.

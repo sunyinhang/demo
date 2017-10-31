@@ -6,6 +6,7 @@ import com.haiercash.payplatform.config.HttpMessageConvertersAutoConfiguration;
 import com.haiercash.payplatform.context.RequestContext;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
+import com.haiercash.payplatform.converter.StringHttpMessageConverterEx;
 import com.haiercash.payplatform.trace.TraceID;
 import com.netflix.config.DynamicBooleanProperty;
 import com.netflix.config.DynamicPropertyFactory;
@@ -13,15 +14,17 @@ import com.netflix.config.DynamicStringListProperty;
 import com.netflix.config.DynamicStringProperty;
 import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.AbstractClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
@@ -42,10 +45,14 @@ import java.util.List;
  * Created by 许崇雷 on 2017-08-15.
  */
 public class RestTemplateEx extends RestTemplate {
-    private boolean inited; //实例是否初始化
+    private final RestTemplateSupportedType supportedType;  //支持的类型
+    private volatile boolean inited;                        //实例是否初始化
 
-    public RestTemplateEx() {
+    public RestTemplateEx(RestTemplateSupportedType supportedType) {
         super(Collections.singletonList(null));
+        if (supportedType == null)
+            throw new NullPointerException("supportedType can not be null");
+        this.supportedType = supportedType;
     }
 
     //初始化.必须延迟执行,否则无法读取配置
@@ -56,11 +63,22 @@ public class RestTemplateEx extends RestTemplate {
             if (this.inited)
                 return;
             RestTemplateConfig.init();
-            this.setMessageConverters(RestTemplateConfig.MESSAGE_CONVERTERS);
+            switch (this.supportedType) {
+                case JSON:
+                    this.setMessageConverters(RestTemplateConfig.MESSAGE_JSON_CONVERTERS);
+                    break;
+                case XML:
+                    this.setMessageConverters(RestTemplateConfig.MESSAGE_XML_CONVERTERS);
+                    break;
+                default:
+                    this.setMessageConverters(RestTemplateConfig.MESSAGE_JSON_CONVERTERS);
+                    break;
+            }
             this.inited = true;
         }
     }
 
+    //获取转换器
     @Override
     public List<HttpMessageConverter<?>> getMessageConverters() {
         this.init();
@@ -74,6 +92,7 @@ public class RestTemplateEx extends RestTemplate {
         return super.doExecute(url, method, new RequestCallbackWrapper(requestCallback), responseExtractor);
     }
 
+    //创建请求
     @Override
     protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
         ClientHttpRequest clientHttpRequest = super.createRequest(url, method);
@@ -143,19 +162,22 @@ public class RestTemplateEx extends RestTemplate {
         private static final List<String> SYSTEM_IGNORE_HEADERS = Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Content-Type", "Content-Length", "Cookie", "Set-Cookie", "Authorization", "Connection", "Host", "User-Agent");
         private static final DynamicBooleanProperty ROUTE_HEADERS_ENABLED_PROPERTY = DynamicPropertyFactory.getInstance().getBooleanProperty("ribbon.route-headers-enabled", false);
         private static final DynamicStringListProperty USER_IGNORE_HEADERS_PROPERTY = new DynamicStringListProperty("ribbon.ignore-headers", (String) null);
-        private static final DynamicStringProperty PREFERRED_JSON_MAPPER = DynamicPropertyFactory.getInstance().getStringProperty(HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY, StringUtils.EMPTY);
+        private static final DynamicStringProperty PREFERRED_JSON_MAPPER = DynamicPropertyFactory.getInstance().getStringProperty(HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY, StringUtils.EMPTY);
+        private static final DynamicStringProperty PREFERRED_XML_MAPPER = DynamicPropertyFactory.getInstance().getStringProperty(HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_PROPERTY, StringUtils.EMPTY);
 
-        private static boolean INITED;                                      //是否已初始化
-        private static boolean ROUTE_HEADERS_ENABLED;                       //是否启用传递 Headers
-        private static CaseInsensitiveKeyMap<Object> IGNORE_HEADERS;        //忽略的 Headers
-        private static List<HttpMessageConverter<?>> MESSAGE_CONVERTERS;    //格式转换器
+        private static boolean INITED;                                          //是否已初始化
+        private static boolean ROUTE_HEADERS_ENABLED;                           //是否启用传递 Headers
+        private static CaseInsensitiveKeyMap<Object> IGNORE_HEADERS;            //忽略的 Headers
+        private static List<HttpMessageConverter<?>> MESSAGE_JSON_CONVERTERS;   //格式转换器 Json
+        private static List<HttpMessageConverter<?>> MESSAGE_XML_CONVERTERS;    //格式转换器 Xml
 
         //初始化
         private static void init() {
             if (INITED)
                 return;
             initIgnoreHeaders();
-            initMessageConverters();
+            initMessageJsonConverters();
+            initMessageXmlConverters();
             INITED = true;
         }
 
@@ -172,30 +194,53 @@ public class RestTemplateEx extends RestTemplate {
             IGNORE_HEADERS = set;
         }
 
-        //创建数据转换器
-        private static void initMessageConverters() {
+        //创建数据转换器 Json
+        private static void initMessageJsonConverters() {
             List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
             messageConverters.add(new ByteArrayHttpMessageConverter());
-            messageConverters.add(new StringHttpMessageConverter());
+            messageConverters.add(new StringHttpMessageConverterEx(MediaType.APPLICATION_JSON_UTF8));
             messageConverters.add(new ResourceHttpMessageConverter());
             messageConverters.add(new SourceHttpMessageConverter());
             messageConverters.add(new AllEncompassingFormHttpMessageConverter());
             String preferredJsonMapper = PREFERRED_JSON_MAPPER.get().toLowerCase();
             switch (preferredJsonMapper) {
-                case HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY_JACKSON:
+                case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_JACKSON:
                     messageConverters.add(new MappingJackson2HttpMessageConverter());
                     break;
-                case HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY_GSON:
+                case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_GSON:
                     messageConverters.add(new GsonHttpMessageConverter());
                     break;
-                case HttpMessageConvertersAutoConfiguration.PREFERRED_MAPPER_PROPERTY_FASTJSON:
+                case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_FASTJSON:
                     messageConverters.add(new FastJsonHttpMessageConverterEx());
                     break;
                 default:
                     messageConverters.add(new MappingJackson2HttpMessageConverter());
                     break;
             }
-            MESSAGE_CONVERTERS = messageConverters;
+            MESSAGE_JSON_CONVERTERS = messageConverters;
+        }
+
+        //创建数据转换器 Xml
+        private static void initMessageXmlConverters() {
+            List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+            messageConverters.add(new ByteArrayHttpMessageConverter());
+            messageConverters.add(new StringHttpMessageConverterEx(MediaType.APPLICATION_XML));
+            messageConverters.add(new ResourceHttpMessageConverter());
+            messageConverters.add(new SourceHttpMessageConverter());
+            messageConverters.add(new AllEncompassingFormHttpMessageConverter());
+            String preferredXmlMapper = PREFERRED_XML_MAPPER.get().toLowerCase();
+            switch (preferredXmlMapper) {
+                case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_PROPERTY_JACKSON:
+                    messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
+                    break;
+                case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_PROPERTY_JAXB:
+                    messageConverters.add(new Jaxb2RootElementHttpMessageConverter());
+                    break;
+                default:
+                    messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
+                    break;
+            }
+            MESSAGE_XML_CONVERTERS = messageConverters;
         }
     }
 }
