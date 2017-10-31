@@ -1,6 +1,7 @@
 package com.haiercash.payplatform;
 
 import com.haiercash.payplatform.client.RestTemplateEx;
+import com.haiercash.payplatform.client.RestTemplateSupportedType;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -32,12 +33,17 @@ public class Application {
     @LoadBalanced
     @Bean
     RestTemplate restTemplate() {
-        return new RestTemplateEx();
+        return new RestTemplateEx(RestTemplateSupportedType.JSON);
     }
 
-    @Bean(name = "restTemplateNormal")
-    RestTemplate restTemplateNormal() {
-        return new RestTemplateEx();
+    @Bean(name = "restTemplateJson")
+    RestTemplate restTemplateJson() {
+        return new RestTemplateEx(RestTemplateSupportedType.JSON);
+    }
+
+    @Bean(name = "restTemplateXml")
+    RestTemplate restTemplateXml() {
+        return new RestTemplateEx(RestTemplateSupportedType.XML);
     }
 
     public static void main(String[] args) {
