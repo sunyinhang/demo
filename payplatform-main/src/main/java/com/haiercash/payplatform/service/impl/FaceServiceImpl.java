@@ -122,10 +122,10 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         json.put("filestream", filestream);//识别图像文件流
         json.put("appno", appno);//申请编号
         json.put("filestreamname", filestreamname);//文件名
-        if ("33".equals(channelNo)) {//乔融
-            json.put("organization", "01");//机构号(海鑫洺)
-        } else {
+        if ("46".equals(channelNo)) { //顺逛
             json.put("organization", "02");//机构号(国政通)
+        } else {//乔融  现金贷
+            json.put("organization", "01");//机构号(海鑫洺)
         }
 
         //xmllog.info("调用外联人脸识别接口，请求数据：" + json.toString());
