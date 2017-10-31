@@ -35,8 +35,8 @@ spring:
       cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
   http:
     converters:
-      preferred-json-mapper: fastjson
-      preferred-xml-mapper: jackson
+      preferred-json-mapper: fastjson # json 转换器, 接收数据和请求数据时使用
+      preferred-xml-mapper: jackson # xml 转换器, 请求数据时使用
     encoding:
       force: true
     multipart:
@@ -59,7 +59,6 @@ datasources:
   payplatform:
     datasource:
       url: jdbc:oracle:thin:@10.164.194.168:1521/haiercash
-      #url: jdbc:oracle:thin:@10.164.197.49:1521/ibank
       username: haiercashpay
       password: haiercashpay
       driverClassName: oracle.jdbc.OracleDriver
@@ -98,13 +97,12 @@ datasources:
       underscoreToCamelCase: true
 eureka:
   client:
-    register-with-eureka: true  #是否注册自身到eureka服务器
-    fetch-registry: true        #是否从eureka服务器获取注册信息
+    register-with-eureka: true #是否注册自身到eureka服务器
+    fetch-registry: true #是否从eureka服务器获取注册信息
     registryFetchIntervalSeconds: 5
     eurekaServiceUrlPollIntervalSeconds: 120
     serviceUrl:
-      defaultZone: http://10.164.197.208:1180/eureka/,http://10.164.197.209:1180/eureka/
-      #defaultZone: http://10.164.197.32:1180/eureka/,http://10.164.197.33:1180/eureka/,http://10.164.197.34:1180/eureka/
+      defaultZone: http://10.164.197.208:1180/eureka, http://10.164.197.209:1180/eureka
   instance:
     instanceId: ${spring.application.name}@${spring.cloud.client.ipAddress}:${server.port}(${spring.cloud.client.hostname})
     appname: ${spring.application.name}
@@ -112,7 +110,6 @@ eureka:
     lease-renewal-interval-in-seconds: 1
     lease-expiration-duration-in-seconds: 2
     secure-port-enabled: false
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
 zuul:
   ignoredServices: '*'
   set-content-length: true # 返回长度,微服务没有返回长度或请求 GZip 压缩除外
@@ -136,20 +133,9 @@ common:
     port: 10001
     prefix: "PAYPLATFORM:"
 app:
-  instance:
-    #  错误码前缀：错误码组成为 前缀（此处定义）+模块代码（controller中定义）+错误码（super.fail中定义）
-    errorPrefix: PPF
-    # redisPrefix: PAYPLATFORM
   file:
-    # 文件上传路径
-    uploadPath: f:\file\upload
-    # excel模板文件路径
-    templatePath: f:\file\template
-  aspect:
-    controller:
-      open: true
-    service:
-      open: true
+    uploadPath: f:\file\upload # 文件上传路径
+    templatePath: f:\file\template # excel模板文件路径
   rest:
     APPCA: http://APPCA
     APPMANAGE: http://APPMANAGE
@@ -166,7 +152,6 @@ app:
     ACQUIRER: http://ACQUIRER
     ORDER: http://ORDER
   other:
-    # baseSharePath: /testshare01
     haierDataImg_url: /testshare01/00/Data/haierData/
     outplatform_url: http://10.164.194.120:9080
     face_DataImg_url: /testshare01/crm/image/
@@ -184,8 +169,4 @@ app:
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
   redis:
     prefix: PAYPLATFORM
-    # 过期时间，以秒为单位
-    expire: 3600
-  # rediskey:
-    # rediskey: ${common.redis.prefix}__DEMO__
-    # redistimeout: 300
+    expire: 3600 # 过期时间，以秒为单位
