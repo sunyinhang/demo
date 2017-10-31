@@ -2,11 +2,11 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpClient;
-import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,17 +33,30 @@ import java.util.UUID;
 @Service
 public class FaceServiceImpl extends BaseService implements FaceService{
     public Log logger = LogFactory.getLog(getClass());
-    @Autowired
-    private Session session;
-    @Autowired
-    private AppServerService appServerService;
-
     @Value("${app.other.outplatform_url}")
     protected String outplatform_url;
     @Value("${app.other.face_DataImg_url}")
     protected String face_DataImg_url;
     @Value("${app.other.haierDataImg_url}")
     protected String haierDataImg_url;
+    @Autowired
+    private Session session;
+    @Autowired
+    private AppServerService appServerService;
+
+    public static void createDir(String destDirName) {
+        File dir = new File(destDirName);
+        if (dir.exists()) {
+            return;
+        }
+        if (!destDirName.endsWith(File.separator)) {
+            destDirName = destDirName + File.separator;
+        }
+        // 创建目录
+        if (dir.mkdirs()) {
+            return;
+        }
+    }
 
     //人脸识别
     @Override
@@ -109,7 +122,12 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         json.put("filestream", filestream);//识别图像文件流
         json.put("appno", appno);//申请编号
         json.put("filestreamname", filestreamname);//文件名
-        json.put("organization", "02");//机构号(国政通)
+        if ("33".equals(channelNo)) {//乔融
+            json.put("organization", "01");//机构号(海鑫洺)
+        } else {
+            json.put("organization", "02");//机构号(国政通)
+        }
+
         //xmllog.info("调用外联人脸识别接口，请求数据：" + json.toString());
         String resData = HttpClient.sendJson(url, json.toString());
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
@@ -401,20 +419,6 @@ public class FaceServiceImpl extends BaseService implements FaceService{
         }
 
         return success();
-    }
-
-    public static void createDir(String destDirName) {
-        File dir = new File(destDirName);
-        if (dir.exists()) {
-            return;
-        }
-        if (!destDirName.endsWith(File.separator)) {
-            destDirName = destDirName + File.separator;
-        }
-        // 创建目录
-        if (dir.mkdirs()) {
-            return;
-        }
     }
 
     private Map<String, Object> validateUserFlag(String userId, String token, String channel, String channelNo, Map cacheMap){
