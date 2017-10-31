@@ -246,6 +246,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
                 this.redisSession.set(thirdToken, cachemap);
                 returnmap.put("flag", "2");//跳转登陆绑定页
+                returnmap.put("phone", phoneNo_);//手机号
 //                returnmap.put("token", thirdToken);
                 return success(returnmap);
             } else {
