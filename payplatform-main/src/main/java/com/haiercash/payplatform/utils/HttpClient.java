@@ -19,12 +19,6 @@
  */
 package com.haiercash.payplatform.utils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -169,28 +163,5 @@ public class HttpClient {
 
         }
         return null;
-    }
-
-    /**
-     * 发送Get请求
-     *
-     * @param url
-     * @return
-     * @auther zhaohan
-     */
-    public static String sendGetUrl(String url) {
-        DefaultHttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(url);
-        String result = null;
-        try {
-            HttpResponse response = httpClient.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-            result = EntityUtils.toString(entity, "UTF-8");
-
-            httpGet.releaseConnection();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 }    

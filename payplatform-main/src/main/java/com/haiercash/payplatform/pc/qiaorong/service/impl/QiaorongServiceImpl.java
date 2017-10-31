@@ -10,10 +10,15 @@ import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
+import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.CmisTradeCode;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +26,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by yuanli on 2017/9/25.
@@ -55,11 +65,11 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         //logger.info("输出：" + map);
         String channelNo = (String) map.get("channelNo");
         String data = (String) map.get("data");
-        if(StringUtils.isEmpty(channelNo)){
+        if (StringUtils.isEmpty(channelNo)) {
             logger.info("渠道编码不能为空");
             return fail(ConstUtil.ERROR_CODE, "渠道编码不能为空");
         }
-        if(StringUtils.isEmpty(data)){
+        if (StringUtils.isEmpty(data)) {
             logger.info("请求数据不能为空");
             return fail(ConstUtil.ERROR_CODE, "请求数据不能为空");
         }
@@ -72,13 +82,13 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String applSeq = (String) camap.get("applSeq");
         String typ_cde = (String) camap.get("typ_cde");
         String callbackUrl = (String) camap.get("callbackUrl");
-        if(StringUtils.isEmpty(applSeq)){
+        if (StringUtils.isEmpty(applSeq)) {
             return fail(ConstUtil.ERROR_CODE, "申请流水号不能为空");
         }
-        if(StringUtils.isEmpty(typ_cde)){
+        if (StringUtils.isEmpty(typ_cde)) {
             return fail(ConstUtil.ERROR_CODE, "贷款品种不能为空");
         }
-        if(StringUtils.isEmpty(callbackUrl)){
+        if (StringUtils.isEmpty(callbackUrl)) {
             return fail(ConstUtil.ERROR_CODE, "回调接口不能为空");
         }
 
@@ -107,11 +117,11 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String applseq = (String) map.get("applseq");
         String token = (String) map.get("token");
         logger.info("申请流水号：" + applseq);
-        if(StringUtils.isEmpty(applseq)){
+        if (StringUtils.isEmpty(applseq)) {
             logger.info("申请流水号为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        if(StringUtils.isEmpty(token)){
+        if (StringUtils.isEmpty(token)) {
             logger.info("token不能为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -198,7 +208,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String token = (String) map.get("token");
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
-        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -249,7 +259,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cacheMap.put("custName", custName);
         cacheMap.put("certNo", certNo);
         cacheMap.put("userflag", "1");
-        logger.info("userflag:1" );
+        logger.info("userflag:1");
         session.set(token, cacheMap);
 
 
@@ -267,12 +277,12 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map headjson = (Map) resultmap.get("head");
         String retFlag = (String) headjson.get("retFlag");
         String retMsg = (String) headjson.get("retMsg");
-        if(!"00000".equals(retFlag)){
+        if (!"00000".equals(retFlag)) {
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         Map body = (Map) resultmap.get("body");
         String code = (String) body.get("code"); //结果标识码
-        if("00".equals(code)){//人脸识别通过
+        if ("00".equals(code)) {//人脸识别通过
             logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
             double amount = Double.parseDouble(totalamount);
 
@@ -280,11 +290,11 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             returnmap.put("flag", "05");//跳转合同
             return success(returnmap);//跳转合同展示页面
 
-        }else if("01".equals(code)){//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+        } else if ("01".equals(code)) {//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
             //终止
             logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
             return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
-        }else if("02".equals(code)){//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+        } else if ("02".equals(code)) {//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
             //跳转替代影像
             //终止
             logger.info("人脸识别，剩余次数为0，录单终止");
@@ -292,7 +302,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 //            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
 //            returnmap.put("flag", "03");// 手持身份证
 //            return success(returnmap);
-        }else if("10".equals(code)){//10：未通过人脸识别，可以再做人脸识别
+        } else if ("10".equals(code)) {//10：未通过人脸识别，可以再做人脸识别
             //可以做人脸识别
             logger.info("未通过人脸识别，可以再做人脸识别");
             returnmap.put("flag", "02");// 人脸识别
@@ -314,7 +324,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String registerNum = (String) map.get("registerNum");
         String registerEvent = (String) map.get("registerEvent");
 
-        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(password)){
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(password)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo + "  password" + password);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -342,7 +352,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 
 
         logger.info("百融注册事件：registerNum：" + registerNum + "********registerEvent:" + registerEvent);
-        if(!StringUtils.isEmpty(registerNum)){
+        if (!StringUtils.isEmpty(registerNum)) {
             Map<String, String> mapLoginEvent = new HashMap();
             mapLoginEvent.put("content", EncryptUtil.simpleEncrypt(registerNum));
             mapLoginEvent.put("reserved6", applseq);
@@ -365,7 +375,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             riskmap.put("channelNo", channelNo);
             appServerService.updateRiskInfo("", map);
         }
-
 
 
         //注册
@@ -401,12 +410,12 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map headjson = (Map) resultmap.get("head");
         String faceretFlag = (String) headjson.get("retFlag");
         String retMsg = (String) headjson.get("retMsg");
-        if(!"00000".equals(faceretFlag)){
+        if (!"00000".equals(faceretFlag)) {
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         Map body = (Map) resultmap.get("body");
         String code = (String) body.get("code"); //结果标识码
-        if("00".equals(code)){//人脸识别通过
+        if ("00".equals(code)) {//人脸识别通过
             logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
             double amount = Double.parseDouble(totalamount);
 
@@ -414,18 +423,18 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             returnmap.put("flag", "05");//跳转合同
             return success(returnmap);//跳转合同展示页面
 
-        }else if("01".equals(code)){//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+        } else if ("01".equals(code)) {//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
             //终止
             logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
             return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
-        }else if("02".equals(code)){//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+        } else if ("02".equals(code)) {//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
             //跳转替代影像
             logger.info("人脸识别，剩余次数为0，录单终止");
             return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
 //            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
 //            returnmap.put("flag", "03");// 手持身份证
 //            return success(returnmap);
-        }else if("10".equals(code)){//10：未通过人脸识别，可以再做人脸识别
+        } else if ("10".equals(code)) {//10：未通过人脸识别，可以再做人脸识别
             //可以做人脸识别
             logger.info("未通过人脸识别，可以再做人脸识别");
             returnmap.put("flag", "02");// 人脸识别
@@ -441,7 +450,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String token = super.getToken();
         String channel = super.getChannel();
         String channelNo = super.getChannelNo();
-        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -470,7 +479,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String token = super.getToken();
         String channel = super.getChannel();
         String channelNo = super.getChannelNo();
-        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -497,7 +506,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String token = super.getToken();
         String channel = super.getChannel();
         String channelNo = super.getChannelNo();
-        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)){
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -537,7 +546,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String verifyNo = (String) map.get("verifyNo");//验证码
         logger.info("百融风险信息：");
         logger.info("loginNum:" + loginNum + "  loginEvent:" + loginEvent + "  lendNum:" + lendNum + "  lendEvent:" + lendEvent);
-        if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(verifyNo)){
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(verifyNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo + "  verifyNo" + verifyNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -557,7 +566,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String phone = (String) cacheMap.get("phoneNo");
         String callbackUrl = (String) cacheMap.get("callbackUrl");
         String userflag = (String) cacheMap.get("userflag");
-        if(!"1".equals(userflag)){//未进行过四要素验证
+        if (!"1".equals(userflag)) {//未进行过四要素验证
             return fail(ConstUtil.ERROR_CODE, "请先进行四要素验证");
         }
 
@@ -586,13 +595,12 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         uploadimgmap.put("applSeq", applseq);//订单号
         uploadimgmap.put("channel", channel);
         uploadimgmap.put("channelNo", channelNo);
-        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
-        if(!HttpUtil.isSuccess(uploadimgresultmap)){
+        Map<String, Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
+        if (!HttpUtil.isSuccess(uploadimgresultmap)) {
             logger.info("订单提交，影像上传失败失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         logger.info("订单提交，影像上传成功");
-
 
 
         //3.个人借款合同
@@ -601,7 +609,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map<String, Object> loanparamMap = new HashMap<String, Object>();
         loanparamMap.put("typCdeList", typCde);
         Map<String, Object> loanmap = appServerService.pLoanTypList(token, loanparamMap);
-        if(!HttpUtil.isSuccess(loanmap)){
+        if (!HttpUtil.isSuccess(loanmap)) {
             return loanmap;
         }
         List<Map<String, Object>> loanbody = (List<Map<String, Object>>) loanmap.get("body");
@@ -623,8 +631,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         orderJson.put("order", order.toString());
 
         SignContractInfo signContractInfo = signContractInfoDao.getSignContractInfo(typCde);
-        if(signContractInfo == null){
-            return fail(ConstUtil .ERROR_CODE, "贷款品种"+ typCde +"没有配置签章类型");
+        if (signContractInfo == null) {
+            return fail(ConstUtil.ERROR_CODE, "贷款品种" + typCde + "没有配置签章类型");
         }
         String signType = signContractInfo.getSigntype();//签章类型
         Map contractmap = new HashMap();//
@@ -665,7 +673,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map zxmap = appServerService.caRequest(token, reqZXJson);
 
 
-
         //5.注册合同
         JSONObject orderRegister = new JSONObject();
         orderRegister.put("custName", name);// 客户姓名
@@ -688,8 +695,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map zcmap = appServerService.caRequest(token, reqZCJson);
 
         //6.百融风险信息推送
-        logger.info("百融登录事件：loginEvent："+loginEvent+"********loginEventNum:"+loginNum + "  lendEvent" + lendEvent + "  lendNum:" + lendNum);
-        if(!StringUtils.isEmpty(loginNum) && !StringUtils.isEmpty(lendNum)){
+        logger.info("百融登录事件：loginEvent：" + loginEvent + "********loginEventNum:" + loginNum + "  lendEvent" + lendEvent + "  lendNum:" + lendNum);
+        if (!StringUtils.isEmpty(loginNum) && !StringUtils.isEmpty(lendNum)) {
             Map<String, Object> riskmap = new HashMap<String, Object>();
             List<List<Map<String, String>>> content = new ArrayList<>();
             List<Map<String, String>> contentList = new ArrayList<>();
@@ -729,8 +736,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         //String callbackUrl3 = "";
         String backurl = callbackUrl + "?applseq=" + applseq;
         logger.info("乔融豆子*******签章回调地址：" + backurl);
-        String resData = HttpClient.sendGetUrl(backurl);
-        logger.info("乔融豆子*******签章回调接口返回数据："+resData);
+        String resData = JsonClientUtils.getForString(backurl);
+        logger.info("乔融豆子*******签章回调接口返回数据：" + resData);
 //        if(resData == null || "".equals(resData)){
 //            return fail("18", "回调接口调用失败");
 //        }
@@ -757,6 +764,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 
     /**
      * 根据流水号获取贷款信息
+     *
      * @param applSeq
      * @return
      */
