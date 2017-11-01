@@ -622,6 +622,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         boolean flag = false;
         for (int i = 0; i < body.size(); i++) {
             String retypCde = body.get(i).getTypCde();
+            logger.info("retypCde==" + retypCde + ";typCde==" + typCde);
             if (typCde.equals(retypCde)) {
                 flag = true;
             }
@@ -629,6 +630,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if (!flag) {
             return fail("error", "该订单并不支持在此渠道进行提交！");
         }
+        logger.info(flag);
         //1.支付密码验证
         HashMap<String, Object> pwdmap = new HashMap<>();
         String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
