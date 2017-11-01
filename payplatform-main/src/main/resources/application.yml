@@ -8,7 +8,7 @@ security:
   sessions: NEVER
 info:
   name: ${spring.application.name}
-  version: ${application.version}
+  version: ${project.version}
 spring:
   application:
     name: payplatform-develop
@@ -20,15 +20,15 @@ spring:
       min-idle: 10
       max-active: 1000
   rabbitmq:
-    addresses: 10.164.197.208:5672, 10.164.197.228:5672
+    addresses: 10.164.197.208:5672,10.164.197.228:5672
     username: admin
     password: admin123
     virtual-host: /
     publisher-confirms: true
     listener:
       simple:
-        acknowledge-mode: auto # 消费者开启ack
-        concurrency: 1 # Listener并行处理的消息数量，可以通过增加此数量提高消息处理效率
+        acknowledge-mode: auto # 确认模式
+        concurrency: 1 # 最小消费者数量
     requestedHeartbeat: 60
     exchange: APPMSG_TOPIC_EXCHANGE
     queue:
@@ -38,9 +38,10 @@ spring:
       preferred-json-mapper: fastjson # json 转换器, 接收数据和请求数据时使用
       preferred-xml-mapper: jackson # xml 转换器, 请求数据时使用
     encoding:
-      force: true
+      force: true # 强制用 UTF-8 编码解析请求
     multipart:
-      max-file-size: 10MB
+      max-file-size: 10MB # 最大文件大小
+      max-request-size: 10MB # 最大请求大小
 redis:
   single:
     host: 10.164.194.123
@@ -97,12 +98,12 @@ datasources:
       underscoreToCamelCase: true
 eureka:
   client:
-    register-with-eureka: true #是否注册自身到eureka服务器
-    fetch-registry: true #是否从eureka服务器获取注册信息
+    register-with-eureka: true # 是否注册自身到 eureka 服务器
+    fetch-registry: true # 是否从 eureka 服务器获取注册信息
     registryFetchIntervalSeconds: 5
     eurekaServiceUrlPollIntervalSeconds: 120
     serviceUrl:
-      defaultZone: http://10.164.197.208:1180/eureka, http://10.164.197.209:1180/eureka
+      defaultZone: http://10.164.197.208:1180/eureka/,http://10.164.197.209:1180/eureka/
   instance:
     instanceId: ${spring.application.name}@${spring.cloud.client.ipAddress}:${server.port}(${spring.cloud.client.hostname})
     appname: ${spring.application.name}
@@ -133,6 +134,11 @@ common:
     port: 10001
     prefix: "PAYPLATFORM:"
 app:
+  address:
+    gateUrl: http://testpm.haiercash.com
+  redis:
+    prefix: PAYPLATFORM
+    expire: 3600 # 过期时间，以秒为单位
   file:
     uploadPath: f:\file\upload # 文件上传路径
     templatePath: f:\file\template # excel模板文件路径
@@ -151,6 +157,8 @@ app:
     UAUTH: http://UAUTH
     ACQUIRER: http://ACQUIRER
     ORDER: http://ORDER
+  cmis:
+    url: http://10.164.194.105:8098/cmis/HTTP_DEMO_SERVICE/ # cmis 服务地址
   other:
     haierDataImg_url: /testshare01/00/Data/haierData/
     outplatform_url: http://10.164.194.120:9080
@@ -167,6 +175,5 @@ app:
     sg_typCde: 17098a
     sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
-  redis:
-    prefix: PAYPLATFORM
-    expire: 3600 # 过期时间，以秒为单位
+  cashLoan:
+    whiteTagIds: 49aa1427f97a432e9c1658a5708bd198,ba2dbc42abf347cfba67580118ad1985,36d86a768c624bc784c8a9e6523e2eb5,2e476949487f4c4a81e9ff3bd788930a # 现金贷标签白名单

@@ -7,6 +7,7 @@ import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SignContractInfo;
+import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
@@ -56,6 +57,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private SignContractInfoDao signContractInfoDao;
+    @Autowired
+    private AppConfig appConfig;
 
     /*
     ca签章
@@ -174,7 +177,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         loanRequestMap.put("applyTnr", appOrderMapCmis.get("APPLY_TNR"));
         loanRequestMap.put("fstPay", appOrderMapCmis.get("FST_PAY"));
         logger.debug("loanRequestMap==" + loanRequestMap);
-        Map<String, Object> paySsResultMap = cmisApplService.getHkssReturnMap(loanRequestMap, getGateUrl(), getToken());
+        Map<String, Object> paySsResultMap = cmisApplService.getHkssReturnMap(loanRequestMap, appConfig.getGateUrl(), getToken());
 
         if (paySsResultMap != null) {
             Map<String, Object> body = (Map<String, Object>) paySsResultMap.get("body");

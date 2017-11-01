@@ -18,7 +18,8 @@ import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.common.entity.LoanTypes;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
-import com.haiercash.payplatform.config.CashLoanConfig;
+import com.haiercash.payplatform.config.AppCashLoanConfig;
+import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
@@ -28,7 +29,12 @@ import com.haiercash.payplatform.rest.common.CommonRestUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.AppServerUtils;
+import com.haiercash.payplatform.utils.ApplicationContextUtils;
+import com.haiercash.payplatform.utils.BusinessException;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +42,12 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -56,7 +67,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     @Autowired
     private CommonPageService commonPageService;
     @Autowired
-    private CashLoanConfig cashLoanConfig;
+    private AppCashLoanConfig appCashLoanConfig;
+    @Autowired
+    private AppConfig appConfig;
 
     @Override
     public String getActivityUrl() {
@@ -66,7 +79,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if (setting == null) {
             return StringUtils.EMPTY;
         }
-        return this.cashLoanConfig.getActiveUrlPrefix() + setting.getActivityUrl();
+        return this.appConfig.getGateUrl() + setting.getActivityUrl();
     }
 
     @Override
@@ -155,7 +168,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             return CommonResponse.create(ConstUtil.ERROR_CODE, "没有任何标签");
         IEnumerable<String> userTags = Linq.asEnumerable(tags).select(tagMap -> Convert.toString(tagMap.get("tagId")));
         //标签跟配置的标签取交集
-        List<String> allowTags = cashLoanConfig.getTagIds();
+        List<String> allowTags = appCashLoanConfig.getWhiteTagIds();
         if (CollectionUtils.isEmpty(allowTags))
             return CommonResponse.create(ConstUtil.ERROR_CODE, "支付平台未配置允许的标签");
         List<String> intersectTags = userTags.intersect(Linq.asEnumerable(allowTags)).toList();//取交集

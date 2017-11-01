@@ -9,6 +9,7 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgRegions;
+import com.haiercash.payplatform.config.AppOtherConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
@@ -64,7 +65,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     private SgInnerService sgInnerService;
     @Autowired
     private OrderManageService orderManageService;
-
+    @Autowired
+    private AppOtherConfig appOtherConfig;
 
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
@@ -125,7 +127,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         requestParams.put("cardnumber", null);
         requestParams.put("data", new JSONObject(body));
 
-        String url = this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData";
+        String url = appOtherConfig.getOutplatform_url() + "/Outreachplatform/api/externalData/savaExternalData";
         logger.info("推送外联风险信息，请求地址：" + url);
         String resData = JsonClientUtils.postForString(url, requestParams);
         logger.info("推送外联风险信息，返回数据：" + resData);

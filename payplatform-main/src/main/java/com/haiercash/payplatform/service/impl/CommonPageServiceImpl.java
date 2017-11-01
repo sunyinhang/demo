@@ -6,12 +6,23 @@ import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.SignContractInfo;
+import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.CmisTradeCode;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RestUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,15 +30,17 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by yuanli on 2017/9/20.
  */
 @Service
 public class CommonPageServiceImpl extends BaseService implements CommonPageService {
-    @Value("${app.other.appServer_page_url}")
-    protected String appServer_page_url;
     @Autowired
     private Session session;
     @Autowired
@@ -44,18 +57,21 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private AppConfig appConfig;
 
     /**
      * 合同展示
+     *
      * @param map
      * @return
      */
     @Override
-    public Map<String, Object> showcontract(Map<String, Object> map) throws Exception{
+    public Map<String, Object> showcontract(Map<String, Object> map) throws Exception {
         String flag = (String) map.get("flag");
 
         String token = super.getToken();
-        if(StringUtils.isEmpty(flag) || StringUtils.isEmpty(token)){
+        if (StringUtils.isEmpty(flag) || StringUtils.isEmpty(token)) {
             logger.info("前台传入参数为空");
             logger.info("flag:" + flag + "  token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -73,16 +89,16 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         Map result = new HashMap();
         String url = "";
         //征信协议展示
-        if("1".equals(flag)){
+        if ("1".equals(flag)) {
             String name = new String(Base64.encode(custName.getBytes()), "UTF-8");
-            name= URLEncoder.encode(name,"UTF-8");
+            name = URLEncoder.encode(name, "UTF-8");
             url = "/app/appserver/edCredit?custName=" + name + "&certNo=" + certNo;
             result.put("url", url);
         }
         //签章协议展示
-        if("2".equals(flag)){
+        if ("2".equals(flag)) {
             String applseq = (String) map.get("applseq");
-            if(StringUtils.isEmpty(applseq)){
+            if (StringUtils.isEmpty(applseq)) {
                 logger.info("applseq:" + applseq);
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
@@ -90,9 +106,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             result.put("url", url);
         }
         //注册协议展示
-        if("3".equals(flag)){
+        if ("3".equals(flag)) {
             String name = new String(Base64.encode(custName.getBytes()), "UTF-8");
-            name= URLEncoder.encode(name,"UTF-8");
+            name = URLEncoder.encode(name, "UTF-8");
             url = "/app/appserver/register?custName=" + name;
             result.put("url", url);
         }
@@ -172,7 +188,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         apporder.setCustNo(custInfo.get("custNo").toString());
 
 
-
         /**
          * 处理白名单类型及准入资格
          * 1、调crm 28接口，查询未实名认证客户的准入资格，如果返回不准入，则返回订单提交失败信息，提示不准入。
@@ -226,8 +241,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             logger.debug("订单提交commitBussiness方法返回：" + result);
             return result;
             //return success(result);
-        }
-        else {
+        } else {
             return fail("05", "订单提交类型不正确");
         }
     }
@@ -239,7 +253,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("typCdeList", typCde);
         Map<String, Object> loanmap = appServerService.pLoanTypList(token, paramMap);
-        if(!HttpUtil.isSuccess(loanmap)){
+        if (!HttpUtil.isSuccess(loanmap)) {
             return loanmap;
         }
         List<Map<String, Object>> loanbody = (List<Map<String, Object>>) loanmap.get("body");
@@ -262,8 +276,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         orderJson.put("order", order.toString());
 
         SignContractInfo signContractInfo = signContractInfoDao.getSignContractInfo(typCde);
-        if(signContractInfo == null){
-            return fail(ConstUtil .ERROR_CODE, "贷款品种"+ typCde +"没有配置签章类型");
+        if (signContractInfo == null) {
+            return fail(ConstUtil.ERROR_CODE, "贷款品种" + typCde + "没有配置签章类型");
         }
         String signType = signContractInfo.getSigntype();//签章类型
         Map map = new HashMap();// 合同
@@ -432,7 +446,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String cityCode = "";
         // 根据区号获取市
         Map<String, Object> result = appServerService.getAreaInfo(token, citymap);
-        String retFlag = (String) ((Map<String, Object>)result.get("head")).get("retFlag");
+        String retFlag = (String) ((Map<String, Object>) result.get("head")).get("retFlag");
         if (!"00000".equals(retFlag)) {
             return cityCode;
         }
@@ -447,6 +461,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
     /**
      * 查询贷款用途
+     *
      * @param params
      * @return
      */
@@ -682,7 +697,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             hm.put("applyTnr", order.getApplyTnr());
             hm.put("fstPay", order.getFstPay());
             hm.put("mtdCde", order.getMtdCde());
-            Map<String, Object> hkss_json = cmisApplService.getHkssReturnMap(hm, super.getGateUrl(), super.getToken());
+            Map<String, Object> hkss_json = cmisApplService.getHkssReturnMap(hm, appConfig.getGateUrl(), super.getToken());
             logger.info("还款试算service返回hkss:" + hkss_json);
             Map<String, Object> hkssBodyMap = (Map<String, Object>) hkss_json.get("body");
             Map<String, Object> first = (Map) ((List) hkssBodyMap.get("mx")).get(0);//获取第0期的费用
@@ -746,7 +761,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             } else {
                 // 重复创建的情况
                 String orderno = relation.getOrderNo();
-                if(!StringUtils.isEmpty(orderNo)){
+                if (!StringUtils.isEmpty(orderNo)) {
                     appOrdernoTypgrpRelationDao.deleteByOrderNo(orderNo);
                 }
             }
