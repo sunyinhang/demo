@@ -15,6 +15,9 @@ public final class RabbitTemplateProvider {
     @Autowired
     private RabbitTemplate rabbitTemplateInstance;
 
+    private RabbitTemplateProvider() {
+    }
+
     public static RabbitTemplate getRabbitTemplate() {
         return rabbitTemplate;
     }
