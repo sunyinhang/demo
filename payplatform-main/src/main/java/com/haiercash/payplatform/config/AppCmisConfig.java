@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.config;
 
-import com.haiercash.payplatform.rabbit.RabbitProperty;
+import com.haiercash.payplatform.rabbit.QueueProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -13,5 +13,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "app.cmis")
 public class AppCmisConfig {
     private String url;
-    private RabbitProperty rabbit;
+    private QueueProperties rabbit;
 }
