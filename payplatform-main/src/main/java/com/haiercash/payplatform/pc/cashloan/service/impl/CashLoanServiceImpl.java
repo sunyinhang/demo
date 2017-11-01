@@ -16,6 +16,7 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.ChannelStoreRelation;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.LoanType;
+import com.haiercash.payplatform.common.entity.LoanTypeProperty;
 import com.haiercash.payplatform.common.entity.LoanTypes;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.config.CashLoanConfig;
@@ -28,7 +29,12 @@ import com.haiercash.payplatform.rest.common.CommonRestUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.AppServerUtils;
+import com.haiercash.payplatform.utils.ApplicationContextUtils;
+import com.haiercash.payplatform.utils.BusinessException;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +42,13 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -99,16 +111,17 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     /**
      * 根据channelNo 获取贷款种类,不受配置影响
      *
-     * @param channelNo
      * @return 贷款种类列表
      */
     @Override
-    public IResponse<List<LoanType>> getLoanTypeByChannelNo(String channelNo) {
-        Assert.notNull(channelNo, "channelNo can not be null");
+    public IResponse<List<LoanType>> getLoanTypeByChannelNo() {
+        String channelNo = super.getChannelNo();
+        Assert.notNull(channelNo, "渠道号不能为空");
+        //从数据库查询渠道对应的商户
         List<ChannelStoreRelation> relations = this.channelStoreRelationDao.selectByChanelNo(channelNo);
         if (CollectionUtils.isEmpty(relations))
             return CommonResponse.create(ConstUtil.ERROR_CODE, "该渠道没有配置任何门店商户");
-
+        //查询商户的标签列表
         List<LoanType> loanTypeList = new ArrayList<>();
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/pub/gm/getLoanDic";
         for (ChannelStoreRelation relation : relations) {
@@ -126,6 +139,42 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
         //贷款品种去重
         List<LoanType> distinctLoanTypes = Linq.asEnumerable(loanTypeList).distinct().toList();//去重
+        //补全贷款品种的信息
+        String pLoanTypUrl = AppServerUtils.getAppServerUrl() + "/app/appserver/cmis/pLoanTyp";
+        for (LoanType distinctLoanType : distinctLoanTypes) {
+            //查询明细
+            String typCde = distinctLoanType.getTypCde();
+            Map<String, Object> params = new HashMap<>();
+            params.put("channel", this.getChannel());
+            params.put("channelNo", channelNo);
+            params.put("typCde", typCde);
+            IResponse<Map> response = CommonRestUtils.getForMap(pLoanTypUrl, params);
+            response.assertSuccessNeedBody();
+            Map loanTypeIno = response.getBody();
+            //补全
+            distinctLoanType.setTypCde(Convert.toString(loanTypeIno.get("typCde")));
+            distinctLoanType.setTypSeq(Convert.toString(loanTypeIno.get("typSeq")));
+            distinctLoanType.setTypGrp(Convert.toString(loanTypeIno.get("typGrp")));
+            distinctLoanType.setMinAmt(Convert.toString(loanTypeIno.get("minAmt")));
+            distinctLoanType.setMaxAmt(Convert.toString(loanTypeIno.get("maxAmt")));
+            distinctLoanType.setTnrOpt(Convert.toString(loanTypeIno.get("tnrOpt")));
+            distinctLoanType.setTnrMaxDays(Convert.toString(loanTypeIno.get("tnrMaxDays")));
+            distinctLoanType.setMtdCde(Convert.toString(loanTypeIno.get("payMtd")));
+            distinctLoanType.setMtdDesc(Convert.toString(loanTypeIno.get("payMtdDesc")));
+            //转换,理论上应该由CMIS提供接口
+            String payMtd = Convert.toString(loanTypeIno.get("payMtd"));
+            switch (payMtd) {
+                case "01":
+                    LoanTypeProperty property = new LoanTypeProperty();
+                    property.setMTD_CDE("M002");
+                    distinctLoanType.setPLoanTypMtd(Collections.singletonList(new LoanTypeProperty()));
+                    break;
+                default:
+                    distinctLoanType.setPLoanTypMtd(Collections.emptyList());
+                    break;
+            }
+        }
+        //返回
         CommonResponse<List<LoanType>> response = CommonResponse.success();
         response.setBody(distinctLoanTypes);
         return response;
@@ -179,22 +228,23 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     /**
      * 根据配置和参数查询贷款种类
      *
-     * @param setting   渠道配置可以为 null
-     * @param channelNo 渠道号
-     * @param custName  姓名
-     * @param idType    证件类型 20 身份证,00 手机号
-     * @param idNo      身份证或手机号
+     * @param setting  渠道配置可以为 null
+     * @param custName 姓名
+     * @param idType   证件类型 20 身份证,00 手机号
+     * @param idNo     身份证或手机号
      * @return 贷款种类列表
      */
     @Override
-    public IResponse<List<LoanType>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo) {
+    public IResponse<List<LoanType>> getLoanType(EntrySetting setting, String custName, String idType, String idNo) {
+        String channelNo = super.getChannelNo();
+        Assert.hasLength(channelNo, "渠道号不能为空");
         if (setting == null)
             setting = this.entrySettingDao.selectBychanelNo(channelNo);
         if (setting == null)
             return CommonResponse.create(ConstUtil.ERROR_CODE, "该渠道未配置贷款品种的获取方式");
         switch (setting.getLoanTypeFrom()) {
             case "01"://根据 channelNo 取
-                return this.getLoanTypeByChannelNo(channelNo);
+                return this.getLoanTypeByChannelNo();
             case "02"://根据客户信息从 crm 取
                 return this.getLoanTypeByCustInfo(custName, idType, idNo);
             default:

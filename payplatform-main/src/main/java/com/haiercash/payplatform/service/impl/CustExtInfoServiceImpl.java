@@ -31,7 +31,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 
 @Service
@@ -899,7 +903,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             logger.info("idNo为空");
             return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        IResponse<List<LoanType>> loanTypeData = cashLoanService.getLoanType(null, channelNo, custName, idType, idNo);
+        IResponse<List<LoanType>> loanTypeData = cashLoanService.getLoanType(null, custName, idType, idNo);
 //        List<LoanType> body = loanTypeData.getBody();
 //        String loantyp = "";
 //        if(body.size()>0){
@@ -1007,9 +1011,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("custName",custName);
-        paramMap.put("idTyp",idTyp);
-        paramMap.put("idNo",idNo);
+        paramMap.put("custName", custName);
+        paramMap.put("idTyp", idTyp);
+        paramMap.put("idNo", idNo);
         Map<String, Object> custWhiteListCmis = crmService.getCustWhiteListCmis(paramMap);
         return custWhiteListCmis;
     }
@@ -1040,9 +1044,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String custName = (String) cacheMap.get("name");
         String idType = (String) cacheMap.get("idType");
         String idNo = (String) cacheMap.get("idCard");
-        paramMap.put("custName",custName);
-        paramMap.put("idTyp",idType);
-        paramMap.put("idNo",idNo);
+        paramMap.put("custName", custName);
+        paramMap.put("idTyp", idType);
+        paramMap.put("idNo", idNo);
         Map<String, Object> custWhiteListCmis = getCustWhiteListCmis(token, channel, channelNo, paramMap);
         Map updmobileheadjson = (Map<String, Object>) custWhiteListCmis.get("head");
         String updmobileretflag = (String) updmobileheadjson.get("retFlag");
@@ -1050,11 +1054,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             String retMsg = (String) updmobileheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
+        List<Map<String, String>> custWhiteListCmisList = (List<Map<String, String>>) custWhiteListCmis.get("body");
         for (int i = 0; i < custWhiteListCmisList.size(); i++) {
-            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")){
+            if (custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")) {
                 String haierCreditInt = custWhiteListCmisList.get(i).get("haierCredit");
-                returnParamMap.put("haierCredit",haierCreditInt);
+                returnParamMap.put("haierCredit", haierCreditInt);
                 break;
             }
         }
