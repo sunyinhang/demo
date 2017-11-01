@@ -533,7 +533,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String retFlag = jb.getString("RET_CODE");
         String retMsg = jb.getString("RET_MSG");
         if (!"00000".equals(retFlag)) {
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return fail(ConstUtil.ERROR_CODE, "四要素验证失败");
         }
         return success();
     }
