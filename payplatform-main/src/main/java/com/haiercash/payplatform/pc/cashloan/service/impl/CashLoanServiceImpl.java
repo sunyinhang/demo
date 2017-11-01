@@ -595,16 +595,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
 
-
-        //参数非空校验
-        if (StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
-                || StringUtils.isEmpty(applSeq) || StringUtils.isEmpty(orderNo)) {
-            logger.info("channel:" + channel + "  channelNo:" + channelNo + "   token:" + token
-                    + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
-            logger.info("前台获取数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
-
         String userId = cacheMap.get("userId").toString();
 
         //根据userId获取客户编号
@@ -626,6 +616,19 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String mobile = (String) custresult.get("mobile");
         logger.info("订单提交，获取客户实名信息成功");
 
+        //根据贷款品种判断是否允许进件
+        IResponse<List<LoanType>> loanType = this.getLoanType(null, custName, "20", certNo);
+        List<LoanType> body = loanType.getBody();
+        boolean flag = false;
+        for (int i = 0; i < body.size(); i++) {
+            String retypCde = body.get(i).getTypCde();
+            if (typCde.equals(retypCde)) {
+                flag = true;
+            }
+        }
+        if (!flag) {
+            return fail("error", "该订单并不支持在此渠道进行提交！");
+        }
         //1.支付密码验证
         HashMap<String, Object> pwdmap = new HashMap<>();
         String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
