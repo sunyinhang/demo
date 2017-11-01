@@ -25,14 +25,11 @@ spring:
     password: admin123
     virtual-host: /
     publisher-confirms: true
+    requestedHeartbeat: 60
     listener:
       simple:
         acknowledge-mode: auto # 确认模式
         concurrency: 1 # 最小消费者数量
-    requestedHeartbeat: 60
-    exchange: APPMSG_TOPIC_EXCHANGE
-    queue:
-      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
   http:
     converters:
       preferred-json-mapper: fastjson # json 转换器, 接收数据和请求数据时使用
@@ -159,6 +156,10 @@ app:
     ORDER: http://ORDER
   cmis:
     url: http://10.164.194.105:8098/cmis/HTTP_DEMO_SERVICE/ # cmis 服务地址
+    rabbit:
+      exchange: APPMSG_TOPIC_EXCHANGE
+      routingKey:
+      queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
   other:
     haierDataImg_url: /testshare01/00/Data/haierData/
     outplatform_url: http://10.164.194.120:9080

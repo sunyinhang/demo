@@ -34,7 +34,7 @@ import java.util.UUID;
  * @since v1.0.1
  */
 @Component
-@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
+@RabbitListener(queues = "${app.cmis.rabbit.queue}")
 public class CmisMessageHandler {
     private Log logger = LogFactory.getLog(CmisMessageHandler.class);
     @Value("${app.other.haiershunguang_ts_url}")
