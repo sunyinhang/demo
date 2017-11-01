@@ -488,6 +488,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
      */
     @Override
     public Map<String, Object> identity(Map<String, Object> map) throws Exception {
+        logger.info("四要素验证***************开始");
         String channelNo = (String) map.get("channelNo");
         String data = (String) map.get("data");
         if (StringUtils.isEmpty(channelNo)) {
@@ -500,7 +501,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
 
         String params = commonPageService.decryptData(data, channelNo);
-        logger.info("CA签章接收到的数据：" + params);
+        logger.info("四要素验证接收到的数据：" + params);
         JSONObject camap = new JSONObject(params);
         //
         String custName = camap.getString("custName");
@@ -526,7 +527,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String resData = JsonClientUtils.postForString(url, jsonMap);
         logger.info("实名认证(外联)响应数据==>" + resData);
         if (resData == null || "".equals(resData)) {
-            logger.info("修改密码的实名认证(外联)接口，返回数据为空");
+            logger.info("实名认证(外联)响应数据为空");
             return fail(ConstUtil.FAILED_INFO, ConstUtil.ERROR_INFO);
         }
         JSONObject jb = new JSONObject(resData);
