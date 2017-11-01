@@ -1,14 +1,30 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.bestvike.lang.Base64Utils;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
+import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.rest.client.JsonClientUtils;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.CmisTradeCode;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.payplatform.utils.RestUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +35,11 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by yuanli on 2017/9/20.
@@ -28,6 +48,8 @@ import java.util.*;
 public class CommonPageServiceImpl extends BaseService implements CommonPageService {
     @Value("${app.other.appServer_page_url}")
     protected String appServer_page_url;
+    @Value("${app.other.outplatform_url}")
+    protected String outplatform_url;
     @Autowired
     private Session session;
     @Autowired
@@ -44,6 +66,10 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private CooperativeBusinessDao cooperativeBusinessDao;
+    @Autowired
+    private CommonPageService commonPageService;
 
     /**
      * 合同展示
@@ -455,6 +481,80 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String token = super.getToken();
         Map<String, Object> resultMap = appServerService.getPurpose(token, params);
         return resultMap;
+    }
+
+    /*
+    实名验证
+     */
+    @Override
+    public Map<String, Object> identity(Map<String, Object> map) throws Exception {
+        String channelNo = (String) map.get("channelNo");
+        String data = (String) map.get("data");
+        if (StringUtils.isEmpty(channelNo)) {
+            logger.info("渠道编码不能为空");
+            return fail(ConstUtil.ERROR_CODE, "渠道编码不能为空");
+        }
+        if (StringUtils.isEmpty(data)) {
+            logger.info("请求数据不能为空");
+            return fail(ConstUtil.ERROR_CODE, "请求数据不能为空");
+        }
+
+        String params = commonPageService.decryptData(data, channelNo);
+        logger.info("CA签章接收到的数据：" + params);
+        JSONObject camap = new JSONObject(params);
+        //
+        String custName = camap.getString("custName");
+        String cardNo = camap.getString("cardNo");
+        String bankCode = camap.getString("bankCode");
+        String certNo = camap.getString("certNo");
+        String mobile = camap.getString("mobile");
+        if (StringUtils.isEmpty(custName) || StringUtils.isEmpty(cardNo) || StringUtils.isEmpty(bankCode)
+                || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(mobile)) {
+            return fail(ConstUtil.ERROR_CODE, "必传项不能为空");
+        }
+        String url = outplatform_url + "/Outreachplatform/api/chinaPay/identifyByFlag";
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("accountName", custName);
+        jsonMap.put("accountNo", cardNo);
+        jsonMap.put("bankCode", bankCode);
+        jsonMap.put("id", certNo);
+        jsonMap.put("cardPhone", mobile);
+        jsonMap.put("flag", "1");//四要素
+        jsonMap.put("channelNo", channelNo);
+        jsonMap.put("days", "0");
+        logger.info("实名认证(外联)参数==>" + jsonMap.toString());
+        String resData = JsonClientUtils.postForString(url, jsonMap);
+        logger.info("实名认证(外联)响应数据==>" + resData);
+        if (resData == null || "".equals(resData)) {
+            logger.info("修改密码的实名认证(外联)接口，返回数据为空");
+            return fail(ConstUtil.FAILED_INFO, ConstUtil.ERROR_INFO);
+        }
+        JSONObject jb = new JSONObject(resData);
+        String retFlag = jb.getString("RET_CODE");
+        String retMsg = jb.getString("RET_MSG");
+        if (!"00000".equals(retFlag)) {
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        return success();
+    }
+
+    @Override
+    public String decryptData(String data, String channelNo) throws Exception {
+        //获取渠道公钥
+        logger.info("获取渠道" + channelNo + "公钥");
+        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
+        if (cooperativeBusiness == null) {
+            throw new RuntimeException("渠道" + channelNo + "公钥获取失败");
+        }
+        String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
+
+        //请求数据解析
+        String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
+        //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
+        //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
+        //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
+
+        return params;
     }
 
 

@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.service;
 
 import com.haiercash.payplatform.common.data.AppOrder;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -39,4 +38,14 @@ public interface CommonPageService {
     查询贷款用途
      */
     Map<String, Object> getPurpose(Map<String, Object> params);
+
+    /*
+    实名认证（外联实名验证）
+     */
+    Map<String, Object> identity(Map<String, Object> params) throws Exception;
+
+    /*
+    解密
+     */
+    String decryptData(String data, String channelNo) throws Exception;
 }

@@ -3,11 +3,23 @@ package com.haiercash.payplatform.controller;
 import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.FileUtil;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.CustExtInfoService;
+import com.haiercash.payplatform.service.FaceService;
+import com.haiercash.payplatform.service.InstallmentAccountService;
+import com.haiercash.payplatform.service.LimitService;
+import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.service.PayPasswdService;
+import com.haiercash.payplatform.service.RegisterService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -663,6 +675,17 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/validateAndBindOtherUser", method = RequestMethod.POST)
     public Map<String, Object> validateAndBindOtherUser(@RequestBody Map<String, Object> map) throws Exception {
         return registerService.validateAndBindOtherUser(super.getToken(), super.getChannel(), super.getChannelNo(), map);
+    }
+
+    /**
+     * 实名认证
+     *
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/identity", method = RequestMethod.POST)
+    public Map<String, Object> identity(@RequestBody Map<String, Object> map) throws Exception {
+        return commonPageService.identity(map);
     }
 
 }
