@@ -176,4 +176,4 @@ app:
     sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
   cashLoan:
-    whiteTagIds: 49aa1427f97a432e9c1658a5708bd198,ba2dbc42abf347cfba67580118ad1985,36d86a768c624bc784c8a9e6523e2eb5,2e476949487f4c4a81e9ff3bd788930a # 现金贷标签白名单
+    whiteTagIds: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804
