@@ -167,7 +167,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 case "01":
                     LoanTypeProperty property = new LoanTypeProperty();
                     property.setMTD_CDE("M002");
-                    distinctLoanType.setPLoanTypMtd(Collections.singletonList(new LoanTypeProperty()));
+                    distinctLoanType.setPLoanTypMtd(Collections.singletonList(property));
                     break;
                 default:
                     distinctLoanType.setPLoanTypMtd(Collections.emptyList());
