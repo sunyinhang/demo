@@ -184,7 +184,6 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
         Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
         Map<String, Object> hrparamMap = new HashMap<String, Object>();
-        //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!
         String typCde = "";//贷款品种
         if (channel.isEmpty()) {
             logger.info("channel为空");
@@ -565,13 +564,13 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         boolean hehyflag = false; //海尔会员标识
-        List<Map<String, String>> custWhiteListCmisList = (List<Map<String, String>>) custWhiteListCmis.get("body");
-        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
-            if (custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")) {
-                hehyflag = true;
-                break;
-            }
-        }
+//        List<Map<String, String>> custWhiteListCmisList = (List<Map<String, String>>) custWhiteListCmis.get("body");
+//        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
+//            if (custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")) {
+//                hehyflag = true;
+//                break;
+//            }
+//        }
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", uidLocal);//内部userId
