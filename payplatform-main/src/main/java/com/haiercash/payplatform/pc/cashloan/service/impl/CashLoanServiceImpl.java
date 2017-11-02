@@ -635,13 +635,13 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
         logger.info("订单提交，支付密码验证成功");
 
-        //2.合同签订  （TODO!!!!）
-//        Map<String, Object> contractmap = commonPageService.signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
-//        if (!HttpUtil.isSuccess(contractmap)) {
-//            logger.info("订单提交，合同签订失败");
-//            return contractmap;
-//        }
-//        logger.info("订单提交，合同签订成功");
+        //2.合同签订
+        Map<String, Object> contractmap = commonPageService.signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
+        if (!HttpUtil.isSuccess(contractmap)) {
+            logger.info("订单提交，合同签订失败");
+            return contractmap;
+        }
+        logger.info("订单提交，合同签订成功");
 
         //3.影像上传
         Map<String, Object> uploadimgmap = new HashMap<String, Object>();
