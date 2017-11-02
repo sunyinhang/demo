@@ -37,4 +37,10 @@ public class JsonSerializerTest {
             Assert.assertArrayEquals(PERSON_ARRAY, personArray);
         }
     }
+
+    @Test
+    public void testNull() {
+        String nullJson = JsonSerializer.serialize(null);
+        Object object = JsonSerializer.deserialize(nullJson, Object.class);
+    }
 }
