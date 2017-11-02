@@ -2,7 +2,6 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.bestvike.lang.Base64Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -11,8 +10,20 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.redis.RedisUtils;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderManageService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.DesUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,8 +40,6 @@ import java.util.UUID;
  */
 @Service
 public class CommitOrderServiceImpl extends BaseService implements CommitOrderService {
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -56,11 +65,12 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
     /**
      * 订单提交
+     *
      * @param map
      * @return
      */
     @Override
-    public Map<String, Object> commitOrder(Map<String, Object> map)  throws Exception{
+    public Map<String, Object> commitOrder(Map<String, Object> map) throws Exception {
         logger.info("订单提交****************开始");
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
@@ -70,15 +80,15 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String paypwd = (String) map.get("paypwd");
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
-        if(!StringUtils.isEmpty(map.get("longitude"))){
-            longitude = (BigDecimal)map.get("longitude");//经度
+        if (!StringUtils.isEmpty(map.get("longitude"))) {
+            longitude = (BigDecimal) map.get("longitude");//经度
         }
-        if(!StringUtils.isEmpty(map.get("latitude"))){
-            latitude = (BigDecimal)map.get("latitude");//维度
+        if (!StringUtils.isEmpty(map.get("latitude"))) {
+            latitude = (BigDecimal) map.get("latitude");//维度
         }
         String area = (String) map.get("area");//区域
         //缓存获取（放开）
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -94,7 +104,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("缓存数据获取");
             appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
             logger.info("提交订单信息appOrder:" + appOrder);
-            if(appOrder == null){
+            if (appOrder == null) {
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
             typCde = appOrder.getTypCde();
@@ -103,17 +113,17 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
 
         //参数非空校验
-        if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
-                || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq)){
+        if (StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
+                || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq)) {
             logger.info("channel:" + channel + "  channelNo:" + channelNo + "   token:" + token
-                + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
+                    + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
         //根据用户中心token获取统一认证userId
         String userId = sgInnerService.getuserId(token);
-        if(StringUtils.isEmpty(userId)){
+        if (StringUtils.isEmpty(userId)) {
             logger.info("根据用户中心token获取统一认证userId失败");
             return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
         }
@@ -125,7 +135,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
         Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
-        if (!HttpUtil.isSuccess(custInforesult) ) {
+        if (!HttpUtil.isSuccess(custInforesult)) {
             logger.info("订单提交，获取实名信息失败");
             return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
         }
@@ -146,7 +156,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         pwdmap.put("channel", channel);
         pwdmap.put("channelNo", channelNo);
         Map<String, Object> resmap = appServerService.validatePayPasswd(token, pwdmap);
-        if(!HttpUtil.isSuccess(resmap)){
+        if (!HttpUtil.isSuccess(resmap)) {
             logger.info("订单提交，支付密码验证失败");
             return fail("error", "支付密码校验失败");
         }
@@ -154,7 +164,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
         //2.合同签订
         Map<String, Object> contractmap = commonPageService.signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
-        if(!HttpUtil.isSuccess(contractmap)){
+        if (!HttpUtil.isSuccess(contractmap)) {
             logger.info("订单提交，合同签订失败");
             return contractmap;
         }
@@ -166,8 +176,8 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         uploadimgmap.put("applSeq", applSeq);//订单号
         uploadimgmap.put("channel", channel);
         uploadimgmap.put("channelNo", channelNo);
-        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
-        if(!HttpUtil.isSuccess(uploadimgresultmap)){
+        Map<String, Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
+        if (!HttpUtil.isSuccess(uploadimgresultmap)) {
             logger.info("订单提交，影像上传失败失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -236,14 +246,14 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         //签章成功进行redis存储
 //        String key = "applSeq" + applSeq;
 //        cacheMap.put(key, key);
-//        session.set(token, cacheMap);
+//        RedisUtils.set(token, cacheMap);
 
 
         return result;
     }
 
 
-    private String encrypt(String data, String channelNo,String tradeCode) throws Exception {
+    private String encrypt(String data, String channelNo, String tradeCode) throws Exception {
         //byte[] bytes = key.getBytes();
         //获取渠道私钥
         logger.info("获取渠道" + channelNo + "私钥");

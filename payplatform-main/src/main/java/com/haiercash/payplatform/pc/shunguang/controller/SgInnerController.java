@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.controller.BaseController;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
@@ -29,8 +28,6 @@ public class SgInnerController extends BaseController {
         super(MODULE_NO);
     }
 
-    @Autowired
-    private Session session;
     @Autowired
     private SgInnerService sgInnerService;
     @Autowired

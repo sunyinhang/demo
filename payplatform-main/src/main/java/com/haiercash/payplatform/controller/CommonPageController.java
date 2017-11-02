@@ -1,13 +1,24 @@
 package com.haiercash.payplatform.controller;
 
-import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.FileUtil;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.CustExtInfoService;
+import com.haiercash.payplatform.service.FaceService;
+import com.haiercash.payplatform.service.InstallmentAccountService;
+import com.haiercash.payplatform.service.LimitService;
+import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.service.PayPasswdService;
+import com.haiercash.payplatform.service.RegisterService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +35,6 @@ public class CommonPageController extends BaseController {
     //模块编码  01
     private static String MODULE_NO = "01";
     public Log logger = LogFactory.getLog(getClass());
-    @Autowired
-    private Cache cache;
     @Autowired
     private OCRIdentityService ocrIdentityService;
     @Autowired
@@ -625,6 +634,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 3.1.13(GET)查询所有贷款用途列表(APP)
+     *
      * @param params
      * @return
      * @throws Exception

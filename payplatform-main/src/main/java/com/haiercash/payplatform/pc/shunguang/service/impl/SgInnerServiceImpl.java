@@ -3,22 +3,22 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
+import com.haiercash.payplatform.redis.RedisUtils;
+import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
 import com.haiercash.payplatform.service.HaierDataService;
 import com.haiercash.payplatform.service.OrderManageService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,8 +35,6 @@ import java.util.Map;
  */
 @Service
 public class SgInnerServiceImpl extends BaseService implements SgInnerService {
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -69,7 +67,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //获取缓存数据
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -113,7 +111,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
-            session.set(token, cacheMap);
+            RedisUtils.set(token, cacheMap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
@@ -143,7 +141,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         cacheMap.put("idNo", certNo);//身份证号
         cacheMap.put("idCard", certNo);//身份证号
         cacheMap.put("idType", certType);
-        session.set(token, cacheMap);
+        RedisUtils.set(token, cacheMap);
         //6.查询客户额度
         Map<String, Object> edMap = new HashMap<String, Object>();
         edMap.put("userId", uidLocal);//内部userId
@@ -173,7 +171,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         } else if ("22".equals(outSts)) {//审批被退回
             String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
             cacheMap.put("crdSeq", crdSeq);
-            session.set(token, cacheMap);
+            RedisUtils.set(token, cacheMap);
             String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
@@ -201,7 +199,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String orderNo = (String) map.get("orderNo");//待提交时必传
         Map retrunmap = new HashMap();
 
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -292,7 +290,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             appOrder.setFstPay(fst_pay);//首付金额
 
             cacheMap.put("apporder", appOrder);
-            session.set(token, cacheMap);
+            RedisUtils.set(token, cacheMap);
 
             psPerdNo = applyTnr;
             retrunmap.put("applyTnr", applyTnr);
@@ -396,7 +394,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String applyTnr = (String) map.get("applyTnr");
         String applyTnrTyp = (String) map.get("applyTnrTyp");
 
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -435,7 +433,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         appOrder.setApplyTnr(applyTnr);//借款期限
         appOrder.setApplyTnrTyp(applyTnr);//借款期限类型
         cacheMap.put("apporder", appOrder);
-        session.set(token, cacheMap);
+        RedisUtils.set(token, cacheMap);
 
         Map retrunmap = new HashMap();
         retrunmap.put("totalAmt", totalAmt);
@@ -465,12 +463,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             return userId;
         }
         String uidHaier = uid.toString();
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             cacheMap = new HashMap<String, Object>();
         }
         cacheMap.put("uidHaier", uidHaier);
-        session.set(token, cacheMap);
+        RedisUtils.set(token, cacheMap);
         String userInforesult = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(uidHaier));
         Map<String, Object> resultMap = HttpUtil.json2Map(userInforesult);
         String head = resultMap.get("head").toString();
@@ -494,7 +492,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
     public Map<String, Object> getedbackurl() {
         logger.info("额度回调*************开始");
         String token = super.getToken();
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -512,7 +510,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
     public Map<String, Object> getpaybackurl() {
         logger.info("贷款回调*************开始");
         String token = super.getToken();
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -536,7 +534,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             logger.info("获取token失败token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cachemap = session.get(token, Map.class);
+        Map<String, Object> cachemap = RedisUtils.getMap(token);
         if (StringUtils.isEmpty(cachemap)) {
             logger.info("Redis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -577,7 +575,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         if ("22".equals(outSts)) {//审批被退回
             String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
             cachemap.put("crdSeq", crdSeq);
-            session.set(token, cachemap);
+            RedisUtils.set(token, cachemap);
             flag = "05";
         } else if ("25".equals(outSts)) {//审批被拒绝
             flag = "02";

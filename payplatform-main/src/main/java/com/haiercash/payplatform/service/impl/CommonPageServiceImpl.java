@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.AppOrder;
@@ -8,6 +7,7 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -42,8 +42,6 @@ import java.util.Objects;
 @Service
 public class CommonPageServiceImpl extends BaseService implements CommonPageService {
     @Autowired
-    private Session session;
-    @Autowired
     private CmisApplService cmisApplService;
     @Autowired
     private AcquirerService acquirerService;
@@ -77,7 +75,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

@@ -7,7 +7,6 @@ import com.bestvike.linq.IEnumerable;
 import com.bestvike.linq.Linq;
 import com.bestvike.reflect.GenericType;
 import com.bestvike.serialization.JsonSerializer;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.ChannelStoreRelationDao;
 import com.haiercash.payplatform.common.dao.EntrySettingDao;
@@ -23,6 +22,7 @@ import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.common.CommonResponse;
 import com.haiercash.payplatform.rest.common.CommonRestUtils;
@@ -54,8 +54,6 @@ import java.util.Objects;
  */
 @Service
 public class CashLoanServiceImpl extends BaseService implements CashLoanService {
-    @Autowired
-    private Session redisSession;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -257,7 +255,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 uidLocal = registerResult.get("body").toString();//统一认证内userId
                 phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
             } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
-                this.redisSession.set(thirdToken, cachemap);
+                RedisUtils.set(thirdToken, cachemap);
                 returnmap.put("flag", "2");//跳转登陆绑定页
 //                returnmap.put("token", thirdToken);
                 return success(returnmap);
@@ -272,7 +270,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         cachemap.put("userId", uidLocal);//统一认证userId
         cachemap.put("phoneNo", phoneNo);//绑定手机号
-//        redisSession.set(thirdToken, cachemap);
+//        RedisUtils.set(thirdToken, cachemap);
 
         logger.info("进行token绑定");
         //4.token绑定
@@ -300,7 +298,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
             logger.info("token:" + thirdToken);
             logger.info("跳转额度激活，cachemap：" + cachemap.toString());
-            redisSession.set(thirdToken, cachemap);
+            RedisUtils.set(thirdToken, cachemap);
 
             returnmap.put("flag", "3");//跳转OCR
             returnmap.put("token", thirdToken);
@@ -326,7 +324,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         cachemap.put("idNo", certNo);//身份证号
         cachemap.put("idCard", certNo);//身份证号
         cachemap.put("idType", certType);
-        redisSession.set(thirdToken, cachemap);
+        RedisUtils.set(thirdToken, cachemap);
         String tag = "SHH";
         String typCde = "";//贷款品种
         Map<String, Object> cacheedmap = new HashMap<>();
@@ -464,7 +462,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 Integer crdSeqInt = (Integer) body.get("applSeq");
                 String crdSeq = Integer.toString(crdSeqInt);
                 cachemap.put("crdSeq", crdSeq);
-                this.redisSession.set(thirdToken, cachemap);
+                RedisUtils.set(thirdToken, cachemap);
                 String outSts = body.get("outSts").toString();
                 if ("27".equals(outSts)) {
                     returnmap.put("flag", "12");//通过  我的额度
@@ -551,7 +549,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         //缓存获取（放开）
-        Map<String, Object> cacheMap = redisSession.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -726,7 +724,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         //appOrder缓存获取（放开）
-        Map<String, Object> cacheMap = redisSession.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -925,7 +923,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         cacheMap.put("custName", custName);
         cacheMap.put("custNo", custNo);
         cacheMap.put("certNo", certNo);
-        redisSession.set(token, cacheMap);
+        RedisUtils.set(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap)) {//订单保存失败
             logger.info("订单保存失败");
