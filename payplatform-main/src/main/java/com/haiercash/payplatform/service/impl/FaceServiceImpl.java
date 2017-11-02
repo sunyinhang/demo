@@ -123,7 +123,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         jsonMap.put("appno", appno);//申请编号
         jsonMap.put("filestreamname", filestreamname);//文件名
         jsonMap.put("organization", "02");//机构号(国政通)
-        if ("46".equals(channelNo)) { //顺逛
+        if ("46".equals(channelNo) || "33".equals(channelNo)) { //顺逛  乔融
             jsonMap.put("organization", "02");//机构号(国政通)
         } else {//乔融  现金贷
             jsonMap.put("organization", "01");//机构号(海鑫洺)
