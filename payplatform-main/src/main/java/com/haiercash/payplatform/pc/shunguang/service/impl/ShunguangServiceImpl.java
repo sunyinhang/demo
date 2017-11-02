@@ -48,6 +48,8 @@ import java.util.UUID;
 @Service
 public class ShunguangServiceImpl extends BaseService implements ShunguangService {
     public Log logger = LogFactory.getLog(getClass());
+    @Value("${app.other.haiercashpay_web_url}")
+    protected String haiercashpay_web_url;
     @Autowired
     private Session session;
     @Autowired
@@ -65,9 +67,19 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     @Autowired
     private OrderManageService orderManageService;
 
-
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
+    public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
+        Map<String, Object> headMap = new HashMap();
+        Date now = new Date();
+        headMap.put("serno", UUID.randomUUID().toString().replaceAll("-", ""));
+        headMap.put("tradeDate", DateUtil.formatDate(now, "yyyy-MM-dd"));
+        headMap.put("tradeTime", DateUtil.formatDate(now, "HH:mm:ss"));
+        headMap.put("tradeCode", tradeCode);
+        headMap.put("sysFlag", sysFlag);
+        headMap.put("channelNo", channelNo);
+        headMap.put("cooprCode", StringUtils.isEmpty(cooprCode) ? "" : cooprCode);
+        headMap.put("tradeType", StringUtils.isEmpty(tradeType) ? "" : tradeType);
+        return headMap;
+    }
 
     @Override
     public Map<String, Object> saveStoreInfo(Map<String, Object> storeInfo) {
@@ -259,9 +271,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         appOrder.setFstPay(fstPay.toString());//首付金额
 
 
-        //TODO!!!!!根据商城订单号查询订单接口
-        //TODO!!!!!若flag   N  则为新订单   outsts   91(取消)  新单
-        //TODO!!!!!         Y  applseq  formId   outsts 00  90  修改   其他  成功
+        //根据商城订单号查询订单接口
+        //若flag   N  则为新订单   outsts   91(取消)  新单
+        //         Y  applseq  formId   outsts 00  90  修改   其他  成功
         //根据商城订单号查询订单信息
         Map<String, Object> mallordermap = orderManageService.getOrderStsByMallOrder(orderSn);
         if (!HttpUtil.isSuccess(mallordermap)) {
@@ -669,7 +681,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
     }
-
 
     //9 白条额度进行贷款支付结果主动查询接口
     public Map<String, Object> queryAppLoanAndGoods(Map<String, Object> map) throws Exception {
@@ -1185,20 +1196,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         return success(returnmap);
 
         ///return success();
-    }
-
-    public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
-        Map<String, Object> headMap = new HashMap();
-        Date now = new Date();
-        headMap.put("serno", UUID.randomUUID().toString().replaceAll("-", ""));
-        headMap.put("tradeDate", DateUtil.formatDate(now, "yyyy-MM-dd"));
-        headMap.put("tradeTime", DateUtil.formatDate(now, "HH:mm:ss"));
-        headMap.put("tradeCode", tradeCode);
-        headMap.put("sysFlag", sysFlag);
-        headMap.put("channelNo", channelNo);
-        headMap.put("cooprCode", StringUtils.isEmpty(cooprCode) ? "" : cooprCode);
-        headMap.put("tradeType", StringUtils.isEmpty(tradeType) ? "" : tradeType);
-        return headMap;
     }
 
 

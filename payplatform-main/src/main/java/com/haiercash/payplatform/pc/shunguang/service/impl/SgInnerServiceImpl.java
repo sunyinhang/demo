@@ -8,17 +8,17 @@ import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
+import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
 import com.haiercash.payplatform.service.HaierDataService;
 import com.haiercash.payplatform.service.OrderManageService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,6 +35,12 @@ import java.util.Map;
  */
 @Service
 public class SgInnerServiceImpl extends BaseService implements SgInnerService {
+    @Value("${app.other.haiercashpay_web_url}")
+    protected String haiercashpay_web_url;
+    @Value("${app.shunguang.sg_merch_no}")
+    protected String sg_merch_no;
+    @Value("${app.shunguang.sg_store_no}")
+    protected String sg_store_no;
     @Autowired
     private Session session;
     @Autowired
@@ -51,8 +57,6 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
     private OrderManageService orderManageService;
     @Autowired
     private AcquirerService acquirerService;
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
 
     @Override
     public Map<String, Object> userlogin(Map<String, Object> map) {
@@ -324,7 +328,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         paySsMap.put("channelNo", channelNo);
         boolean boo = false;
         Map<String, Object> payssresultMap = appServerService.getBatchPaySs(token, paySsMap);
-        if (!HttpUtil.isSuccess(payssresultMap)) {//额度校验失败
+        if (!HttpUtil.isSuccess(payssresultMap)) {//批量还款试算失败
             String retflag = (String) ((Map<String, Object>) (payssresultMap.get("head"))).get("retFlag");
             if ("A1101".equals(retflag)) {//贷款类型为天
                 boo = true;
@@ -362,7 +366,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
         Map<String, Object> payresultMap = appServerService.getPaySs(token, payMap);
-        if (!HttpUtil.isSuccess(payresultMap)) {//额度校验失败
+        if (!HttpUtil.isSuccess(payresultMap)) {//还款试算失败
             String retmsg = (String) ((Map<String, Object>) (payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
@@ -380,6 +384,17 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             retrunmap.put("payMtd", "");
         } else {
             retrunmap.put("payMtd", ((Map<String, Object>) (payssresultMap.get("body"))).get("info"));
+            //根据商户和门店查询贷款品种（若包含17100a[30天免息] 展示30天免息）
+            Map<String, Object> paramMap = new HashMap<String, Object>();
+            paramMap.put("merchantCode", sg_merch_no);
+            paramMap.put("storeCode", sg_store_no);
+            Map<String, Object> loanmap = appServerService.getLoanDic(token, paramMap);
+            if (!HttpUtil.isSuccess(loanmap)) {//还款试算失败
+                String retmsg = (String) ((Map<String, Object>) (loanmap.get("head"))).get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retmsg);
+            }
+            //遍历
+            //若包含17100a则返回时增加17100a
         }
 
         logger.info("白条分期页面加载*******************结束");

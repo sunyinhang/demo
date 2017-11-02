@@ -5,6 +5,9 @@ import com.haiercash.payplatform.controller.BaseController;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,14 +25,9 @@ import java.util.Map;
  */
 @RestController
 public class SgInnerController extends BaseController {
-    public Log logger = LogFactory.getLog(getClass());
     //模块编码  02
     private static String MODULE_NO = "02";
-
-    public SgInnerController() {
-        super(MODULE_NO);
-    }
-
+    public Log logger = LogFactory.getLog(getClass());
     @Autowired
     private Session session;
     @Autowired
@@ -37,6 +36,12 @@ public class SgInnerController extends BaseController {
     private CommitOrderService commitOrderService;
     @Autowired
     private SaveOrderService saveOrderService;
+    @Autowired
+    private AppServerService appServerService;
+
+    public SgInnerController() {
+        super(MODULE_NO);
+    }
 
     /**
      * 登录
@@ -125,5 +130,19 @@ public class SgInnerController extends BaseController {
     @RequestMapping(value = "/api/payment/shunguang/approveStatus", method = RequestMethod.POST)
     public Map<String, Object> approveStatus() throws Exception {
         return sgInnerService.approveStatus(super.getToken());
+    }
+
+    @RequestMapping(value = "/api/payment/shunguang/test", method = RequestMethod.GET)
+    public Map<String, Object> test() {
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("merchantCode", "EHAIER");
+        paramMap.put("storeCode", "SHUNGUANG");
+        Map<String, Object> loanmap = appServerService.getLoanDic("", paramMap);
+        if (!HttpUtil.isSuccess(loanmap)) {//还款试算失败
+            String retmsg = (String) ((Map<String, Object>) (loanmap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+        Map m = (Map) loanmap.get("body");
+        return m;
     }
 }
