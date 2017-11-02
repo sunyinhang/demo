@@ -42,5 +42,8 @@ public class JsonSerializerTest {
     public void testNull() {
         String nullJson = JsonSerializer.serialize(null);
         Object object = JsonSerializer.deserialize(nullJson, Object.class);
+        Assert.assertNull(object);
+        Object object2 = JsonSerializer.deserialize(null, Object.class);
+        Assert.assertNull(object2);
     }
 }
