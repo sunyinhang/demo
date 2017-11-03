@@ -6,7 +6,7 @@ import lombok.Data;
  * Created by 许崇雷 on 2017-11-01.
  */
 @Data
-public class QueueProperties {
+public final class RabbitProperties {
     private String exchange;
     private String routingKey;
     private String queue;
