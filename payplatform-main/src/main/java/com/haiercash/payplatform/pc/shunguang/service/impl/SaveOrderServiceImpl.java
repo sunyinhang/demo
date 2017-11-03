@@ -87,7 +87,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
 
         //appOrder缓存获取（放开）
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -328,7 +328,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         cacheMap.put("custName", custName);
         cacheMap.put("custNo", custNo);
         cacheMap.put("certNo", certNo);
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap)) {//订单保存失败
             logger.info("订单保存失败");

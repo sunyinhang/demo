@@ -66,7 +66,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -139,7 +139,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -202,7 +202,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -276,7 +276,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数outSts为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

@@ -77,7 +77,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -157,7 +157,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             cacheMap.put("certImagePathB", certImagePath);
         }
 
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         logger.info("OCR身份信息获取*************结束");
         return success(cardsResJson);
     }
@@ -208,13 +208,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
 
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         cacheMap.put("name", name);
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         logger.info("OCR信息保存（下一步）***********结束");
         return success();
     }
@@ -276,7 +276,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
 
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -340,7 +340,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //3.jedis缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -477,7 +477,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         cacheMap.put("idNo", idNo);
         cacheMap.put("idType", idType);
         cacheMap.put("cardPhone", cardPhone);
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
 
         //获取客户标签
         Map tagmap = new HashMap<>();
@@ -539,7 +539,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 //        }
 
         cacheMap.put("phoneNo", mobile);
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         //OCR图片路径上送
         Map<String, String> pathMap = new HashMap<String, String>();
         pathMap.put("certImagePathA", (String) cacheMap.get("certImagePathA"));//正面共享盘位置
@@ -617,14 +617,14 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("从前端获取的支付密码为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         cacheMap.put("pageFlag", "0");
         cacheMap.put("payPasswd", payPasswd);
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         logger.info("支付密码设置************结束");
         return success();
     }
@@ -653,7 +653,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 logger.info("------------注册协议------------" + realmName);
                 map.put("realmName", realmName);
             }else{
-                Map<String, Object> cacheMap = RedisUtils.getMap(token);
+                Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
                 if (cacheMap == null || "".equals(cacheMap)) {
                     logger.info("Jedis获取失败");
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -676,7 +676,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
 
-            Map<String, Object> cacheMap = RedisUtils.getMap(token);
+            Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
             if (cacheMap == null || "".equals(cacheMap)) {
                 logger.info("Jedis获取失败");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -715,7 +715,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     //获取绑定手机号
     @Override
     public Map<String, Object> getPhoneNo(String token) {
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -752,7 +752,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //3.jedis缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -877,7 +877,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         cacheMap.put("idNo", idNo);
         cacheMap.put("idType", idType);
         cacheMap.put("cardPhone", cardPhone);
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
 
 /*        //获取客户标签
         Map tagmap = new HashMap<>();
@@ -939,7 +939,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 //        }
 
         cacheMap.put("phoneNo", mobile);
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         //OCR图片路径上送
         Map<String, String> pathMap = new HashMap<String, String>();
         pathMap.put("certImagePathA", (String) cacheMap.get("certImagePathA"));//正面共享盘位置

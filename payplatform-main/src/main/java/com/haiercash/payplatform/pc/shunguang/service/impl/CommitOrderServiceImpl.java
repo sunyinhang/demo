@@ -88,7 +88,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
         String area = (String) map.get("area");//区域
         //缓存获取（放开）
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -246,7 +246,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         //签章成功进行redis存储
 //        String key = "applSeq" + applSeq;
 //        cacheMap.put(key, key);
-//        RedisUtils.set(token, cacheMap);
+//        RedisUtils.setExpire(token, cacheMap);
 
 
         return result;

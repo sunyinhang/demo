@@ -75,7 +75,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

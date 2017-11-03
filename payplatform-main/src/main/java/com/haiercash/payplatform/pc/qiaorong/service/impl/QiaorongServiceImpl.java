@@ -96,7 +96,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String uuid = UUID.randomUUID().toString().replace("-", "");
         Map cachemap = new HashMap();
         cachemap.put("callbackUrl", callbackUrl);
-        RedisUtils.set(uuid, cachemap);
+        RedisUtils.setExpire(uuid, cachemap);
 
         String date = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
 
@@ -127,7 +127,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
-        Map<String, Object> cachemap = RedisUtils.getMap(token);
+        Map<String, Object> cachemap = RedisUtils.getExpireMap(token);
         if (cachemap == null || "".equals(cachemap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -195,7 +195,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cachemap.put("totalamount", appOrderMapCmis.get("APPLY_AMT"));
         cachemap.put("typCde", typCde);//
         cachemap.put("userId", appOrderMapCmis.get("INDIV_MOBILE"));
-        RedisUtils.set(token, cachemap);
+        RedisUtils.setExpire(token, cachemap);
 
 
         logger.info(resultMap);
@@ -216,7 +216,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -261,7 +261,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cacheMap.put("certNo", certNo);
         cacheMap.put("userflag", "1");
         logger.info("userflag:1");
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
 
 
         //3.手机号已注册，判断是否需要人脸识别
@@ -332,7 +332,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -458,7 +458,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -487,7 +487,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -514,7 +514,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -553,7 +553,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

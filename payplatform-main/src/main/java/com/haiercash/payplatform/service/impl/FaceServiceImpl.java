@@ -79,7 +79,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -274,7 +274,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -361,7 +361,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //缓存数据获取及非空判断
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -448,14 +448,14 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 m.put("faceFlag", "4");
             } else {
                 cacheMap.put("payPasswdFlag", "1");
-                RedisUtils.set(token, cacheMap);
+                RedisUtils.setExpire(token, cacheMap);
                 logger.info("已设置支付密码，跳转支付密码验证页面");
                 m.put("faceFlag", "1");
             }
             return success(m);
         } else {//未设置支付密码
             cacheMap.put("payPasswdFlag", "0");
-            RedisUtils.set(token, cacheMap);
+            RedisUtils.setExpire(token, cacheMap);
             logger.info("未设置支付密码，跳转支付密码设置页面");
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("faceFlag", "0");

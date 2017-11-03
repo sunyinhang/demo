@@ -76,7 +76,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             }
         }
 
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -233,7 +233,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //            return fail(ConstUtil.ERROR_CODE, retMsg);
 //        }
         cacheMap.put("crdSeq", applSeq);
-        RedisUtils.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         return success();
     }
 
@@ -252,7 +252,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String type = (String) params.get("type");
             if (type == null || type.equals("get")) {
                 retMap = new HashMap<String, Object>();
-                Map<String, Object> sessionMap = (Map<String, Object>) RedisUtils.getMap(token);
+                Map<String, Object> sessionMap = (Map<String, Object>) RedisUtils.getExpireMap(token);
                 if (sessionMap == null) {
                     return success();
                 }
@@ -264,7 +264,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     }
                 }
             } else if (type.equals("set")) {
-                retMap = (Map<String, Object>) RedisUtils.getMap(token);
+                retMap = (Map<String, Object>) RedisUtils.getExpireMap(token);
                 if (retMap == null) {
                     retMap = new HashMap<>();
                 }
@@ -276,7 +276,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                         retMap.put(param, null);
                     }*/
                 }
-                RedisUtils.set(token, retMap);
+                RedisUtils.setExpire(token, retMap);
                 return success();
             }
         }
@@ -296,7 +296,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("payPasswd" + oldpassword + " newpassword" + newpassword);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         String userId = (String) cacheMap.get("userId");
         if (userId == null && "".equals(userId)) {
             logger.info("缓存中userID为空");
@@ -335,7 +335,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Jedi获取的数据weikong");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -418,7 +418,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String retMsg = "获取前端的参数为空";
             return fail(ConstUtil.FAILED_INFO, retMsg);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取获取数据为空" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -445,7 +445,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if ("00000".equals(head.getString("retFlag"))) {
             cacheMap.put("payPasswd", payPasswd);
             cacheMap.put("pageFlag", "1");
-            RedisUtils.set(token, cacheMap);
+            RedisUtils.setExpire(token, cacheMap);
             return success();
         } else {
             String tetFlag = head.getString("tetFlag");
@@ -472,7 +472,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String channelNo = super.getChannelNo();//渠道编码
         //String channelNo="46";
         logger.info("渠道编码channelNo" + channelNo);
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Redis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -607,7 +607,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的参数为空：token：" + token + "  ,channel" + channel + "  ," + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-//        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+//        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
 //        if (StringUtils.isEmpty(cacheMap)) {
 //            logger.info("Redi获取的数据weikong");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -710,7 +710,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //            logger.info("获取的数据为空：token" + token + "  ,channel" + channel + "  ,channelNo" + channelNo);
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
 //        }
-//        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+//        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
 //        if (StringUtils.isEmpty(cacheMap)) {
 //            logger.info("贷款详情页面:还款总额接口，Jedis失效，cacheMap" + cacheMap);
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -947,7 +947,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取token失败token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Redis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -992,7 +992,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             // jb.put("crdComAvailAntSum", crdComAvailAntSum);
             cacheMap.put("crdNorAvailAmt", crdNorAvailAmt);//存储redis
             cacheMap.put("crdComAvailAnt", crdComAvailAnt);
-            RedisUtils.set(token, cacheMap);
+            RedisUtils.setExpire(token, cacheMap);
             return success(jb);
         } else {
             return fail(ConstUtil.ERROR_CODE, retMsg);
@@ -1010,7 +1010,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取token失败token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Redis获取缓存失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -1061,7 +1061,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的参数为空token=" + token + "  ,channel=" + channel + "  ,channelNo=" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Redis为空：" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -1105,7 +1105,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Redis为空：" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -1266,7 +1266,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的参数为空token:" + token + "  ,channel:" + channel + "  ,channelNO:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Redis为空：" + cacheMap);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -1286,7 +1286,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("获取的token为空" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cacheMap)) {
             logger.info("Redi获取的数据为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -1304,7 +1304,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     public Map<String, Object> resetPayPasswdForHaier(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("支付密码未设置，进行密码的设置");
         String payPasswd = (String) param.get("payPasswd");//密码
-        Map<String, Object> cacheMap = RedisUtils.getMap(token);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
