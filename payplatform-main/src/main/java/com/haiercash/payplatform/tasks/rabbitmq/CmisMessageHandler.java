@@ -2,11 +2,13 @@ package com.haiercash.payplatform.tasks.rabbitmq;
 
 import com.alibaba.fastjson.JSONObject;
 import com.bestvike.lang.Base64Utils;
+import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.PublishDao;
 import com.haiercash.payplatform.common.dao.SgtsLogDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgtsLog;
+import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.utils.DesUtil;
@@ -19,7 +21,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -61,7 +62,6 @@ public class CmisMessageHandler {
     //消费节点类类活动的消息
     @RabbitHandler
     public void consumeNodeMessage(String json) {
-        {
             logger.info("获取实时推送信息，开始");
             String resultjson = ""; // 响应信贷方数据
             String applSeq = ""; // 申请流水号
@@ -93,6 +93,7 @@ public class CmisMessageHandler {
                     if (jsonObj.containsKey("tradeCode") && "100022".equals(jsonObj.getString("tradeCode"))) {
                         tradeCode = jsonObj.getString("tradeCode");// 交易码
                         channelNo = jsonObj.getString("channelNo");
+                        ThreadContext.init(StringUtils.EMPTY, "11", channelNo);
                         applSeq = jsonObj.getString("applSeq");
 //                        outSts = jsonObj.getString("outSts");// 审批状态
                         msgTyp = jsonObj.getString("msgTyp");//等同于outsts
@@ -344,7 +345,6 @@ public class CmisMessageHandler {
                 throw new RuntimeException();
             }
             logger.info("获取实时推送信息，结束。流水号是：" + applSeq);
-        }
     }
 
     private void ts(String msgTyp, String applSeq, String outSts, String channelNo, String idNo, String retMsg, String url_ts, String retflag) throws Exception {
@@ -352,7 +352,7 @@ public class CmisMessageHandler {
         SgtsLog sgtsLog = new SgtsLog();
         if ("01".equals(msgTyp)) {
             tscount = sgtsLogDao.selectApplSeq(applSeq, outSts);
-            if (StringUtils.isEmpty(tscount)) {
+            if (tscount == null) {
                 String s1 = UUID.randomUUID().toString().replaceAll("-", "");
                 sgtsLog.setLogId(s1);
                 sgtsLog.setApplSeq(applSeq);
@@ -374,20 +374,18 @@ public class CmisMessageHandler {
                 sgtsLogDao.update(tscount, applSeq, outSts);
                 retMsg = "推送地址：" + url_ts;
                 throw new Exception(retMsg);
-            } else if (!StringUtils.isEmpty(tscount)) {
+            } else {
                 if (tscount < 3) {
                     tscount++;
                     sgtsLog.setTscount(tscount);
                     sgtsLogDao.update(tscount, applSeq, outSts);
                     retMsg = "推送地址：" + url_ts;
                     throw new Exception(retMsg);
-                } else {
-                    return;
                 }
             }
         } else {
             tscount = sgtsLogDao.selectApplSeqed(applSeq, msgTyp);
-            if (StringUtils.isEmpty(tscount)) {
+            if (tscount == null) {
                 String s1 = UUID.randomUUID().toString().replaceAll("-", "");
                 sgtsLog.setLogId(s1);
                 sgtsLog.setApplSeq(applSeq);
@@ -408,18 +406,16 @@ public class CmisMessageHandler {
                 sgtsLogDao.updateed(tscount, applSeq, msgTyp);
                 retMsg = "推送地址：" + url_ts;
                 throw new Exception(retMsg);
-            } else if (!StringUtils.isEmpty(tscount)) {
+            } else {
                 if (tscount < 3) {
                     tscount++;
                     sgtsLog.setTscount(tscount);
                     sgtsLogDao.updateed(tscount, applSeq, msgTyp);
                     retMsg = "推送地址：" + url_ts;
                     throw new Exception(retMsg);
-                } else {
-                    return;
                 }
+                logger.info("获取实时推送信息，结束，成功的流水号是：" + applSeq);
             }
-            logger.info("获取实时推送信息，结束，成功的流水号是：" + applSeq);
         }
     }
 

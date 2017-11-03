@@ -18,10 +18,9 @@ public interface CashLoanService {
     /**
      * 根据channelNo 获取贷款种类,不受配置影响
      *
-     * @param channelNo
      * @return 贷款种类列表
      */
-    IResponse<List<LoanType>> getLoanTypeByChannelNo(String channelNo);
+    IResponse<List<LoanType>> getLoanTypeByChannelNo();
 
     /**
      * 根据 姓名,证件 获取贷款种类,不受配置影响
@@ -36,14 +35,13 @@ public interface CashLoanService {
     /**
      * 根据配置和参数查询贷款种类
      *
-     * @param setting   渠道配置可以为 null
-     * @param channelNo 渠道号
-     * @param custName  姓名
-     * @param idType    证件类型 20 身份证,00 手机号
-     * @param idNo      身份证或手机号
+     * @param setting  渠道配置可以为 null
+     * @param custName 姓名
+     * @param idType   证件类型 20 身份证,00 手机号
+     * @param idNo     身份证或手机号
      * @return 贷款种类列表
      */
-    IResponse<List<LoanType>> getLoanType(EntrySetting setting, String channelNo, String custName, String idType, String idNo);
+    IResponse<List<LoanType>> getLoanType(EntrySetting setting, String custName, String idType, String idNo);
 
     /**
      * 现金贷贷款提交

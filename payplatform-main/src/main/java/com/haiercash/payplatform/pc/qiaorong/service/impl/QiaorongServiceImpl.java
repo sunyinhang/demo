@@ -14,6 +14,7 @@ import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
 import com.haiercash.payplatform.utils.CmisTradeCode;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.ConstUtil;
@@ -56,6 +57,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private SignContractInfoDao signContractInfoDao;
+    @Autowired
+    private CommonPageService commonPageService;
 
     /*
     ca签章
@@ -74,7 +77,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             return fail(ConstUtil.ERROR_CODE, "请求数据不能为空");
         }
 
-        String params = decryptData(data, channelNo);
+        String params = commonPageService.decryptData(data, channelNo);
         logger.info("CA签章接收到的数据：" + params);
         JSONObject camap = new JSONObject(params);
 //        ObjectMapper objectMapper = new ObjectMapper();
