@@ -19,7 +19,7 @@ public abstract class AbstractStringOperations {
     }
 
     protected static String getKey(String key) {
-        return RedisTemplateProvider.getRedisConfigurationProperties().getKey(key);
+        return RedisTemplateProvider.getRedisProperties().getKey(key);
     }
 
     protected static String[] getKeys(String[] keys) {

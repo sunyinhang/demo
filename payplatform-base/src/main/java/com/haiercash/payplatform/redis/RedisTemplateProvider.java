@@ -12,11 +12,11 @@ import javax.annotation.PostConstruct;
 @Component
 public final class RedisTemplateProvider {
     private static StringRedisTemplate redisTemplate;
-    private static RedisConfigurationProperties redisConfigurationProperties;
+    private static RedisProperties redisProperties;
     @Autowired
     private StringRedisTemplate redisTemplateInstance;
     @Autowired
-    private RedisConfigurationProperties redisConfigurationPropertiesInstance;
+    private RedisProperties redisPropertiesInstance;
 
     private RedisTemplateProvider() {
     }
@@ -25,13 +25,13 @@ public final class RedisTemplateProvider {
         return redisTemplate;
     }
 
-    public static RedisConfigurationProperties getRedisConfigurationProperties() {
-        return redisConfigurationProperties;
+    public static RedisProperties getRedisProperties() {
+        return redisProperties;
     }
 
     @PostConstruct
     private void init() {
         redisTemplate = this.redisTemplateInstance;
-        redisConfigurationProperties = this.redisConfigurationPropertiesInstance;
+        redisProperties = this.redisPropertiesInstance;
     }
 }

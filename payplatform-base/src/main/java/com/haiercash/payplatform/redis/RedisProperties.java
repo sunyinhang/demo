@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "spring.redis")
-public class RedisConfigurationProperties {
+public class RedisProperties {
     private String globalKeyPrefix;
     private Integer defaultValueExpire;
 

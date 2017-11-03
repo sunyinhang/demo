@@ -44,7 +44,7 @@ public final class RedisTemplateEx extends StringRedisTemplate {
     }
 
     private static String getKey(String key) {
-        return RedisTemplateProvider.getRedisConfigurationProperties().getKey(key);
+        return RedisTemplateProvider.getRedisProperties().getKey(key);
     }
 
     private static Collection<String> getKeys(Collection<String> keys) {

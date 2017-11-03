@@ -22,8 +22,8 @@ public final class RedisUtils {
         return RedisTemplateProvider.getRedisTemplate();
     }
 
-    private static RedisConfigurationProperties getRedisConfigurationProperties() {
-        return RedisTemplateProvider.getRedisConfigurationProperties();
+    private static RedisProperties getRedisProperties() {
+        return RedisTemplateProvider.getRedisProperties();
     }
 
     private static String serialize(Object value) {
@@ -77,17 +77,17 @@ public final class RedisUtils {
     //region 字符串命令-常用
 
     public static void setExpire(String key, Object value) {
-        if (getRedisConfigurationProperties().valueExpireEnabled())
-            getRedisTemplate().opsForValue().set(key, serialize(value), getRedisConfigurationProperties().getDefaultValueExpire(), getRedisConfigurationProperties().getTimeUnit());
+        if (getRedisProperties().valueExpireEnabled())
+            getRedisTemplate().opsForValue().set(key, serialize(value), getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
         else
             getRedisTemplate().opsForValue().set(key, serialize(value));
     }
 
     @SuppressWarnings("Duplicates")
     public static <T> T getExpire(String key, Class<T> clazz) {
-        if (getRedisConfigurationProperties().valueExpireEnabled()) {
+        if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
-            operations.expire(getRedisConfigurationProperties().getDefaultValueExpire(), getRedisConfigurationProperties().getTimeUnit());
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
             return deserialize(operations.get(), clazz);
         } else {
             return deserialize(getRedisTemplate().opsForValue().get(key), clazz);
@@ -96,9 +96,9 @@ public final class RedisUtils {
 
     @SuppressWarnings("Duplicates")
     public static <T> T getExpire(String key, TypeReference<T> type) {
-        if (getRedisConfigurationProperties().valueExpireEnabled()) {
+        if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
-            operations.expire(getRedisConfigurationProperties().getDefaultValueExpire(), getRedisConfigurationProperties().getTimeUnit());
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
             return deserialize(operations.get(), type);
         } else {
             return deserialize(getRedisTemplate().opsForValue().get(key), type);
@@ -115,11 +115,11 @@ public final class RedisUtils {
     }
 
     public static boolean setnxExpire(String key, Object value) {
-        if (getRedisConfigurationProperties().valueExpireEnabled()) {
+        if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
             boolean success = operations.setIfAbsent(serialize(value));
             if (success)
-                operations.expire(getRedisConfigurationProperties().getDefaultValueExpire(), getRedisConfigurationProperties().getTimeUnit());
+                operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
             return success;
         } else {
             return getRedisTemplate().opsForValue().setIfAbsent(key, serialize(value));
