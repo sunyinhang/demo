@@ -158,7 +158,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         resultMap.put("phone", appOrderMapCmis.get("INDIV_MOBILE"));//手机号
         resultMap.put("idnumber", appOrderMapCmis.get("ID_NO"));//身份证号
         //还款帐号
-        List<Map<String, Object>> cardList = (ArrayList<Map<String, Object>>) appOrderMapCmis.get("accInfo");
+        List<Map<String, Object>> cardList = (List<Map<String, Object>>) appOrderMapCmis.get("accInfo");
         for (Map<String, Object> card : cardList) {
             // 获取卡类型
             String type = String.valueOf(card.get("APPL_AC_KIND"));

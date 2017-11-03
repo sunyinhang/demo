@@ -97,7 +97,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         Map<String, Object> paramYXMap = new HashMap<String, Object>();
         //获取贷款类型查询客户所有影像ID
 //        JSONObject pLoanTypImagesBodyjson = new JSONObject(pLoanTypImagesMap.get("body"));
-        ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) pLoanTypImagesMap.get("body");
+        List<Map<String, String>> list = (List<Map<String, String>>) pLoanTypImagesMap.get("body");
         for (int i = 0; i < list.size(); i++) {
             List<JSONObject> resultList_ = new ArrayList<JSONObject>();
             String docCde = list.get(i).get("docCde");//影像代码
@@ -112,7 +112,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             if (!ifError(stringObjectMapHeadMap)) {
                 return fail(ConstUtil.ERROR_CODE, stringObjectMapMsg);
             }
-            ArrayList<Map<String, Object>> list_ = (ArrayList<Map<String, Object>>) stringObjectMap.get("body");
+            List<Map<String, Object>> list_ = (List<Map<String, Object>>) stringObjectMap.get("body");
             if (list_.size() > 0) {
                 for (int j = 0; j < list_.size(); j++) {
                     int id = (int) list_.get(j).get("id");

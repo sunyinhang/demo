@@ -9,8 +9,24 @@ import com.haiercash.payplatform.common.enums.AcquirerApptEnum;
 import com.haiercash.payplatform.common.enums.AcquirerEnum;
 import com.haiercash.payplatform.common.enums.AcquirerGoodsEnum;
 import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppManageService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisService;
+import com.haiercash.payplatform.service.CommonRepaymentPersonService;
+import com.haiercash.payplatform.service.CrmService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.AcqTradeCode;
+import com.haiercash.payplatform.utils.AcqUtil;
+import com.haiercash.payplatform.utils.BusinessException;
+import com.haiercash.payplatform.utils.ChannelType;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.IdCardUtils;
+import com.haiercash.payplatform.utils.ReflactUtils;
+import com.haiercash.payplatform.utils.RestUtil;
+import com.haiercash.payplatform.utils.ResultHead;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +39,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * acquirer service impl.
@@ -228,7 +248,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         Map<String, Object> lxrMap = HttpUtil.json2Map(lxrJson);
         List<Map<String, Object>> lxrlist = new ArrayList<>();
         if (!StringUtils.isEmpty(lxrMap.get("body"))) {
-            lxrlist = (ArrayList) lxrMap.get("body");
+            lxrlist = (List) lxrMap.get("body");
         }
         apptmap.put("appt_typ", "01");// 申请人类型 01 - 主申请人
         apptmap.put("appt_relation", "");
@@ -478,7 +498,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         String retFlag = headJson.getRetFlag();
         String retMsg = headJson.getRetMsg();
         if ("00000".equals(retFlag)) {
-            List<CommonRepaymentPerson> personlist = (ArrayList<CommonRepaymentPerson>) commonPersonMap.get("body");
+            List<CommonRepaymentPerson> personlist = (List<CommonRepaymentPerson>) commonPersonMap.get("body");
             logger.info("共同还款人列表：" + personlist);
             for (CommonRepaymentPerson person : personlist) {
                 // 获取共同还款人的客户编号
@@ -653,7 +673,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
                     return fail("56", "crm查询门店信息失败");
                 }
                 Map<String, Object> crmMap = HttpUtil.json2Map(crmJson);
-                ArrayList<Map<String, Object>> crmList = (ArrayList<Map<String, Object>>) crmMap.get("body");
+                List<Map<String, Object>> crmList = (List<Map<String, Object>>) crmMap.get("body");
                 if (crmList != null && crmList.size() > 0) {
                     Map<String, Object> o = (Map<String, Object>) crmList.get(0);
                     String storeName = o.get("storeName").toString();
