@@ -1,6 +1,5 @@
 server:
   port: 8030
-  version:
   connection-timeout: 6000
 logging:
   level:
@@ -12,7 +11,7 @@ info:
   version: ${application.version}
 spring:
   application:
-    name: payplatform-develop
+    name: payplatform
   ignoreUnresolvablePlaceholders: true
   redis:
     host: 10.164.194.123
@@ -25,7 +24,6 @@ spring:
   http.converters.preferred-xml-mapper: jackson
   rabbitmq:
     addresses: 10.164.197.208:5672, 10.164.197.228:5672
-#    addresses: 10.164.197.54:5672, 10.164.197.55:5672
     username: admin
     password: admin123
     virtual-host: /
@@ -34,10 +32,8 @@ spring:
       acknowledge-mode: AUTO  # 消费者开启ack
       concurrency: 1  # Listener并行处理的消息数量，可以通过增加此数量提高消息处理效率
     requestedHeartbeat: 60
-#    exchange: APPMSG_TOPIC_EXCHANGE_DEV    测试
     exchange: APPMSG_TOPIC_EXCHANGE
     queue:
-#      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
       cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
   http:
     encoding:
@@ -61,8 +57,7 @@ redis:
 datasources:
   payplatform:
     datasource:
-      url: jdbc:oracle:thin:@10.164.194.168:1521/haiercash
-      #url: jdbc:oracle:thin:@10.164.197.49:1521/ibank
+      url: jdbc:oracle:thin:@10.164.197.49:1521/ibank
       username: haiercashpay
       password: haiercashpay
       driverClassName: oracle.jdbc.OracleDriver
@@ -106,8 +101,7 @@ eureka:
     registryFetchIntervalSeconds: 5
     eurekaServiceUrlPollIntervalSeconds: 120
     serviceUrl:
-      defaultZone: http://10.164.197.208:1180/eureka/,http://10.164.197.209:1180/eureka/
-      #defaultZone: http://10.164.197.32:1180/eureka/,http://10.164.197.33:1180/eureka/,http://10.164.197.34:1180/eureka/
+      defaultZone: http://10.164.197.32:1180/eureka/,http://10.164.197.33:1180/eureka/,http://10.164.197.34:1180/eureka/
   instance:
     instanceId: ${spring.application.name}@${spring.cloud.client.ipAddress}:${server.port}(${spring.cloud.client.hostname})
     appname: ${spring.application.name}
@@ -171,13 +165,13 @@ app:
   other:
     # baseSharePath: /testshare01
     haierDataImg_url: /testshare01/00/Data/haierData/
-    outplatform_url: http://10.164.194.120:9080
+    outplatform_url: http://10.164.197.48:9080
     face_DataImg_url: /testshare01/crm/image/
-    appServer_page_url: http://testpm.haiercash.com/
-    haierData_url: http://taccount.haier.com
-    haiercashpay_web_url: https://testpm.haiercash.com/
+    appServer_page_url: https://testpm.haiercash.com/
+    haierData_url: https://taccount.haier.com
+    haiercashpay_web_url: https://testpm.haiercash.com:9002/
     haiershunguang_ts_url : http://mobiletest.ehaier.com:58093
-    moxie_apikey : 51f5eed2f64f467a9a20f15d2ce26038
+    moxie_apikey: 51f5eed2f64f467a9a20f15d2ce26038
   shunguang:
     sg_merch_no: EHAIER
     sg_store_no: SHUNGUANG
