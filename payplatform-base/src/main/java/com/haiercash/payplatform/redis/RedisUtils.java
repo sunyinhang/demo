@@ -2,6 +2,7 @@ package com.haiercash.payplatform.redis;
 
 import com.alibaba.fastjson.TypeReference;
 import com.bestvike.serialization.JsonSerializer;
+import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.Collection;
@@ -73,13 +74,65 @@ public final class RedisUtils {
     //endregion
 
 
-    //region 字符串命令
+    //region 字符串命令-常用
 
-    public static void set(String key, Object value) {
-        if (getRedisConfigurationProperties().useValueExpire())
+    public static void setExpire(String key, Object value) {
+        if (getRedisConfigurationProperties().valueExpireEnabled())
             getRedisTemplate().opsForValue().set(key, serialize(value), getRedisConfigurationProperties().getDefaultValueExpire(), getRedisConfigurationProperties().getTimeUnit());
         else
             getRedisTemplate().opsForValue().set(key, serialize(value));
+    }
+
+    @SuppressWarnings("Duplicates")
+    public static <T> T getExpire(String key, Class<T> clazz) {
+        if (getRedisConfigurationProperties().valueExpireEnabled()) {
+            BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
+            operations.expire(getRedisConfigurationProperties().getDefaultValueExpire(), getRedisConfigurationProperties().getTimeUnit());
+            return deserialize(operations.get(), clazz);
+        } else {
+            return deserialize(getRedisTemplate().opsForValue().get(key), clazz);
+        }
+    }
+
+    @SuppressWarnings("Duplicates")
+    public static <T> T getExpire(String key, TypeReference<T> type) {
+        if (getRedisConfigurationProperties().valueExpireEnabled()) {
+            BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
+            operations.expire(getRedisConfigurationProperties().getDefaultValueExpire(), getRedisConfigurationProperties().getTimeUnit());
+            return deserialize(operations.get(), type);
+        } else {
+            return deserialize(getRedisTemplate().opsForValue().get(key), type);
+        }
+    }
+
+    public static String getExpireString(String key) {
+        return getExpire(key, String.class);
+    }
+
+    public static Map<String, Object> getExpireMap(String key) {
+        return getExpire(key, new TypeReference<Map<String, Object>>() {
+        });
+    }
+
+    public static boolean setnxExpire(String key, Object value) {
+        if (getRedisConfigurationProperties().valueExpireEnabled()) {
+            BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
+            boolean success = operations.setIfAbsent(serialize(value));
+            if (success)
+                operations.expire(getRedisConfigurationProperties().getDefaultValueExpire(), getRedisConfigurationProperties().getTimeUnit());
+            return success;
+        } else {
+            return getRedisTemplate().opsForValue().setIfAbsent(key, serialize(value));
+        }
+    }
+
+    //endregion
+
+
+    //region 字符串命令
+
+    public static void set(String key, Object value) {
+        getRedisTemplate().opsForValue().set(key, serialize(value));
     }
 
     public static <T> T get(String key, Class<T> clazz) {

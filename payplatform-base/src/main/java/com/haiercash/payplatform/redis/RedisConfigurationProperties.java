@@ -18,13 +18,14 @@ public class RedisConfigurationProperties {
     private Integer defaultValueExpire;
 
     public String getKey(String key) {
-        String globalKeyPrefix = StringUtils.isEmpty(this.globalKeyPrefix)
-                ? StringUtils.EMPTY
-                : (this.globalKeyPrefix + ":");
-        return key == null ? globalKeyPrefix : (globalKeyPrefix + key);
+        String globalKeyPrefix = this.globalKeyPrefix;
+        if (StringUtils.isEmpty(globalKeyPrefix))
+            return key == null ? StringUtils.EMPTY : key;
+        else
+            return StringUtils.isEmpty(key) ? globalKeyPrefix : (globalKeyPrefix + ":" + key);
     }
 
-    public boolean useValueExpire() {
+    public boolean valueExpireEnabled() {
         return this.defaultValueExpire != null && this.defaultValueExpire > 0;
     }
 
