@@ -691,7 +691,11 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         }
 
         // 是否额度加支用，默认是
-        acquirer.put("crd_flag", "Y");
+        if ("49".equals(this.getChannelNo())) {
+            acquirer.put("crd_flag", "N");
+        } else {
+            acquirer.put("crd_flag", "Y");
+        }
         return acquirer;
     }
 
