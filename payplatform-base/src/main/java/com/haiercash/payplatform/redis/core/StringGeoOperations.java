@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2017-11-02.
  */
-public class StringGeoOperations extends AbstractStringOperations implements GeoOperations<String, String> {
+public final class StringGeoOperations extends AbstractStringOperations implements GeoOperations<String, String> {
     private final GeoOperations<String, String> operations;
 
     public StringGeoOperations(RedisTemplate<String, String> template, RedisProperties properties, GeoOperations<String, String> operations) {

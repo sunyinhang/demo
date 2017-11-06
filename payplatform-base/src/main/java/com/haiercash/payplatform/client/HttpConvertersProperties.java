@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Data
 @ConfigurationProperties(prefix = "spring.http.converters")
-public class HttpConvertersProperties {
+public final class HttpConvertersProperties {
     public static final String PREFERRED_JSON_MAPPER_PROPERTY = "spring.http.converters.preferredJsonMapper";
     private String preferredJsonMapper;
     private String preferredXmlMapper;

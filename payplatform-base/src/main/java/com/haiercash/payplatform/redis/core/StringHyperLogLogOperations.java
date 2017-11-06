@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 /**
  * Created by 许崇雷 on 2017-11-02.
  */
-public class StringHyperLogLogOperations extends AbstractStringOperations implements HyperLogLogOperations<String, String> {
+public final class StringHyperLogLogOperations extends AbstractStringOperations implements HyperLogLogOperations<String, String> {
     private final HyperLogLogOperations<String, String> operations;
 
     public StringHyperLogLogOperations(RedisTemplate<String, String> template, RedisProperties properties, HyperLogLogOperations<String, String> operations) {

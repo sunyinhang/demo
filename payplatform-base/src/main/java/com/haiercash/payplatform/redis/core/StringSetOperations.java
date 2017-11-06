@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Created by 许崇雷 on 2017-11-02.
  */
-public class StringSetOperations extends AbstractStringOperations implements SetOperations<String, String> {
+public final class StringSetOperations extends AbstractStringOperations implements SetOperations<String, String> {
     private final SetOperations<String, String> operations;
 
     public StringSetOperations(RedisTemplate<String, String> template, RedisProperties properties, SetOperations<String, String> operations) {

@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Created by 许崇雷 on 2017-11-02.
  */
-public class StringZSetOperations extends AbstractStringOperations implements ZSetOperations<String, String> {
+public final class StringZSetOperations extends AbstractStringOperations implements ZSetOperations<String, String> {
     private final ZSetOperations<String, String> operations;
 
     public StringZSetOperations(RedisTemplate<String, String> template, RedisProperties properties, ZSetOperations<String, String> operations) {

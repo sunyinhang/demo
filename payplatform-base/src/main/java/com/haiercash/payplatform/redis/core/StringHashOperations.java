@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * Created by 许崇雷 on 2017-11-02.
  */
-public class StringHashOperations<HK, KV> extends AbstractStringOperations implements HashOperations<String, HK, KV> {
+public final class StringHashOperations<HK, KV> extends AbstractStringOperations implements HashOperations<String, HK, KV> {
     private final HashOperations<String, HK, KV> operations;
 
     public StringHashOperations(RedisTemplate<String, String> template, RedisProperties properties, HashOperations<String, HK, KV> operations) {

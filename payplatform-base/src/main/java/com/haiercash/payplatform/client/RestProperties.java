@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 @ConfigurationProperties(prefix = "spring.rest")
-public class RestProperties {
+public final class RestProperties {
     private static final Object PRESENT = new Object();
     private static final List<String> SYSTEM_IGNORE_HEADERS = Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Content-Type", "Content-Length", "Cookie", "Set-Cookie", "Authorization", "Connection", "Host", "User-Agent");
     private Boolean routeHeadersEnabled;

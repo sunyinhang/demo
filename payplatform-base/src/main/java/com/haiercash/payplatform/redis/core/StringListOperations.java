@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by 许崇雷 on 2017-11-02.
  */
-public class StringListOperations extends AbstractStringOperations implements ListOperations<String, String> {
+public final class StringListOperations extends AbstractStringOperations implements ListOperations<String, String> {
     private final ListOperations<String, String> operations;
 
     public StringListOperations(RedisTemplate<String, String> template, RedisProperties properties, ListOperations<String, String> operations) {

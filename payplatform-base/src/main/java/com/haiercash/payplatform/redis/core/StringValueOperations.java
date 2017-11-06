@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by 许崇雷 on 2017-11-02.
  */
-public class StringValueOperations extends AbstractStringOperations implements ValueOperations<String, String> {
+public final class StringValueOperations extends AbstractStringOperations implements ValueOperations<String, String> {
     private final ValueOperations<String, String> operations;
 
     public StringValueOperations(RedisTemplate<String, String> template, RedisProperties properties, ValueOperations<String, String> operations) {
