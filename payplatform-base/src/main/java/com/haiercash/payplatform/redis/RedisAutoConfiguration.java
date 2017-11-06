@@ -14,10 +14,19 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Configuration
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisAutoConfiguration {
+    private final RedisProperties properties;
+
+    public RedisAutoConfiguration(RedisProperties properties) {
+        this.properties = properties;
+        RedisUtils.properties = properties;
+    }
+
     @Bean
     @Primary
     @ConditionalOnMissingBean(name = "redisTemplate")
     StringRedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        return new RedisTemplateEx(redisConnectionFactory);
+        RedisTemplateEx redisTemplate = new RedisTemplateEx(redisConnectionFactory);
+        redisTemplate.properties = this.properties;
+        return redisTemplate;
     }
 }

@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.redis.core;
 
-import com.bestvike.linq.Linq;
-import com.haiercash.payplatform.redis.RedisTemplateProvider;
+import com.haiercash.payplatform.redis.RedisProperties;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -13,25 +12,27 @@ import java.util.Map;
  */
 public abstract class AbstractStringOperations {
     private final RedisTemplate<String, String> template;
+    private final RedisProperties properties;
 
-    protected AbstractStringOperations(RedisTemplate<String, String> template) {
+    protected AbstractStringOperations(RedisTemplate<String, String> template, RedisProperties properties) {
         this.template = template;
+        this.properties = properties;
     }
 
-    protected static String getKey(String key) {
-        return RedisTemplateProvider.getRedisProperties().getKey(key);
+    protected String getKey(String key) {
+        return this.properties.getKey(key);
     }
 
-    protected static String[] getKeys(String[] keys) {
-        return keys == null ? null : Linq.asEnumerable(keys).select(AbstractStringOperations::getKey).toArray(String.class);
+    protected String[] getKeys(String[] keys) {
+        return this.properties.getKeys(keys);
     }
 
-    protected static Collection<String> getKeys(Collection<String> keys) {
-        return keys == null ? null : Linq.asEnumerable(keys).select(AbstractStringOperations::getKey).toList();
+    protected Collection<String> getKeys(Collection<String> keys) {
+        return this.properties.getKeys(keys);
     }
 
-    protected static <T> Map<? extends String, T> getKeyMap(Map<? extends String, T> map) {
-        return map == null ? null : Linq.asEnumerable(map).toMap(entry -> getKey(entry.getKey()), Map.Entry::getValue);
+    protected <T> Map<? extends String, T> getKeyMap(Map<? extends String, T> map) {
+        return this.properties.getKeyMap(map);
     }
 
     public RedisOperations<String, String> getOperations() {

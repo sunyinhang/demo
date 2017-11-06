@@ -6,7 +6,6 @@ import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
 import com.haiercash.payplatform.converter.StringHttpMessageConverterEx;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -25,7 +24,6 @@ import java.util.List;
  * Created by 许崇雷 on 2017-11-06.
  */
 @Data
-@Configuration
 @ConfigurationProperties(prefix = "spring.http.converters")
 public class HttpConvertersProperties {
     public static final String PREFERRED_JSON_MAPPER_PROPERTY = "spring.http.converters.preferredJsonMapper";

@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
  * Created by 许崇雷 on 2017-11-01.
  */
 public final class RedisUtils {
+    static RedisProperties properties;
+
     private RedisUtils() {
     }
 
@@ -23,7 +25,7 @@ public final class RedisUtils {
     }
 
     private static RedisProperties getRedisProperties() {
-        return RedisTemplateProvider.getRedisProperties();
+        return properties;
     }
 
     private static String serialize(Object value) {

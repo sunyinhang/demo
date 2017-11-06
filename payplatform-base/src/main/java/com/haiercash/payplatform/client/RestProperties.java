@@ -4,7 +4,6 @@ import com.bestvike.collection.CollectionUtils;
 import lombok.Data;
 import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.List;
  * Created by 许崇雷 on 2017-11-06.
  */
 @Data
-@Configuration
 @ConfigurationProperties(prefix = "spring.rest")
 public class RestProperties {
     private static final Object PRESENT = new Object();
