@@ -1147,7 +1147,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         Map<String, Object> bodyMap = (Map<String, Object>) responseMap.get("body");
         applyAmt = String.valueOf(StringUtils.isEmpty("applyAmt") ? 0 : applyAmt);
-        String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAmt")) ? 0 : bodyMap.get("crdComAvailAmt"));
+        String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdNorAvailAmt")) ? 0 : bodyMap.get("crdNorAvailAmt"));
         logger.info("可用额度:" + crdComAvailAmt);
         if (new BigDecimal(crdComAvailAmt).compareTo(new BigDecimal(applyAmt)) >= 0) {
             logger.info("可用额度满足申请金额");
