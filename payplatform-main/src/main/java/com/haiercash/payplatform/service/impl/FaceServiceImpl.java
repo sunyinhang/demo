@@ -21,7 +21,11 @@ import sun.misc.BASE64Encoder;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -123,7 +127,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         jsonMap.put("appno", appno);//申请编号
         jsonMap.put("filestreamname", filestreamname);//文件名
         jsonMap.put("organization", "02");//机构号(国政通)
-        if ("46".equals(channelNo)) { //顺逛
+        if ("46".equals(channelNo) || "49".equals(channelNo)) { //顺逛
             jsonMap.put("organization", "02");//机构号(国政通)
         } else {//乔融  现金贷
             jsonMap.put("organization", "01");//机构号(海鑫洺)

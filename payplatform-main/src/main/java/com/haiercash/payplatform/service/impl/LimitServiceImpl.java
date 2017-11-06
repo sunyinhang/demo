@@ -2,16 +2,15 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.LimitService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +157,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
                 String retMsg = (String) custTagHeadMap.get("retMsg");
                 return fail(ConstUtil.ERROR_CODE, retMsg);
             }
-            List<Map<String,Object>> tiglist =  (ArrayList<Map<String,Object>>) custTag.get("body");
+            List<Map<String, Object>> tiglist = (List<Map<String, Object>>) custTag.get("body");
             boolean flag = false;
             for (int i = 0; i < tiglist.size(); i++) {
                String tagIdData = (String) tiglist.get(i).get("tagId");
