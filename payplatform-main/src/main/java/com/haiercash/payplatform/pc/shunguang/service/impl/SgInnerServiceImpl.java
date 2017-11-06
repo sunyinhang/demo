@@ -377,7 +377,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
 //        String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
 //        String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
 
-
+        retrunmap.put("typCde", typCde);//贷款品种
         retrunmap.put("payAmt", payAmt);
         retrunmap.put("totalAmt", totalAmt);
         if (boo) {//贷款类型按天
@@ -393,8 +393,16 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
                 String retmsg = (String) ((Map<String, Object>) (loanmap.get("head"))).get("retMsg");
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             }
-            //遍历
-            //若包含17100a则返回时增加17100a
+            //遍历  若包含17100a则返回时增加17100a
+            JSONArray jsonArray = (JSONArray) loanmap.get("body");
+            logger.info("jsonArray大小" + jsonArray.size());
+            for (int j = 0; j < jsonArray.size(); j++) {
+                org.json.JSONObject jsonm = new org.json.JSONObject(jsonArray.get(j).toString());
+                String loanCode = (String) jsonm.get("loanCode");
+                if ("17100a".equals(loanCode)) {
+                    retrunmap.put("loanCode", loanCode);
+                }
+            }
         }
 
         logger.info("白条分期页面加载*******************结束");

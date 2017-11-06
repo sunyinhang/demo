@@ -2,29 +2,34 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
-import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
-import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.CrmManageService;
+import com.haiercash.payplatform.service.HaierDataService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RestUtil;
-import org.json.JSONObject;
-//import com.alibaba.fastjson.JSONArray;
-//import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+//import com.alibaba.fastjson.JSONArray;
+//import com.alibaba.fastjson.JSONObject;
 
 /**
  * Created by use on 2017/8/16.
@@ -75,11 +80,13 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String updflag = (String) map.get("flag");//1.待提交返显
         String orderNo = (String) map.get("orderNo");//待提交时必传
         String areaCode = (String) map.get("areaCode");//区编码
+        String typCde = (String) map.get("typCde");//贷款品种编码
         //非空判断
         if(StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
-                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp)){
+                || StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(applyTnrTyp) || StringUtils.isEmpty(typCde)) {
             logger.info("token:" + token + "  channel:" + channel + "   channelNo:" + channelNo
-                       + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp + "   updflag:" + updflag + "  orderNo:" + orderNo);
+                    + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp
+                    + "   updflag:" + updflag + "  orderNo:" + orderNo + "   typCde:" + typCde);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -104,6 +111,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         } catch (IOException e) {
             e.printStackTrace();
         }
+        appOrder.setTypCde(typCde);//贷款品种编码
 
         //根据token获取统一认证userid
         String userId = sgInnerService.getuserId(token);
@@ -111,8 +119,6 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             logger.info("根据用户中心token获取统一认证userId失败");
             return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
         }
-        //TODO!!!!
-        //String userId = cacheMap.get("userId").toString();
 
         //获取客户信息
         logger.info("订单保存，根据userId获取客户信息");
@@ -142,7 +148,6 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         if(!HttpUtil.isSuccess(tagmapresult)){
             return tagmapresult;
         }
-        //TODO!!!!
         String userType = (String) cacheMap.get("userType");
         //String userType = "01";
         String tagId = "";
@@ -302,7 +307,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //2.是否允许申请贷款
         logger.info("查看是否允许申请贷款");
-        String typCde = appOrder.getTypCde();
+        //String typCde = appOrder.getTypCde();
         SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
         String date = dateFormater.format(new Date());
         Map<String, Object> queryordermap = new HashMap<String, Object>();
@@ -326,6 +331,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         cacheMap.put("custName", custName);
         cacheMap.put("custNo", custNo);
         cacheMap.put("certNo", certNo);
+        cacheMap.put("apporder", appOrder);
         session.set(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
