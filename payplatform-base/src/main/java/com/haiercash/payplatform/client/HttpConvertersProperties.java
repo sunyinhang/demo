@@ -1,0 +1,95 @@
+package com.haiercash.payplatform.client;
+
+import com.bestvike.lang.StringUtils;
+import com.haiercash.payplatform.config.HttpMessageConvertersAutoConfiguration;
+import com.haiercash.payplatform.converter.FastJsonHttpMessageConverterEx;
+import com.haiercash.payplatform.converter.StringHttpMessageConverterEx;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
+import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by 许崇雷 on 2017-11-06.
+ */
+@Data
+@Configuration
+@ConfigurationProperties(prefix = "spring.http.converters")
+public class HttpConvertersProperties {
+    private String preferredJsonMapper;
+    private String preferredXmlMapper;
+
+    public void config(RestTemplateEx restTemplate) {
+        switch (restTemplate.supportedType) {
+            case JSON:
+                restTemplate.setMessageConverters(this.createJsonConverters());
+                break;
+            case XML:
+                restTemplate.setMessageConverters(this.createXmlConverters());
+                break;
+            default:
+                throw new RuntimeException("Unexpected supportedType of RestTemplateEx");
+        }
+    }
+
+    //创建数据转换器 Json
+    private List<HttpMessageConverter<?>> createJsonConverters() {
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        messageConverters.add(new ByteArrayHttpMessageConverter());
+        messageConverters.add(new StringHttpMessageConverterEx(MediaType.APPLICATION_JSON_UTF8));
+        messageConverters.add(new ResourceHttpMessageConverter());
+        messageConverters.add(new SourceHttpMessageConverter());
+        messageConverters.add(new AllEncompassingFormHttpMessageConverter());
+        String preferredJsonMapper = this.preferredJsonMapper == null ? StringUtils.EMPTY : this.preferredJsonMapper.toLowerCase();
+        switch (preferredJsonMapper) {
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_JACKSON:
+                messageConverters.add(new MappingJackson2HttpMessageConverter());
+                break;
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_GSON:
+                messageConverters.add(new GsonHttpMessageConverter());
+                break;
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_FASTJSON:
+                messageConverters.add(new FastJsonHttpMessageConverterEx());
+                break;
+            default:
+                messageConverters.add(new MappingJackson2HttpMessageConverter());
+                break;
+        }
+        return messageConverters;
+    }
+
+    //创建数据转换器 Xml
+    private List<HttpMessageConverter<?>> createXmlConverters() {
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        messageConverters.add(new ByteArrayHttpMessageConverter());
+        messageConverters.add(new StringHttpMessageConverterEx(MediaType.APPLICATION_XML));
+        messageConverters.add(new ResourceHttpMessageConverter());
+        messageConverters.add(new SourceHttpMessageConverter());
+        messageConverters.add(new AllEncompassingFormHttpMessageConverter());
+        String preferredXmlMapper = this.preferredXmlMapper == null ? StringUtils.EMPTY : this.preferredXmlMapper.toLowerCase();
+        switch (preferredXmlMapper) {
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_PROPERTY_JACKSON:
+                messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
+                break;
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_PROPERTY_JAXB:
+                messageConverters.add(new Jaxb2RootElementHttpMessageConverter());
+                break;
+            default:
+                messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
+                break;
+        }
+        return messageConverters;
+    }
+}
