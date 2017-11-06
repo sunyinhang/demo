@@ -3,7 +3,6 @@ package com.haiercash.payplatform.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.List;
 
@@ -14,6 +13,5 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties(prefix = "app.cashLoan")
 public class AppCashLoanConfig {
-    StringRedisTemplate redisTemplate;
     private List<String> whiteTagIds;
 }
