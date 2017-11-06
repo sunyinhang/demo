@@ -28,6 +28,7 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties(prefix = "spring.http.converters")
 public class HttpConvertersProperties {
+    public static final String PREFERRED_JSON_MAPPER_PROPERTY = "spring.http.converters.preferredJsonMapper";
     private String preferredJsonMapper;
     private String preferredXmlMapper;
 
@@ -54,13 +55,13 @@ public class HttpConvertersProperties {
         messageConverters.add(new AllEncompassingFormHttpMessageConverter());
         String preferredJsonMapper = this.preferredJsonMapper == null ? StringUtils.EMPTY : this.preferredJsonMapper.toLowerCase();
         switch (preferredJsonMapper) {
-            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_JACKSON:
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_JACKSON:
                 messageConverters.add(new MappingJackson2HttpMessageConverter());
                 break;
-            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_GSON:
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_GSON:
                 messageConverters.add(new GsonHttpMessageConverter());
                 break;
-            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_PROPERTY_FASTJSON:
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_FASTJSON:
                 messageConverters.add(new FastJsonHttpMessageConverterEx());
                 break;
             default:
@@ -80,10 +81,10 @@ public class HttpConvertersProperties {
         messageConverters.add(new AllEncompassingFormHttpMessageConverter());
         String preferredXmlMapper = this.preferredXmlMapper == null ? StringUtils.EMPTY : this.preferredXmlMapper.toLowerCase();
         switch (preferredXmlMapper) {
-            case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_PROPERTY_JACKSON:
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_JACKSON:
                 messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
                 break;
-            case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_PROPERTY_JAXB:
+            case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_JAXB:
                 messageConverters.add(new Jaxb2RootElementHttpMessageConverter());
                 break;
             default:
