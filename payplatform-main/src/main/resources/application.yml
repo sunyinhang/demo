@@ -3,9 +3,9 @@ server:
   connection-timeout: 6000
 logging:
   level:
-    org.springframework: WARN
+    org.springframework: warn
 security:
-  sessions: NEVER
+  sessions: never
 info:
   name: ${spring.application.name}
   version: ${project.version}
@@ -21,6 +21,9 @@ spring:
     multipart:
       max-file-size: 10MB # 最大文件大小
       max-request-size: 10MB # 最大请求大小
+  rest:
+    route-headers-enabled: false
+    ignore-headers:
   redis:
     host: 10.164.194.123
     port: 10001
@@ -28,15 +31,15 @@ spring:
       maxIdle: 100
       minIdle: 10
       maxActive: 1000
-    globalKeyPrefix: PAYPLATFORM # 全局前缀, 自动用 ':' 分割
-    defaultValueExpire: 3600 # 默认字符串过期时间, 单位:秒
+    global-key-prefix: PAYPLATFORM # 全局前缀, 自动用 ':' 分割
+    default-value-expire: 3600 # 默认字符串过期时间, 单位:秒
   rabbitmq:
     addresses: 10.164.197.208:5672,10.164.197.228:5672
     username: admin
     password: admin123
     virtual-host: /
     publisher-confirms: true
-    requestedHeartbeat: 60
+    requested-heartbeat: 60
     listener:
       simple:
         acknowledge-mode: auto # 确认模式
@@ -85,9 +88,9 @@ eureka:
   client:
     register-with-eureka: true # 是否注册自身到 eureka 服务器
     fetch-registry: true # 是否从 eureka 服务器获取注册信息
-    registryFetchIntervalSeconds: 5
-    eurekaServiceUrlPollIntervalSeconds: 120
-    serviceUrl:
+    registry-fetch-interval-seconds: 5
+    eureka-service-url-poll-interval-seconds: 120
+    service-url:
       defaultZone: http://10.164.197.208:1180/eureka/,http://10.164.197.209:1180/eureka/
   instance:
     instanceId: ${spring.application.name}@${spring.cloud.client.ipAddress}:${server.port}(${spring.cloud.client.hostname})
@@ -97,7 +100,7 @@ eureka:
     lease-expiration-duration-in-seconds: 2
     secure-port-enabled: false
 zuul:
-  ignoredServices: '*'
+  ignored-services: '*'
   set-content-length: true # 返回长度,微服务没有返回长度或请求 GZip 压缩除外
   host:
     socket-timeout-millis: 30000
@@ -110,7 +113,6 @@ zuul:
 ribbon:
   ConnectTimeout: 3000
   ReadTimeout: 60000
-  route-headers-enabled: false
   eureka:
     enabled: true
 app:
@@ -138,7 +140,7 @@ app:
     url: http://10.164.194.105:8098/cmis/HTTP_DEMO_SERVICE/ # cmis 服务地址
     rabbit:
       exchange: APPMSG_TOPIC_EXCHANGE
-      routingKey:
+      routing-key:
       queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
   other:
     haierDataImg_url: /testshare01/00/Data/haierData/
@@ -156,5 +158,5 @@ app:
     sg_typCde: 17098a
     sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
-  cashLoan:
-    whiteTagIds: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804
+  cash-loan:
+    white-tag-ids: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804
