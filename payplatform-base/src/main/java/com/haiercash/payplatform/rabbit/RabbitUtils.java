@@ -15,14 +15,14 @@ public final class RabbitUtils {
         return RabbitTemplateProvider.getRabbitTemplate();
     }
 
-    public static void convertAndSend(RabbitProperties rabbitProperties, Object message) {
-        Assert.notNull(rabbitProperties, "rabbitProperties can not be null");
+    public static void convertAndSend(RabbitInfo rabbitInfo, Object message) {
+        Assert.notNull(rabbitInfo, "rabbitInfo can not be null");
         Assert.notNull(message, "message can not be null");
 
         RabbitTemplate rabbitTemplate = getRabbitTemplate();
         if (message instanceof String)
-            rabbitTemplate.convertAndSend(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), message);
+            rabbitTemplate.convertAndSend(rabbitInfo.getExchange(), rabbitInfo.getRoutingKey(), message);
         else
-            rabbitTemplate.convertAndSend(rabbitProperties.getExchange(), rabbitProperties.getRoutingKey(), JsonSerializer.serialize(message));
+            rabbitTemplate.convertAndSend(rabbitInfo.getExchange(), rabbitInfo.getRoutingKey(), JsonSerializer.serialize(message));
     }
 }

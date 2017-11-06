@@ -12,8 +12,11 @@ import javax.annotation.PostConstruct;
 @Component
 public final class RabbitTemplateProvider {
     private static RabbitTemplate rabbitTemplate;
+    private static RabbitProperties rabbitProperties;
     @Autowired
     private RabbitTemplate rabbitTemplateInstance;
+    @Autowired
+    private RabbitProperties rabbitPropertiesInstance;
 
     private RabbitTemplateProvider() {
     }
@@ -22,8 +25,13 @@ public final class RabbitTemplateProvider {
         return rabbitTemplate;
     }
 
+    public static RabbitProperties getRabbitProperties() {
+        return rabbitProperties;
+    }
+
     @PostConstruct
     private void init() {
         rabbitTemplate = this.rabbitTemplateInstance;
+        rabbitProperties = this.rabbitPropertiesInstance;
     }
 }
