@@ -688,6 +688,12 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> identity(@RequestBody Map<String, Object> map) throws Exception {
         return commonPageService.identity(map);
     }
+    /**
+     * @Title queryApplReraidPlanByloanNo
+     * @Description: 还款计划
+     * @author yu jianwei
+     * @date 2017/11/6 17:18
+     */
     @RequestMapping(value = "/api/payment/queryApplReraidPlanByloanNo", method = RequestMethod.POST)
     public Map<String, Object> queryApplReraidPlanByloanNo(@RequestBody Map<String, Object> map) throws Exception {
         return commonPageService.queryApplReraidPlanByloanNo(map);

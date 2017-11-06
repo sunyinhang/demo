@@ -1302,6 +1302,15 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     public Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) {
         logger.info("============查询还款计划开始===========");
         Map<String, Object> resultMap = crmService.queryApplReraidPlanByloanNo(params);
+        Map<String, Object> custHeadObject = (Map<String, Object>) resultMap.get("head");
+        String retFlag = String.valueOf(custHeadObject.get("retFlag"));
+        if (!"00000".equals(retFlag)) {
+            return resultMap;
+        }
+        String totleAmt = String.valueOf(custHeadObject.get("totleAmt"));
+        Map<String, Object> body = (Map<String, Object>) resultMap.get("body");
+        body.put("totleAmt", totleAmt);
+        resultMap.put("body", body);
         logger.info("============查询还款计划结束===========");
         return resultMap;
     }
