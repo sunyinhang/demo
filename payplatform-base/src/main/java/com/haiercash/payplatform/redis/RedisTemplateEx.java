@@ -9,6 +9,7 @@ import com.haiercash.payplatform.redis.core.StringSetOperations;
 import com.haiercash.payplatform.redis.core.StringValueOperations;
 import com.haiercash.payplatform.redis.core.StringZSetOperations;
 import org.springframework.data.redis.connection.DataType;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.BoundGeoOperations;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
@@ -40,7 +41,8 @@ public final class RedisTemplateEx extends StringRedisTemplate {
     private GeoOperations<String, String> geoOps;
     private HyperLogLogOperations<String, String> hllOps;
 
-    public RedisTemplateEx() {
+    public RedisTemplateEx(RedisConnectionFactory connectionFactory) {
+        super(connectionFactory);
     }
 
     private static String getKey(String key) {
