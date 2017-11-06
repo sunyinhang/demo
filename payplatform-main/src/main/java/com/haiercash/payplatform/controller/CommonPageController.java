@@ -683,9 +683,13 @@ public class CommonPageController extends BaseController {
      * @param map
      * @return
      */
+
     @RequestMapping(value = "/api/payment/identity", method = RequestMethod.POST)
     public Map<String, Object> identity(@RequestBody Map<String, Object> map) throws Exception {
         return commonPageService.identity(map);
     }
-
+    @RequestMapping(value = "/api/payment/queryApplReraidPlanByloanNo", method = RequestMethod.POST)
+    public Map<String, Object> queryApplReraidPlanByloanNo(@RequestBody Map<String, Object> map) throws Exception {
+        return commonPageService.queryApplReraidPlanByloanNo(map);
+    }
 }

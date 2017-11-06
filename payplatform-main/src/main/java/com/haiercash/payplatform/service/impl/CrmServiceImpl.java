@@ -119,4 +119,14 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         }
         return map;
     }
+    @Override
+    public Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) {
+        String url = EurekaServer.CRM + "/app/crm/apporder/queryApplReraidPlanByloanNo";
+        Map<String, Object> map =  HttpUtil.restGetMap(url,getToken(),params);
+        if (StringUtils.isEmpty(map)) {
+            logger.error("还款计划查询！");
+            return fail(RestUtil.ERROR_INTERNAL_CODE, RestUtil.ERROR_INTERNAL_MSG);
+        }
+        return map;
+    }
 }

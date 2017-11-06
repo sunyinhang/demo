@@ -68,6 +68,13 @@ public interface CrmService {
      * @return
      */
     Map<String, Object> getCustWhiteListCmis(Map<String, Object> params);
+    /**
+     * @Title queryApplReraidPlanByloanNo
+     * @Description: 108、(GET)还款计划查询 (crm)
+     * @author yu jianwei
+     * @date 2017/11/6 13:41
+     */
+    Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params);
 
 
 }
