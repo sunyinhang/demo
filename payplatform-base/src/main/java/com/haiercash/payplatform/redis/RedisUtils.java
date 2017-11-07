@@ -133,27 +133,51 @@ public final class RedisUtils {
 
     //region 字符串命令
 
+    /**
+     * 使用 setExpire 代替
+     */
+    @Deprecated
     public static void set(String key, Object value) {
         getRedisTemplate().opsForValue().set(key, serialize(value));
     }
 
+    /**
+     * 使用 getExpire 代替
+     */
+    @Deprecated
     public static <T> T get(String key, Class<T> clazz) {
         return deserialize(getRedisTemplate().opsForValue().get(key), clazz);
     }
 
+    /**
+     * 使用 getExpire 代替
+     */
+    @Deprecated
     public static <T> T get(String key, TypeReference<T> type) {
         return deserialize(getRedisTemplate().opsForValue().get(key), type);
     }
 
+    /**
+     * 使用 getExpireString 代替
+     */
+    @Deprecated
     public static String getString(String key) {
         return get(key, String.class);
     }
 
+    /**
+     * 使用 getExpireMap 代替
+     */
+    @Deprecated
     public static Map<String, Object> getMap(String key) {
         return get(key, new TypeReference<Map<String, Object>>() {
         });
     }
 
+    /**
+     * 使用 setnxExpire 代替
+     */
+    @Deprecated
     public static boolean setnx(String key, Object value) {
         return getRedisTemplate().opsForValue().setIfAbsent(key, serialize(value));
     }
