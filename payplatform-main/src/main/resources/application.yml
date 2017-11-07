@@ -107,11 +107,8 @@ ribbon:
   eureka:
     enabled: true
 app:
-  address:
-    gate-url: http://testpm.haiercash.com
-  file:
-    uploadPath: f:\file\upload # 文件上传路径
-    templatePath: f:\file\template # excel模板文件路径
+  common:
+    gate-url: http://testpm.haiercash.com # 程序前缀
   rest:
     APPCA: http://APPCA
     APPMANAGE: http://APPMANAGE
