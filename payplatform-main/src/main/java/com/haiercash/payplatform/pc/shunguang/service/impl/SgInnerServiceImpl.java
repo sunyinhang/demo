@@ -2,6 +2,7 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bestvike.lang.Convert;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
@@ -9,13 +10,7 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.service.HaierDataService;
-import com.haiercash.payplatform.service.OrderManageService;
-import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
@@ -418,6 +413,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String channelNo = (String) map.get("channelNo");
         String applyTnr = (String) map.get("applyTnr");
         String applyTnrTyp = (String) map.get("applyTnrTyp");
+        String typCde = Convert.toString(map.get("typCde"));
 
         Map<String, Object> cacheMap = session.get(token, Map.class);
         if (cacheMap == null || "".equals(cacheMap)) {
@@ -436,7 +432,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             e.printStackTrace();
         }
         String payAmt = appOrder.getApplyAmt();//申请金额
-        String typCde = appOrder.getTypCde();//贷款品种
+        //String typCde = appOrder.getTypCde();//贷款品种
 
         Map<String, Object> payMap = new HashMap<String, Object>();
         payMap.put("typCde", typCde);
