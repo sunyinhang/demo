@@ -28,9 +28,9 @@ spring:
     host: 10.164.194.123
     port: 10001
     pool:
-      maxIdle: 100
-      minIdle: 10
-      maxActive: 1000
+      max-idle: 100
+      min-idle: 10
+      max-active: 1000
     global-key-prefix: PAYPLATFORM # 全局前缀, 自动用 ':' 分割
     default-value-expire: 3600 # 默认字符串过期时间, 单位:秒
   rabbitmq:
@@ -44,46 +44,37 @@ spring:
       simple:
         acknowledge-mode: auto # 确认模式
         concurrency: 1 # 最小消费者数量
-datasources:
-  payplatform:
-    datasource:
-      url: jdbc:oracle:thin:@10.164.194.168:1521/haiercash
-      username: haiercashpay
-      password: haiercashpay
-      driverClassName: oracle.jdbc.OracleDriver
-      # 连接池配置
-      # type: com.alibaba.druid.pool.DruidDataSource
-      # 初始化大小，最小，最大
-      initialSize: 5
-      minIdle: 5
-      maxActive: 20
-      # 配置获取连接等待超时的时间
-      maxWait: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      timeBetweenEvictionRunsMillis: 60000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: select 1 from dual
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      # 打开PSCache，并且指定每个连接上PSCache的大小
-      # poolPreparedStatements: true
-      # maxPoolPreparedStatementPerConnectionSize: 21
-      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙 ,wall,commonLogging
-      filters: stat,wall,commonLogging
-      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
-      # connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  datasource:
+    url: jdbc:oracle:thin:@10.164.194.168:1521/haiercash
+    username: haiercashpay
+    password: haiercashpay
+    driver-class-name: oracle.jdbc.OracleDriver
     druid:
-      path: /druid/*
-      loginUsername: admin
-      loginPassword: admin
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 1 from dual
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall,commonLogging
+      web-stat-filter:
+        enabled: false
+      stat-view-servlet:
+        enabled: true
+        url-pattern:
+        reset-enable: false
+        login-username: admin
+        login-password: admin
     mybatis:
       dialect: org.apache.ibatis.dialect.OracleDialect
-      basePackage: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
-      aliasesPackage: com.haiercash.commons.data,com.haiercash.payplatform.**.data
-      mapperLocations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
-      underscoreToCamelCase: true
+      base-package: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
+      aliases-package: com.haiercash.commons.data,com.haiercash.payplatform.**.data
+      mapper-locations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
+      underscore-to-camel-case: true
 eureka:
   client:
     register-with-eureka: true # 是否注册自身到 eureka 服务器
@@ -117,7 +108,7 @@ ribbon:
     enabled: true
 app:
   address:
-    gateUrl: http://testpm.haiercash.com
+    gate-url: http://testpm.haiercash.com
   file:
     uploadPath: f:\file\upload # 文件上传路径
     templatePath: f:\file\template # excel模板文件路径
@@ -158,5 +149,5 @@ app:
     sg_typCde: 17098a
     sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
-  cash-loan:
+  cashloan:
     white-tag-ids: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804
