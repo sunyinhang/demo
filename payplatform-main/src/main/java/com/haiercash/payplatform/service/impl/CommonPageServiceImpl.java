@@ -145,10 +145,10 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
         logger.info("订单提交业务类型:" + applSeq + ", typgrp:" + apporder.getTypGrp());
         // 检验可用额度是否满足申请金额
-        if (!judgeApplAmt(apporder.getIdTyp(), apporder.getIdNo(), apporder.getApplyAmt(), super.getToken())) {
+   /*     if (!judgeApplAmt(apporder.getIdTyp(), apporder.getIdNo(), apporder.getApplyAmt(), super.getToken())) {
             logger.info("对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
             return fail("07", "对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
-        }
+        }*/
 
         // 商户版直接提交核心
         if ("13".equals(super.getChannel()) || "11".equals(super.getChannel())) {
