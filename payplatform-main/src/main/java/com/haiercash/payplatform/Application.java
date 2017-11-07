@@ -19,7 +19,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableZuulProxy
 @EnableScheduling
 @EnableEurekaClient
-@ComponentScan(basePackages = {"com.haiercash.payplatform"})
+@ComponentScan(basePackages = {"com.haiercash.commons", "com.haiercash.payplatform"})
 public class Application {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
