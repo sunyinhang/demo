@@ -139,6 +139,7 @@ app:
     haierData_url: http://account.haier.com
     haiercashpay_web_url: https://www.haiercash.com:15006/
     haiershunguang_ts_url: http://pay.ehaier.com
+    moxie_apikey:
   shunguang:
     sg_merch_no: EHAIER
     sg_store_no: SHUNGUANG
