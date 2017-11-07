@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.bestvike.lang.Base64Utils;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
@@ -9,8 +8,11 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgRegions;
+import com.haiercash.payplatform.config.AppOtherConfig;
+import com.haiercash.payplatform.config.AppShunguangConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -22,12 +24,9 @@ import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -47,11 +46,6 @@ import java.util.UUID;
  */
 @Service
 public class ShunguangServiceImpl extends BaseService implements ShunguangService {
-    public Log logger = LogFactory.getLog(getClass());
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -66,9 +60,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     private SgInnerService sgInnerService;
     @Autowired
     private OrderManageService orderManageService;
+    @Autowired
+    private AppOtherConfig appOtherConfig;
+    @Autowired
+    private AppShunguangConfig appShunguangConfig;
 
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
-        Map<String, Object> headMap = new HashMap();
+        Map<String, Object> headMap = new HashMap<>();
         Date now = new Date();
         headMap.put("serno", UUID.randomUUID().toString().replaceAll("-", ""));
         headMap.put("tradeDate", DateUtil.formatDate(now, "yyyy-MM-dd"));
@@ -137,7 +135,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         requestParams.put("cardnumber", null);
         requestParams.put("data", new JSONObject(body));
 
-        String url = this.outplatUrl + "/Outreachplatform/api/externalData/savaExternalData";
+        String url = appOtherConfig.getOutplatform_url() + "/Outreachplatform/api/externalData/savaExternalData";
         logger.info("推送外联风险信息，请求地址：" + url);
         String resData = JsonClientUtils.postForString(url, requestParams);
         logger.info("推送外联风险信息，返回数据：" + resData);
@@ -303,15 +301,15 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("name", custName);
         cachemap.put("idNo", certNo);
         cachemap.put("userId", userId);
-        session.set(token, cachemap);
+        RedisUtils.setExpire(token, cachemap);
         logger.info("name:" + custName + "  idNo:" + certNo + "  userId:" + userId);
         Map returnmap = new HashMap<>();
         String backurl = "";
         if ("1".equals(f)) {//订单已提交成功
-            backurl = haiercashpay_web_url + "sgbt/#!/payByBt/loanResult.html?token=" + token + "&applSeq=" + applSeq;
+            backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/payByBt/loanResult.html?token=" + token + "&applSeq=" + applSeq;
             ;
         } else {
-            backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
+            backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
         }
         logger.info("支付跳转页面：" + backurl);
         returnmap.put("backurl", backurl);
@@ -427,8 +425,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             } else if ("U0160".equals(userretFlag)) {
                 //U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录
-                session.set(token, cachemap);
-                String backurl = haiercashpay_web_url + "sgbt/#!/login/login.html?token=" + token;
+                RedisUtils.setExpire(token, cachemap);
+                String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/login/login.html?token=" + token;
                 returnmap.put("backurl", backurl);
                 logger.info("页面跳转到：" + backurl);
                 return success(returnmap);
@@ -452,7 +450,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
         cachemap.put("userId", uidLocal);//统一认证userId
         cachemap.put("phoneNo", phoneNo);//绑定手机号
-        session.set(token, cachemap);
+        RedisUtils.setExpire(token, cachemap);
         logger.info("进行token绑定");
         //4.token绑定
         Map<String, Object> bindMap = new HashMap<String, Object>();
@@ -479,8 +477,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
             logger.info("token:" + token);
             logger.info("跳转额度激活，cachemap：" + cachemap.toString());
-            session.set(token, cachemap);
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+            RedisUtils.setExpire(token, cachemap);
+            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
             returnmap.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(returnmap);
@@ -510,8 +508,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             cachemap.put("idNo", certNo);//身份证号
             cachemap.put("idCard", certNo);//身份证号
             cachemap.put("idType", certType);
-            session.set(token, cachemap);
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/quotaMerge.html?token=" + token;
+            RedisUtils.setExpire(token, cachemap);
+            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/quotaMerge.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
@@ -1085,14 +1083,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
-            session.set(token, cachemap);
+            RedisUtils.setExpire(token, cachemap);
 
             ///
-            Map<String, Object> cacheMap = session.get(token, Map.class);
+            Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
             logger.info("cacheMap:" + cacheMap);
 
 
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
@@ -1113,7 +1111,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("idNo", certNo);//身份证号
         cachemap.put("idCard", certNo);//身份证号
         cachemap.put("idType", certType);
-        session.set(token, cachemap);
+        RedisUtils.setExpire(token, cachemap);
 
         // 查询有无额度 by lihua
         HashMap<String, Object> edCheckmap = new HashMap<>();
@@ -1142,29 +1140,29 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String crdNorAvailAmt = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
             //跳转有额度页面
-            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
+            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/payByBt/myAmount.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
         //审批状态判断
         String outSts = (String) ((Map<String, Object>) (edresult.get("body"))).get("outSts");
         if ("01".equals(outSts)) {//额度正在审批中
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
+            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else if ("22".equals(outSts)) {//审批被退回
             String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
             cachemap.put("crdSeq", crdSeq);
-            session.set(token, cachemap);
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
+            RedisUtils.setExpire(token, cachemap);
+            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else if ("25".equals(outSts)) {//审批被拒绝
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
+            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else {//没有额度  额度激活
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
+            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
@@ -1178,20 +1176,20 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         if (StringUtils.isEmpty(token)) {
             return fail(ConstUtil.ERROR_CODE, "请在header中传入token");
         }
-        Map<String, Object> cachemap = session.get(token, Map.class);
+        Map<String, Object> cachemap = RedisUtils.getExpireMap(token);
         if (cachemap == null || "".equals(cachemap)) {
             cachemap = new HashMap<String, Object>();
         }
         cachemap.put("apporder", appOrder);
         cachemap.put("userId", appOrder.getUserId());
-        session.set(token, cachemap);
+        RedisUtils.setExpire(token, cachemap);
 
         cachemap.put("userType", "01");//01:微店主  02:消费者
         cachemap.put("paybackurl", "www.baidu.com");//支付申请回调url
         cachemap.put("apporder", appOrder);
-        session.set(token, cachemap);
+        RedisUtils.setExpire(token, cachemap);
         Map returnmap = new HashMap<>();
-        String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
+        String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
         returnmap.put("backurl", backurl);
         return success(returnmap);
 

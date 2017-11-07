@@ -13,7 +13,12 @@ import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.AcqTradeCode;
+import com.haiercash.payplatform.utils.AcqUtil;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.DesUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -36,7 +41,7 @@ import java.util.UUID;
  * @since v1.0.1
  */
 @Component
-@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
+@RabbitListener(queues = "${app.cmis.rabbit.queue}")
 public class CmisMessageHandler {
     @Value("${app.other.haiershunguang_ts_url}")
     protected String haiershunguang_ts_url;

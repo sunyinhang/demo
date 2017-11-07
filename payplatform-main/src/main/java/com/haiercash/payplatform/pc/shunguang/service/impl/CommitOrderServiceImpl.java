@@ -2,7 +2,6 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.bestvike.lang.Base64Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -11,6 +10,7 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -40,8 +40,6 @@ import java.util.UUID;
  */
 @Service
 public class CommitOrderServiceImpl extends BaseService implements CommitOrderService {
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -89,7 +87,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
         String area = (String) map.get("area");//区域
         //缓存获取（放开）
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

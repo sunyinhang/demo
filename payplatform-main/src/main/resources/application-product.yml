@@ -1,0 +1,151 @@
+# 生产环境
+server:
+  port: 8030
+  connection-timeout: 6000
+logging:
+  level:
+    org.springframework: warn
+security:
+  sessions: never
+info:
+  name: ${spring.application.name}
+  version: ${project.version}
+spring:
+  application:
+    name: payplatform
+  http:
+    converters:
+      preferred-json-mapper: fastjson # json 转换器, 接收数据和请求数据时使用
+      preferred-xml-mapper: jackson # xml 转换器, 请求数据时使用
+    encoding:
+      force: true # 强制用 UTF-8 编码解析请求
+    multipart:
+      max-file-size: 10MB # 最大文件大小
+      max-request-size: 10MB # 最大请求大小
+  rest:
+    route-headers-enabled: false
+    ignore-headers:
+  redis:
+    host: 10.164.196.147
+    port: 10001
+    pool:
+      max-idle: 100
+      min-idle: 10
+      max-active: 1000
+    global-key-prefix: PAYPLATFORM # 全局前缀, 自动用 ':' 分割
+    default-value-expire: 3600 # 默认字符串过期时间, 单位:秒
+  rabbitmq:
+    addresses: 10.164.196.209:5672,10.164.196.210:5672
+    username: admin
+    password: admin123
+    virtual-host: /
+    publisher-confirms: true
+    requested-heartbeat: 60
+    listener:
+      simple:
+        acknowledge-mode: auto # 确认模式
+        concurrency: 1 # 最小消费者数量
+  datasource:
+    url: jdbc:oracle:thin:@10.164.193.114:1521:ibank
+    username: haiercashpay
+    password: haiercashpay
+    driver-class-name: oracle.jdbc.OracleDriver
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 1 from dual
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall,commonLogging
+      web-stat-filter:
+        enabled: false
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: admin
+        login-password: admin
+    mybatis:
+      dialect: org.apache.ibatis.dialect.OracleDialect
+      base-package: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
+      aliases-package: com.haiercash.commons.data,com.haiercash.payplatform.**.data
+      mapper-locations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
+      underscore-to-camel-case: true
+eureka:
+  client:
+    register-with-eureka: true # 是否注册自身到 eureka 服务器
+    fetch-registry: true # 是否从 eureka 服务器获取注册信息
+    registry-fetch-interval-seconds: 5
+    eureka-service-url-poll-interval-seconds: 120
+    service-url:
+      defaultZone: http://10.164.196.180:1180/eureka/,http://10.164.196.182:1180/eureka/,http://10.164.196.185:1180/eureka/
+  instance:
+    instanceId: ${spring.application.name}@${spring.cloud.client.ipAddress}:${server.port}(${spring.cloud.client.hostname})
+    appname: ${spring.application.name}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+    secure-port-enabled: false
+zuul:
+  ignored-services: '*'
+  set-content-length: true # 返回长度,微服务没有返回长度或请求 GZip 压缩除外
+  host:
+    socket-timeout-millis: 30000
+  routes:
+    crmForApp:
+      path: /app/appserver/**
+      service-id: APPSERVERNOAUTHNEW
+      strip-prefix: false
+      sensitive-headers:
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
+  eureka:
+    enabled: true
+app:
+  common:
+    gate-url: https://www.haiercash.com:15006 # 程序前缀
+  rest:
+    APPCA: http://APPCA
+    APPMANAGE: http://APPMANAGE
+    APPMSG: http://APPSERVER-MSG
+    APPSERVER: http://APPSERVER
+    APPSERVERNOAUTH: http://APPSERVERNOAUTH
+    APPSERVERNOAUTHNEW: http://APPSERVERNOAUTHNEW
+    CMISPROXY: http://CMISPROXY
+    CRM: http://CRM
+    HCPORTAL: http://HCPORTAL
+    CMISFRONTSERVER: http://CMIS-FRONT-SERVER
+    GM: http://GM
+    UAUTH: http://UAUTH
+    ACQUIRER: http://ACQUIRER
+    ORDER: http://ORDER
+  cmis:
+    url: # cmis 服务地址
+    rabbit:
+      exchange: APPMSG_TOPIC_EXCHANGE
+      routing-key:
+      queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
+  other:
+    haierDataImg_url: /storage2018/00/Data/haierData/
+    outplatform_url: http://192.168.1.14:15006
+    face_DataImg_url: /storage2018/crm/image/
+    appServer_page_url: https://app.haiercash.com/
+    haierData_url: http://account.haier.com
+    haiercashpay_web_url: https://www.haiercash.com:15006/
+    haiershunguang_ts_url: http://pay.ehaier.com
+    moxie_apikey:
+  shunguang:
+    sg_merch_no: EHAIER
+    sg_store_no: SHUNGUANG
+    sg_user_id: EH3623
+    sg_typCde: 17098a
+    sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
+    sg_consumer: dc04a273474a404bafdad48ddb63cce2
+  cashloan:
+    white-tag-ids: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804

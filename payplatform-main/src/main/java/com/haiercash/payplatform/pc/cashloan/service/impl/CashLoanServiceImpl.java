@@ -7,7 +7,6 @@ import com.bestvike.linq.IEnumerable;
 import com.bestvike.linq.Linq;
 import com.bestvike.reflect.GenericType;
 import com.bestvike.serialization.JsonSerializer;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.ChannelStoreRelationDao;
 import com.haiercash.payplatform.common.dao.EntrySettingDao;
@@ -19,17 +18,24 @@ import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.common.entity.LoanTypeProperty;
 import com.haiercash.payplatform.common.entity.LoanTypes;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
-import com.haiercash.payplatform.config.CashLoanConfig;
+import com.haiercash.payplatform.config.AppCashloanConfig;
+import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.common.CommonResponse;
 import com.haiercash.payplatform.rest.common.CommonRestUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.utils.AppServerUtils;
+import com.haiercash.payplatform.utils.ApplicationContextUtils;
+import com.haiercash.payplatform.utils.BusinessException;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,15 +43,19 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
  */
 @Service
 public class CashLoanServiceImpl extends BaseService implements CashLoanService {
-    @Autowired
-    private Session redisSession;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -57,7 +67,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     @Autowired
     private CommonPageService commonPageService;
     @Autowired
-    private CashLoanConfig cashLoanConfig;
+    private AppCashloanConfig appCashloanConfig;
+    @Autowired
+    private AppConfig appConfig;
 
     @Override
     public String getActivityUrl() {
@@ -67,7 +79,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if (setting == null) {
             return StringUtils.EMPTY;
         }
-        return this.cashLoanConfig.getActiveUrlPrefix() + setting.getActivityUrl();
+        return this.appConfig.getGateUrl() + setting.getActivityUrl();
     }
 
     @Override
@@ -193,7 +205,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             return CommonResponse.create(ConstUtil.ERROR_CODE, "没有任何标签");
         IEnumerable<String> userTags = Linq.asEnumerable(tags).select(tagMap -> Convert.toString(tagMap.get("tagId")));
         //标签跟配置的标签取交集
-        List<String> allowTags = cashLoanConfig.getTagIds();
+        List<String> allowTags = appCashloanConfig.getWhiteTagIds();
         if (CollectionUtils.isEmpty(allowTags))
             return CommonResponse.create(ConstUtil.ERROR_CODE, "支付平台未配置允许的标签");
         List<String> intersectTags = userTags.intersect(Linq.asEnumerable(allowTags)).toList();//取交集
@@ -283,7 +295,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 uidLocal = registerResult.get("body").toString();//统一认证内userId
                 phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
             } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
-                this.redisSession.set(thirdToken, cachemap);
+                RedisUtils.setExpire(thirdToken, cachemap);
                 returnmap.put("flag", "2");//跳转登陆绑定页
                 returnmap.put("phone", phoneNo_);//手机号
 //                returnmap.put("token", thirdToken);
@@ -299,7 +311,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         cachemap.put("userId", uidLocal);//统一认证userId
         cachemap.put("phoneNo", phoneNo);//绑定手机号
-//        redisSession.set(thirdToken, cachemap);
+//        RedisUtils.setExpire(thirdToken, cachemap);
 
         logger.info("进行token绑定");
         //4.token绑定
@@ -327,7 +339,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
             logger.info("token:" + thirdToken);
             logger.info("跳转额度激活，cachemap：" + cachemap.toString());
-            redisSession.set(thirdToken, cachemap);
+            RedisUtils.setExpire(thirdToken, cachemap);
 
             returnmap.put("flag", "3");//跳转OCR
             returnmap.put("token", thirdToken);
@@ -353,7 +365,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         cachemap.put("idNo", certNo);//身份证号
         cachemap.put("idCard", certNo);//身份证号
         cachemap.put("idType", certType);
-        redisSession.set(thirdToken, cachemap);
+        RedisUtils.setExpire(thirdToken, cachemap);
         String tag = "SHH";
         String typCde = "";//贷款品种
         Map<String, Object> cacheedmap = new HashMap<>();
@@ -491,7 +503,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 Integer crdSeqInt = (Integer) body.get("applSeq");
                 String crdSeq = Integer.toString(crdSeqInt);
                 cachemap.put("crdSeq", crdSeq);
-                this.redisSession.set(thirdToken, cachemap);
+                RedisUtils.setExpire(thirdToken, cachemap);
                 String outSts = body.get("outSts").toString();
                 if ("27".equals(outSts)) {
                     returnmap.put("flag", "12");//通过  我的额度
@@ -578,7 +590,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         //缓存获取（放开）
-        Map<String, Object> cacheMap = redisSession.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -758,7 +770,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         //appOrder缓存获取（放开）
-        Map<String, Object> cacheMap = redisSession.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -957,7 +969,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         cacheMap.put("custName", custName);
         cacheMap.put("custNo", custNo);
         cacheMap.put("certNo", certNo);
-        redisSession.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap)) {//订单保存失败
             logger.info("订单保存失败");

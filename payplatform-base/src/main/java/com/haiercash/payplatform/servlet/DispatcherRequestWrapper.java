@@ -1,7 +1,10 @@
 package com.haiercash.payplatform.servlet;
 
+import com.bestvike.linq.exception.NotSupportedException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.BufferedReader;
 import java.io.IOException;
 
 /**
@@ -22,5 +25,10 @@ public final class DispatcherRequestWrapper extends HttpServletRequestWrapper {
         if (this.inputStream == null)
             this.inputStream = new DispatcherInputStreamWrapper(super.getInputStream());
         return this.inputStream;
+    }
+
+    @Override
+    public BufferedReader getReader() throws IOException {
+        throw new NotSupportedException("not support read request by reader");
     }
 }

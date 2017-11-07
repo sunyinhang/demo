@@ -27,7 +27,7 @@
         <queueSize>512</queueSize>
         <discardingThreshold>0</discardingThreshold>
     </appender>
-    <logger name="com.haiercash" level="debug">
+    <logger name="com.haiercash" level="info">
         <appender-ref ref="ASYNC_LOG"/>
     </logger>
 
@@ -44,7 +44,7 @@
         <queueSize>512</queueSize>
         <discardingThreshold>0</discardingThreshold>
     </appender>
-    <logger name="com.haiercash.payplatform.tasks" level="debug">
+    <logger name="com.haiercash.payplatform.tasks" level="info">
         <appender-ref ref="ASYNC_TASK_LOG"/>
     </logger>
 
@@ -61,7 +61,7 @@
         <queueSize>512</queueSize>
         <discardingThreshold>0</discardingThreshold>
     </appender>
-    <logger name="com.haiercash.payplatform.trace" level="debug">
+    <logger name="com.haiercash.payplatform.trace" level="info">
         <appender-ref ref="ASYNC_TRACE_LOG"/>
     </logger>
 </configuration>

@@ -1,12 +1,18 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.redis.RedisUtils;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.CrmManageService;
+import com.haiercash.payplatform.service.HaierDataService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +22,11 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 //import com.alibaba.fastjson.JSONArray;
 //import com.alibaba.fastjson.JSONObject;
@@ -26,19 +36,6 @@ import java.util.*;
  */
 @Service
 public class SaveOrderServiceImpl extends BaseService implements SaveOrderService {
-
-    @Value("${app.shunguang.sg_merch_no}")
-    protected String sg_merch_no;
-    @Value("${app.shunguang.sg_store_no}")
-    protected String sg_store_no;
-    @Value("${app.shunguang.sg_user_id}")
-    protected String sg_user_id;
-    @Value("${app.shunguang.sg_shopkeeper}")
-    protected String sg_shopkeeper;
-    @Value("${app.shunguang.sg_consumer}")
-    protected String sg_consumer;
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -55,6 +52,18 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
     private CrmManageService crmManageService;
     @Autowired
     private CommonPageService commonPageService;
+
+    @Value("${app.shunguang.sg_merch_no}")
+    protected String sg_merch_no;
+    @Value("${app.shunguang.sg_store_no}")
+    protected String sg_store_no;
+    @Value("${app.shunguang.sg_user_id}")
+    protected String sg_user_id;
+    @Value("${app.shunguang.sg_shopkeeper}")
+    protected String sg_shopkeeper;
+    @Value("${app.shunguang.sg_consumer}")
+    protected String sg_consumer;
+
 
     @Override
     public Map<String, Object> saveOrder(Map<String, Object> map) {
@@ -80,7 +89,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
 
         //appOrder缓存获取（放开）
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -320,7 +329,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         cacheMap.put("custNo", custNo);
         cacheMap.put("certNo", certNo);
         cacheMap.put("apporder", appOrder);
-        session.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
             logger.info("订单保存失败");
