@@ -6,13 +6,7 @@ import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.service.CrmManageService;
-import com.haiercash.payplatform.service.HaierDataService;
-import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +16,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //import com.alibaba.fastjson.JSONArray;
 //import com.alibaba.fastjson.JSONObject;
@@ -37,6 +27,16 @@ import java.util.Map;
 @Service
 public class SaveOrderServiceImpl extends BaseService implements SaveOrderService {
 
+    @Value("${app.shunguang.sg_merch_no}")
+    protected String sg_merch_no;
+    @Value("${app.shunguang.sg_store_no}")
+    protected String sg_store_no;
+    @Value("${app.shunguang.sg_user_id}")
+    protected String sg_user_id;
+    @Value("${app.shunguang.sg_shopkeeper}")
+    protected String sg_shopkeeper;
+    @Value("${app.shunguang.sg_consumer}")
+    protected String sg_consumer;
     @Autowired
     private Session session;
     @Autowired
@@ -55,18 +55,6 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
     private CrmManageService crmManageService;
     @Autowired
     private CommonPageService commonPageService;
-
-    @Value("${app.shunguang.sg_merch_no}")
-    protected String sg_merch_no;
-    @Value("${app.shunguang.sg_store_no}")
-    protected String sg_store_no;
-    @Value("${app.shunguang.sg_user_id}")
-    protected String sg_user_id;
-    @Value("${app.shunguang.sg_shopkeeper}")
-    protected String sg_shopkeeper;
-    @Value("${app.shunguang.sg_consumer}")
-    protected String sg_consumer;
-
 
     @Override
     public Map<String, Object> saveOrder(Map<String, Object> map) {
@@ -103,11 +91,11 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         AppOrder appOrder = null;
         try {
             logger.info("缓存数据获取");
-            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-            logger.info("提交订单信息appOrder:" + appOrder);
-            if(appOrder == null){
+            if (StringUtils.isEmpty(cacheMap.get("apporder"))) {
+                logger.info("登录超时");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
+            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
