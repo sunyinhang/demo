@@ -99,9 +99,9 @@ zuul:
   routes:
     crmForApp:
       path: /app/appserver/**
-      serviceId: APPSERVERNOAUTHNEW
-      stripPrefix: false
-      sensitiveHeaders:
+      service-id: APPSERVERNOAUTHNEW
+      strip-prefix: false
+      sensitive-headers:
 ribbon:
   ConnectTimeout: 3000
   ReadTimeout: 60000
