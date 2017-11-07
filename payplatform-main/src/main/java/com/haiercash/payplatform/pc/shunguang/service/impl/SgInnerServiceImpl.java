@@ -423,11 +423,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         ObjectMapper objectMapper = new ObjectMapper();
         AppOrder appOrder = null;
         try {
-            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-            logger.info("appOrder0:" + appOrder);
-            if (appOrder == null) {
+            if (StringUtils.isEmpty(cacheMap.get("apporder"))) {
+                logger.info("登录超时");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
+            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
+            logger.info("appOrder0:" + appOrder);
         } catch (IOException e) {
             e.printStackTrace();
         }
