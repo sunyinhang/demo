@@ -138,8 +138,8 @@ app:
     appServer_page_url: http://testpm.haiercash.com/
     haierData_url: http://taccount.haier.com
     haiercashpay_web_url: https://testpm.haiercash.com/
-    haiershunguang_ts_url : http://mobiletest.ehaier.com:58093
-    moxie_apikey : 51f5eed2f64f467a9a20f15d2ce26038
+    haiershunguang_ts_url: http://mobiletest.ehaier.com:58093
+    moxie_apikey: 51f5eed2f64f467a9a20f15d2ce26038
   shunguang:
     sg_merch_no: EHAIER
     sg_store_no: SHUNGUANG
