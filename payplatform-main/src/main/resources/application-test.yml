@@ -1,8 +1,8 @@
-# 封测环境
+# 测试环境
 server:
   port: 8030
   version:
-  connection-timeout: 6000
+  connection-timeout: 600000
 logging:
   level:
     org.springframework: WARN
@@ -13,7 +13,7 @@ info:
   version: ${application.version}
 spring:
   application:
-    name: payplatform
+    name: payplatform_test
   ignoreUnresolvablePlaceholders: true
   redis:
     host: 10.164.194.123
@@ -33,14 +33,9 @@ spring:
       acknowledge-mode: AUTO  # 消费者开启ack
       concurrency: 1  # Listener并行处理的消息数量，可以通过增加此数量提高消息处理效率
     requestedHeartbeat: 60
-    exchange: APPMSG_TOPIC_EXCHANGE
+    exchange: APPMSG_TOPIC_EXCHANGE_DEV
     queue:
-      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
-  http:
-    encoding:
-      force: true
-    multipart:
-      max-file-size: 10MB
+      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
 redis:
   single:
     host: 10.164.194.123
@@ -58,7 +53,7 @@ redis:
 datasources:
   payplatform:
     datasource:
-      url: jdbc:oracle:thin:@10.164.197.49:1521/ibank
+      url: jdbc:oracle:thin:@10.164.194.168:1521/haiercash
       username: haiercashpay
       password: haiercashpay
       driverClassName: oracle.jdbc.OracleDriver
@@ -102,7 +97,7 @@ eureka:
     registryFetchIntervalSeconds: 5
     eurekaServiceUrlPollIntervalSeconds: 120
     serviceUrl:
-      defaultZone: http://10.164.197.32:1180/eureka/,http://10.164.197.33:1180/eureka/,http://10.164.197.34:1180/eureka/
+      defaultZone: http://10.164.197.208:1180/eureka/,http://10.164.197.209:1180/eureka/
   instance:
     instanceId: ${spring.application.name}@${spring.cloud.client.ipAddress}:${server.port}(${spring.cloud.client.hostname})
     appname: ${spring.application.name}
@@ -125,7 +120,7 @@ zuul:
 ribbon:
   ConnectTimeout: 3000
   ReadTimeout: 60000
-  route-headers-enabled: false
+  route-headers-enabled: true
   eureka:
     enabled: true
 common:
@@ -156,28 +151,28 @@ app:
     APPSERVERNOAUTH: http://APPSERVERNOAUTH
     APPSERVERNOAUTHNEW: http://APPSERVERNOAUTHNEW
     CMISPROXY: http://CMISPROXY
-    CRM: http://CRM-PREPARE
-    HCPORTAL: http://HCPORTAL
+    CRM: http://CRM-BETA
+    HCPORTAL: http://HCPORTAL-BETA
     CMISFRONTSERVER: http://CMIS-FRONT-SERVER
-    GM: http://GM
-    UAUTH: http://UAUTH
+    GM: http://GM-BETA
+    UAUTH: http://UAUTH-BETA
     ACQUIRER: http://ACQUIRER
     ORDER: http://ORDER
   other:
     # baseSharePath: /testshare01
     haierDataImg_url: /testshare01/00/Data/haierData/
-    outplatform_url: http://10.164.197.48:9080
+    outplatform_url: http://10.164.194.120:9080
     face_DataImg_url: /testshare01/crm/image/
-    appServer_page_url: https://testpm.haiercash.com/
-    haierData_url: https://taccount.haier.com
-    haiercashpay_web_url: https://testpm.haiercash.com:9002/
-    haiershunguang_ts_url : http://mobiletest.ehaier.com:58093
-    moxie_apikey: 51f5eed2f64f467a9a20f15d2ce26038
+    appServer_page_url: http://testpm.haiercash.com/
+    haierData_url: http://taccount.haier.com
+    haiercashpay_web_url: http://58.56.185.70/
+    moxie_apikey : 51f5eed2f64f467a9a20f15d2ce26038
   shunguang:
-    sg_merch_no: EHAIER
-    sg_store_no: SHUNGUANG
-    sg_user_id: SAQDGM01
+    sg_merch_no: 302017001073
+    sg_store_no: 302017040270
+    sg_user_id: 303197
     sg_typCde: 17098a
+    sg_typLevelTwo: 010014
     sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
   redis:
