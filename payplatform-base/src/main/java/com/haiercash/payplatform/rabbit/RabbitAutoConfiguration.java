@@ -30,7 +30,7 @@ public class RabbitAutoConfiguration {
 
     @Bean
     @Primary
-    @ConditionalOnMissingBean(name = "rabbitTemplate")
+    @ConditionalOnMissingBean
     RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplateEx(connectionFactory);
         MessageConverter messageConverter = this.messageConverter.getIfUnique();

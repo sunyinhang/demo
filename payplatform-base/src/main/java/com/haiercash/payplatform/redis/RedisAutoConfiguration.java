@@ -23,7 +23,7 @@ public class RedisAutoConfiguration {
 
     @Bean
     @Primary
-    @ConditionalOnMissingBean(name = "redisTemplate")
+    @ConditionalOnMissingBean
     StringRedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplateEx redisTemplate = new RedisTemplateEx(redisConnectionFactory);
         redisTemplate.properties = this.properties;
