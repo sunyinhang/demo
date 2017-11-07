@@ -12,6 +12,6 @@ import java.util.List;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "app.cashLoan")
-public class AppCashLoanConfig {
+public class AppCashloanConfig {
     private List<String> whiteTagIds;
 }
