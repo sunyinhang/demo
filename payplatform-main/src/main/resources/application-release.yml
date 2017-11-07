@@ -1,20 +1,30 @@
 # 封测环境
 server:
   port: 8030
-  version:
   connection-timeout: 6000
 logging:
   level:
-    org.springframework: WARN
+    org.springframework: warn
 security:
-  sessions: NEVER
+  sessions: never
 info:
   name: ${spring.application.name}
-  version: ${application.version}
+  version: ${project.version}
 spring:
   application:
     name: payplatform
-  ignoreUnresolvablePlaceholders: true
+  http:
+    converters:
+      preferred-json-mapper: fastjson # json 转换器, 接收数据和请求数据时使用
+      preferred-xml-mapper: jackson # xml 转换器, 请求数据时使用
+    encoding:
+      force: true # 强制用 UTF-8 编码解析请求
+    multipart:
+      max-file-size: 10MB # 最大文件大小
+      max-request-size: 10MB # 最大请求大小
+  rest:
+    route-headers-enabled: false
+    ignore-headers:
   redis:
     host: 10.164.194.123
     port: 10001
@@ -22,86 +32,57 @@ spring:
       max-idle: 100
       min-idle: 10
       max-active: 1000
-  http.converters.preferred-json-mapper: fastjson
+    global-key-prefix: PAYPLATFORM # 全局前缀, 自动用 ':' 分割
+    default-value-expire: 3600 # 默认字符串过期时间, 单位:秒
   rabbitmq:
-    addresses: 10.164.197.208:5672, 10.164.197.228:5672
+    addresses: 10.164.197.208:5672,10.164.197.228:5672
     username: admin
     password: admin123
     virtual-host: /
     publisher-confirms: true
+    requested-heartbeat: 60
     listener:
-      acknowledge-mode: AUTO  # 消费者开启ack
-      concurrency: 1  # Listener并行处理的消息数量，可以通过增加此数量提高消息处理效率
-    requestedHeartbeat: 60
-    exchange: APPMSG_TOPIC_EXCHANGE
-    queue:
-      cmis_payplatform_queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
-  http:
-    encoding:
-      force: true
-    multipart:
-      max-file-size: 10MB
-redis:
-  single:
-    host: 10.164.194.123
-    port: 10001
-  # cluster:
-  #   address: 192.168.1.17:7001,192.168.1.17:7002,192.168.1.17:7003
-  #   timeout: 300000
-  #   maxRedirections: 6
-  pool:
-    maxWaitMillis: -1
-    maxTotal: 1000
-    maxIdle: 100
-    minIdle: 10
-    testOnBorrow: true
-datasources:
-  payplatform:
-    datasource:
-      url: jdbc:oracle:thin:@10.164.197.49:1521/ibank
-      username: haiercashpay
-      password: haiercashpay
-      driverClassName: oracle.jdbc.OracleDriver
-      # 连接池配置
-      # type: com.alibaba.druid.pool.DruidDataSource
-      # 初始化大小，最小，最大
-      initialSize: 5
-      minIdle: 5
-      maxActive: 20
-      # 配置获取连接等待超时的时间
-      maxWait: 60000
-      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      timeBetweenEvictionRunsMillis: 60000
-      # 配置一个连接在池中最小生存的时间，单位是毫秒
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: select 1 from dual
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      # 打开PSCache，并且指定每个连接上PSCache的大小
-      # poolPreparedStatements: true
-      # maxPoolPreparedStatementPerConnectionSize: 21
-      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙 ,wall,commonLogging
-      filters: stat,wall,commonLogging
-      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
-      # connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      simple:
+        acknowledge-mode: auto # 确认模式
+        concurrency: 1 # 最小消费者数量
+  datasource:
+    url: jdbc:oracle:thin:@10.164.197.49:1521/ibank
+    username: haiercashpay
+    password: haiercashpay
+    driver-class-name: oracle.jdbc.OracleDriver
     druid:
-      path: /druid/*
-      loginUsername: admin
-      loginPassword: admin
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 1 from dual
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall,commonLogging
+      web-stat-filter:
+        enabled: false
+      stat-view-servlet:
+        enabled: true
+        url-pattern:
+        reset-enable: false
+        login-username: admin
+        login-password: admin
     mybatis:
       dialect: org.apache.ibatis.dialect.OracleDialect
-      basePackage: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
-      aliasesPackage: com.haiercash.commons.data,com.haiercash.payplatform.**.data
-      mapperLocations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
-      underscoreToCamelCase: true
+      base-package: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
+      aliases-package: com.haiercash.commons.data,com.haiercash.payplatform.**.data
+      mapper-locations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
+      underscore-to-camel-case: true
 eureka:
   client:
-    register-with-eureka: true  #是否注册自身到eureka服务器
-    fetch-registry: true        #是否从eureka服务器获取注册信息
-    registryFetchIntervalSeconds: 5
-    eurekaServiceUrlPollIntervalSeconds: 120
-    serviceUrl:
+    register-with-eureka: true # 是否注册自身到 eureka 服务器
+    fetch-registry: true # 是否从 eureka 服务器获取注册信息
+    registry-fetch-interval-seconds: 5
+    eureka-service-url-poll-interval-seconds: 120
+    service-url:
       defaultZone: http://10.164.197.32:1180/eureka/,http://10.164.197.33:1180/eureka/,http://10.164.197.34:1180/eureka/
   instance:
     instanceId: ${spring.application.name}@${spring.cloud.client.ipAddress}:${server.port}(${spring.cloud.client.hostname})
@@ -110,44 +91,25 @@ eureka:
     lease-renewal-interval-in-seconds: 1
     lease-expiration-duration-in-seconds: 2
     secure-port-enabled: false
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
 zuul:
-  ignoredServices: '*'
+  ignored-services: '*'
   set-content-length: true # 返回长度,微服务没有返回长度或请求 GZip 压缩除外
   host:
     socket-timeout-millis: 30000
   routes:
     crmForApp:
       path: /app/appserver/**
-      serviceId: APPSERVERNOAUTHNEW
-      stripPrefix: false
+      service-id: APPSERVERNOAUTHNEW
+      strip-prefix: false
       sensitive-headers:
 ribbon:
   ConnectTimeout: 3000
   ReadTimeout: 60000
-  route-headers-enabled: false
   eureka:
     enabled: true
-common:
-  redis:
-    host: 10.164.194.123
-    port: 10001
-    prefix: "PAYPLATFORM:"
 app:
-  instance:
-    #  错误码前缀：错误码组成为 前缀（此处定义）+模块代码（controller中定义）+错误码（super.fail中定义）
-    errorPrefix: PPF
-    # redisPrefix: PAYPLATFORM
-  file:
-    # 文件上传路径
-    uploadPath: f:\file\upload
-    # excel模板文件路径
-    templatePath: f:\file\template
-  aspect:
-    controller:
-      open: true
-    service:
-      open: true
+  common:
+    gate-url: https://testpm.haiercash.com:9002 # 程序前缀
   rest:
     APPCA: http://APPCA
     APPMANAGE: http://APPMANAGE
@@ -163,15 +125,20 @@ app:
     UAUTH: http://UAUTH
     ACQUIRER: http://ACQUIRER
     ORDER: http://ORDER
+  cmis:
+    url: # cmis 服务地址
+    rabbit:
+      exchange: APPMSG_TOPIC_EXCHANGE
+      routing-key:
+      queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
   other:
-    # baseSharePath: /testshare01
     haierDataImg_url: /testshare01/00/Data/haierData/
     outplatform_url: http://10.164.197.48:9080
     face_DataImg_url: /testshare01/crm/image/
     appServer_page_url: https://testpm.haiercash.com/
     haierData_url: https://taccount.haier.com
     haiercashpay_web_url: https://testpm.haiercash.com:9002/
-    haiershunguang_ts_url : http://mobiletest.ehaier.com:58093
+    haiershunguang_ts_url: http://mobiletest.ehaier.com:58093
     moxie_apikey: 51f5eed2f64f467a9a20f15d2ce26038
   shunguang:
     sg_merch_no: EHAIER
@@ -180,10 +147,5 @@ app:
     sg_typCde: 17098a
     sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
-  redis:
-    prefix: PAYPLATFORM
-    # 过期时间，以秒为单位
-    expire: 3600
-  # rediskey:
-    # rediskey: ${common.redis.prefix}__DEMO__
-    # redistimeout: 300
+  cashloan:
+    white-tag-ids: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804
