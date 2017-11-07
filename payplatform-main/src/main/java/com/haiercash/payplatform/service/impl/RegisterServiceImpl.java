@@ -1,10 +1,14 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.bestvike.lang.Convert;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CrmService;
+import com.haiercash.payplatform.service.CustExtInfoService;
+import com.haiercash.payplatform.service.RegisterService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
@@ -20,8 +24,6 @@ import java.util.Map;
  */
 @Service
 public class RegisterServiceImpl extends BaseService implements RegisterService {
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -54,7 +56,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         }
         String userIdEncrypt = EncryptUtil.simpleEncrypt((String) params.get("userId"));
         //缓存数据获取
-//        Map<String, Object> cacheMap = session.get(token, Map.class);
+//        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
 //        if(cacheMap == null || "".equals(cacheMap)){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -107,7 +109,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         }
         String userIdEncrypt = EncryptUtil.simpleEncrypt((String) params.get("userId"));
         //缓存数据获取
-//        Map<String, Object> cacheMap = session.get(token, Map.class);
+//        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
 //        if(cacheMap == null || "".equals(cacheMap)){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -207,7 +209,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         cacheMap.put("userId", userId);
         String phoneNo = (String) response.getBody().get("mobile");
         cacheMap.put("phoneNo", phoneNo);
-        session.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         //5.查询实名信息
         Map<String, Object> custMap = new HashMap<String, Object>();
         custMap.put("userId", userId);//内部userId
@@ -240,7 +242,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         cacheMap.put("bankCode", bankNo);//银行代码
         cacheMap.put("bankName", bankName);//银行名称
         cacheMap.put("idType", certType);
-        session.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         //判断用户是否是海尔员工
         hrparamMap.put("custName", custName);
         hrparamMap.put("idTyp", certType);
@@ -405,7 +407,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 Integer crdSeqInt = (Integer) body.get("applSeq");
                 String crdSeq = Integer.toString(crdSeqInt);
                 cacheMap.put("crdSeq", crdSeq);
-                session.set(token, cacheMap);
+                RedisUtils.setExpire(token, cacheMap);
                 String outSts = body.get("outSts").toString();
                 if ("27".equals(outSts)) {
                     resultparamMap.put("flag", "9");//通过  我的额度
@@ -481,7 +483,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //获取缓存数据
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -531,7 +533,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             return fail(ConstUtil.ERROR_CODE, custretMsg);
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
-            session.set(token, cacheMap);
+            RedisUtils.setExpire(token, cacheMap);
             map.put("flag", "6");//  跳转实名认证页面
             return success(map);
         }
@@ -550,7 +552,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         cacheMap.put("idNo", certNo);//身份证号
         cacheMap.put("idCard", certNo);//身份证号
         cacheMap.put("idType", certType);
-        session.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
         //判断用户是否是海尔员工
         hrparamMap.put("custName", custName);
         hrparamMap.put("idTyp", certType);
@@ -715,7 +717,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 Integer crdSeqInt = (Integer) body.get("applSeq");
                 String crdSeq = Integer.toString(crdSeqInt);
                 cacheMap.put("crdSeq", crdSeq);
-                session.set(token, cacheMap);
+                RedisUtils.setExpire(token, cacheMap);
                 String outSts = body.get("outSts").toString();
                 if ("27".equals(outSts)) {
                     map.put("flag", "9");//通过  我的额度

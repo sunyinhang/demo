@@ -24,6 +24,9 @@ public final class RestTemplateProvider {
     @Qualifier("restTemplateXml")
     private RestTemplate restTemplateXmlInstance;
 
+    private RestTemplateProvider() {
+    }
+
     //负载均衡的
     public static RestTemplate getRestTemplate() {
         return restTemplate;

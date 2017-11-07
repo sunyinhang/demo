@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.bestvike.lang.Base64Utils;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -9,13 +8,28 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SignContractInfo;
+import com.haiercash.payplatform.config.AppConfig;
+import com.haiercash.payplatform.config.AppOtherConfig;
 import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.CrmService;
+import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.CmisTradeCode;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.payplatform.utils.RestUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,19 +37,17 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by yuanli on 2017/9/20.
  */
 @Service
 public class CommonPageServiceImpl extends BaseService implements CommonPageService {
-    @Value("${app.other.appServer_page_url}")
-    protected String appServer_page_url;
-    @Value("${app.other.outplatform_url}")
-    protected String outplatform_url;
-    @Autowired
-    private Session session;
     @Autowired
     private CmisApplService cmisApplService;
     @Autowired
@@ -51,15 +63,16 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     @Autowired
     private OrderService orderService;
     @Autowired
-    private CooperativeBusinessDao cooperativeBusinessDao;
+    private AppConfig appConfig;
     @Autowired
-    private CommonPageService commonPageService;
+    private AppOtherConfig appOtherConfig;
+    @Autowired
+    private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private CrmService crmService;
 
     /**
      * 合同展示
-     *
      * @param map
      * @return
      */
@@ -74,7 +87,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -458,7 +471,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
     /**
      * 查询贷款用途
-     *
      * @param params
      * @return
      */
@@ -486,7 +498,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return fail(ConstUtil.ERROR_CODE, "请求数据不能为空");
         }
 
-        String params = commonPageService.decryptData(data, channelNo);
+        String params = decryptData(data, channelNo);
         logger.info("四要素验证接收到的数据：" + params);
         JSONObject camap = new JSONObject(params);
         //
@@ -499,7 +511,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(mobile)) {
             return fail(ConstUtil.ERROR_CODE, "必传项不能为空");
         }
-        String url = outplatform_url + "/Outreachplatform/api/chinaPay/identifyByFlag";
+        String url = appOtherConfig.getOutplatform_url() + "/Outreachplatform/api/chinaPay/identifyByFlag";
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("accountName", custName);
         jsonMap.put("accountNo", cardNo);
@@ -769,7 +781,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             hm.put("applyTnr", order.getApplyTnr());
             hm.put("fstPay", order.getFstPay());
             hm.put("mtdCde", order.getMtdCde());
-            Map<String, Object> hkss_json = cmisApplService.getHkssReturnMap(hm, super.getGateUrl(), super.getToken());
+            Map<String, Object> hkss_json = cmisApplService.getHkssReturnMap(hm, appConfig.getGateUrl(), super.getToken());
             logger.info("还款试算service返回hkss:" + hkss_json);
             Map<String, Object> hkssBodyMap = (Map<String, Object>) hkss_json.get("body");
             Map<String, Object> first = (Map) ((List) hkssBodyMap.get("mx")).get(0);//获取第0期的费用

@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -44,8 +44,6 @@ public class FaceServiceImpl extends BaseService implements FaceService {
     @Value("${app.other.haierDataImg_url}")
     protected String haierDataImg_url;
     @Autowired
-    private Session session;
-    @Autowired
     private AppServerService appServerService;
 
     public static void createDir(String destDirName) {
@@ -81,7 +79,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -276,7 +274,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -363,7 +361,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //缓存数据获取及非空判断
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -450,14 +448,14 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 m.put("faceFlag", "4");
             } else {
                 cacheMap.put("payPasswdFlag", "1");
-                session.set(token, cacheMap);
+                RedisUtils.setExpire(token, cacheMap);
                 logger.info("已设置支付密码，跳转支付密码验证页面");
                 m.put("faceFlag", "1");
             }
             return success(m);
         } else {//未设置支付密码
             cacheMap.put("payPasswdFlag", "0");
-            session.set(token, cacheMap);
+            RedisUtils.setExpire(token, cacheMap);
             logger.info("未设置支付密码，跳转支付密码设置页面");
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("faceFlag", "0");

@@ -69,9 +69,13 @@ public final class IncomingLog {
         writeHeaders(builder, response);
         //
         builder.append("Response Body:").append(Environment.NewLine);
-        String content = response.getOutputStream().getContent();
-        if (StringUtils.isNotEmpty(content))
-            builder.append("    ").append(content).append(Environment.NewLine);
+        if (response.isUsingWriter()) {
+            builder.append("    ").append(TraceConfig.BODY_RESOURCE).append(Environment.NewLine);
+        } else {
+            String content = response.getOutputStream().getContent();
+            if (StringUtils.isNotEmpty(content))
+                builder.append("    ").append(content).append(Environment.NewLine);
+        }
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
         builder.append(RES___END);

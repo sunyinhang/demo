@@ -159,4 +159,6 @@ public interface AppServerService {
     //(POST) 验证并绑定第三方（非海尔集团）用户
     public Map<String, Object> validateAndBindUserByExternUid(String token, Map<String, Object> paramMap);
 
+    //根据商户门店查询贷款品种
+    public Map<String, Object> getLoanDic(String token, Map<String, Object> paramMap);
 }

@@ -1,7 +1,7 @@
 dependencies {
     compile project(':bestvike-core')
 
-    compile('com.haiercash:util:2.0.44-SNAPSHOT')
+    compile('com.haiercash:payplatform-util:1.0.1-SNAPSHOT')
     compile('com.bestvike:bv-mybatis:3.4.0-SNAPSHOT')
     compile('com.bestvike:bv-jxls-poi:1.0.9-SNAPSHOT')
     compile('com.bestvike:bv-jxls-reader:2.0.2-SNAPSHOT')

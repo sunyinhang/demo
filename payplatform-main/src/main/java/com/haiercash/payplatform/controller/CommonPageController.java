@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.controller;
 
-import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.FileUtil;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.service.AppServerService;
@@ -36,8 +35,6 @@ public class CommonPageController extends BaseController {
     //模块编码  01
     private static String MODULE_NO = "01";
     public Log logger = LogFactory.getLog(getClass());
-    @Autowired
-    private Cache cache;
     @Autowired
     private OCRIdentityService ocrIdentityService;
     @Autowired
@@ -637,6 +634,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 3.1.13(GET)查询所有贷款用途列表(APP)
+     *
      * @param params
      * @return
      * @throws Exception
