@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.controller;
 
-import com.haiercash.commons.redis.Cache;
 import com.haiercash.commons.util.FileUtil;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.service.AppServerService;
@@ -36,8 +35,6 @@ public class CommonPageController extends BaseController {
     //模块编码  01
     private static String MODULE_NO = "01";
     public Log logger = LogFactory.getLog(getClass());
-    @Autowired
-    private Cache cache;
     @Autowired
     private OCRIdentityService ocrIdentityService;
     @Autowired
@@ -637,6 +634,7 @@ public class CommonPageController extends BaseController {
 
     /**
      * 3.1.13(GET)查询所有贷款用途列表(APP)
+     *
      * @param params
      * @return
      * @throws Exception
@@ -683,9 +681,19 @@ public class CommonPageController extends BaseController {
      * @param map
      * @return
      */
+
     @RequestMapping(value = "/api/payment/identity", method = RequestMethod.POST)
     public Map<String, Object> identity(@RequestBody Map<String, Object> map) throws Exception {
         return commonPageService.identity(map);
     }
-
+    /**
+     * @Title queryApplReraidPlanByloanNo
+     * @Description: 还款计划
+     * @author yu jianwei
+     * @date 2017/11/6 17:18
+     */
+    @RequestMapping(value = "/api/payment/queryApplReraidPlanByloanNo", method = RequestMethod.POST)
+    public Map<String, Object> queryApplReraidPlanByloanNo(@RequestBody Map<String, Object> map) throws Exception {
+        return commonPageService.queryApplReraidPlanByloanNo(map);
+    }
 }

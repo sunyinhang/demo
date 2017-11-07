@@ -1,20 +1,20 @@
 package com.haiercash.payplatform.pc.qiaorong.service.impl;
 
 import com.bestvike.lang.Base64Utils;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SignContractInfo;
+import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.service.CommonPageService;
 import com.haiercash.payplatform.utils.CmisTradeCode;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.ConstUtil;
@@ -46,8 +46,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
     @Autowired
-    private Session session;
-    @Autowired
     private CmisApplService cmisApplService;
     @Autowired
     private AppServerService appServerService;
@@ -58,7 +56,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     @Autowired
     private SignContractInfoDao signContractInfoDao;
     @Autowired
-    private CommonPageService commonPageService;
+    private AppConfig appConfig;
 
     /*
     ca签章
@@ -77,7 +75,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             return fail(ConstUtil.ERROR_CODE, "请求数据不能为空");
         }
 
-        String params = commonPageService.decryptData(data, channelNo);
+        String params = decryptData(data, channelNo);
         logger.info("CA签章接收到的数据：" + params);
         JSONObject camap = new JSONObject(params);
 //        ObjectMapper objectMapper = new ObjectMapper();
@@ -98,7 +96,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String uuid = UUID.randomUUID().toString().replace("-", "");
         Map cachemap = new HashMap();
         cachemap.put("callbackUrl", callbackUrl);
-        session.set(uuid, cachemap);
+        RedisUtils.setExpire(uuid, cachemap);
 
         String date = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
 
@@ -129,7 +127,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
-        Map<String, Object> cachemap = session.get(token, Map.class);
+        Map<String, Object> cachemap = RedisUtils.getExpireMap(token);
         if (cachemap == null || "".equals(cachemap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -177,7 +175,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         loanRequestMap.put("applyTnr", appOrderMapCmis.get("APPLY_TNR"));
         loanRequestMap.put("fstPay", appOrderMapCmis.get("FST_PAY"));
         logger.debug("loanRequestMap==" + loanRequestMap);
-        Map<String, Object> paySsResultMap = cmisApplService.getHkssReturnMap(loanRequestMap, getGateUrl(), getToken());
+        Map<String, Object> paySsResultMap = cmisApplService.getHkssReturnMap(loanRequestMap, appConfig.getGateUrl(), getToken());
 
         if (paySsResultMap != null) {
             Map<String, Object> body = (Map<String, Object>) paySsResultMap.get("body");
@@ -197,7 +195,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cachemap.put("totalamount", appOrderMapCmis.get("APPLY_AMT"));
         cachemap.put("typCde", typCde);//
         cachemap.put("userId", appOrderMapCmis.get("INDIV_MOBILE"));
-        session.set(token, cachemap);
+        RedisUtils.setExpire(token, cachemap);
 
 
         logger.info(resultMap);
@@ -218,7 +216,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -263,7 +261,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cacheMap.put("certNo", certNo);
         cacheMap.put("userflag", "1");
         logger.info("userflag:1");
-        session.set(token, cacheMap);
+        RedisUtils.setExpire(token, cacheMap);
 
 
         //3.手机号已注册，判断是否需要人脸识别
@@ -334,7 +332,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -460,7 +458,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -489,7 +487,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -516,7 +514,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -555,7 +553,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

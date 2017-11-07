@@ -3,7 +3,7 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'org.springframework.boot'
 
-    version = '1.1.4'
+    version = '1.1.7'
     sourceCompatibility = 1.8
     sourceSets {
         main {
@@ -54,7 +54,8 @@ allprojects {
         //xml
         compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml')
         //数据库
-        compile('com.alibaba:druid:1.1.3')
+        compile('com.alibaba:druid:1.1.5')
+        compile('com.alibaba:druid-spring-boot-starter:1.1.5')
         compile('com.oracle:ojdbc6:11g')
         //==运行时==
         runtime('org.springframework.boot:spring-boot-devtools')

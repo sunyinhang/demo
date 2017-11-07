@@ -1,13 +1,11 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -18,8 +16,6 @@ import java.util.Map;
 @Service
 public class CrmManageServiceImpl  extends BaseService implements CrmManageService {
     public Log logger = LogFactory.getLog(getClass());
-    @Autowired
-    private Session session;
 
     @Override
     public Map<String, Object> getCustTag(String token, Map<String, Object> paramMap) {

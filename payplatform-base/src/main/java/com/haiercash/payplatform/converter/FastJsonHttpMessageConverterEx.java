@@ -3,7 +3,7 @@ package com.haiercash.payplatform.converter;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.bestvike.serialization.JsonSerializer;
-import com.haiercash.commons.support.JSONObjectSerializer;
+import com.haiercash.payplatform.support.JSONObjectSerializer;
 import org.apache.ibatis.utils.PaginationJsonSerializer;
 import org.apache.ibatis.utils.PaginationList;
 import org.json.JSONObject;

@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
@@ -39,8 +38,6 @@ public class ShunguangController extends BaseController {
         super(MODULE_NO);
     }
 
-    @Autowired
-    private Session session;
     @Autowired
     private ShunguangService shunguangService;
     @Autowired

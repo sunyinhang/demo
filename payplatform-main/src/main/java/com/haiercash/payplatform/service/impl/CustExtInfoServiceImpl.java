@@ -1,9 +1,9 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.bestvike.lang.Convert;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.common.CommonResponse;
 import com.haiercash.payplatform.service.AppServerService;
@@ -41,8 +41,6 @@ import java.util.UUID;
 @Service
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService {
     public Log logger = LogFactory.getLog(getClass());
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -91,13 +89,13 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, pLoanTypImagesretMsg);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         String custNo = (String) cacheMap.get("custNo");
 //        String custNo = "C201607151029101937960";
         Map<String, Object> paramYXMap = new HashMap<String, Object>();
         //获取贷款类型查询客户所有影像ID
 //        JSONObject pLoanTypImagesBodyjson = new JSONObject(pLoanTypImagesMap.get("body"));
-        ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) pLoanTypImagesMap.get("body");
+        List<Map<String, String>> list = (List<Map<String, String>>) pLoanTypImagesMap.get("body");
         for (int i = 0; i < list.size(); i++) {
             List<JSONObject> resultList_ = new ArrayList<JSONObject>();
             String docCde = list.get(i).get("docCde");//影像代码
@@ -112,7 +110,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             if (!ifError(stringObjectMapHeadMap)) {
                 return fail(ConstUtil.ERROR_CODE, stringObjectMapMsg);
             }
-            ArrayList<Map<String, Object>> list_ = (ArrayList<Map<String, Object>>) stringObjectMap.get("body");
+            List<Map<String, Object>> list_ = (List<Map<String, Object>>) stringObjectMap.get("body");
             if (list_.size() > 0) {
                 for (int j = 0; j < list_.size(); j++) {
                     int id = (int) list_.get(j).get("id");
@@ -193,7 +191,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -257,7 +255,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -453,7 +451,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -620,7 +618,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -804,7 +802,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
                     if ("1".equals(preAmountFlag)) {
                         cacheMap.put("preAmountFlag", preAmountFlag);
-                        session.set(token, cacheMap);
+                        RedisUtils.setExpire(token, cacheMap);
                         resultparamMap.put("flag", "6");//跳转借款页面
                         return success(resultparamMap);
                     }
@@ -819,7 +817,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             } else {//跳转人脸识别
                 if ("1".equals(preAmountFlag)) {
                     cacheMap.put("preAmountFlag", preAmountFlag);
-                    session.set(token, cacheMap);
+                    RedisUtils.setExpire(token, cacheMap);
                 }
                 resultparamMap.put("flag", "5");
             }
@@ -844,7 +842,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -880,7 +878,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return CommonResponse.create(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -943,7 +941,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -998,7 +996,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -1036,7 +1034,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);

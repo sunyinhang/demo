@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -21,7 +21,11 @@ import sun.misc.BASE64Encoder;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +43,6 @@ public class FaceServiceImpl extends BaseService implements FaceService {
     protected String face_DataImg_url;
     @Value("${app.other.haierDataImg_url}")
     protected String haierDataImg_url;
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
 
@@ -77,7 +79,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -123,11 +125,11 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         jsonMap.put("appno", appno);//申请编号
         jsonMap.put("filestreamname", filestreamname);//文件名
         jsonMap.put("organization", "02");//机构号(国政通)
-        if ("46".equals(channelNo)) { //顺逛
-            jsonMap.put("organization", "02");//机构号(国政通)
-        } else {//乔融  现金贷
-            jsonMap.put("organization", "01");//机构号(海鑫洺)
-        }
+//        if ("46".equals(channelNo) || "49".equals(channelNo)) { //顺逛
+//            jsonMap.put("organization", "02");//机构号(国政通)
+//        } else {//乔融  现金贷
+//            jsonMap.put("organization", "01");//机构号(海鑫洺)
+//        }
         //xmllog.info("调用外联人脸识别接口，请求数据：" + json.toString());
         String resData = JsonClientUtils.postForString(url, jsonMap);
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
@@ -272,7 +274,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -359,7 +361,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //缓存数据获取及非空判断
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -446,14 +448,14 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 m.put("faceFlag", "4");
             } else {
                 cacheMap.put("payPasswdFlag", "1");
-                session.set(token, cacheMap);
+                RedisUtils.setExpire(token, cacheMap);
                 logger.info("已设置支付密码，跳转支付密码验证页面");
                 m.put("faceFlag", "1");
             }
             return success(m);
         } else {//未设置支付密码
             cacheMap.put("payPasswdFlag", "0");
-            session.set(token, cacheMap);
+            RedisUtils.setExpire(token, cacheMap);
             logger.info("未设置支付密码，跳转支付密码设置页面");
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("faceFlag", "0");

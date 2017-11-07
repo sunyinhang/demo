@@ -2,15 +2,21 @@ package com.haiercash.payplatform.tasks.rabbitmq;
 
 import com.alibaba.fastjson.JSONObject;
 import com.bestvike.lang.Base64Utils;
+import com.bestvike.lang.Convert;
 import com.bestvike.lang.StringUtils;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.PublishDao;
 import com.haiercash.payplatform.common.dao.SgtsLogDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgtsLog;
+import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.context.ThreadContext;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.utils.AcqTradeCode;
+import com.haiercash.payplatform.utils.AcqUtil;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import org.apache.commons.logging.Log;
@@ -35,11 +41,11 @@ import java.util.UUID;
  * @since v1.0.1
  */
 @Component
-@RabbitListener(queues = "${spring.rabbitmq.queue.cmis_payplatform_queue}")
+@RabbitListener(queues = "${app.cmis.rabbit.queue}")
 public class CmisMessageHandler {
-    private Log logger = LogFactory.getLog(CmisMessageHandler.class);
     @Value("${app.other.haiershunguang_ts_url}")
     protected String haiershunguang_ts_url;
+    private Log logger = LogFactory.getLog(CmisMessageHandler.class);
     @Autowired
     private RabbitTemplate rabbitTemplate;
     @Autowired
@@ -236,11 +242,15 @@ public class CmisMessageHandler {
                             }
                             mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
                             logger.info("获取的商城订单号是：" + mallOrderNo);
+                            //获取贷款品种
+                            String typCde = gettypcde(applSeq, channelNo);
+                            logger.info("商城订单：" + mallOrderNo + "的贷款品种编码为：" + typCde);
                             HashMap<Object, Object> bodyinfo = new HashMap<>();
                             map.put("outSts", "02");
                             map.put("applSeq", applSeq);//申请流水号
                             map.put("idNo", idNo);//身份证号
                             map.put("orderNo", mallOrderNo);//订单编号    D17082411290147627
+                            map.put("typCde", typCde);//贷款品种编码
                             bodyinfo.put("body", map);
                             bodyinfo.put("userid", externUid);//集团userid   1000030088
                             if (StringUtils.isEmpty(url_ts)) {
@@ -272,10 +282,14 @@ public class CmisMessageHandler {
                             }
                             mallOrderNo = (String) bodyappl.get("mallOrderNo");//商城订单号
                             logger.info("商城订单号是" + mallOrderNo + "流水号是：" + applSeq);
+                            //获取贷款品种
+                            String typCde = gettypcde(applSeq, channelNo);
+                            logger.info("商城订单：" + mallOrderNo + "的贷款品种编码为：" + typCde);
                             map.put("outSts", "01");
                             map.put("applSeq", applSeq);//申请流水号
                             map.put("idNo", idNo);//身份证号
                             map.put("orderNo", mallOrderNo);//订单编号   D17082411290147627
+                            map.put("typCde", typCde);//贷款品种
                             bodyinfo.put("body", map);
                             bodyinfo.put("userid", externUid);//集团userid   1000030088
                             if (StringUtils.isEmpty(url_ts)) {
@@ -451,6 +465,27 @@ public class CmisMessageHandler {
         map.put("data", desData);
         map.put("key", password_);
         return map;
+    }
+
+    private String gettypcde(String applSeq, String channelNo) {
+        String url = EurekaServer.ACQUIRER + "/api/appl/selectApplInfoApp";
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("applSeq", applSeq);
+        logger.info("获取贷款详情请求参数:applSeq:" + applSeq + ",channelNo:" + channelNo);
+        Map<String, Object> acqResponse = AcqUtil
+                .getAcqResponse(url, AcqTradeCode.SELECT_APP_APPL_INFO, ConstUtil.CHANNEL, channelNo, "", "",
+                        paramMap);
+        if (acqResponse == null || acqResponse.isEmpty()) {
+            return null;
+        }
+        if (!CmisUtil.isSuccess(acqResponse)) {
+            return null;
+        }
+        Map<String, Object> acqBody = (Map<String, Object>) ((Map<String, Object>) acqResponse.get("response"))
+                .get("body");
+        String typCde = Convert.toString(acqBody.get("typ_cde"));
+        return typCde;
     }
 
 }

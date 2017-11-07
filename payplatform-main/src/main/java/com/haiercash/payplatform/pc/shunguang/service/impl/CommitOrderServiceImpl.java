@@ -2,7 +2,6 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.bestvike.lang.Base64Utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -11,8 +10,20 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.payplatform.redis.RedisUtils;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderManageService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.DesUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,8 +40,6 @@ import java.util.UUID;
  */
 @Service
 public class CommitOrderServiceImpl extends BaseService implements CommitOrderService {
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -78,7 +87,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         }
         String area = (String) map.get("area");//区域
         //缓存获取（放开）
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -233,10 +242,9 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         Map<String, Object> result = commonPageService.commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
         logger.info("订单提交,客户姓名：" + custName);
         logger.info("订单提交，返回数据：" + result);
-        //签章成功进行redis存储
-//        String key = "applSeq" + applSeq;
-//        cacheMap.put(key, key);
-//        session.set(token, cacheMap);
+
+        //回调   typCde  TODO!!!!
+        String mallOrderNo = appOrder.getMallOrderNo();//商城订单编号
 
 
         return result;

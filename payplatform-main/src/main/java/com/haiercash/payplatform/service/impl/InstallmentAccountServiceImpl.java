@@ -1,11 +1,16 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.bestvike.lang.Convert;
-import com.haiercash.commons.redis.Session;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CustExtInfoService;
+import com.haiercash.payplatform.service.InstallmentAccountService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.ResultHead;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +27,6 @@ import java.util.Map;
  */
 @Service
 public class InstallmentAccountServiceImpl extends BaseService implements InstallmentAccountService {
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -63,8 +66,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
-        if(cacheMap == null || "".equals(cacheMap)){
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -136,8 +139,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token,Map.class);
-        if(cacheMap == null || "".equals(cacheMap)){
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
+        if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -199,7 +202,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数size为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -273,7 +276,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, "参数outSts为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -331,22 +334,22 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             logger.info("channelNo为空");
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
-        if(!map.containsKey("orderNo")){
+        if (!map.containsKey("orderNo")) {
             logger.info("订单号orderNo为空");
             return fail(ConstUtil.ERROR_CODE, "参数orderNo不存在!");
         }
         String orderNo = (String) map.get("orderNo");
-        if(StringUtils.isEmpty(orderNo)){
+        if (StringUtils.isEmpty(orderNo)) {
             logger.info("订单号orderNo为空");
             return fail(ConstUtil.ERROR_CODE, "参数orderNo为空!");
         }
-        Map req = new HashMap<String,Object>();
+        Map req = new HashMap<String, Object>();
         req.put("channelNo", channelNo);
         req.put("channel", channel);
         req.put("orderNo", orderNo);
-        logger.info("查询订单详情接口，请求数据："+req.toString());
+        logger.info("查询订单详情接口，请求数据：" + req.toString());
         AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
-        if(AppOrdernoTypgrpRelation == null){
+        if (AppOrdernoTypgrpRelation == null) {
             logger.info("没有获取到订单信息");
             return fail(ConstUtil.ERROR_CODE, "没有获取到订单信息");
         }
@@ -354,17 +357,17 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         String applseq = AppOrdernoTypgrpRelation.getApplSeq();
         Map<String, Object> queryOrderInfo = acquirerService.getOrderFromAcquirer(applseq, channel, channelNo, null, null, "2");
 //        Map<String, Object> queryOrderInfo = appServerService.queryOrderInfo(token, req);
-        if(queryOrderInfo == null){
+        if (queryOrderInfo == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         Map<String, Object> resultHeadMap = (Map<String, Object>) queryOrderInfo.get("head");
         String retFlag = (String) resultHeadMap.get("retFlag");
-        if(!"00000".equals(retFlag)){
+        if (!"00000".equals(retFlag)) {
             String retMsg = (String) resultHeadMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        BigDecimal xfze = new BigDecimal(0) ;
-        BigDecimal applyAmt = new BigDecimal(0) ;
+        BigDecimal xfze = new BigDecimal(0);
+        BigDecimal applyAmt = new BigDecimal(0);
         String ordertotal = "";
         Map<String, Object> resMap = (Map<String, Object>) queryOrderInfo.get("body");
 //        AppOrder appOrder = acquirerService.acquirerMap2OrderObject(resMap, new AppOrder());
@@ -372,65 +375,65 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         String applyTnrTyp = (String) resMap.get("apply_tnr_typ");
 //                appOrder.getApplyTnrTyp();
         logger.info("--日志输出：");
-        BigDecimal totalnormint = new  BigDecimal(resMap.get("totalnormint").toString());
-        BigDecimal totalfeeamt =new  BigDecimal(resMap.get("totalfeeamt").toString());
+        BigDecimal totalnormint = new BigDecimal(resMap.get("totalnormint").toString());
+        BigDecimal totalfeeamt = new BigDecimal(resMap.get("totalfeeamt").toString());
         BigDecimal Totalnormint = new BigDecimal(0);
         BigDecimal Totalfeeamt = new BigDecimal(0);
-        if("null".equals(totalnormint) || "".equals(totalnormint) || totalnormint == null){
+        if ("null".equals(totalnormint) || "".equals(totalnormint) || totalnormint == null) {
             Totalnormint = new BigDecimal(0);
-        }else{
+        } else {
             Totalnormint = totalnormint;
         }
-        if("null".equals(totalfeeamt) || "".equals(totalfeeamt) || totalfeeamt == null){
+        if ("null".equals(totalfeeamt) || "".equals(totalfeeamt) || totalfeeamt == null) {
             Totalfeeamt = new BigDecimal(0);
-        }else{
-            Totalfeeamt =  totalfeeamt;
+        } else {
+            Totalfeeamt = totalfeeamt;
         }
         BigDecimal xfzeBig = new BigDecimal(0);
         xfzeBig = Totalnormint.add(Totalfeeamt);
 
-        if(!applyTnrTyp.equals("D") && !applyTnrTyp.equals("d") &&( applyTnrTyp != null && !"".equals(applyTnrTyp))){
+        if (!applyTnrTyp.equals("D") && !applyTnrTyp.equals("d") && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
             String xfzeStr = String.valueOf(xfzeBig);//息费总额
-            if (xfzeStr.equals("null")){
+            if (xfzeStr.equals("null")) {
                 xfze = new BigDecimal(0);
-            }else{
+            } else {
                 xfze = new BigDecimal(xfzeStr);
             }
 //            Integer applyAmtStr = (Integer)resMap.get("apply_amt");
-            BigDecimal applyAmtStr = new  BigDecimal(resMap.get("apply_amt").toString());
+            BigDecimal applyAmtStr = new BigDecimal(resMap.get("apply_amt").toString());
 //            String applyAmtStr = (String) resMap.get("apply_amt");
 //                    appOrder.getApplyAmt();//借款总额
-            if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null){
+            if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null) {
                 applyAmt = new BigDecimal(0);
-            }else{
+            } else {
                 applyAmt = applyAmtStr;
             }
             BigDecimal total = new BigDecimal(0);
             total = xfze.add(applyAmt);
-            ordertotal =  total.divide(new BigDecimal(1) , 2,BigDecimal.ROUND_HALF_UP) + "";
+            ordertotal = total.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
             resMap.put("ordertotal", ordertotal);
-            resMap.put("xfze",xfzeStr);
-        }else if(( applyTnrTyp != null && !"".equals(applyTnrTyp))&&("D".equals(applyTnrTyp) || "d".equals(applyTnrTyp) ) ){
+            resMap.put("xfze", xfzeStr);
+        } else if ((applyTnrTyp != null && !"".equals(applyTnrTyp)) && ("D".equals(applyTnrTyp) || "d".equals(applyTnrTyp))) {
             String xfzeStr = String.valueOf(xfzeBig);//息费总额
-            if (xfzeStr.equals("null")){
+            if (xfzeStr.equals("null")) {
                 xfze = new BigDecimal(0);
-            }else{
+            } else {
                 xfze = new BigDecimal(xfzeStr);
             }
 //            Integer applyAmtStr = (Integer)resMap.get("apply_amt");
-            BigDecimal applyAmtStr = new  BigDecimal(resMap.get("apply_amt").toString());
+            BigDecimal applyAmtStr = new BigDecimal(resMap.get("apply_amt").toString());
 //            String applyAmtStr = (String) resMap.get("apply_amt");
 //                    appOrder.getApplyAmt();//借款总额
-            if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null){
+            if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null) {
                 applyAmt = new BigDecimal(0);
-            }else{
+            } else {
                 applyAmt = applyAmtStr;
             }
             BigDecimal total = new BigDecimal(0);
             total = xfze.add(applyAmt);
-            ordertotal =  total + "";
+            ordertotal = total + "";
             resMap.put("ordertotal", ordertotal);
-            resMap.put("xfze",xfzeStr);
+            resMap.put("xfze", xfzeStr);
         }
         return success(resMap);
     }

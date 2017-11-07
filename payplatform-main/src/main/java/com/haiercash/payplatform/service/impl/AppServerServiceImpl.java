@@ -947,4 +947,15 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("验证并绑定第三方（非海尔集团）用户,返回信息：" + map);
         return map;
     }
+
+    //根据商户门店查询贷款品种
+    @Override
+    public Map<String, Object> getLoanDic(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/pub/gm/getLoanDic";
+        ;
+        logger.info("根据商户门店查询贷款品种,请求地址：" + url);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("根据商户门店查询贷款品种,返回信息：" + map);
+        return map;
+    }
 }

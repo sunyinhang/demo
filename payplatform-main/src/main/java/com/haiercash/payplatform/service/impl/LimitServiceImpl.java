@@ -1,17 +1,16 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.commons.redis.Session;
+import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.LimitService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,6 @@ import java.util.Map;
  */
 @Service
 public class LimitServiceImpl extends BaseService implements LimitService{
-    @Autowired
-    private Session session;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -63,7 +60,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = session.get(token, Map.class);
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if(cacheMap == null || "".equals(cacheMap)){
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -158,7 +155,7 @@ public class LimitServiceImpl extends BaseService implements LimitService{
                 String retMsg = (String) custTagHeadMap.get("retMsg");
                 return fail(ConstUtil.ERROR_CODE, retMsg);
             }
-            List<Map<String,Object>> tiglist =  (ArrayList<Map<String,Object>>) custTag.get("body");
+            List<Map<String, Object>> tiglist = (List<Map<String, Object>>) custTag.get("body");
             boolean flag = false;
             for (int i = 0; i < tiglist.size(); i++) {
                String tagIdData = (String) tiglist.get(i).get("tagId");

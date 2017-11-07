@@ -22,7 +22,7 @@ public interface CommonPageService {
     合同签订
      */
     Map<String, Object> signContract(String custName, String custIdCode, String applseq, String phone, String typCde,
-                                            String channelNo, String token);
+                                     String channelNo, String token);
 
     /*
     订单保存
@@ -48,4 +48,13 @@ public interface CommonPageService {
     解密
      */
     String decryptData(String data, String channelNo) throws Exception;
+
+    /**
+     * @Title queryApplReraidPlanByloanNo
+     * @Description: 还款计划查询
+     * @author yu jianwei
+     * @date 2017/11/6 13:49
+     */
+    Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) throws Exception;
+
 }
