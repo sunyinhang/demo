@@ -203,6 +203,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String flag = (String) map.get("flag");//1.待提交返显
         String orderNo = (String) map.get("orderNo");//待提交时必传
         Map retrunmap = new HashMap();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
@@ -214,6 +215,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String payAmt = "";//申请金额
         String typCde = "";//贷款品种
         String psPerdNo = "";//借款期限
+        String typcde_sg = "";//顺逛传输
         if ("1".equals(flag) || "1".equals(updatemallflag)) {//待提交返显
             logger.info("待提交订单*********数据加载");
 
@@ -225,6 +227,18 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             } else {
                 logger.info("退回及待提交进行订单修改");
                 orderNo = (String) cacheMap.get("updatemalloderNo");
+                //获取第三方传输的贷款品种
+                AppOrder appOrder = null;
+                try {
+                    if (StringUtils.isEmpty(cacheMap.get("apporder"))) {
+                        logger.info("登录超时");
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+                    }
+                    appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                typcde_sg = appOrder.getTypCde();//第三方传送的贷款品种
             }
             //
             AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
@@ -300,9 +314,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             psPerdNo = applyTnr;
             retrunmap.put("applyTnr", applyTnr);
             retrunmap.put("applyTnrTyp", applyTnrTyp);
+
+            if (!StringUtils.isEmpty(typcde_sg) && !typCde.equals(typcde_sg)) {
+                retrunmap.put("typCde_sg", typCde);//页面展示
+            }
         } else {
             logger.info("新订单********数据加载");
-            ObjectMapper objectMapper = new ObjectMapper();
             AppOrder appOrder = null;
             try {
                 if (StringUtils.isEmpty(cacheMap.get("apporder"))) {
@@ -375,12 +392,47 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String totalAmt = payBody.get("repaymentTotalAmt").toString();
 //        String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
 //        String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
-
-        retrunmap.put("typCde", typCde);//贷款品种
+        //新增
+        if ("1".equals(updatemallflag)) {//顺逛重新提交订单
+            retrunmap.put("typCde", typcde_sg);//贷款品种
+        } else {
+            retrunmap.put("typCde", typCde);//贷款品种
+        }
         retrunmap.put("payAmt", payAmt);
         retrunmap.put("totalAmt", totalAmt);
         if (boo) {//贷款类型按天
             retrunmap.put("payMtd", "");
+
+            if (!StringUtils.isEmpty(typcde_sg) && !typcde_sg.equals(typCde)) {
+                Map<String, Object> paySsMap1 = new HashMap<String, Object>();
+                paySsMap1.put("typCde", typcde_sg);
+                paySsMap1.put("apprvAmt", payAmt);
+                paySsMap1.put("channel", channel);
+                paySsMap1.put("channelNo", channelNo);
+                Map<String, Object> payssresultMap1 = appServerService.getBatchPaySs(token, paySsMap1);
+                retrunmap.put("payMtd", ((Map<String, Object>) (payssresultMap1.get("body"))).get("info"));
+
+                //查询商户门店可用贷款品种
+                //根据商户和门店查询贷款品种（若包含17100a[30天免息] 展示30天免息）
+                Map<String, Object> paramMap = new HashMap<String, Object>();
+                paramMap.put("merchantCode", sg_merch_no);
+                paramMap.put("storeCode", sg_store_no);
+                Map<String, Object> loanmap = appServerService.getLoanDic(token, paramMap);
+                if (!HttpUtil.isSuccess(loanmap)) {//获取贷款品种失败
+                    String retmsg = (String) ((Map<String, Object>) (loanmap.get("head"))).get("retMsg");
+                    return fail(ConstUtil.ERROR_CODE, retmsg);
+                }
+                //遍历  若包含17100a则返回时增加17100a
+                List jsonArray = (List) loanmap.get("body");
+                logger.info("jsonArray大小" + jsonArray.size());
+                for (int j = 0; j < jsonArray.size(); j++) {
+                    Map jsonm = (Map) jsonArray.get(j);
+                    String loanCode = (String) jsonm.get("loanCode");
+                    if ("17100a".equals(loanCode)) {
+                        retrunmap.put("loanCode", loanCode);
+                    }
+                }
+            }
         } else {
             retrunmap.put("payMtd", ((Map<String, Object>) (payssresultMap.get("body"))).get("info"));
             //根据商户和门店查询贷款品种（若包含17100a[30天免息] 展示30天免息）
@@ -388,15 +440,15 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             paramMap.put("merchantCode", sg_merch_no);
             paramMap.put("storeCode", sg_store_no);
             Map<String, Object> loanmap = appServerService.getLoanDic(token, paramMap);
-            if (!HttpUtil.isSuccess(loanmap)) {//还款试算失败
+            if (!HttpUtil.isSuccess(loanmap)) {//获取贷款品种失败
                 String retmsg = (String) ((Map<String, Object>) (loanmap.get("head"))).get("retMsg");
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             }
             //遍历  若包含17100a则返回时增加17100a
-            JSONArray jsonArray = (JSONArray) loanmap.get("body");
+            List jsonArray = (List) loanmap.get("body");
             logger.info("jsonArray大小" + jsonArray.size());
             for (int j = 0; j < jsonArray.size(); j++) {
-                org.json.JSONObject jsonm = new org.json.JSONObject(jsonArray.get(j).toString());
+                Map jsonm = (Map) jsonArray.get(j);
                 String loanCode = (String) jsonm.get("loanCode");
                 if ("17100a".equals(loanCode)) {
                     retrunmap.put("loanCode", loanCode);
