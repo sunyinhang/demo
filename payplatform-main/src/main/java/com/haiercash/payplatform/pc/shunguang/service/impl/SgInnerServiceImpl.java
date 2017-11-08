@@ -2,6 +2,7 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bestvike.lang.BeanUtils;
 import com.bestvike.lang.Convert;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
@@ -583,17 +584,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
 
         } else {
             logger.info("新订单********数据加载");
-            AppOrder appOrder = null;
-            try {
-                if (StringUtils.isEmpty(cacheMap.get("apporder"))) {
-                    logger.info("登录超时");
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-                }
-                appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-            } catch (IOException e) {
-                e.printStackTrace();
+            Map<String, Object> appOrderMap = (Map<String, Object>) cacheMap.get("apporder");
+            if (appOrderMap == null) {
+                logger.info("登录超时");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
-
+            AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
             payAmt = appOrder.getApplyAmt();//申请金额
             //typCde = appOrder.getTypCde();//贷款品种
         }
