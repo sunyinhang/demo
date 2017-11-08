@@ -9,12 +9,6 @@ import com.haiercash.payplatform.redis.core.StringValueOperations;
 import com.haiercash.payplatform.redis.core.StringZSetOperations;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.BoundGeoOperations;
-import org.springframework.data.redis.core.BoundHashOperations;
-import org.springframework.data.redis.core.BoundListOperations;
-import org.springframework.data.redis.core.BoundSetOperations;
-import org.springframework.data.redis.core.BoundValueOperations;
-import org.springframework.data.redis.core.BoundZSetOperations;
 import org.springframework.data.redis.core.GeoOperations;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.HyperLogLogOperations;
@@ -32,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * Created by 许崇雷 on 2017-11-01.
  */
 public final class RedisTemplateEx extends StringRedisTemplate {
-    //
+    // properties
     RedisProperties properties;
     // cache singleton objects (where possible)
     private ValueOperations<String, String> valueOps;
@@ -174,37 +168,6 @@ public final class RedisTemplateEx extends StringRedisTemplate {
     @Override
     public void watch(Collection<String> keys) {
         super.watch(this.properties.getKeys(keys));
-    }
-
-
-    @Override
-    public BoundValueOperations<String, String> boundValueOps(String key) {
-        return super.boundValueOps(this.properties.getKey(key));
-    }
-
-    @Override
-    public BoundListOperations<String, String> boundListOps(String key) {
-        return super.boundListOps(this.properties.getKey(key));
-    }
-
-    @Override
-    public BoundSetOperations<String, String> boundSetOps(String key) {
-        return super.boundSetOps(this.properties.getKey(key));
-    }
-
-    @Override
-    public BoundZSetOperations<String, String> boundZSetOps(String key) {
-        return super.boundZSetOps(this.properties.getKey(key));
-    }
-
-    @Override
-    public BoundGeoOperations<String, String> boundGeoOps(String key) {
-        return super.boundGeoOps(this.properties.getKey(key));
-    }
-
-    @Override
-    public <HK, HV> BoundHashOperations<String, HK, HV> boundHashOps(String key) {
-        return super.boundHashOps(this.properties.getKey(key));
     }
 
     //endregion
