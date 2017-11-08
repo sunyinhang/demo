@@ -2,17 +2,21 @@ package com.haiercash.payplatform.service.impl;
 
 import com.bestvike.lang.Base64Utils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
+import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.common.data.AppointmentRecord;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.AppOtherConfig;
 import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.redis.RedisUtils;
+import com.haiercash.payplatform.rest.IResponse;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
+import com.haiercash.payplatform.rest.common.CommonResponse;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.BaseService;
@@ -42,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Created by yuanli on 2017/9/20.
@@ -70,6 +75,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
     private CrmService crmService;
+    @Autowired
+    private AppointmentRecordDao appointmentRecordDao;
 
     /**
      * 合同展示
@@ -1325,6 +1332,17 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         resultMap.put("body", body);
         logger.info("============查询还款计划结束===========");
         return resultMap;
+    }
+
+    @Override
+    public IResponse appointment(String phone, String name, String education) {
+        AppointmentRecord record = new AppointmentRecord();
+        record.setId(UUID.randomUUID().toString());
+        record.setPhone(phone);
+        record.setName(name);
+        record.setEducation(education);
+        appointmentRecordDao.insert(record);
+        return CommonResponse.success();
     }
 
     public void calcFstPct(AppOrder order) {

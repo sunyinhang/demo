@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.service;
 
 import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.rest.IResponse;
 
 import java.util.Map;
 
@@ -57,4 +58,13 @@ public interface CommonPageService {
      */
     Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) throws Exception;
 
+    /**
+     * 预约
+     *
+     * @param phone
+     * @param name
+     * @param education
+     * @return
+     */
+    IResponse appointment(String phone, String name, String education);
 }
