@@ -1,6 +1,8 @@
 package com.haiercash.payplatform.redis;
 
 import com.alibaba.fastjson.TypeReference;
+import com.bestvike.lang.StringUtils;
+import com.bestvike.linq.exception.InvalidOperationException;
 import com.bestvike.serialization.JsonSerializer;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -185,6 +187,43 @@ public final class RedisUtils {
     //endregion
 
 
+    //region 哈希命令-常用
+
+    private static String getOpsForHashKey(String key, String field) {
+        if (StringUtils.isEmpty(key))
+            throw new InvalidOperationException("redis ops for hash key can not be empty");
+        if (StringUtils.isEmpty(field))
+            throw new InvalidOperationException("redis ops for hash field can not be empty");
+        return key + ":" + field;
+    }
+
+    public static void hsetExpire(String key, String field, Object value) {
+        setExpire(getOpsForHashKey(key, field), value);
+    }
+
+    public static <T> T hgetExpire(String key, String field, Class<T> clazz) {
+        return getExpire(getOpsForHashKey(key, field), clazz);
+    }
+
+    public static <T> T hgetExpire(String key, String field, TypeReference<T> type) {
+        return getExpire(getOpsForHashKey(key, field), type);
+    }
+
+    public static String hgetExpireString(String key, String field) {
+        return getExpireString(getOpsForHashKey(key, field));
+    }
+
+    public static Map<String, Object> hgetExpireMap(String key, String field) {
+        return getExpireMap(getOpsForHashKey(key, field));
+    }
+
+    public static boolean hsetnxExpire(String key, String field, Object value) {
+        return setnxExpire(getOpsForHashKey(key, field), value);
+    }
+
+    //endregion
+
+
     //region 哈希命令
 
     public static long hdel(String key, String field) {
@@ -195,29 +234,53 @@ public final class RedisUtils {
         return getRedisTemplate().opsForHash().hasKey(key, field);
     }
 
+    /**
+     * 使用 hsetExpire 代替
+     */
+    @Deprecated
     public static void hset(String key, String field, Object value) {
         getRedisTemplate().opsForHash().put(key, field, serialize(value));
     }
 
+    /**
+     * 使用 hgetExpire 代替
+     */
+    @Deprecated
     public static <T> T hget(String key, String field, Class<T> clazz) {
         return deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), clazz);
     }
 
+    /**
+     * 使用 hgetExpire 代替
+     */
+    @Deprecated
     public static <T> T hget(String key, String field, TypeReference<T> type) {
         return deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), type);
     }
 
+    /**
+     * 使用 hgetExpireString 代替
+     */
+    @Deprecated
     public static String hgetString(String key, String field) {
         return hget(key, field, String.class);
     }
 
+    /**
+     * 使用 hgetExpireMap 代替
+     */
+    @Deprecated
     public static Map<String, Object> hgetMap(String key, String field) {
         return hget(key, field, new TypeReference<Map<String, Object>>() {
         });
     }
 
-    public static void hsetnx(String key, String field, Object value) {
-        getRedisTemplate().opsForHash().putIfAbsent(key, field, serialize(value));
+    /**
+     * 使用 hsetnxExpire 代替
+     */
+    @Deprecated
+    public static boolean hsetnx(String key, String field, Object value) {
+        return getRedisTemplate().opsForHash().putIfAbsent(key, field, serialize(value));
     }
 
     //endregion
@@ -276,16 +339,16 @@ public final class RedisUtils {
         });
     }
 
-    public static void lpush(String key, Object value) {
-        getRedisTemplate().opsForList().leftPush(key, serialize(value));
+    public static long lpush(String key, Object value) {
+        return getRedisTemplate().opsForList().leftPush(key, serialize(value));
     }
 
-    public static void lpushx(String key, Object value) {
-        getRedisTemplate().opsForList().leftPushIfPresent(key, serialize(value));
+    public static long lpushx(String key, Object value) {
+        return getRedisTemplate().opsForList().leftPushIfPresent(key, serialize(value));
     }
 
-    public static void lpushx(String key, long count, Object value) {
-        getRedisTemplate().opsForList().remove(key, count, serialize(value));
+    public static long lpushx(String key, long count, Object value) {
+        return getRedisTemplate().opsForList().remove(key, count, serialize(value));
     }
 
     public static <T> T rpop(String key, Class<T> clazz) {
@@ -305,12 +368,12 @@ public final class RedisUtils {
         });
     }
 
-    public static void rpush(String key, Object value) {
-        getRedisTemplate().opsForList().rightPush(key, serialize(value));
+    public static long rpush(String key, Object value) {
+        return getRedisTemplate().opsForList().rightPush(key, serialize(value));
     }
 
-    public static void rpushx(String key, Object value) {
-        getRedisTemplate().opsForList().rightPushIfPresent(key, serialize(value));
+    public static long rpushx(String key, Object value) {
+        return getRedisTemplate().opsForList().rightPushIfPresent(key, serialize(value));
     }
 
     //endregion
