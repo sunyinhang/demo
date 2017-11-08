@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bestvike.lang.BeanUtils;
 import com.bestvike.lang.Convert;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -200,7 +198,6 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String flag = (String) map.get("flag");//1.待提交返显
         String orderNo = (String) map.get("orderNo");//待提交时必传
         Map retrunmap = new HashMap();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
@@ -225,16 +222,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
                 logger.info("退回及待提交进行订单修改");
                 orderNo = (String) cacheMap.get("updatemalloderNo");
                 //获取第三方传输的贷款品种
-                AppOrder appOrder = null;
-                try {
-                    if (StringUtils.isEmpty(cacheMap.get("apporder"))) {
-                        logger.info("登录超时");
-                        return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-                    }
-                    appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                Map<String, Object> appOrderMap = (Map<String, Object>) cacheMap.get("apporder");
+                if (appOrderMap == null) {
+                    logger.info("登录超时");
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
                 }
+                AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
                 typcde_sg = appOrder.getTypCde();//第三方传送的贷款品种
             }
             //
@@ -329,16 +322,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
 //            }
         } else {
             logger.info("新订单********数据加载");
-            AppOrder appOrder = null;
-            try {
-                if (StringUtils.isEmpty(cacheMap.get("apporder"))) {
-                    logger.info("登录超时");
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-                }
-                appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-            } catch (IOException e) {
-                e.printStackTrace();
+            Map<String, Object> appOrderMap = (Map<String, Object>) cacheMap.get("apporder");
+            if (appOrderMap == null) {
+                logger.info("登录超时");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
+            AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
 
             payAmt = appOrder.getApplyAmt();//申请金额
             typCde = appOrder.getTypCde();//贷款品种
@@ -481,7 +470,6 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String flag = (String) map.get("flag");//1.待提交返显
         String orderNo = (String) map.get("orderNo");//待提交时必传
         Map retrunmap = new HashMap();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
@@ -621,8 +609,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             paySsMap.put("channel", channel);
             paySsMap.put("channelNo", channelNo);
             Map<String, Object> payssresultMap = appServerService.getBatchPaySs(token, paySsMap);
+            String retflag = (String) ((Map<String, Object>) (payssresultMap.get("head"))).get("retFlag");
             if (!HttpUtil.isSuccess(payssresultMap)) {
-                String retflag = (String) ((Map<String, Object>) (payssresultMap.get("head"))).get("retFlag");
                 if ("A1101".equals(retflag)) {//贷款类型为天
                     Map m = new HashMap<>();
                     m.put("typCde", loanCode);//loancode   17100a
@@ -634,16 +622,17 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
                     return fail(ConstUtil.ERROR_CODE, retmsg);
                 }
             }
-            Map bodymap = (Map) payssresultMap.get("body");
-            List list = (List) bodymap.get("info");
-            for (int i = 0; i < list.size(); i++) {
-                Map m = (Map) list.get(i);
-                m.put("typCde", loanCode);
-                m.put("applyTnr", m.get("psPerdNo"));//期限
-                m.put("applyTnrTyp", m.get("psPerdNo"));//期限类型
-                typeList.add(m);
+            if (!"A1101".equals(retflag)) {
+                Map bodymap = (Map) payssresultMap.get("body");
+                List list = (List) bodymap.get("info");
+                for (int i = 0; i < list.size(); i++) {
+                    Map m = (Map) list.get(i);
+                    m.put("typCde", loanCode);
+                    m.put("applyTnr", m.get("psPerdNo"));//期限
+                    m.put("applyTnrTyp", m.get("psPerdNo"));//期限类型
+                    typeList.add(m);
+                }
             }
-
         }
 
 
@@ -713,18 +702,13 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-        AppOrder appOrder = null;
-        try {
-            if (StringUtils.isEmpty(cacheMap.get("apporder"))) {
-                logger.info("登录超时");
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-            }
-            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-            logger.info("appOrder0:" + appOrder);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        Map<String, Object> appOrderMap = (Map<String, Object>) cacheMap.get("apporder");
+        if (appOrderMap == null) {
+            logger.info("登录超时");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+        AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
         String payAmt = appOrder.getApplyAmt();//申请金额
         //String typCde = appOrder.getTypCde();//贷款品种
 
