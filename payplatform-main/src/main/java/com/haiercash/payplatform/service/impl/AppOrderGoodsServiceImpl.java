@@ -1,13 +1,14 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
+import com.haiercash.payplatform.config.EurekaServer;
 import com.haiercash.payplatform.service.AppOrderGoodsService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.RestUtil;
 import com.haiercash.payplatform.utils.ResultHead;
-import com.haiercash.payplatform.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -84,7 +85,7 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
         Map<String, Object> resultMap = HttpUtil.restPutMap(url, paramMap);
         logger.info("<== OM-1104 resultMap:" + resultMap);
         if (resultMap == null || resultMap.isEmpty()) {
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "订单系统通信失败");
+            return fail(ConstUtil.ERROR_CODE, "订单系统通信失败");
         }
         if (!HttpUtil.isSuccess(resultMap)) {
             return resultMap;
@@ -139,7 +140,7 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
         logger.info("<== OM-1103  response : " + responseJson);
         HashMap<String, Object> resultMap = HttpUtil.json2DeepMap(responseJson);
         if (resultMap == null || resultMap.isEmpty()) {
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "订单系统通信失败");
+            return fail(ConstUtil.ERROR_CODE, "订单系统通信失败");
         }
         if (!HttpUtil.isSuccess(resultMap)) {
             return resultMap;

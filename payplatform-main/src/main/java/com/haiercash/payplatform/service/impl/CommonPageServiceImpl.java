@@ -31,7 +31,6 @@ import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
-import com.haiercash.payplatform.utils.RestUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Base64;
@@ -649,7 +648,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         logger.info("CRM 实名信息接口返回：" + json);
         if (StringUtils.isEmpty(json)) {
             logger.info("CRM实名认证信息（getCustRealInfo）接口返回异常！请求处理被迫停止！");
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "CRM系统通信失败");
+            return fail(ConstUtil.ERROR_CODE, "CRM系统通信失败");
         }
         if (!HttpUtil.isSuccess(json)) {
             return HttpUtil.json2DeepMap(json);

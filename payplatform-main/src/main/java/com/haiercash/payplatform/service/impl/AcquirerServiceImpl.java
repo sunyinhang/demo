@@ -21,11 +21,11 @@ import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.BusinessException;
 import com.haiercash.payplatform.utils.ChannelType;
 import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.IdCardUtils;
 import com.haiercash.payplatform.utils.ReflactUtils;
-import com.haiercash.payplatform.utils.RestUtil;
 import com.haiercash.payplatform.utils.ResultHead;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -224,7 +224,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         String json = HttpUtil.restGet(url, getToken());
         if (StringUtils.isEmpty(json)) {
             logger.error("客户扩展信息接口返回异常！-->CRM 1.4");
-            return fail("51", RestUtil.ERROR_INTERNAL_MSG);
+            return fail("51", ConstUtil.ERROR_INFO);
         }
         logger.debug("CRM 获取客户拓展信息返回json:" + json);
         Map<String, Object> custExtInfoMap = HttpUtil.json2Map(json);
@@ -244,7 +244,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         logger.debug("CRM 获取客户基本信息:" + lxrJson);
         if (StringUtils.isEmpty(lxrJson)) {
             logger.error("联系人列表查询失败！——>CRM 1.8");
-            return fail("52", RestUtil.ERROR_INTERNAL_MSG);
+            return fail("52", ConstUtil.ERROR_INFO);
         }
         Map<String, Object> lxrMap = HttpUtil.json2Map(lxrJson);
         List<Map<String, Object>> lxrlist = new ArrayList<>();
@@ -740,7 +740,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
                 .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/cancelAppl", AcqTradeCode.COMMIT_APPL,
                         super.getChannel(), super.getChannelNo(), null, null, params);
         if (result == null || result.isEmpty()) {
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "收单系统通信失败！");
+            return fail(ConstUtil.ERROR_CODE, "收单系统通信失败！");
         }
         if (!CmisUtil.isSuccess(result)) {
             logger.info("收单系统取消贷款申请失败, applSeq:" + applSeq);

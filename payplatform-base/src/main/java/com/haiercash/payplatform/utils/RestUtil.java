@@ -1,8 +1,5 @@
 package com.haiercash.payplatform.utils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,13 +7,7 @@ import java.util.Map;
  * Created by use on 2017/7/25.
  */
 public final class RestUtil {
-    public static Log logger = LogFactory.getLog(RestUtil.class);
-    public static String ERROR_INTERNAL_CODE = ConstUtil.ERROR_CODE;
-    public static String ERROR_INTERNAL_MSG = ConstUtil.ERROR_INFO;
-    private static String SUCCESS_CODE = ConstUtil.SUCCESS_CODE;
-    private static String SUCCESS_MSG = ConstUtil.SUCCESS_MSG;
-
-    public RestUtil() {
+    private RestUtil() {
     }
 
     public static Map<String, Object> fail(String retFlag, String retMsg) {
@@ -29,11 +20,11 @@ public final class RestUtil {
     }
 
     public static Map<String, Object> success() {
-        return fail(SUCCESS_CODE, SUCCESS_MSG);
+        return fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
     }
 
     public static Map<String, Object> success(Object result) {
-        Map<String, Object> resultMap = fail(SUCCESS_CODE, SUCCESS_MSG);
+        Map<String, Object> resultMap = fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
         resultMap.put("body", result);
         return resultMap;
     }
