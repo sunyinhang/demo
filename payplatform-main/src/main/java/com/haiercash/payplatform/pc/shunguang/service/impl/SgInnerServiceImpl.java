@@ -10,7 +10,13 @@ import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.redis.RedisUtils;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.HaierDataService;
+import com.haiercash.payplatform.service.OrderManageService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.HttpUtil;
@@ -599,6 +605,9 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         for (int j = 0; j < jsonArray.size(); j++) {
             Map jsonm = (Map) jsonArray.get(j);
             String loanCode = (String) jsonm.get("loanCode");
+            if ("17033a".equals(loanCode)) {//17033a进行过滤  不展示
+                continue;
+            }
             if (loanCode.equals(innerTypCde)) {//原贷款品种依然可用
                 loanflag = false;
             }
