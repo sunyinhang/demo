@@ -1,12 +1,12 @@
 package com.haiercash.payplatform.pc.shunguang.controller;
 
-import com.haiercash.payplatform.controller.BaseController;
+import com.haiercash.spring.controller.BaseController;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;

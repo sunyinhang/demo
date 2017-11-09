@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.common.entity;
 
-import com.bestvike.lang.StringUtils;
+import com.haiercash.core.lang.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

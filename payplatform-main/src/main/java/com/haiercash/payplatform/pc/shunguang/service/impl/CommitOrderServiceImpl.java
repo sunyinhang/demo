@@ -1,7 +1,10 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.bestvike.lang.Base64Utils;
-import com.bestvike.lang.BeanUtils;
+import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.BeanUtils;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -10,7 +13,7 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.payplatform.redis.RedisUtils;
+import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;

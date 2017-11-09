@@ -1,10 +1,11 @@
 package com.haiercash.payplatform.controller;
 
-import com.bestvike.lang.Convert;
-import com.bestvike.lang.StringUtils;
+import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.StringUtils;
+import com.haiercash.spring.controller.BaseController;
 import com.haiercash.commons.util.FileUtil;
-import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.rest.common.CommonResponse;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CommonPageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
@@ -14,7 +15,7 @@ import com.haiercash.payplatform.service.LimitService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.service.RegisterService;
-import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.spring.utils.ConstUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

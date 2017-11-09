@@ -24,7 +24,7 @@ import com.haiercash.payplatform.common.entity.Corehead;
 import com.haiercash.payplatform.common.entity.QueryLimitMessage;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.config.AppCmisConfig;
-import com.haiercash.payplatform.rest.client.XmlClientUtils;
+import com.haiercash.spring.rest.client.XmlClientUtils;
 import com.haiercash.payplatform.service.PaymentServiceInterface;
 import com.haiercash.payplatform.utils.XstreamBuild;
 import org.apache.commons.logging.Log;

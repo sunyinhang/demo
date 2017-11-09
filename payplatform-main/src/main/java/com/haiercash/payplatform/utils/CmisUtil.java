@@ -1,6 +1,8 @@
 package com.haiercash.payplatform.utils;
 
-import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 

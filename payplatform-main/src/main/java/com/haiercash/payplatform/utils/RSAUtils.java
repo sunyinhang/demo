@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.utils;
 
-import com.bestvike.lang.Base64Utils;
+import com.haiercash.core.lang.Base64Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.security.Key;

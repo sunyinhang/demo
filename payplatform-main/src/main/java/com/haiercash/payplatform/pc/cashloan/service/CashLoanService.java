@@ -2,7 +2,7 @@ package com.haiercash.payplatform.pc.cashloan.service;
 
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.LoanType;
-import com.haiercash.payplatform.rest.IResponse;
+import com.haiercash.spring.rest.IResponse;
 
 import java.util.List;
 import java.util.Map;

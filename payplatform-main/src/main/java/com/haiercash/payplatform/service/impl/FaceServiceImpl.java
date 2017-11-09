@@ -1,11 +1,11 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.redis.RedisUtils;
-import com.haiercash.payplatform.rest.client.JsonClientUtils;
+import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.FaceService;
-import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;

@@ -1,9 +1,9 @@
 package com.payplatform.impl;
 
-import com.bestvike.serialization.JsonSerializer;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
-import com.haiercash.payplatform.context.ThreadContext;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.utils.HttpUtil;
 import com.payplatform.ControllerTest;
 import org.junit.Assert;
 import org.junit.Test;

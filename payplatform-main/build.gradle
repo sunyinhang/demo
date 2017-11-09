@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':payplatform-base')
+    compile project(':haiercash-spring')
 }
 ext {
     releasePublish = project.hasProperty('release')

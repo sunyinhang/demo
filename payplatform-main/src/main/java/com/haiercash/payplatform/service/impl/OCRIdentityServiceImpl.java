@@ -2,14 +2,14 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
-import com.haiercash.payplatform.redis.RedisUtils;
+import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.OCRIdentityService;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;

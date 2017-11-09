@@ -1,6 +1,9 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.bestvike.lang.Base64Utils;
+import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.commons.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
@@ -12,8 +15,8 @@ import com.haiercash.payplatform.config.AppOtherConfig;
 import com.haiercash.payplatform.config.AppShunguangConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
-import com.haiercash.payplatform.redis.RedisUtils;
-import com.haiercash.payplatform.rest.client.JsonClientUtils;
+import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.*;
 import com.haiercash.payplatform.utils.*;
 import org.json.JSONArray;

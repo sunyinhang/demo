@@ -1,15 +1,15 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.rest.common.CommonResponse;
-import com.haiercash.payplatform.rest.common.CommonRestUtils;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.common.CommonResponse;
+import com.haiercash.spring.rest.common.CommonRestUtils;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.AppServerUtils;
-import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
