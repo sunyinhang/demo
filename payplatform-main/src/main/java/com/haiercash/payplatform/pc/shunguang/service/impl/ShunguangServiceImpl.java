@@ -14,29 +14,15 @@ import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.redis.RedisUtils;
 import com.haiercash.payplatform.rest.client.JsonClientUtils;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.CrmService;
-import com.haiercash.payplatform.service.HaierDataService;
-import com.haiercash.payplatform.service.OrderManageService;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.DesUtil;
-import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.utils.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * shunguang service impl.
@@ -64,6 +50,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     private AppOtherConfig appOtherConfig;
     @Autowired
     private AppShunguangConfig appShunguangConfig;
+    @Autowired
+    private AcquirerService acquirerService;
 
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
         Map<String, Object> headMap = new HashMap<>();
@@ -944,7 +932,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 
         //请求数据解析
-        String ss = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey));
+//        String ss = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey));
         //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
         String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
@@ -1196,5 +1184,25 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         ///return success();
     }
 
-
+    /**
+     * @Title returnGoods
+     * @Description: 退货接口
+     * @author yu jianwei
+     * @date 2017/11/6 17:45
+     */
+    @Override
+    public Map<String, Object> returnGoods(Map<String, Object> map) {
+        logger.info("===============退货开始==================");
+        String channelNo = String.valueOf(map.get("channelNo"));
+        String data = JSONObject.valueToString(map.get("data"));//交易信息
+        String key = String.valueOf(map.get("key"));
+        try {
+            String params = decryptData(data, channelNo, key);
+            Map<String, Object> returnMap = acquirerService.returnGoods(AcqTradeCode.ACQ_RETURNGODDS_TREADECODE, ConstUtil.CHANNEL, channelNo, "", "", HttpUtil.json2Map((  JSONObject.stringToValue(params).toString())));
+            return (Map<String, Object>) returnMap.get("head");
+        } catch (Exception e) {
+            logger.error(e);
+            return fail("01", "请求数据校验失败");
+        }
+    }
 }

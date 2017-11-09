@@ -47,6 +47,7 @@ import java.util.Map;
 
 /**
  * acquirer service impl.
+ *
  * @author Liu qingxiang
  * @since v1.0.1
  */
@@ -68,7 +69,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
 
     @Override
     public Map<String, Object> getOrderFromAcquirer(String applSeq, String channel, String channelNo, String cooprCde,
-            String tradeType, String flag) {
+                                                    String tradeType, String flag) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("applSeq", applSeq);
         paramMap.put("channelNo", channelNo);
@@ -784,5 +785,11 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         return (Map<String, Object>) result.get("response");
     }
 
-
+    @Override
+    public Map<String, Object> returnGoods(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map) {
+        String url = EurekaServer.ACQUIRER + "/api/appl/returnGoods";
+        Map headMap = AcqUtil.getAcqHead(tradeCode, sysFlag, channelNo, cooprCode, tradeType);
+        Map<String, Object> result = AcqUtil.getAcqResponse(url, headMap, map);
+        return result;
+    }
 }
