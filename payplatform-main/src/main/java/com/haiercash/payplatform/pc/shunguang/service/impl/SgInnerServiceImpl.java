@@ -663,6 +663,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             //
             retrunmap.put("applyTnr", payMap.get("applyTnr"));
             retrunmap.put("applyTnrTyp", payMap.get("applyTnrTyp"));
+            retrunmap.put("typCde", typCde_sg);
         } else {//待提交订单且原来的贷款品种可用
             payMap.put("typCde", innerTypCde);//
             payMap.put("apprvAmt", payAmt);
@@ -671,6 +672,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             //
             retrunmap.put("applyTnr", innerApplyTnr);
             retrunmap.put("applyTnrTyp", innerApplyTnrTyp);
+            retrunmap.put("typCde", innerTypCde);
         }
 
         payMap.put("channel", channel);
