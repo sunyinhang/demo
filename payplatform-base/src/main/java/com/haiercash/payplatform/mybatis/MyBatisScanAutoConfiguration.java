@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.datasource.mybatis;
+package com.haiercash.payplatform.mybatis;
 
 import com.bestvike.lang.Convert;
 import org.mybatis.mapper.MapperScannerConfigurer;
@@ -16,20 +16,25 @@ import org.springframework.core.env.Environment;
  */
 @Configuration
 public class MyBatisScanAutoConfiguration implements ApplicationContextAware {
+    private static final String PREFIX = "spring.mybatis";
     private String basePackage;
     private Boolean underscoreToCamelCase;
+
+    private static String getPropertyName(String name) {
+        return PREFIX + "." + name;
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         if (applicationContext == null)
             return;
         Environment environment = applicationContext.getEnvironment();
-        String basePackage = environment.getProperty("spring.datasource.mybatis.base-package");
+        String basePackage = environment.getProperty(getPropertyName("base-package"));
         if (basePackage == null)
-            basePackage = environment.getProperty("spring.datasource.mybatis.basePackage");
-        String underscoreToCamelCase = environment.getProperty("spring.datasource.mybatis.underscore-to-camel-case");
+            basePackage = environment.getProperty(getPropertyName("basePackage"));
+        String underscoreToCamelCase = environment.getProperty(getPropertyName("underscore-to-camel-case"));
         if (underscoreToCamelCase == null)
-            underscoreToCamelCase = environment.getProperty("spring.datasource.mybatis.underscoreToCamelCase");
+            underscoreToCamelCase = environment.getProperty(getPropertyName("underscoreToCamelCase"));
         this.basePackage = basePackage;
         this.underscoreToCamelCase = Convert.defaultBoolean(underscoreToCamelCase, false);
     }

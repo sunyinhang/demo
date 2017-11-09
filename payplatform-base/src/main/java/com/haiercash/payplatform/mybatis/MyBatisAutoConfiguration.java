@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.datasource.mybatis;
+package com.haiercash.payplatform.mybatis;
 
 import com.bestvike.collection.CollectionUtils;
 import com.bestvike.lang.StringUtils;

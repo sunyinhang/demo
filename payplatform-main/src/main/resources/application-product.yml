@@ -70,12 +70,12 @@ spring:
         reset-enable: false
         login-username: admin
         login-password: admin
-    mybatis:
-      dialect: org.apache.ibatis.dialect.OracleDialect
-      base-package: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
-      aliases-package: com.haiercash.commons.data,com.haiercash.payplatform.**.data
-      mapper-locations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
-      underscore-to-camel-case: true
+  mybatis:
+    dialect: org.apache.ibatis.dialect.OracleDialect
+    base-package: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
+    aliases-package: com.haiercash.commons.data,com.haiercash.payplatform.**.data
+    mapper-locations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
+    underscore-to-camel-case: true
 eureka:
   client:
     register-with-eureka: true # 是否注册自身到 eureka 服务器
