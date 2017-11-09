@@ -178,11 +178,13 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
         outImag.close();
         inputStream1.close();
-
+        //图片压缩
+        ImageUtil.zipImageFile(new File(filePath.toString()), new File(filePath.toString()), 425, 638, 0.7f);
+        //生成MD5
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
         String MD5 = DigestUtils.md5Hex(is);
         is.close();
-        ImageUtil.zipImageFile(new File(filePath.toString()), new File(filePath.toString()), 425, 638, 0.7f);
+
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
