@@ -277,7 +277,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (cacheMap == null) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
