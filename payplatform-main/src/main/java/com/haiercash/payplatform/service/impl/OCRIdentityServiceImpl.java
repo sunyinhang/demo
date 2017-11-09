@@ -2,15 +2,15 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.commons.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
-import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
+import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
-import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,7 +66,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     public Map<String, Object> ocrIdentity(MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("OCR身份信息获取*************开始");
         //图片非空判断
-        if (ocrImg.isEmpty()) {
+        if (ocrImg == null || ocrImg.isEmpty()) {
             logger.info("图片为空");
             return fail("01", "图片为空");
         }
