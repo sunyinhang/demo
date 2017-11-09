@@ -2,6 +2,7 @@ package com.haiercash.payplatform.redis;
 
 import com.bestvike.lang.StringUtils;
 import com.bestvike.linq.Linq;
+import com.bestvike.linq.exception.InvalidOperationException;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -19,11 +20,9 @@ public final class RedisProperties {
     private Integer defaultValueExpire;
 
     public String getKey(String key) {
-        String globalKeyPrefix = this.globalKeyPrefix;
-        if (StringUtils.isEmpty(globalKeyPrefix))
-            return key == null ? StringUtils.EMPTY : key;
-        else
-            return StringUtils.isEmpty(key) ? globalKeyPrefix : (globalKeyPrefix + ":" + key);
+        if (StringUtils.isEmpty(key))
+            throw new InvalidOperationException("redis key can not be empty");
+        return StringUtils.isEmpty(this.globalKeyPrefix) ? key : this.globalKeyPrefix + ":" + key;
     }
 
     public String[] getKeys(String[] keys) {

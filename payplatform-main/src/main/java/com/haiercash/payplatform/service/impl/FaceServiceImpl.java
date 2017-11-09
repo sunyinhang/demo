@@ -7,6 +7,7 @@ import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.ImageUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -181,7 +182,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
         String MD5 = DigestUtils.md5Hex(is);
         is.close();
-
+        ImageUtil.zipImageFile(new File(filePath.toString()), new File(filePath.toString()), 425, 638, 0.7f);
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);

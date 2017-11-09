@@ -99,5 +99,12 @@ public interface ShunguangService {
      * @throws Exception
      */
     Map<String, Object> payApplytest(AppOrder appOrder) throws Exception;
+    /**
+     * @Title returnGoods
+     * @Description: 退货接口
+     * @author yu jianwei
+     * @date 2017/11/6 17:41
+     */
+    Map<String, Object> returnGoods(Map<String, Object> map) throws Exception;
 
 }

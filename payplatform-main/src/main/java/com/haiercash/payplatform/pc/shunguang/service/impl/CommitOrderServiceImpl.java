@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.bestvike.lang.Base64Utils;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.bestvike.lang.BeanUtils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -11,24 +11,12 @@ import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.redis.RedisUtils;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.service.GmService;
-import com.haiercash.payplatform.service.OrderManageService;
-import com.haiercash.payplatform.service.OrderService;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.DesUtil;
-import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,20 +84,14 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 //        if(cacheMap.containsKey(key0)){
 //            return success();
 //        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        AppOrder appOrder = null;
         String typCde = "";
-        try {
-            logger.info("缓存数据获取");
-            appOrder = objectMapper.readValue(cacheMap.get("apporder").toString(), AppOrder.class);
-            logger.info("提交订单信息appOrder:" + appOrder);
-            if(appOrder == null){
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-            }
-            typCde = appOrder.getTypCde();
-        } catch (IOException e) {
-            e.printStackTrace();
+        Map<String, Object> appOrderMap = (Map<String, Object>) cacheMap.get("apporder");
+        if (appOrderMap == null) {
+            logger.info("登录超时");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+        AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
+        typCde = appOrder.getTypCde();
 
         //参数非空校验
         if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)

@@ -26,7 +26,7 @@ public interface AcquirerService {
      * @return Map<String, Object>
      */
     Map<String, Object> getOrderFromAcquirer(String applSeq, String channel, String channelNo, String cooprCde,
-            String tradeType, String flag);
+                                             String tradeType, String flag);
 
     /**
      * 映射商品map为商品对象.
@@ -66,14 +66,16 @@ public interface AcquirerService {
 
     /**
      * 去收单查apporder
-     * @param applSeq       流水号
-     * @param channelNo     渠道号
-     * @return  Map
+     *
+     * @param applSeq   流水号
+     * @param channelNo 渠道号
+     * @return Map
      */
     AppOrder getAppOrderFromAcquirer(String applSeq, String channelNo);
 
     /**
      * 贷款申请取消.
+     *
      * @param applSeq 贷款申请流水号
      * @return Map
      */
@@ -81,10 +83,11 @@ public interface AcquirerService {
 
     /**
      * 去收单推送 风险信息采集接口定义
+     *
      * @param map
-     * @return  Map
+     * @return Map
      */
-    public  Map<String, Object> saveRiskInfo(Map<String, Object> map);
+    public Map<String, Object> saveRiskInfo(Map<String, Object> map);
 
 //    /**
 //     * 2.1.5	(POST) ACQ-1133贷款申请取消
@@ -95,10 +98,19 @@ public interface AcquirerService {
 
     /**
      * 贷款申请提交.
-     * @param order     订单详情
-     * @param flag      0:贷款取消  1:贷款提交
-     * @param riskJson  风险信息
+     *
+     * @param order    订单详情
+     * @param flag     0:贷款取消  1:贷款提交
+     * @param riskJson 风险信息
      * @return Map
      */
     Map<String, Object> commitAppl(AppOrder order, String flag, String riskJson);
+
+    /**
+     * @Title returnGoods
+     * @Description: 收单的退货接口
+     * @author yu jianwei
+     * @date 2017/11/6 17:47
+     */
+    public Map<String, Object> returnGoods(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map);
 }

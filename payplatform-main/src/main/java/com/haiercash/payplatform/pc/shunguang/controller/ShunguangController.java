@@ -266,4 +266,18 @@ public class ShunguangController extends BaseController {
         }
         return resultMap;
     }
+    /**
+     * @Title
+     * @Description:
+     * @author yu jianwei
+     * @date 2017/11/6 17:40
+     */
+    @RequestMapping(value = "/api/payment/shunguang/returnGoods", method = RequestMethod.POST)
+    public Map<String, Object> returnGoods(@RequestBody Map<String, Object> map) throws Exception {
+        Map<String, Object> checkMap = this.confirmData(map);
+        if (!HttpUtil.isSuccess(checkMap)) {
+            return checkMap;
+        }
+        return shunguangService.returnGoods(map);
+    }
 }
