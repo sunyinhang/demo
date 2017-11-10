@@ -618,7 +618,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         for (int j = 0; j < jsonArray.size(); j++) {
             Map jsonm = (Map) jsonArray.get(j);
             String loanCode = (String) jsonm.get("loanCode");
-            if ("17033a".equals(loanCode)) {//17033a进行过滤  不展示
+            if ("17033a".equals(loanCode) || "17034a".equals(loanCode) || "17045a".equals(loanCode) || "17046a".equals(loanCode) || "17047a".equals(loanCode) || "17048a".equals(loanCode) || "17049a".equals(loanCode)) {//17033a进行过滤  不展示
                 continue;
             }
             if (loanCode.equals(innerTypCde)) {//原贷款品种依然可用
