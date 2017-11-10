@@ -9,16 +9,16 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
-import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
 import com.haiercash.payplatform.service.HaierDataService;
 import com.haiercash.payplatform.service.OrderManageService;
 import com.haiercash.payplatform.service.OrderService;
-import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -488,6 +488,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String innerTypCde = "";//贷款品种
         String innerApplyTnr = "";//借款期限
         String innerApplyTnrTyp = "";//借款期限类型
+        String applSeq = "";
         //String psPerdNo = "";//借款期限
         if ("1".equals(flag) || "1".equals(updatemallflag)) {//待提交返显
             logger.info("待提交订单*********数据加载");
@@ -500,6 +501,14 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             } else {
                 logger.info("退回及待提交进行订单修改");
                 orderNo = (String) cacheMap.get("updatemalloderNo");
+                //
+                Map<String, Object> appOrderMap = (Map<String, Object>) cacheMap.get("apporder");
+                if (appOrderMap == null) {
+                    logger.info("登录超时");
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+                }
+                AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
+                applSeq = appOrder.getApplSeq();
             }
             //
             AppOrdernoTypgrpRelation AppOrdernoTypgrpRelation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
@@ -571,6 +580,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
 
             cacheMap.put("apporder", appOrder);
             RedisUtils.setExpire(token, cacheMap);
+
+            if (StringUtils.isEmpty(applSeq)) {
+                appOrder.setApplSeq(applSeq);
+            }
 
 //            psPerdNo = applyTnr;//借款期限
 //            retrunmap.put("applyTnr", applyTnr);
