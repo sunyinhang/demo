@@ -578,12 +578,12 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             appOrder.setApplyAmt(payAmt);//借款总额
             appOrder.setFstPay(fst_pay);//首付金额
 
-            cacheMap.put("apporder", appOrder);
-            RedisUtils.setExpire(token, cacheMap);
-
             if (StringUtils.isEmpty(applSeq)) {
                 appOrder.setApplSeq(applSeq);
             }
+            cacheMap.put("apporder", appOrder);
+            RedisUtils.setExpire(token, cacheMap);
+
 
 //            psPerdNo = applyTnr;//借款期限
 //            retrunmap.put("applyTnr", applyTnr);
