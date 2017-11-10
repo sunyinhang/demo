@@ -1,10 +1,7 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.haiercash.core.lang.Base64Utils;
-import com.haiercash.spring.service.BaseService;
-import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.commons.util.DateUtil;
+import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
 import com.haiercash.payplatform.common.data.AppOrder;
@@ -15,17 +12,33 @@ import com.haiercash.payplatform.config.AppOtherConfig;
 import com.haiercash.payplatform.config.AppShunguangConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CrmService;
+import com.haiercash.payplatform.service.HaierDataService;
+import com.haiercash.payplatform.service.OrderManageService;
+import com.haiercash.payplatform.utils.AcqTradeCode;
+import com.haiercash.payplatform.utils.DesUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * shunguang service impl.
@@ -280,6 +293,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         } else if ("00".equals(sysSts) || "90".equals(sysSts)) {//作为修改订单处理
             cachemap.put("updatemallflag", "1");//修改标识
             cachemap.put("updatemalloderNo", formId);//要修改的订单编号
+            appOrder.setApplSeq(applSeq);
         } else {//订单已提交成功
             f = "1";
         }
