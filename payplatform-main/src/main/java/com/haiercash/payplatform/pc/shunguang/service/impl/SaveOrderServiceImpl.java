@@ -99,6 +99,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
         AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
         appOrder.setTypCde(typCde);//贷款品种编码
+        logger.info("appOrder1" + appOrder);
 
         //根据token获取统一认证userid
         String userId = sgInnerService.getuserId(token);
@@ -313,6 +314,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
 
         //3.订单保存
+        logger.info("appOrder2:" + appOrder);
         Map<String, Object> ordermap = commonPageService.saveAppOrderInfo(appOrder);
         cacheMap.put("ordermap", ordermap);
         cacheMap.put("custName", custName);

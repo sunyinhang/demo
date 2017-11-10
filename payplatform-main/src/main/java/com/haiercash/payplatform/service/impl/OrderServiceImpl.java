@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
@@ -216,7 +217,9 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             url = EurekaServer.ORDER + "/api/order/save";
         }
         orderMap.entrySet().removeIf(entry -> entry.getValue() == null);
+        logger.info("前appOrder：" + JsonSerializer.serialize(appOrder));
         this.checkOrderDefaultValue(appOrder, orderMap);
+        logger.info("后orderMap：" + JsonSerializer.serialize(orderMap));
         logger.info("==> ORDER save :" + FormatUtil.toJson(orderMap));
         Map<String, Object> returnMap = HttpUtil.restPostMap(url, orderMap);
         logger.info("<== ORDER save :" + FormatUtil.toJson(returnMap));
