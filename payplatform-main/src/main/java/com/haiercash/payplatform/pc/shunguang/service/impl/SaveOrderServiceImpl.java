@@ -321,6 +321,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         cacheMap.put("custNo", custNo);
         cacheMap.put("certNo", certNo);
         cacheMap.put("apporder", appOrder);
+        logger.info("贷款品种编码为：" + appOrder.getTypCde());
         RedisUtils.setExpire(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败

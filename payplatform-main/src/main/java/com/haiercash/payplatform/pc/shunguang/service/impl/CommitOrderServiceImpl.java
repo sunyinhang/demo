@@ -2,9 +2,6 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.BeanUtils;
-import com.haiercash.spring.service.BaseService;
-import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -13,9 +10,20 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderManageService;
+import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.payplatform.utils.DesUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -94,6 +102,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
+        logger.info("贷款品种编码为：" + appOrder.getTypCde());
         typCde = appOrder.getTypCde();
 
         //参数非空校验
