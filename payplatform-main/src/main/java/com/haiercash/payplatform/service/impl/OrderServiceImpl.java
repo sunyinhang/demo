@@ -5,19 +5,20 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.enums.OrderEnum;
-import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.payplatform.service.AppManageService;
-import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CmisService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.GmService;
 import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ChannelType;
-import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.beans.IntrospectionException;
@@ -65,7 +66,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
                 Method method = pd.getReadMethod();
                 Object value = method.invoke(order);
                 List<String> key = OrderEnum.getOrderAttrs(field.getName());
-                if (!StringUtils.isEmpty(key)) {
+                if (!CollectionUtils.isEmpty(key)) {
                     if (value != null) {
                         Map<String, Object> finalMap = map;
                         key.forEach(singleKey -> finalMap.put(singleKey, value));

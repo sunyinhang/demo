@@ -286,6 +286,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String flag = (String) bodymap.get("flag");
         String applSeq = (String) bodymap.get("applSeq");
         String sysSts = (String) bodymap.get("sysSts");
+        logger.info("applSeq1:" + applSeq);
 
         String f = "0";
         if ("N".equals(flag) || "91".equals(sysSts)) {//作为新单处理
@@ -294,6 +295,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             cachemap.put("updatemallflag", "1");//修改标识
             cachemap.put("updatemalloderNo", formId);//要修改的订单编号
             appOrder.setApplSeq(applSeq);
+            logger.info("applSeq2:" + applSeq);
         } else {//订单已提交成功
             f = "1";
         }
