@@ -2,6 +2,7 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.BeanUtils;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -87,6 +88,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String area = (String) map.get("area");//区域
         //缓存获取（放开）
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
+        logger.info("cacheMap：" + JsonSerializer.serialize(cacheMap));
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -101,6 +103,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("登录超时");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+        logger.info("appOrderMap：" + JsonSerializer.serialize(appOrderMap));
         AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
         logger.info("贷款品种编码为：" + appOrder.getTypCde());
         typCde = appOrder.getTypCde();
@@ -236,10 +239,6 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         Map<String, Object> result = commonPageService.commitAppOrder(orderNo, applSeq, "1", null, null, relation.getTypGrp());
         logger.info("订单提交,客户姓名：" + custName);
         logger.info("订单提交，返回数据：" + result);
-
-        //回调   typCde  TODO!!!!
-        String mallOrderNo = appOrder.getMallOrderNo();//商城订单编号
-
 
         return result;
     }
