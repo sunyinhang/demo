@@ -5,32 +5,22 @@ import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
-import com.haiercash.payplatform.common.data.AppOrder;
-import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.common.data.AppointmentRecord;
-import com.haiercash.payplatform.common.data.CooperativeBusiness;
-import com.haiercash.payplatform.common.data.SignContractInfo;
+import com.haiercash.payplatform.common.data.*;
 import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.AppOtherConfig;
+import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.utils.CmisTradeCode;
+import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.payplatform.service.CmisApplService;
-import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.service.CrmService;
-import com.haiercash.payplatform.service.GmService;
-import com.haiercash.payplatform.service.OrderService;
-import com.haiercash.payplatform.utils.CmisTradeCode;
-import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.spring.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RSAUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Base64;
@@ -40,12 +30,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by yuanli on 2017/9/20.
@@ -1320,12 +1305,12 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     public Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) {
         logger.info("============查询还款计划开始===========");
         Map<String, Object> resultMap = crmService.queryApplReraidPlanByloanNo(params);
-        Map<String, Object> custHeadObject = (Map<String, Object>) resultMap.get("head");
-        String retFlag = String.valueOf(custHeadObject.get("retFlag"));
+        Map<String, Object> resultHead = (Map<String, Object>) (resultMap.get("head"));
+        String retFlag = resultHead.get("retFlag").toString();
         if (!"00000".equals(retFlag)) {
             return resultMap;
         }
-        String totleAmt = String.valueOf(custHeadObject.get("totleAmt"));
+        String totleAmt = String.valueOf(resultHead.get("totleAmt"));
         Map<String, Object> body = (Map<String, Object>) resultMap.get("body");
         body.put("totleAmt", totleAmt);
         resultMap.put("body", body);
