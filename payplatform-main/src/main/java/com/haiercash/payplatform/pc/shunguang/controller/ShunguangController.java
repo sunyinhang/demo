@@ -3,13 +3,13 @@ package com.haiercash.payplatform.pc.shunguang.controller;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.payplatform.controller.BaseController;
+import com.haiercash.spring.controller.BaseController;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.tasks.rabbitmq.CmisMessageHandler;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -265,5 +265,19 @@ public class ShunguangController extends BaseController {
             return success(hm);
         }
         return resultMap;
+    }
+    /**
+     * @Title
+     * @Description:
+     * @author yu jianwei
+     * @date 2017/11/6 17:40
+     */
+    @RequestMapping(value = "/api/payment/shunguang/returnGoods", method = RequestMethod.POST)
+    public Map<String, Object> returnGoods(@RequestBody Map<String, Object> map) throws Exception {
+        Map<String, Object> checkMap = this.confirmData(map);
+        if (!HttpUtil.isSuccess(checkMap)) {
+            return checkMap;
+        }
+        return shunguangService.returnGoods(map);
     }
 }

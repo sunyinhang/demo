@@ -1,16 +1,15 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.rest.common.CommonResponse;
-import com.haiercash.payplatform.rest.common.CommonRestUtils;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.common.CommonResponse;
+import com.haiercash.spring.rest.common.CommonRestUtils;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.AppServerUtils;
-import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RestUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -70,7 +69,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         logger.debug("CRM13 queryMerchCustInfo:" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             logger.error("CRM13 查询实名认证客户信息失败！");
-            return fail("52", RestUtil.ERROR_INTERNAL_MSG);
+            return fail("52", ConstUtil.ERROR_INFO);
         }
         return HttpUtil.json2DeepMap(jsonStr);
     }
@@ -94,7 +93,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         logger.debug("App validateUsers :" + response);
         if (StringUtils.isEmpty(response)) {
             logger.error("登录验证信息失败！");
-            return CommonResponse.create(RestUtil.ERROR_INTERNAL_CODE, RestUtil.ERROR_INTERNAL_MSG);
+            return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         return response;
     }
@@ -115,7 +114,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         Map<String, Object> map =  HttpUtil.restGetMap(url,getToken(),params);
         if (StringUtils.isEmpty(map)) {
             logger.error("查询白名单列表！");
-            return fail(RestUtil.ERROR_INTERNAL_CODE, RestUtil.ERROR_INTERNAL_MSG);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         return map;
     }
@@ -125,7 +124,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         Map<String, Object> map =  HttpUtil.restGetMap(url,getToken(),params);
         if (StringUtils.isEmpty(map)) {
             logger.error("还款计划查询！");
-            return fail(RestUtil.ERROR_INTERNAL_CODE, RestUtil.ERROR_INTERNAL_MSG);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         return map;
     }

@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.common.enums;
 
-import com.bestvike.collection.ArrayUtils;
-import com.bestvike.lang.StringUtils;
+import com.haiercash.core.collection.ArrayUtils;
+import com.haiercash.core.lang.StringUtils;
 
 /**
  * Created by 许崇雷 on 2017-10-10.

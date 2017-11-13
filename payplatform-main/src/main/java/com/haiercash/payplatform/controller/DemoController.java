@@ -1,8 +1,9 @@
 package com.haiercash.payplatform.controller;
 
-import com.bestvike.reflect.GenericType;
-import com.haiercash.payplatform.rest.IResponse;
-import com.haiercash.payplatform.rest.common.CommonRestUtils;
+import com.haiercash.core.reflect.GenericType;
+import com.haiercash.spring.controller.BaseController;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

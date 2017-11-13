@@ -3,14 +3,14 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.common.enums.AcquirerCommonPersonEnum;
-import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CommonRepaymentPersonService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.AcqUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RestUtil;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,7 @@ public class CommonRepaymentPersonServiceImpl extends BaseService implements Com
                 .getAcqResponse(acqUrl, AcqTradeCode.SELECT_COMMON_PERSON, super.getChannel(), super.getChannelNo(), "",
                         "", paramMap);
         if (acqResponse == null || acqResponse.isEmpty()) {
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "收单系统通信失败");
+            return fail(ConstUtil.ERROR_CODE, "收单系统通信失败");
         }
         if (!AcqUtil.isSuccess(acqResponse)) {
             Map<String, Object> responseMap = (Map<String, Object>) acqResponse.get("response");
@@ -119,7 +119,7 @@ public class CommonRepaymentPersonServiceImpl extends BaseService implements Com
                 .getAcqResponse(acqUrl, AcqTradeCode.DELETE_APPT, super.getChannel(), super.getChannelNo(), "", "",
                         paramMap);
         if (acqResponse == null || acqResponse.isEmpty()) {
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "收单系统通信失败！");
+            return fail(ConstUtil.ERROR_CODE, "收单系统通信失败！");
         }
         if (!AcqUtil.isSuccess(acqResponse)) {
             return fail("22", "删除共同还款人失败!");

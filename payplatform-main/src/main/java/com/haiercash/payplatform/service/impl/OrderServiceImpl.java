@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
@@ -10,14 +10,16 @@ import com.haiercash.payplatform.service.AppManageService;
 import com.haiercash.payplatform.service.CmisService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ChannelType;
 import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.utils.RestUtil;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.beans.IntrospectionException;
@@ -65,7 +67,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
                 Method method = pd.getReadMethod();
                 Object value = method.invoke(order);
                 List<String> key = OrderEnum.getOrderAttrs(field.getName());
-                if (!StringUtils.isEmpty(key)) {
+                if (!CollectionUtils.isEmpty(key)) {
                     if (value != null) {
                         Map<String, Object> finalMap = map;
                         key.forEach(singleKey -> finalMap.put(singleKey, value));
@@ -215,12 +217,14 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             url = EurekaServer.ORDER + "/api/order/save";
         }
         orderMap.entrySet().removeIf(entry -> entry.getValue() == null);
+        logger.info("前appOrder：" + JsonSerializer.serialize(appOrder));
         this.checkOrderDefaultValue(appOrder, orderMap);
+        logger.info("后orderMap：" + JsonSerializer.serialize(orderMap));
         logger.info("==> ORDER save :" + FormatUtil.toJson(orderMap));
         Map<String, Object> returnMap = HttpUtil.restPostMap(url, orderMap);
         logger.info("<== ORDER save :" + FormatUtil.toJson(returnMap));
         if (returnMap == null || returnMap.isEmpty()) {
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "订单系统通信失败");
+            return fail(ConstUtil.ERROR_CODE, "订单系统通信失败");
         }
         if (HttpUtil.isSuccess(returnMap)) {
             String orderNo = (String) ((Map<String, Object>) returnMap.get("body")).get("formId");
@@ -300,7 +304,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
                 .restGetMap(url);
         logger.info("<== ORDER 获取商品列表：" + goodsMap);
         if (StringUtils.isEmpty(goodsMap)) {
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "订单系统系统通信失败");
+            return fail(ConstUtil.ERROR_CODE, "订单系统系统通信失败");
         }
         if (!HttpUtil.isSuccess(goodsMap)) {
             logger.info("订单系统获取商品列表失败, formId:" + formId);
@@ -383,7 +387,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         crmParam.put("idNo", appOrder.getIdNo());
         Map<String, Object> custIsPass = crmService.getCustIsPass(crmParam);
         if (custIsPass == null || custIsPass.isEmpty()) {
-            return fail(RestUtil.ERROR_INTERNAL_CODE, "CRM 通信失败");
+            return fail(ConstUtil.ERROR_CODE, "CRM 通信失败");
         }
         if (!HttpUtil.isSuccess(custIsPass)) {
             return custIsPass;

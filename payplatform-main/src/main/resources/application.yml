@@ -70,12 +70,12 @@ spring:
         reset-enable: false
         login-username: admin
         login-password: admin
-    mybatis:
-      dialect: org.apache.ibatis.dialect.OracleDialect
-      base-package: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
-      aliases-package: com.haiercash.commons.data,com.haiercash.payplatform.**.data
-      mapper-locations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
-      underscore-to-camel-case: true
+  mybatis:
+    dialect: org.apache.ibatis.dialect.OracleDialect
+    base-package: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
+    aliases-package: com.haiercash.commons.data,com.haiercash.payplatform.**.data
+    mapper-locations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
+    underscore-to-camel-case: true
 eureka:
   client:
     register-with-eureka: true # 是否注册自身到 eureka 服务器
@@ -144,7 +144,7 @@ app:
     sg_merch_no: EHAIER
     sg_store_no: SHUNGUANG
     sg_user_id: SAQDGM01
-    sg_typCde: 17098a
+    sg_typCde: 17033a
     sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
     sg_consumer: dc04a273474a404bafdad48ddb63cce2
   cashloan:

@@ -1,7 +1,11 @@
 package com.haiercash.payplatform.controller;
 
+import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.StringUtils;
+import com.haiercash.spring.controller.BaseController;
 import com.haiercash.commons.util.FileUtil;
-import com.haiercash.payplatform.rest.IResponse;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CommonPageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
@@ -11,9 +15,11 @@ import com.haiercash.payplatform.service.LimitService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.service.RegisterService;
+import com.haiercash.spring.utils.ConstUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -695,5 +701,15 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/queryApplReraidPlanByloanNo", method = RequestMethod.POST)
     public Map<String, Object> queryApplReraidPlanByloanNo(@RequestBody Map<String, Object> map) throws Exception {
         return commonPageService.queryApplReraidPlanByloanNo(map);
+    }
+
+    @PostMapping(value = "/api/payment/appointment")
+    public IResponse appointment(@RequestBody Map<String, Object> map) {
+        String phone = Convert.toString(map.get("phone"));
+        String name = Convert.toString(map.get("name"));
+        String education = Convert.toString(map.get("education"));
+        if (StringUtils.isEmpty(phone))
+            return CommonResponse.create(ConstUtil.ERROR_PARAM_INVALID_CODE, "请填写手机号码");
+        return commonPageService.appointment(phone, name, education);
     }
 }

@@ -95,5 +95,8 @@ public class AcqTradeCode {
      * (POST) 提交还款请求
      */
     public static final String SAVE_REPAY_INFO = "ACQ-2101";
-
+    /**
+     *  收单退货 交易码
+     */
+    public static final String ACQ_RETURNGODDS_TREADECODE = "ACQ";
 }

@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.rest.client.JsonClientUtils;
+import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.payplatform.service.HaierDataService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

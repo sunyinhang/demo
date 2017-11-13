@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.utils;
 
-import com.bestvike.lang.Convert;
+import com.haiercash.core.lang.Convert;
 import org.apache.commons.lang.StringUtils;
 
 /**

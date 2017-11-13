@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.pc.moxie.controller;
 
-import com.haiercash.payplatform.controller.BaseController;
+import com.haiercash.spring.controller.BaseController;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

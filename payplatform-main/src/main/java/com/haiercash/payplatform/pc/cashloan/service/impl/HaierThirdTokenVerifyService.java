@@ -1,15 +1,15 @@
 package com.haiercash.payplatform.pc.cashloan.service.impl;
 
-import com.bestvike.lang.Convert;
-import com.bestvike.lang.StringUtils;
-import com.bestvike.serialization.JsonSerializer;
+import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
-import com.haiercash.payplatform.rest.client.JsonClientUtils;
-import com.haiercash.payplatform.service.BaseService;
-import com.haiercash.payplatform.utils.BusinessException;
-import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.spring.rest.client.JsonClientUtils;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.BusinessException;
+import com.haiercash.spring.utils.ConstUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

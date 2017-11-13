@@ -1,17 +1,17 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.bestvike.lang.Convert;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
-import com.haiercash.payplatform.redis.RedisUtils;
-import com.haiercash.payplatform.rest.IResponse;
+import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.IResponse;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.RegisterService;
-import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

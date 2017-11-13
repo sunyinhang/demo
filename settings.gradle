@@ -1,4 +1,4 @@
 rootProject.name = 'payplatform'
-include 'bestvike-core'
-include 'payplatform-base'
+include 'haiercash-core'
+include 'haiercash-spring'
 include 'payplatform-main'

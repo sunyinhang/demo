@@ -2,13 +2,12 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
-import com.haiercash.payplatform.config.EurekaServer;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CmisService;
-import com.haiercash.payplatform.utils.ConstUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.payplatform.utils.IdCardUtils;
-import com.haiercash.payplatform.utils.RestUtil;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -191,7 +190,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
         logger.debug("CRM个人扩展信息接口返回json==" + json);
         if (StringUtils.isEmpty(json)) {
             logger.error("客户扩展信息接口返回异常!——》 CRM 1.4");
-            return fail("51", RestUtil.ERROR_INTERNAL_MSG);
+            return fail("51", ConstUtil.ERROR_INFO);
         }
         Map<String, Object> custExtInfoMap = HttpUtil.json2Map(json);
         logger.debug("custExtInfoMap==" + custExtInfoMap);
@@ -215,7 +214,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
             logger.info("CRM 1.26 smrzResult==" + smrzJson);
             if (StringUtils.isEmpty(smrzJson)) {
                 logger.error("实名认证信息查询失败！——》CRM 1.26");
-                return fail("54", RestUtil.ERROR_INTERNAL_MSG);
+                return fail("54", ConstUtil.ERROR_INFO);
             }
             Map<String, Object> smrzMap = HttpUtil.json2Map(smrzJson);
             if (!StringUtils.isEmpty(smrzMap.get("body"))) {
@@ -239,7 +238,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
         logger.debug("CRM findCustFCiCustContactByCustNo DONE");
         if (StringUtils.isEmpty(lxrJson)) {
             logger.error("联系人列表查询失败!——》CRM 1.8");
-            return fail("52", RestUtil.ERROR_INTERNAL_MSG);
+            return fail("52", ConstUtil.ERROR_INFO);
         }
 
         Map<String, Object> lxrMap = HttpUtil.json2Map(lxrJson);

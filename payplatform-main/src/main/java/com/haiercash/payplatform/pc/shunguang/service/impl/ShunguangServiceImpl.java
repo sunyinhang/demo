@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.bestvike.lang.Base64Utils;
 import com.haiercash.commons.util.DateUtil;
+import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
 import com.haiercash.payplatform.common.data.AppOrder;
@@ -12,18 +12,20 @@ import com.haiercash.payplatform.config.AppOtherConfig;
 import com.haiercash.payplatform.config.AppShunguangConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
-import com.haiercash.payplatform.redis.RedisUtils;
-import com.haiercash.payplatform.rest.client.JsonClientUtils;
+import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.HaierDataService;
 import com.haiercash.payplatform.service.OrderManageService;
-import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.HttpUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.client.JsonClientUtils;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     private AppOtherConfig appOtherConfig;
     @Autowired
     private AppShunguangConfig appShunguangConfig;
+    @Autowired
+    private AcquirerService acquirerService;
 
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
         Map<String, Object> headMap = new HashMap<>();
@@ -282,6 +286,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String flag = (String) bodymap.get("flag");
         String applSeq = (String) bodymap.get("applSeq");
         String sysSts = (String) bodymap.get("sysSts");
+        logger.info("applSeq1:" + applSeq);
 
         String f = "0";
         if ("N".equals(flag) || "91".equals(sysSts)) {//作为新单处理
@@ -289,6 +294,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         } else if ("00".equals(sysSts) || "90".equals(sysSts)) {//作为修改订单处理
             cachemap.put("updatemallflag", "1");//修改标识
             cachemap.put("updatemalloderNo", formId);//要修改的订单编号
+            appOrder.setApplSeq(applSeq);
+            logger.info("applSeq2:" + applSeq);
         } else {//订单已提交成功
             f = "1";
         }
@@ -944,7 +951,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 
         //请求数据解析
-        String ss = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey));
+//        String ss = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey));
         //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
         String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
@@ -1196,5 +1203,25 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         ///return success();
     }
 
-
+    /**
+     * @Title returnGoods
+     * @Description: 退货接口
+     * @author yu jianwei
+     * @date 2017/11/6 17:45
+     */
+    @Override
+    public Map<String, Object> returnGoods(Map<String, Object> map) {
+        logger.info("===============退货开始==================");
+        String channelNo = String.valueOf(map.get("channelNo"));
+        String data = JSONObject.valueToString(map.get("data"));//交易信息
+        String key = String.valueOf(map.get("key"));
+        try {
+            String params = decryptData(data, channelNo, key);
+            Map<String, Object> returnMap = acquirerService.returnGoods(AcqTradeCode.ACQ_RETURNGODDS_TREADECODE, ConstUtil.CHANNEL, channelNo, "", "", HttpUtil.json2Map((  JSONObject.stringToValue(params).toString())));
+            return (Map<String, Object>) returnMap.get("head");
+        } catch (Exception e) {
+            logger.error(e);
+            return fail("01", "请求数据校验失败");
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.service;
 
-import com.haiercash.payplatform.rest.IResponse;
+import com.haiercash.spring.rest.IResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;

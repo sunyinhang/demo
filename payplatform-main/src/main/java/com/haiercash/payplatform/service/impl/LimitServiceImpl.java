@@ -1,11 +1,11 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.redis.RedisUtils;
+import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.LimitService;
-import com.haiercash.payplatform.utils.ConstUtil;
+import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

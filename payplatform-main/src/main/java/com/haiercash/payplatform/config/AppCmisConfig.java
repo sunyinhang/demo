@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.config;
 
-import com.haiercash.payplatform.rabbit.RabbitInfo;
+import com.haiercash.spring.rabbit.RabbitInfo;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

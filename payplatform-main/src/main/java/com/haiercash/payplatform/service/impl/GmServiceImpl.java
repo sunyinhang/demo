@@ -1,9 +1,9 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.payplatform.config.EurekaServer;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.payplatform.service.GmService;
-import com.haiercash.payplatform.utils.HttpUtil;
-import com.haiercash.payplatform.service.BaseService;
+import com.haiercash.spring.utils.HttpUtil;
+import com.haiercash.spring.service.BaseService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
