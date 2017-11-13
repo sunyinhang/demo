@@ -1292,7 +1292,8 @@ public class AppOrder {
 	public String toString() {
 		return "AppOrder{" +
 				"orderNo='" + orderNo + '\'' +
-				", applseq='" + applseq + '\'' +
+                ", mallOrderNo='" + mallOrderNo + '\'' +
+                ", applseq='" + applseq + '\'' +
 				", idTyp='" + idTyp + '\'' +
 				", idNo='" + idNo + '\'' +
 				", custName='" + custName + '\'' +
@@ -1387,7 +1388,8 @@ public class AppOrder {
 				", goodsModel='" + goodsModel + '\'' +
 				", goodsNum='" + goodsNum + '\'' +
 				", goodsPrice='" + goodsPrice + '\'' +
-				", deliverProvince='" + deliverProvince + '\'' +
+                ", appOrderGoodsList=" + appOrderGoodsList +
+                ", deliverProvince='" + deliverProvince + '\'' +
 				", deliverCity='" + deliverCity + '\'' +
 				", deliverArea='" + deliverArea + '\'' +
 				", adName='" + adName + '\'' +
