@@ -55,3 +55,32 @@ jar {
 bootRepackage {
     enabled = false
 }
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.isReleaseVersion ? project.version : "${project.version}-SNAPSHOT"
+            //
+            from components.java
+            //
+            pom.withXml {
+                asNode().appendNode('name', POM_NAME)
+                asNode().appendNode('description', POM_DESCRIPTION)
+                asNode().appendNode('url', POM_URL)
+            }
+        }
+    }
+    repositories {
+        maven {
+            url project.isReleaseVersion ? NEXUS_RELEASE_REPO_URL : NEXUS_SNAPSHOT_REPO_URL
+            credentials {
+                username NEXUS_USERNAME
+                password NEXUS_PASSWORD
+            }
+        }
+    }
+}

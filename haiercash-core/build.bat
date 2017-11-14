@@ -1,2 +1,2 @@
 @ECHO OFF
-gradle clean build -Prelease -x Test
+gradle clean build -Prelease
