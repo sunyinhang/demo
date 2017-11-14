@@ -1,8 +1,63 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    ext {
+        springBootVersion = '1.5.6.RELEASE'
+        springCloudVersion = 'Dalston.SR3'
+        isReleaseVersion = project.hasProperty('release')
+    }
+    repositories {
+        mavenLocal()
+        maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
     compile project(':haiercash-core')
 
+    //==依赖==
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
+    compile('org.springframework.boot:spring-boot-starter-amqp')
+    //数据库
+    compile('com.oracle:ojdbc6:11g')
+    compile('com.alibaba:druid-spring-boot-starter:1.1.5')
+    //支持
+    compile('org.json:json')
+    //其他
     compile('com.haiercash:payplatform-util:1.0.1-SNAPSHOT')
     compile('com.bestvike:bv-mybatis:3.4.0-SNAPSHOT')
     compile('com.bestvike:bv-jxls-poi:1.0.9-SNAPSHOT')
     compile('com.bestvike:bv-jxls-reader:2.0.2-SNAPSHOT')
+    //==编译时==
+    compileOnly('org.projectlombok:lombok')
+    //==测试时==
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.projectlombok:lombok')
+}
+
+jar {
+    baseName = project.name
+    version = project.isReleaseVersion ? project.version : "${project.version}-SNAPSHOT"
+}
+
+bootRepackage {
+    enabled = false
 }
