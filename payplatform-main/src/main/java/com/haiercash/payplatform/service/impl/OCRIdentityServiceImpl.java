@@ -1,6 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.commons.util.EncryptUtil;
+import com.haiercash.mybatis.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CrmManageService;

@@ -12,14 +12,8 @@ import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.AppOtherConfig;
-import com.haiercash.spring.config.EurekaServer;
-import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.spring.rest.IResponse;
-import com.haiercash.spring.rest.client.JsonClientUtils;
-import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CmisApplService;
 import com.haiercash.payplatform.service.CommonPageService;
 import com.haiercash.payplatform.service.CrmService;
@@ -27,10 +21,16 @@ import com.haiercash.payplatform.service.GmService;
 import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.CmisTradeCode;
 import com.haiercash.payplatform.utils.CmisUtil;
-import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.client.JsonClientUtils;
+import com.haiercash.spring.rest.common.CommonResponse;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.codec.Base64;
@@ -925,7 +925,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return null;
         }
         //加密后的str传入接口
-        String str = com.haiercash.commons.util.EncryptUtil.simpleEncrypt(userId);
+        String str = com.haiercash.mybatis.util.EncryptUtil.simpleEncrypt(userId);
         String url = EurekaServer.UAUTH + "/app/uauth/getMobile" + "?userId=" + str;
         logger.info("统一认证1.21==》请求url==" + url);
         String json = HttpUtil.restGet(url, token);
@@ -1250,7 +1250,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return null;
         }
         //加密后的str传入接口
-        String str = com.haiercash.commons.util.EncryptUtil.simpleEncrypt(userId);
+        String str = com.haiercash.mybatis.util.EncryptUtil.simpleEncrypt(userId);
         String url = EurekaServer.UAUTH + "/app/uauth/getMobile" + "?userId=" + str;
         logger.info("统一认证1.21==》请求url==" + url);
         String json = HttpUtil.restGet(url, token);

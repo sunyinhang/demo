@@ -72,9 +72,9 @@ spring:
         login-password: admin
   mybatis:
     dialect: org.apache.ibatis.dialect.OracleDialect
-    base-package: com.haiercash.commons.dao,com.haiercash.payplatform.**.dao
-    aliases-package: com.haiercash.commons.data,com.haiercash.payplatform.**.data
-    mapper-locations: classpath*:com/haiercash/commons/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
+    base-package: com.haiercash.mybatis.dao,com.haiercash.payplatform.**.dao
+    aliases-package: com.haiercash.mybatis.data,com.haiercash.payplatform.**.data
+    mapper-locations: classpath*:com/haiercash/mybatis/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
     underscore-to-camel-case: true
 eureka:
   client:
