@@ -1,4 +1,4 @@
-package com.idcard;
+package com.haiercash.payplatform.utils.idcard;
 
 import com.alibaba.druid.util.StringUtils;
 

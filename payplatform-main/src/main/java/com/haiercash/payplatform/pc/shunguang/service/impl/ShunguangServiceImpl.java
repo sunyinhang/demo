@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
-import com.haiercash.commons.util.DateUtil;
 import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.mybatis.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
 import com.haiercash.payplatform.common.data.AppOrder;
