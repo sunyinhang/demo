@@ -1,12 +1,10 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.haiercash.core.lang.Base64Utils;
-import com.haiercash.core.lang.BeanUtils;
-import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
-import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.pc.shunguang.service.CommitOrderService;
@@ -21,7 +19,6 @@ import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
-import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
@@ -86,27 +83,6 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             latitude = (BigDecimal)map.get("latitude");//维度
         }
         String area = (String) map.get("area");//区域
-        //缓存获取（放开）
-        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        logger.info("cacheMap：" + JsonSerializer.serialize(cacheMap));
-        if (cacheMap == null || "".equals(cacheMap)) {
-            logger.info("Jedis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-//        String key0 = "applSeq" + applSeq;
-//        if(cacheMap.containsKey(key0)){
-//            return success();
-//        }
-        String typCde = "";
-        Map<String, Object> appOrderMap = (Map<String, Object>) cacheMap.get("apporder");
-        if (appOrderMap == null) {
-            logger.info("登录超时");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        logger.info("appOrderMap：" + JsonSerializer.serialize(appOrderMap));
-        AppOrder appOrder = BeanUtils.mapToBean(appOrderMap, AppOrder.class);
-        logger.info("贷款品种编码为：" + appOrder.getTypCde());
-        typCde = appOrder.getTypCde();
 
         //参数非空校验
         if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
@@ -116,6 +92,14 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
+
+        //查询订单详情
+        Map<String, Object> mapLoanDetail = acquirerService.getOrderFromAcquirer(applSeq, channel, channelNo, null, null, "2");
+        if (!HttpUtil.isSuccess(mapLoanDetail)) {
+            return mapLoanDetail;
+        }
+        Map bodyLoanDetail = (Map<String, Object>) mapLoanDetail.get("body");
+        String typCde = Convert.toString(bodyLoanDetail.get("typ_cde"));//贷款品种
 
         //根据用户中心token获取统一认证userId
         String userId = sgInnerService.getuserId(token);
