@@ -130,6 +130,37 @@ public final class RedisUtils {
         }
     }
 
+    @SuppressWarnings("Duplicates")
+    public static <T> T getsetExpire(String key, Object value, Class<T> clazz) {
+        if (getRedisProperties().valueExpireEnabled()) {
+            BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+            return deserialize(operations.getAndSet(serialize(value)), clazz);
+        } else {
+            return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), clazz);
+        }
+    }
+
+    @SuppressWarnings("Duplicates")
+    public static <T> T getsetExpire(String key, Object value, TypeReference<T> type) {
+        if (getRedisProperties().valueExpireEnabled()) {
+            BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+            return deserialize(operations.getAndSet(serialize(value)), type);
+        } else {
+            return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), type);
+        }
+    }
+
+    public static String getsetExpireString(String key, Object value) {
+        return getsetExpire(key, value, String.class);
+    }
+
+    public static Map<String, Object> getsetExpireMap(String key, Object value) {
+        return getsetExpire(key, value, new TypeReference<Map<String, Object>>() {
+        });
+    }
+
     //endregion
 
 
@@ -182,6 +213,39 @@ public final class RedisUtils {
     @Deprecated
     public static boolean setnx(String key, Object value) {
         return getRedisTemplate().opsForValue().setIfAbsent(key, serialize(value));
+    }
+
+    /**
+     * 使用 getsetExpire 代替
+     */
+    @Deprecated
+    public static <T> T getset(String key, Object value, Class<T> clazz) {
+        return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), clazz);
+    }
+
+    /**
+     * 使用 getsetExpire 代替
+     */
+    @Deprecated
+    public static <T> T getset(String key, Object value, TypeReference<T> type) {
+        return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), type);
+    }
+
+    /**
+     * 使用 getsetExpireString 代替
+     */
+    @Deprecated
+    public static String getsetString(String key, Object value) {
+        return getset(key, value, String.class);
+    }
+
+    /**
+     * 使用 getsetExpireMap 代替
+     */
+    @Deprecated
+    public static Map<String, Object> getsetMap(String key, Object value) {
+        return getset(key, value, new TypeReference<Map<String, Object>>() {
+        });
     }
 
     //endregion
