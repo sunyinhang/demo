@@ -39,13 +39,9 @@ dependencies {
     //数据库
     compile('com.oracle:ojdbc6:11g')
     compile('com.alibaba:druid-spring-boot-starter:1.1.5')
+    compile('com.haiercash:haiercash-mybatis:1.0.2')
     //支持
     compile('org.json:json')
-    //其他
-    compile('com.haiercash:payplatform-util:1.0.1-SNAPSHOT')
-    compile('com.bestvike:bv-mybatis:3.4.0-SNAPSHOT')
-    compile('com.bestvike:bv-jxls-poi:1.0.9-SNAPSHOT')
-    compile('com.bestvike:bv-jxls-reader:2.0.2-SNAPSHOT')
     //==编译时==
     compileOnly('org.projectlombok:lombok')
     //==测试时==
