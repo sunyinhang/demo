@@ -41,6 +41,7 @@ dependencies {
     //xml
     compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml')
     //==编译时==
+    compileOnly('org.springframework.boot:spring-boot-configuration-processor')
     compileOnly('org.projectlombok:lombok')
     //==测试时==
     testCompile('org.springframework.boot:spring-boot-starter-test')
