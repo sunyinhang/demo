@@ -1,8 +1,8 @@
 package com.haiercash.payplatform.utils;
 
+import com.haiercash.mybatis.util.DateUtil;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
-import com.haiercash.commons.util.DateUtil;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 

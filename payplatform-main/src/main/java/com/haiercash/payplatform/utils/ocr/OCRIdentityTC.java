@@ -1,14 +1,17 @@
 package com.haiercash.payplatform.utils.ocr;
 
 import com.haiercash.payplatform.common.entity.ReturnMessage;
-import com.idcard.Demo;
-import com.idcard.GlobalData;
+import com.haiercash.payplatform.utils.idcard.Demo;
+import com.haiercash.payplatform.utils.idcard.GlobalData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import static java.lang.System.out;
@@ -167,7 +170,7 @@ public class OCRIdentityTC {
                 e.printStackTrace();
                 logger.info("天诚OCR身份证识别：识别出现异常："+e.getMessage());
             }
-           // com.idcard.StringManager.SaveJPGFile("d:/ImageFile/001.jpg", stringManager.headimg.getBytes());// 人头像保存
+            // com.haiercash.payplatform.utils.idcard.StringManager.SaveJPGFile("d:/ImageFile/001.jpg", stringManager.headimg.getBytes());// 人头像保存
         }else{
             logger.info("天诚OCR身份证识别：返回值为空！");
             out.print("buf == null\n");

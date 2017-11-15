@@ -5,12 +5,23 @@ import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
-import com.haiercash.payplatform.common.data.*;
+import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.common.data.AppointmentRecord;
+import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.AppOtherConfig;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.service.AcquirerService;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.CrmService;
+import com.haiercash.payplatform.service.GmService;
+import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.CmisTradeCode;
 import com.haiercash.payplatform.utils.CmisUtil;
+import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
@@ -30,7 +41,12 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Created by yuanli on 2017/9/20.
@@ -910,7 +926,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return null;
         }
         //加密后的str传入接口
-        String str = com.haiercash.commons.util.EncryptUtil.simpleEncrypt(userId);
+        String str = EncryptUtil.simpleEncrypt(userId);
         String url = EurekaServer.UAUTH + "/app/uauth/getMobile" + "?userId=" + str;
         logger.info("统一认证1.21==》请求url==" + url);
         String json = HttpUtil.restGet(url, token);
@@ -1235,7 +1251,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return null;
         }
         //加密后的str传入接口
-        String str = com.haiercash.commons.util.EncryptUtil.simpleEncrypt(userId);
+        String str = EncryptUtil.simpleEncrypt(userId);
         String url = EurekaServer.UAUTH + "/app/uauth/getMobile" + "?userId=" + str;
         logger.info("统一认证1.21==》请求url==" + url);
         String json = HttpUtil.restGet(url, token);

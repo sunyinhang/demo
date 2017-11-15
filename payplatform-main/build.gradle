@@ -1,13 +1,76 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    ext {
+        springBootVersion = '1.5.6.RELEASE'
+        springCloudVersion = 'Dalston.SR3'
+        isReleaseVersion = project.hasProperty('release')
+    }
+    repositories {
+        mavenLocal()
+        maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
     compile project(':haiercash-spring')
+
+    //==依赖==
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
+    compile('org.springframework.boot:spring-boot-starter-amqp')
+    compile('org.springframework.boot:spring-boot-starter-mail')
+    compile('org.springframework.cloud:spring-cloud-starter-oauth2')
+    compile('org.springframework.cloud:spring-cloud-starter-eureka')
+    compile('org.springframework.cloud:spring-cloud-starter-feign')
+    compile('org.springframework.cloud:spring-cloud-starter-zuul')
+    compile('org.springframework.session:spring-session')
+    //==运行时==
+    runtime('org.springframework.boot:spring-boot-devtools')
+    //==编译时==
+    compileOnly('org.springframework.boot:spring-boot-configuration-processor')
+    compileOnly('org.projectlombok:lombok')
+    //==测试时==
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.springframework.security:spring-security-test')
+    testCompile('org.projectlombok:lombok')
 }
-ext {
-    releasePublish = project.hasProperty('release')
-}
+
 jar {
     baseName = project.name
-    version = project.releasePublish ? project.version : "${project.version}-SNAPSHOT"
+    version = project.isReleaseVersion ? project.version : "${project.version}-SNAPSHOT"
 }
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDirs 'src/main/java'
+        }
+    }
+}
+
 springBoot {
     classifier = 'exec'
 }

@@ -1,0 +1,87 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    ext {
+        springBootVersion = '1.5.6.RELEASE'
+        springCloudVersion = 'Dalston.SR3'
+        isReleaseVersion = project.hasProperty('release')
+    }
+    repositories {
+        mavenLocal()
+        maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    //==依赖==
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.cloud:spring-cloud-starter-eureka')
+    compile('org.springframework.cloud:spring-cloud-starter-zuul')
+    //linq
+    compile('com.bestvike:linq:1.0.1')
+    //json
+    compile('com.alibaba:fastjson:1.2.38')
+    //xml
+    compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml')
+    //==编译时==
+    compileOnly('org.springframework.boot:spring-boot-configuration-processor')
+    compileOnly('org.projectlombok:lombok')
+    //==测试时==
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.projectlombok:lombok')
+}
+
+jar {
+    baseName = project.name
+    version = project.isReleaseVersion ? project.version : "${project.version}-SNAPSHOT"
+}
+
+bootRepackage {
+    enabled = false
+}
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.isReleaseVersion ? project.version : "${project.version}-SNAPSHOT"
+            //
+            from components.java
+            //
+            pom.withXml {
+                asNode().appendNode('name', POM_NAME)
+                asNode().appendNode('description', POM_DESCRIPTION)
+                asNode().appendNode('url', POM_URL)
+            }
+        }
+    }
+    repositories {
+        maven {
+            url project.isReleaseVersion ? NEXUS_RELEASE_REPO_URL : NEXUS_SNAPSHOT_REPO_URL
+            credentials {
+                username NEXUS_USERNAME
+                password NEXUS_PASSWORD
+            }
+        }
+    }
+}

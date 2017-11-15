@@ -1,11 +1,15 @@
-package com.idcard;
+package com.haiercash.payplatform.utils.idcard;
 //import net.sf.json.JSONException;
 //import net.sf.json.JSONObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class StringManager {
 	public  String headimg = "";
