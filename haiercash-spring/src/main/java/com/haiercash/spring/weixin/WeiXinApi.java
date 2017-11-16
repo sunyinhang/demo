@@ -5,11 +5,16 @@ import com.haiercash.spring.client.RestTemplateProvider;
 import com.haiercash.spring.redis.RedisLock;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.utils.BusinessException;
+import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.spring.weixin.entity.WeiXinSignature;
 import com.haiercash.spring.weixin.entity.WeiXinTicket;
 import com.haiercash.spring.weixin.entity.WeiXinToken;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,7 +52,8 @@ public final class WeiXinApi {
         params.put("grant_type", "client_credential");
         params.put("appid", this.properties.getAppid());
         params.put("secret", this.properties.getSecret());
-        WeiXinToken token = getRestTemplate().getForObject(this.properties.getTokenUrl(), WeiXinToken.class, params);
+        String url = this.properties.getTokenUrl() + "?grant_type=client_credential&appid=" + this.properties.getAppid() + "&secret=" + this.properties.getSecret();
+        WeiXinToken token = getRestTemplate().getForObject(url, WeiXinToken.class, params);
         if (!token.isSuccess())
             throw new BusinessException(token.getErrorcodeStr(), token.getErrormsg());
         return token;
@@ -67,7 +73,9 @@ public final class WeiXinApi {
             Map<String, Object> params = new HashMap<>();
             params.put("access_token", token.getAccess_token());
             params.put("type", type);
-            ticket = getRestTemplate().getForObject(this.properties.getTicketUrl(), WeiXinTicket.class, params);
+
+            String url = this.properties.getTicketUrl() + "?access_token=" + token.getAccess_token() + "&type=" + type;
+            ticket = getRestTemplate().getForObject(url, WeiXinTicket.class, params);
             if (!ticket.isSuccess())
                 throw new BusinessException(ticket.getErrorcodeStr(), ticket.getErrormsg());
             ticket.setGenTime(DateUtils.nowString());
