@@ -28,8 +28,8 @@ public final class WeiXinApi {
     private static final TimeUnit LOCK_TICKET_TIMEUNIT = TimeUnit.SECONDS;
     private static final String KEY_TICKET = "WEIXIN:TICKET";
     private static final String TICKET_TYPE = "jsapi";
-    private static final String URL_GET_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token";
-    private static final String URL_GET_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";
+    // private static final String URL_GET_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token";
+    // private static final String URL_GET_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";
 
     @Autowired
     private WeiXinProperties properties;
@@ -47,7 +47,7 @@ public final class WeiXinApi {
         params.put("grant_type", "client_credential");
         params.put("appid", this.properties.getAppid());
         params.put("secret", this.properties.getSecret());
-        WeiXinToken token = getRestTemplate().getForObject(URL_GET_ACCESS_TOKEN, WeiXinToken.class, params);
+        WeiXinToken token = getRestTemplate().getForObject(this.properties.getTokenUrl(), WeiXinToken.class, params);
         if (!token.isSuccess())
             throw new BusinessException(token.getErrorcodeStr(), token.getErrormsg());
         return token;
@@ -67,7 +67,7 @@ public final class WeiXinApi {
             Map<String, Object> params = new HashMap<>();
             params.put("access_token", token.getAccess_token());
             params.put("type", type);
-            ticket = getRestTemplate().getForObject(URL_GET_TICKET, WeiXinTicket.class, params);
+            ticket = getRestTemplate().getForObject(this.properties.getTicketUrl(), WeiXinTicket.class, params);
             if (!ticket.isSuccess())
                 throw new BusinessException(ticket.getErrorcodeStr(), ticket.getErrormsg());
             ticket.setGenTime(DateUtils.nowString());

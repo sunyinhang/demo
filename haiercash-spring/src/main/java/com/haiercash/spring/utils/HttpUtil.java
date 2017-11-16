@@ -5,21 +5,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by use on 2017/7/25.
@@ -358,5 +349,13 @@ public final class HttpUtil {
 
     public static boolean isSuccess(Map<String, Object> map) {
         return getReturnCode(map).equals(ConstUtil.SUCCESS_CODE);
+    }
+
+    // 下载文件
+    public static byte[] download(String url) {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(url, byte[].class);
+        return responseEntity.getBody();
+        //return restTemplate.getForObject(url, byte[].class);
     }
 }

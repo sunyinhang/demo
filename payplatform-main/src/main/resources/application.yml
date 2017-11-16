@@ -152,3 +152,6 @@ app:
   weixin:
     appid: wx765f132310ed7371
     secret: c400d6495e25f2401b5a7209585fc56c
+    tokenUrl: https://api.weixin.qq.com/cgi-bin/token
+    ticketUrl: https://api.weixin.qq.com/cgi-bin/ticket/getticket
+    mediaUrl: https://api.weixin.qq.com/cgi-bin/media/get
