@@ -1,6 +1,10 @@
+import org.springframework.util.StringUtils
+
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
+group = 'com.haiercash'
+version = StringUtils.trimWhitespace(new File("${projectDir.getAbsolutePath()}${File.separator}..${File.separator}VERSION").text)
 sourceCompatibility = 1.8
 
 buildscript {
