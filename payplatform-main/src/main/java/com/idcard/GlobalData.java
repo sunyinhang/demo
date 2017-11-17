@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.utils.idcard;
+package com.idcard;
 
 
 public class GlobalData {
