@@ -5,6 +5,9 @@ import com.alibaba.druid.util.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
+/**
+ * 请勿修改包名,否则会导致报错,非常重要
+ */
 public class Demo {
 	static
     {
