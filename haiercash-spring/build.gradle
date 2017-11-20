@@ -33,9 +33,17 @@ dependencies {
     compile project(':haiercash-core')
 
     //==依赖==
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-data-redis')
     compile('org.springframework.boot:spring-boot-starter-amqp')
+    compile('org.springframework.boot:spring-boot-starter-mail')
+    compile('org.springframework.cloud:spring-cloud-starter-oauth2')
+    compile('org.springframework.cloud:spring-cloud-starter-eureka')
+    compile('org.springframework.cloud:spring-cloud-starter-feign')
+    compile('org.springframework.cloud:spring-cloud-starter-zuul')
+    compile('org.springframework.session:spring-session')
     //数据库
     compile('com.oracle:ojdbc6:11g')
     compile('com.alibaba:druid-spring-boot-starter:1.1.5')
