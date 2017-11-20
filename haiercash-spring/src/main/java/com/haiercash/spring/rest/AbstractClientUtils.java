@@ -17,6 +17,7 @@ import java.util.Map;
  * Created by 许崇雷 on 2017-10-21.
  */
 public abstract class AbstractClientUtils {
+    private static final String ERROR_NULL_MSG = "外部服务未返回任何数据";
     private static final String ERROR_SERVER_MSG = "外部系统发生错误:HTTP-%s";
 
     protected abstract RestTemplate getRestTemplate();
@@ -30,8 +31,11 @@ public abstract class AbstractClientUtils {
         URI uri = uriBuilder.build().encode().toUri();
         RestTemplate restTemplate = this.getRestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK)
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            if (responseEntity.getBody() == null)
+                throw new RuntimeException(ERROR_NULL_MSG);
             return responseEntity.getBody();
+        }
         throw new RuntimeException(String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
     }
 
@@ -44,8 +48,11 @@ public abstract class AbstractClientUtils {
         URI uri = uriBuilder.build().encode().toUri();
         RestTemplate restTemplate = this.getRestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.exchange(uri, HttpMethod.DELETE, new HttpEntity<>(headers), String.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK)
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            if (responseEntity.getBody() == null)
+                throw new RuntimeException(ERROR_NULL_MSG);
             return responseEntity.getBody();
+        }
         throw new RuntimeException(String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
     }
 
@@ -54,8 +61,11 @@ public abstract class AbstractClientUtils {
         URI uri = uriBuilder.build().encode().toUri();
         RestTemplate restTemplate = this.getRestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(request, headers), String.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK)
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            if (responseEntity.getBody() == null)
+                throw new RuntimeException(ERROR_NULL_MSG);
             return responseEntity.getBody();
+        }
         throw new RuntimeException(String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
     }
 
@@ -64,8 +74,11 @@ public abstract class AbstractClientUtils {
         URI uri = uriBuilder.build().encode().toUri();
         RestTemplate restTemplate = this.getRestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(request, headers), String.class);
-        if (responseEntity.getStatusCode() == HttpStatus.OK)
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            if (responseEntity.getBody() == null)
+                throw new RuntimeException(ERROR_NULL_MSG);
             return responseEntity.getBody();
+        }
         throw new RuntimeException(String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
     }
 }
