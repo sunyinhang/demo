@@ -17,7 +17,7 @@ import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.spring.weixin.WeiXinApiConsts;
+import com.haiercash.spring.weixin.WeiXinApi;
 import com.haiercash.spring.weixin.WeiXinUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -207,7 +207,7 @@ public class CommonPageController extends BaseController {
         Map<String, Object> params = new HashMap<>();
         params.put("access_token", token);
         params.put("media_id", mediaId);
-        byte[] img = JsonClientUtils.getForObject(WeiXinApiConsts.URL_GET_MEDIA, byte[].class, params);
+        byte[] img = JsonClientUtils.getForObject(WeiXinApi.URL_GET_MEDIA, byte[].class, params);
         return faceService.uploadFacePic(img, request, response);
     }
 
