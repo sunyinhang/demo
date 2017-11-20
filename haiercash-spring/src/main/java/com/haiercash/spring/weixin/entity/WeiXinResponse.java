@@ -1,8 +1,10 @@
 package com.haiercash.spring.weixin.entity;
 
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.ObjectUtils;
+import com.haiercash.spring.utils.BusinessException;
 import lombok.Data;
+
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-11-15.
@@ -12,11 +14,9 @@ public class WeiXinResponse {
     private Integer errcode;
     private String errormsg;
 
-    public String getErrorcodeStr() {
-        return Convert.toString(this.errcode);
-    }
-
-    public boolean isSuccess() {
-        return ObjectUtils.equals(this.errcode, 0);
+    public void assertSuccess() {
+        if (Objects.equals(this.errcode, 0))
+            return;
+        throw new BusinessException(Convert.toString(this.errcode), this.errormsg);
     }
 }

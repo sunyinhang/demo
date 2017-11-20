@@ -1,12 +1,12 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.FaceService;
+import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
-import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.payplatform.utils.EncryptUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,7 +22,6 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -62,12 +61,12 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
     //人脸识别
     @Override
-    public Map<String, Object> uploadFacePic(MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Map<String, Object> uploadFacePic(/*MultipartFile faceImg,*/byte[] faceBytes, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("人脸识别*****************开始");
-        if (faceImg.isEmpty()) {
+        /*if (faceImg.isEmpty()) {
             logger.info("图片为空");
             return fail(ConstUtil.ERROR_CODE, "图片为空");
-        }
+        }*/
         //前台参数获取
         String token = request.getHeader("token");
         String channel = request.getHeader("channel");
@@ -100,20 +99,8 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String appno = UUID.randomUUID().toString().replace("-", "");
         String filestreamname = custNo + ".jpg";
         //图片处理
-        InputStream inputStream = faceImg.getInputStream();
-        InputStream inputStream1 = faceImg.getInputStream();
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buf = new byte[1024];
-        int numBytesRead = 0;
-        while ((numBytesRead = inputStream.read(buf)) != -1) {
-            output.write(buf, 0, numBytesRead);
-        }
-        byte[] data = output.toByteArray();
-        output.close();
-        inputStream.close();
-
         BASE64Encoder encode = new BASE64Encoder();
-        String base64 = encode.encode(data);
+        String base64 = encode.encode(faceBytes);
         String filestream = URLEncoder.encode(base64, "UTF-8");
         //调用外联活体人脸识别
         String url = outplatform_url + "/Outreachplatform/api/face/isface";
@@ -170,13 +157,14 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String fileName = UUID.randomUUID().toString().replaceAll("-", "");
         filePath = filePath.append(fileName).append(".jpg"); // 测试打开
         FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
-        byte[] bufferOut = new byte[1024];
+        outImag.write(faceBytes);
+        /*byte[] bufferOut = new byte[1024];
         int bytes = 0;
         while ((bytes = inputStream1.read(bufferOut)) != -1) {
             outImag.write(bufferOut, 0, bytes);
         }
         outImag.close();
-        inputStream1.close();
+        inputStream1.close();*/
         //图片压缩
         //ImageUtil.zipImageFile(new File(filePath.toString()), new File(filePath.toString()), 425, 638, 0.7f);
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));

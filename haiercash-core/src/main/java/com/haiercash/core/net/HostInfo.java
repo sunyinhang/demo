@@ -1,5 +1,11 @@
 package com.haiercash.core.net;
 
+import sun.management.VMManagement;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -18,6 +24,7 @@ public final class HostInfo {
     private String hostName;
     private String[] macAddress;
     private String[] ipAddress;
+    private int processId;
 
     //构造函数
     private HostInfo() {
@@ -69,6 +76,15 @@ public final class HostInfo {
         return instance.ipAddress;
     }
 
+    /**
+     * 获取进程 id
+     *
+     * @return 进程 id
+     */
+    public static int getProcessId() {
+        return instance.processId;
+    }
+
     //刷新
     private void refresh() {
         try {
@@ -95,8 +111,16 @@ public final class HostInfo {
                 }
             }
             this.hostName = hostName;
-            this.macAddress = macAddress.toArray(new String[0]);
-            this.ipAddress = ipAddress.toArray(new String[0]);
+            this.macAddress = macAddress.toArray(new String[macAddress.size()]);
+            this.ipAddress = ipAddress.toArray(new String[ipAddress.size()]);
+            //获取当前进程 id
+            RuntimeMXBean runtimeMBean = ManagementFactory.getRuntimeMXBean();
+            Field jvmField = runtimeMBean.getClass().getDeclaredField("jvm");
+            jvmField.setAccessible(true);
+            VMManagement jvm = (VMManagement) jvmField.get(runtimeMBean);
+            Method getProcessIdMethod = jvm.getClass().getDeclaredMethod("getProcessId");
+            getProcessIdMethod.setAccessible(true);
+            this.processId = (int) getProcessIdMethod.invoke(jvm);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -166,83 +166,43 @@ public final class RedisUtils {
 
     //region 字符串命令
 
-    /**
-     * 使用 setExpire 代替
-     */
-    @Deprecated
     public static void set(String key, Object value) {
         getRedisTemplate().opsForValue().set(key, serialize(value));
     }
 
-    /**
-     * 使用 getExpire 代替
-     */
-    @Deprecated
     public static <T> T get(String key, Class<T> clazz) {
         return deserialize(getRedisTemplate().opsForValue().get(key), clazz);
     }
 
-    /**
-     * 使用 getExpire 代替
-     */
-    @Deprecated
     public static <T> T get(String key, TypeReference<T> type) {
         return deserialize(getRedisTemplate().opsForValue().get(key), type);
     }
 
-    /**
-     * 使用 getExpireString 代替
-     */
-    @Deprecated
     public static String getString(String key) {
         return get(key, String.class);
     }
 
-    /**
-     * 使用 getExpireMap 代替
-     */
-    @Deprecated
     public static Map<String, Object> getMap(String key) {
         return get(key, new TypeReference<Map<String, Object>>() {
         });
     }
 
-    /**
-     * 使用 setnxExpire 代替
-     */
-    @Deprecated
     public static boolean setnx(String key, Object value) {
         return getRedisTemplate().opsForValue().setIfAbsent(key, serialize(value));
     }
 
-    /**
-     * 使用 getsetExpire 代替
-     */
-    @Deprecated
     public static <T> T getset(String key, Object value, Class<T> clazz) {
         return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), clazz);
     }
 
-    /**
-     * 使用 getsetExpire 代替
-     */
-    @Deprecated
     public static <T> T getset(String key, Object value, TypeReference<T> type) {
         return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), type);
     }
 
-    /**
-     * 使用 getsetExpireString 代替
-     */
-    @Deprecated
     public static String getsetString(String key, Object value) {
         return getset(key, value, String.class);
     }
 
-    /**
-     * 使用 getsetExpireMap 代替
-     */
-    @Deprecated
     public static Map<String, Object> getsetMap(String key, Object value) {
         return getset(key, value, new TypeReference<Map<String, Object>>() {
         });
@@ -298,51 +258,27 @@ public final class RedisUtils {
         return getRedisTemplate().opsForHash().hasKey(key, field);
     }
 
-    /**
-     * 使用 hsetExpire 代替
-     */
-    @Deprecated
     public static void hset(String key, String field, Object value) {
         getRedisTemplate().opsForHash().put(key, field, serialize(value));
     }
 
-    /**
-     * 使用 hgetExpire 代替
-     */
-    @Deprecated
     public static <T> T hget(String key, String field, Class<T> clazz) {
         return deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), clazz);
     }
 
-    /**
-     * 使用 hgetExpire 代替
-     */
-    @Deprecated
     public static <T> T hget(String key, String field, TypeReference<T> type) {
         return deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), type);
     }
 
-    /**
-     * 使用 hgetExpireString 代替
-     */
-    @Deprecated
     public static String hgetString(String key, String field) {
         return hget(key, field, String.class);
     }
 
-    /**
-     * 使用 hgetExpireMap 代替
-     */
-    @Deprecated
     public static Map<String, Object> hgetMap(String key, String field) {
         return hget(key, field, new TypeReference<Map<String, Object>>() {
         });
     }
 
-    /**
-     * 使用 hsetnxExpire 代替
-     */
-    @Deprecated
     public static boolean hsetnx(String key, String field, Object value) {
         return getRedisTemplate().opsForHash().putIfAbsent(key, field, serialize(value));
     }

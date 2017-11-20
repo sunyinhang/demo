@@ -11,5 +11,5 @@ import lombok.Data;
 public final class WeiXinSignature {
     private String timestamp;
     private String noncestr;
-    private String sinature;
+    private String signature;
 }
