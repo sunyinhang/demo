@@ -1387,36 +1387,15 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if (Objects.equals(retFlag, "00000")) {
             //集团uid已在统一认证做过绑定
             String body = userInfo.get("body").toString();
-            //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
             JSONObject bodyMap = new JSONObject(body);
             uidLocal = bodyMap.get("userId").toString();//统一认证内userId
             phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
-        } else if (Objects.equals(retFlag, "U0178")) {//U0157：未查到该用户的信息
-            //向后台注册用户信息
-            Map<String, Object> registerResult = saveUserByExternUid(this.getChannelNo(), userId__, phoneNo_);
-            String registerResultFlag = HttpUtil.getReturnCode(registerResult);
-            if ("00000".equals(registerResultFlag)) {
-                uidLocal = registerResult.get("body").toString();//统一认证内userId
-                phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
-            } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
-                RedisUtils.setExpire(thirdToken, cachemap);
-                returnmap.put("flag", "2");//跳转登陆绑定页
-                returnmap.put("phone", phoneNo_);//手机号
-//                returnmap.put("token", thirdToken);
-                return success(returnmap);
-            } else {
-                //注册失败
-                String userretmsg = HttpUtil.getRetMsg(registerResult);
-                return fail(ConstUtil.ERROR_CODE, userretmsg);
-            }
         } else {
-            throw new BusinessException(HttpUtil.getReturnCode(userInfo), HttpUtil.getRetMsg(userInfo));
+            returnmap.put("flag", "1");//跳转活动页
+            return success(returnmap);
         }
-
         cachemap.put("userId", uidLocal);//统一认证userId
         cachemap.put("phoneNo", phoneNo);//绑定手机号
-//        RedisUtils.setExpire(thirdToken, cachemap);
-
         logger.info("进行token绑定");
         //4.token绑定
         Map<String, Object> bindMap = new HashMap<>();
@@ -1428,7 +1407,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-
         //5.查询实名信息
         Map<String, Object> custMap = new HashMap<String, Object>();
         custMap.put("userId", uidLocal);//内部userId
@@ -1442,15 +1420,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
             logger.info("token:" + thirdToken);
-            logger.info("跳转额度激活，cachemap：" + cachemap.toString());
-            RedisUtils.setExpire(thirdToken, cachemap);
-
-            returnmap.put("flag", "3");//跳转OCR
-            returnmap.put("token", thirdToken);
-//
-//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + thirdToken;
-//            returnmap.put("backurl", backurl);
-//            logger.info("页面跳转到：" + backurl);
+            returnmap.put("flag", "1");//活动页
             return success(returnmap);
         }
         String certType = ((Map<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
@@ -1492,14 +1462,11 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
             String _outSts = (String) headinfo.get("outSts");
-            //applType="2";
             String retmsg = "01";//未申请
-            if ("25".equals(_outSts)) {
-                returnmap.put("flag", "10");// 拒绝
-                returnmap.put("token", thirdToken);
+            if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+                returnmap.put("flag", "1");//活动页
                 return success(returnmap);
-            }
-            if ("2".equals(applType)) {
+            } else if ("2".equals(applType)) {
                 HashMap<String, Object> edCheckmap = new HashMap<>();
                 edCheckmap.put("idNo", certNo);
                 edCheckmap.put("channel", "11");
@@ -1518,18 +1485,11 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 RedisUtils.setExpire(thirdToken, cachemap);
                 String outSts = body.get("outSts").toString();
                 if ("27".equals(outSts)) {
-                    returnmap.put("flag", "01");//通过  我的额度
-                } else if ("25".equals(outSts)) {
-                    returnmap.put("flag", "02");// 拒绝
-                } else if ("22".equals(outSts)) {
-                    returnmap.put("flag", "03");// 退回
-                } else {//审批中
-                    returnmap.put("flag", "04");// 审批中
+                    returnmap.put("flag", "2");//通过  我的额度
                 }
-            } else {
-                returnmap.put("flag", "01");//通过  我的额度
+            } else if ("".equals(flag)) {
+                returnmap.put("flag", "2");//通过  我的额度
             }
-
         }
         returnmap.put("token", thirdToken);
         return success(returnmap);
@@ -1592,7 +1552,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             case "01":
                 Map<String, Object> map = new HashMap<>();
                 map.put("flag", "1");
-                return success(map);//跳转到登陆页
+                return success(map);//跳转活动页
 
             case "02":
                 String thirdToken = this.getToken();
