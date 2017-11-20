@@ -3,18 +3,31 @@ package com.haiercash.payplatform.controller;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.mybatis.util.FileUtil;
-import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.CustExtInfoService;
+import com.haiercash.payplatform.service.FaceService;
+import com.haiercash.payplatform.service.InstallmentAccountService;
+import com.haiercash.payplatform.service.LimitService;
+import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.service.PayPasswdService;
+import com.haiercash.payplatform.service.RegisterService;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.spring.utils.HttpUtil;
+import com.haiercash.spring.weixin.WeiXinApiConsts;
 import com.haiercash.spring.weixin.WeiXinUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -187,14 +201,13 @@ public class CommonPageController extends BaseController {
         return success(WeiXinUtils.sign(url));
     }
 
-    @Value("${app.weixin.mediaUrl}")
-    private String mediaUrl;
     @RequestMapping(value = "/api/payment/uploadFacePic", method = RequestMethod.GET)
     public Map<String, Object> uploadFacePicFromWx(@RequestParam String mediaId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String token = "";
-        String url = mediaUrl + "?access_token=" + token + "&media_id=" + mediaId;
-        byte[] img = HttpUtil.download(url);
-
+        Map<String, Object> params = new HashMap<>();
+        params.put("access_token", token);
+        params.put("media_id", mediaId);
+        byte[] img = JsonClientUtils.getForObject(WeiXinApiConsts.URL_GET_MEDIA, byte[].class, params);
         return faceService.uploadFacePic(img, request, response);
     }
 
