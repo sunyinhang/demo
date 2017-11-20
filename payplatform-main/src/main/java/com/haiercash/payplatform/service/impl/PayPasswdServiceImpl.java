@@ -517,6 +517,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String psNormIntAmtStr = String.valueOf(json.get("totalnormint"));//总利息金额
             if (StringUtils.isEmpty(psNormIntAmtStr)) {
                 psNormIntAmt = new BigDecimal(0);
+                String psNormIntAmtStr_ = "0.00";
+                json.put("totalnormint", psNormIntAmtStr_);
             } else {
                 psNormIntAmt = new BigDecimal(psNormIntAmtStr);
             }
