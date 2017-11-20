@@ -13,6 +13,4 @@ import org.springframework.context.annotation.Configuration;
 public class WeiXinProperties {
     private String appid;
     private String secret;
-    private String tokenUrl;
-    private String ticketUrl;
 }
