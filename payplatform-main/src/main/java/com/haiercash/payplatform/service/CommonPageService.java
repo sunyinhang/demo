@@ -67,4 +67,13 @@ public interface CommonPageService {
      * @return
      */
     IResponse appointment(String phone, String name, String education);
+
+    /**
+     * @Title joinActivityRedirect
+     * @Description: 现金贷 登陆页面初始化 页面跳转
+     * @author yu jianwei
+     * @date 2017/11/20 10:56
+     */
+    Map<String, Object> joinActivity() throws Exception;
+
 }

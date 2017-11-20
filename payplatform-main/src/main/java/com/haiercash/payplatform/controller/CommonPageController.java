@@ -692,6 +692,7 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> identity(@RequestBody Map<String, Object> map) throws Exception {
         return commonPageService.identity(map);
     }
+
     /**
      * @Title queryApplReraidPlanByloanNo
      * @Description: 还款计划
@@ -712,4 +713,16 @@ public class CommonPageController extends BaseController {
             return CommonResponse.create(ConstUtil.ERROR_PARAM_INVALID_CODE, "请填写手机号码");
         return commonPageService.appointment(phone, name, education);
     }
+
+    /**
+     * @Title joinActivity
+     * @Description: 现金贷 登陆页面初始化 页面跳转
+     * @author yu jianwei
+     * @date 2017/11/20 10:56
+     */
+    @RequestMapping(value = "/api/payment/joinActivity", method = RequestMethod.POST)
+    public Map<String, Object> joinActivity() throws Exception {
+        return commonPageService.joinActivity();
+    }
+
 }

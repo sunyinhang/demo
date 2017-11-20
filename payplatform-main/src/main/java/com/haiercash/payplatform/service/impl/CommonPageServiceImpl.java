@@ -4,14 +4,18 @@ import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
+import com.haiercash.payplatform.common.dao.EntrySettingDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.AppointmentRecord;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.data.SignContractInfo;
+import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.config.AppConfig;
 import com.haiercash.payplatform.config.AppOtherConfig;
+import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CmisApplService;
@@ -30,6 +34,8 @@ import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.ApplicationContextUtils;
+import com.haiercash.spring.utils.BusinessException;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
 import org.json.JSONObject;
@@ -77,9 +83,12 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private CrmService crmService;
     @Autowired
     private AppointmentRecordDao appointmentRecordDao;
+    @Autowired
+    private EntrySettingDao entrySettingDao;
 
     /**
      * 合同展示
+     *
      * @param map
      * @return
      */
@@ -478,6 +487,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
     /**
      * 查询贷款用途
+     *
      * @param params
      * @return
      */
@@ -1341,6 +1351,190 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         return CommonResponse.success();
     }
 
+    /**
+     * @Title joinActivityRedirect
+     * @Description: 现金贷 登陆页面初始化 页面跳转
+     * @author yu jianwei
+     * @date 2017/11/20 10:56
+     */
+    private Map<String, Object> joinActivityRedirect(EntrySetting setting) {
+        logger.info("现金贷申请接口*******************开始");
+        Map<String, Object> cachemap = new HashMap<>();
+        Map<String, Object> returnmap = new HashMap<>();//返回的map
+        String channelNo = this.getChannelNo();
+        String thirdToken = this.getToken();
+        String verifyUrl = setting.getVerifyUrlThird() + thirdToken;
+        String uidLocal;//统一认证userid
+        String phoneNo;//统一认证绑定手机号
+        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
+        Map<String, Object> validateUserFlagMap = new HashMap<>();
+        logger.info("验证第三方 token:" + verifyUrl);
+        //验证客户信息
+        ThirdTokenVerifyService thirdTokenVerifyService;
+        try {
+            thirdTokenVerifyService = ApplicationContextUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
+        } catch (Exception e) {
+            throw new BusinessException(ConstUtil.ERROR_CODE, "错误的 thirdTokenVerifyService 名称:'" + setting.getVerifyUrlService() + "'");
+        }
+        ThirdTokenVerifyResult thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
+        String userId__ = thirdInfo.getUserId();
+        String phoneNo_ = thirdInfo.getPhoneNo();
+        cachemap.put("uidHaier", userId__);
+        cachemap.put("haieruserId", phoneNo_);
+        //从后台查询用户信息
+        Map<String, Object> userInfo = queryUserByExternUid(channelNo, userId__);
+        String retFlag = HttpUtil.getReturnCode(userInfo);
+        if (Objects.equals(retFlag, "00000")) {
+            //集团uid已在统一认证做过绑定
+            String body = userInfo.get("body").toString();
+            //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+            JSONObject bodyMap = new JSONObject(body);
+            uidLocal = bodyMap.get("userId").toString();//统一认证内userId
+            phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
+        } else if (Objects.equals(retFlag, "U0178")) {//U0157：未查到该用户的信息
+            //向后台注册用户信息
+            Map<String, Object> registerResult = saveUserByExternUid(this.getChannelNo(), userId__, phoneNo_);
+            String registerResultFlag = HttpUtil.getReturnCode(registerResult);
+            if ("00000".equals(registerResultFlag)) {
+                uidLocal = registerResult.get("body").toString();//统一认证内userId
+                phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
+            } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
+                RedisUtils.setExpire(thirdToken, cachemap);
+                returnmap.put("flag", "2");//跳转登陆绑定页
+                returnmap.put("phone", phoneNo_);//手机号
+//                returnmap.put("token", thirdToken);
+                return success(returnmap);
+            } else {
+                //注册失败
+                String userretmsg = HttpUtil.getRetMsg(registerResult);
+                return fail(ConstUtil.ERROR_CODE, userretmsg);
+            }
+        } else {
+            throw new BusinessException(HttpUtil.getReturnCode(userInfo), HttpUtil.getRetMsg(userInfo));
+        }
+
+        cachemap.put("userId", uidLocal);//统一认证userId
+        cachemap.put("phoneNo", phoneNo);//绑定手机号
+//        RedisUtils.setExpire(thirdToken, cachemap);
+
+        logger.info("进行token绑定");
+        //4.token绑定
+        Map<String, Object> bindMap = new HashMap<>();
+        bindMap.put("userId", uidLocal);//内部userId
+        bindMap.put("token", thirdToken);
+        bindMap.put("channel", "11");
+        bindMap.put("channelNo", channelNo);
+        Map<String, Object> bindresult = appServerService.saveThirdPartToken(bindMap);
+        if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+
+        //5.查询实名信息
+        Map<String, Object> custMap = new HashMap<String, Object>();
+        custMap.put("userId", uidLocal);//内部userId
+        custMap.put("channel", "11");
+        custMap.put("channelNo", channelNo);
+        Map custresult = appServerService.queryPerCustInfo(thirdToken, custMap);
+        String custretflag = ((Map<String, Object>) (custresult.get("head"))).get("retFlag").toString();
+        if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
+            String custretMsg = ((Map<String, Object>) (custresult.get("head"))).get("retMsg").toString();
+            return fail(ConstUtil.ERROR_CODE, custretMsg);
+        }
+        if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
+            logger.info("token:" + thirdToken);
+            logger.info("跳转额度激活，cachemap：" + cachemap.toString());
+            RedisUtils.setExpire(thirdToken, cachemap);
+
+            returnmap.put("flag", "3");//跳转OCR
+            returnmap.put("token", thirdToken);
+//
+//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + thirdToken;
+//            returnmap.put("backurl", backurl);
+//            logger.info("页面跳转到：" + backurl);
+            return success(returnmap);
+        }
+        String certType = ((Map<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
+        String certNo = ((Map<String, Object>) (custresult.get("body"))).get("certNo").toString();//身份证号
+        String custNo = ((Map<String, Object>) (custresult.get("body"))).get("custNo").toString();//客户编号
+        String custName = ((Map<String, Object>) (custresult.get("body"))).get("custName").toString();//客户名称
+        String cardNo = ((Map<String, Object>) (custresult.get("body"))).get("cardNo").toString();//银行卡号
+        String bankNo = ((Map<String, Object>) (custresult.get("body"))).get("acctBankNo").toString();//银行代码
+        String bankName = ((Map<String, Object>) (custresult.get("body"))).get("acctBankName").toString();//银行名称
+
+        cachemap.put("custNo", custNo);//客户编号
+        cachemap.put("name", custName);//客户姓名
+        cachemap.put("cardNo", cardNo);//银行卡号
+        cachemap.put("bankCode", bankNo);//银行代码
+        cachemap.put("bankName", bankName);//银行名称
+        cachemap.put("idNo", certNo);//身份证号
+        cachemap.put("idCard", certNo);//身份证号
+        cachemap.put("idType", certType);
+        RedisUtils.setExpire(thirdToken, cachemap);
+        String tag = "SHH";
+        String typCde = "";//贷款品种
+        Map<String, Object> cacheedmap = new HashMap<>();
+        cacheedmap.put("channel", "11");
+        cacheedmap.put("channelNo", channelNo);
+        cacheedmap.put("userId", uidLocal);
+        Map<String, Object> mapcache = appServerService.checkEdAppl(thirdToken, cacheedmap);
+        logger.info("额度申请校验接口返回数据：" + mapcache);
+        if (!HttpUtil.isSuccess(mapcache)) {
+            Map<String, Object> head = (Map<String, Object>) mapcache.get("head");
+            String _retFlag_ = (String) head.get("retFlag");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        Object head2 = mapcache.get("head");
+        Map<String, Object> retinfo = (Map<String, Object>) head2;
+        String retFlag_ = (String) retinfo.get("retFlag");
+        String retMsg_ = (String) retinfo.get("retMsg");
+        if ("00000".equals(retFlag_)) {
+            Map<String, Object> headinfo = (Map<String, Object>) (mapcache.get("body"));
+            String applType = (String) headinfo.get("applType");
+            String flag = (String) headinfo.get("flag");
+            String _outSts = (String) headinfo.get("outSts");
+            //applType="2";
+            String retmsg = "01";//未申请
+            if ("25".equals(_outSts)) {
+                returnmap.put("flag", "10");// 拒绝
+                returnmap.put("token", thirdToken);
+                return success(returnmap);
+            }
+            if ("2".equals(applType)) {
+                HashMap<String, Object> edCheckmap = new HashMap<>();
+                edCheckmap.put("idNo", certNo);
+                edCheckmap.put("channel", "11");
+                edCheckmap.put("channelNo", channelNo);
+                edCheckmap.put("idTyp", certType);
+                Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, edCheckmap);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
+                Map<String, Object> head = (Map<String, Object>) edApplProgress.get("head");
+                if (!"00000".equals(head.get("retFlag"))) {
+                    logger.info("额度申请进度查询（最新的进度 根据idNo查询）,错误信息：" + head.get("retMsg"));
+                    return fail(ConstUtil.ERROR_CODE, (String) head.get("retMsg"));
+                }
+                Map<String, Object> body = (Map<String, Object>) edApplProgress.get("body");
+                Integer crdSeqInt = (Integer) body.get("applSeq");
+                String crdSeq = Integer.toString(crdSeqInt);
+                cachemap.put("crdSeq", crdSeq);
+                RedisUtils.setExpire(thirdToken, cachemap);
+                String outSts = body.get("outSts").toString();
+                if ("27".equals(outSts)) {
+                    returnmap.put("flag", "01");//通过  我的额度
+                } else if ("25".equals(outSts)) {
+                    returnmap.put("flag", "02");// 拒绝
+                } else if ("22".equals(outSts)) {
+                    returnmap.put("flag", "03");// 退回
+                } else {//审批中
+                    returnmap.put("flag", "04");// 审批中
+                }
+            } else {
+                returnmap.put("flag", "01");//通过  我的额度
+            }
+
+        }
+        returnmap.put("token", thirdToken);
+        return success(returnmap);
+    }
+
     public void calcFstPct(AppOrder order) {
         if (org.springframework.util.StringUtils.isEmpty(order.getFstPay())) {
             order.setFstPay("0.0");
@@ -1356,5 +1550,60 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             order.setFstPct(fstPct_big.toString());
         }
         logger.info("首付金额：" + order.getFstPay() + "首付比例：" + order.getFstPct());
+    }
+
+    private Map<String, Object> queryUserByExternUid(String externCompanyNo, String externUid) {
+        Map<String, Object> map = new HashMap<>();
+        String externCompanyNo_ = EncryptUtil.simpleEncrypt(externCompanyNo);
+        String externUid_ = EncryptUtil.simpleEncrypt(externUid);
+        map.put("externCompanyNo", externCompanyNo_);
+        map.put("externUid", externUid_);
+        Map<String, Object> stringObjectMap = appServerService.queryUserByExternUid(this.getToken(), map);
+//        String response = appServerService.queryHaierUserInfo(EncryptUtil.simpleEncrypt(outUserId));
+        if (stringObjectMap == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "根据第三方（非海尔集团）id查询用户信息失败");
+        return stringObjectMap;
+    }
+
+
+    private Map<String, Object> saveUserByExternUid(String externCompanyNo, String externUid, String linkMobile) {
+        Map<String, Object> map = new HashMap<>();
+        String externCompanyNo_ = EncryptUtil.simpleEncrypt(externCompanyNo);
+        String externUid_ = EncryptUtil.simpleEncrypt(externUid);
+        String linkMobile_ = EncryptUtil.simpleEncrypt(linkMobile);
+        map.put("externCompanyNo", externCompanyNo_);
+        map.put("externUid", externUid_);
+        map.put("linkMobile", linkMobile_);
+        Map<String, Object> stringObjectMap = appServerService.saveUserByExternUid(this.getToken(), map);
+        if (stringObjectMap == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "根据第三方（非海尔集团）id查询用户信息失败");
+        return stringObjectMap;
+    }
+
+    @Override
+    public Map<String, Object> joinActivity() {
+        String channelNo = this.getChannelNo();
+        EntrySetting setting = entrySettingDao.selectBychanelNo(channelNo);
+        if (setting == null) {
+            return fail(ConstUtil.ERROR_CODE, "没有配置相应渠道数据！");
+        }
+        String loginType = setting.getLoginType();
+        switch (loginType) {
+            case "01":
+                Map<String, Object> map = new HashMap<>();
+                map.put("flag", "1");
+                return success(map);//跳转到登陆页
+
+            case "02":
+                String thirdToken = this.getToken();
+                if (com.haiercash.core.lang.StringUtils.isEmpty(thirdToken))
+                    return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "token 登陆,但是未传递 token");
+                return this.joinActivityRedirect(setting);
+
+            default:
+                String msg = "错误的登陆类型:" + loginType;
+                logger.warn(msg);
+                return fail(ConstUtil.ERROR_CODE, msg);
+        }
     }
 }
