@@ -10,8 +10,6 @@ import com.haiercash.spring.weixin.entity.WeiXinToken;
 import com.haiercash.spring.weixin.enums.WeiXinGrantType;
 import com.haiercash.spring.weixin.enums.WeiXinTicketType;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by 许崇雷 on 2017-11-15.
  */
-@Component
 public final class WeiXinApi {
     private static final int LOCK_TICKET_TIMEOUT = 8;
     private static final TimeUnit LOCK_TICKET_TIMEUNIT = TimeUnit.SECONDS;
@@ -30,8 +27,11 @@ public final class WeiXinApi {
     public static final String URL_GET_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";
     public static final String URL_GET_MEDIA = "https://api.weixin.qq.com/cgi-bin/media/get";
 
-    @Autowired
-    private WeiXinProperties properties;
+    private final WeiXinProperties properties;
+
+    public WeiXinApi(WeiXinProperties properties) {
+        this.properties = properties;
+    }
 
     private static String timestamp() {
         return Long.toString(System.currentTimeMillis() / 1000);
