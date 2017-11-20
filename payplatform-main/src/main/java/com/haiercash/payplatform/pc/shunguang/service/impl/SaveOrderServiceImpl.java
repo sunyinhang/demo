@@ -15,6 +15,7 @@ import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
+import com.haiercash.spring.utils.ResultHead;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -326,8 +327,10 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap) ) {//订单保存失败
             logger.info("订单保存失败");
-            Map resultHead = (Map<String, Object>) (ordermap.get("head"));
-            String retmsg = resultHead.get("retMsg").toString();
+            ResultHead resultHead = (ResultHead) (ordermap.get("head"));
+            String retmsg = resultHead.getRetMsg();
+//            Map resultHead = (Map<String, Object>) (ordermap.get("head"));
+//            String retmsg = resultHead.get("retMsg").toString();
             //String retmsg = resultHead.getRetMsg();
             //String retmsg = (String) ((Map<String, Object>)(ordermap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
