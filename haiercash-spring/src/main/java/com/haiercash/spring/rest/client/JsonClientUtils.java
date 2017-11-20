@@ -3,7 +3,6 @@ package com.haiercash.spring.rest.client;
 import com.haiercash.core.reflect.GenericType;
 import com.haiercash.spring.client.RestTemplateProvider;
 import com.haiercash.spring.rest.AbstractClientUtils;
-import com.haiercash.spring.rest.IResponse;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
@@ -129,62 +128,62 @@ public class JsonClientUtils {
         return clientUtils.putForCore(url, request, responseType, headers);
     }
 
-    public static IResponse<Map> getForMap(String url) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> getForMap(String url) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.getForCore(url, mapType, null, null);
     }
 
-    public static IResponse<Map> getForMap(String url, Map<String, ?> uriVariables) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> getForMap(String url, Map<String, ?> uriVariables) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.getForCore(url, mapType, uriVariables, null);
     }
 
-    public static IResponse<Map> getForMap(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> getForMap(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.getForCore(url, mapType, uriVariables, headers);
     }
 
-    public static IResponse<Map> deleteForMap(String url) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> deleteForMap(String url) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.deleteForCore(url, mapType, null, null);
     }
 
-    public static IResponse<Map> deleteForMap(String url, Map<String, ?> uriVariables) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> deleteForMap(String url, Map<String, ?> uriVariables) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.deleteForCore(url, mapType, uriVariables, null);
     }
 
-    public static IResponse<Map> deleteForMap(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> deleteForMap(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.deleteForCore(url, mapType, uriVariables, headers);
     }
 
-    public static IResponse<Map> postForMap(String url, Object request) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> postForMap(String url, Object request) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.postForCore(url, request, mapType, null);
     }
 
-    public static IResponse<Map> postForMap(String url, Object request, MultiValueMap<String, String> headers) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> postForMap(String url, Object request, MultiValueMap<String, String> headers) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.postForCore(url, request, mapType, headers);
     }
 
-    public static IResponse<Map> putForMap(String url, Object request) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> putForMap(String url, Object request) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.putForCore(url, request, mapType, null);
     }
 
-    public static IResponse<Map> putForMap(String url, Object request, MultiValueMap<String, String> headers) {
-        AbstractClientUtils<IResponse<Map>> clientUtils = getClientUtils();
+    public static Map<String, Object> putForMap(String url, Object request, MultiValueMap<String, String> headers) {
+        AbstractClientUtils<Map<String, Object>> clientUtils = getClientUtils();
         Type mapType = getMapType();
         return clientUtils.putForCore(url, request, mapType, headers);
     }
