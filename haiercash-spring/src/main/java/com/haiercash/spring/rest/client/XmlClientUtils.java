@@ -188,6 +188,66 @@ public class XmlClientUtils {
         return clientUtils.putForCore(url, request, mapType, headers);
     }
 
+    public static String getForString(String url) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.getForCore(url, mapType, null, null);
+    }
+
+    public static String getForString(String url, Map<String, ?> uriVariables) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.getForCore(url, mapType, uriVariables, null);
+    }
+
+    public static String getForString(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.getForCore(url, mapType, uriVariables, headers);
+    }
+
+    public static String deleteForString(String url) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.deleteForCore(url, mapType, null, null);
+    }
+
+    public static String deleteForString(String url, Map<String, ?> uriVariables) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.deleteForCore(url, mapType, uriVariables, null);
+    }
+
+    public static String deleteForString(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.deleteForCore(url, mapType, uriVariables, headers);
+    }
+
+    public static String postForString(String url, Object request) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.postForCore(url, request, mapType, null);
+    }
+
+    public static String postForString(String url, Object request, MultiValueMap<String, String> headers) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.postForCore(url, request, mapType, headers);
+    }
+
+    public static String putForString(String url, Object request) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.putForCore(url, request, mapType, null);
+    }
+
+    public static String putForString(String url, Object request, MultiValueMap<String, String> headers) {
+        AbstractClientUtils<String> clientUtils = getClientUtils();
+        Type mapType = getMapType();
+        return clientUtils.putForCore(url, request, mapType, headers);
+    }
+
 
     private static final class ClientUtils<TResponse> extends AbstractClientUtils<TResponse> {
         private ClientUtils() {
