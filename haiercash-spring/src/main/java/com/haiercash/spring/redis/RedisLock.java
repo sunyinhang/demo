@@ -1,11 +1,11 @@
 package com.haiercash.spring.redis;
 
 import com.bestvike.linq.exception.InvalidOperationException;
-import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.threading.ThreadUtils;
 import org.springframework.data.redis.core.TimeoutUtils;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 public final class RedisLock {
     private static final int DEFAULT_SLEEP_MILLIS = 100;//加锁等待时间片
     private final String name;//名称
+    private final String redisKey;//redis redisKey
     private final int acquireTimeout;//申请过程的超时时间
     private boolean locked;//是否加锁
 
@@ -38,7 +39,12 @@ public final class RedisLock {
         if (acquireTimeout <= 0)
             throw new InvalidOperationException("acquireTimeout must greater than zero");
         this.name = name;
+        this.redisKey = name + "_LOCK";
         this.acquireTimeout = acquireTimeout;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
@@ -54,27 +60,26 @@ public final class RedisLock {
         do {
             //尝试加锁,值为到期时间
             long expireEnd = System.currentTimeMillis() + expireTimeout;
-            String expireEndStr = String.valueOf(expireEnd);
-            if (RedisUtils.setnx(this.name, expireEndStr))
+            if (RedisUtils.setnx(this.redisKey, expireEnd))
                 return this.locked = true;
 
             //别人已释放,立即进入下次循环,尝试加锁
-            String expireEndInRedis = RedisUtils.getString(this.name); //redis里的时间
+            Long expireEndInRedis = RedisUtils.get(this.redisKey, Long.class); //redis里的时间
             if (expireEndInRedis == null)
                 continue;
 
             //未超时等待
-            if (System.currentTimeMillis() < Long.parseLong(expireEndInRedis)) {
+            if (System.currentTimeMillis() <= expireEndInRedis) {
                 ThreadUtils.sleep(DEFAULT_SLEEP_MILLIS);
                 continue;
             }
 
             //这里值会被覆盖，但是因为什么相差了很少的时间，所以可以接受.如果获取到的为 null 说明之前被删,正好加锁成功
-            String expireEndInRedisNow = RedisUtils.getsetString(this.name, expireEndStr);
-            if (expireEndInRedisNow == null || StringUtils.equals(expireEndInRedis, expireEndInRedisNow))
+            Long expireEndInRedisNow = RedisUtils.getset(this.redisKey, expireEnd, Long.class);
+            if (expireEndInRedisNow == null || Objects.equals(expireEndInRedis, expireEndInRedisNow))
                 return this.locked = true;
             ThreadUtils.sleep(DEFAULT_SLEEP_MILLIS);
-        } while (System.currentTimeMillis() < acquireEnd);
+        } while (System.currentTimeMillis() <= acquireEnd);
 
         return false;
     }
@@ -84,7 +89,7 @@ public final class RedisLock {
      */
     public void unlock() {
         if (this.locked) {
-            RedisUtils.del(this.name);
+            RedisUtils.del(this.redisKey);
             this.locked = false;
         }
     }

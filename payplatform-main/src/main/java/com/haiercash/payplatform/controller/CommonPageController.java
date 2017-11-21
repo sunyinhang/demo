@@ -14,8 +14,11 @@ import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.service.RegisterService;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.weixin.WeiXinApi;
+import com.haiercash.spring.weixin.WeiXinUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -169,7 +175,40 @@ public class CommonPageController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/uploadFacePic", method = RequestMethod.POST)
     public Map<String, Object> uploadFacePic(@RequestBody MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return faceService.uploadFacePic(faceImg, request, response);
+        if (faceImg == null || faceImg.isEmpty()) {
+            logger.info("图片为空");
+            return fail(ConstUtil.ERROR_CODE, "图片为空");
+        }
+        InputStream inputStream = faceImg.getInputStream();
+        // InputStream inputStream1 = faceImg.getInputStream();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024];
+        int numBytesRead = 0;
+        while ((numBytesRead = inputStream.read(buf)) != -1) {
+            output.write(buf, 0, numBytesRead);
+        }
+        byte[] data = output.toByteArray();
+        output.close();
+        inputStream.close();
+        return faceService.uploadFacePic(data, request, response);
+    }
+
+    /**
+     * 获取jssdk签名
+     */
+    @RequestMapping(value = "/api/payment/wx/signature", method = RequestMethod.GET)
+    public Map<String, Object> wxSignature(@RequestParam String url) throws Exception {
+        return success(WeiXinUtils.sign(url));
+    }
+
+    @RequestMapping(value = "/api/payment/uploadFacePic", method = RequestMethod.GET)
+    public Map<String, Object> uploadFacePicFromWx(@RequestParam String mediaId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String token = "";
+        Map<String, Object> params = new HashMap<>();
+        params.put("access_token", token);
+        params.put("media_id", mediaId);
+        byte[] img = JsonClientUtils.getForObject(WeiXinApi.URL_GET_MEDIA, byte[].class, params);
+        return faceService.uploadFacePic(img, request, response);
     }
 
     /**
