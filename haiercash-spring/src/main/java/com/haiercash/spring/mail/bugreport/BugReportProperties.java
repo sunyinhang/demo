@@ -13,7 +13,8 @@ import java.util.List;
 public final class BugReportProperties {
     private Boolean enabled;
     private Integer queueSize = 10;
-    private Integer sendIntervalSeconds = 5 * 60;
+    private Integer sendIntervalSeconds;
+    private String display;
     private String subject;
     private List<String> to;
     private List<String> cc;
