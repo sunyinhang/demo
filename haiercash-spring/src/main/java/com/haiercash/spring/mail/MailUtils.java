@@ -21,6 +21,7 @@ public final class MailUtils {
         return (JavaMailSenderImpl) MailSenderProvider.getJavaMailSender();
     }
 
+    //直接发送
     public static void send(Mail mail) {
         JavaMailSenderImpl mailSender = getJavaMailSender();
         try {
@@ -38,8 +39,13 @@ public final class MailUtils {
             if (CollectionUtils.isNotEmpty(mail.getAttachmentList()))
                 for (MailAttachment attachment : mail.getAttachmentList())
                     helper.addAttachment(attachment.getFileName(), attachment.getFile());
+            mailSender.send(message);
         } catch (Exception e) {
             logger.error("发送邮件失败", e);
         }
+    }
+
+    //通过消息平台发送
+    public static void sendByMsgPlatform(Mail mail) {
     }
 }
