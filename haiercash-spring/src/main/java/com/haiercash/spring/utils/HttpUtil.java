@@ -243,9 +243,13 @@ public final class HttpUtil {
             JSONArray ja = new JSONArray(json);
 
             for (int i = 0; i < ja.length(); ++i) {
-                String subJson = ja.get(i).toString();
-                Map map = json2Map(subJson);
-                list.add(map);
+                Object subJson = ja.get(i);
+                if(subJson instanceof JSONObject ){
+                    Map map = json2Map(subJson.toString());
+                    list.add(map);
+                }else {
+                    list.add(subJson.toString());
+                }
             }
 
             return list;

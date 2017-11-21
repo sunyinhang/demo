@@ -1213,12 +1213,17 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     public Map<String, Object> returnGoods(Map<String, Object> map) {
         logger.info("===============退货开始==================");
         String channelNo = String.valueOf(map.get("channelNo"));
-        String data = JSONObject.valueToString(map.get("data"));//交易信息
+        String data = String.valueOf(map.get("data"));//交易信息
         String key = String.valueOf(map.get("key"));
         try {
             String params = decryptData(data, channelNo, key);
-            Map<String, Object> returnMap = acquirerService.returnGoods(AcqTradeCode.ACQ_RETURNGODDS_TREADECODE, ConstUtil.CHANNEL, channelNo, "", "", HttpUtil.json2Map((  JSONObject.stringToValue(params).toString())));
-            return (Map<String, Object>) returnMap.get("head");
+            Map<String, Object> paramMap = HttpUtil.json2Map(params);
+            Map<String, Object> returnMap = acquirerService.returnGoods(AcqTradeCode.ACQ_RETURNGODDS_TREADECODE, ConstUtil.CHANNEL, channelNo, "", "", paramMap);
+            if (returnMap == null) {
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            System.out.println("returnMap"+returnMap);
+            return (Map<String, Object>)((Map<String, Object>) returnMap.get("response")).get("head");
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
