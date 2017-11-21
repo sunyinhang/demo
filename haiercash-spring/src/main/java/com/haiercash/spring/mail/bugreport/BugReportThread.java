@@ -1,8 +1,8 @@
 package com.haiercash.spring.mail.bugreport;
 
 import com.haiercash.core.threading.ThreadUtils;
-import com.haiercash.spring.mail.Mail;
 import com.haiercash.spring.mail.MailUtils;
+import com.haiercash.spring.mail.core.Mail;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,10 +29,12 @@ public final class BugReportThread extends Thread {
     public void run() {
         while (true) {
             try {
-                if (this.properties.getEnabled() != null && this.properties.getEnabled())
-                    MailUtils.send(this.queue.take());
-                else
-                    this.logger.warn("由于未启用 bug report 功能, 跳过了邮件发送");
+                if (this.properties.getEnabled() != null && this.properties.getEnabled()) {
+                    Mail mail = this.queue.take();
+                    MailUtils.send(mail);
+                    continue;
+                }
+                this.logger.warn("由于未启用 bug report 功能, 跳过了邮件发送");
             } catch (Exception e) {
                 this.logger.warn("发送邮件失败", e);
             } finally {

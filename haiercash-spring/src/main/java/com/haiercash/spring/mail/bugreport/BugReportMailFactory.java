@@ -5,7 +5,7 @@ import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.mail.Mail;
+import com.haiercash.spring.mail.core.Mail;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 

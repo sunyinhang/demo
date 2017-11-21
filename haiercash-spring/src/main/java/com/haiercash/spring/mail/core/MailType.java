@@ -1,4 +1,4 @@
-package com.haiercash.spring.mail;
+package com.haiercash.spring.mail.core;
 
 /**
  * Created by 许崇雷 on 2016/9/5.

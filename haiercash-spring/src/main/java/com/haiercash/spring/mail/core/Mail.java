@@ -1,4 +1,4 @@
-package com.haiercash.spring.mail;
+package com.haiercash.spring.mail.core;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.haiercash.spring.mail;
+package com.haiercash.spring.mail.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.io.File;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public final class MailInline {
-    private String contentId;
+public final class MailAttachment {
+    private String fileName;
     private File file;
 }
