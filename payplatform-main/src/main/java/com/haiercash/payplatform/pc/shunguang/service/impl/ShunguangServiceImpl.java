@@ -1222,7 +1222,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             if (returnMap == null) {
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            System.out.println("returnMap"+returnMap);
             return (Map<String, Object>)((Map<String, Object>) returnMap.get("response")).get("head");
         } catch (Exception e) {
             logger.error(e);
