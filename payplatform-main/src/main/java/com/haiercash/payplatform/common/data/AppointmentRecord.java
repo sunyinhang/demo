@@ -18,5 +18,5 @@ public class AppointmentRecord {
     private String phone;
     private String name;
     private String education;
-    private String creatdate;
+    private String createdate;
 }

@@ -1338,7 +1338,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         record.setPhone(phone);
         record.setName(name);
         record.setEducation(education);
-        record.setCreatdate(DateUtils.nowString());
+        record.setCreatedate(DateUtils.nowString());
         appointmentRecordDao.insert(record);
         return CommonResponse.success();
     }
