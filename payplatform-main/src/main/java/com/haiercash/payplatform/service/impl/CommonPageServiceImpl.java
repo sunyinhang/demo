@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
@@ -1337,6 +1338,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         record.setPhone(phone);
         record.setName(name);
         record.setEducation(education);
+        record.setCreatdate(DateUtils.nowString());
         appointmentRecordDao.insert(record);
         return CommonResponse.success();
     }
