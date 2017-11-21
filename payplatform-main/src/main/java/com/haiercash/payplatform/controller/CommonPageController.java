@@ -764,4 +764,14 @@ public class CommonPageController extends BaseController {
         return commonPageService.joinActivity();
     }
 
+    /**
+     * @Title personalEd
+     * @Description: 查询个人额度状态
+     * @author yu jianwei
+     * @date 2017/11/21 17:11
+     */
+    @RequestMapping(value = "/api/payment/joinActivity", method = RequestMethod.POST)
+    public Map<String, Object> personalEd() throws Exception {
+        return commonPageService.personalEd();
+    }
 }
