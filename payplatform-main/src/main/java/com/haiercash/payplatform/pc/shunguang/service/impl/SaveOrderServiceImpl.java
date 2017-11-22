@@ -265,10 +265,10 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             citymap.put("channel", channel);
             citymap.put("channelNo", channelNo);
             Map<String, Object> cityCodeMap = commonPageService.getCode(token, citymap);
-            Map jsonMap = (Map<String, Object>) cityCodeMap.get("head");
-            String retFlag_one = (String) jsonMap.get("retFlag");
+            ResultHead jsonMap = (ResultHead) cityCodeMap.get("head");
+            String retFlag_one = jsonMap.getRetFlag(); // (String) jsonMap.get("retFlag");
             if (!"00000".equals(retFlag_one)) {
-                String retMsg = (String) jsonMap.get("retMsg");
+                String retMsg = jsonMap.getRetMsg();// (String) jsonMap.get("retMsg");
                 return fail(ConstUtil.ERROR_CODE, retMsg);
             }
             cityCode = (String) cityCodeMap.get("cityCode");
@@ -288,10 +288,10 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
                 provincemap.put("channel", channel);
                 provincemap.put("channelNo", channelNo);
                 Map<String, Object> provinceCodeMap = commonPageService.getCode(token, provincemap);
-                Map jsonMapT = (Map<String, Object>) provinceCodeMap.get("head");
-                String retFlag_two = (String) jsonMapT.get("retFlag");
+                ResultHead jsonMapT = (ResultHead) provinceCodeMap.get("head");
+                String retFlag_two = jsonMapT.getRetFlag(); //(String) jsonMapT.get("retFlag");
                 if (!"00000".equals(retFlag_two)) {
-                    String retMsg = (String) jsonMapT.get("retMsg");
+                    String retMsg = jsonMapT.getRetMsg();//(String) jsonMapT.get("retMsg");
                     return fail(ConstUtil.ERROR_CODE, retMsg);
                 }
                 provinceCode = (String) provinceCodeMap.get("cityCode");
