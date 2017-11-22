@@ -1589,36 +1589,15 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
         Map<String, Object> validateUserFlagMap = new HashMap<>();
         logger.info("token:" + token);
-        //获取缓存数据
+//        //获取缓存数据
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         userId = cacheMap.get("userId") + "";
-        String custNo = cacheMap.get("custNo") + "";
-        String custName = cacheMap.get("custName") + "";
         String certNo = cacheMap.get("idNo") + "";
         String idType = cacheMap.get("idType") + "";
-        //5.查询实名信息
-        Map<String, Object> custMap = new HashMap<String, Object>();
-        custMap.put("userId", userId);//内部userId
-        custMap.put("channel", "11");
-        custMap.put("channelNo", channelNo);
-        Map custresult = appServerService.queryPerCustInfo(token, custMap);
-        String custretflag = ((Map<String, Object>) (custresult.get("head"))).get("retFlag").toString();
-        if (!"00000".equals(custretflag) && !"C1220".equals(custretflag)) {//查询实名信息失败
-            String custretMsg = ((Map<String, Object>) (custresult.get("head"))).get("retMsg").toString();
-            return fail(ConstUtil.ERROR_CODE, custretMsg);
-        }
-        if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
-            logger.info("token:" + token);
-            returnmap.put("flag", "3");//跳转OCR
-            returnmap.put("token", token);
-            return success(returnmap);
-        }
-        String tag = "SHH";
-        String typCde = "";//贷款品种
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
         cacheedmap.put("channelNo", channelNo);
@@ -1633,117 +1612,19 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map<String, Object>) head2;
         String retFlag_ = (String) retinfo.get("retFlag");
-        String retMsg_ = (String) retinfo.get("retMsg");
         if ("00000".equals(retFlag_)) {
             Map<String, Object> headinfo = (Map<String, Object>) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
             String _outSts = (String) headinfo.get("outSts");
-            //applType="2";
             String retmsg = "01";//未申请
             if ("25".equals(_outSts)) {
-                returnmap.put("flag", "10");// 拒绝
+                returnmap.put("flag", "3");// 拒绝
                 returnmap.put("token", token);
                 return success(returnmap);
             }
             if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
-                logger.info("没有额度申请");
-                Map<String, Object> paramMap = new HashMap<String, Object>();
-                paramMap.put("channelNo", channelNo);
-                paramMap.put("tag", tag);//标签
-                paramMap.put("businessType", "EDJH");//业务类型 现金贷：XJD   商品分期：SPFQ      额度激活：EDJH    提额：TE   额度申请：EDSQ   个人信息维护：GRXX
-                paramMap.put("channel", this.getChannel());//渠道号
-                paramMap.put("isOrder", "N");//是否为订单
-                paramMap.put("orderNo", "");//订单编号
-                paramMap.put("applSeq", "");//订单流水号
-                paramMap.put("userId", userId);//用户id
-                paramMap.put("custNo", custNo);//用户编号
-                paramMap.put("typCde", typCde);//贷款品种代码
-                paramMap.put("custName", custName);//用户名称
-                paramMap.put("noEduLocal", "NO");//是否校验最高学历与户口性质
-                paramMap.put("idNo", certNo);//身份证号
-                Map<String, Object> stringObjectMap = appServerService.checkIfMsgComplete(token, paramMap);
-                if (stringObjectMap == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                }
-                Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
-                String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
-                if (!"00000".equals(resultmapFlag)) {
-                    String retMsg = (String) resultmapjsonMap.get("retMsg");
-                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                }
-                Map resultmapbodyMap = (Map<String, Object>) stringObjectMap.get("body");
-                String SMRZ = (String) resultmapbodyMap.get("SMRZ");//实名认证信息
-                String GRJBXX = (String) resultmapbodyMap.get("GRJBXX");//个人基本信息
-                String DWXX = (String) resultmapbodyMap.get("DWXX");//单位信息
-                String JZXX = (String) resultmapbodyMap.get("JZXX");//居住信息
-                String LXRXX = (String) resultmapbodyMap.get("LXRXX");//联系人信息
-                Map BCYXMap = (Map<String, Object>) resultmapbodyMap.get("BCYX");//必传影像信息
-                String BCYX = (String) BCYXMap.get("BCYX");
-                if ("N".equals(SMRZ)) {
-                    //没有做过实名认证，跳转实名认证页面
-                    returnmap.put("flag", "3");//转实名认证页面
-                } else {
-                    if ("Y".equals(GRJBXX) && "Y".equals(DWXX) && "Y".equals(JZXX) && "Y".equals(LXRXX) && "Y".equals(BCYX)) {//
-                        //如个人信息完整，则判断是否做过人脸识别
-                        ifNeedFaceChkByTypCdeMap.put("typCde", typCde);
-                        ifNeedFaceChkByTypCdeMap.put("source", getChannel());
-                        ifNeedFaceChkByTypCdeMap.put("custNo", custNo);
-                        ifNeedFaceChkByTypCdeMap.put("name", custName);
-                        ifNeedFaceChkByTypCdeMap.put("idNumber", certNo);
-                        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
-                        Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
-                        if (saveCustFCiCustContactMap == null) {
-                            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                        }
-                        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
-                        String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
-                        if (!"00000".equals(saveCustFCiCustContactMapHeadFlag)) {
-                            String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
-                            return fail(ConstUtil.ERROR_CODE, retMsg);
-                        }
-                        Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
-                        String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
-                        if (code != null && !"".equals(code)) {
-                            logger.info("*********人脸识别标识码：" + code);
-                            if ("00".equals(code)) {// 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
-                                validateUserFlagMap.put("channelNo", channelNo);// 渠道
-                                validateUserFlagMap.put("channel", getChannel());
-                                validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userId));//客户编号18254561920
-                                Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
-                                if (alidateUserMap == null) {
-                                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                                }
-                                Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
-                                String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
-                                if (!"00000".equals(alidateUserHeadMapFlag)) {
-                                    String retMsg = (String) alidateUserHeadMap.get("retMsg");
-                                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                                }
-                                Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
-                                String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
-                                if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                                }
-                                if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
-                                    returnmap.put("flag", "4");
-                                } else {//没有设置支付密码
-                                    returnmap.put("flag", "5");
-                                }
-                            } else if ("01".equals(code)) {// 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                                returnmap.put("flag", "6");
-                            } else if ("02".equals(code)) {// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                                returnmap.put("flag", "7");
-                            } else {//跳转人脸识别
-                                returnmap.put("flag", "8");
-                            }
-
-                        }
-                    } else {
-                        //个人信息不完成，跳转完善个人扩展信息页面
-                        returnmap.put("flag", "9");//跳转完善个人扩展信息页面
-                    }
-                }
+                //没有额度申请
             } else if ("2".equals(applType)) {
                 HashMap<String, Object> edCheckmap = new HashMap<>();
                 edCheckmap.put("idNo", certNo);
@@ -1761,16 +1642,16 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 String crdSeq = Integer.toString(crdSeqInt);
                 String outSts = body.get("outSts").toString();
                 if ("27".equals(outSts)) {
-                    returnmap.put("flag", "12");//通过  我的额度
+                    returnmap.put("flag", "1");//通过  我的额度
                 } else if ("25".equals(outSts)) {
-                    returnmap.put("flag", "10");// 拒绝
+                    returnmap.put("flag", "3");// 拒绝
                 } else if ("22".equals(outSts)) {
-                    returnmap.put("flag", "11");// 退回
+                    returnmap.put("flag", "2");// 退回
                 } else {//审批中
-                    returnmap.put("flag", "13");// 审批中
+                    returnmap.put("flag", "4");// 审批中
                 }
             } else if ("".equals(flag)) {
-                returnmap.put("flag", "12");//通过  我的额度
+                returnmap.put("flag", "1");//通过  我的额度
             }
         }
         returnmap.put("token", token);
