@@ -118,7 +118,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         logger.info("合同展示页面初始化*******开始");
         String applseq = (String) map.get("applseq");
         String token = (String) map.get("token");
-        String channelNo = (String) map.get("channelNo");
+        String channelNo = super.getChannelNo();
+        //String channelNo = (String) map.get("channelNo");
         logger.info("申请流水号：" + applseq);
         if (StringUtils.isEmpty(applseq)) {
             logger.info("申请流水号为空");
@@ -161,7 +162,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String loannumber = Convert.toString(bodyLoanDetail.get("apply_tnr"));//期数
         String apply_tnr_typ = Convert.toString(bodyLoanDetail.get("apply_tnr_typ"));//期限类型
         //获取商品信息
-        List goodlist = (List) bodyLoanDetail.get("goodsList");
+        Map goodmap = (Map) bodyLoanDetail.get("goodsList");
+        List goodlist = (List) goodmap.get("good");
         for (Object goods: goodlist) {
             Map goodsmap = (Map) goods;
             String goodsname = Convert.toString(goodsmap.get("goods_name"));//商品名称
