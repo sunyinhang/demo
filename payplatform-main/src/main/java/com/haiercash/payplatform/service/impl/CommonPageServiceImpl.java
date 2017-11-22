@@ -1620,7 +1620,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String tag = "SHH";
         String typCde = "";//贷款品种
         Map<String, Object> cacheedmap = new HashMap<>();
-        cacheedmap.put("channe．l", "11");
+        cacheedmap.put("channel", "11");
         cacheedmap.put("channelNo", channelNo);
         cacheedmap.put("userId", userId);
         Map<String, Object> mapcache = appServerService.checkEdAppl(token, cacheedmap);
