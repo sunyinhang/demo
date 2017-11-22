@@ -908,6 +908,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //获取市代码
         String cityCode = "";
         String provinceCode = "";
+        String areaType = "";
         if (org.springframework.util.StringUtils.isEmpty(areaCode)) {
             cityCode = "370000";
             provinceCode = "370200";
@@ -918,21 +919,41 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             citymap.put("flag", "parent");
             citymap.put("channel", channel);
             citymap.put("channelNo", channelNo);
-            cityCode = commonPageService.getCode(token, citymap);
+            Map<String, Object> cityCodeMap = commonPageService.getCode(token, citymap);
+            Map jsonMap = (Map<String, Object>) cityCodeMap.get("head");
+            String retFlag_one = (String) jsonMap.get("retFlag");
+            if (!"00000".equals(retFlag_one)) {
+                String retMsg = (String) jsonMap.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+            cityCode = (String) cityCodeMap.get("cityCode");
+            areaType = (String) cityCodeMap.get("areaType");
             if (org.springframework.util.StringUtils.isEmpty(cityCode)) {
                 logger.info("获取市编码失败");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            //获取省代码
-            Map<String, Object> provincemap = new HashMap<String, Object>();
-            provincemap.put("areaCode", cityCode);
-            provincemap.put("flag", "parent");
-            provincemap.put("channel", channel);
-            provincemap.put("channelNo", channelNo);
-            provinceCode = commonPageService.getCode(token, provincemap);
-            if (org.springframework.util.StringUtils.isEmpty(provinceCode)) {
-                logger.info("获取省编码失败");
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            if ("province".equals(areaType)) {
+                provinceCode = cityCode;
+                cityCode = areaCode;
+            } else {
+                //获取省代码
+                Map<String, Object> provincemap = new HashMap<String, Object>();
+                provincemap.put("areaCode", cityCode);
+                provincemap.put("flag", "parent");
+                provincemap.put("channel", channel);
+                provincemap.put("channelNo", channelNo);
+                Map<String, Object> provinceCodeMap = commonPageService.getCode(token, provincemap);
+                Map jsonMapT = (Map<String, Object>) provinceCodeMap.get("head");
+                String retFlag_two = (String) jsonMapT.get("retFlag");
+                if (!"00000".equals(retFlag_two)) {
+                    String retMsg = (String) jsonMapT.get("retMsg");
+                    return fail(ConstUtil.ERROR_CODE, retMsg);
+                }
+                provinceCode = (String) provinceCodeMap.get("cityCode");
+                if (org.springframework.util.StringUtils.isEmpty(provinceCode)) {
+                    logger.info("获取省编码失败");
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                }
             }
         }
         //录单校验

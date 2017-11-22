@@ -460,21 +460,27 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     }
 
     @Override
-    public String getCode(String token, Map<String, Object> citymap) {
+    public Map<String, Object> getCode(String token, Map<String, Object> citymap) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
         String cityCode = "";
+        String areaType = "";
         // 根据区号获取市
         Map<String, Object> result = appServerService.getAreaInfo(token, citymap);
         String retFlag = (String) ((Map<String, Object>) result.get("head")).get("retFlag");
+        String retMsg = (String) ((Map<String, Object>) result.get("head")).get("retMsg");
         if (!"00000".equals(retFlag)) {
-            return cityCode;
+            return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         List<Map<String, Object>> body = (List<Map<String, Object>>) result.get("body");
 
         for (int i = 0; i < body.size(); i++) {
             Map<String, Object> m = body.get(i);
             cityCode = m.get("areaCode").toString();
+            areaType = m.get("areaType").toString();
         }
-        return cityCode;
+        resultMap.put("cityCode", cityCode);
+        resultMap.put("areaType", areaType);
+        return resultMap;
     }
 
     /**

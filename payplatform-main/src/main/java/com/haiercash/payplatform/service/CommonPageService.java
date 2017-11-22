@@ -33,7 +33,7 @@ public interface CommonPageService {
     /*
     获取省市编码
      */
-    String getCode(String token, Map<String, Object> citymap);
+    Map<String, Object> getCode(String token, Map<String, Object> citymap);
 
     /*
     查询贷款用途
