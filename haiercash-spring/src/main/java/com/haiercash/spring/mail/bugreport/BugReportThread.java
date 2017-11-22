@@ -29,8 +29,8 @@ public final class BugReportThread extends Thread {
     public void run() {
         while (true) {
             try {
+                Mail mail = this.queue.take();
                 if (this.properties.getEnabled() != null && this.properties.getEnabled()) {
-                    Mail mail = this.queue.take();
                     MailUtils.send(mail);
                     continue;
                 }
