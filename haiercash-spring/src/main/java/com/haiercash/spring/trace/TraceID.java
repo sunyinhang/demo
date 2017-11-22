@@ -1,11 +1,9 @@
 package com.haiercash.spring.trace;
 
-import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.net.HostInfo;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
+import com.haiercash.spring.boot.ApplicationUtils;
 
 import java.time.LocalDate;
 import java.util.concurrent.locks.ReentrantLock;
@@ -19,11 +17,11 @@ public final class TraceID {
     private static final String DATE_FORMAT = "yyyyMMdd-HHmmss";
     private static final char[] IP_LAST_BIT_SEPARATOR = new char[]{'.'};
     private static final String IP_LAST_BIT;
-    private static final DynamicStringProperty PROPERTY_APPLICATION_NAME = DynamicPropertyFactory.getInstance().getStringProperty("spring.application.name", StringUtils.EMPTY);
     private static final int LEN_APPLICATION_NAME = 3;
     private static String APPLICATION_NAME;
 
     static {
+        //初始化 IP_LAST_BIT
         String[] ips = HostInfo.getIpAddress();
         if (ips.length < 1) {
             IP_LAST_BIT = HostInfo.getHostName();
@@ -32,6 +30,9 @@ public final class TraceID {
             String[] bits = StringUtils.split(ip, IP_LAST_BIT_SEPARATOR, true);
             IP_LAST_BIT = bits[bits.length - 1];
         }
+        //初始化 APPLICATION_NAME
+        String appName = ApplicationUtils.getProperties().getName();
+        APPLICATION_NAME = (appName.length() <= LEN_APPLICATION_NAME ? appName : appName.substring(0, LEN_APPLICATION_NAME)).toUpperCase();
     }
 
     private TraceID() {
@@ -43,10 +44,6 @@ public final class TraceID {
      * @return 调用链 ID
      */
     public static String generate() {
-        if (StringUtils.isEmpty(APPLICATION_NAME)) {
-            String appName = Convert.toString(PROPERTY_APPLICATION_NAME.get());
-            APPLICATION_NAME = (appName.length() < LEN_APPLICATION_NAME ? appName : appName.substring(0, LEN_APPLICATION_NAME)).toUpperCase();
-        }
         StringBuilder builder = new StringBuilder(25);
         builder.append(DateUtils.toString(DateUtils.now(), DATE_FORMAT))//年月日时分秒毫秒
                 .append("-")
