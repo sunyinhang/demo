@@ -20,13 +20,12 @@ import java.util.concurrent.TimeUnit;
  * Created by 许崇雷 on 2017-11-15.
  */
 public final class WeiXinApi {
-    private static final int LOCK_TICKET_TIMEOUT = 8;
-    private static final TimeUnit LOCK_TICKET_TIMEUNIT = TimeUnit.SECONDS;
-    private static final String KEY_TICKET = "WEIXIN:TICKET";
     public static final String URL_GET_TOKEN = "https://api.weixin.qq.com/cgi-bin/token";
     public static final String URL_GET_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket";
     public static final String URL_GET_MEDIA = "https://api.weixin.qq.com/cgi-bin/media/get";
-
+    private static final int LOCK_TICKET_TIMEOUT = 8;
+    private static final TimeUnit LOCK_TICKET_TIMEUNIT = TimeUnit.SECONDS;
+    private static final String KEY_TICKET = "WEIXIN:TICKET";
     private final WeiXinProperties properties;
 
     public WeiXinApi(WeiXinProperties properties) {
