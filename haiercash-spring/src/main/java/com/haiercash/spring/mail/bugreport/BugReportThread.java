@@ -34,9 +34,9 @@ public final class BugReportThread extends Thread {
                     MailUtils.send(mail);
                     continue;
                 }
-                this.logger.warn("由于未启用 bug report 功能, 跳过了邮件发送");
+                this.logger.warn("由于未启用 bug report 功能，跳过了发送邮件");
             } catch (Exception e) {
-                this.logger.warn("发送邮件失败", e);
+                this.logger.warn("bug report 发送邮件失败", e);
             } finally {
                 ThreadUtils.sleep(this.sendIntervalMillis);
             }
@@ -45,7 +45,11 @@ public final class BugReportThread extends Thread {
 
     public void sendAsync(Mail mail) {
         try {
-            this.queue.offer(mail);
+            if (this.properties.getEnabled() != null && this.properties.getEnabled()) {
+                this.queue.offer(mail);
+                return;
+            }
+            this.logger.warn("由于未启用 bug report 功能，跳过了入发送队列");
         } catch (Exception e) {
             this.logger.warn("bug report 入发送队列失败", e);
         }
