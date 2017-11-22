@@ -61,7 +61,7 @@
         <queueSize>512</queueSize>
         <discardingThreshold>0</discardingThreshold>
     </appender>
-    <logger name="com.haiercash.payplatform.trace" level="info">
+    <logger name="com.haiercash.spring.trace" level="info">
         <appender-ref ref="ASYNC_TRACE_LOG"/>
     </logger>
 </configuration>
