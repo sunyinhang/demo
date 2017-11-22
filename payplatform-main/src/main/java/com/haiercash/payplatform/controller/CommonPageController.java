@@ -770,7 +770,7 @@ public class CommonPageController extends BaseController {
      * @author yu jianwei
      * @date 2017/11/21 17:11
      */
-    @RequestMapping(value = "/api/payment/joinActivity", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/payment/personalEd", method = RequestMethod.POST)
     public Map<String, Object> personalEd() throws Exception {
         return commonPageService.personalEd();
     }
