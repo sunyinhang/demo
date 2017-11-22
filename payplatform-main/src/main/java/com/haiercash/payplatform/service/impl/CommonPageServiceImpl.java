@@ -480,7 +480,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         resultMap.put("cityCode", cityCode);
         resultMap.put("areaType", areaType);
-        return resultMap;
+        return success(resultMap);
     }
 
     /**
