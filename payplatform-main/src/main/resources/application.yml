@@ -8,12 +8,12 @@ logging:
 security:
   sessions: never
 info:
-  name: paypaltform
-  description: 支付平台
+  name: paypaltform-develop
+  description: 支付平台-开发环境
 spring:
   application:
-    name: ${info.name}-develop
-    description: ${info.description}-开发环境
+    name: ${info.name}
+    description: ${info.description}
     version: ${info.version}
   http:
     converters:
