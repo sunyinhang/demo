@@ -51,6 +51,10 @@ jar {
     version = project.isReleaseVersion ? project.version : "${project.version}-SNAPSHOT"
 }
 
+springBoot {
+    classifier = 'exec'
+}
+
 sourceSets {
     main {
         java {
@@ -62,6 +66,8 @@ sourceSets {
     }
 }
 
-springBoot {
-    classifier = 'exec'
+processResources {
+    filesMatching('application.properties') {
+        expand(project.properties)
+    }
 }
