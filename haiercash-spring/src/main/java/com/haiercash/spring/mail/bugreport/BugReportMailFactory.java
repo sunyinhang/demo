@@ -22,7 +22,9 @@ public final class BugReportMailFactory {
         this.properties = properties;
     }
 
-    public Mail createMail(String content) {
+    public Mail createMail(BugReportLevel level, String content) {
+        if (level == null)
+            level = BugReportLevel.UNKNOWN;
         ApplicationProperties applicationProperties = ApplicationUtils.getProperties();
         Mail mail = new Mail();
         mail.setDisplay(String.format("%s (%s)", applicationProperties.getDescription(), applicationProperties.getName()));
@@ -37,6 +39,7 @@ public final class BugReportMailFactory {
         builder.append("<hr>");
         builder.append("<table>");
         builder.append("<tr><th>名称</th><th>说明</th></tr>");
+        builder.append("<tr><td>级别</td><td>").append(level.getDescription()).append("</td></tr>");
         builder.append("<tr><td>实例</td><td>").append(applicationProperties.getDescription()).append(" (").append(applicationProperties.getName()).append(")").append("</td></tr>");
         builder.append("<tr><td>版本</td><td>").append(applicationProperties.getVersion()).append("</td></tr>");
         builder.append("<tr><td>时间</td><td>").append(DateUtils.nowString()).append("</td></tr>");

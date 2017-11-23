@@ -13,6 +13,8 @@ import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.service.RegisterService;
 import com.haiercash.spring.controller.BaseController;
+import com.haiercash.spring.mail.bugreport.BugReportLevel;
+import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
@@ -586,7 +588,9 @@ public class CommonPageController extends BaseController {
 
     @RequestMapping(value = "/api/payment/report", method = RequestMethod.POST)
     public void report(@RequestBody String error) {
-        logger.error(error);
+        String msg = "客户端错误报告:" + error;
+        BugReportUtils.sendAsync(BugReportLevel.WARN, msg);
+        logger.error(msg);
     }
 
     /**
