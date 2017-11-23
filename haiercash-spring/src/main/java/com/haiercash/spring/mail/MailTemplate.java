@@ -38,7 +38,7 @@ public final class MailTemplate {
             helper.setCc(Linq.asEnumerable(mail.getCcList()).toArray(String.class));
             helper.setBcc(Linq.asEnumerable(mail.getBccList()).toArray(String.class));
             helper.setSubject(mail.getSubject());
-            helper.setText(mail.getContent(), mail.getMailType() == MailType.Html);
+            helper.setText(mail.getContent(), mail.getMailType() == MailType.HTML);
             if (CollectionUtils.isNotEmpty(mail.getInlineList()))
                 for (MailInline inline : mail.getInlineList())
                     helper.addInline(inline.getContentId(), inline.getFile());

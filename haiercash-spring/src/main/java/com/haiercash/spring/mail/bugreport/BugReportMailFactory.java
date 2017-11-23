@@ -52,7 +52,7 @@ public final class BugReportMailFactory {
         builder.append("</table>");
         builder.append("</body>");
         mail.setContent(builder.toString());
-        mail.setMailType(MailType.Html);
+        mail.setMailType(MailType.HTML);
         return mail;
     }
 }
