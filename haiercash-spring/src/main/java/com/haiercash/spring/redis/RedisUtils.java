@@ -288,6 +288,10 @@ public final class RedisUtils {
 
     //region 列表操作
 
+    public static long lrem(String key, long count, Object value) {
+        return getRedisTemplate().opsForList().remove(key, count, value);
+    }
+
     public static <T> T blpop(String key, long timeout, TimeUnit unit, Class<T> clazz) {
         return deserialize(getRedisTemplate().opsForList().leftPop(key, timeout, unit), clazz);
     }
