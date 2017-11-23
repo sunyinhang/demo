@@ -1,5 +1,6 @@
 package com.haiercash.spring.mail;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
  * Created by 许崇雷 on 2017-11-21.
  */
 @Configuration
+@ConditionalOnBean(JavaMailSender.class)
 @EnableConfigurationProperties(MailProperties.class)
 public class MailAutoConfiguration {
     private final JavaMailSender mailSender;
