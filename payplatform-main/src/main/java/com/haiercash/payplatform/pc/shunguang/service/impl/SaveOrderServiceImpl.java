@@ -271,8 +271,13 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
                 String retMsg = jsonMap.getRetMsg();// (String) jsonMap.get("retMsg");
                 return fail(ConstUtil.ERROR_CODE, retMsg);
             }
-            cityCode = (String) cityCodeMap.get("cityCode");
-            areaType = (String) cityCodeMap.get("areaType");
+            logger.info("cityCodeMap------" + cityCodeMap);
+            Map<String, Object> map_one = (Map<String, Object>) cityCodeMap.get("body");
+            cityCode = (String) map_one.get("cityCode");
+            areaType = (String) map_one.get("areaType");
+//            cityCode = (String) cityCodeMap.get("cityCode");
+//            areaType = (String) cityCodeMap.get("areaType");
+            logger.info("cityCode------" + cityCode + "---------" + areaType);
             if(StringUtils.isEmpty(cityCode)){
                 logger.info("获取市编码失败");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -294,7 +299,9 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
                     String retMsg = jsonMapT.getRetMsg();//(String) jsonMapT.get("retMsg");
                     return fail(ConstUtil.ERROR_CODE, retMsg);
                 }
-                provinceCode = (String) provinceCodeMap.get("cityCode");
+                Map<String, Object> map_two = (Map<String, Object>) provinceCodeMap.get("body");
+                provinceCode = (String) map_two.get("cityCode");
+                logger.info("provinceCode------" + provinceCode);
                 if (StringUtils.isEmpty(provinceCode)) {
                     logger.info("获取省编码失败");
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);

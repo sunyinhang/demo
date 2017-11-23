@@ -929,7 +929,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             }
             logger.info("cityCodeMap------" + cityCodeMap);
             Map<String, Object> map_one = (Map<String, Object>) cityCodeMap.get("body");
-            //TODO
             cityCode = (String) map_one.get("cityCode");
             areaType = (String) map_one.get("areaType");
             logger.info("cityCode------" + cityCode + "---------" + areaType);
