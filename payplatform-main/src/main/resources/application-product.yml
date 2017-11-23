@@ -80,7 +80,7 @@ spring:
     underscore-to-camel-case: true
   mail:
     mode: direct
-    host:
+#    host:
     port:
     username:
     password:

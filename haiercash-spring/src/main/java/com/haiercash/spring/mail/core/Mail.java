@@ -18,7 +18,7 @@ public final class Mail {
     private String content;
     private List<MailInline> inlineList;
     private List<MailAttachment> attachmentList;
-    private MailType mailType = MailType.Plain;
+    private MailType mailType = MailType.PLAIN;
 
     public void addTo(String to) {
         if (this.toList == null)

@@ -7,11 +7,11 @@ public enum MailType {
     /**
      * 普通文本
      */
-    Plain("text/plain;charset=UTF-8"),
+    PLAIN("text/plain;charset=UTF-8"),
     /**
      * Html 文本
      */
-    Html("text/html;charset=UTF-8");
+    HTML("text/html;charset=UTF-8");
 
     //值
     private final String value;

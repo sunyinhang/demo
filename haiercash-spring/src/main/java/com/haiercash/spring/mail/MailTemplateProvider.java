@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 @Component
 public final class MailTemplateProvider {
     private static MailTemplate mailTemplate;
-    @Autowired
+    @Autowired(required = false)
     private MailTemplate mailTemplateInstance;
 
     public static MailTemplate getMailTemplate() {
