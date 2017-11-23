@@ -253,6 +253,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         //获取市代码
         String cityCode = "";
         String provinceCode = "";
+        String areaType = "";
         if(StringUtils.isEmpty(areaCode)){
             cityCode = "370000";
             provinceCode = "370200";
@@ -263,21 +264,48 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             citymap.put("flag", "parent");
             citymap.put("channel", channel);
             citymap.put("channelNo", channelNo);
-            cityCode =  commonPageService.getCode(token, citymap);
+            Map<String, Object> cityCodeMap = commonPageService.getCode(token, citymap);
+            ResultHead jsonMap = (ResultHead) cityCodeMap.get("head");
+            String retFlag_one = jsonMap.getRetFlag(); // (String) jsonMap.get("retFlag");
+            if (!"00000".equals(retFlag_one)) {
+                String retMsg = jsonMap.getRetMsg();// (String) jsonMap.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+            logger.info("cityCodeMap------" + cityCodeMap);
+            Map<String, Object> map_one = (Map<String, Object>) cityCodeMap.get("body");
+            cityCode = (String) map_one.get("cityCode");
+            areaType = (String) map_one.get("areaType");
+//            cityCode = (String) cityCodeMap.get("cityCode");
+//            areaType = (String) cityCodeMap.get("areaType");
+            logger.info("cityCode------" + cityCode + "---------" + areaType);
             if(StringUtils.isEmpty(cityCode)){
                 logger.info("获取市编码失败");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            //获取省代码
-            Map<String, Object > provincemap = new HashMap<String, Object>();
-            provincemap.put("areaCode", cityCode);
-            provincemap.put("flag", "parent");
-            provincemap.put("channel", channel);
-            provincemap.put("channelNo", channelNo);
-            provinceCode = commonPageService.getCode(token, provincemap);
-            if(StringUtils.isEmpty(provinceCode)){
-                logger.info("获取省编码失败");
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            if ("province".equals(areaType)) {
+                provinceCode = cityCode;
+                cityCode = areaCode;
+            } else {
+                //获取省代码
+                Map<String, Object> provincemap = new HashMap<String, Object>();
+                provincemap.put("areaCode", cityCode);
+                provincemap.put("flag", "parent");
+                provincemap.put("channel", channel);
+                provincemap.put("channelNo", channelNo);
+                Map<String, Object> provinceCodeMap = commonPageService.getCode(token, provincemap);
+                ResultHead jsonMapT = (ResultHead) provinceCodeMap.get("head");
+                String retFlag_two = jsonMapT.getRetFlag(); //(String) jsonMapT.get("retFlag");
+                if (!"00000".equals(retFlag_two)) {
+                    String retMsg = jsonMapT.getRetMsg();//(String) jsonMapT.get("retMsg");
+                    return fail(ConstUtil.ERROR_CODE, retMsg);
+                }
+                Map<String, Object> map_two = (Map<String, Object>) provinceCodeMap.get("body");
+                provinceCode = (String) map_two.get("cityCode");
+                logger.info("provinceCode------" + provinceCode);
+                if (StringUtils.isEmpty(provinceCode)) {
+                    logger.info("获取省编码失败");
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                }
             }
         }
         //录单校验
@@ -329,6 +357,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             logger.info("订单保存失败");
             ResultHead resultHead = (ResultHead) (ordermap.get("head"));
             String retmsg = resultHead.getRetMsg();
+//            Map resultHead = (Map<String, Object>) (ordermap.get("head"));
 //            String retmsg = resultHead.get("retMsg").toString();
             //String retmsg = resultHead.getRetMsg();
             //String retmsg = (String) ((Map<String, Object>)(ordermap.get("head"))).get("retMsg");
