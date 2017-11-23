@@ -3,11 +3,14 @@ package com.haiercash.spring.mail;
 import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.mail.core.Mail;
 import com.haiercash.spring.mail.core.MailAttachment;
 import com.haiercash.spring.mail.core.MailInline;
 import com.haiercash.spring.mail.core.MailSendMode;
 import com.haiercash.spring.mail.core.MailType;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -53,6 +56,11 @@ public final class MailTemplate {
 
     //通过消息平台发送
     private void sendMsgPlatform(Mail mail) {
+        String url = EurekaServer.getAPPMSG() + "/api/mail/send";
+        IResponse response = CommonRestUtils.postForMap(url, mail);
+        if (response.isSuccess())
+            return;
+        this.logger.warn(String.format("消息平台发送邮件失败:%s-%s", response.getRetFlag(), response.getRetMsg()));
     }
 
     //发送
