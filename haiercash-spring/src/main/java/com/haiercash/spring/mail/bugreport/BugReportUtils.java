@@ -12,7 +12,7 @@ public final class BugReportUtils {
         return BugReportProvider.getBugReportThread();
     }
 
-    public static void sendAsync(String content) {
-        getBugReportThread().sendAsync(getBugReportMailFactory().createMail(content));
+    public static void sendAsync(BugReportLevel level, String content) {
+        getBugReportThread().sendAsync(getBugReportMailFactory().createMail(level, content));
     }
 }
