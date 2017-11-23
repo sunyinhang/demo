@@ -12,11 +12,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 /**
  * Created by 许崇雷 on 2017-10-25.
  */
 public final class ErrorHandler {
+    private static final String MSG_MISSING_SERVLET_REQUEST_PARAMETER = "缺少必须的参数:";
     private static final Log logger = LogFactory.getLog(ErrorHandler.class);
 
     private ErrorHandler() {
@@ -29,6 +31,11 @@ public final class ErrorHandler {
 
     public static ResponseEntity<CommonResponse> handleBusinessException(BusinessException e) {
         CommonResponse response = CommonResponse.create(e.getRetFlag(), e.getRetMsg());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public static ResponseEntity<CommonResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        CommonResponse response = CommonResponse.create(ConstUtil.ERROR_CODE, MSG_MISSING_SERVLET_REQUEST_PARAMETER + e.getParameterName());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
