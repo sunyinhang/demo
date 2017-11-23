@@ -26,13 +26,13 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CommonPageService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.spring.boot.ApplicationUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.spring.utils.ApplicationContextUtils;
 import com.haiercash.spring.utils.BusinessException;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
@@ -269,7 +269,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //验证客户信息
         ThirdTokenVerifyService thirdTokenVerifyService;
         try {
-            thirdTokenVerifyService = ApplicationContextUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
+            thirdTokenVerifyService = ApplicationUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
         } catch (Exception e) {
             throw new BusinessException(ConstUtil.ERROR_CODE, "错误的 thirdTokenVerifyService 名称:'" + setting.getVerifyUrlService() + "'");
         }

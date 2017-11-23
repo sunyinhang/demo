@@ -1,4 +1,4 @@
-package com.haiercash.core.serialization;
+package com.haiercash.core;
 
 import com.haiercash.core.io.CharsetNames;
 import org.junit.Test;

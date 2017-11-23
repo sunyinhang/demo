@@ -3,6 +3,8 @@ package com.haiercash.spring.servlet;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.mail.bugreport.BugReportLevel;
+import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.utils.BusinessException;
 import com.haiercash.spring.utils.ConstUtil;
@@ -31,7 +33,9 @@ public final class ErrorHandler {
     }
 
     public static ResponseEntity<CommonResponse> handleException(Exception e) {
-        logger.error(ThrowableUtils.getString(e));
+        String msg = ThrowableUtils.getString(e);
+        logger.error(msg);
+        BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
         CommonResponse response = CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

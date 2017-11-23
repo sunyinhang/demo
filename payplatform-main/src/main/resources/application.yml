@@ -8,11 +8,13 @@ logging:
 security:
   sessions: never
 info:
-  name: ${spring.application.name}
-  version: ${project.version}
+  name: paypaltform-develop
+  description: 支付平台-开发环境
 spring:
   application:
-    name: payplatform-develop
+    name: ${info.name}
+    description: ${info.description}
+    version: ${info.version}
   http:
     converters:
       preferred-json-mapper: fastjson # json 转换器, 接收数据和请求数据时使用
@@ -76,6 +78,23 @@ spring:
     aliases-package: com.haiercash.mybatis.data,com.haiercash.payplatform.**.data
     mapper-locations: classpath*:com/haiercash/mybatis/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
     underscore-to-camel-case: true
+  mail:
+    mode: direct
+#    host:
+    port:
+    username:
+    password:
+    properties:
+      mail.smtp.ssl.enable: false
+      mail.smtp.starttls.enable: true
+    bug-report:
+      enabled: false
+      queue-size: 10
+      send-interval-seconds: 120
+      subject: 【海尔消费金融】错误报告
+      to:
+      cc:
+      bcc:
 eureka:
   client:
     register-with-eureka: true # 是否注册自身到 eureka 服务器
