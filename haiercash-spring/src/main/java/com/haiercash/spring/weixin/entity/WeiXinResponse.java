@@ -15,7 +15,7 @@ public class WeiXinResponse {
     private String errormsg;
 
     public void assertSuccess() {
-        if (Objects.equals(this.errcode, 0))
+        if (this.errcode == null || Objects.equals(this.errcode, 0))
             return;
         throw new BusinessException("WX" + Convert.toString(this.errcode), this.errormsg);
     }
