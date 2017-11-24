@@ -26,6 +26,7 @@ public final class WeiXinApi {
     private static final int LOCK_TICKET_WAIT = 5000;
     private static final int LOCK_TICKET_TIMEOUT = 10;
     private static final TimeUnit LOCK_TICKET_TIMEUNIT = TimeUnit.SECONDS;
+    private static final String KEY_TOKEN = "WEIXIN:TOKEN";
     private static final String KEY_TICKET = "WEIXIN:TICKET";
     private final WeiXinProperties properties;
 
@@ -37,17 +38,18 @@ public final class WeiXinApi {
         return Long.toString(System.currentTimeMillis() / 1000);
     }
 
-    public WeiXinToken getToken(WeiXinGrantType grantType) {
+    private WeiXinToken getToken(WeiXinGrantType grantType) {
         Map<String, Object> params = new HashMap<>();
         params.put("grant_type", grantType.value());
         params.put("appid", this.properties.getAppid());
         params.put("secret", this.properties.getSecret());
         WeiXinToken token = JsonClientUtils.getForObject(URL_GET_TOKEN, WeiXinToken.class, params);
+        token.setGenTime(DateUtils.now());
         token.assertSuccess();
         return token;
     }
 
-    public WeiXinTicket getTicket(WeiXinGrantType grantType, WeiXinTicketType ticketType) {
+    private WeiXinTicket getTicket(WeiXinGrantType grantType, WeiXinTicketType ticketType) {
         RedisLock lock = new RedisLock(KEY_TICKET, LOCK_TICKET_WAIT);
         if (!lock.lock(LOCK_TICKET_TIMEOUT, LOCK_TICKET_TIMEUNIT))
             throw new RuntimeException("从 redis 获取微信 ticket 加锁失败");
@@ -64,11 +66,16 @@ public final class WeiXinApi {
             ticket = JsonClientUtils.getForObject(URL_GET_TICKET, WeiXinTicket.class, params);
             ticket.assertSuccess();
             ticket.setGenTime(DateUtils.now());
+            RedisUtils.set(KEY_TOKEN, token);
             RedisUtils.set(KEY_TICKET, ticket);
             return ticket;
         } finally {
             lock.unlock();
         }
+    }
+
+    public WeiXinToken getCachedToken() {
+        return RedisUtils.get(KEY_TOKEN, WeiXinToken.class);
     }
 
     public WeiXinSignature sign(String url) {
@@ -77,6 +84,6 @@ public final class WeiXinApi {
         String noncestr = UUID.randomUUID().toString();
         String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s", ticket.getTicket(), noncestr, timestamp, url);
         String signature = DigestUtils.sha1Hex(str);
-        return new WeiXinSignature(timestamp, noncestr, signature);
+        return new WeiXinSignature(this.properties.getAppid(), timestamp, noncestr, signature);
     }
 }

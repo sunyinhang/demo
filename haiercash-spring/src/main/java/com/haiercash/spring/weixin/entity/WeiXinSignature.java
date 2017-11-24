@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public final class WeiXinSignature {
+    private String appid;
     private String timestamp;
     private String noncestr;
     private String signature;

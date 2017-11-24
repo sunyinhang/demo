@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by 许崇雷 on 2017-11-21.
  */
 public final class BugReportMailFactory {
-    private static final String CONTENT_HEAD = "<head><meta charset=\"UTF-8\"><style>body{font-family:微软雅黑;}table{margin-top:10px;border-collapse:collapse;border:1px solid #aaa;}table th{vertical-align:baseline;padding:6px 15px 6px 6px;background-color:#d5d5d5;border:1px solid #aaa;word-break:keep-all;white-space:nowrap;text-align:left;}table td{vertical-align:text-top;padding:6px 15px 6px 6px;background-color:#efefef;border:1px solid #aaa;word-break:keep-all;white-space:nowrap;}</style></head>";
+    private static final String CONTENT_HEAD = "<head><meta charset=\"UTF-8\"><style>body{font-family:微软雅黑;}table{margin-top:10px;border-collapse:collapse;border:1px solid #aaa;}table th{vertical-align:baseline;padding:6px 15px 6px 6px;background-color:#d5d5d5;border:1px solid #aaa;word-break:keep-all;white-space:nowrap;text-align:left;}table td{vertical-align:text-top;padding:6px 15px 6px 6px;background-color:#efefef;border:1px solid #aaa;word-break:break-all;white-space:pre-wrap;}</style></head>";
     private final BugReportProperties properties;
 
     public BugReportMailFactory(BugReportProperties properties) {

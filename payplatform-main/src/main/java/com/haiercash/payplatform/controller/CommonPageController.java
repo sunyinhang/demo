@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.controller;
 
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.mybatis.util.FileUtil;
 import com.haiercash.payplatform.service.AppServerService;
@@ -21,6 +22,7 @@ import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.weixin.WeiXinApi;
 import com.haiercash.spring.weixin.WeiXinUtils;
+import com.haiercash.spring.weixin.entity.WeiXinToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -205,9 +207,13 @@ public class CommonPageController extends BaseController {
 
     @RequestMapping(value = "/api/payment/uploadFacePic", method = RequestMethod.GET)
     public Map<String, Object> uploadFacePicFromWx(@RequestParam String mediaId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String token = "";
+        WeiXinToken token = WeiXinUtils.getCachedToken();
+        if (token == null)
+            return fail(ConstUtil.ERROR_CODE, "必须先获取 ticket");
+        if (!token.isValid())
+            return fail(ConstUtil.ERROR_CODE, "token 已失效, 必须先获取 ticket");
         Map<String, Object> params = new HashMap<>();
-        params.put("access_token", token);
+        params.put("access_token", token.getAccess_token());
         params.put("media_id", mediaId);
         byte[] img = JsonClientUtils.getForObject(WeiXinApi.URL_GET_MEDIA, byte[].class, params);
         return faceService.uploadFacePic(img, request, response);
@@ -588,9 +594,12 @@ public class CommonPageController extends BaseController {
 
     @RequestMapping(value = "/api/payment/report", method = RequestMethod.POST)
     public void report(@RequestBody String error) {
-        String msg = "客户端错误报告:" + error;
+        StringBuilder builder = new StringBuilder("客户端错误报告");
+        builder.append(Environment.NewLine);
+        builder.append(error);
+        String msg = builder.toString();
+        logger.warn(msg);
         BugReportUtils.sendAsync(BugReportLevel.WARN, msg);
-        logger.error(msg);
     }
 
     /**
