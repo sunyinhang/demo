@@ -24,6 +24,7 @@ import java.util.Map;
 /**
  * Created by use on 2017/7/25.
  */
+@Deprecated
 public final class HttpUtil {
     private static final Log logger = LogFactory.getLog(HttpUtil.class);
 
@@ -302,12 +303,12 @@ public final class HttpUtil {
         }
     }
 
-    public static String getReturnCode(String json) {
+    public static String getRetFlag(String json) {
         Map map = json2Map(json);
-        return getReturnCode(map);
+        return getRetFlag(map);
     }
 
-    public static String getReturnCode(Map<String, Object> map) {
+    public static String getRetFlag(Map<String, Object> map) {
         if (map == null) {
             return "";
         } else {
@@ -357,10 +358,10 @@ public final class HttpUtil {
     }
 
     public static boolean isSuccess(String json) {
-        return getReturnCode(json).equals(ConstUtil.SUCCESS_CODE);
+        return getRetFlag(json).equals(ConstUtil.SUCCESS_CODE);
     }
 
     public static boolean isSuccess(Map<String, Object> map) {
-        return getReturnCode(map).equals(ConstUtil.SUCCESS_CODE);
+        return getRetFlag(map).equals(ConstUtil.SUCCESS_CODE);
     }
 }

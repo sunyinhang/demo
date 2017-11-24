@@ -280,7 +280,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         cachemap.put("haieruserId", phoneNo_);
         //从后台查询用户信息
         Map<String, Object> userInfo = this.queryUserByExternUid(channelNo, userId__);
-        String retFlag = HttpUtil.getReturnCode(userInfo);
+        String retFlag = HttpUtil.getRetFlag(userInfo);
         if (Objects.equals(retFlag, "00000")) {
             //集团uid已在统一认证做过绑定
             String body = userInfo.get("body").toString();
@@ -291,7 +291,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         } else if (Objects.equals(retFlag, "U0178")) {//U0157：未查到该用户的信息
             //向后台注册用户信息
             Map<String, Object> registerResult = this.saveUserByExternUid(this.getChannelNo(), userId__, phoneNo_);
-            String registerResultFlag = HttpUtil.getReturnCode(registerResult);
+            String registerResultFlag = HttpUtil.getRetFlag(registerResult);
             if ("00000".equals(registerResultFlag)) {
                 uidLocal = registerResult.get("body").toString();//统一认证内userId
                 phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
@@ -307,7 +307,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 return fail(ConstUtil.ERROR_CODE, userretmsg);
             }
         } else {
-            throw new BusinessException(HttpUtil.getReturnCode(userInfo), HttpUtil.getRetMsg(userInfo));
+            throw new BusinessException(HttpUtil.getRetFlag(userInfo), HttpUtil.getRetMsg(userInfo));
         }
 
         cachemap.put("userId", uidLocal);//统一认证userId

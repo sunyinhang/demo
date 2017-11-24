@@ -1391,7 +1391,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         cachemap.put("haieruserId", phoneNo_);
         //从后台查询用户信息
         Map<String, Object> userInfo = queryUserByExternUid(channelNo, userId__);
-        String retFlag = HttpUtil.getReturnCode(userInfo);
+        String retFlag = HttpUtil.getRetFlag(userInfo);
         if (Objects.equals(retFlag, "00000")) {
             //集团uid已在统一认证做过绑定
             String body = userInfo.get("body").toString();

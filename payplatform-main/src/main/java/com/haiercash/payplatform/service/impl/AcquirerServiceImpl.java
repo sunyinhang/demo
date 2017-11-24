@@ -8,24 +8,24 @@ import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.common.enums.AcquirerApptEnum;
 import com.haiercash.payplatform.common.enums.AcquirerEnum;
 import com.haiercash.payplatform.common.enums.AcquirerGoodsEnum;
-import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppManageService;
-import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CmisService;
 import com.haiercash.payplatform.service.CommonRepaymentPersonService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.AcqUtil;
-import com.haiercash.spring.utils.BusinessException;
 import com.haiercash.payplatform.utils.ChannelType;
 import com.haiercash.payplatform.utils.CmisUtil;
-import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.payplatform.utils.IdCardUtils;
 import com.haiercash.payplatform.utils.ReflactUtils;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.utils.BusinessException;
+import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.spring.utils.ResultHead;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -650,7 +650,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
             Map<String, Object> saleRes = crmService.getStoreSaleByUserId(userId);
             if (!HttpUtil.isSuccess(saleRes)) {
                 logger.error("销售代表信息查询失败---》CRM 1.29 userId:" + userId);
-                return fail(HttpUtil.getReturnCode(saleRes), HttpUtil.getRetMsg(saleRes));
+                return fail(HttpUtil.getRetFlag(saleRes), HttpUtil.getRetMsg(saleRes));
             }
             Map salerBodyMap = (Map) saleRes.get("body");
             acquirer.put("saler_name", salerBodyMap.get("userName"));
