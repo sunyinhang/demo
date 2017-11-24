@@ -44,8 +44,8 @@ public final class WeiXinApi {
         params.put("appid", this.properties.getAppid());
         params.put("secret", this.properties.getSecret());
         WeiXinToken token = JsonClientUtils.getForObject(URL_GET_TOKEN, WeiXinToken.class, params);
-        token.setGenTime(DateUtils.now());
         token.assertSuccess();
+        token.setGenTime(DateUtils.now());
         return token;
     }
 
