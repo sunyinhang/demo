@@ -25,6 +25,7 @@ public final class WeiXinApi {
     public static final String URL_GET_MEDIA = "https://api.weixin.qq.com/cgi-bin/media/get";
     private static final int LOCK_TICKET_TIMEOUT = 8;
     private static final TimeUnit LOCK_TICKET_TIMEUNIT = TimeUnit.SECONDS;
+    private static final String KEY_TOKEN = "WEIXIN:TOKEN";
     private static final String KEY_TICKET = "WEIXIN:TICKET";
     private final WeiXinProperties properties;
 
@@ -36,17 +37,18 @@ public final class WeiXinApi {
         return Long.toString(System.currentTimeMillis() / 1000);
     }
 
-    public WeiXinToken getToken(WeiXinGrantType grantType) {
+    private WeiXinToken getToken(WeiXinGrantType grantType) {
         Map<String, Object> params = new HashMap<>();
         params.put("grant_type", grantType.value());
         params.put("appid", this.properties.getAppid());
         params.put("secret", this.properties.getSecret());
         WeiXinToken token = JsonClientUtils.getForObject(URL_GET_TOKEN, WeiXinToken.class, params);
+        token.setGenTime(DateUtils.now());
         token.assertSuccess();
         return token;
     }
 
-    public WeiXinTicket getTicket(WeiXinGrantType grantType, WeiXinTicketType ticketType) {
+    private WeiXinTicket getTicket(WeiXinGrantType grantType, WeiXinTicketType ticketType) {
         RedisLock lock = new RedisLock(KEY_TICKET);
         if (!lock.lock(LOCK_TICKET_TIMEOUT, LOCK_TICKET_TIMEUNIT))
             throw new RuntimeException("从 redis 获取微信 ticket 加锁失败");
@@ -63,11 +65,16 @@ public final class WeiXinApi {
             ticket = JsonClientUtils.getForObject(URL_GET_TICKET, WeiXinTicket.class, params);
             ticket.assertSuccess();
             ticket.setGenTime(DateUtils.now());
+            RedisUtils.set(KEY_TOKEN, token);
             RedisUtils.set(KEY_TICKET, ticket);
             return ticket;
         } finally {
             lock.unlock();
         }
+    }
+
+    public WeiXinToken getCachedToken() {
+        return RedisUtils.get(KEY_TOKEN, WeiXinToken.class);
     }
 
     public WeiXinSignature sign(String url) {
