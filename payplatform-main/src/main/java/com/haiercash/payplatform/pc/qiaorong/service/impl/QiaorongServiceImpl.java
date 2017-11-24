@@ -767,6 +767,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("收单系统提交贷款申请成功, applSeq:" + applseq);
         }
 
+        Map<String, Object> mapRes = (Map) result.get("response");
+        return mapRes;
 
         // 调信贷贷款提交接口.
 //        HashMap<String, Object> mapSubmit = new HashMap<>();
@@ -783,7 +785,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 //        }
 //        Map<String, Object> response = (Map<String, Object>) responseMap.get("response");
 
-        return result;
     }
 
 
