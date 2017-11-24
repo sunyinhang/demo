@@ -704,6 +704,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 //            realmName = "/static/agreement/PersonInfo.html";
                 logger.info("----------个人信息协议-----------" + realmName);
                 map.put("realmName", realmName);
+            } else if ("sesame".equals(flag)) {
+                realmName = "/app/appserver/seSameCredit";
+                logger.info("------------芝麻信用授权书展示地址---------" + realmName);
+                map.put("realmName", realmName);
             }
 
         }
