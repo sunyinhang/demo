@@ -76,6 +76,6 @@ public final class WeiXinApi {
         String noncestr = UUID.randomUUID().toString();
         String str = String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s", ticket.getTicket(), noncestr, timestamp, url);
         String signature = DigestUtils.sha1Hex(str);
-        return new WeiXinSignature(timestamp, noncestr, signature);
+        return new WeiXinSignature(this.properties.getAppid(), timestamp, noncestr, signature);
     }
 }
