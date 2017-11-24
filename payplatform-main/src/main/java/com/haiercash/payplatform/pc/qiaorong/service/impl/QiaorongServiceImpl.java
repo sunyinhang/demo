@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.pc.qiaorong.service.impl;
 
 import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.mybatis.util.EncryptUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -11,6 +12,8 @@ import com.haiercash.payplatform.pc.moxie.service.MoxieService;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CmisApplService;
+import com.haiercash.payplatform.utils.AcqTradeCode;
+import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.CmisTradeCode;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
@@ -45,8 +48,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     protected String moxie_apikey;
     @Value("${app.other.haiercashpay_web_url}")
     protected String haiercashpay_web_url;
-    @Autowired
-    private CmisApplService cmisApplService;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -117,6 +118,8 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         logger.info("合同展示页面初始化*******开始");
         String applseq = (String) map.get("applseq");
         String token = (String) map.get("token");
+        String channelNo = super.getChannelNo();
+        //String channelNo = (String) map.get("channelNo");
         logger.info("申请流水号：" + applseq);
         if (StringUtils.isEmpty(applseq)) {
             logger.info("申请流水号为空");
@@ -126,75 +129,82 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("token不能为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
+        if (StringUtils.isEmpty(channelNo)) {
+            logger.info("渠道编码不能为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
 
         Map<String, Object> cachemap = RedisUtils.getExpireMap(token);
         if (cachemap == null || "".equals(cachemap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        // 去cmis查询订单信息
-        Map<String, Object> appOrderMapCmis = this.getAppOrderMapFromCmis(applseq);
-        if (appOrderMapCmis == null || appOrderMapCmis.isEmpty()) {
-            logger.info("未查询到贷款信息");
-            return fail(ConstUtil.ERROR_CODE, "未查询到贷款信息");
-        }
 
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("totalamount", appOrderMapCmis.get("APPLY_AMT"));//应还总额
-        resultMap.put("loannumber", appOrderMapCmis.get("APPLY_TNR"));//剩余期数
-        List<String> goodsNameList = new ArrayList<>();
-        List<Map<String, Object>> goods = (List<Map<String, Object>>) appOrderMapCmis.get("goods");
-        if (goods != null && !goods.isEmpty()) {
-            for (Map<String, Object> good : goods) {
-                goodsNameList.add((String) good.get("GOODS_NAME"));
-            }
+        // 去收单查询订单信息
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("applSeq", applseq);
+        paramMap.put("channelNo", channelNo);
+        Map<String, Object> acquierOrder = AcqUtil.getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/selectApplInfoApp",
+                AcqTradeCode.SELECT_APP_APPL_INFO, ConstUtil.CHANNEL, channelNo, null, null, paramMap);
+
+        Map mapLoanDetail = (Map<String, Object>) acquierOrder.get("response");
+        if (!HttpUtil.isSuccess(mapLoanDetail)) {
+            return mapLoanDetail;
         }
-        String typCde = String.valueOf(appOrderMapCmis.get("LOAN_TYP"));//贷款品种
-
-        resultMap.put("goods", goodsNameList);//分期产品
-        resultMap.put("name", appOrderMapCmis.get("CUST_NAME"));//姓名
-        resultMap.put("phone", appOrderMapCmis.get("INDIV_MOBILE"));//手机号
-        resultMap.put("idnumber", appOrderMapCmis.get("ID_NO"));//身份证号
-        //还款帐号
-        List<Map<String, Object>> cardList = (ArrayList<Map<String, Object>>) appOrderMapCmis.get("accInfo");
-        for (Map<String, Object> card : cardList) {
-            // 获取卡类型
-            String type = String.valueOf(card.get("APPL_AC_KIND"));
-            if ("02".equals(type) || "2".equals(type)) {
-                resultMap.put("cardnumber", card.get("APPL_AC_NO"));//还款卡号
-                cachemap.put("cardnumber", card.get("APPL_AC_NO"));
-            }
+        Map bodyLoanDetail = (Map<String, Object>) mapLoanDetail.get("body");
+        String typCde = Convert.toString(bodyLoanDetail.get("typ_cde"));//贷款品种
+        String totalamount = Convert.toString(bodyLoanDetail.get("apply_amt"));//借款总额
+        String name = Convert.toString(bodyLoanDetail.get("cust_name"));//申请人姓名
+        String phone = Convert.toString(bodyLoanDetail.get("indiv_mobile"));//申请人手机号
+        String idnumber = Convert.toString(bodyLoanDetail.get("id_no"));//身份证号
+        String cardnumber = Convert.toString(bodyLoanDetail.get("repay_appl_card_no"));//还款卡号
+        String loannumber = Convert.toString(bodyLoanDetail.get("apply_tnr"));//期数
+        String apply_tnr_typ = Convert.toString(bodyLoanDetail.get("apply_tnr_typ"));//期限类型
+        //获取商品信息
+        Map goodmap = (Map) bodyLoanDetail.get("goodsList");
+        List goodlist = (List) goodmap.get("good");
+        for (Object goods: goodlist) {
+            Map goodsmap = (Map) goods;
+            String goodsname = Convert.toString(goodsmap.get("goods_name"));//商品名称
+            resultMap.put("goods", goodsname);//分期产品
         }
-
-        //resultMap.put("cardnumber",appOrderMapCmis.get(""));
-        //调用6.17接口 查询每期应还款
-        HashMap<String, Object> loanRequestMap = new HashMap<>();
-        loanRequestMap.put("typCde", appOrderMapCmis.get("LOAN_TYP"));
-        loanRequestMap.put("apprvAmt", appOrderMapCmis.get("APPLY_AMT"));
-        loanRequestMap.put("applyTnrTyp", appOrderMapCmis.get("APPLY_TNR_TYP"));
-        loanRequestMap.put("applyTnr", appOrderMapCmis.get("APPLY_TNR"));
-        loanRequestMap.put("fstPay", appOrderMapCmis.get("FST_PAY"));
-        logger.debug("loanRequestMap==" + loanRequestMap);
-        Map<String, Object> paySsResultMap = cmisApplService.getHkssReturnMap(loanRequestMap, appConfig.getGateUrl(), getToken());
-
-        if (paySsResultMap != null) {
-            Map<String, Object> body = (Map<String, Object>) paySsResultMap.get("body");
-            List<Map<String, Object>> mx = (List<Map<String, Object>>) body.get("mx");
-            if (mx != null) {
-
-                Map<String, Object> perMx = mx.size() > 1 ? mx.get(1) : mx.get(0);
-                String perMxString = String.valueOf(perMx.get("instmAmt"));
-                resultMap.put("loanpayment", perMxString);//每期应还金额
-            }
+        //还款试算获取分期金额
+        Map<String, Object> payMap = new HashMap<String, Object>();
+        payMap.put("typCde", typCde);
+        payMap.put("apprvAmt", totalamount);
+        payMap.put("applyTnrTyp", apply_tnr_typ);
+        payMap.put("applyTnr", loannumber);
+        payMap.put("channel", ConstUtil.CHANNEL);
+        payMap.put("channelNo", channelNo);
+        Map<String, Object> payresultMap = appServerService.getPaySs(token, payMap);
+        if (!HttpUtil.isSuccess(payresultMap)) {//还款试算失败
+            String retmsg = (String) ((Map<String, Object>) (payresultMap.get("head"))).get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retmsg);
         }
 
-        cachemap.put("name", appOrderMapCmis.get("CUST_NAME"));
-        cachemap.put("phoneNo", appOrderMapCmis.get("INDIV_MOBILE"));
-        cachemap.put("idCard", appOrderMapCmis.get("ID_NO"));
+        List loanlist = (List) ((Map<String, Object>) payresultMap.get("body")).get("mx");
+        for (int i = 0; i < loanlist.size(); i++ ) {
+            Map map1 = (Map) loanlist.get(0);
+            String instmAmt = Convert.toString(map1.get("instmAmt"));//分期金额
+            resultMap.put("loanpayment", instmAmt);//每期应还金额
+        }
+
+        resultMap.put("totalamount", totalamount);//应还总额
+        resultMap.put("loannumber", loannumber);//剩余期数
+        resultMap.put("name", name);//姓名
+        resultMap.put("phone", phone);//手机号
+        resultMap.put("idnumber", idnumber);//身份证号
+        resultMap.put("cardnumber", cardnumber);//还款卡号
+
+        cachemap.put("cardnumber", cardnumber);
+        cachemap.put("name", name);
+        cachemap.put("phoneNo", phone);
+        cachemap.put("idCard", idnumber);
         cachemap.put("applSeq", applseq);
-        cachemap.put("totalamount", appOrderMapCmis.get("APPLY_AMT"));
+        cachemap.put("totalamount", totalamount);
         cachemap.put("typCde", typCde);//
-        cachemap.put("userId", appOrderMapCmis.get("INDIV_MOBILE"));
+        cachemap.put("userId", phone);
         RedisUtils.setExpire(token, cachemap);
 
 
@@ -744,22 +754,37 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 //        }
 
         //8.订单提交
-        // 调信贷贷款申请接口.
-        HashMap<String, Object> mapSubmit = new HashMap<>();
-        mapSubmit.put("applSeq", applseq);
-        mapSubmit.put("flag", "1");//0：贷款取消  1:申请提交   2：合同提交
-        mapSubmit.put("sysFlag", "11");
-        mapSubmit.put("channel", channelNo);//渠道编码
-        logger.info("申请流水号：" + applseq + "进行订单提交");
-        Map<String, Object> responseMap = CmisUtil.getCmisResponse(CmisTradeCode.TRADECODE_DK_CANCEL, null, mapSubmit);
-        logger.info("信贷100026提交接口返回" + responseMap);
-        if (responseMap == null) {
-            logger.info("贷款提交失败,信贷系统贷款提交返回信息为空");
-            return fail(ConstUtil.ERROR_CODE, "贷款提交失败");
+        //调用收单订单提交
+        Map<String, Object> param = new HashMap<>();
+        param.put("applSeq", applseq);
+        param.put("flag", "1");//贷款提交
+        Map<String, Object> result = AcqUtil
+                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/commitAppl", AcqTradeCode.COMMIT_APPL,
+                        ConstUtil.CHANNEL, channelNo, null, null, param);
+        if (!CmisUtil.isSuccess(result)) {
+            logger.info("收单系统提交贷款申请失败, applSeq:" + applseq);
+        } else {
+            logger.info("收单系统提交贷款申请成功, applSeq:" + applseq);
         }
-        Map<String, Object> response = (Map<String, Object>) responseMap.get("response");
 
-        return response;
+        Map<String, Object> mapRes = (Map) result.get("response");
+        return mapRes;
+
+        // 调信贷贷款提交接口.
+//        HashMap<String, Object> mapSubmit = new HashMap<>();
+//        mapSubmit.put("applSeq", applseq);
+//        mapSubmit.put("flag", "1");//0：贷款取消  1:申请提交   2：合同提交
+//        mapSubmit.put("sysFlag", "11");
+//        mapSubmit.put("channel", channelNo);//渠道编码
+//        logger.info("申请流水号：" + applseq + "进行订单提交");
+//        Map<String, Object> responseMap = CmisUtil.getCmisResponse(CmisTradeCode.TRADECODE_DK_CANCEL, null, mapSubmit);
+//        logger.info("信贷100026提交接口返回" + responseMap);
+//        if (responseMap == null) {
+//            logger.info("贷款提交失败,信贷系统贷款提交返回信息为空");
+//            return fail(ConstUtil.ERROR_CODE, "贷款提交失败");
+//        }
+//        Map<String, Object> response = (Map<String, Object>) responseMap.get("response");
+
     }
 
 
