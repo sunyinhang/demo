@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,8 @@ import java.util.Objects;
 @Configuration
 @EnableConfigurationProperties(MyBatisProperties.class)
 public class MyBatisAutoConfiguration {
+    private static final String PREFIX = "spring.mybatis";
+    private static final String BASE_PACKAGE = "base-package";
     private final MyBatisProperties properties;
 
     public MyBatisAutoConfiguration(MyBatisProperties properties) {
@@ -43,6 +46,7 @@ public class MyBatisAutoConfiguration {
 
     @Bean
     @Primary
+    @ConditionalOnProperty(prefix = PREFIX, name = BASE_PACKAGE)
     @ConditionalOnMissingBean
     SqlSessionFactory sqlSessionFactory(DataSource dataSource) {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
@@ -70,6 +74,7 @@ public class MyBatisAutoConfiguration {
 
     @Bean
     @Primary
+    @ConditionalOnProperty(prefix = PREFIX, name = BASE_PACKAGE)
     @ConditionalOnMissingBean
     SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
