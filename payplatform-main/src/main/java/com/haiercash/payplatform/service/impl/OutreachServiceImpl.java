@@ -12,9 +12,7 @@ public class OutreachServiceImpl extends FaceServiceImpl implements OutreachServ
 
     @Override
     public Map<String, Object> protocolauth(Map<String, Object> params) {
-        String url = outplatform_url+"/Outreachplatform/api/alibaba/protocolauth";
-        return  JsonClientUtils.postForMap(url, params);
+        String url = outplatform_url + "/Outreachplatform/api/alibaba/protocolauth";
+        return JsonClientUtils.postForMap(url, params);
     }
-
-
 }
