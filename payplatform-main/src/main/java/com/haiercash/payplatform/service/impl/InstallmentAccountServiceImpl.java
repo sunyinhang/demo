@@ -3,14 +3,14 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.spring.rest.IResponse;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.InstallmentAccountService;
 import com.haiercash.payplatform.service.OrderService;
+import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.ResultHead;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,8 +210,6 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //总入口需查询客户信息数据
         String idNo = (String) cacheMap.get("idCard");
-//        String idNo = "37040319910722561X";
-//        idNo = (String) map.get("idNo");
         if (idNo == null || "".equals(idNo)) {
             logger.info("idCard为空");
             return fail(ConstUtil.ERROR_CODE, "idCard为空!");
@@ -223,7 +222,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         req.put("idNo", idNo);
         req.put("page", String.valueOf(page));
         req.put("size", String.valueOf(size));
-        req.put("flag", "A");
+//        req.put("flag", "A");
         logger.info("待还款信息查询(全部)接口，请求数据：" + req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.queryApplAllByIdNo(token, req);
         if (dateAppOrderPerson == null) {
@@ -237,9 +236,24 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         Map<String, Object> body = (Map<String, Object>) dateAppOrderPerson.get("body");
         List<Map<String, Object>> order = (List<Map<String, Object>>) body.get("orders");
+        List<Map<String, Object>> order_rep = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < order.size(); i++) {
+            Map<String, Object> ordermap = (Map<String, Object>) order.get(i);
+            BigDecimal sybj = Convert.toDecimal(ordermap.get("sybj"));
+            Integer remainDays = Convert.toInteger(ordermap.get("remainDays"));
+            String psDueDt = Convert.toString(ordermap.get("psDueDt"));
+            if (remainDays.intValue() >= 0) {
+                ordermap.put("outSts", "DH");//待还款
+            } else {
+                ordermap.put("outSts", "OD");//逾期
+            }
+            ordermap.put("applyDt", psDueDt);//把申请日替换成到期日，PS 前端需要
+            ordermap.put("apprvAmt", sybj);
+            order_rep.add(ordermap);
+        }
         Map<String, Object> orders = new HashMap<String, Object>();
 //        orders.put("orders", order);
-        body.put("orders", order);
+        body.put("orders", order_rep);
         dateAppOrderPerson.put("body", body);
         return dateAppOrderPerson;
     }

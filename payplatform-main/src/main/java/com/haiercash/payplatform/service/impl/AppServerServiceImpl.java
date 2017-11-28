@@ -1,9 +1,9 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.spring.service.BaseService;
 import com.haiercash.payplatform.utils.AppServerUtils;
+import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -676,7 +676,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     //待还款信息查询
     @Override
     public Map<String, Object> queryApplAllByIdNo(String token, Map<String, Object> paramMap) {
-        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/queryApplListByIdNo";
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/queryApplAllByIdNo";
         logger.info("待还款信息查询接口，请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         return map;
