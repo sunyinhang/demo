@@ -173,4 +173,4 @@ app:
     secret:
   outreach:
     appid: 300001074
-    channel_no: HCP
+    channel-no: HCP

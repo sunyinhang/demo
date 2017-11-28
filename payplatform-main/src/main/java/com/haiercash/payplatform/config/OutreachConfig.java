@@ -14,5 +14,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "app.outreach")
 public class OutreachConfig {
     private String appid;//阿里商户应用id
-    private String channel_no;//调用渠道
+    private String channelNo;//调用渠道
 }

@@ -245,7 +245,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         outMap.put("mobileOne", userId);
         outMap.put("mobileTwo", phoneNo);
         outMap.put("appid", outreachConfig.getAppid());
-        outMap.put("channelNo", outreachConfig.getChannel_no());
+        outMap.put("channelNo", outreachConfig.getChannelNo());
         outMap.put("businessChannelNo ", channelNo);
         outreachService.protocolauth(outMap);//芝麻授权
         cacheMap.put("crdSeq", applSeq);
