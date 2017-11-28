@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "app.cashLoan")
+@ConfigurationProperties(prefix = "app.outreach")
 public class OutreachConfig {
     private String appid;
     private String channelNo;
