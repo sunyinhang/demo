@@ -2,12 +2,14 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.spring.rest.client.JsonClientUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 /**
- * @Description:
+ * @Description: 外联接口
  */
+@Service
 public class OutreachServiceImpl extends FaceServiceImpl implements OutreachService {
 
     @Override

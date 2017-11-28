@@ -3,8 +3,10 @@ package com.haiercash.payplatform.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.haiercash.mybatis.util.EncryptUtil;
+import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.CmisUtil;
@@ -40,6 +42,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private AcquirerService acquirerService;
     @Value("${app.other.outplatform_url}")
     protected String outplatform_url;
+    @Autowired
+    private OutreachService outreachService;
+    @Autowired
+    private OutreachConfig outreachConfig;
 
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
@@ -217,8 +223,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         hashMapTwo.put("content", listTwo);
         arrayList.add(hashMapOne);
         arrayList.add(hashMapTwo);
-        hashMap.put("list", arrayList);
 //        hashMap.put("channel", channel);
+        hashMap.put("list", arrayList);
 //        hashMap.put("channelNo", channelNo);
         Map<String, Object> stringObjectMap = appServerService.updateListRiskInfo(token, hashMap);
 //        if (stringObjectMap == null) {
@@ -232,6 +238,16 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //            String retMsg = (String) setcustTagHeadMap.get("retMsg");
 //            return fail(ConstUtil.ERROR_CODE, retMsg);
 //        }
+        HashMap<String, Object> outMap = new HashMap<String, Object>();
+        outMap.put("applseq", applSeq);
+        outMap.put("name", name);
+        outMap.put("certNo", certNo);
+        outMap.put("mobileOne", userId);
+        outMap.put("mobileTwo", phoneNo);
+        outMap.put("appid", outreachConfig.getAppid());
+        outMap.put("channelNo", outreachConfig.getChannelNo());
+        outMap.put("businessChannelNo ", channelNo);
+        outreachService.protocolauth(outMap);//芝麻授权
         cacheMap.put("crdSeq", applSeq);
         RedisUtils.setExpire(token, cacheMap);
         return success();
