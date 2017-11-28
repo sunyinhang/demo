@@ -241,13 +241,13 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             Map<String, Object> ordermap = (Map<String, Object>) order.get(i);
             BigDecimal sybj = Convert.toDecimal(ordermap.get("sybj"));
             Integer remainDays = Convert.toInteger(ordermap.get("remainDays"));
-            String psDueDt = Convert.toString(ordermap.get("psDueDt"));
+//            String psDueDt = Convert.toString(ordermap.get("psDueDt"));
             if (remainDays.intValue() >= 0) {
                 ordermap.put("outSts", "DH");//待还款
             } else {
                 ordermap.put("outSts", "OD");//逾期
             }
-            ordermap.put("applyDt", psDueDt);//把申请日替换成到期日，PS 前端需要
+//            ordermap.put("applyDt", psDueDt);//把申请日替换成到期日，PS 前端需要
             ordermap.put("apprvAmt", sybj);
             order_rep.add(ordermap);
         }
