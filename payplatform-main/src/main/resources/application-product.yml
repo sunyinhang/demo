@@ -171,9 +171,6 @@ app:
   weixin:
     appid:
     secret:
-  #外联配置
   outreach:
-    #阿里商户应用id
     appid: 300001074
-    #调用渠道
     channelNo: HCP

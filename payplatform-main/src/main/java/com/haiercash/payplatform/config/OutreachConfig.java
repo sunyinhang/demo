@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Created by yu jianwei on 2017/11/28
  *
- * @Description:
+ * @Description: 外联相关配置
  */
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "app.outreach")
 public class OutreachConfig {
-    private String appid;
-    private String channelNo;
+    private String appid;//阿里商户应用id
+    private String channelNo;//调用渠道
 }
