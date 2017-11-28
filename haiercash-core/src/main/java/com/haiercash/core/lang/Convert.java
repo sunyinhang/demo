@@ -1,7 +1,7 @@
 package com.haiercash.core.lang;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import com.haiercash.core.reflect.ReflectionUtils;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -27,19 +27,6 @@ public final class Convert {
     private static final ThreadLocal<SimpleDateFormat> FORMAT_DATE = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd"));
     private static final ThreadLocal<SimpleDateFormat> FORMAT_DATE_TIME = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
     private static final ThreadLocal<SimpleDateFormat> FORMAT_DATE_TIME_MS = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"));
-
-    //调用对象的方法,无参数
-    @SuppressWarnings("unchecked")
-    private static <T> T invoke(Object value, String methodName) throws Exception {
-        Method method = value.getClass().getMethod(methodName);
-        return (T) method.invoke(value);
-    }
-
-    //创建类型的实例,一个参数
-    private static <T> T create(Class<T> clazz, Object arg0) throws Exception {
-        Constructor<T> constructor = clazz.getConstructor(arg0.getClass());
-        return constructor.newInstance(arg0);
-    }
 
     //获取最后一个点后的字符串
     private static String getShortClassName(String clazzName) {
@@ -334,12 +321,12 @@ public final class Convert {
 
         try {
             String shortClassName = getShortClassName(clazz.getName());
-            return invoke(value, StringUtils.decapitalize(shortClassName) + "Value");
+            return ReflectionUtils.invoke(value, StringUtils.decapitalize(shortClassName) + "Value");
         } catch (Exception ignored) {
         }
 
         try {
-            return create(clazz, value);
+            return ReflectionUtils.newInstance(clazz, new Class[]{value.getClass()}, new Object[]{value});
         } catch (Exception ignored) {
         }
 

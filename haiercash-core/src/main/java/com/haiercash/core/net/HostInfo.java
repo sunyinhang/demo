@@ -1,11 +1,10 @@
 package com.haiercash.core.net;
 
+import com.haiercash.core.reflect.ReflectionUtils;
 import sun.management.VMManagement;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -115,12 +114,8 @@ public final class HostInfo {
             this.ipAddress = ipAddress.toArray(new String[ipAddress.size()]);
             //获取当前进程 id
             RuntimeMXBean runtimeMBean = ManagementFactory.getRuntimeMXBean();
-            Field jvmField = runtimeMBean.getClass().getDeclaredField("jvm");
-            jvmField.setAccessible(true);
-            VMManagement jvm = (VMManagement) jvmField.get(runtimeMBean);
-            Method getProcessIdMethod = jvm.getClass().getDeclaredMethod("getProcessId");
-            getProcessIdMethod.setAccessible(true);
-            this.processId = (int) getProcessIdMethod.invoke(jvm);
+            VMManagement jvm = ReflectionUtils.getField(runtimeMBean, "jvm");
+            this.processId = ReflectionUtils.invoke(jvm, "getProcessId");
         } catch (Exception e) {
             e.printStackTrace();
         }
