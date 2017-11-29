@@ -13,6 +13,8 @@ public final class BugReportUtils {
     }
 
     public static void sendAsync(BugReportLevel level, String content) {
-        getBugReportThread().sendAsync(getBugReportMailFactory().createMail(level, content));
+        if (level == null)
+            level = BugReportLevel.DEFAULT_LEVEL;
+        getBugReportThread().sendAsync(level, getBugReportMailFactory().createMail(level, content));
     }
 }

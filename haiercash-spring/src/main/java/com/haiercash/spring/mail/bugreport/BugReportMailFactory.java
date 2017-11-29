@@ -23,8 +23,6 @@ public final class BugReportMailFactory {
     }
 
     public Mail createMail(BugReportLevel level, String content) {
-        if (level == null)
-            level = BugReportLevel.UNKNOWN;
         ApplicationProperties applicationProperties = ApplicationUtils.getProperties();
         Mail mail = new Mail();
         mail.setDisplay(String.format("%s (%s)", applicationProperties.getDescription(), applicationProperties.getName()));
