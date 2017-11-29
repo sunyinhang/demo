@@ -247,7 +247,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         outMap.put("appid", outreachConfig.getAppid());
         outMap.put("channelNo", outreachConfig.getChannelNo());
         outMap.put("businessChannelNo ", channelNo);
+        logger.info("==============芝麻授权开始==============");
         outreachService.protocolauth(outMap);//芝麻授权
+        logger.info("==============芝麻授权结束==============");
         cacheMap.put("crdSeq", applSeq);
         RedisUtils.setExpire(token, cacheMap);
         return success();
