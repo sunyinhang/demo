@@ -40,7 +40,7 @@ public final class BugReportMailFactory {
         builder.append("<tr><td>级别</td><td>").append(level.getDescription()).append("</td></tr>");
         builder.append("<tr><td>实例</td><td>").append(applicationProperties.getDescription()).append(" (").append(applicationProperties.getName()).append(")").append("</td></tr>");
         builder.append("<tr><td>版本</td><td>").append(applicationProperties.getVersion()).append("</td></tr>");
-        builder.append("<tr><td>时间</td><td>").append(DateUtils.nowString()).append("</td></tr>");
+        builder.append("<tr><td>时间</td><td>").append(DateUtils.nowDateTime()).append("</td></tr>");
         builder.append("<tr><td>线程</td><td>").append(Thread.currentThread().getName()).append("</td></tr>");
         if (ThreadContext.exists()) {
             builder.append("<tr><td>追踪</td><td>").append(ThreadContext.getTraceID()).append("</td></tr>");
