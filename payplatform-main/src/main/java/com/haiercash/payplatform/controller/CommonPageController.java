@@ -337,7 +337,7 @@ public class CommonPageController extends BaseController {
 
 
     /**
-     * 查询贷款详情
+     * 查询贷款详情（调用收单）
      *
      * @return
      */
@@ -346,6 +346,15 @@ public class CommonPageController extends BaseController {
         return payPasswdService.queryLoanDetailInfo(super.getToken(), applSeq);
     }
 
+    /**
+     * 查询贷款详情（现金贷调用APP）
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryLoanDetailInfoForApp", method = RequestMethod.GET)
+    public Map<String, Object> queryLoanDetailInfoForApp(@RequestParam(value = "applSeq") String applSeq) {
+        return payPasswdService.queryLoanDetailInfoForApp(super.getToken(), applSeq);
+    }
 
     /**
      * 贷款详情页面:按贷款申请查询分期账单
