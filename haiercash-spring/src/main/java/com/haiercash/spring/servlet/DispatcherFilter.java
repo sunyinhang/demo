@@ -1,5 +1,6 @@
 package com.haiercash.spring.servlet;
 
+import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
@@ -27,7 +28,8 @@ import java.io.IOException;
 public final class DispatcherFilter implements Filter {
     private static final String NAME_TOKEN = "token";
     private static final String NAME_CHANNEL = "channel";
-    private static final String NAME_CHANNEL_NO = "channelNo";
+    private static final String NAME_CHANNEL_NO_PRIMARY = "channel_no";
+    private static final String NAME_CHANNEL_NO_SECONDARY = "channelNo";
 
     private String getArg(DispatcherRequestWrapper request, String name) {
         return StringUtils.defaultIfEmpty(request.getHeader(name), request.getParameter(name));
@@ -49,7 +51,7 @@ public final class DispatcherFilter implements Filter {
         DispatcherRequestWrapper request = new DispatcherRequestWrapper((HttpServletRequest) servletRequest);
         DispatcherResponseWrapper response = new DispatcherResponseWrapper((HttpServletResponse) servletResponse);
         RequestContext.init(request, response);
-        ThreadContext.init(this.getArg(request, NAME_TOKEN), this.getArg(request, NAME_CHANNEL), this.getArg(request, NAME_CHANNEL_NO));
+        ThreadContext.init(this.getArg(request, NAME_TOKEN), this.getArg(request, NAME_CHANNEL), Convert.defaultString(this.getArg(request, NAME_CHANNEL_NO_PRIMARY), this.getArg(request, NAME_CHANNEL_NO_SECONDARY)));
         IncomingLog.writeRequestLog(request);
         long begin = System.currentTimeMillis();
         try {
