@@ -2,6 +2,7 @@ package com.haiercash.payplatform.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.mybatis.util.EncryptUtil;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.service.AcquirerService;
@@ -670,6 +671,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 //            String applyTnrTyp = json.getString("apply_tnr_typ");
             String totfee = "";
             String apprvTotal = "";
+//            String setlTotalAmt = "";
             //if (!"D".equals(applyTnrTyp) && !"d".equals(applyTnrTyp) && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
             String psNormIntAmtStr = String.valueOf(json.get("psNormIntAmt"));//总利息金额
             if (StringUtils.isEmpty(psNormIntAmtStr)) {
@@ -701,8 +703,17 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             total = tot.add(apprvAmt);//总利息+总费用+贷款审批金额
             apprvTotal = total.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
             json.put("ordertotal", apprvTotal);
-
-            //}
+            //已还金额、待还金额管控
+            BigDecimal setlFeeAmt = Convert.toDecimal(json.get("setlFeeAmt"));
+            BigDecimal setlPrcpAmt = Convert.toDecimal(json.get("setlPrcpAmt"));
+            BigDecimal setlIntAmt = Convert.toDecimal(json.get("setlIntAmt"));
+            BigDecimal setlTotalAmt = setlFeeAmt.add(setlPrcpAmt).add(setlIntAmt);
+            json.put("setlTotalAmt", setlTotalAmt.toString());//已还金额
+            BigDecimal repayPrcpAmt = Convert.toDecimal(json.get("repayPrcpAmt"));
+            BigDecimal repayFeeAmt = Convert.toDecimal(json.get("repayFeeAmt"));
+            BigDecimal repayIntAmt = Convert.toDecimal(json.get("repayIntAmt"));
+            BigDecimal repayAmt = repayPrcpAmt.add(repayFeeAmt).add(repayIntAmt);
+            json.put("repayAmt", repayAmt);
             String outStsNew = json.getString("outSts");
             if (!"WS".equals(outStsNew)) {
                 if (outStsNew.equals("1")) {
