@@ -89,6 +89,7 @@ spring:
       mail.smtp.starttls.enable: true
     bug-report:
       enabled: true
+      level: error
       queue-size: 10
       send-interval-seconds: 120
       subject: 【海尔消费金融】错误报告

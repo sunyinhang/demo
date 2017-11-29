@@ -28,13 +28,19 @@ public final class BugReportThread extends Thread {
     @Override
     public void run() {
         while (true) {
+            Mail mail;
             try {
-                Mail mail = this.queue.take();
-                if (this.properties.getEnabled() != null && this.properties.getEnabled()) {
-                    MailUtils.send(mail);
-                    continue;
-                }
+                mail = this.queue.take();
+            } catch (Exception e) {
+                this.logger.warn("bug report 从发送队列取出邮件失败", e);
+                continue;
+            }
+            if (this.properties.getEnabled() == null || !this.properties.getEnabled()) {
                 this.logger.warn("由于未启用 bug report 功能，跳过了发送邮件");
+                continue;
+            }
+            try {
+                MailUtils.send(mail);
             } catch (Exception e) {
                 this.logger.warn("bug report 发送邮件失败", e);
             } finally {
@@ -43,13 +49,18 @@ public final class BugReportThread extends Thread {
         }
     }
 
-    public void sendAsync(Mail mail) {
-        try {
-            if (this.properties.getEnabled() != null && this.properties.getEnabled()) {
-                this.queue.offer(mail);
-                return;
-            }
+    public void sendAsync(BugReportLevel level, Mail mail) {
+        if (this.properties.getEnabled() == null || !this.properties.getEnabled()) {
             this.logger.warn("由于未启用 bug report 功能，跳过了入发送队列");
+            return;
+        }
+        BugReportLevel sendLevel = BugReportLevel.forName(this.properties.getLevel());
+        if (level.ordinal() < sendLevel.ordinal()) {
+            this.logger.warn(String.format("bug report 实例级别为 %s, 限制级别为 %s，跳过了入发送队列", level.name(), sendLevel.name()));
+            return;
+        }
+        try {
+            this.queue.offer(mail);
         } catch (Exception e) {
             this.logger.warn("bug report 入发送队列失败", e);
         }
