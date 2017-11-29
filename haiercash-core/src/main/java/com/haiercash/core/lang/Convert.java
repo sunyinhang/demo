@@ -311,10 +311,10 @@ public final class Convert {
             ret = toCharacter(value);
         else if (clazz.equals(String.class))
             ret = toString(value);
-        else if (Timestamp.class.isAssignableFrom(clazz))
-            ret = toTimestamp(value);
-        else if (Date.class.isAssignableFrom(clazz))
+        else if (clazz.isAssignableFrom(Date.class))
             ret = toDate(value);
+        else if (clazz.isAssignableFrom(Timestamp.class))
+            ret = toTimestamp(value);
 
         if (ret != null)
             return (T) ret;

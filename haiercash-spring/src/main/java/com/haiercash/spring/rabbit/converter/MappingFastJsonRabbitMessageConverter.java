@@ -50,10 +50,10 @@ public final class MappingFastJsonRabbitMessageConverter extends AbstractMessage
         if (!(message.getPayload() instanceof byte[]))
             throw new RuntimeException("payload must instance of byte[]");
         byte[] payload = (byte[]) message.getPayload();
-        if (byte[].class.isAssignableFrom(targetClass))
+        if (targetClass.isAssignableFrom(byte[].class))
             return payload;
         String json = this.getBodyAsString(payload, message.getHeaders());
-        if (String.class.isAssignableFrom(targetClass))
+        if (targetClass.isAssignableFrom(String.class))
             return json;
         return JsonSerializer.deserialize(json, targetClass);
     }
