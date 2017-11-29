@@ -703,7 +703,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             total = tot.add(apprvAmt);//总利息+总费用+贷款审批金额
             apprvTotal = total.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
             json.put("ordertotal", apprvTotal);
-            //已还金额、待还金额管控
+            //已还金额、待还金额、息费管控
             BigDecimal setlFeeAmt = Convert.toDecimal(json.get("setlFeeAmt"));
             BigDecimal setlPrcpAmt = Convert.toDecimal(json.get("setlPrcpAmt"));
             BigDecimal setlIntAmt = Convert.toDecimal(json.get("setlIntAmt"));
@@ -714,6 +714,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             BigDecimal repayIntAmt = Convert.toDecimal(json.get("repayIntAmt"));
             BigDecimal repayAmt = repayPrcpAmt.add(repayFeeAmt).add(repayIntAmt);
             json.put("repayAmt", repayAmt);
+            json.put("xfje", tot.toString());
             String outStsNew = json.getString("outSts");
             if (!"WS".equals(outStsNew)) {
                 if (outStsNew.equals("1")) {
