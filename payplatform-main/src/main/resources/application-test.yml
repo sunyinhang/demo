@@ -30,6 +30,7 @@ spring:
   redis:
     host: 10.164.194.123
     port: 10001
+    timeout: 10000
     pool:
       max-idle: 100
       min-idle: 10
@@ -175,4 +176,3 @@ app:
   outreach:
     appid: 300000762
     channel-no: HCP
-
