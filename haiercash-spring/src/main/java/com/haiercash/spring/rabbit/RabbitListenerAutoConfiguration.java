@@ -2,14 +2,16 @@ package com.haiercash.spring.rabbit;
 
 import com.haiercash.core.reflect.ReflectionUtils;
 import com.haiercash.spring.rabbit.converter.MappingFastJsonRabbitMessageConverter;
+import com.haiercash.spring.rabbit.core.RabbitMessageHandlerMethodFactory;
+import com.haiercash.spring.rabbit.core.RabbitMethodRabbitListenerEndpoint;
 import com.haiercash.spring.rabbit.core.RabbitMultiMethodRabbitListenerEndpoint;
 import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
+import org.springframework.amqp.rabbit.listener.MethodRabbitListenerEndpoint;
 import org.springframework.amqp.rabbit.listener.MultiMethodRabbitListenerEndpoint;
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpoint;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,7 @@ import java.util.List;
 @Configuration
 public class RabbitListenerAutoConfiguration implements RabbitListenerConfigurer {
     private void setHandlerMethodFactory(RabbitListenerEndpointRegistrar registrar) {
-        DefaultMessageHandlerMethodFactory handlerMethodFactory = new DefaultMessageHandlerMethodFactory();
+        RabbitMessageHandlerMethodFactory handlerMethodFactory = new RabbitMessageHandlerMethodFactory();
         handlerMethodFactory.setMessageConverter(new MappingFastJsonRabbitMessageConverter());
         handlerMethodFactory.setBeanFactory(ReflectionUtils.getField(registrar, "beanFactory"));
         handlerMethodFactory.afterPropertiesSet();
@@ -35,10 +37,12 @@ public class RabbitListenerAutoConfiguration implements RabbitListenerConfigurer
             RabbitListenerEndpoint endpoint = ReflectionUtils.getField(endpointDescriptor, "endpoint");
             RabbitListenerContainerFactory<?> containerFactory = ReflectionUtils.getField(endpointDescriptor, "containerFactory");
             //替换 endpoint
-            if (endpoint instanceof MultiMethodRabbitListenerEndpoint) {
-                MultiMethodRabbitListenerEndpoint multiEndpoint = ((MultiMethodRabbitListenerEndpoint) endpoint);
-                endpoint = new RabbitMultiMethodRabbitListenerEndpoint(multiEndpoint, ReflectionUtils.getField(multiEndpoint, "methods"), multiEndpoint.getBean());
-            }
+            if (endpoint instanceof MultiMethodRabbitListenerEndpoint)
+                endpoint = new RabbitMultiMethodRabbitListenerEndpoint((MultiMethodRabbitListenerEndpoint) endpoint);
+            else if (endpoint instanceof MethodRabbitListenerEndpoint)
+                endpoint = new RabbitMethodRabbitListenerEndpoint((MethodRabbitListenerEndpoint) endpoint);
+            else
+                throw new RuntimeException("unexpected type of RabbitListenerEndpoint");
             registrar.registerEndpoint(endpoint, containerFactory);
         }
     }

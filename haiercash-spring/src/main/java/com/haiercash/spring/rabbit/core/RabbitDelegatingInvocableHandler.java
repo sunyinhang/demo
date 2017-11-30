@@ -21,8 +21,6 @@ public final class RabbitDelegatingInvocableHandler extends DelegatingInvocableH
 
     @Override
     protected InvocableHandlerMethod findHandlerForPayload(Class<?> payloadClass) {
-        return this.handlers.size() == 1
-                ? this.handlers.get(0)
-                : super.findHandlerForPayload(payloadClass);
+        return this.handlers.size() == 1 ? this.handlers.get(0) : super.findHandlerForPayload(payloadClass);
     }
 }
