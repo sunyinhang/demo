@@ -3,7 +3,7 @@ package com.haiercash.spring.servlet;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.trace.IncomingLog;
+import com.haiercash.spring.trace.rest.IncomingLog;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.haiercash.spring.trace;
+package com.haiercash.spring.trace.rest;
 
 import com.haiercash.core.collection.ArrayUtils;
 import com.haiercash.core.io.CharsetNames;

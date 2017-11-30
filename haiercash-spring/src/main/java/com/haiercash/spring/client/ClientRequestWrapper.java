@@ -1,6 +1,6 @@
 package com.haiercash.spring.client;
 
-import com.haiercash.spring.trace.OutgoingLog;
+import com.haiercash.spring.trace.rest.OutgoingLog;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.AbstractClientHttpRequest;

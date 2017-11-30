@@ -1,4 +1,4 @@
-package com.haiercash.spring.trace;
+package com.haiercash.spring.trace.rest;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
