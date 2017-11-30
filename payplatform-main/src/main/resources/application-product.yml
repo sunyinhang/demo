@@ -28,10 +28,10 @@ spring:
     route-headers-enabled: false
     ignore-headers:
   redis:
-    host: 10.164.196.147
+    host: 10.164.194.195
     port: 10001
     pool:
-      max-idle: 100
+      max-idle: 200
       min-idle: 10
       max-active: 1000
     global-key-prefix: PAYPLATFORM # 全局前缀, 自动用 ':' 分割
