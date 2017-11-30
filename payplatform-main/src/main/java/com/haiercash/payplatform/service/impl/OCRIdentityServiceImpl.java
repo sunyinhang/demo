@@ -1020,13 +1020,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         boolean hehyflag = false; //海尔会员标识
-        List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
-        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
-            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")){
-                hehyflag = true;
-                break;
-            }
-        }
+//        List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
+//        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
+//            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")){
+//                hehyflag = true;
+//                break;
+//            }
+//        }
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         if(hehyflag){
             Map<String, Object> cacheedmap = new HashMap<>();
