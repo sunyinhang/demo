@@ -5,6 +5,7 @@ import com.haiercash.core.reflect.ReflectionUtils;
 import org.springframework.amqp.rabbit.listener.MethodRabbitListenerEndpoint;
 import org.springframework.amqp.rabbit.listener.adapter.HandlerAdapter;
 import org.springframework.amqp.rabbit.listener.adapter.MessagingMessageListenerAdapter;
+import org.springframework.messaging.handler.invocation.InvocableHandlerMethod;
 
 /**
  * Created by 许崇雷 on 2017-11-30.
@@ -37,6 +38,7 @@ public class RabbitMethodRabbitListenerEndpoint extends MethodRabbitListenerEndp
 
     @Override
     protected HandlerAdapter configureListenerAdapter(MessagingMessageListenerAdapter messageListener) {
-        return super.configureListenerAdapter(messageListener);
+        InvocableHandlerMethod invocableHandlerMethod = this.getMessageHandlerMethodFactory().createInvocableHandlerMethod(this.getBean(), this.getMethod());
+        return new RabbitHandlerAdapter(invocableHandlerMethod);
     }
 }

@@ -38,6 +38,6 @@ public final class RabbitMultiMethodRabbitListenerEndpoint extends RabbitMethodR
         for (Method method : this.methods)
             invocableHandlerMethods.add(this.getMessageHandlerMethodFactory().createInvocableHandlerMethod(this.getBean(), method));
         DelegatingInvocableHandler delegatingHandler = new RabbitDelegatingInvocableHandler(invocableHandlerMethods, this.getBean(), this.getResolver(), this.getBeanExpressionContext());
-        return new HandlerAdapter(delegatingHandler);
+        return new RabbitHandlerAdapter(delegatingHandler);
     }
 }

@@ -28,7 +28,7 @@ public class RabbitAutoConfiguration {
 
     @Bean
     @Primary
-    FastJsonRabbitMessageConverter messageConverter() {
+    MessageConverter messageConverter() {
         return new FastJsonRabbitMessageConverter();
     }
 

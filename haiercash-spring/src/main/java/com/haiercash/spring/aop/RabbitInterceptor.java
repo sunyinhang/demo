@@ -1,6 +1,5 @@
 package com.haiercash.spring.aop;
 
-import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.ThreadContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,23 +21,15 @@ import org.springframework.stereotype.Component;
 public final class RabbitInterceptor {
     private final Log logger = LogFactory.getLog(RabbitInterceptor.class);
 
-    @Pointcut("execution(* com.haiercash..*.*(..)) && @annotation(org.springframework.amqp.rabbit.annotation.RabbitHandler)")
+    @Pointcut("execution(* com.haiercash..*.*(..)) && @annotation(org.springframework.amqp.rabbit.annotation.RabbitListener)" +
+            " || @annotation(org.springframework.amqp.rabbit.annotation.RabbitHandler))")
     private void doRabbitPointcut() {
     }
 
     @Around(value = "doRabbitPointcut()")
     public Object doRabbit(ProceedingJoinPoint joinPoint) throws Throwable {
-        //打印日志
         String action = joinPoint.getSignature().toLongString();
-        Object[] args = joinPoint.getArgs();
-        this.logger.info("==>Rabbit:" + action + "@" + StringUtils.join(args, "; "));
-
-        //进入 RabbitHandler
-        ThreadContext.reset();
-        try {
-            return joinPoint.proceed();
-        } finally {
-            ThreadContext.reset();
-        }
+        this.logger.info(String.format("[%s] ==>RabbitHandler: %s", ThreadContext.getTraceID(), action));
+        return joinPoint.proceed();
     }
 }
