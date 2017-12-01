@@ -6,12 +6,12 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.utils.DigestUtils;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -557,7 +557,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
             //获取MD5码
             boolean isA = "certImagePathA".equals(entry.getKey());
-            String md5Code = DigestUtils.md5Hex(is);
+            String md5Code = DigestUtils.md5(is);
             paramMap.put("token", token);
             paramMap.put("md5", md5Code);//文件md5码
             paramMap.put("custNo", custNo);
@@ -963,7 +963,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
             //获取MD5码
             boolean isA = "certImagePathA".equals(entry.getKey());
-            String md5Code = DigestUtils.md5Hex(is);
+            String md5Code = DigestUtils.md5(is);
             paramMap.put("token", token);
             paramMap.put("md5", md5Code);//文件md5码
             paramMap.put("custNo", custNo);
