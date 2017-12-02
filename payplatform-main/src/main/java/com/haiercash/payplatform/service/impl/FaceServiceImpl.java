@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.core.io.IOUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.EncryptUtil;
@@ -169,7 +168,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         //图片压缩
         //ImageUtil.zipImageFile(new File(filePath.toString()), new File(filePath.toString()), 425, 638, 0.7f);
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5Hex(IOUtils.toByteArray(is));
+        String MD5 = DigestUtils.md5Hex(is);
         is.close();
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
