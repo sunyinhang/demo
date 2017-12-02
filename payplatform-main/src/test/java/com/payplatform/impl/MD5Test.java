@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 注意 apache 对文件流的 md5 有 bug.必须转为 byte 才行.
  * Created by yuanli on 2017/12/1.
  */
 public class MD5Test {
@@ -40,4 +39,6 @@ public class MD5Test {
         String md2=DigestUtils.md5Hex(buf);
         Assert.assertEquals(md2, MD5);
     }
+
+
 }

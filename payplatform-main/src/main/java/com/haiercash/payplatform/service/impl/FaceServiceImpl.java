@@ -1,13 +1,14 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.io.IOUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
-import com.haiercash.payplatform.utils.DigestUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -144,6 +145,13 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             //score = new JSONObject(jsonmsg.getString("entity")).getString("score");
         }
 
+        //人脸识别成功。将图片上送到app后台
+//        StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(ConstUtil.ATTACHTYPE_DOC065)
+//                .append(File.separator);
+//        String fileName = UUID.randomUUID().toString().replaceAll("-", "");
+//        filePath = filePath.append(fileName).append(".jpg"); // 测试打开
+//        InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
+//        String md5Code = DigestUtils.md5Hex(is);
         StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(ConstUtil.ATTACHTYPE_DOC065)
                 .append(File.separator);// File.separator
         createDir(String.valueOf(filePath));
@@ -151,8 +159,17 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         filePath = filePath.append(fileName).append(".jpg"); // 测试打开
         FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
         outImag.write(faceBytes);
+        /*byte[] bufferOut = new byte[1024];
+        int bytes = 0;
+        while ((bytes = inputStream1.read(bufferOut)) != -1) {
+            outImag.write(bufferOut, 0, bytes);
+        }
+        outImag.close();
+        inputStream1.close();*/
+        //图片压缩
+        //ImageUtil.zipImageFile(new File(filePath.toString()), new File(filePath.toString()), 425, 638, 0.7f);
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5(is);
+        String MD5 = DigestUtils.md5Hex(IOUtils.toByteArray(is));
         is.close();
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -177,7 +194,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         //通过人脸分数判断人脸识别是否通过
         File file = new File(String.valueOf(filePath));
         InputStream instream = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5code = DigestUtils.md5(instream);
+        String MD5code = DigestUtils.md5Hex(instream);
         Map<String, Object> checkMap = new HashMap<String, Object>();
         checkMap.put("faceValue", score);//人脸分数
         checkMap.put("typCde", typCde);// 贷款品种 从redis中获取
@@ -282,7 +299,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         inputStream.close();
 
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5(is);
+        String MD5 = DigestUtils.md5Hex(is);
         is.close();
         //
         Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -435,4 +452,5 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return success(m);
         }
     }
+
 }
