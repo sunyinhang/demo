@@ -7,6 +7,7 @@ import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.rabbit.exception.ConsumeDisabledException;
+import com.haiercash.spring.trace.rest.TraceConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.support.AmqpHeaders;
@@ -41,31 +42,49 @@ public final class IncomingLog {
         logger.info(builder.toString());
     }
 
-    public static void writeResponseLog(Message message, boolean disabled, Exception exception, long tookMs) {
-        String errMsg = null;
+    public static void writeResponseLog(Message message, long tookMs) {
         StringBuilder builder = new StringBuilder();
         builder.append(Environment.NewLine).append(RES_BEGIN).append(Environment.NewLine);
         MessageHeaders headers = message.getHeaders();
         builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(headers.getId()).append(Environment.NewLine);
         //
-        if (disabled) {
-            builder.append("Result:").append(Environment.NewLine);
-            builder.append("    ").append(ConsumeDisabledException.MSG).append(Environment.NewLine);
-        } else if (exception != null) {
-            errMsg = ThrowableUtils.getString(exception);
-            builder.append("Error:").append(Environment.NewLine);
-            builder.append(errMsg).append(Environment.NewLine);
-        } else {
-            builder.append("Result:").append(Environment.NewLine);
-            builder.append("    消费成功").append(Environment.NewLine);
-        }
+        builder.append("Result:").append(Environment.NewLine);
+        builder.append("    消费成功").append(Environment.NewLine);
+        //
+        builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
+        builder.append(COS___END);
+        logger.info(builder.toString());
+    }
+
+    public static void writeDisabled(Message message, long tookMs) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(Environment.NewLine).append(RES_BEGIN).append(Environment.NewLine);
+        MessageHeaders headers = message.getHeaders();
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(headers.getId()).append(Environment.NewLine);
+        //
+        builder.append("Result:").append(Environment.NewLine);
+        builder.append("    ").append(ConsumeDisabledException.MSG).append(Environment.NewLine);
+        //
+        builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
+        builder.append(COS___END);
+        logger.warn(builder.toString());
+    }
+
+    public static void writeError(Message message, Exception e, long tookMs) {
+        String msg = ThrowableUtils.getString(e);
+        StringBuilder builder = new StringBuilder();
+        builder.append(Environment.NewLine).append(RES_BEGIN).append(Environment.NewLine);
+        MessageHeaders headers = message.getHeaders();
+        builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(headers.getId()).append(Environment.NewLine);
+        //
+        builder.append("Error:").append(Environment.NewLine);
+        builder.append(msg).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
         builder.append(COS___END);
         logger.error(builder.toString());
         //错误报告
-        if (errMsg != null)
-            BugReportUtils.sendAsync(BugReportLevel.ERROR, errMsg);
+        BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
     }
 
     private static void writeHeaders(StringBuilder builder, MessageHeaders headers) {
@@ -74,7 +93,7 @@ public final class IncomingLog {
     }
 
     private static String getBody(byte[] body, MessageHeaders headers) {
-        String encoding = headers == null ? TraceConfig.DEFAULT_CHARSET : Convert.defaultString(headers.get(AmqpHeaders.CONTENT_ENCODING), TraceConfig.DEFAULT_CHARSET);
+        String encoding = headers == null ? TraceConfig.DEFAULT_CHARSET_NAME : Convert.defaultString(headers.get(AmqpHeaders.CONTENT_ENCODING), TraceConfig.DEFAULT_CHARSET_NAME);
         try {
             return new String(body, encoding);
         } catch (Exception e) {

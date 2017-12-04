@@ -25,18 +25,17 @@ public final class RabbitHandlerAdapter extends HandlerAdapter {
         ThreadContext.init(null, null, null);
         IncomingLog.writeRequestLog(message);
         long begin = System.currentTimeMillis();
-        boolean disabled = false;
-        Exception exception = null;
         try {
-            return super.invoke(message, providedArgs);
+            Object result = super.invoke(message, providedArgs);
+            IncomingLog.writeResponseLog(message, System.currentTimeMillis() - begin);
+            return result;
         } catch (ConsumeDisabledException e) {
-            disabled = true;
+            IncomingLog.writeDisabled(message, System.currentTimeMillis() - begin);
             throw e;
         } catch (Exception e) {
-            exception = e;
+            IncomingLog.writeError(message, e, System.currentTimeMillis() - begin);
             throw e;
         } finally {
-            IncomingLog.writeResponseLog(message, disabled, exception, System.currentTimeMillis() - begin);
             ThreadContext.reset();
         }
     }
