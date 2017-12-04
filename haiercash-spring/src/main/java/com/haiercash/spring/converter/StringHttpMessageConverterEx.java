@@ -1,6 +1,5 @@
 package com.haiercash.spring.converter;
 
-import com.haiercash.core.io.CharsetNames;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -10,6 +9,7 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * Created by 许崇雷 on 2017-10-30.
  */
 public final class StringHttpMessageConverterEx extends AbstractHttpMessageConverter<String> {
-    private static final Charset DEFAULT_CHARSET = Charset.forName(CharsetNames.UTF_8);
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private volatile List<Charset> availableCharsets;
 
     public StringHttpMessageConverterEx(MediaType supportedMediaType) {

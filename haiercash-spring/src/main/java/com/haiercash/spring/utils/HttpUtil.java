@@ -245,10 +245,10 @@ public final class HttpUtil {
 
             for (int i = 0; i < ja.length(); ++i) {
                 Object subJson = ja.get(i);
-                if(subJson instanceof JSONObject ){
+                if (subJson instanceof JSONObject) {
                     Map map = json2Map(subJson.toString());
                     list.add(map);
-                }else {
+                } else {
                     list.add(subJson.toString());
                 }
             }

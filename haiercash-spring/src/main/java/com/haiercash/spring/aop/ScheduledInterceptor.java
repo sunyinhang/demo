@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public final class ScheduledInterceptor {
-    private final Log logger = LogFactory.getLog(RabbitInterceptor.class);
+    private final Log logger = LogFactory.getLog(ScheduledInterceptor.class);
 
     @Pointcut("execution(* com.haiercash..*.*(..)) && @annotation(org.springframework.scheduling.annotation.Scheduled)")
     private void doScheduledPointcut() {
@@ -29,14 +29,12 @@ public final class ScheduledInterceptor {
     public Object doScheduled(ProceedingJoinPoint joinPoint) throws Throwable {
         //打印日志
         String action = joinPoint.getSignature().toLongString();
-        this.logger.info("==>Scheduled:" + action);
-
-        //进入 RabbitHandler
-        ThreadContext.reset();
+        this.logger.info(String.format("[%s] ==>Scheduled Begin: %s", ThreadContext.getTraceID(), action));
+        long begin = System.currentTimeMillis();
         try {
             return joinPoint.proceed();
         } finally {
-            ThreadContext.reset();
+            this.logger.info(String.format("[%s] ==>Scheduled End (Took: %s ms): %s", ThreadContext.getTraceID(), System.currentTimeMillis() - begin, action));
         }
     }
 }

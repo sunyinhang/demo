@@ -4,7 +4,7 @@ import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.trace.IncomingLog;
+import com.haiercash.spring.trace.rest.IncomingLog;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -56,11 +56,11 @@ public final class DispatcherFilter implements Filter {
         long begin = System.currentTimeMillis();
         try {
             filterChain.doFilter(request, response);
+            IncomingLog.writeResponseLog(request, response, System.currentTimeMillis() - begin);
         } catch (Exception e) {
-            IncomingLog.writeError(request, e, System.currentTimeMillis() - begin);
+            IncomingLog.writeErrorLog(request, e, System.currentTimeMillis() - begin);
             throw e;
         } finally {
-            IncomingLog.writeResponseLog(request, response, System.currentTimeMillis() - begin);
             ThreadContext.reset();
             RequestContext.reset();
         }

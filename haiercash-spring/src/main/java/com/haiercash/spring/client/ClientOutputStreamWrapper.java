@@ -1,7 +1,7 @@
 package com.haiercash.spring.client;
 
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.spring.trace.TraceConfig;
+import com.haiercash.spring.trace.rest.TraceConfig;
 import org.springframework.util.Assert;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.haiercash.spring.config;
+package com.haiercash.spring.client.converter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;

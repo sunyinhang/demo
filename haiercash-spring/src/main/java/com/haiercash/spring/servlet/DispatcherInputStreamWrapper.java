@@ -1,7 +1,7 @@
 package com.haiercash.spring.servlet;
 
 import com.haiercash.core.io.IOUtils;
-import com.haiercash.spring.trace.TraceConfig;
+import com.haiercash.spring.trace.rest.TraceConfig;
 import org.springframework.util.Assert;
 
 import javax.servlet.ReadListener;

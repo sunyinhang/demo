@@ -1,7 +1,7 @@
 package com.haiercash.spring.client;
 
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.spring.config.HttpMessageConvertersAutoConfiguration;
+import com.haiercash.spring.client.converter.HttpMessageConvertersAutoConfiguration;
 import com.haiercash.spring.converter.FastJsonHttpMessageConverterEx;
 import com.haiercash.spring.converter.StringHttpMessageConverterEx;
 import lombok.Data;

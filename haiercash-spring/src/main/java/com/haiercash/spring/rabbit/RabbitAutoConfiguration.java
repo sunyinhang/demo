@@ -1,9 +1,9 @@
 package com.haiercash.spring.rabbit;
 
+import com.haiercash.spring.rabbit.converter.FastJsonRabbitMessageConverter;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,22 +20,24 @@ import org.springframework.retry.support.RetryTemplate;
 @Configuration
 @EnableConfigurationProperties(RabbitProperties.class)
 public class RabbitAutoConfiguration {
-    private final ObjectProvider<MessageConverter> messageConverter;
     private final RabbitProperties properties;
 
-    public RabbitAutoConfiguration(ObjectProvider<MessageConverter> messageConverter, RabbitProperties properties) {
-        this.messageConverter = messageConverter;
+    public RabbitAutoConfiguration(RabbitProperties properties) {
         this.properties = properties;
     }
 
     @Bean
     @Primary
+    MessageConverter messageConverter() {
+        return new FastJsonRabbitMessageConverter();
+    }
+
+    @Bean
+    @Primary
     @ConditionalOnMissingBean
-    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
         RabbitTemplate rabbitTemplate = new RabbitTemplateEx(connectionFactory);
-        MessageConverter messageConverter = this.messageConverter.getIfUnique();
-        if (messageConverter != null)
-            rabbitTemplate.setMessageConverter(messageConverter);
+        rabbitTemplate.setMessageConverter(messageConverter);
         rabbitTemplate.setMandatory(this.determineMandatoryFlag());
         RabbitProperties.Template templateProperties = this.properties.getTemplate();
         RabbitProperties.Retry retryProperties = templateProperties.getRetry();

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -88,11 +89,14 @@ public final class ControllerInterceptor {
                 Parameter param = params[i];
                 if (param.getAnnotation(RequestBody.class) == null)
                     continue;
-                Class paramType = param.getType();
+                Class<?> paramType = param.getType();
                 if (Map.class.isAssignableFrom(paramType)) {
                     Map map = (Map) args[i];
                     if (map == null) {
-                        args[i] = new HashMap<String, Object>();
+                        if (paramType.isAssignableFrom(HashMap.class))
+                            args[i] = new HashMap<String, Object>();
+                        else if (paramType.isAssignableFrom(LinkedHashMap.class))
+                            args[i] = new LinkedHashMap<String, Object>();
                         continue;
                     }
                     if (StringUtils.isEmpty(token))
@@ -146,8 +150,8 @@ public final class ControllerInterceptor {
                     Object arg = args[i];
                     if (arg == null)
                         break;
-                    if (Map.class.isAssignableFrom(paramType)) {
-                        Map map = (Map) args[i];
+                    if (arg instanceof Map) {
+                        Map map = (Map) arg;
                         map.put(NAME_TOKEN, token);
                         map.put(NAME_CHANNEL, channel);
                         map.put(NAME_CHANNEL_NO, channelNo);
