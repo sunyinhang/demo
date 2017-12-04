@@ -2,7 +2,6 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.mybatis.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
-import com.haiercash.payplatform.config.AppServerConfig;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.service.AppServerService;
@@ -55,8 +54,6 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     private CrmManageService crmManageService;
     @Autowired
     private ShunguangConfig shunguangConfig;
-    @Autowired
-    private AppServerConfig appServerConfig;
     @Autowired
     private StorageConfig storageConfig;
 
