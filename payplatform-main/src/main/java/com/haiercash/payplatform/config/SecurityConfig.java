@@ -15,7 +15,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/static/**", "/app/**", "/pub/**", "/api/**").permitAll()
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
