@@ -29,14 +29,11 @@ public final class ScheduledInterceptor {
     public Object doScheduled(ProceedingJoinPoint joinPoint) throws Throwable {
         //打印日志
         String action = joinPoint.getSignature().toLongString();
-        this.logger.info("==>Scheduled:" + action);
-
-        //进入 RabbitHandler
-        ThreadContext.reset();
+        this.logger.info(String.format("[%s] ==>Scheduled Begin: %s", ThreadContext.getTraceID(), action));
         try {
             return joinPoint.proceed();
         } finally {
-            ThreadContext.reset();
+            this.logger.info(String.format("[%s] ==>Scheduled End: %s", ThreadContext.getTraceID(), action));
         }
     }
 }
