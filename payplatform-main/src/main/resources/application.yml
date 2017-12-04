@@ -146,33 +146,33 @@ app:
     UAUTH: http://UAUTH
     ACQUIRER: http://ACQUIRER
     ORDER: http://ORDER
+  storage:
+    ocr-path: /testshare01/00/Data/haierData
+    face-path: /testshare01/crm/image
   cmis:
-    url: http://10.164.194.105:8098/cmis/HTTP_DEMO_SERVICE/ # cmis 服务地址
+    url: http://10.164.194.105:8098/cmis/HTTP_DEMO_SERVICE # cmis 服务地址
     rabbit:
       exchange: APPMSG_TOPIC_EXCHANGE
       routing-key:
       queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
-  other:
-    haierDataImg_url: /testshare01/00/Data/haierData/
-    outplatform_url: http://10.164.194.120:9080
-    face_DataImg_url: /testshare01/crm/image/
-    appServer_page_url: http://testpm.haiercash.com/
-    haierData_url: http://taccount.haier.com
-    haiercashpay_web_url: https://testpm.haiercash.com/
-    haiershunguang_ts_url: http://mobiletest.ehaier.com:58093
-    moxie_apikey: 51f5eed2f64f467a9a20f15d2ce26038
+  outreach:
+    appid: 300000762
+    channel-no: HCP
+    url: http://10.164.194.120:9080
+  haier-group:
+    account-url: http://taccount.haier.com
+  moxie:
+    api-key: 51f5eed2f64f467a9a20f15d2ce26038
   shunguang:
-    sg_merch_no: EHAIER
-    sg_store_no: SHUNGUANG
-    sg_user_id: SAQDGM01
-    sg_typCde: 17033a
-    sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
-    sg_consumer: dc04a273474a404bafdad48ddb63cce2
+    merch-no: EHAIER
+    store-no: SHUNGUANG
+    user-id: SAQDGM01
+    typ-cde: 17033a
+    shop-keeper: 882f7f5c91fc4ed09a754e28841bc7ad
+    consumer: dc04a273474a404bafdad48ddb63cce2
+    ts-url: http://mobiletest.ehaier.com:58093
   cashloan:
     white-tag-ids: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804
   weixin:
     appid: wx765f132310ed7371
     secret: c400d6495e25f2401b5a7209585fc56c
-  outreach:
-    appid: 300000762
-    channel-no: HCP

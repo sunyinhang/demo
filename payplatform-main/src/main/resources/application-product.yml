@@ -146,33 +146,33 @@ app:
     UAUTH: http://UAUTH
     ACQUIRER: http://ACQUIRER
     ORDER: http://ORDER
+  storage:
+    ocr-path: /storage2018/00/Data/haierData
+    face-path: /storage2018/crm/image
   cmis:
     url: # cmis 服务地址
     rabbit:
       exchange: APPMSG_TOPIC_EXCHANGE
       routing-key:
       queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
-  other:
-    haierDataImg_url: /storage2018/00/Data/haierData/
-    outplatform_url: http://192.168.1.14:15006
-    face_DataImg_url: /storage2018/crm/image/
-    appServer_page_url: https://app.haiercash.com/
-    haierData_url: http://account.haier.com
-    haiercashpay_web_url: https://www.haiercash.com:15006/
-    haiershunguang_ts_url: http://pay.ehaier.com
-    moxie_apikey:
+  outreach:
+    appid: 300001074
+    channel-no: HCP
+    url: http://192.168.1.14:15006
+  haier-group:
+    account-url: http://account.haier.com
+  moxie:
+    api-key:
   shunguang:
-    sg_merch_no: EHAIER
-    sg_store_no: SHUNGUANG
-    sg_user_id: EH3623
-    sg_typCde: 17033a
-    sg_shopkeeper: 882f7f5c91fc4ed09a754e28841bc7ad
-    sg_consumer: dc04a273474a404bafdad48ddb63cce2
+    merch-no: EHAIER
+    store-no: SHUNGUANG
+    user-id: EH3623
+    typ-cde: 17033a
+    shop-keeper: 882f7f5c91fc4ed09a754e28841bc7ad
+    consumer: dc04a273474a404bafdad48ddb63cce2
+    ts-url: http://pay.ehaier.com
   cashloan:
     white-tag-ids: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804
   weixin:
     appid:
     secret:
-  outreach:
-    appid: 300001074
-    channel-no: HCP

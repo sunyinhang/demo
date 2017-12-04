@@ -2,6 +2,9 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.mybatis.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
+import com.haiercash.payplatform.config.AppServerConfig;
+import com.haiercash.payplatform.config.ShunguangConfig;
+import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
@@ -16,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,19 +51,15 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     private AppServerService appServerService;
     @Autowired
     private CustExtInfoService custExtInfoService;
-
-    @Value("${app.other.haierDataImg_url}")
-    protected String haierDataImg_url;
-
-    @Value("${app.other.appServer_page_url}")
-    protected String appServer_page_url;
-
     @Autowired
     private CrmManageService crmManageService;
-    @Value("${app.shunguang.sg_shopkeeper}")
-    protected String sg_shopkeeper;
-    @Value("${app.shunguang.sg_consumer}")
-    protected String sg_consumer;
+    @Autowired
+    private ShunguangConfig shunguangConfig;
+    @Autowired
+    private AppServerConfig appServerConfig;
+    @Autowired
+    private StorageConfig storageConfig;
+
 
     public Map<String, Object> ocrIdentity(MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("OCR身份信息获取*************开始");
@@ -165,7 +163,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     private String saveImage2Disk(String userId, String imageStr) throws IOException {
         String imgPath = "";
         try {
-            String fn = haierDataImg_url + "/certImage/" + userId;
+            String fn = storageConfig.getOcrPath() + "/certImage/" + userId;
             File path = new File(fn);
             if (!path.exists()) {
                 path.mkdirs();
@@ -355,17 +353,17 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String idCard = (String) cacheMap.get("idCard");//扫描身份证号
         String userId = (String) cacheMap.get("userId");//userId
         if (!StringUtils.isEmpty(idCard)) {
-            idCard=idCard.toUpperCase();
-            logger.info("扫描的身份证号码是"+idCard);
-        }else {
+            idCard = idCard.toUpperCase();
+            logger.info("扫描的身份证号码是" + idCard);
+        } else {
             logger.info("扫描身份证号为空");
-            return fail(ConstUtil.ERROR_CODE,"扫描身份证号为空");
+            return fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
         }
         //顺逛传送身份证与客户实名身份证不一致
         String idNoHaier = (String) cacheMap.get("idNoHaier");//
-        if (!StringUtils.isEmpty(idNoHaier)){
-            idNoHaier=idNoHaier.toUpperCase();
-            logger.info("顺逛传送身份证号是："+idNoHaier);
+        if (!StringUtils.isEmpty(idNoHaier)) {
+            idNoHaier = idNoHaier.toUpperCase();
+            logger.info("顺逛传送身份证号是：" + idNoHaier);
         }
         if (!StringUtils.isEmpty(idNoHaier) && !idCard.equals(idNoHaier)) {
             logger.info("顺逛传送身份证与客户实名身份证不一致");
@@ -403,10 +401,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             certEndDt = vDate.substring(8);  //剩余的作为截止日期
         }
 
-        if("男".equals(gender)){//10男
+        if ("男".equals(gender)) {//10男
             gender = "10";
         }
-        if("女".equals(gender)){//20女
+        if ("女".equals(gender)) {//20女
             gender = "20";
         }
 
@@ -492,10 +490,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String userType = (String) cacheMap.get("userType");
         String tagId = "";
         if ("01".equals(userType)) {//微店主
-            tagId = sg_shopkeeper;
+            tagId = shunguangConfig.getShopKeeper();
         }
         if ("02".equals(userType)) {//消费者
-            tagId = sg_consumer;
+            tagId = shunguangConfig.getConsumer();
         }
         //
         Boolean b = false;
@@ -645,14 +643,14 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("从前端h获取的flag为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        if("register".equals(flag)){
+        if ("register".equals(flag)) {
             if (StringUtils.isEmpty(token)) {
                 String custName = "";
-                custName =URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                custName = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
                 realmName = "/app/appserver/register?custName=" + custName;
                 logger.info("------------注册协议------------" + realmName);
                 map.put("realmName", realmName);
-            }else{
+            } else {
                 Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
                 if (cacheMap == null || "".equals(cacheMap)) {
                     logger.info("Jedis获取失败");
@@ -661,15 +659,15 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 String orderNo = (String) cacheMap.get("orderNo");
                 String custName = (String) cacheMap.get("name");
                 if (!StringUtils.isEmpty(orderNo) || !StringUtils.isEmpty(custName)) {
-                if (orderNo == null) {
-                    orderNo = "";
-                }
+                    if (orderNo == null) {
+                        orderNo = "";
+                    }
                     realmName = "/app/appserver/register?orderNo=" + orderNo + "&custName=" + URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
                     logger.info("------------注册协议------------" + realmName);
                     map.put("realmName", realmName);
+                }
             }
-            }
-        }else{
+        } else {
             if (StringUtils.isEmpty(token)) {
                 logger.info("从前端获取的token：" + token);
                 logger.info("从前端获取的token为空");
@@ -699,7 +697,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                     logger.info("--------------征信查询------------" + realmName);
                     map.put("realmName", realmName);
                 }
-            }else if ("person".equals(flag)) {
+            } else if ("person".equals(flag)) {
                 realmName = "/app/ht/agreement/PersonInfo.html";
 //            realmName = "/static/agreement/PersonInfo.html";
                 logger.info("----------个人信息协议-----------" + realmName);
@@ -749,7 +747,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
         //2.前台参数非空判断
-        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(verifyNo)||
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(verifyNo) ||
                 StringUtils.isEmpty(cardnumber) || StringUtils.isEmpty(mobile) ||
                 StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("token:" + token + "  verifyNo:" + verifyNo +
@@ -773,11 +771,11 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String idCard = (String) cacheMap.get("idCard");//扫描身份证号
         String userId = (String) cacheMap.get("userId");//userId
         if (!StringUtils.isEmpty(idCard)) {
-            idCard=idCard.toUpperCase();
-            logger.info("扫描的身份证号码是"+idCard);
-        }else {
+            idCard = idCard.toUpperCase();
+            logger.info("扫描的身份证号码是" + idCard);
+        } else {
             logger.info("扫描身份证号为空");
-            return fail(ConstUtil.ERROR_CODE,"扫描身份证号为空");
+            return fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
         }
         //4.缓存数据非空判断
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
@@ -811,10 +809,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             certEndDt = vDate.substring(8);  //剩余的作为截止日期
         }
 
-        if("男".equals(gender)){//10男
+        if ("男".equals(gender)) {//10男
             gender = "10";
         }
-        if("女".equals(gender)){//20女
+        if ("女".equals(gender)) {//20女
             gender = "20";
         }
 
@@ -1009,9 +1007,9 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         logger.info("绑定手机号***********************结束");
 
         Map<String, Object> hrparamMap = new HashMap<String, Object>();
-        hrparamMap.put("custName",custName);
-        hrparamMap.put("idTyp",idType);
-        hrparamMap.put("idNo",idNo);
+        hrparamMap.put("custName", custName);
+        hrparamMap.put("idTyp", idType);
+        hrparamMap.put("idNo", idNo);
         Map<String, Object> custWhiteListCmis = custExtInfoService.getCustWhiteListCmis(token, channel, channelNo, hrparamMap);
         Map updmobileheadjson = (Map<String, Object>) custWhiteListCmis.get("head");
         String updmobileretflag = (String) updmobileheadjson.get("retFlag");
@@ -1028,7 +1026,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 //            }
 //        }
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
-        if(hehyflag){
+        if (hehyflag) {
             Map<String, Object> cacheedmap = new HashMap<>();
             cacheedmap.put("channel", "11");
             cacheedmap.put("channelNo", channelNo);
@@ -1058,7 +1056,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                     resultparamMap.put("flag", "2");//通过  我的额度
                 }
             }
-        }else{
+        } else {
             resultparamMap.put("flag", "1");//通过  个人扩展信息
         }
         return success(resultparamMap);

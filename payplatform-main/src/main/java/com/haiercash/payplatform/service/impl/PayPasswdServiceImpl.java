@@ -19,7 +19,6 @@ import com.haiercash.spring.utils.ConstUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -41,8 +40,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private AppServerService appServerService;
     @Autowired
     private AcquirerService acquirerService;
-    @Value("${app.other.outplatform_url}")
-    protected String outplatform_url;
     @Autowired
     private OutreachService outreachService;
     @Autowired
@@ -389,7 +386,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         map.put("channelNo", channelNo);//
         map.put("verifyNo", verifyNo);//验证码
         map.put("newPayPasswd", EncryptUtil.simpleEncrypt(newPayPasswd));//新支付密码
-        String url = outplatform_url + "/Outreachplatform/api/chinaPay/identifyByFlag";
+        String url = outreachConfig.getUrl() + "/Outreachplatform/api/chinaPay/identifyByFlag";
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("accountName", custName);
         jsonMap.put("accountNo", cardNo);

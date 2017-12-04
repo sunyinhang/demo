@@ -19,9 +19,6 @@ import java.util.Map;
 public class AppServerServiceImpl extends BaseService implements AppServerService {
     public Log logger = LogFactory.getLog(getClass());
 
-//    @Value("${app.rest.APPSERVER}")
-//    protected String appserverurl;
-
     /**
      * 获取省市区
      *

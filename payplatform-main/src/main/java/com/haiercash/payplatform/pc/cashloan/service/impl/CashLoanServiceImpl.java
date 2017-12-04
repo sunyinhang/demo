@@ -18,8 +18,8 @@ import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.common.entity.LoanTypeProperty;
 import com.haiercash.payplatform.common.entity.LoanTypes;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
-import com.haiercash.payplatform.config.AppCashloanConfig;
-import com.haiercash.payplatform.config.AppConfig;
+import com.haiercash.payplatform.config.CashloanConfig;
+import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.service.AppServerService;
@@ -68,9 +68,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     @Autowired
     private CommonPageService commonPageService;
     @Autowired
-    private AppCashloanConfig appCashloanConfig;
+    private CashloanConfig cashloanConfig;
     @Autowired
-    private AppConfig appConfig;
+    private CommonConfig commonConfig;
 
     @Override
     public String getActivityUrl() {
@@ -80,7 +80,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if (setting == null) {
             return StringUtils.EMPTY;
         }
-        return this.appConfig.getGateUrl() + setting.getActivityUrl();
+        return this.commonConfig.getGateUrl() + setting.getActivityUrl();
     }
 
     @Override
@@ -206,7 +206,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             return CommonResponse.create(ConstUtil.ERROR_CODE, "没有任何标签");
         IEnumerable<String> userTags = Linq.asEnumerable(tags).select(tagMap -> Convert.toString(tagMap.get("tagId")));
         //标签跟配置的标签取交集
-        List<String> allowTags = appCashloanConfig.getWhiteTagIds();
+        List<String> allowTags = cashloanConfig.getWhiteTagIds();
         if (CollectionUtils.isEmpty(allowTags))
             return CommonResponse.create(ConstUtil.ERROR_CODE, "支付平台未配置允许的标签");
         List<String> intersectTags = userTags.intersect(Linq.asEnumerable(allowTags)).toList();//取交集

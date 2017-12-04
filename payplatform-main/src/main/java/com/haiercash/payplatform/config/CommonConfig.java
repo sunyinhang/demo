@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "app.common")
-public class AppConfig {
+public class CommonConfig {
     private String gateUrl;
 }

@@ -3,7 +3,6 @@ package com.haiercash.payplatform.utils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -13,9 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class CmisUtil {
-    @Value("${app.rest.HCPORTAL}")
-    private static String hcportal;
-
     private CmisUtil() {
     }
 

@@ -5,7 +5,8 @@ import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.URLSerializer;
-import com.haiercash.payplatform.config.AppOtherConfig;
+import com.haiercash.payplatform.config.OutreachConfig;
+import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.EncryptUtil;
@@ -41,9 +42,11 @@ import java.util.UUID;
 public class FaceServiceImpl extends BaseService implements FaceService {
     public Log logger = LogFactory.getLog(getClass());
     @Autowired
-    private AppOtherConfig appOtherConfig;
-    @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private StorageConfig storageConfig;
+    @Autowired
+    private OutreachConfig outreachConfig;
 
     private static void createDir(String destDirName) {
         if (!destDirName.endsWith(File.separator))
@@ -94,7 +97,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String appno = UUID.randomUUID().toString().replace("-", "");
         String filestreamname = custNo + ".jpg";
         String filestream = URLSerializer.encode(Base64Utils.encode(faceBytes), CharsetNames.UTF_8);
-        String url = this.appOtherConfig.getOutplatform_url() + "/Outreachplatform/api/face/isface";
+        String url = outreachConfig.getUrl() + "/Outreachplatform/api/face/isface";
         logger.info("调用外联人脸识别接口，请求地址：" + url);
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("personalName", name);//客户姓名
@@ -123,7 +126,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
 
         //人脸识别成功后落盘
-        String dir = this.appOtherConfig.getFace_DataImg_url() + custNo + File.separator + ConstUtil.ATTACHTYPE_DOC065 + File.separator;
+        String dir = storageConfig.getFacePath() + File.separator + custNo + File.separator + ConstUtil.ATTACHTYPE_DOC065 + File.separator;
         createDir(dir);
         final String filePath = dir + appno + ".jpg";
         try (OutputStream outputStream = new FileOutputStream(filePath)) {
@@ -241,7 +244,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
         //
         InputStream inputStream = faceImg.getInputStream();
-        StringBuffer filePath = new StringBuffer(this.appOtherConfig.getFace_DataImg_url()).append(custNo).append(File.separator).append(ConstUtil.ATTACHTYPE_APP01)
+        StringBuffer filePath = new StringBuffer(storageConfig.getFacePath()).append(File.separator).append(custNo).append(File.separator).append(ConstUtil.ATTACHTYPE_APP01)
                 .append(File.separator);// File.separator
         createDir(String.valueOf(filePath));
         String fileName = UUID.randomUUID().toString().replaceAll("-", "");

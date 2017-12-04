@@ -14,8 +14,8 @@ import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
-import com.haiercash.payplatform.config.AppConfig;
-import com.haiercash.payplatform.config.AppOtherConfig;
+import com.haiercash.payplatform.config.CommonConfig;
+import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
@@ -75,9 +75,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     @Autowired
     private OrderService orderService;
     @Autowired
-    private AppConfig appConfig;
-    @Autowired
-    private AppOtherConfig appOtherConfig;
+    private CommonConfig commonConfig;
     @Autowired
     private CooperativeBusinessDao cooperativeBusinessDao;
     @Autowired
@@ -86,6 +84,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private AppointmentRecordDao appointmentRecordDao;
     @Autowired
     private EntrySettingDao entrySettingDao;
+    @Autowired
+    private OutreachConfig outreachConfig;
 
     /**
      * 合同展示
@@ -535,7 +535,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(mobile)) {
             return fail(ConstUtil.ERROR_CODE, "必传项不能为空");
         }
-        String url = appOtherConfig.getOutplatform_url() + "/Outreachplatform/api/chinaPay/identifyByFlag";
+        String url = outreachConfig.getUrl() + "/Outreachplatform/api/chinaPay/identifyByFlag";
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("accountName", custName);
         jsonMap.put("accountNo", cardNo);
@@ -805,7 +805,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             hm.put("applyTnr", order.getApplyTnr());
             hm.put("fstPay", order.getFstPay());
             hm.put("mtdCde", order.getMtdCde());
-            Map<String, Object> hkss_json = cmisApplService.getHkssReturnMap(hm, appConfig.getGateUrl(), super.getToken());
+            Map<String, Object> hkss_json = cmisApplService.getHkssReturnMap(hm, commonConfig.getGateUrl(), super.getToken());
             logger.info("还款试算service返回hkss:" + hkss_json);
             Map<String, Object> hkssBodyMap = (Map<String, Object>) hkss_json.get("body");
             Map<String, Object> first = (Map) ((List) hkssBodyMap.get("mx")).get(0);//获取第0期的费用
