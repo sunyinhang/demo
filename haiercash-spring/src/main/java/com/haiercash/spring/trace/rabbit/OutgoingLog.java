@@ -56,6 +56,7 @@ public final class OutgoingLog {
         logger.info(builder.toString());
     }
 
+    @SuppressWarnings("Duplicates")
     public static void writeErrorLog(StringBuilder builder, Exception e, long tookMs) {
         String msg = ThrowableUtils.getString(e);
         builder.append("Error:").append(Environment.NewLine);

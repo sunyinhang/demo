@@ -29,7 +29,11 @@ public final class RabbitInterceptor {
     @Around(value = "doRabbitPointcut()")
     public Object doRabbit(ProceedingJoinPoint joinPoint) throws Throwable {
         String action = joinPoint.getSignature().toLongString();
-        this.logger.info(String.format("[%s] ==>RabbitHandler: %s", ThreadContext.getTraceID(), action));
-        return joinPoint.proceed();
+        this.logger.info(String.format("[%s] ==>RabbitHandler Begin: %s", ThreadContext.getTraceID(), action));
+        try {
+            return joinPoint.proceed();
+        } finally {
+            this.logger.info(String.format("[%s] ==>RabbitHandler End: %s", ThreadContext.getTraceID(), action));
+        }
     }
 }
