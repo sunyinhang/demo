@@ -3,11 +3,10 @@ package com.haiercash.payplatform.pc.shunguang.controller;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
-import com.haiercash.spring.controller.BaseController;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.OrderService;
-import com.haiercash.payplatform.tasks.rabbitmq.CmisMessageHandler;
+import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
 import org.apache.commons.logging.Log;
@@ -40,8 +39,6 @@ public class ShunguangController extends BaseController {
 
     @Autowired
     private ShunguangService shunguangService;
-    @Autowired
-    private CmisMessageHandler cmisMseeageHandler;
     @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
     @Autowired
@@ -266,6 +263,7 @@ public class ShunguangController extends BaseController {
         }
         return resultMap;
     }
+
     /**
      * @Title
      * @Description:
