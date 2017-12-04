@@ -12,6 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "app.cmis")
 public class CmisConfig {
-    private String url;
-    private RabbitInfo rabbit;
+	private String url;
+	private RabbitInfo rabbit;
 }
