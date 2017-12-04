@@ -1,5 +1,7 @@
 package com.haiercash.spring.trace.rest;
 
+import com.haiercash.core.io.CharsetNames;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -13,5 +15,6 @@ public final class TraceConfig {
     public static final String BODY_OVER_FLOW = "(...内容过大，无法显示)";
     public static final String BODY_RESOURCE = "(...资源文件，无法显示)";
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    public static final String DEFAULT_CHARSET_NAME = CharsetNames.UTF_8;
     public static final ThreadLocal<byte[]> BUFFER = ThreadLocal.withInitial(() -> new byte[BUFFER_SIZE]);
 }

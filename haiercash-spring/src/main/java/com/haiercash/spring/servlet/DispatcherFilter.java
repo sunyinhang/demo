@@ -54,11 +54,11 @@ public final class DispatcherFilter implements Filter {
         long begin = System.currentTimeMillis();
         try {
             filterChain.doFilter(request, response);
+            IncomingLog.writeResponseLog(request, response, System.currentTimeMillis() - begin);
         } catch (Exception e) {
-            IncomingLog.writeError(request, e, System.currentTimeMillis() - begin);
+            IncomingLog.writeErrorLog(request, e, System.currentTimeMillis() - begin);
             throw e;
         } finally {
-            IncomingLog.writeResponseLog(request, response, System.currentTimeMillis() - begin);
             ThreadContext.reset();
             RequestContext.reset();
         }

@@ -5,6 +5,8 @@ import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.mail.bugreport.BugReportLevel;
+import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.servlet.DispatcherRequestWrapper;
 import com.haiercash.spring.servlet.DispatcherResponseWrapper;
 import org.apache.commons.logging.Log;
@@ -82,18 +84,21 @@ public final class IncomingLog {
         logger.info(builder.toString());
     }
 
-    public static void writeError(DispatcherRequestWrapper request, Exception e, long tookMs) {
+    public static void writeErrorLog(DispatcherRequestWrapper request, Exception e, long tookMs) {
+        String msg = ThrowableUtils.getString(e);
         StringBuilder builder = new StringBuilder();
         builder.append(Environment.NewLine).append(ERR_BEGIN).append(Environment.NewLine);
         String method = request.getMethod().toUpperCase();//转大写
         builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(method).append(" ").append(request.getServletPath()).append(Environment.NewLine);
         //
         builder.append("Error:").append(Environment.NewLine);
-        builder.append(ThrowableUtils.getString(e)).append(Environment.NewLine);
+        builder.append(msg).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
         builder.append(ERR___END);
-        logger.info(builder.toString());
+        logger.error(builder.toString());
+        //错误报告
+        BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
     }
 
     private static void writeHeaders(StringBuilder builder, HttpServletRequest request) {
