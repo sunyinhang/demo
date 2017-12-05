@@ -12,7 +12,7 @@ import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.spring.utils.ResultHead;
+import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -458,11 +458,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         Map<String, Object> resultMap = new HashMap<String, Object>();
         Map<String, Object> stringObjectMap = queryOrderInfo(token, channelNo, channel, params);
         logger.info("stringObjectMap:" + stringObjectMap);
-        ResultHead resultHead = (ResultHead) stringObjectMap.get("head");
-        String retFlag = resultHead.getRetFlag();
-        if (!"00000".equals(retFlag)) {
-            String retMsg = (String) resultHead.getRetMsg();
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+        if (!HttpUtil.isSuccess(stringObjectMap)) {
+            return stringObjectMap;
         }
         Map<String, Object> resMap = (Map<String, Object>) stringObjectMap.get("body");
         Double apply_amt = Convert.toDouble(resMap.get("apply_amt"));//借款金额

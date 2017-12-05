@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 该类已过时, 请使用 负载均衡: CommonRestUtils/CmisAcqUtils  非负载均衡: CmisDirectUtils/JsonClientUtils/XmlClientUtils
  * Created by use on 2017/7/25.
  */
 @Deprecated
@@ -82,7 +84,7 @@ public final class HttpUtil {
     }
 
     public static String restGet(String url, String token, Integer responseCode) {
-        return restExchange(HttpMethod.GET, url, token, (String) null, responseCode);
+        return restExchange(HttpMethod.GET, url, token, null, responseCode);
     }
 
     public static String restGet(String url, String token) {
@@ -90,30 +92,22 @@ public final class HttpUtil {
     }
 
     public static String restGet(String url) {
-        return restGet(url, (String) null);
+        return restGet(url, null);
     }
 
     public static String restDelete(String url, String token, Integer responseCode) {
-        return restExchange(HttpMethod.DELETE, url, token, (String) null, responseCode);
+        return restExchange(HttpMethod.DELETE, url, token, null, responseCode);
     }
 
     public static String restExchange(HttpMethod method, String url, String token, String data, Integer responseCode) {
         try {
             HttpHeaders headers = getHeaders(token);
-            ResponseEntity e;
-            HttpEntity status;
-            if (data != null) {
-                status = new HttpEntity(data, headers);
-                e = getRestTemplate().exchange(url, method, status, String.class, new Object[0]);
-            } else {
-                status = new HttpEntity(headers);
-                e = getRestTemplate().exchange(url, method, status, String.class, new Object[0]);
-            }
-
-            HttpStatus status1 = e.getStatusCode();
-            return responseCode != null && status1.value() != responseCode.intValue() ? null : (String) e.getBody();
+            HttpEntity<?> requestEntity = new HttpEntity<>(data, headers);
+            ResponseEntity<String> responseEntity = getRestTemplate().exchange(url, method, requestEntity, String.class);
+            HttpStatus httpStatus = responseEntity.getStatusCode();
+            return responseCode != null && httpStatus.value() != responseCode ? null : responseEntity.getBody();
         } catch (Exception var8) {
-            logger.error("restExchangeMap失败：" + var8.getMessage());
+            logger.error("restExchange 失败：" + var8.getMessage());
             return null;
         }
     }
@@ -123,7 +117,7 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restPostMap(String url, Map<String, Object> data, Integer responseCode) {
-        return restExchangeMap(HttpMethod.POST, url, (String) null, data, responseCode);
+        return restExchangeMap(HttpMethod.POST, url, null, data, responseCode);
     }
 
     public static Map<String, Object> restPostMap(String url, String token, Map<String, Object> data) {
@@ -131,7 +125,7 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restPostMap(String url, Map<String, Object> data) {
-        return restPostMap(url, (String) null, data, Integer.valueOf(HttpStatus.OK.value()));
+        return restPostMap(url, null, data, Integer.valueOf(HttpStatus.OK.value()));
     }
 
     public static Map<String, Object> restPutMap(String url, String token, Map<String, Object> data, Integer responseCode) {
@@ -139,7 +133,7 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restPutMap(String url, Map<String, Object> data, Integer responseCode) {
-        return restExchangeMap(HttpMethod.PUT, url, (String) null, data, responseCode);
+        return restExchangeMap(HttpMethod.PUT, url, null, data, responseCode);
     }
 
     public static Map<String, Object> restPutMap(String url, String token, Map<String, Object> data) {
@@ -147,7 +141,7 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restPutMap(String url, Map<String, Object> data) {
-        return restPutMap(url, (String) null, data, Integer.valueOf(HttpStatus.OK.value()));
+        return restPutMap(url, null, data, Integer.valueOf(HttpStatus.OK.value()));
     }
 
     public static Map<String, Object> restGetMap(String url, String token, int responseCode) {
@@ -155,7 +149,7 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restGetMap(String url, int responseCode) {
-        return restGetMap(url, (String) null, responseCode);
+        return restGetMap(url, null, responseCode);
     }
 
     public static Map<String, Object> restGetMap(String url, String token, Map<String, Object> map, int responseCode) {
@@ -177,38 +171,19 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restExchangeMap(HttpMethod method, String url, String token, Map<String, Object> data, Integer responseCode) {
-        return restExchangeMap(method, false, url, token, data, responseCode);
-    }
-
-    public static Map<String, Object> restExchangeMap(HttpMethod method, boolean isOrigin, String url, String token, Map<String, Object> data, Integer responseCode) {
         try {
             HttpHeaders headers = getHeaders(token, data);
-            ResponseEntity e;
-            HttpEntity status;
-            if (data != null) {
-                status = new HttpEntity(data, headers);
-                if (isOrigin) {
-                    e = (new RestTemplate()).exchange(url, method, status, Map.class, new Object[0]);
-                } else {
-                    e = getRestTemplate().exchange(url, method, status, Map.class, new Object[0]);
-                }
-            } else {
-                status = new HttpEntity(headers);
-                if (isOrigin) {
-                    e = (new RestTemplate()).exchange(url, method, status, Map.class, new Object[0]);
-                } else {
-                    e = getRestTemplate().exchange(url, method, status, Map.class, new Object[0]);
-                }
-            }
-
-            HttpStatus status1 = e.getStatusCode();
-            if (responseCode != null && status1.value() != responseCode.intValue()) {
+            HttpEntity<?> requestEntity = new HttpEntity<>(data, headers);
+            ResponseEntity<Map<String, Object>> responseEntity = getRestTemplate().exchange(url, method, requestEntity, new ParameterizedTypeReference<Map<String, Object>>() {
+            });
+            HttpStatus statusCode = responseEntity.getStatusCode();
+            if (responseCode != null && statusCode.value() != responseCode) {
                 return null;
             } else {
-                return (Map) e.getBody();
+                return responseEntity.getBody();
             }
-        } catch (Exception var9) {
-            logger.error("restExchangeMap失败：" + var9.getMessage());
+        } catch (Exception e) {
+            logger.error("restExchangeMap 失败：" + e.getMessage());
             return null;
         }
     }
@@ -316,10 +291,6 @@ public final class HttpUtil {
             if (map.get("head") instanceof Map) {
                 mapHead = (Map) map.get("head");
             } else {
-                if (map.get("head") instanceof ResultHead) {
-                    return ((ResultHead) map.get("head")).getRetFlag();
-                }
-
                 mapHead = json2Map(map.get("head").toString());
             }
 
@@ -335,11 +306,6 @@ public final class HttpUtil {
 
             if (resultMap.get("head") instanceof Map) {
                 return (Map) resultMap.get("head");
-            } else if (resultMap.get("head") instanceof ResultHead) {
-                Map<String, Object> map = new HashMap();
-                map.put("retFlag", ((ResultHead) resultMap.get("head")).getRetFlag());
-                map.put("retMsg", ((ResultHead) resultMap.get("head")).getRetMsg());
-                return map;
             } else {
                 return null;
             }

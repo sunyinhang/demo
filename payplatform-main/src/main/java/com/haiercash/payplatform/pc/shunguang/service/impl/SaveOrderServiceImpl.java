@@ -12,7 +12,6 @@ import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
-import com.haiercash.spring.utils.ResultHead;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -242,11 +241,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             citymap.put("channel", channel);
             citymap.put("channelNo", channelNo);
             Map<String, Object> cityCodeMap = commonPageService.getCode(token, citymap);
-            ResultHead jsonMap = (ResultHead) cityCodeMap.get("head");
-            String retFlag_one = jsonMap.getRetFlag(); // (String) jsonMap.get("retFlag");
-            if (!"00000".equals(retFlag_one)) {
-                String retMsg = jsonMap.getRetMsg();// (String) jsonMap.get("retMsg");
-                return fail(ConstUtil.ERROR_CODE, retMsg);
+            if (!HttpUtil.isSuccess(cityCodeMap)) {
+                return cityCodeMap;
             }
             logger.info("cityCodeMap------" + cityCodeMap);
             Map<String, Object> map_one = (Map<String, Object>) cityCodeMap.get("body");
@@ -270,11 +266,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
                 provincemap.put("channel", channel);
                 provincemap.put("channelNo", channelNo);
                 Map<String, Object> provinceCodeMap = commonPageService.getCode(token, provincemap);
-                ResultHead jsonMapT = (ResultHead) provinceCodeMap.get("head");
-                String retFlag_two = jsonMapT.getRetFlag(); //(String) jsonMapT.get("retFlag");
-                if (!"00000".equals(retFlag_two)) {
-                    String retMsg = jsonMapT.getRetMsg();//(String) jsonMapT.get("retMsg");
-                    return fail(ConstUtil.ERROR_CODE, retMsg);
+                if (!HttpUtil.isSuccess(provinceCodeMap)) {
+                    return provinceCodeMap;
                 }
                 Map<String, Object> map_two = (Map<String, Object>) provinceCodeMap.get("body");
                 provinceCode = (String) map_two.get("cityCode");
@@ -331,14 +324,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         RedisUtils.setExpire(token, cacheMap);
         logger.info("订单保存结果：" + ordermap.toString());
         if (!HttpUtil.isSuccess(ordermap)) {//订单保存失败
-            logger.info("订单保存失败");
-            ResultHead resultHead = (ResultHead) (ordermap.get("head"));
-            String retmsg = resultHead.getRetMsg();
-//            Map resultHead = (Map<String, Object>) (ordermap.get("head"));
-//            String retmsg = resultHead.get("retMsg").toString();
-            //String retmsg = resultHead.getRetMsg();
-            //String retmsg = (String) ((Map<String, Object>)(ordermap.get("head"))).get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retmsg);
+            return ordermap;
         }
 
         return ordermap;

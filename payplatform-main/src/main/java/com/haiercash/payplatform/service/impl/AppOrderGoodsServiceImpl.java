@@ -1,14 +1,13 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.common.data.AppOrderGoods;
-import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.payplatform.service.AppOrderGoodsService;
+import com.haiercash.payplatform.utils.FormatUtil;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.spring.utils.HttpUtil;
 import com.haiercash.spring.utils.RestUtil;
-import com.haiercash.spring.utils.ResultHead;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -32,11 +31,8 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
     public Map<String, Object> saveAppOrderGoods(AppOrderGoods appOrderGoods) {
         Map<String, Object> gmMap = this.saveGoodToGm(appOrderGoods);
         logger.info("gmMap==" + gmMap);
-        ResultHead head = (ResultHead) gmMap.get("head");
-        String retFlag = head.getRetFlag();
-        String retMsg = head.getRetMsg();
-        if (!"00000".equals(retFlag)) {
-            return RestUtil.fail(retFlag, retMsg);//返回GM的错误码
+        if (!HttpUtil.isSuccess(gmMap)) {
+            return gmMap;//返回GM的错误码
         }
         String url = EurekaServer.ORDER + "/api/order/goods/add";
         Map<String, Object> orderMap = new HashMap<>();
@@ -67,11 +63,8 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
     public Map<String, Object> updateAppOrderGoods(AppOrderGoods appOrderGoods) {
         Map<String, Object> gmMap = saveGoodToGm(appOrderGoods);
         logger.info("gmMap==" + gmMap);
-        ResultHead head = (ResultHead) gmMap.get("head");
-        String retFlag = head.getRetFlag();
-        String retMsg = head.getRetMsg();
-        if (!"00000".equals(retFlag)) {
-            return RestUtil.fail(retFlag, retMsg);//返回GM的错误码
+        if (!HttpUtil.isSuccess(gmMap)) {
+            return gmMap;//返回GM的错误码
         }
         String url = EurekaServer.ORDER + "/api/order/goods/update";
         Map<String, Object> paramMap = new HashMap<>();
