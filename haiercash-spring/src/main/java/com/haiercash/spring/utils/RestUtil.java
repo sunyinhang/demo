@@ -11,25 +11,25 @@ public final class RestUtil {
     }
 
     public static Map<String, Object> fail(String retFlag, String retMsg) {
-        HashMap<String, Object> resultMap = new HashMap<>();
-        ResultHead head = new ResultHead();
-        head.setRetFlag(retFlag);
-        head.setRetMsg(retMsg);
-        resultMap.put("head", head);
-        return resultMap;
+        Map<String, Object> head = new HashMap<>();
+        head.put("retFlag", retFlag);
+        head.put("retMsg", retMsg);
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("head", head);
+        return result;
     }
 
     public static Map<String, Object> success() {
         return fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
     }
 
-    public static Map<String, Object> success(Object result) {
-        Map<String, Object> resultMap = fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
-        resultMap.put("body", result);
-        return resultMap;
+    public static Map<String, Object> success(Object body) {
+        Map<String, Object> result = fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
+        result.put("body", body);
+        return result;
     }
 
-    public static boolean isSuccess(Map<String, Object> resultMap) {
-        return HttpUtil.isSuccess(resultMap);
+    public static boolean isSuccess(Map<String, Object> result) {
+        return HttpUtil.isSuccess(result);
     }
 }
