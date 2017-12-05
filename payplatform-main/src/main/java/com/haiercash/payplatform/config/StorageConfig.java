@@ -5,11 +5,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Created by 许崇雷 on 2017-10-31.
+ * Created by 许崇雷 on 2017-12-04.
  */
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "app.common")
-public class AppConfig {
-    private String gateUrl;
+@ConfigurationProperties(prefix = "app.storage")
+public class StorageConfig {
+    private String ocrPath;
+    private String facePath;
 }

@@ -1,22 +1,26 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
+import com.haiercash.core.io.CharsetNames;
+import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.URLSerializer;
+import com.haiercash.payplatform.config.OutreachConfig;
+import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
-import com.haiercash.payplatform.utils.DigestUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import sun.misc.BASE64Encoder;
 
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URLEncoder;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -36,37 +41,28 @@ import java.util.UUID;
 @Service
 public class FaceServiceImpl extends BaseService implements FaceService {
     public Log logger = LogFactory.getLog(getClass());
-    @Value("${app.other.outplatform_url}")
-    protected String outplatform_url;
-    @Value("${app.other.face_DataImg_url}")
-    protected String face_DataImg_url;
-    @Value("${app.other.haierDataImg_url}")
-    protected String haierDataImg_url;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private StorageConfig storageConfig;
+    @Autowired
+    private OutreachConfig outreachConfig;
 
-    public static void createDir(String destDirName) {
-        File dir = new File(destDirName);
-        if (dir.exists()) {
-            return;
-        }
-        if (!destDirName.endsWith(File.separator)) {
+    private static void createDir(String destDirName) {
+        if (!destDirName.endsWith(File.separator))
             destDirName = destDirName + File.separator;
-        }
-        // 创建目录
-        if (dir.mkdirs()) {
+        File dir = new File(destDirName);
+        if (dir.exists())
             return;
-        }
+        // 创建目录
+        //noinspection ResultOfMethodCallIgnored
+        dir.mkdirs();
     }
 
     //人脸识别
     @Override
-    public Map<String, Object> uploadFacePic(/*MultipartFile faceImg,*/byte[] faceBytes, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Map<String, Object> uploadFacePic(byte[] faceBytes, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("人脸识别*****************开始");
-        /*if (faceImg.isEmpty()) {
-            logger.info("图片为空");
-            return fail(ConstUtil.ERROR_CODE, "图片为空");
-        }*/
         //前台参数获取
         String token = request.getHeader("token");
         String channel = request.getHeader("channel");
@@ -77,9 +73,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             logger.info("前台传入数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
+
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -96,14 +93,11 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
+        //人脸识别
         String appno = UUID.randomUUID().toString().replace("-", "");
         String filestreamname = custNo + ".jpg";
-        //图片处理
-        BASE64Encoder encode = new BASE64Encoder();
-        String base64 = encode.encode(faceBytes);
-        String filestream = URLEncoder.encode(base64, "UTF-8");
-        //调用外联活体人脸识别
-        String url = outplatform_url + "/Outreachplatform/api/face/isface";
+        String filestream = URLSerializer.encode(Base64Utils.encode(faceBytes), CharsetNames.UTF_8);
+        String url = outreachConfig.getUrl() + "/Outreachplatform/api/face/isface";
         logger.info("调用外联人脸识别接口，请求地址：" + url);
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("personalName", name);//客户姓名
@@ -112,20 +106,8 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         jsonMap.put("appno", appno);//申请编号
         jsonMap.put("filestreamname", filestreamname);//文件名
         jsonMap.put("organization", "02");//机构号(国政通)
-//        if ("46".equals(channelNo) || "49".equals(channelNo)) { //顺逛
-//            jsonMap.put("organization", "02");//机构号(国政通)
-//        } else {//乔融  现金贷
-//            jsonMap.put("organization", "01");//机构号(海鑫洺)
-//        }
-        //xmllog.info("调用外联人脸识别接口，请求数据：" + json.toString());
         String resData = JsonClientUtils.postForString(url, jsonMap);
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
-        //resData = "{\"code\":\"0000\",\"message\":\"{\\\"user_check_result\\\":\\\"3\\\",\\\"msg\\\":\\\"比对服务处理成功\\\",\\\"requestId\\\":\\\"d77b77852fe728c13b7114dbd5c448d9\\\",\\\"code\\\":\\\"1001\\\",\\\"entity\\\":{\\\"score\\\":\\\"83.23\\\",\\\"desc\\\":\\\"是同一个人\\\"}}\",\"data\":null}";
-        //{"code":"0000","data":[],"message":"{\"msg\":\"账号密码不匹配\",\"code\":\"-1\"}"}
-        //{"code":"0000","data":[],"message":"{\"msg\":\"未检测到脸\",\"code\":\"-2\"}"}
-        //{"code":"0000","message":"{\"msg\":\"请求参数错误，缺少必要的参数\",\"code\":\"9990\"}","data":null}
-        //{"code":"0000","message":"{\"user_check_result\":\"3\",\"msg\":\"比对服务处理成功\",\"requestId\":\"61a9af6a6f19316f33809cf90235740b\",\"code\":\"1001\",\"entity\":{\"score\":\"57.24\",\"desc\":\"不是同一个人\"}}","data":null}
-        //{"code":"0000","message":"{\"user_check_result\":\"3\",\"msg\":\"比对服务处理成功\",\"requestId\":\"d77b77852fe728c13b7114dbd5c448d9\",\"code\":\"1001\",\"entity\":{\"score\":\"83.23\",\"desc\":\"是同一个人\"}}","data":null}
         //人脸分值
         String score = "0";
         JSONObject jsonob = new JSONObject(resData);
@@ -141,31 +123,28 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             String entity = jsonmsg.get("entity").toString();
             JSONObject jsonn = new JSONObject(entity);
             score = jsonn.get("score").toString();
-            //score = new JSONObject(jsonmsg.getString("entity")).getString("score");
         }
 
-        StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(ConstUtil.ATTACHTYPE_DOC065)
-                .append(File.separator);// File.separator
-        createDir(String.valueOf(filePath));
-        String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-        filePath = filePath.append(fileName).append(".jpg"); // 测试打开
-        FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
-        outImag.write(faceBytes);
-        InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5(is);
-        is.close();
-
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        //人脸识别成功后落盘
+        String dir = storageConfig.getFacePath() + File.separator + custNo + File.separator + ConstUtil.ATTACHTYPE_DOC065 + File.separator;
+        createDir(dir);
+        final String filePath = dir + appno + ".jpg";
+        try (OutputStream outputStream = new FileOutputStream(filePath)) {
+            outputStream.write(faceBytes);
+        }
+        //调用 appserver
+        String md5ForUpload;
+        try (FileInputStream inputStream = new FileInputStream(filePath)) {
+            md5ForUpload = DigestUtils.md5Hex(inputStream);
+        }
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         paramMap.put("custNo", custNo);// 客户编号
         paramMap.put("attachType", ConstUtil.ATTACHTYPE_DOC065);// 影像类型
         paramMap.put("attachName", ConstUtil.ATTACHTYPE_DOC065_DESC);// 人脸照片
-        paramMap.put("md5", MD5);//文件md5码
-        paramMap.put("filePath", filePath.toString());
-        //paramMap.put("fileStream", inputStream1);
-        String applSeq = (String) cacheMap.get("applSeq");
-        //paramMap.put("applSeq", applSeq);
+        paramMap.put("md5", md5ForUpload);//文件md5码
+        paramMap.put("filePath", filePath);
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
         Map uploadheadjson = (Map<String, Object>) uploadresultmap.get("head");
@@ -174,11 +153,13 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             String retMsg = (String) uploadheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
+
         //通过人脸分数判断人脸识别是否通过
-        File file = new File(String.valueOf(filePath));
-        InputStream instream = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5code = DigestUtils.md5(instream);
-        Map<String, Object> checkMap = new HashMap<String, Object>();
+        String md5ForFaceCheck;
+        try (InputStream inputStream = new FileInputStream(filePath)) {
+            md5ForFaceCheck = DigestUtils.md5Hex(inputStream);
+        }
+        Map<String, Object> checkMap = new HashMap<>();
         checkMap.put("faceValue", score);//人脸分数
         checkMap.put("typCde", typCde);// 贷款品种 从redis中获取
         checkMap.put("custNo", EncryptUtil.simpleEncrypt(custNo));
@@ -187,7 +168,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         checkMap.put("mobile", EncryptUtil.simpleEncrypt(mobile));
         checkMap.put("source", channel);
         checkMap.put("filePath", filePath);
-        checkMap.put("md5", MD5code);
+        checkMap.put("md5", md5ForFaceCheck);
         checkMap.put("token", token);
         if ("1".equals(edflag)) {
             checkMap.put("isEdAppl", "Y");//是否是额度申请或提额
@@ -202,31 +183,27 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             //人脸识别成功
             //判断是否已经设置过支付密码
             if ("33".equals(channelNo)) {//如果是乔融则不进行支付密码校验
-                Map<String, Object> m = new HashMap<String, Object>();
+                Map<String, Object> m = new HashMap<>();
                 m.put("faceFlag", "1");
                 return success(m);
             }
-            Map m = validateUserFlag(userId, token, channel, channelNo, cacheMap);
-            return m;
-        } else {
-            Map checkbodyjson = (Map<String, Object>) checkresultmap.get("body");
-            if ("N".equals(checkbodyjson.get("isRetry")) &&
-                    "N".equals(checkbodyjson.get("isOK")) &&
-                    "N".equals(checkbodyjson.get("isResend"))) {
-                //跳转到手持身份证
-                Map<String, Object> m = new HashMap<String, Object>();
-                m.put("faceFlag", "2");
-                return success(m);
-//                logger.info("您人脸识别失败多次，暂时不允许继续申请，谢谢您的关注");
-//                return fail(ConstUtil.ERROR_CODE,"您人脸识别失败多次，暂时不允许继续申请，谢谢您的关注");
-            } else {
-                //可以继续做人脸，跳转到人脸页面
-                Map<String, Object> m = new HashMap<String, Object>();
-                m.put("faceFlag", "3");
-                return success(m);
-            }
+            return validateUserFlag(userId, token, channel, channelNo, cacheMap);
         }
 
+        Map checkbodyjson = (Map<String, Object>) checkresultmap.get("body");
+        if ("N".equals(checkbodyjson.get("isRetry")) &&
+                "N".equals(checkbodyjson.get("isOK")) &&
+                "N".equals(checkbodyjson.get("isResend"))) {
+            //跳转到手持身份证
+            Map<String, Object> m = new HashMap<>();
+            m.put("faceFlag", "2");
+            return success(m);
+        } else {
+            //可以继续做人脸，跳转到人脸页面
+            Map<String, Object> m = new HashMap<>();
+            m.put("faceFlag", "3");
+            return success(m);
+        }
     }
 
     //上传手持身份证
@@ -267,7 +244,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
         //
         InputStream inputStream = faceImg.getInputStream();
-        StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(ConstUtil.ATTACHTYPE_APP01)
+        StringBuffer filePath = new StringBuffer(storageConfig.getFacePath()).append(File.separator).append(custNo).append(File.separator).append(ConstUtil.ATTACHTYPE_APP01)
                 .append(File.separator);// File.separator
         createDir(String.valueOf(filePath));
         String fileName = UUID.randomUUID().toString().replaceAll("-", "");
@@ -282,10 +259,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         inputStream.close();
 
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5(is);
+        String MD5 = DigestUtils.md5Hex(is);
         is.close();
         //
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         paramMap.put("custNo", custNo);// 客户编号
@@ -310,8 +287,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
         //上传替代影像成功
         //判断是否已经设置过支付密码
-        Map<String, Object> m = validateUserFlag(userId, token, channel, channelNo, cacheMap);
-        return m;
+        return validateUserFlag(userId, token, channel, channelNo, cacheMap);
     }
 
     /**
@@ -352,7 +328,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //判断是否需要做人脸识别
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("typCde", typCde);
         paramMap.put("source", channel);
         paramMap.put("custNo", custNo);
@@ -383,13 +359,13 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         } else if ("02".equals(code)) {//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
             //跳转替代影像
             logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             map.put("faceFlag", "2");// 手持身份证
             return success(map);
         } else if ("10".equals(code)) {//10：未通过人脸识别，可以再做人脸识别
             //可以做人脸识别
             logger.info("未通过人脸识别，可以再做人脸识别");
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             map.put("faceFlag", "3");// 人脸识别
             return success(map);
         }
@@ -399,7 +375,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
     private Map<String, Object> validateUserFlag(String userId, String token, String channel, String channelNo, Map cacheMap) {
         logger.info("验证是否设置过支付密码*******************开始");
-        Map<String, Object> pwdmap = new HashMap<String, Object>();
+        Map<String, Object> pwdmap = new HashMap<>();
         pwdmap.put("userId", EncryptUtil.simpleEncrypt(userId));
         pwdmap.put("channel", channelNo);
         pwdmap.put("channelNo", channelNo);
@@ -411,10 +387,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         logger.info("上传手持身份证**********************成功");
-        Map bodyjson = (Map<String, Object>) resultmap.get("body");
+        Map<String, Object> bodyjson = (Map<String, Object>) resultmap.get("body");
         String payPasswdFlag = (String) bodyjson.get("payPasswdFlag");
         if (payPasswdFlag.equals("1")) {// 1：已设置
-            Map<String, Object> m = new HashMap<String, Object>();
+            Map<String, Object> m = new HashMap<>();
             String preAmountFlag = (String) cacheMap.get("preAmountFlag");
             if ("1".equals(preAmountFlag)) {
                 logger.info("已设置支付密码，跳转借款页面");
@@ -430,9 +406,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             cacheMap.put("payPasswdFlag", "0");
             RedisUtils.setExpire(token, cacheMap);
             logger.info("未设置支付密码，跳转支付密码设置页面");
-            Map<String, Object> m = new HashMap<String, Object>();
+            Map<String, Object> m = new HashMap<>();
             m.put("faceFlag", "0");
             return success(m);
         }
     }
+
 }

@@ -1,7 +1,6 @@
 package com.haiercash.spring.redis;
 
 import com.bestvike.linq.Linq;
-import com.bestvike.linq.exception.InvalidOperationException;
 import com.haiercash.core.lang.StringUtils;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -20,9 +19,9 @@ public final class RedisProperties {
     private Integer defaultValueExpire;
 
     public String getKey(String key) {
-        if (StringUtils.isEmpty(key))
-            throw new InvalidOperationException("redis key can not be empty");
-        return StringUtils.isEmpty(this.globalKeyPrefix) ? key : this.globalKeyPrefix + ":" + key;
+        return StringUtils.isEmpty(this.globalKeyPrefix)
+                ? (key == null ? StringUtils.EMPTY : key)
+                : (StringUtils.isEmpty(key) ? globalKeyPrefix : (globalKeyPrefix + ":" + key));
     }
 
     public String[] getKeys(String[] keys) {

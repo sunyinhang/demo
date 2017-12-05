@@ -2,11 +2,12 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.lang.Convert;
 import com.haiercash.payplatform.common.entity.LoanType;
+import com.haiercash.payplatform.config.ShunguangConfig;
+import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.CustExtInfoService;
-import com.haiercash.payplatform.utils.DigestUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
@@ -14,11 +15,11 @@ import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
 @Service
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService {
     public Log logger = LogFactory.getLog(getClass());
@@ -47,13 +47,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     private CrmService crmService;
     @Autowired
     private CashLoanService cashLoanService;
-    //    @Value("${app.other.baseSharePath:}")
-//    protected String baseSharePath;
-    @Value("${app.other.face_DataImg_url}")
-    protected String face_DataImg_url;
-
-    @Value("${app.shunguang.sg_typCde}")
-    protected String sg_typCde;
+    @Autowired
+    private ShunguangConfig shunguangConfig;
+    @Autowired
+    private StorageConfig storageConfig;
 
     @Override
     public Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) throws Exception {
@@ -73,7 +70,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //            return fail(ConstUtil.ERROR_CODE, allCustExtInfotMsg);
 //        }
         if ("46".equals(channelNo)) {
-            typCde = sg_typCde;//贷款品种
+            typCde = shunguangConfig.getTypCde();//贷款品种
         } else {
             //查询贷款品种类型
         }
@@ -371,7 +368,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存联系人二**************结束");
         logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
         if ("46".equals(channelNo)) {
-            typCde = sg_typCde;//贷款品种
+            typCde = shunguangConfig.getTypCde();//贷款品种
         }
         ifNeedFaceChkByTypCdeMap.put("typCde", typCde);
         ifNeedFaceChkByTypCdeMap.put("source", channel);
@@ -476,8 +473,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         InputStream inputStream = iconImg.getInputStream();
         //TODO
-        StringBuffer filePath = new StringBuffer(face_DataImg_url).append(custNo).append(File.separator).append(docCde).append(File.separator);//        D:/JavaProjects/PayPlatform/payplatform/static/sgbt/images/crm/image/C201708010722561X68720\DOC001\a1f4d50d8b6743e58a3c3fdc206fb184.jpg;
-//        StringBuffer filePath = new StringBuffer(face_DataImg_url);
+        StringBuffer filePath = new StringBuffer(storageConfig.getFacePath()).append(File.separator).append(custNo).append(File.separator).append(docCde).append(File.separator);
         createDir(String.valueOf(filePath));
         String filestreamname = custNo + ".jpg";
         String fileName = UUID.randomUUID().toString().replaceAll("-", "");
@@ -492,7 +488,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         outImag.close();
         inputStream.close();
         InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5(is);
+        String MD5 = DigestUtils.md5Hex(is);
         is.close();
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("channel", channel);

@@ -23,10 +23,10 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.payplatform.common.entity.Corehead;
 import com.haiercash.payplatform.common.entity.QueryLimitMessage;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
-import com.haiercash.payplatform.config.AppCmisConfig;
-import com.haiercash.spring.rest.client.XmlClientUtils;
+import com.haiercash.payplatform.config.CmisConfig;
 import com.haiercash.payplatform.service.PaymentServiceInterface;
 import com.haiercash.payplatform.utils.XstreamBuild;
+import com.haiercash.spring.rest.client.XmlClientUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class PaymentServiceImpl implements PaymentServiceInterface {
     private Log logger = LogFactory.getLog(PaymentServiceImpl.class);
 
     @Autowired
-    private AppCmisConfig appCmisConfig;
+    private CmisConfig cmisConfig;
 
     @Override
     public ReturnMessage queryLimitMessage(QueryLimitMessage queryLimitMessage) {
@@ -62,7 +62,7 @@ public class PaymentServiceImpl implements PaymentServiceInterface {
         String requestXml = xstreamBuild.bulidCorerequestXml(queryLimitMessage,
                 corehead);
 
-        String response = XmlClientUtils.postForString(appCmisConfig.getUrl(), requestXml);
+        String response = XmlClientUtils.postForString(cmisConfig.getUrl(), requestXml);
         logger.info(response);
         Map map = (Map) xstreamBuild.bulidCoreresponseBean(response);
         List head = (List) map.get("head");

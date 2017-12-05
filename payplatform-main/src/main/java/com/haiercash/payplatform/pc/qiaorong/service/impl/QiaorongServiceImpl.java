@@ -7,14 +7,13 @@ import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SignContractInfo;
-import com.haiercash.payplatform.config.AppConfig;
+import com.haiercash.payplatform.config.CommonConfig;
+import com.haiercash.payplatform.config.MoxieConfig;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.CmisApplService;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.AcqUtil;
-import com.haiercash.payplatform.utils.CmisTradeCode;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
@@ -25,7 +24,6 @@ import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -42,12 +40,6 @@ import java.util.UUID;
  */
 @Service
 public class QiaorongServiceImpl extends BaseService implements QiaorongService {
-
-    private static int limitAmount = 30000;
-    @Value("${app.other.moxie_apikey}")
-    protected String moxie_apikey;
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -57,7 +49,9 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     @Autowired
     private SignContractInfoDao signContractInfoDao;
     @Autowired
-    private AppConfig appConfig;
+    private CommonConfig commonConfig;
+    @Autowired
+    private MoxieConfig moxieConfig;
 
     /*
     ca签章
@@ -101,7 +95,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 
         String date = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
 
-        String backurl = haiercashpay_web_url + "qr/#!/installment.html?token=" + uuid + "&applseq=" + applSeq + "&date=" + date;
+        String backurl = commonConfig.getGateUrl() + "/qr/#!/installment.html?token=" + uuid + "&applseq=" + applSeq + "&date=" + date;
         logger.info("签章跳转页面地址：" + backurl);
         Map ResultMap = new HashMap();
         ResultMap.put("backurl", backurl);
@@ -164,7 +158,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         //获取商品信息
         Map goodmap = (Map) bodyLoanDetail.get("goodsList");
         List goodlist = (List) goodmap.get("good");
-        for (Object goods: goodlist) {
+        for (Object goods : goodlist) {
             Map goodsmap = (Map) goods;
             String goodsname = Convert.toString(goodsmap.get("goods_name"));//商品名称
             resultMap.put("goods", goodsname);//分期产品
@@ -184,7 +178,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
 
         List loanlist = (List) ((Map<String, Object>) payresultMap.get("body")).get("mx");
-        for (int i = 0; i < loanlist.size(); i++ ) {
+        for (int i = 0; i < loanlist.size(); i++) {
             Map map1 = (Map) loanlist.get(0);
             String instmAmt = Convert.toString(map1.get("instmAmt"));//分期金额
             resultMap.put("loanpayment", instmAmt);//每期应还金额
@@ -534,7 +528,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String applseq = (String) cacheMap.get("applSeq");
         String idNo = (String) cacheMap.get("idCard");//身份证
 
-        String apiKey = moxie_apikey;
+        String apiKey = moxieConfig.getApiKey();
         String userId = idNo + applseq;
 
         Map resultmap = new HashMap();

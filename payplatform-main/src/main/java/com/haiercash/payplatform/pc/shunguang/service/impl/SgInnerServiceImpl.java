@@ -8,20 +8,19 @@ import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
+import com.haiercash.payplatform.config.CommonConfig;
+import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.CmisApplService;
 import com.haiercash.payplatform.service.HaierDataService;
 import com.haiercash.payplatform.service.OrderManageService;
-import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -35,26 +34,20 @@ import java.util.Map;
  */
 @Service
 public class SgInnerServiceImpl extends BaseService implements SgInnerService {
-    @Value("${app.other.haiercashpay_web_url}")
-    protected String haiercashpay_web_url;
-    @Value("${app.shunguang.sg_merch_no}")
-    protected String sg_merch_no;
-    @Value("${app.shunguang.sg_store_no}")
-    protected String sg_store_no;
     @Autowired
     private AppServerService appServerService;
     @Autowired
-    private OrderService orderService;
-    @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
-    @Autowired
-    private CmisApplService cmisApplService;
     @Autowired
     private HaierDataService haierDataService;
     @Autowired
     private OrderManageService orderManageService;
     @Autowired
     private AcquirerService acquirerService;
+    @Autowired
+    private ShunguangConfig shunguangConfig;
+    @Autowired
+    private CommonConfig commonConfig;
 
     @Override
     public Map<String, Object> userlogin(Map<String, Object> map) {
@@ -116,7 +109,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         }
         if ("C1220".equals(custretflag)) {//C1120  客户信息不存在  跳转无额度页面
             RedisUtils.setExpire(token, cacheMap);
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountNot.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
@@ -160,7 +153,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         String crdNorAvailAmt = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
             //跳转有额度页面
-            String backurl = haiercashpay_web_url + "sgbt/#!/payByBt/myAmount.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/myAmount.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
@@ -168,7 +161,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         //审批状态判断
         String outSts = (String) ((Map<String, Object>) (edresult.get("body"))).get("outSts");
         if ("01".equals(outSts)) {//额度正在审批中
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyIn.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
@@ -176,17 +169,17 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
             cacheMap.put("crdSeq", crdSeq);
             RedisUtils.setExpire(token, cacheMap);
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
         } else if ("25".equals(outSts)) {//审批被拒绝
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyFail.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
         } else {//没有额度  额度激活
-            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountActive.html?token=" + token;
             map.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(map);
@@ -441,8 +434,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             retrunmap.put("payMtd", ((Map<String, Object>) (payssresultMap.get("body"))).get("info"));
             //根据商户和门店查询贷款品种（若包含17100a[30天免息] 展示30天免息）
             Map<String, Object> paramMap = new HashMap<String, Object>();
-            paramMap.put("merchantCode", sg_merch_no);
-            paramMap.put("storeCode", sg_store_no);
+            paramMap.put("merchantCode", shunguangConfig.getMerchNo());
+            paramMap.put("storeCode", shunguangConfig.getStoreNo());
             Map<String, Object> loanmap = appServerService.getLoanDic(token, paramMap);
             if (!HttpUtil.isSuccess(loanmap)) {//获取贷款品种失败
                 String retmsg = (String) ((Map<String, Object>) (loanmap.get("head"))).get("retMsg");
@@ -603,8 +596,8 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
 
         //1、查询全部可用贷款品种
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("merchantCode", sg_merch_no);
-        paramMap.put("storeCode", sg_store_no);
+        paramMap.put("merchantCode", shunguangConfig.getMerchNo());
+        paramMap.put("storeCode", shunguangConfig.getStoreNo());
         Map<String, Object> loanmap = appServerService.getLoanDic(token, paramMap);
         if (!HttpUtil.isSuccess(loanmap)) {//获取贷款品种失败
             String retmsg = (String) ((Map<String, Object>) (loanmap.get("head"))).get("retMsg");

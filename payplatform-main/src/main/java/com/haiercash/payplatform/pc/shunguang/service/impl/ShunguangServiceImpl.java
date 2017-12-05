@@ -8,8 +8,8 @@ import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgRegions;
-import com.haiercash.payplatform.config.AppOtherConfig;
-import com.haiercash.payplatform.config.AppShunguangConfig;
+import com.haiercash.payplatform.config.CommonConfig;
+import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
 import com.haiercash.payplatform.service.AcquirerService;
@@ -63,11 +63,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     @Autowired
     private OrderManageService orderManageService;
     @Autowired
-    private AppOtherConfig appOtherConfig;
-    @Autowired
-    private AppShunguangConfig appShunguangConfig;
+    private OutreachConfig outreachConfig;
     @Autowired
     private AcquirerService acquirerService;
+    @Autowired
+    private CommonConfig commonConfig;
 
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
         Map<String, Object> headMap = new HashMap<>();
@@ -139,7 +139,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         requestParams.put("cardnumber", null);
         requestParams.put("data", new JSONObject(body));
 
-        String url = appOtherConfig.getOutplatform_url() + "/Outreachplatform/api/externalData/savaExternalData";
+        String url = outreachConfig.getUrl() + "/Outreachplatform/api/externalData/savaExternalData";
         logger.info("推送外联风险信息，请求地址：" + url);
         String resData = JsonClientUtils.postForString(url, requestParams);
         logger.info("推送外联风险信息，返回数据：" + resData);
@@ -313,10 +313,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map returnmap = new HashMap<>();
         String backurl = "";
         if ("1".equals(f)) {//订单已提交成功
-            backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/payByBt/loanResult.html?token=" + token + "&applSeq=" + applSeq;
-            ;
+            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/loanResult.html?token=" + token + "&applSeq=" + applSeq;
         } else {
-            backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
+            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/btInstalments.html?token=" + token;
         }
         logger.info("支付跳转页面：" + backurl);
         returnmap.put("backurl", backurl);
@@ -433,7 +432,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 //U0160:该用户已注册，无法注册
                 //跳转登录页面进行登录
                 RedisUtils.setExpire(token, cachemap);
-                String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/login/login.html?token=" + token;
+                String backurl = commonConfig.getGateUrl() + "/sgbt/#!/login/login.html?token=" + token;
                 returnmap.put("backurl", backurl);
                 logger.info("页面跳转到：" + backurl);
                 return success(returnmap);
@@ -485,7 +484,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("token:" + token);
             logger.info("跳转额度激活，cachemap：" + cachemap.toString());
             RedisUtils.setExpire(token, cachemap);
-            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountNot.html?token=" + token;
             returnmap.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(returnmap);
@@ -516,7 +515,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             cachemap.put("idCard", certNo);//身份证号
             cachemap.put("idType", certType);
             RedisUtils.setExpire(token, cachemap);
-            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/quotaMerge.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/quotaMerge.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
@@ -1097,7 +1096,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("cacheMap:" + cacheMap);
 
 
-            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/amountNot.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountNot.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
@@ -1147,29 +1146,29 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String crdNorAvailAmt = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
             //跳转有额度页面
-            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/payByBt/myAmount.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/myAmount.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
         //审批状态判断
         String outSts = (String) ((Map<String, Object>) (edresult.get("body"))).get("outSts");
         if ("01".equals(outSts)) {//额度正在审批中
-            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/applyIn.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyIn.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else if ("22".equals(outSts)) {//审批被退回
             String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
             cachemap.put("crdSeq", crdSeq);
             RedisUtils.setExpire(token, cachemap);
-            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/applyReturn.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyReturn.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else if ("25".equals(outSts)) {//审批被拒绝
-            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/applyFail.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyFail.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         } else {//没有额度  额度激活
-            String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/applyQuota/amountActive.html?token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountActive.html?token=" + token;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
@@ -1196,7 +1195,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         cachemap.put("apporder", appOrder);
         RedisUtils.setExpire(token, cachemap);
         Map returnmap = new HashMap<>();
-        String backurl = appOtherConfig.getHaiercashpay_web_url() + "sgbt/#!/payByBt/btInstalments.html?token=" + token;
+        String backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/btInstalments.html?token=" + token;
         returnmap.put("backurl", backurl);
         return success(returnmap);
 
@@ -1222,7 +1221,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             if (returnMap == null) {
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            return (Map<String, Object>)((Map<String, Object>) returnMap.get("response")).get("head");
+            return (Map<String, Object>) ((Map<String, Object>) returnMap.get("response")).get("head");
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");
