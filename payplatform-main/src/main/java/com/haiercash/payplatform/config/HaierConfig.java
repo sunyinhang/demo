@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "app.haierGroup")
-public class HaierGroupConfig {
+@ConfigurationProperties(prefix = "app.haier")
+public class HaierConfig {
     private String accountUrl;
 }

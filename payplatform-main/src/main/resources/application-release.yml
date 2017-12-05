@@ -159,7 +159,7 @@ app:
     appid: 300000762
     channel-no: HCP
     url: http://10.164.197.48:9080
-  haier-group:
+  haier:
     account-url: https://taccount.haier.com
   moxie:
     api-key: 51f5eed2f64f467a9a20f15d2ce26038
