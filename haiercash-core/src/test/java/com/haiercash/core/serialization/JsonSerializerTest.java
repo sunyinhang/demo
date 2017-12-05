@@ -46,4 +46,13 @@ public class JsonSerializerTest {
         Object object2 = JsonSerializer.deserialize(null, Object.class);
         Assert.assertNull(object2);
     }
+
+    @Test
+    public void testNum() {
+        Long num = 100L;
+        String numJson = JsonSerializer.serialize(num);
+        Long num2 = JsonSerializer.deserialize(numJson, Long.class);
+        Assert.assertEquals("100", numJson);
+        Assert.assertEquals(num, num2);
+    }
 }
