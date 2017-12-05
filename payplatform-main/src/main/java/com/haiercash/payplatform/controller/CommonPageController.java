@@ -4,7 +4,6 @@ import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.mybatis.util.FileUtil;
-import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CommonPageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.FaceService;
@@ -59,8 +58,6 @@ public class CommonPageController extends BaseController {
     private CustExtInfoService custExtInfoService;
     @Autowired
     private PayPasswdService payPasswdService;
-    @Autowired
-    private AppServerService appServerService;
     @Autowired
     private LimitService limitService;
     @Autowired
