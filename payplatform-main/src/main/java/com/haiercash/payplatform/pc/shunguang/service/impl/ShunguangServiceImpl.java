@@ -560,8 +560,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String uidHaier = uid.toString();//1000030088
         //String uidHaier = "100003008";
         Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
-        Object head1 = userIdOne.get("head");
-        JSONObject jsonObject = new JSONObject(head1);
+        JSONObject jsonObject = new JSONObject((Map) userIdOne.get("head"));
         String retMsg1 = (String) jsonObject.get("retMsg");
         if ("01".equals(retMsg1)) {
             logger.info("没有额度申请(根据集团userId查询统一认证userId为空)");
@@ -726,8 +725,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String uidHaier = uid.toString();//1000030088
         //String uidHaier = "100003008";
         Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
-        Object head1 = userIdOne.get("head");
-        JSONObject jsonObject = new JSONObject(head1);
+        JSONObject jsonObject = new JSONObject((Map) userIdOne.get("head"));
         String retMsg1 = (String) jsonObject.get("retMsg");
         //String applSeq="918653";
         if (StringUtils.isEmpty(applSeq)) {

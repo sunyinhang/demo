@@ -341,13 +341,13 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             paramMap.put("isEdAppl", "Y");//是否是额度申请或提额
         }
         Map<String, Object> resultmap = appServerService.ifNeedFaceChkByTypCde(token, paramMap);
-        JSONObject headjson = new JSONObject(resultmap.get("head"));
+        JSONObject headjson = new JSONObject((Map) resultmap.get("head"));
         String retFlag = headjson.getString("retFlag");
         String retMsg = headjson.getString("retMsg");
         if (!"00000".equals(retFlag)) {
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        JSONObject body = new JSONObject(resultmap.get("body"));
+        JSONObject body = new JSONObject((Map) resultmap.get("body"));
         String code = body.getString("code"); //结果标识码
         if ("00".equals(code)) {//人脸识别通过
             validateUserFlag(userId, token, channel, channelNo, cacheMap);
