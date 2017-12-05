@@ -63,7 +63,7 @@ public final class IncomingLog {
         builder.append("[").append(ThreadContext.getTraceID()).append("] ").append(headers.getId()).append(Environment.NewLine);
         //
         builder.append("Result:").append(Environment.NewLine);
-        builder.append("    ").append(ConsumeDisabledException.MSG).append(Environment.NewLine);
+        builder.append("    ").append(ConsumeDisabledException.MESSAGE).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
         builder.append(COS___END);
