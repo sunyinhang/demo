@@ -26,7 +26,6 @@ import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.utils.BusinessException;
 import com.haiercash.spring.utils.ConstUtil;
 import com.haiercash.spring.utils.HttpUtil;
-import com.haiercash.spring.utils.ResultHead;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -495,10 +494,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         Map<String, Object> commonPersonMap = commonRepaymentPersonService
                 .getCommonRepaymentPerson(apporder.getApplSeq());
         logger.debug("共同还款人map列表  commonPersonMap==" + commonPersonMap);
-        ResultHead headJson = (ResultHead) commonPersonMap.get("head");
-        String retFlag = headJson.getRetFlag();
-        String retMsg = headJson.getRetMsg();
-        if ("00000".equals(retFlag)) {
+        if (HttpUtil.isSuccess(commonPersonMap)) {
             List<CommonRepaymentPerson> personlist = (List<CommonRepaymentPerson>) commonPersonMap.get("body");
             logger.info("共同还款人列表：" + personlist);
             for (CommonRepaymentPerson person : personlist) {
