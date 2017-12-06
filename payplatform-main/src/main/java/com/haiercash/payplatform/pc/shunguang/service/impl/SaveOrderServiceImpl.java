@@ -156,7 +156,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         payMap.put("channel", channel);
         payMap.put("channelNo", channelNo);
         Map<String, Object> payresultMap = appServerService.getPaySs(token, payMap);
-        if (!HttpUtil.isSuccess(payresultMap)) {//额度校验失败
+        if (!HttpUtil.isSuccess(payresultMap)) {//还款试算
             String retmsg = (String) ((Map<String, Object>) (payresultMap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }

@@ -54,13 +54,14 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String edxgflag = (String) param.get("edxgflag");//修改申请提交标识
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
-        if (!StringUtils.isEmpty(param.get("longitude"))) {
+        String area = "";
+        if (!StringUtils.isEmpty(param.get("longitude")) && !StringUtils.isEmpty(param.get("latitude")) && !StringUtils.isEmpty(param.get("area"))) {
             longitude = (BigDecimal) param.get("longitude");//经度
-        }
-        if (!StringUtils.isEmpty(param.get("latitude"))) {
             latitude = (BigDecimal) param.get("latitude");//维度
+            area = (String) param.get("area");//区域
+        } else {
+            return fail(ConstUtil.ERROR_CODE, "获取地理位置失败!");
         }
-        String area = (String) param.get("area");//区域
         if (StringUtils.isEmpty(token)) {
             logger.info("token:" + token);
             logger.info("从前端获取的的token为空");

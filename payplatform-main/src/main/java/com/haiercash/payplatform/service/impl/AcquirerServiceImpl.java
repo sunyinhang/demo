@@ -565,8 +565,14 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
             headMap.put("applSeq", relation.getApplSeq());
         }
         logger.info("向收单系统发起贷款申请, 参数:" + acquirer);
-        Map<String, Object> result = AcqUtil
-                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcAppl", headMap, acquirer);
+        Map<String, Object> result = new HashMap<String, Object>();
+        if ("46".equals(getChannelNo())) {
+            result = AcqUtil
+                    .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcApplEK", headMap, acquirer);
+        } else {
+            result = AcqUtil
+                    .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcAppl", headMap, acquirer);
+        }
         if (AcqUtil.isSuccess(result)) {
             logger.info("更新订单，收单系统保存贷款详情成功, applSeq:" + order.getApplSeq()
                     + ",返回结果:" + result);
@@ -687,9 +693,10 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
             acquirer.put("crt_usr", acquirer.get("saler_cde"));
         }
 
-        // 是否额度加支用，默认是
+        // 顺逛默认值处理
         if ("49".equals(this.getChannelNo())) {
-            acquirer.put("crd_flag", "N");
+            acquirer.put("crd_flag", "N");//是否额度加支用，默认是
+            acquirer.put("creditType", "02");//支用类型     00：单纯贷款    01：额度申请加支用  02：支用
         } else {
             acquirer.put("crd_flag", "Y");
         }
