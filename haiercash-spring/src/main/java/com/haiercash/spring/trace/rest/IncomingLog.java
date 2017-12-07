@@ -9,6 +9,7 @@ import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.servlet.DispatcherRequestWrapper;
 import com.haiercash.spring.servlet.DispatcherResponseWrapper;
+import com.haiercash.spring.trace.TraceConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

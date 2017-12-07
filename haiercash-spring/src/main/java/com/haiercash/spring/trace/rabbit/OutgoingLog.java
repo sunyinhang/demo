@@ -7,7 +7,7 @@ import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
-import com.haiercash.spring.trace.rest.TraceConfig;
+import com.haiercash.spring.trace.TraceConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.core.Message;
