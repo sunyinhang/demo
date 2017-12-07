@@ -1,11 +1,7 @@
 package com.haiercash.spring.scheduling.core;
 
-import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.mail.bugreport.BugReportLevel;
-import com.haiercash.spring.mail.bugreport.BugReportUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.haiercash.spring.trace.scheduling.ErrorHandler;
 import org.springframework.util.Assert;
 
 /**
@@ -13,7 +9,6 @@ import org.springframework.util.Assert;
  */
 public final class ContextRunnable implements Runnable {
     private final Runnable runnable;
-    private final Log logger = LogFactory.getLog(ContextRunnable.class);
 
     public ContextRunnable(Runnable runnable) {
         Assert.notNull(runnable, "runnable can not be null");
@@ -26,16 +21,9 @@ public final class ContextRunnable implements Runnable {
         try {
             runnable.run();
         } catch (Exception e) {
-            this.handleError(e);
+            ErrorHandler.handleException(e);
         } finally {
             ThreadContext.reset();
         }
-    }
-
-    private void handleError(Exception e) {
-        String msg = ThrowableUtils.getString(e);
-        this.logger.error(msg);
-        //错误报告
-        BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
     }
 }
