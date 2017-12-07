@@ -1,7 +1,7 @@
 package com.haiercash.spring.rest.common;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.haiercash.spring.servlet.ErrorHandler;
+import com.haiercash.spring.trace.rest.ErrorHandler;
 import lombok.Data;
 
 /**
