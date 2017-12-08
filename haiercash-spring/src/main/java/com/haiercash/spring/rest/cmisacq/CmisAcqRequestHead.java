@@ -31,4 +31,7 @@ public final class CmisAcqRequestHead {
 
     @JSONField(ordinal = 8)
     private String cooprCode;
+
+    CmisAcqRequestHead() {
+    }
 }

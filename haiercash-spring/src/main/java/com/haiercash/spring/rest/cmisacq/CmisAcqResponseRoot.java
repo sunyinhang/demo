@@ -13,4 +13,7 @@ public final class CmisAcqResponseRoot<TBody> {
 
     @JSONField(ordinal = 2)
     private TBody body;
+
+    CmisAcqResponseRoot() {
+    }
 }

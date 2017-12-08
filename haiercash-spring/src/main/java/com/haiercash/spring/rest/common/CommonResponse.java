@@ -19,7 +19,10 @@ public final class CommonResponse<TBody> implements IResponse<TBody> {
     @JSONField(ordinal = 2)
     private TBody body;
 
-    public static <TBody> CommonResponse<TBody> create(String retFlag, String retMsg) {
+    CommonResponse() {
+    }
+
+    public static <TBody> CommonResponse<TBody> fail(String retFlag, String retMsg) {
         CommonResponseHead head = new CommonResponseHead();
         head.setRetFlag(retFlag);
         head.setRetMsg(retMsg);
@@ -29,7 +32,14 @@ public final class CommonResponse<TBody> implements IResponse<TBody> {
     }
 
     public static <TBody> CommonResponse<TBody> success() {
-        return create(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
+        return fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
+    }
+
+    public static <TBody> CommonResponse<TBody> success(TBody body) {
+        CommonResponse<TBody> response = success();
+        if (body != null)
+            response.setBody(body);
+        return response;
     }
 
     @JSONField(serialize = false, deserialize = false)

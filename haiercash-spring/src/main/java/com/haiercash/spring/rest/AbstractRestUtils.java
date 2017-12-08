@@ -47,7 +47,7 @@ public abstract class AbstractRestUtils<TResponse extends IResponse> implements 
 
     protected abstract RestTemplate getRestTemplate();
 
-    protected abstract TResponse createResponse(String retFlag, String retMsg);
+    protected abstract TResponse fail(String retFlag, String retMsg);
 
     protected final GenericTypeReference<TResponse> createResponseTypeReference(Type bodyType) {
         ParameterizedTypeImpl responseType = ParameterizedTypeImpl.make(this.responseRawType, new Type[]{bodyType}, null);
@@ -67,11 +67,11 @@ public abstract class AbstractRestUtils<TResponse extends IResponse> implements 
             RestTemplate restTemplate = this.getRestTemplate();
             ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), responseTypeReference);
             return (responseEntity.getStatusCode() == HttpStatus.OK)
-                    ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
-                    : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
+                    ? (responseEntity.getBody() == null ? this.fail(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
+                    : this.fail(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
         } catch (Exception e) {
             this.logger.error(ThrowableUtils.getString(e));
-            return this.createResponse(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
+            return this.fail(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
         }
     }
 
@@ -88,11 +88,11 @@ public abstract class AbstractRestUtils<TResponse extends IResponse> implements 
             RestTemplate restTemplate = this.getRestTemplate();
             ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.DELETE, new HttpEntity<>(headers), responseTypeReference);
             return (responseEntity.getStatusCode() == HttpStatus.OK)
-                    ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
-                    : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
+                    ? (responseEntity.getBody() == null ? this.fail(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
+                    : this.fail(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
         } catch (Exception e) {
             this.logger.error(ThrowableUtils.getString(e));
-            return this.createResponse(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
+            return this.fail(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
         }
     }
 
@@ -105,11 +105,11 @@ public abstract class AbstractRestUtils<TResponse extends IResponse> implements 
             RestTemplate restTemplate = this.getRestTemplate();
             ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(request, headers), responseTypeReference);
             return (responseEntity.getStatusCode() == HttpStatus.OK)
-                    ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
-                    : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
+                    ? (responseEntity.getBody() == null ? this.fail(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
+                    : this.fail(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
         } catch (Exception e) {
             this.logger.error(ThrowableUtils.getString(e));
-            return this.createResponse(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
+            return this.fail(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
         }
     }
 
@@ -122,11 +122,11 @@ public abstract class AbstractRestUtils<TResponse extends IResponse> implements 
             RestTemplate restTemplate = this.getRestTemplate();
             ResponseEntity<TResponse> responseEntity = restTemplate.exchange(uri, HttpMethod.PUT, new HttpEntity<>(request, headers), responseTypeReference);
             return (responseEntity.getStatusCode() == HttpStatus.OK)
-                    ? (responseEntity.getBody() == null ? this.createResponse(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
-                    : this.createResponse(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
+                    ? (responseEntity.getBody() == null ? this.fail(ERROR_NULL, ERROR_NULL_MSG) : responseEntity.getBody())
+                    : this.fail(ERROR_SERVER, String.format(ERROR_SERVER_MSG, responseEntity.getStatusCodeValue()));
         } catch (Exception e) {
             this.logger.error(ThrowableUtils.getString(e));
-            return this.createResponse(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
+            return this.fail(ERROR_UNKNOWN, String.format(ERROR_UNKNOWN_MSG, ThrowableUtils.getMessage(e)));
         }
     }
 }

@@ -200,8 +200,8 @@ public final class CommonRestUtils {
         }
 
         @Override
-        protected CommonResponse<TBody> createResponse(String retFlag, String retMsg) {
-            return CommonResponse.create(retFlag, retMsg);
+        protected CommonResponse<TBody> fail(String retFlag, String retMsg) {
+            return CommonResponse.fail(retFlag, retMsg);
         }
     }
 }

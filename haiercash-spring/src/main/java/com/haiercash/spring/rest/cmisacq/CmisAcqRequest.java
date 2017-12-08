@@ -14,4 +14,7 @@ public final class CmisAcqRequest implements IRequest {
 
     @JSONField(ordinal = 2)
     private Object body;
+
+    CmisAcqRequest() {
+    }
 }
