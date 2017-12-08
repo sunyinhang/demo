@@ -121,7 +121,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //从数据库查询渠道对应的商户
         List<ChannelStoreRelation> relations = this.channelStoreRelationDao.selectByChanelNo(channelNo);
         if (CollectionUtils.isEmpty(relations))
-            return CommonResponse.create(ConstUtil.ERROR_CODE, "该渠道没有配置任何门店商户");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "该渠道没有配置任何门店商户");
         //查询商户的标签列表
         List<LoanType> loanTypeList = new ArrayList<>();
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/pub/gm/getLoanDic";
@@ -176,9 +176,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             }
         }
         //返回
-        CommonResponse<List<LoanType>> response = CommonResponse.success();
-        response.setBody(distinctLoanTypes);
-        return response;
+        return CommonResponse.success(distinctLoanTypes);
     }
 
     /**
@@ -202,12 +200,12 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         tagsResponse.assertSuccessNeedBody();
         List<Map> tags = tagsResponse.getBody();
         if (CollectionUtils.isEmpty(tags))
-            return CommonResponse.create(ConstUtil.ERROR_CODE, "没有任何标签");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "没有任何标签");
         IEnumerable<String> userTags = Linq.asEnumerable(tags).select(tagMap -> Convert.toString(tagMap.get("tagId")));
         //标签跟配置的标签取交集
         List<String> allowTags = cashloanConfig.getWhiteTagIds();
         if (CollectionUtils.isEmpty(allowTags))
-            return CommonResponse.create(ConstUtil.ERROR_CODE, "支付平台未配置允许的标签");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "支付平台未配置允许的标签");
         List<String> intersectTags = userTags.intersect(Linq.asEnumerable(allowTags)).toList();//取交集
         //根据标签查询贷款品种
         String loanUrl = EurekaServer.CRM + "/app/crm/cust/getLoanCodeByTagId";
@@ -221,9 +219,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
         //贷款品种去重
         List<LoanType> distinctLoanTypes = Linq.asEnumerable(loanTypeList).distinct().toList();//去重
-        CommonResponse<List<LoanType>> response = CommonResponse.success();
-        response.setBody(distinctLoanTypes);
-        return response;
+        return CommonResponse.success(distinctLoanTypes);
     }
 
     /**
@@ -242,14 +238,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if (setting == null)
             setting = this.entrySettingDao.selectBychanelNo(channelNo);
         if (setting == null)
-            return CommonResponse.create(ConstUtil.ERROR_CODE, "该渠道未配置贷款品种的获取方式");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "该渠道未配置贷款品种的获取方式");
         switch (setting.getLoanTypeFrom()) {
             case "01"://根据 channelNo 取
                 return this.getLoanTypeByChannelNo();
             case "02"://根据客户信息从 crm 取
                 return this.getLoanTypeByCustInfo(custName, idType, idNo);
             default:
-                return CommonResponse.create(ConstUtil.ERROR_CODE, "该渠道未配置贷款品种的获取方式");
+                return CommonResponse.fail(ConstUtil.ERROR_CODE, "该渠道未配置贷款品种的获取方式");
         }
     }
 

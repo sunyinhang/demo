@@ -1,14 +1,14 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.payplatform.service.CrmService;
+import com.haiercash.payplatform.utils.AppServerUtils;
+import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.payplatform.service.CrmService;
-import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.spring.utils.ConstUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.spring.utils.HttpUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -77,9 +77,9 @@ public class CrmServiceImpl extends BaseService implements CrmService {
     @Override
     public IResponse<Map> validateUsers(String userId, String password) {
         if (StringUtils.isEmpty(userId))
-            return CommonResponse.create(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户账号不能为空");
+            return CommonResponse.fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户账号不能为空");
         if (StringUtils.isEmpty(password))
-            return CommonResponse.create(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户密码不能为空");
+            return CommonResponse.fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户密码不能为空");
 //        String url = EurekaServer.UAUTH + "/app/uauth/validateUsers?userId=" + userId + "&password=" + password;
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/customerLogin";
         Map paramMap = new HashMap<String, Object>();
@@ -93,7 +93,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         logger.debug("App validateUsers :" + response);
         if (StringUtils.isEmpty(response)) {
             logger.error("登录验证信息失败！");
-            return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         return response;
     }
