@@ -16,7 +16,10 @@ public final class CmisAcqResponse<TBody> implements IResponse<TBody> {
     @JSONField(ordinal = 1)
     private CmisAcqResponseRoot<TBody> response;
 
-    public static <TBody> CmisAcqResponse<TBody> create(String retFlag, String retMsg) {
+    CmisAcqResponse() {
+    }
+
+    public static <TBody> CmisAcqResponse<TBody> fail(String retFlag, String retMsg) {
         CmisAcqResponseHead head = new CmisAcqResponseHead();
         head.setRetFlag(retFlag);
         head.setRetMsg(retMsg);
@@ -28,7 +31,14 @@ public final class CmisAcqResponse<TBody> implements IResponse<TBody> {
     }
 
     public static <TBody> CmisAcqResponse<TBody> success() {
-        return create(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
+        return fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
+    }
+
+    public static <TBody> CmisAcqResponse<TBody> success(TBody body) {
+        CmisAcqResponse<TBody> response = success();
+        if (body != null)
+            response.getResponse().setBody(body);
+        return response;
     }
 
     @JSONField(serialize = false, deserialize = false)

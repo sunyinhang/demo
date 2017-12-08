@@ -863,21 +863,21 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
-            return CommonResponse.create(ConstUtil.ERROR_CODE, "参数token为空!");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "参数token为空!");
         }
         if (channel.isEmpty()) {
             logger.info("channel为空");
-            return CommonResponse.create(ConstUtil.ERROR_CODE, "参数channel为空!");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "参数channel为空!");
         }
         if (channelNo.isEmpty()) {
             logger.info("channelNo为空");
-            return CommonResponse.create(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (cacheMap == null || "".equals(cacheMap)) {
             logger.info("Redis数据获取失败");
-            return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String custName = (String) cacheMap.get("name");
         String idType = (String) cacheMap.get("idType");
@@ -887,38 +887,25 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String bankName = (String) cacheMap.get("bankName");//银行卡名称
         if (custName.isEmpty()) {
             logger.info("custName为空");
-            return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         if (idType.isEmpty()) {
             logger.info("idType为空");
-            return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         if (idNo.isEmpty()) {
             logger.info("idNo为空");
-            return CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         IResponse<List<LoanType>> loanTypeData = cashLoanService.getLoanType(null, custName, idType, idNo);
-//        List<LoanType> body = loanTypeData.getBody();
-//        String loantyp = "";
-//        if(body.size()>0){
-//            loantyp = body.get(0).getTypCde();
-//        }
-//        Map<String,Object> typCdeMap = new HashMap<String,Object>();
-//        typCdeMap.put("typCde",loantyp);
-//        Map<String, Object> stringObjectMap = appServerService.pLoanTyp(token, typCdeMap);
-//        Map<String,Object> bodyMap = (Map<String, Object>) stringObjectMap.get("body");
-//        Integer maxAmt = (Integer)bodyMap.get("maxAmt");
-//        Integer minAmt = (Integer)bodyMap.get("minAmt");
+
         loanTypeData.assertSuccessNeedBody();
-        CommonResponse<Map> response = CommonResponse.success();
         Map<String, Object> map = new HashMap<>();
         map.put("cardNo", cardNo);
         map.put("bankCode", bankCode);
         map.put("bankName", bankName);
         map.put("loanTypes", loanTypeData.getBody());
-//0
-        response.setBody(map);
-        return response;
+        return CommonResponse.success(map);
     }
 
     @Override

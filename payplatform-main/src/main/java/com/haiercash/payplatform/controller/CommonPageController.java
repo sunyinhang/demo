@@ -768,7 +768,7 @@ public class CommonPageController extends BaseController {
         String name = Convert.toString(map.get("name"));
         String education = Convert.toString(map.get("education"));
         if (StringUtils.isEmpty(phone))
-            return CommonResponse.create(ConstUtil.ERROR_PARAM_INVALID_CODE, "请填写手机号码");
+            return CommonResponse.fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "请填写手机号码");
         return commonPageService.appointment(phone, name, education);
     }
 

@@ -200,8 +200,8 @@ public final class CmisAcqUtils {
         }
 
         @Override
-        protected CmisAcqResponse<TBody> createResponse(String retFlag, String retMsg) {
-            return CmisAcqResponse.create(retFlag, retMsg);
+        protected CmisAcqResponse<TBody> fail(String retFlag, String retMsg) {
+            return CmisAcqResponse.fail(retFlag, retMsg);
         }
     }
 }

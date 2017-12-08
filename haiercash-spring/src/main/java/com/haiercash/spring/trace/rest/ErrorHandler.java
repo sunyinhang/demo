@@ -30,12 +30,12 @@ public final class ErrorHandler {
     }
 
     public static ResponseEntity<CommonResponse> handleBusinessException(BusinessException e) {
-        CommonResponse response = CommonResponse.create(e.getRetFlag(), e.getRetMsg());
+        CommonResponse response = CommonResponse.fail(e.getRetFlag(), e.getRetMsg());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public static ResponseEntity<CommonResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
-        CommonResponse response = CommonResponse.create(ConstUtil.ERROR_CODE, MSG_MISSING_SERVLET_REQUEST_PARAMETER + e.getParameterName());
+        CommonResponse response = CommonResponse.fail(ConstUtil.ERROR_CODE, MSG_MISSING_SERVLET_REQUEST_PARAMETER + e.getParameterName());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -43,7 +43,7 @@ public final class ErrorHandler {
         String msg = ThrowableUtils.getString(e);
         logger.error(msg);
         BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
-        CommonResponse response = CommonResponse.create(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        CommonResponse response = CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

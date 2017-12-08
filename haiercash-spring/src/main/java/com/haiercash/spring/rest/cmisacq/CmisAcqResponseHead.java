@@ -18,6 +18,9 @@ public final class CmisAcqResponseHead {
     @JSONField(ordinal = 3)
     private String serno;
 
+    CmisAcqResponseHead() {
+    }
+
     public void setRetFlag(String retFlag) {
         this.retFlag = ErrorHandler.getRetFlag(retFlag);
     }

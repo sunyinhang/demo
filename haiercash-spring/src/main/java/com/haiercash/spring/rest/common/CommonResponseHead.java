@@ -15,6 +15,9 @@ public final class CommonResponseHead {
     @JSONField(ordinal = 2)
     private String retMsg;
 
+    CommonResponseHead() {
+    }
+
     public void setRetFlag(String retFlag) {
         this.retFlag = ErrorHandler.getRetFlag(retFlag);
     }
