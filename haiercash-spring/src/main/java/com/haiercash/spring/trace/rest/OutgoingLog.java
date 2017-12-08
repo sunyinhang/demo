@@ -9,8 +9,6 @@ import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.spring.client.ClientRequestWrapper;
 import com.haiercash.spring.client.ClientResponseWrapper;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.mail.bugreport.BugReportLevel;
-import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
@@ -79,15 +77,13 @@ public final class OutgoingLog {
 
     @SuppressWarnings("Duplicates")
     public static void writeError(StringBuilder builder, Exception e, long tookMs) {
-        String msg = ThrowableUtils.getString(e);
+        String msg = ThrowableUtils.getMessage(e);
         builder.append("Error:").append(Environment.NewLine);
         builder.append(msg).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
         builder.append(INVOKE___END);
         logger.error(builder.toString());
-        //错误报告
-        BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
     }
 
     private static void writeHeaders(StringBuilder builder, HttpHeaders headers) {

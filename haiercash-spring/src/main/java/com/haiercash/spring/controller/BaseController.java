@@ -3,7 +3,7 @@ package com.haiercash.spring.controller;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.rest.common.CommonResponse;
-import com.haiercash.spring.servlet.ErrorHandler;
+import com.haiercash.spring.trace.rest.ErrorHandler;
 import com.haiercash.spring.utils.BusinessException;
 import com.haiercash.spring.utils.RestUtil;
 import org.apache.commons.logging.Log;
