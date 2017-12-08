@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * Created by 许崇雷 on 2017-11-03.
@@ -18,15 +17,12 @@ public class RedisAutoConfiguration {
 
     public RedisAutoConfiguration(RedisProperties properties) {
         this.properties = properties;
-        RedisUtils.properties = properties;
     }
 
     @Bean
     @Primary
     @ConditionalOnMissingBean
-    StringRedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplateEx redisTemplate = new RedisTemplateEx(redisConnectionFactory);
-        redisTemplate.properties = this.properties;
-        return redisTemplate;
+    RedisTemplateEx redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        return new RedisTemplateEx(redisConnectionFactory, this.properties);
     }
 }

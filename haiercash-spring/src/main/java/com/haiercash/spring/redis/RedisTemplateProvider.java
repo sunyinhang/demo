@@ -1,7 +1,6 @@
 package com.haiercash.spring.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -11,14 +10,14 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public final class RedisTemplateProvider {
-    private static StringRedisTemplate redisTemplate;
+    private static RedisTemplateEx redisTemplate;
     @Autowired
-    private StringRedisTemplate redisTemplateInstance;
+    private RedisTemplateEx redisTemplateInstance;
 
     private RedisTemplateProvider() {
     }
 
-    public static StringRedisTemplate getRedisTemplate() {
+    public static RedisTemplateEx getRedisTemplate() {
         return redisTemplate;
     }
 

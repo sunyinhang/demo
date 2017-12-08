@@ -3,9 +3,8 @@ package com.haiercash.spring.redis;
 import com.alibaba.fastjson.TypeReference;
 import com.bestvike.linq.exception.InvalidOperationException;
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.spring.redis.converter.FastJsonRedisSerializer;
 import org.springframework.data.redis.core.BoundValueOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.Collection;
 import java.util.Map;
@@ -15,31 +14,19 @@ import java.util.concurrent.TimeUnit;
  * Created by 许崇雷 on 2017-11-01.
  */
 public final class RedisUtils {
-    static RedisProperties properties;
+    private static final FastJsonRedisSerializer SERIALIZER = new FastJsonRedisSerializer();
 
     private RedisUtils() {
     }
 
     //region 工具
 
-    private static StringRedisTemplate getRedisTemplate() {
+    private static RedisTemplateEx getRedisTemplate() {
         return RedisTemplateProvider.getRedisTemplate();
     }
 
     private static RedisProperties getRedisProperties() {
-        return properties;
-    }
-
-    private static String serialize(Object value) {
-        return JsonSerializer.serialize(value);
-    }
-
-    private static <T> T deserialize(String json, Class<T> clazz) {
-        return JsonSerializer.deserialize(json, clazz);
-    }
-
-    private static <T> T deserialize(String json, TypeReference<T> type) {
-        return JsonSerializer.deserialize(json, type);
+        return getRedisTemplate().getProperties();
     }
 
     //endregion
@@ -82,9 +69,9 @@ public final class RedisUtils {
 
     public static void setExpire(String key, Object value) {
         if (getRedisProperties().valueExpireEnabled())
-            getRedisTemplate().opsForValue().set(key, serialize(value), getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+            getRedisTemplate().opsForValue().set(key, SERIALIZER.serialize(value), getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
         else
-            getRedisTemplate().opsForValue().set(key, serialize(value));
+            getRedisTemplate().opsForValue().set(key, SERIALIZER.serialize(value));
     }
 
     @SuppressWarnings("Duplicates")
@@ -92,9 +79,9 @@ public final class RedisUtils {
         if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
             operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
-            return deserialize(operations.get(), clazz);
+            return SERIALIZER.deserialize(operations.get(), clazz);
         } else {
-            return deserialize(getRedisTemplate().opsForValue().get(key), clazz);
+            return SERIALIZER.deserialize(getRedisTemplate().opsForValue().get(key), clazz);
         }
     }
 
@@ -103,9 +90,9 @@ public final class RedisUtils {
         if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
             operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
-            return deserialize(operations.get(), type);
+            return SERIALIZER.deserialize(operations.get(), type);
         } else {
-            return deserialize(getRedisTemplate().opsForValue().get(key), type);
+            return SERIALIZER.deserialize(getRedisTemplate().opsForValue().get(key), type);
         }
     }
 
@@ -121,12 +108,12 @@ public final class RedisUtils {
     public static boolean setnxExpire(String key, Object value) {
         if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
-            boolean success = operations.setIfAbsent(serialize(value));
+            boolean success = operations.setIfAbsent(SERIALIZER.serialize(value));
             if (success)
                 operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
             return success;
         } else {
-            return getRedisTemplate().opsForValue().setIfAbsent(key, serialize(value));
+            return getRedisTemplate().opsForValue().setIfAbsent(key, SERIALIZER.serialize(value));
         }
     }
 
@@ -135,9 +122,9 @@ public final class RedisUtils {
         if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
             operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
-            return deserialize(operations.getAndSet(serialize(value)), clazz);
+            return SERIALIZER.deserialize(operations.getAndSet(SERIALIZER.serialize(value)), clazz);
         } else {
-            return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), clazz);
+            return SERIALIZER.deserialize(getRedisTemplate().opsForValue().getAndSet(key, SERIALIZER.serialize(value)), clazz);
         }
     }
 
@@ -146,9 +133,9 @@ public final class RedisUtils {
         if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
             operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
-            return deserialize(operations.getAndSet(serialize(value)), type);
+            return SERIALIZER.deserialize(operations.getAndSet(SERIALIZER.serialize(value)), type);
         } else {
-            return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), type);
+            return SERIALIZER.deserialize(getRedisTemplate().opsForValue().getAndSet(key, SERIALIZER.serialize(value)), type);
         }
     }
 
@@ -167,15 +154,15 @@ public final class RedisUtils {
     //region 字符串命令
 
     public static void set(String key, Object value) {
-        getRedisTemplate().opsForValue().set(key, serialize(value));
+        getRedisTemplate().opsForValue().set(key, SERIALIZER.serialize(value));
     }
 
     public static <T> T get(String key, Class<T> clazz) {
-        return deserialize(getRedisTemplate().opsForValue().get(key), clazz);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForValue().get(key), clazz);
     }
 
     public static <T> T get(String key, TypeReference<T> type) {
-        return deserialize(getRedisTemplate().opsForValue().get(key), type);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForValue().get(key), type);
     }
 
     public static String getString(String key) {
@@ -188,15 +175,15 @@ public final class RedisUtils {
     }
 
     public static boolean setnx(String key, Object value) {
-        return getRedisTemplate().opsForValue().setIfAbsent(key, serialize(value));
+        return getRedisTemplate().opsForValue().setIfAbsent(key, SERIALIZER.serialize(value));
     }
 
     public static <T> T getset(String key, Object value, Class<T> clazz) {
-        return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), clazz);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForValue().getAndSet(key, SERIALIZER.serialize(value)), clazz);
     }
 
     public static <T> T getset(String key, Object value, TypeReference<T> type) {
-        return deserialize(getRedisTemplate().opsForValue().getAndSet(key, serialize(value)), type);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForValue().getAndSet(key, SERIALIZER.serialize(value)), type);
     }
 
     public static String getsetString(String key, Object value) {
@@ -259,15 +246,15 @@ public final class RedisUtils {
     }
 
     public static void hset(String key, String field, Object value) {
-        getRedisTemplate().opsForHash().put(key, field, serialize(value));
+        getRedisTemplate().opsForHash().put(key, field, SERIALIZER.serialize(value));
     }
 
     public static <T> T hget(String key, String field, Class<T> clazz) {
-        return deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), clazz);
+        return SERIALIZER.deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), clazz);
     }
 
     public static <T> T hget(String key, String field, TypeReference<T> type) {
-        return deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), type);
+        return SERIALIZER.deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), type);
     }
 
     public static String hgetString(String key, String field) {
@@ -280,7 +267,7 @@ public final class RedisUtils {
     }
 
     public static boolean hsetnx(String key, String field, Object value) {
-        return getRedisTemplate().opsForHash().putIfAbsent(key, field, serialize(value));
+        return getRedisTemplate().opsForHash().putIfAbsent(key, field, SERIALIZER.serialize(value));
     }
 
     //endregion
@@ -293,11 +280,11 @@ public final class RedisUtils {
     }
 
     public static <T> T blpop(String key, long timeout, TimeUnit unit, Class<T> clazz) {
-        return deserialize(getRedisTemplate().opsForList().leftPop(key, timeout, unit), clazz);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForList().leftPop(key, timeout, unit), clazz);
     }
 
     public static <T> T blpop(String key, long timeout, TimeUnit unit, TypeReference<T> type) {
-        return deserialize(getRedisTemplate().opsForList().leftPop(key, timeout, unit), type);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForList().leftPop(key, timeout, unit), type);
     }
 
     public static String blpopString(String key, long timeout, TimeUnit unit) {
@@ -310,11 +297,11 @@ public final class RedisUtils {
     }
 
     public static <T> T brpop(String key, long timeout, TimeUnit unit, Class<T> clazz) {
-        return deserialize(getRedisTemplate().opsForList().rightPop(key, timeout, unit), clazz);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForList().rightPop(key, timeout, unit), clazz);
     }
 
     public static <T> T brpop(String key, long timeout, TimeUnit unit, TypeReference<T> type) {
-        return deserialize(getRedisTemplate().opsForList().rightPop(key, timeout, unit), type);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForList().rightPop(key, timeout, unit), type);
     }
 
     public static String brpopString(String key, long timeout, TimeUnit unit) {
@@ -327,11 +314,11 @@ public final class RedisUtils {
     }
 
     public static <T> T lpop(String key, Class<T> clazz) {
-        return deserialize(getRedisTemplate().opsForList().leftPop(key), clazz);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForList().leftPop(key), clazz);
     }
 
     public static <T> T lpop(String key, TypeReference<T> type) {
-        return deserialize(getRedisTemplate().opsForList().leftPop(key), type);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForList().leftPop(key), type);
     }
 
     public static String lpopString(String key) {
@@ -344,23 +331,23 @@ public final class RedisUtils {
     }
 
     public static long lpush(String key, Object value) {
-        return getRedisTemplate().opsForList().leftPush(key, serialize(value));
+        return getRedisTemplate().opsForList().leftPush(key, SERIALIZER.serialize(value));
     }
 
     public static long lpushx(String key, Object value) {
-        return getRedisTemplate().opsForList().leftPushIfPresent(key, serialize(value));
+        return getRedisTemplate().opsForList().leftPushIfPresent(key, SERIALIZER.serialize(value));
     }
 
     public static long lpushx(String key, long count, Object value) {
-        return getRedisTemplate().opsForList().remove(key, count, serialize(value));
+        return getRedisTemplate().opsForList().remove(key, count, SERIALIZER.serialize(value));
     }
 
     public static <T> T rpop(String key, Class<T> clazz) {
-        return deserialize(getRedisTemplate().opsForList().rightPop(key), clazz);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForList().rightPop(key), clazz);
     }
 
     public static <T> T rpop(String key, TypeReference<T> type) {
-        return deserialize(getRedisTemplate().opsForList().rightPop(key), type);
+        return SERIALIZER.deserialize(getRedisTemplate().opsForList().rightPop(key), type);
     }
 
     public static String rpopString(String key) {
@@ -373,11 +360,11 @@ public final class RedisUtils {
     }
 
     public static long rpush(String key, Object value) {
-        return getRedisTemplate().opsForList().rightPush(key, serialize(value));
+        return getRedisTemplate().opsForList().rightPush(key, SERIALIZER.serialize(value));
     }
 
     public static long rpushx(String key, Object value) {
-        return getRedisTemplate().opsForList().rightPushIfPresent(key, serialize(value));
+        return getRedisTemplate().opsForList().rightPushIfPresent(key, SERIALIZER.serialize(value));
     }
 
     //endregion
