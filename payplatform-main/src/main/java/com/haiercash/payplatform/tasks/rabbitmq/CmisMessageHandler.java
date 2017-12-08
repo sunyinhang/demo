@@ -5,7 +5,6 @@ import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
-import com.haiercash.payplatform.common.dao.PublishDao;
 import com.haiercash.payplatform.common.dao.SgtsLogDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgtsLog;
@@ -24,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,10 +43,6 @@ import java.util.UUID;
 public class CmisMessageHandler {
     private Log logger = LogFactory.getLog(CmisMessageHandler.class);
     @Autowired
-    private RabbitTemplate rabbitTemplate;
-    @Autowired
-    private PublishDao publishDao;
-    @Autowired
     private AppServerService appServerService;
     @Autowired
     private CooperativeBusinessDao cooperativeBusinessDao;
@@ -56,15 +50,6 @@ public class CmisMessageHandler {
     private SgtsLogDao sgtsLogDao;
     @Autowired
     private ShunguangConfig shunguangConfig;
-
-
-    private boolean validNodeMessage(Object nodeMessage) {
-        if (nodeMessage == null) {
-            this.logger.warn("节点类数据为 null,无法消费");
-            return false;
-        }
-        return true;
-    }
 
     //消费节点类类活动的消息
     @RabbitHandler
@@ -100,9 +85,8 @@ public class CmisMessageHandler {
                 if (jsonObj.containsKey("tradeCode") && "100022".equals(jsonObj.getString("tradeCode"))) {
                     tradeCode = jsonObj.getString("tradeCode");// 交易码
                     channelNo = jsonObj.getString("channelNo");
-                    ThreadContext.init(StringUtils.EMPTY, "11", channelNo);
+                    ThreadContext.modify(StringUtils.EMPTY, "11", channelNo);
                     applSeq = jsonObj.getString("applSeq");
-//                        outSts = jsonObj.getString("outSts");// 审批状态
                     msgTyp = jsonObj.getString("msgTyp");//等同于outsts
                     if ("01".equals(msgTyp)) {
                         outSts = jsonObj.getString("outSts");// 审批状态
@@ -434,7 +418,6 @@ public class CmisMessageHandler {
         }
     }
 
-
     private Map<String, Object> encrypt(String data, String channelNo, String tradeCode) throws Exception {
         //byte[] bytes = key.getBytes();
         //获取渠道私钥
@@ -488,5 +471,4 @@ public class CmisMessageHandler {
         String typCde = Convert.toString(acqBody.get("typ_cde"));
         return typCde;
     }
-
 }
