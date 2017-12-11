@@ -2,13 +2,12 @@ package com.haiercash.spring.mail;
 
 import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.CollectionUtils;
-import com.haiercash.core.lang.Convert;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.mail.core.Mail;
 import com.haiercash.spring.mail.core.MailAttachment;
 import com.haiercash.spring.mail.core.MailInline;
-import com.haiercash.spring.mail.core.MailSendMode;
 import com.haiercash.spring.mail.core.MailType;
+import com.haiercash.spring.mail.service.MailController;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import org.apache.commons.logging.Log;
@@ -54,9 +53,9 @@ public final class MailTemplate {
         }
     }
 
-    //通过消息平台发送
-    private void sendMsgPlatform(Mail mail) {
-        String url = EurekaServer.getAPPMSG() + "/api/mail/send";
+    //转给消息平台
+    private void sendForward(Mail mail) {
+        String url = EurekaServer.getAPPMSG() + MailController.API_SEND_MAIL;
         IResponse response = CommonRestUtils.postForMap(url, mail);
         if (response.isSuccess())
             return;
@@ -65,17 +64,10 @@ public final class MailTemplate {
 
     //发送
     public void send(Mail mail) {
-        String mode = Convert.toString(this.properties.getMode()).toLowerCase();
-        switch (mode) {
-            case MailSendMode.DIRECT:
-                this.sendDirect(mail);
-                break;
-            case MailSendMode.MSGPLATFORM:
-                this.sendMsgPlatform(mail);
-                break;
-            default:
-                this.sendDirect(mail);
-                break;
-        }
+        boolean forward = this.properties.getForward() != null && this.properties.getForward();//默认不转发
+        if (forward)
+            this.sendForward(mail);
+        else
+            this.sendDirect(mail);
     }
 }

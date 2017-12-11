@@ -82,7 +82,7 @@ spring:
     mapper-locations: classpath*:com/haiercash/mybatis/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
     underscore-to-camel-case: true
   mail:
-    mode: direct
+    forward: false
     host: smtp.ym.163.com
     port: 25
     username: email@bestvike.com
@@ -90,6 +90,11 @@ spring:
     properties:
       mail.smtp.ssl.enable: false
       mail.smtp.starttls.enable: true
+    async: false
+    rabbit:
+      exchange:
+      routing-key:
+      queue:
     bug-report:
       enabled: true
       level: error
