@@ -25,6 +25,7 @@ public class RestAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     ClientHttpRequestFactory clientHttpRequestFactory() {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         if (this.restProperties.getConnectTimeout() != null)
