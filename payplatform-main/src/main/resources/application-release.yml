@@ -25,6 +25,8 @@ spring:
       max-file-size: 10MB # 最大文件大小
       max-request-size: 10MB # 最大请求大小
   rest:
+    connect-timeout: 3000
+    read-timeout: 60000
     route-headers-enabled: false
     ignore-headers:
   redis:
@@ -123,11 +125,6 @@ zuul:
       service-id: APPSERVERNOAUTHNEW
       strip-prefix: false
       sensitive-headers:
-ribbon:
-  ConnectTimeout: 3000
-  ReadTimeout: 60000
-  eureka:
-    enabled: true
 app:
   common:
     gate-url: https://testpm.haiercash.com:9002 # 程序前缀

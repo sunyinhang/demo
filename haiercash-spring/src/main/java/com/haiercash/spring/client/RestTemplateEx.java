@@ -8,6 +8,7 @@ import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.AbstractClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
@@ -35,6 +36,11 @@ public class RestTemplateEx extends RestTemplate {
             throw new NullPointerException("supportedType can not be null");
         this.supportedType = supportedType;
         //must set converters after construct
+    }
+
+    public RestTemplateEx(RestTemplateSupportedType supportedType, ClientHttpRequestFactory requestFactory) {
+        this(supportedType);
+        this.setRequestFactory(requestFactory);
     }
 
     //发起请求

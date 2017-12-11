@@ -6,6 +6,8 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -23,11 +25,21 @@ public class RestAutoConfiguration {
     }
 
     @Bean
+    ClientHttpRequestFactory clientHttpRequestFactory() {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        if (this.restProperties.getConnectTimeout() != null)
+            simpleClientHttpRequestFactory.setConnectTimeout(this.restProperties.getConnectTimeout());
+        if (this.restProperties.getReadTimeout() != null)
+            simpleClientHttpRequestFactory.setReadTimeout(this.restProperties.getReadTimeout());
+        return simpleClientHttpRequestFactory;
+    }
+
+    @Bean
     @Primary
     @LoadBalanced
     @ConditionalOnMissingBean(name = "restTemplate")
-    RestTemplate restTemplate() {
-        RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.JSON);
+    RestTemplate restTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
+        RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.JSON, clientHttpRequestFactory);
         this.httpConvertersProperties.config(restTemplate);
         this.restProperties.config(restTemplate);
         return restTemplate;
@@ -35,8 +47,8 @@ public class RestAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restTemplateJson")
-    RestTemplate restTemplateJson() {
-        RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.JSON);
+    RestTemplate restTemplateJson(ClientHttpRequestFactory clientHttpRequestFactory) {
+        RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.JSON, clientHttpRequestFactory);
         this.httpConvertersProperties.config(restTemplate);
         this.restProperties.config(restTemplate);
         return restTemplate;
@@ -44,8 +56,8 @@ public class RestAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "restTemplateXml")
-    RestTemplate restTemplateXml() {
-        RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.XML);
+    RestTemplate restTemplateXml(ClientHttpRequestFactory clientHttpRequestFactory) {
+        RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.XML, clientHttpRequestFactory);
         this.httpConvertersProperties.config(restTemplate);
         this.restProperties.config(restTemplate);
         return restTemplate;

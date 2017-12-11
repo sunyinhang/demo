@@ -16,6 +16,8 @@ import java.util.List;
 public final class RestProperties {
     private static final Object PRESENT = new Object();
     private static final List<String> SYSTEM_IGNORE_HEADERS = Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Content-Type", "Content-Length", "Cookie", "Set-Cookie", "Authorization", "Connection", "Host", "User-Agent");
+    private Integer connectTimeout;
+    private Integer readTimeout;
     private Boolean routeHeadersEnabled;
     private List<String> ignoreHeaders;
 
