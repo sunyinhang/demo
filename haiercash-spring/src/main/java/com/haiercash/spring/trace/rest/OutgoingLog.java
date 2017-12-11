@@ -79,7 +79,7 @@ public final class OutgoingLog {
     public static void writeError(StringBuilder builder, Exception e, long tookMs) {
         String msg = ThrowableUtils.getMessage(e);
         builder.append("Error:").append(Environment.NewLine);
-        builder.append(msg).append(Environment.NewLine);
+        builder.append("    ").append(msg).append(Environment.NewLine);
         //
         builder.append("Took: ").append(tookMs).append(" ms").append(Environment.NewLine);
         builder.append(INVOKE___END);
