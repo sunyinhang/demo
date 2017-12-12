@@ -737,16 +737,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
 
 
-        //7.接口回调
-        //String callbackUrl3 = "";
-        String backurl = callbackUrl + "?applseq=" + applseq;
-        logger.info("乔融豆子*******签章回调地址：" + backurl);
-        String resData = JsonClientUtils.getForString(backurl);
-        logger.info("乔融豆子*******签章回调接口返回数据：" + resData);
-//        if(resData == null || "".equals(resData)){
-//            return fail("18", "回调接口调用失败");
-//        }
-
         //8.订单提交
         //调用收单订单提交
         Map<String, Object> param = new HashMap<>();
@@ -759,6 +749,11 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("收单系统提交贷款申请失败, applSeq:" + applseq);
         } else {
             logger.info("收单系统提交贷款申请成功, applSeq:" + applseq);
+            //接口回调
+            String backurl = callbackUrl + "?applseq=" + applseq;
+            logger.info("乔融豆子*******签章回调地址：" + backurl);
+            String resData = JsonClientUtils.getForString(backurl);
+            logger.info("乔融豆子*******签章回调接口返回数据：" + resData);
         }
 
         Map<String, Object> mapRes = (Map) result.get("response");
