@@ -87,6 +87,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
+        if (cacheMap == null || "".equals(cacheMap)) {
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
         String custNo = (String) cacheMap.get("custNo");
 //        String custNo = "C201607151029101937960";
         Map<String, Object> paramYXMap = new HashMap<String, Object>();
