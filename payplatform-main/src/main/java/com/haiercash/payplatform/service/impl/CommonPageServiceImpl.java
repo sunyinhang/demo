@@ -164,11 +164,12 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
         logger.info("订单提交业务类型:" + applSeq + ", typgrp:" + apporder.getTypGrp());
         // 检验可用额度是否满足申请金额
-   /*     if (!judgeApplAmt(apporder.getIdTyp(), apporder.getIdNo(), apporder.getApplyAmt(), super.getToken())) {
-            logger.info("对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
-            return fail("07", "对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
-        }*/
-
+        if ("46".equals(getChannelNo())) {
+            if (!judgeApplAmt(apporder.getIdTyp(), apporder.getIdNo(), apporder.getApplyAmt(), super.getToken())) {
+                logger.info("对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
+                return fail("07", "对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
+            }
+        }
         // 商户版直接提交核心
         if ("13".equals(super.getChannel()) || "11".equals(super.getChannel())) {
             opType = "1";
@@ -1169,7 +1170,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         Map<String, Object> bodyMap = (Map<String, Object>) responseMap.get("body");
         applyAmt = String.valueOf(StringUtils.isEmpty("applyAmt") ? 0 : applyAmt);
-        String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdNorAvailAmt")) ? 0 : bodyMap.get("crdNorAvailAmt"));
+        String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAnt")) ? 0 : bodyMap.get("crdComAvailAnt"));//商品贷用crdComAvailAnt   现金贷用crdNorAvailAmt
         logger.info("可用额度:" + crdComAvailAmt);
         if (new BigDecimal(crdComAvailAmt).compareTo(new BigDecimal(applyAmt)) >= 0) {
             logger.info("可用额度满足申请金额");
