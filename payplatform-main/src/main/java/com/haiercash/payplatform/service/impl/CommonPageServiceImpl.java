@@ -1666,4 +1666,55 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         return success(returnmap);
     }
 
+    /**
+     * 获取地理位置
+     *
+     * @param provinceName
+     * @param cityName
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> getAreaCode(String provinceName, String cityName, String districtName) throws Exception {
+        String province = "";
+        String city = "";
+        String district = "";
+        if (StringUtils.isEmpty(cityName)) {
+            //TODO 根据省编码
+        } else {
+            if (StringUtils.isEmpty(provinceName)) {
+                //TODO 根据城市名查询城市编码
+            } else {
+                //TODO 根据省、市名称查询城市
+                //TODO 判断是否有城市编码
+                if (true) {
+
+                } else {
+                    //TODO 没有城市编码 根据省编码、区名称查询
+                    if (true) {//判断是否有城市编码
+
+                    } else {
+                        if (StringUtils.isEmpty(districtName)) {
+                            //流程卡死
+                        }
+                        //TODO 根据省编码和区名称查询是否有城市编码
+                        if (true) {//判断是否有城市编码
+
+                        } else {
+                            cityName = districtName;
+                            //TODO 查询类型为城市的城市编码
+                        }
+                    }
+
+                }
+            }
+        }
+        if (StringUtils.isEmpty(provinceName)) {
+            //根据城市编码查询省名称
+        }
+
+
+        return null;
+    }
+
 }
