@@ -1170,7 +1170,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         Map<String, Object> bodyMap = (Map<String, Object>) responseMap.get("body");
         applyAmt = String.valueOf(StringUtils.isEmpty("applyAmt") ? 0 : applyAmt);
-        String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAnt")) ? 0 : bodyMap.get("crdComAvailAnt"));//商品贷用crdComAvailAnt   现金贷用crdNorAvailAmt
+        String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAmt")) ? 0 : bodyMap.get("crdComAvailAmt"));//商品贷用crdComAvailAmt   现金贷用crdNorAvailAmt
         logger.info("可用额度:" + crdComAvailAmt);
         if (new BigDecimal(crdComAvailAmt).compareTo(new BigDecimal(applyAmt)) >= 0) {
             logger.info("可用额度满足申请金额");
