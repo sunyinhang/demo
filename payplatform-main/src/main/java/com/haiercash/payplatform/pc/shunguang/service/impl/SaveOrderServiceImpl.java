@@ -282,8 +282,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         logger.info("进行录单校验");
         Map<String, Object> ordercheakmap = new HashMap<String, Object>();
         ordercheakmap.put("userId", userId);
-        ordercheakmap.put("provinceCode", provinceCode);
-        ordercheakmap.put("cityCode", cityCode);
+        ordercheakmap.put("provinceCode", 990000);
+        ordercheakmap.put("cityCode", 990100);
         ordercheakmap.put("channel", channel);
         ordercheakmap.put("channelNo", channelNo);
         Map<String, Object> ordercheakresult = appServerService.getCustInfoAndEdInfoPerson(token, ordercheakmap);
