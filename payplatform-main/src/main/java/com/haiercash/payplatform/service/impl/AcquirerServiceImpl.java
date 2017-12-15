@@ -570,8 +570,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
 //            result = AcqUtil
 //                    .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcApplEK", headMap, acquirer);
 //        } else {
-            result = AcqUtil
-                    .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcAppl", headMap, acquirer);
+        result = AcqUtil
+                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcAppl", headMap, acquirer);
 //        }
         if (AcqUtil.isSuccess(result)) {
             logger.info("更新订单，收单系统保存贷款详情成功, applSeq:" + order.getApplSeq()
@@ -791,6 +791,14 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     @Override
     public Map<String, Object> returnGoods(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map) {
         String url = EurekaServer.ACQUIRER + "/api/appl/returnGoods";
+        Map headMap = AcqUtil.getAcqHead(tradeCode, sysFlag, channelNo, cooprCode, tradeType);
+        Map<String, Object> result = AcqUtil.getAcqResponse(url, headMap, map);
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getReturnGoodsInfo(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map) {
+        String url = EurekaServer.ACQUIRER + "/api/appl/getReturnGoodsInfo";
         Map headMap = AcqUtil.getAcqHead(tradeCode, sysFlag, channelNo, cooprCode, tradeType);
         Map<String, Object> result = AcqUtil.getAcqResponse(url, headMap, map);
         return result;

@@ -113,4 +113,12 @@ public interface AcquirerService {
      * @date 2017/11/6 17:47
      */
     public Map<String, Object> returnGoods(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map);
+
+    /**
+     * @Title getReturnGoodsInfo
+     * @Description:
+     * @author yu jianwei
+     * @date 2017/12/15 11:22
+     */
+    public Map<String, Object> getReturnGoodsInfo(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map);
 }

@@ -1219,7 +1219,33 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             if (returnMap == null) {
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
             }
-            return (Map<String, Object>) ((Map<String, Object>) returnMap.get("response")).get("head");
+            return (Map<String, Object>) returnMap.get("response");
+        } catch (Exception e) {
+            logger.error(e);
+            return fail("01", "请求数据校验失败");
+        }
+    }
+
+    /**
+     * @Title getReturnGoodsInfo
+     * @Description: 查询退货详情
+     * @author yu jianwei
+     * @date 2017/12/15 11:14
+     */
+    @Override
+    public Map<String, Object> getReturnGoodsInfo(Map<String, Object> map) {
+        logger.info("===============查询退货详情开始==================");
+        String channelNo = String.valueOf(map.get("channelNo"));
+        String data = String.valueOf(map.get("data"));//交易信息
+        String key = String.valueOf(map.get("key"));
+        try {
+            String params = decryptData(data, channelNo, key);
+            Map<String, Object> paramMap = HttpUtil.json2Map(params);
+            Map<String, Object> returnMap = acquirerService.getReturnGoodsInfo(AcqTradeCode.ACQ_RETURNGODDS_TREADECODE, ConstUtil.CHANNEL, channelNo, "", "", paramMap);
+            if (returnMap == null) {
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            }
+            return (Map<String, Object>) returnMap.get("response");
         } catch (Exception e) {
             logger.error(e);
             return fail("01", "请求数据校验失败");

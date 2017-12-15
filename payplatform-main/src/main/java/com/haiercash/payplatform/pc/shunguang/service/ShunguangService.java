@@ -107,4 +107,12 @@ public interface ShunguangService {
      */
     Map<String, Object> returnGoods(Map<String, Object> map) throws Exception;
 
+    /**
+     * @Title getReturnGoodsInfo
+     * @Description: 查询退货详情
+     * @author yu jianwei
+     * @date 2017/12/15 11:13
+     */
+    Map<String, Object> getReturnGoodsInfo(Map<String, Object> map) throws Exception;
+
 }
