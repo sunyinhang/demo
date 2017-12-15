@@ -18,4 +18,14 @@ public interface SAreaDao extends BaseMapper<SArea> {
     List<SArea> selectByName(@Param("areaName") String areaName);
     //根据编码查询
     List<SArea> selectByCode(@Param("areaCode") String areaCode);
+
+    //根据地区名称及上级编码查询
+    SArea selectByCodeAndAreaParentCode(@Param("areaName") String areaName, @Param("areaParentCode") String areaParentCode, @Param("areaType") String areaType);
+
+    //根据省编码、区名称查询
+    SArea searchCityCode(@Param("areaParentCode") String areaParentCode, @Param("areaName") String areaName);
+
+    //根据编码及类型查询
+    SArea selectByCodeAndAreaType(@Param("areaCode") String areaCode, @Param("areaType") String areaType);
+
 }

@@ -793,4 +793,17 @@ public class CommonPageController extends BaseController {
     public Map<String, Object> personalEd() throws Exception {
         return commonPageService.personalEd();
     }
+
+    /**
+     * @Title personalEd
+     * @Description: 获取地理位置
+     * @author li jianyu  测试用
+     * @date
+     */
+    @RequestMapping(value = "/api/payment/getAreaCode", method = RequestMethod.POST)
+    public Map<String, Object> getAreaCode(@RequestBody Map<String, Object> map) throws Exception {
+        return commonPageService.getAreaCode(map.get("provinceName").toString(), map.get("cityName").toString(), map.get("districtName").toString());
+    }
+
+
 }

@@ -92,7 +92,7 @@ public interface CommonPageService {
      * @return
      * @throws Exception
      */
-    Map<String, Object> getAreaCode(String provinceName, String cityName, String districtName) throws Exception;
+    Map<String, Object> getAreaCode(String provinceName, String cityName, String districtName);
 
 
 }

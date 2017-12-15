@@ -3,6 +3,7 @@ package com.haiercash.payplatform.common.data;
 import lombok.Data;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "S_AREA")
 public class SArea {
+    @Id
     private String areaCode;//编码
     private String areaName;//名称
     private String areaParentCode;//上级编码
