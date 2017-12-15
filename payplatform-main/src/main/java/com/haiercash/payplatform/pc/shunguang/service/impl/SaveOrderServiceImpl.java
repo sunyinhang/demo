@@ -231,8 +231,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String provinceCode = "";
         String areaType = "";
         if (StringUtils.isEmpty(areaCode)) {
-            cityCode = "370000";
-            provinceCode = "370200";
+            provinceCode = "990000";
+            cityCode = "990100";
         } else {
             logger.info("获取业务发生地省市区");
             Map<String, Object> citymap = new HashMap<String, Object>();
@@ -282,8 +282,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         logger.info("进行录单校验");
         Map<String, Object> ordercheakmap = new HashMap<String, Object>();
         ordercheakmap.put("userId", userId);
-        ordercheakmap.put("provinceCode", 990000);
-        ordercheakmap.put("cityCode", 990100);
+        ordercheakmap.put("provinceCode", provinceCode);
+        ordercheakmap.put("cityCode", cityCode);
         ordercheakmap.put("channel", channel);
         ordercheakmap.put("channelNo", channelNo);
         Map<String, Object> ordercheakresult = appServerService.getCustInfoAndEdInfoPerson(token, ordercheakmap);
