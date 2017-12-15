@@ -3,12 +3,14 @@ package com.haiercash.payplatform.common.dao;
 import com.haiercash.payplatform.common.data.SArea;
 import org.apache.ibatis.annotations.Param;
 import org.mybatis.mapper.common.BaseMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by yuanli on 2017/12/13.
  */
+@Repository
 public interface SAreaDao extends BaseMapper<SArea> {
     //根据名称及类型查询
     SArea getByCodeAndType(@Param("areaName") String areaName, @Param("areaType") String areaType);
