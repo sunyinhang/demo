@@ -909,8 +909,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String provinceCode = "";
 //        String areaType = "";
         if (org.springframework.util.StringUtils.isEmpty(province) && org.springframework.util.StringUtils.isEmpty(city)) {
-            provinceCode = "370200";
-            cityCode = "370000";
+            provinceCode = "370000";
+            cityCode = "370200";
         } else {
             logger.info("获取业务发生地省市,省：" + province + ",市：" + city + ",区：" + district);
             Map<String, Object> areaCode = commonPageService.getAreaCode(province, city, district);
