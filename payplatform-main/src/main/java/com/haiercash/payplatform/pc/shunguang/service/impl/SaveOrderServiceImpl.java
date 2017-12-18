@@ -234,8 +234,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String provinceCode = "";
 //        String areaType = "";
         if (StringUtils.isEmpty(province) && StringUtils.isEmpty(city)) {
-            provinceCode = "990000";
-            cityCode = "990100";
+            provinceCode = "990000";//未知省
+            cityCode = "990100";//未知市
         } else {
             logger.info("获取业务发生地省市,省：" + province + ",市：" + city + ",区：" + district);
             Map<String, Object> areaCode = commonPageService.getAreaCode(province, city, district);
