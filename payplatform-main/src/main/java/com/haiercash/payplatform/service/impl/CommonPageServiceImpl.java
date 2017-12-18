@@ -6,12 +6,14 @@ import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.EntrySettingDao;
+import com.haiercash.payplatform.common.dao.SAreaDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.common.data.AppointmentRecord;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.EntrySetting;
+import com.haiercash.payplatform.common.data.SArea;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.config.CommonConfig;
@@ -86,6 +88,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private EntrySettingDao entrySettingDao;
     @Autowired
     private OutreachConfig outreachConfig;
+    @Autowired
+    private SAreaDao sAreaDao;
 
     /**
      * 合同展示
@@ -1665,6 +1669,107 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         returnmap.put("token", token);
         return success(returnmap);
+    }
+
+    /**
+     * 获取地理位置
+     *
+     * @param provinceName
+     * @param cityName
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> getAreaCode(String provinceName, String cityName, String districtName) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        String province = "";
+        String city = "";
+        if (StringUtils.isEmpty(cityName)) {
+            //根据省编码和区名称查询城市编码
+            SArea province_sArea = sAreaDao.getByCodeAndType(provinceName, "province");
+            if (StringUtils.isEmpty(province_sArea)) {
+                return fail(ConstUtil.ERROR_CODE, "所在城市省暂未查到");
+            }
+            province = province_sArea.getAreaCode();//省编码
+            SArea sArea1 = sAreaDao.searchCityCode(province, districtName);
+            if (!StringUtils.isEmpty(sArea1)) {//判断是否有城市编码
+                city = sArea1.getAreaCode();
+                map.put("province", province);
+                map.put("city", city);
+            } else {
+                cityName = districtName;
+                //查询类型为城市的城市编码
+                SArea city1 = sAreaDao.getByCodeAndType(cityName, "city");
+                if (!StringUtils.isEmpty(city1)) {
+                    city = city1.getAreaCode();
+                    map.put("province", province);
+                    map.put("city", city);
+                } else {
+                    return fail(ConstUtil.ERROR_CODE, "尚未获取您的位置");
+                }
+            }
+
+        } else {
+            if (StringUtils.isEmpty(provinceName)) {
+                //根据城市名查询城市编码
+                List<SArea> sAreas = sAreaDao.selectByName(cityName);
+                if (StringUtils.isEmpty(sAreas)) {
+                    return fail(ConstUtil.ERROR_CODE, "所在城市暂未查到");
+                }
+                for (int i = 0; i < sAreas.size(); i++) {
+                    if ("province".equals(sAreas.get(i).getAreaType())) {
+                        province = sAreas.get(i).getAreaCode();
+                    } else if ("city".equals(sAreas.get(i).getAreaType())) {
+                        city = sAreas.get(i).getAreaCode();
+                    }
+                }
+                map.put("province", province);
+                map.put("city", city);
+            } else {
+                //根据省、市名称查询城市
+                SArea province_sArea = sAreaDao.getByCodeAndType(provinceName, "province");
+                if (StringUtils.isEmpty(province_sArea)) {
+                    return fail(ConstUtil.ERROR_CODE, "所在城市暂未查到");
+                }
+                province = province_sArea.getAreaCode();//省编码
+                SArea sArea = sAreaDao.selectByCodeAndAreaParentCode(cityName, province, "city");
+                //判断是否有城市编码
+                if (!StringUtils.isEmpty(sArea)) {
+                    city = sArea.getAreaCode();
+                    map.put("province", province);
+                    map.put("city", city);
+                } else {
+                    if (StringUtils.isEmpty(districtName)) {
+                        return fail(ConstUtil.ERROR_CODE, "所在城市暂未查到");
+                    }
+                    //根据省编码和区名称查询是否有城市编码
+                    SArea sArea1 = sAreaDao.searchCityCode(province, districtName);
+                    if (!StringUtils.isEmpty(sArea1)) {//判断是否有城市编码
+                        city = sArea1.getAreaCode();
+                        map.put("province", province);
+                        map.put("city", city);
+                    } else {
+                        cityName = districtName;
+                        //查询类型为城市的城市编码
+                        SArea city1 = sAreaDao.getByCodeAndType(cityName, "city");
+                        if (!StringUtils.isEmpty(city1)) {
+                            city = city1.getAreaCode();
+                            map.put("province", province);
+                            map.put("city", city);
+                        } else {
+                            return fail(ConstUtil.ERROR_CODE, "所在城市暂未查到");
+                        }
+                    }
+
+                }
+            }
+        }
+        if (StringUtils.isEmpty(province)) {
+            //根据城市编码查询省名称
+            SArea city1 = sAreaDao.selectByCodeAndAreaType(city, "city");
+            province = city1.getAreaParentCode();
+        }
+        return success(map);
     }
 
 }

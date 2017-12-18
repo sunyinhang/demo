@@ -84,4 +84,15 @@ public interface CommonPageService {
      */
     Map<String, Object> personalEd() ;
 
+    /**
+     * 获取地理位置
+     *
+     * @param provinceName
+     * @param cityName
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> getAreaCode(String provinceName, String cityName, String districtName);
+
+
 }

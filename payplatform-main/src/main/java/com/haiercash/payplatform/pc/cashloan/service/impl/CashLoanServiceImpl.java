@@ -751,12 +751,15 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
         String updflag = (String) map.get("flag");//1.待提交返显
         String orderNo = (String) map.get("orderNo");//待提交时必传
-        String areaCode = (String) map.get("areaCode");//区编码
+//        String areaCode = (String) map.get("areaCode");//区编码
         String applyAmt = Convert.toString(map.get("applyAmt"));//申请金额
         String typCde = (String) map.get("typCde");//贷款品种
         String purpose = (String) map.get("purpose");//贷款用途
         String applCardNo = (String) map.get("applCardNo");//放款卡号
         String repayApplCardNo = (String) map.get("repayApplCardNo");//还款卡号
+        String province = (String) map.get("province");//省名称
+        String city = (String) map.get("city");//市名称
+        String district = (String) map.get("district");//区名称
 
         //非空判断
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
@@ -905,52 +908,61 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String cityCode = "";
         String provinceCode = "";
         String areaType = "";
-        if (org.springframework.util.StringUtils.isEmpty(areaCode)) {
+        if (org.springframework.util.StringUtils.isEmpty(province) && org.springframework.util.StringUtils.isEmpty(city)) {
             cityCode = "370000";
             provinceCode = "370200";
         } else {
-            logger.info("获取业务发生地省市区");
-            Map<String, Object> citymap = new HashMap<String, Object>();
-            citymap.put("areaCode", areaCode);
-            citymap.put("flag", "parent");
-            citymap.put("channel", channel);
-            citymap.put("channelNo", channelNo);
-            Map<String, Object> cityCodeMap = commonPageService.getCode(token, citymap);
-            if (!HttpUtil.isSuccess(cityCodeMap)) {
-                return cityCodeMap;
+            logger.info("获取业务发生地省市");
+            Map<String, Object> areaCode = commonPageService.getAreaCode(province, city, district);
+            if (!HttpUtil.isSuccess(areaCode)) {
+                return areaCode;
             }
-            logger.info("cityCodeMap------" + cityCodeMap);
-            Map<String, Object> map_one = (Map<String, Object>) cityCodeMap.get("body");
-            cityCode = (String) map_one.get("cityCode");
-            areaType = (String) map_one.get("areaType");
-            logger.info("cityCode------" + cityCode + "---------" + areaType);
-            if (org.springframework.util.StringUtils.isEmpty(cityCode)) {
-                logger.info("获取市编码失败");
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-            }
-            if ("province".equals(areaType)) {
-                provinceCode = cityCode;
-                cityCode = areaCode;
-            } else {
-                //获取省代码
-                Map<String, Object> provincemap = new HashMap<String, Object>();
-                provincemap.put("areaCode", cityCode);
-                provincemap.put("flag", "parent");
-                provincemap.put("channel", channel);
-                provincemap.put("channelNo", channelNo);
-                Map<String, Object> provinceCodeMap = commonPageService.getCode(token, provincemap);
-                if (!HttpUtil.isSuccess(provinceCodeMap)) {
-                    return provinceCodeMap;
-                }
-                Map<String, Object> map_two = (Map<String, Object>) provinceCodeMap.get("body");
-                provinceCode = (String) map_two.get("cityCode");
-                logger.info("provinceCode------" + provinceCode);
-//                provinceCode = (String) provinceCodeMap.get("cityCode");
-                if (org.springframework.util.StringUtils.isEmpty(provinceCode)) {
-                    logger.info("获取省编码失败");
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                }
-            }
+            logger.info("获取业务发生地省市areaCode------" + areaCode);
+            Map<String, Object> areaCodeBody = (Map<String, Object>) areaCode.get("body");
+            provinceCode = (String) areaCodeBody.get("province");
+            cityCode = (String) areaCodeBody.get("city");
+//            logger.info("获取业务发生地省市区");
+//            Map<String, Object> citymap = new HashMap<String, Object>();
+//            citymap.put("areaCode", areaCode);
+//            citymap.put("flag", "parent");
+//            citymap.put("channel", channel);
+//            citymap.put("channelNo", channelNo);
+//            Map<String, Object> cityCodeMap = commonPageService.getCode(token, citymap);
+//            if (!HttpUtil.isSuccess(cityCodeMap)) {
+//                return cityCodeMap;
+//            }
+//            logger.info("cityCodeMap------" + cityCodeMap);
+//            Map<String, Object> map_one = (Map<String, Object>) cityCodeMap.get("body");
+//            cityCode = (String) map_one.get("cityCode");
+//            areaType = (String) map_one.get("areaType");
+//            logger.info("cityCode------" + cityCode + "---------" + areaType);
+//            if (org.springframework.util.StringUtils.isEmpty(cityCode)) {
+//                logger.info("获取市编码失败");
+//                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//            }
+//            if ("province".equals(areaType)) {
+//                provinceCode = cityCode;
+//                cityCode = areaCode;
+//            } else {
+//                //获取省代码
+//                Map<String, Object> provincemap = new HashMap<String, Object>();
+//                provincemap.put("areaCode", cityCode);
+//                provincemap.put("flag", "parent");
+//                provincemap.put("channel", channel);
+//                provincemap.put("channelNo", channelNo);
+//                Map<String, Object> provinceCodeMap = commonPageService.getCode(token, provincemap);
+//                if (!HttpUtil.isSuccess(provinceCodeMap)) {
+//                    return provinceCodeMap;
+//                }
+//                Map<String, Object> map_two = (Map<String, Object>) provinceCodeMap.get("body");
+//                provinceCode = (String) map_two.get("cityCode");
+//                logger.info("provinceCode------" + provinceCode);
+////                provinceCode = (String) provinceCodeMap.get("cityCode");
+//                if (org.springframework.util.StringUtils.isEmpty(provinceCode)) {
+//                    logger.info("获取省编码失败");
+//                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//                }
+//            }
         }
         //录单校验
         logger.info("进行录单校验");

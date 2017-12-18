@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.payplatform.common.dao.SAreaDao">
+
+    <select id="getByCodeAndType" resultType="com.haiercash.payplatform.common.data.SArea">
+        select * from S_AREA where AREA_NAME = #{areaName} AND AREA_TYPE = #{areaType}
+    </select>
+
+    <select id="selectByName" resultType="com.haiercash.payplatform.common.data.SArea">
+        select * from S_AREA where AREA_NAME = #{areaName}
+    </select>
+
+    <select id="selectByCode" resultType="com.haiercash.payplatform.common.data.SArea">
+        select * from S_AREA where AREA_CODE = #{areaCode}
+    </select>
+
+    <select id="selectByCodeAndAreaParentCode" resultType="com.haiercash.payplatform.common.data.SArea">
+    select * from S_AREA where AREA_NAME = #{areaName} AND AREA_PARENT_CODE = #{areaParentCode}  AND AREA_TYPE = #{areaType}
+    </select>
+
+    <select id="searchCityCode" resultType="com.haiercash.payplatform.common.data.SArea">
+        select * from s_area where  AREA_PARENT_CODE = #{areaParentCode}  and AREA_CODE in (select AREA_PARENT_CODE from s_area where  AREA_NAME = #{areaName} )
+    </select>
+
+    <select id="selectByCodeAndAreaType" resultType="com.haiercash.payplatform.common.data.SArea">
+        select * from S_AREA where AREA_CODE = #{areaCode} AND AREA_TYPE = #{areaType}
+    </select>
+</mapper>
