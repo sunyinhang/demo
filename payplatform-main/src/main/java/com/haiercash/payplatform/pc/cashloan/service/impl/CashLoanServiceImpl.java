@@ -907,12 +907,12 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //获取市代码
         String cityCode = "";
         String provinceCode = "";
-        String areaType = "";
+//        String areaType = "";
         if (org.springframework.util.StringUtils.isEmpty(province) && org.springframework.util.StringUtils.isEmpty(city)) {
-            cityCode = "370000";
             provinceCode = "370200";
+            cityCode = "370000";
         } else {
-            logger.info("获取业务发生地省市");
+            logger.info("获取业务发生地省市,省：" + province + ",市：" + city + ",区：" + district);
             Map<String, Object> areaCode = commonPageService.getAreaCode(province, city, district);
             if (!HttpUtil.isSuccess(areaCode)) {
                 return areaCode;
@@ -965,7 +965,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 //            }
         }
         //录单校验
-        logger.info("进行录单校验");
+//        logger.info("进行录单校验");
+        logger.info("进行录单校验,省编码：" + provinceCode + ",市编码：" + cityCode);
         Map<String, Object> ordercheakmap = new HashMap<String, Object>();
         ordercheakmap.put("userId", userId);
         ordercheakmap.put("provinceCode", provinceCode);
