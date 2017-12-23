@@ -96,6 +96,9 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             oldMap = new HashMap<>();
         }
         oldMap.putAll(childMap);
+        if ("46".equals(getChannelNo())) {
+            oldMap.put("creditType", "02");
+        }
         map.put("appl_inf", oldMap);
 
         childMap.clear();
@@ -387,7 +390,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         // 顺逛白条月均收入默认5000
         if (channelType == ChannelType.Shunguang) {
             orderMap.put("IndivMthInc", "5000");
-            orderMap.put("creditType", "02");
+//            orderMap.put("creditType", "02");
         }
     }
 
