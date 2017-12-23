@@ -1300,8 +1300,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             sgts.put("content", content);
             String sgString = com.alibaba.fastjson.JSONObject.toJSONString(sgts);
             String tradeCode = "Sg-10011";
-            HashMap<String, Object> encrypt = encrypt(sgString, channelNo, tradeCode);//数据的加密数据
-            String result = JsonClientUtils.postForString(url_ts + "/paycenter/json/ious/limitNotify.json", encrypt);
+            HashMap<String, Object> encrypt = encrypt(sgString, channelNo, tradeCode);//数据的加密数据  /json/ious/refundNotify.json
+            logger.info("推送的报文是："+encrypt);
+            String result = JsonClientUtils.postForString(url_ts + "/paycenter/json/ious/refundNotify.json", encrypt);
             String resultjson = result.substring(result.indexOf("{"), result.lastIndexOf("}") + 1);
             logger.info("实时推送接口(JSON格式)，第三方返回的结果数据：" + resultjson);
             com.alibaba.fastjson.JSONObject jsonsObj = com.alibaba.fastjson.JSONObject.parseObject(resultjson);
