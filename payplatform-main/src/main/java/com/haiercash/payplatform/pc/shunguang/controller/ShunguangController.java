@@ -291,7 +291,7 @@ public class ShunguangController extends BaseController {
         return shunguangService.getReturnGoodsInfo(map);
     }
     @RequestMapping(value = "/api/payment/shunguang/shunguangth",method = RequestMethod.POST)
-    public Map<String,Object> shunguangth(@RequestParam Map<String , Object> map){
+    public Map<String,Object> shunguangth(@RequestBody Map<String , Object> map){
 //        HashMap<Object, Object> map1 = new HashMap<>();
 //        HashMap<Object, Object> map2 = new HashMap<>();
 //        HashMap<String, Object> map3 = new HashMap<>();

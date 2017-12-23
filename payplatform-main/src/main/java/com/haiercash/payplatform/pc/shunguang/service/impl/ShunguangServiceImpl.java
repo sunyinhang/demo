@@ -1264,14 +1264,15 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("Sg-10011退货通知推送地址：" + url_ts);
             String js = com.alibaba.fastjson.JSONObject.toJSONString(map);
             com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(js);
-            com.alibaba.fastjson.JSONObject head = jsonObject.getJSONObject("head");//获取头部信息
+            com.alibaba.fastjson.JSONObject request = jsonObject.getJSONObject("request");
+            com.alibaba.fastjson.JSONObject head = request.getJSONObject("head");//获取头部信息
             if (StringUtils.isEmpty(head)) {
                 logger.info("获取head中信息为空：" + head);
                 return fail("参数为空", "从收单获取的头部信息为空");
             }
             serno = head.getString("serno");//报文流水号
             String channelNo = head.getString("channelNo");//渠道编码
-            com.alibaba.fastjson.JSONObject body = jsonObject.getJSONObject("body");//获取body中的信息
+            com.alibaba.fastjson.JSONObject body = request.getJSONObject("body");//获取body中的信息
             if (StringUtils.isEmpty(body)) {
                 logger.info("获取body信息为空" + body);
                 return fail("参数为空", "从收单获取的body信息为空");
