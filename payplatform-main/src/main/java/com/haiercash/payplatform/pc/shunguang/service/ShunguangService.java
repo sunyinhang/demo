@@ -115,4 +115,12 @@ public interface ShunguangService {
      */
     Map<String, Object> getReturnGoodsInfo(Map<String, Object> map) throws Exception;
 
+
+    /**
+     * 顺逛退货消息推送
+     * @param map
+     * @return
+     */
+    public Map<String,Object> ShunGuangth(Map<String, Object> map);
+
 }
