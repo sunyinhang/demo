@@ -96,6 +96,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             oldMap = new HashMap<>();
         }
         oldMap.putAll(childMap);
+        oldMap.put("creditType", "02");
         map.put("appl_inf", oldMap);
 
         childMap.clear();
@@ -211,10 +212,18 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         }
         orderMap.put("sysNo", "11");
         String url;
-        if (isGoodsList) {//多商品
-            url = EurekaServer.ORDER + "/api/order/saveOrder";
+        if ("46".equals(getChannelNo())) {
+            if (isGoodsList) {//多商品
+                url = EurekaServer.ORDER + "/api/order/saveOrderEK";
+            } else {
+                url = EurekaServer.ORDER + "/api/order/saveEK";
+            }
         } else {
-            url = EurekaServer.ORDER + "/api/order/save";
+            if (isGoodsList) {//多商品
+                url = EurekaServer.ORDER + "/api/order/saveOrder";
+            } else {
+                url = EurekaServer.ORDER + "/api/order/save";
+            }
         }
         orderMap.entrySet().removeIf(entry -> entry.getValue() == null);
         logger.info("前appOrder：" + JsonSerializer.serialize(appOrder));
