@@ -31,6 +31,23 @@
         <appender-ref ref="ASYNC_LOG"/>
     </logger>
 
+    <appender name="REPORT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.report.log</FileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} %L - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_REPORT_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="REPORT_LOG"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+    <logger name="com.haiercash.payplatform.controller.ReportController" level="info">
+        <appender-ref ref="ASYNC_REPORT_LOG"/>
+    </logger>
+
     <appender name="TASK_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.task.log</FileNamePattern>

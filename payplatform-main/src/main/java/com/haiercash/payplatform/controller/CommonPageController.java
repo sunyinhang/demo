@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.controller;
 
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.mybatis.util.FileUtil;
 import com.haiercash.payplatform.service.CommonPageService;
@@ -13,8 +12,6 @@ import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.service.RegisterService;
 import com.haiercash.spring.controller.BaseController;
-import com.haiercash.spring.mail.bugreport.BugReportLevel;
-import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
@@ -596,16 +593,6 @@ public class CommonPageController extends BaseController {
     @RequestMapping(value = "/api/payment/queryCustNameByUId", method = RequestMethod.GET)
     public Map<String, Object> queryCustNameByUId() {
         return payPasswdService.queryCustNameByUId(super.getToken());
-    }
-
-    @RequestMapping(value = "/api/payment/report", method = RequestMethod.POST)
-    public void report(@RequestBody String error) {
-        StringBuilder builder = new StringBuilder("客户端错误报告");
-        builder.append(Environment.NewLine);
-        builder.append(error);
-        String msg = builder.toString();
-        logger.warn(msg);
-        BugReportUtils.sendAsync(BugReportLevel.WARN, msg);
     }
 
     /**
