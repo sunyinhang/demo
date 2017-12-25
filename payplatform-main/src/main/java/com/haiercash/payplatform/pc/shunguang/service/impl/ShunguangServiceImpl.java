@@ -1256,7 +1256,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
     }
     //顺逛退货消息推送
-    public Map<String, Object> ShunGuangth(Map<String, Object> map) {
+    public Map<String, Object> shunGuangTh(Map<String, Object> map) {
         logger.info("从收单获取退货通知信息为：" + map);
         String serno = null;
         try {

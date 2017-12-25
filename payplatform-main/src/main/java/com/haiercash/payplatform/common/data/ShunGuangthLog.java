@@ -11,7 +11,7 @@ import javax.persistence.Table;
  */
 @Data
 @Entity
-@Table(name = "ShunGuangth_LOG")
+@Table(name = "SHUN_GUANGTH_LOG")
 public class ShunGuangthLog {
     @Id
     private String logid;//主键
