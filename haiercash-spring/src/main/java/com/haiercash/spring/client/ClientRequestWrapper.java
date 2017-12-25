@@ -7,6 +7,7 @@ import org.springframework.http.client.AbstractClientHttpRequest;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 /**
  * Created by 许崇雷 on 2017-10-16.
@@ -39,16 +40,16 @@ public final class ClientRequestWrapper extends AbstractClientHttpRequest {
     @Override
     protected ClientResponseWrapper executeInternal(HttpHeaders headers) throws IOException {
         this.request.getHeaders().putAll(headers);
-        StringBuilder builder = OutgoingLog.writeRequestLog(this);
+        Map<String, Object> log = OutgoingLog.writeRequestLog(this);
         long begin = System.currentTimeMillis();
         ClientResponseWrapper response;
         try {
             response = new ClientResponseWrapper(this.request.execute());
         } catch (Exception e) {
-            OutgoingLog.writeError(builder, e, System.currentTimeMillis() - begin);
+            OutgoingLog.writeError(log, e, System.currentTimeMillis() - begin);
             throw e;
         }
-        OutgoingLog.writeResponseLog(builder, response, System.currentTimeMillis() - begin);
+        OutgoingLog.writeResponseLog(log, response, System.currentTimeMillis() - begin);
         return response;
     }
 }
