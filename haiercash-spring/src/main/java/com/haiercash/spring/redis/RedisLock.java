@@ -111,7 +111,7 @@ public final class RedisLock {
         if (System.currentTimeMillis() <= expireEnd)
             return LockResult.FAIL;
         //过期覆盖. 可能覆盖两次, 但是因为什么相差了很少的时间，所以可以接受.如果获取到的为 null 说明之前被删,正好加锁成功
-        Long expireEndNow = RedisUtils.getset(this.key, System.currentTimeMillis() + leaseMillis, Long.class);
+        Long expireEndNow = RedisUtils.getSet(this.key, System.currentTimeMillis() + leaseMillis, Long.class);
         if (expireEndNow == null || Objects.equals(expireEnd, expireEndNow))
             return LockResult.SUCCESS;
         return LockResult.FAIL;
