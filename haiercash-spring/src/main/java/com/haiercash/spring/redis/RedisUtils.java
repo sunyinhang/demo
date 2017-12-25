@@ -4,6 +4,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.bestvike.linq.exception.InvalidOperationException;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.redis.converter.FastJsonRedisSerializer;
+import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundValueOperations;
 
 import java.util.Collection;
@@ -118,7 +119,7 @@ public final class RedisUtils {
     }
 
     @SuppressWarnings("Duplicates")
-    public static <T> T getsetExpire(String key, Object value, Class<T> clazz) {
+    public static <T> T getSetExpire(String key, Object value, Class<T> clazz) {
         if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
             operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
@@ -129,7 +130,7 @@ public final class RedisUtils {
     }
 
     @SuppressWarnings("Duplicates")
-    public static <T> T getsetExpire(String key, Object value, TypeReference<T> type) {
+    public static <T> T getSetExpire(String key, Object value, TypeReference<T> type) {
         if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
             operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
@@ -139,12 +140,12 @@ public final class RedisUtils {
         }
     }
 
-    public static String getsetExpireString(String key, Object value) {
-        return getsetExpire(key, value, String.class);
+    public static String getSetExpireString(String key, Object value) {
+        return getSetExpire(key, value, String.class);
     }
 
-    public static Map<String, Object> getsetExpireMap(String key, Object value) {
-        return getsetExpire(key, value, new TypeReference<Map<String, Object>>() {
+    public static Map<String, Object> getSetExpireMap(String key, Object value) {
+        return getSetExpire(key, value, new TypeReference<Map<String, Object>>() {
         });
     }
 
@@ -178,20 +179,20 @@ public final class RedisUtils {
         return getRedisTemplate().opsForValue().setIfAbsent(key, SERIALIZER.serialize(value));
     }
 
-    public static <T> T getset(String key, Object value, Class<T> clazz) {
+    public static <T> T getSet(String key, Object value, Class<T> clazz) {
         return SERIALIZER.deserialize(getRedisTemplate().opsForValue().getAndSet(key, SERIALIZER.serialize(value)), clazz);
     }
 
-    public static <T> T getset(String key, Object value, TypeReference<T> type) {
+    public static <T> T getSet(String key, Object value, TypeReference<T> type) {
         return SERIALIZER.deserialize(getRedisTemplate().opsForValue().getAndSet(key, SERIALIZER.serialize(value)), type);
     }
 
-    public static String getsetString(String key, Object value) {
-        return getset(key, value, String.class);
+    public static String getSetString(String key, Object value) {
+        return getSet(key, value, String.class);
     }
 
-    public static Map<String, Object> getsetMap(String key, Object value) {
-        return getset(key, value, new TypeReference<Map<String, Object>>() {
+    public static Map<String, Object> getSetMap(String key, Object value) {
+        return getSet(key, value, new TypeReference<Map<String, Object>>() {
         });
     }
 
@@ -232,6 +233,27 @@ public final class RedisUtils {
         return setnxExpire(getOpsForHashKey(key, field), value);
     }
 
+    public static void hmsetExpire(String key, Map<String, Object> map) {
+        if (getRedisProperties().valueExpireEnabled()) {
+            BoundHashOperations<String, String, Object> operations = getRedisTemplate().boundHashOps(key);
+            operations.putAll(map);
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+        } else {
+            getRedisTemplate().opsForHash().putAll(key, map);
+        }
+    }
+
+    public static Map<String, Object> hgetAllExpire(String key) {
+        if (getRedisProperties().valueExpireEnabled()) {
+            BoundHashOperations<String, String, Object> operations = getRedisTemplate().boundHashOps(key);
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+            return operations.entries();
+        } else {
+            return getRedisTemplate().<String, Object>opsForHash().entries(key);
+        }
+    }
+
+
     //endregion
 
 
@@ -268,6 +290,14 @@ public final class RedisUtils {
 
     public static boolean hsetnx(String key, String field, Object value) {
         return getRedisTemplate().opsForHash().putIfAbsent(key, field, SERIALIZER.serialize(value));
+    }
+
+    public static void hmset(String key, Map<String, Object> map) {
+        getRedisTemplate().opsForHash().putAll(key, map);
+    }
+
+    public static Map<String, Object> hgetAll(String key) {
+        return getRedisTemplate().<String, Object>opsForHash().entries(key);
     }
 
     //endregion
