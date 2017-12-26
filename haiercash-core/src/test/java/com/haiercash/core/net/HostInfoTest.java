@@ -7,7 +7,7 @@ import org.junit.Test;
  */
 public class HostInfoTest {
     @Test
-    public void getProcessId() throws Exception {
+    public void getProcessId() {
         System.out.println(HostInfo.getProcessId());
     }
 }
