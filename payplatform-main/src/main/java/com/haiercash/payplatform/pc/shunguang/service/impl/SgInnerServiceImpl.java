@@ -876,7 +876,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         }
         String flag = "";//页面跳转标识
         //获取自主支付可用额度金额
-        String crdNorAvailAmt = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt");
+        String crdNorAvailAmt = Convert.toString(((Map<String, Object>) (edresult.get("body"))).get("crdNorAvailAmt"));
         if (crdNorAvailAmt != null && !"".equals(crdNorAvailAmt)) {
             flag = "04";  //跳转有额度页面
             logger.info("=============跳转有额度页面=============");
@@ -886,10 +886,10 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             return success(returnmap);
         }
         //审批状态判断
-        String outSts = (String) ((Map<String, Object>) (edresult.get("body"))).get("outSts");
+        String outSts = Convert.toString(((Map<String, Object>) (edresult.get("body"))).get("outSts"));
         logger.info("审批判断页面跳转码" + outSts);
         if ("22".equals(outSts)) {//审批被退回
-            String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
+            String crdSeq = Convert.toString(((Map<String, Object>) (edresult.get("body"))).get("crdSeq"));
             cachemap.put("crdSeq", crdSeq);
             RedisUtils.setExpire(token, cachemap);
             flag = "05";
