@@ -1266,7 +1266,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     public Map<String, Object> shunguangth(Map<String, Object> map) {
         logger.info("从收单获取退货通知信息为：" + map);
         HashMap sg = new HashMap<>();
-        HashMap sgtwo =new HashMap<>();
+        HashMap sgtwo = new HashMap<>();
         HashMap sgsrs = new HashMap<>();
         String serno = "";
 
@@ -1345,11 +1345,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             }
 
             //根据商城订单号查询退货推送信息
-            if(sgReturngoodsLog == null){
+            if (sgReturngoodsLog == null) {
                 //首次推送
                 ts.setTimes("1");
                 shunGuangthLogDao.insert(ts);
-            }else{
+            } else {
                 int n = Convert.toInteger(sgReturngoodsLog.getTimes());
                 n = n + 1;
                 ts.setTimes(Convert.toString(n));
@@ -1357,9 +1357,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             }
 
         } catch (Exception e) {
-            if(sgReturngoodsLog != null){
+            if (sgReturngoodsLog != null) {
                 int n = Convert.toInteger(sgReturngoodsLog.getTimes());
-                if(n == 2){//第3次推送失败  则结束推送
+                if (n == 2) {//第3次推送失败  则结束推送
                     ts.setFlag("N");//推送失败
                     n = n + 1;
                     ts.setTimes(Convert.toString(n));
@@ -1368,9 +1368,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                     sg.put("retMsg", "处理成功");
                     sg.put("serno", serno);
                     logger.error("退货实时推送接口(JSON格式)， 出现异常 :" + e.getMessage(), e);
-                    sgtwo.put("head",sg);
-                    sgtwo.put("body","");
-                    sgsrs.put("response",sgtwo);
+                    sgtwo.put("head", sg);
+                    sgtwo.put("body", "");
+                    sgsrs.put("response", sgtwo);
                     return sgsrs;
                 }
             }
@@ -1382,9 +1382,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.error("退货实时推送接口(JSON格式)， 出现异常 :" + retMsg, e);
         }
 
-        sgtwo.put("head",sg);
-        sgtwo.put("body","");
-        sgsrs.put("response",sgtwo);
+        sgtwo.put("head", sg);
+        sgtwo.put("body", "");
+        sgsrs.put("response", sgtwo);
         return sgsrs;
     }
 
@@ -1402,11 +1402,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String channelNo = super.getChannelNo();
             logger.info("获取信息的渠道为==>" + channelNo);
             List<SgReturngoodsLog> dataList = shunGuangthLogDao.selectDataByFlag("N", channelNo);
+            if (dataList.size() == 0) {
+                return fail("00002", "暂无发送失败的数据");
+            }
             dataList.forEach((SgReturngoodsLog data) -> {
-                if (StringUtils.isEmpty(data)) {
-                    logger.info("暂无推送失败的信息");
-                    return;
-                }
                 String dataStr = com.alibaba.fastjson.JSONObject.toJSONString(data);
                 com.alibaba.fastjson.JSONObject dataJs = com.alibaba.fastjson.JSONObject.parseObject(dataStr);
                 dataJs.remove("locId");

@@ -5,7 +5,7 @@
 <mapper namespace="com.haiercash.payplatform.common.dao.SgReturngoodsLogDao">
 
     <!--查询顺逛推送次数-->
-    <select id="selectDataByFlag" resultType="com.haiercash.payplatform.common.dao.SgReturngoodsLogDao">
+    <select id="selectDataByFlag" resultType="com.haiercash.payplatform.common.data.SgReturngoodsLog">
      select
              log_id,
              msg_typ,
@@ -19,26 +19,26 @@
              status,
              content
     from SG_RETURNGOODS_LOG
-    where flag=#{flag,jdbcType=VARCHAR}
-    and channel_no=#{channelNo,jdbcType=VARCHAR}
+        where flag=#{0}
+        and channel_no=#{1}
     </select>
 
     <update id="updateFlagById">
         update SG_RETURNGOODS_LOG
         <set>
-            time=#{time, jdbcType=INTEGER},
-            flag=#{flag, jdbcType=VARCHAR}
+            time=#{0},
+            flag=#{1}
         </set>
-        where log_id=#{logId, jdbcType=VARCHAR}
+        where log_id=#{2}
     </update>
 
     <update id="updateTimesById">
         update SG_RETURNGOODS_LOG
         <set>
-            time=#{time, jdbcType=INTEGER},
+            time=#{0},
             times=times+1
         </set>
-        where log_id=#{logId, jdbcType=VARCHAR}
+        where log_id=#{1}
     </update>
 
     <select id="getByMallOrderNo" resultType="com.haiercash.payplatform.common.data.SgReturngoodsLog" >
