@@ -1382,7 +1382,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.error("退货实时推送接口(JSON格式)， 出现异常 :" + retMsg, e);
         }
 
-
         sgtwo.put("head",sg);
         sgtwo.put("body","");
         sgsrs.put("response",sgtwo);

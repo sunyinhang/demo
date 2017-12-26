@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface SgReturngoodsLogDao extends BaseMapper<SgReturngoodsLog> {
     //根据商城订单号查询退货推送信息
-    SgReturngoodsLog getByMallOrderNo(@Param("mallorderno") String mallorderno);
+    SgReturngoodsLog getByMallOrderNo(@Param("mallOrderNo") String mallOrderNo);
     //根据商城订单号修改退货推送信息
     void updateByMallOrderNo(SgReturngoodsLog SgReturngoodsLog);
 
