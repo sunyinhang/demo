@@ -14,15 +14,16 @@ import javax.persistence.Table;
 @Table(name = "SHUN_GUANGTH_LOG")
 public class ShunGuangthLog {
     @Id
-    private String logid;//主键
-    private String msgtyp;//推送类型
-    private String applseq;//申请流水号
-    private String mallorderno;//商城订单号
-    private String loanno;//借据号
-    private String idno;//身份证号
-    private String custname;//客户姓名
-    private String businessid;//业务流水号
-    private String businesstype;//业务类型
+    private String logId;//主键
+    private String msgTyp;//推送类型
+    private String channelNo;//渠道号
+    private String applSeq;//申请流水号
+    private String mallOrderNo;//商城订单号
+    private String loanNo;//借据号
+    private String idNo;//身份证号
+    private String custName;//客户姓名
+    private String businessId;//业务流水号
+    private String businessType;//业务类型
     private String status;//状态
     private String content;//提示描述
     private String time;//时间

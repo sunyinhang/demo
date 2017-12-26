@@ -5,7 +5,11 @@ import com.haiercash.mybatis.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
 import com.haiercash.payplatform.common.dao.ShunGuangthLogDao;
-import com.haiercash.payplatform.common.data.*;
+import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.data.AppOrderGoods;
+import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.data.SgRegions;
+import com.haiercash.payplatform.common.data.ShunGuangthLog;
 import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.config.ShunguangConfig;
@@ -19,6 +23,7 @@ import com.haiercash.payplatform.service.OrderManageService;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
@@ -1255,6 +1260,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail("01", "请求数据校验失败");
         }
     }
+
     //顺逛退货消息推送
     public Map<String, Object> shunGuangTh(Map<String, Object> map) {
         logger.info("从收单获取退货通知信息为：" + map);
@@ -1301,7 +1307,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String sgString = com.alibaba.fastjson.JSONObject.toJSONString(sgts);
             String tradeCode = "Sg-10011";
             HashMap<String, Object> encrypt = encrypt(sgString, channelNo, tradeCode);//数据的加密数据  /json/ious/refundNotify.json
-            logger.info("推送的报文是："+encrypt);
+            logger.info("推送的报文是：" + encrypt);
             String result = JsonClientUtils.postForString(url_ts + "/paycenter/json/ious/refundNotify.json", encrypt);
             String resultjson = result.substring(result.indexOf("{"), result.lastIndexOf("}") + 1);
             logger.info("实时推送接口(JSON格式)，第三方返回的结果数据：" + resultjson);
@@ -1318,16 +1324,17 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             SimpleDateFormat tm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = new Date();
             String time = tm.format(date);
-            ts.setLogid(UUID.randomUUID().toString().replace("-", ""));
-            ts.setMsgtyp(msgTyp);
-            ts.setApplseq(applSeq);
-            ts.setMallorderno(mallOrderNo);
-            ts.setLoanno(loanNo);
-            ts.setIdno(idNo);
-            ts.setCustname(custName);
-            ts.setBusinessid(businessId);
-            ts.setBusinesstype(businessType);
+            ts.setLogId(UUID.randomUUID().toString().replace("-", ""));
+            ts.setMsgTyp(msgTyp);
+            ts.setApplSeq(applSeq);
+            ts.setMallOrderNo(mallOrderNo);
+            ts.setLoanNo(loanNo);
+            ts.setIdNo(idNo);
+            ts.setCustName(custName);
+            ts.setBusinessId(businessId);
+            ts.setBusinessType(businessType);
             ts.setStatus(status);
+            ts.setChannelNo(channelNo);
             ts.setContent(content);
             ts.setTime(time);
             if ("00000".equals(retflag)) {
@@ -1344,35 +1351,91 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         HashMap sg = new HashMap<>();
         HashMap sgone = new HashMap<>();
-        HashMap sgtwo =new HashMap<>();
+        HashMap sgtwo = new HashMap<>();
         HashMap sgsr = new HashMap<>();
         HashMap sgsrs = new HashMap<>();
         sg.put("retFlag", "00000");
         sg.put("retMsg", "处理成功");
         sg.put("serno", serno);
-        sgtwo.put("head",sg);
-        sgtwo.put("body","");
-        sgsrs.put("response",sgtwo);
+        sgtwo.put("head", sg);
+        sgtwo.put("body", "");
+        sgsrs.put("response", sgtwo);
         return sgsrs;
     }
-    private HashMap<String, Object> encrypt(String data, String channelNo, String tradeCode) throws Exception {
-        logger.info("获取渠道" + channelNo + "公钥");
-        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        if (cooperativeBusiness == null) {
-            throw new RuntimeException("渠道" + channelNo + "公钥获取失败");
+
+    /**
+     * @Title pushMessage
+     * @Description: 手动推送消息
+     * @author yu jianwei
+     * @date 2017/12/25 18:23
+     */
+    @Override
+    public Map<String, Object> pushMessage() {
+        logger.info("=========将推送失败的收单获取退货通知从信息数据库推送至顺逛开始=============");
+        try {
+            String url_ts = shunguangConfig.getTsUrl();
+            String channelNo = super.getChannelNo();
+            logger.info("获取信息的渠道为==>" + channelNo);
+            List<ShunGuangthLog> dataList = shunGuangthLogDao.selectDataByFlag("N", channelNo);
+            dataList.forEach((ShunGuangthLog data) -> {
+                if (StringUtils.isEmpty(data)) {
+                    logger.info("暂无推送失败的信息");
+                    return;
+                }
+                String dataStr = com.alibaba.fastjson.JSONObject.toJSONString(data);
+                com.alibaba.fastjson.JSONObject dataJs = com.alibaba.fastjson.JSONObject.parseObject(dataStr);
+                dataJs.remove("locId");
+                String sgString = com.alibaba.fastjson.JSONObject.toJSONString(dataJs);
+                String tradeCode = "Sg-10011";
+                HashMap<String, Object> encrypt = encrypt(sgString, channelNo, tradeCode);//数据的加密数据  /json/ious/refundNotify.json
+                logger.info("推送的报文是：" + encrypt);
+                String result = JsonClientUtils.postForString(url_ts + "/paycenter/json/ious/refundNotify.json", encrypt);
+                String resultjson = result.substring(result.indexOf("{"), result.lastIndexOf("}") + 1);
+                logger.info("实时推送接口(JSON格式)，第三方返回的结果数据：" + resultjson);
+                com.alibaba.fastjson.JSONObject jsonsObj = com.alibaba.fastjson.JSONObject.parseObject(resultjson);
+                com.alibaba.fastjson.JSONObject headone = jsonsObj.getJSONObject("head");
+                String retflag = headone.getString("retFlag");
+                Date date = new Date();
+                String locId = data.getLogId();
+                logger.info("数据库信息Id==>" + locId);
+                if ("00000".equals(retflag)) {
+                    logger.info("数据推送成功");
+                    shunGuangthLogDao.updateFlagById(FormatUtil.formatDate(date), "Y", locId);
+                } else {
+                    logger.info("数据推送失败");
+                    shunGuangthLogDao.updateTimesById(FormatUtil.formatDate(date), locId);
+                }
+            });
+            return success();
+        } catch (Exception e) {
+            String retMsg = e.getMessage();
+            logger.error("退货数据库信息推送接口(JSON格式)， 出现异常 :" + retMsg, e);
+            return fail("00001", "系统内部异常");
         }
-        String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
-        String password = DesUtil.productKey();
-        //2.des加密
-        String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(), password));
-        //3.加密des的key
-        String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(), publicKey));
+    }
+
+    private HashMap<String, Object> encrypt(String data, String channelNo, String tradeCode) {
+        logger.info("获取渠道" + channelNo + "公钥");
         HashMap<String, Object> map = new HashMap<>();
-        map.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
-        map.put("channelNo", "46");
-        map.put("tradeCode", tradeCode);
-        map.put("data", desData);
-        map.put("key", password_);
+        try {
+            CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
+            if (cooperativeBusiness == null) {
+                throw new RuntimeException("渠道" + channelNo + "公钥获取失败");
+            }
+            String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
+            String password = DesUtil.productKey();
+            //2.des加密
+            String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(), password));
+            //3.加密des的key
+            String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(), publicKey));
+            map.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
+            map.put("channelNo", "46");
+            map.put("tradeCode", tradeCode);
+            map.put("data", desData);
+            map.put("key", password_);
+        } catch (Exception e) {
+            logger.error("加解密出现异常" + e.getMessage());
+        }
         return map;
     }
 }

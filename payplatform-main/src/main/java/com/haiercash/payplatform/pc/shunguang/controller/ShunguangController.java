@@ -291,7 +291,7 @@ public class ShunguangController extends BaseController {
         return shunguangService.getReturnGoodsInfo(map);
     }
     @RequestMapping(value = "/api/payment/shunguang/shunguangth",method = RequestMethod.POST)
-    public Map<String,Object> shunGuangTh(@RequestBody Map<String , Object> map){
+    public Map<String,Object> shunguangth(@RequestBody Map<String , Object> map){
 //        HashMap<Object, Object> map1 = new HashMap<>();
 //        HashMap<Object, Object> map2 = new HashMap<>();
 //        HashMap<String, Object> map3 = new HashMap<>();
@@ -316,5 +316,16 @@ public class ShunguangController extends BaseController {
 //        map3.put("head",map1);
 //        map3.put("body",map2);
         return shunguangService.shunGuangTh(map);
+    }
+
+    /**
+     * @Title pushMessage
+     * @Description: 手动推送退货消息
+     * @author yu jianwei
+     * @date 2017/12/25 18:07
+     */
+    @RequestMapping(value = "/api/payment/shunguang/pushMessage", method = RequestMethod.POST)
+    public Map<String, Object> pushMessage() {
+        return shunguangService.pushMessage();
     }
 }

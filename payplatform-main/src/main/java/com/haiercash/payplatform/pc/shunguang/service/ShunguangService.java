@@ -123,4 +123,13 @@ public interface ShunguangService {
      */
     public Map<String,Object> shunGuangTh(Map<String, Object> map);
 
+    /**
+     * @Title pushMessage
+     * @Description:
+     * @author yu jianwei
+     * @date 2017/12/25 18:12
+     */
+    public Map<String, Object> pushMessage();
+
+
 }
