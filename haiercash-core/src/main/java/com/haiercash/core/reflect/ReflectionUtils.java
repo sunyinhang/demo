@@ -1,6 +1,6 @@
 package com.haiercash.core.reflect;
 
-import com.bestvike.linq.exception.ArgumentNullException;
+import org.springframework.util.Assert;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -15,8 +15,8 @@ public final class ReflectionUtils {
     }
 
     private static Field getFieldInfoCore(Class<?> clazz, String filedName, boolean isStatic) {
-        if (clazz == null)
-            throw new ArgumentNullException("clazz", "clazz can not be null");
+        Assert.notNull(clazz, "clazz can not be null");
+
         try {
             Field field = clazz.getDeclaredField(filedName);
             if (Modifier.isStatic(field.getModifiers()) != isStatic)
@@ -29,8 +29,8 @@ public final class ReflectionUtils {
     }
 
     private static Method getMethodInfoCore(Class<?> clazz, String methodName, Class<?>[] parameterTypes, boolean isStatic) {
-        if (clazz == null)
-            throw new ArgumentNullException("clazz", "clazz can not be null");
+        Assert.notNull(clazz, "clazz can not be null");
+
         try {
             Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
             if (Modifier.isStatic(method.getModifiers()) != isStatic)
@@ -49,8 +49,8 @@ public final class ReflectionUtils {
 
     //获取构造函数
     public static <T> Constructor<T> getConstructorInfo(Class<T> clazz, Class<?>[] parameterTypes) {
-        if (clazz == null)
-            throw new ArgumentNullException("clazz", "clazz can not be null");
+        Assert.notNull(clazz, "clazz can not be null");
+
         try {
             Constructor<T> constructor = clazz.getConstructor(parameterTypes);
             constructor.setAccessible(true);
@@ -62,8 +62,8 @@ public final class ReflectionUtils {
 
     //获取字段,可获取父类私有字段
     public static Field getFieldInfo(Class<?> clazz, String filedName, boolean isStatic) {
-        if (clazz == null)
-            throw new ArgumentNullException("clazz", "clazz can not be null");
+        Assert.notNull(clazz, "clazz can not be null");
+
         while (!clazz.equals(Object.class)) {
             Field field = getFieldInfoCore(clazz, filedName, isStatic);
             if (field == null) {
@@ -77,8 +77,8 @@ public final class ReflectionUtils {
 
     //获取方法,可获取父类私有方法
     public static Method getMethodInfo(Class<?> clazz, String methodName, Class<?>[] parameterTypes, boolean isStatic) {
-        if (clazz == null)
-            throw new ArgumentNullException("clazz", "clazz can not be null");
+        Assert.notNull(clazz, "clazz can not be null");
+
         while (!clazz.equals(Object.class)) {
             Method method = getMethodInfoCore(clazz, methodName, parameterTypes, isStatic);
             if (method == null) {
@@ -110,8 +110,8 @@ public final class ReflectionUtils {
     //获取实例字段值
     @SuppressWarnings("unchecked")
     public static <T> T getField(Object target, String fieldName) {
-        if (target == null)
-            throw new ArgumentNullException("target", "target can not be null");
+        Assert.notNull(target, "target can not be null");
+
         Class<?> clazz = target.getClass();
         Field field = getFieldInfo(clazz, fieldName, false);
         if (field == null)
@@ -126,8 +126,8 @@ public final class ReflectionUtils {
     //获取静态字段值
     @SuppressWarnings("unchecked")
     public static <T> T getField(Class<?> clazz, String fieldName) {
-        if (clazz == null)
-            throw new ArgumentNullException("clazz", "clazz can not be null");
+        Assert.notNull(clazz, "clazz can not be null");
+
         Field field = getFieldInfo(clazz, fieldName, true);
         if (field == null)
             throw new RuntimeException("no such field");
@@ -140,8 +140,8 @@ public final class ReflectionUtils {
 
     //设置实例字段值
     public static void setField(Object target, String fieldName, Object value) {
-        if (target == null)
-            throw new ArgumentNullException("target", "target can not be null");
+        Assert.notNull(target, "target can not be null");
+
         Class<?> clazz = target.getClass();
         Field field = getFieldInfo(clazz, fieldName, false);
         if (field == null)
@@ -155,8 +155,8 @@ public final class ReflectionUtils {
 
     //设置静态字段值
     public static void setField(Class<?> clazz, String fieldName, Object value) {
-        if (clazz == null)
-            throw new ArgumentNullException("clazz", "clazz can not be null");
+        Assert.notNull(clazz, "clazz can not be null");
+
         Field field = getFieldInfo(clazz, fieldName, true);
         if (field == null)
             throw new RuntimeException("no such field");
@@ -175,8 +175,8 @@ public final class ReflectionUtils {
     //调用实例方法
     @SuppressWarnings("unchecked")
     public static <T> T invoke(Object target, String methodName, Class<?>[] parameterTypes, Object[] args) {
-        if (target == null)
-            throw new ArgumentNullException("target", "target can not be null");
+        Assert.notNull(target, "target can not be null");
+
         Class<?> clazz = target.getClass();
         Method method = getMethodInfo(clazz, methodName, parameterTypes, false);
         if (method == null)
@@ -196,8 +196,8 @@ public final class ReflectionUtils {
     //调用静态方法
     @SuppressWarnings("unchecked")
     public static <T> T invoke(Class<?> clazz, String methodName, Class<?>[] parameterTypes, Object[] args) {
-        if (clazz == null)
-            throw new ArgumentNullException("clazz", "clazz can not be null");
+        Assert.notNull(clazz, "clazz can not be null");
+
         Method method = getMethodInfo(clazz, methodName, parameterTypes, true);
         if (method == null)
             throw new RuntimeException("no such method");
