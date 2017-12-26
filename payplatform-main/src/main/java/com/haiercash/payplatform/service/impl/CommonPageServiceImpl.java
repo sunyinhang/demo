@@ -1156,13 +1156,13 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         logger.info("检验参数:" + map + ",申请金额:" + applyAmt);
 
         //调用信贷系统失败或者返回失败 直接返回true
-        Map<String, Object> result = CmisUtil.getCmisResponse(CmisTradeCode.TRADECODE_ED_CHECK, token, map);
         /**
          * { "response": { "head": { "retMsg": "交易成功！", "retFlag": "00000" },
          * "body": { "crdComUsedAmt": 6001, "crdComAvailAmt": 0, "crdComAmt":
          * 10000, "crdNorUsedAmt": 6001, "crdAmt": 10000, "crdNorAvailAmt": 0,
          * "crdSts": 30, "crdNorAmt": 10000, "contDt": "2018-03-19" } } }
          */
+        Map<String, Object> result = CmisUtil.getCmisResponse(CmisTradeCode.TRADECODE_ED_CHECK, token, map);
         logger.info("信贷100016返回" + result);
         if (result == null) {
             logger.info("信贷系统额度查询失败");
@@ -1172,8 +1172,10 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if (!CmisUtil.isSuccess(result)) {
             return true;
         }
-        Map<String, Object> bodyMap = (Map<String, Object>) responseMap.get("body");
-        applyAmt = String.valueOf(StringUtils.isEmpty("applyAmt") ? 0 : applyAmt);
+        Map<String, Object> _repbodyMap = (Map<String, Object>) responseMap.get("body");
+        Map<String, Object> speCrdList = (Map<String, Object>) _repbodyMap.get("speCrdList");
+        Map<String, Object> bodyMap = (Map<String, Object>) speCrdList.get("speCrdInfo");
+        applyAmt = String.valueOf(StringUtils.isEmpty(applyAmt) ? 0 : applyAmt);
         String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAmt")) ? 0 : bodyMap.get("crdComAvailAmt"));//商品贷用crdComAvailAmt   现金贷用crdNorAvailAmt
         logger.info("可用额度:" + crdComAvailAmt);
         if (new BigDecimal(crdComAvailAmt).compareTo(new BigDecimal(applyAmt)) >= 0) {
