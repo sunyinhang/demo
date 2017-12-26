@@ -121,7 +121,7 @@ public interface ShunguangService {
      * @param map
      * @return
      */
-    public Map<String,Object> shunGuangTh(Map<String, Object> map);
+    public Map<String,Object> shunguangth(Map<String, Object> map);
 
     /**
      * @Title pushMessage

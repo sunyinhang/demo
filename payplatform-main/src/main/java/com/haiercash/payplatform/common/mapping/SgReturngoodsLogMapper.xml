@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.payplatform.common.dao.SgReturngoodsLogDao">
+
+    <!--查询顺逛推送次数-->
+    <select id="selectDataByFlag" resultType="com.haiercash.payplatform.common.dao.SgReturngoodsLogDao">
+     select
+             log_id,
+             msg_typ,
+             appl_seq,
+             mall_order_no,
+             loan_no,
+             id_no,
+             cust_name,
+             business_id,
+             business_type,
+             status,
+             content
+    from SG_RETURNGOODS_LOG
+    where flag=#{flag,jdbcType=VARCHAR}
+    and channel_no=#{channelNo,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateFlagById">
+        update SG_RETURNGOODS_LOG
+        <set>
+            time=#{time, jdbcType=INTEGER},
+            flag=#{flag, jdbcType=VARCHAR}
+        </set>
+        where log_id=#{logId, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateTimesById">
+        update SG_RETURNGOODS_LOG
+        <set>
+            time=#{time, jdbcType=INTEGER},
+            times=times+1
+        </set>
+        where log_id=#{logId, jdbcType=VARCHAR}
+    </update>
+
+    <select id="getByMallOrderNo" resultType="com.haiercash.payplatform.common.data.SgReturngoodsLog" >
+        select * from SG_RETURNGOODS_LOG where MALL_ORDER_NO = #{mallOrderNo, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateByMallOrderNo">
+        update
+          SG_RETURNGOODS_LOG
+        set
+            msg_typ = #{msgTyp, jdbcType=VARCHAR} ,
+            appl_seq = #{applSeq, jdbcType=VARCHAR} ,
+            loan_no = #{loanNo, jdbcType=VARCHAR} ,
+            id_no = #{idNo, jdbcType=VARCHAR} ,
+            cust_name = #{custName, jdbcType=VARCHAR} ,
+            business_id = #{businessId, jdbcType=VARCHAR} ,
+            business_type = #{businessType, jdbcType=VARCHAR} ,
+            status = #{status, jdbcType=VARCHAR} ,
+            content = #{content, jdbcType=VARCHAR} ,
+            time = #{time, jdbcType=VARCHAR} ,
+            flag = #{flag, jdbcType=VARCHAR} ,
+            times = #{times, jdbcType=VARCHAR} ,
+            channel_no=#{channelNo,jdbcType=VARCHAR},
+            remark = #{remark, jdbcType=VARCHAR}
+        where
+          MALL_ORDER_NO = #{mallOrderNo, jdbcType=VARCHAR}
+        and
+          channel_no=#{channelNo,jdbcType=VARCHAR}
+    </update>
+</mapper>

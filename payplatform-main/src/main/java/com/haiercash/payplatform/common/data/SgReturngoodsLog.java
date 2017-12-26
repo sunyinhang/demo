@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "SG_RETURNGOODS_LOG")
-public class ShunGuangthLog {
+public class SgReturngoodsLog {
     @Id
     private String logId;//主键
     private String msgTyp;//推送类型

@@ -1,15 +1,16 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.mybatis.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
-import com.haiercash.payplatform.common.dao.ShunGuangthLogDao;
+import com.haiercash.payplatform.common.dao.SgReturngoodsLogDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.SgRegions;
-import com.haiercash.payplatform.common.data.ShunGuangthLog;
+import com.haiercash.payplatform.common.data.SgReturngoodsLog;
 import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.config.ShunguangConfig;
@@ -74,7 +75,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     @Autowired
     private CommonConfig commonConfig;
     @Autowired
-    private ShunGuangthLogDao shunGuangthLogDao;
+    private SgReturngoodsLogDao shunGuangthLogDao;
     @Autowired
     private ShunguangConfig shunguangConfig;
 
@@ -1262,40 +1263,57 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //顺逛退货消息推送
-    public Map<String, Object> shunGuangTh(Map<String, Object> map) {
+    public Map<String, Object> shunguangth(Map<String, Object> map) {
         logger.info("从收单获取退货通知信息为：" + map);
-        String serno = null;
+        HashMap sg = new HashMap<>();
+        HashMap sgtwo =new HashMap<>();
+        HashMap sgsrs = new HashMap<>();
+        String serno = "";
+
+        String url_ts = shunguangConfig.getTsUrl();
+        logger.info("Sg-10011退货通知推送地址：" + url_ts);
+
+        Map m = (Map) map.get("request");
+        Map headMap = (Map) m.get("head");
+        Map bodyMap = (Map) m.get("body");
+        //获取头部信息
+        String channelNo = Convert.toString(headMap.get("channelNo"));
+        serno = Convert.toString(headMap.get("serno"));
+        //
+        String msgType = Convert.toString(bodyMap.get("msgType"));//推送类型
+        String applSeq = Convert.toString(bodyMap.get("applSeq"));//申请流水号
+        String loanNo = Convert.toString(bodyMap.get("loanNo"));//借据号
+        String businessId = Convert.toString(bodyMap.get("businessId"));//业务流水号
+        String mallOrderNo = Convert.toString(bodyMap.get("mallOrderNo"));//商城订单号
+        String custName = Convert.toString(bodyMap.get("custName"));//客户姓名
+        String businessType = Convert.toString(bodyMap.get("businessType"));//业务类型
+        String idNo = Convert.toString(bodyMap.get("idNo"));//身份证号
+        String content = Convert.toString(bodyMap.get("content"));//提示描述
+        String status = Convert.toString(bodyMap.get("status"));//状态
+        SgReturngoodsLog sgReturngoodsLog = shunGuangthLogDao.getByMallOrderNo(mallOrderNo);
+
+        SgReturngoodsLog ts = new SgReturngoodsLog();
+        SimpleDateFormat tm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        String time = tm.format(date);
+        ts.setLogId(UUID.randomUUID().toString().replace("-", ""));
+        ts.setMsgTyp(msgType);
+        ts.setApplSeq(applSeq);
+        ts.setMallOrderNo(mallOrderNo);
+        ts.setLoanNo(loanNo);
+        ts.setIdNo(idNo);
+        ts.setCustName(custName);
+        ts.setBusinessId(businessId);
+        ts.setBusinessType(businessType);
+        ts.setStatus(status);
+        ts.setChannelNo(channelNo);
+        ts.setContent(content);
+        ts.setTime(time);
+        ts.setChannelNo(channelNo);
         try {
-            String url_ts = shunguangConfig.getTsUrl();
-            logger.info("Sg-10011退货通知推送地址：" + url_ts);
-            String js = com.alibaba.fastjson.JSONObject.toJSONString(map);
-            com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(js);
-            com.alibaba.fastjson.JSONObject request = jsonObject.getJSONObject("request");
-            com.alibaba.fastjson.JSONObject head = request.getJSONObject("head");//获取头部信息
-            if (StringUtils.isEmpty(head)) {
-                logger.info("获取head中信息为空：" + head);
-                return fail("参数为空", "从收单获取的头部信息为空");
-            }
-            serno = head.getString("serno");//报文流水号
-            String channelNo = head.getString("channelNo");//渠道编码
-            com.alibaba.fastjson.JSONObject body = request.getJSONObject("body");//获取body中的信息
-            if (StringUtils.isEmpty(body)) {
-                logger.info("获取body信息为空" + body);
-                return fail("参数为空", "从收单获取的body信息为空");
-            }
-            String msgTyp = body.get("msgTyp") + "";//推送类型
-            String applSeq = body.get("applSeq") + "";//申请流水号
-            String mallOrderNo = body.get("mallOrderNo") + "";//商城订单号
-            String loanNo = body.get("loanNo") + "";//借据号
-            String idNo = body.get("idNo") + "";//身份证号
-            String custName = body.get("custName") + "";//客户姓名
-            String businessId = body.get("businessId") + "";//业务流水号
-            String businessType = body.get("businessType") + "";//业务类型
-            String status = body.get("status") + "";//状态
-            String content = body.get("content") + "";//提示描述
             HashMap<String, Object> sgts = new HashMap<String, Object>();
-            sgts.put("msgTyp", msgTyp);
-            sgts.put("applSeq", applSeq);
+            sgts.put("msgTyp", msgType);//
+            sgts.put("applSeq", applSeq);//
             sgts.put("mallOrderNo", mallOrderNo);
             sgts.put("loanNo", loanNo);
             sgts.put("idNo", idNo);
@@ -1305,61 +1323,67 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             sgts.put("status", status);
             sgts.put("content", content);
             String sgString = com.alibaba.fastjson.JSONObject.toJSONString(sgts);
-            String tradeCode = "Sg-10011";
-            HashMap<String, Object> encrypt = encrypt(sgString, channelNo, tradeCode);//数据的加密数据  /json/ious/refundNotify.json
-            logger.info("推送的报文是：" + encrypt);
+
+            HashMap<String, Object> encrypt = encrypt(sgString, channelNo, "Sg-10011");//数据的加密数据  /json/ious/refundNotify.json
             String result = JsonClientUtils.postForString(url_ts + "/paycenter/json/ious/refundNotify.json", encrypt);
-            String resultjson = result.substring(result.indexOf("{"), result.lastIndexOf("}") + 1);
-            logger.info("实时推送接口(JSON格式)，第三方返回的结果数据：" + resultjson);
-            com.alibaba.fastjson.JSONObject jsonsObj = com.alibaba.fastjson.JSONObject.parseObject(resultjson);
-            com.alibaba.fastjson.JSONObject headone = jsonsObj.getJSONObject("head");
-            String retflag = headone.getString("retFlag");
-//            String retflag="00000";
-            if (!"00000".equals(retflag)) {// 如果返回异常，继续发送
-                String retMsg = head.getString("retMsg");
-                logger.info("实时推送，响应错误：" + retMsg);
-                logger.info("推送结果返回异常开始重复推送，流水号是：" + applSeq);
-            }
-            ShunGuangthLog ts = new ShunGuangthLog();
-            SimpleDateFormat tm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = new Date();
-            String time = tm.format(date);
-            ts.setLogId(UUID.randomUUID().toString().replace("-", ""));
-            ts.setMsgTyp(msgTyp);
-            ts.setApplSeq(applSeq);
-            ts.setMallOrderNo(mallOrderNo);
-            ts.setLoanNo(loanNo);
-            ts.setIdNo(idNo);
-            ts.setCustName(custName);
-            ts.setBusinessId(businessId);
-            ts.setBusinessType(businessType);
-            ts.setStatus(status);
-            ts.setChannelNo(channelNo);
-            ts.setContent(content);
-            ts.setTime(time);
-            if ("00000".equals(retflag)) {
+            Map resultMap = HttpUtil.json2DeepMap(result);
+            Map headmap = (Map) resultMap.get("head");
+            String retMsg = Convert.toString(headmap.get("retMsg"));
+            String retFlag = Convert.toString(headMap.get("retFlag"));
+            logger.info("实时推送流水号：" + applSeq + "   响应数据：" + retMsg);
+
+            if ("00000".equals(retFlag)) {
                 ts.setFlag("Y");//推送成功
             } else {
                 ts.setFlag("N");//推送失败
             }
-            ts.setTimes("");
-            ts.setRemark("");
-            shunGuangthLogDao.insert(ts);
+
+            //根据商城订单号查询退货推送信息
+            if(sgReturngoodsLog == null){
+                //首次推送
+                ts.setTimes("1");
+                shunGuangthLogDao.insert(ts);
+            }else{
+                int n = Convert.toInteger(sgReturngoodsLog.getTimes());
+                n = n + 1;
+                ts.setTimes(Convert.toString(n));
+                shunGuangthLogDao.updateByMallOrderNo(ts);
+            }
+
+            sg.put("retFlag", "00000");
+            sg.put("retMsg", "处理成功");
+            sg.put("serno", serno);
+
         } catch (Exception e) {
+            if(sgReturngoodsLog != null){
+                int n = Convert.toInteger(sgReturngoodsLog.getTimes());
+                if(n == 2){//第3次推送失败  则结束推送
+                    ts.setFlag("N");//推送失败
+                    n = n + 1;
+                    ts.setTimes(Convert.toString(n));
+                    shunGuangthLogDao.updateByMallOrderNo(ts);
+                    sg.put("retFlag", "00000");
+                    sg.put("retMsg", "处理成功");
+                    sg.put("serno", serno);
+                    logger.error("退货实时推送接口(JSON格式)， 出现异常 :" + e.getMessage(), e);
+                    sgtwo.put("head",sg);
+                    sgtwo.put("body","");
+                    sgsrs.put("response",sgtwo);
+                    return sgsrs;
+                }
+            }
+
             String retMsg = e.getMessage();
+            sg.put("retFlag", "00099");
+            sg.put("retMsg", retMsg);
+            sg.put("serno", serno);
             logger.error("退货实时推送接口(JSON格式)， 出现异常 :" + retMsg, e);
         }
-        HashMap sg = new HashMap<>();
-        HashMap sgone = new HashMap<>();
-        HashMap sgtwo = new HashMap<>();
-        HashMap sgsr = new HashMap<>();
-        HashMap sgsrs = new HashMap<>();
-        sg.put("retFlag", "00000");
-        sg.put("retMsg", "处理成功");
-        sg.put("serno", serno);
-        sgtwo.put("head", sg);
-        sgtwo.put("body", "");
-        sgsrs.put("response", sgtwo);
+
+
+        sgtwo.put("head",sg);
+        sgtwo.put("body","");
+        sgsrs.put("response",sgtwo);
         return sgsrs;
     }
 
@@ -1376,8 +1400,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String url_ts = shunguangConfig.getTsUrl();
             String channelNo = super.getChannelNo();
             logger.info("获取信息的渠道为==>" + channelNo);
-            List<ShunGuangthLog> dataList = shunGuangthLogDao.selectDataByFlag("N", channelNo);
-            dataList.forEach((ShunGuangthLog data) -> {
+            List<SgReturngoodsLog> dataList = shunGuangthLogDao.selectDataByFlag("N", channelNo);
+            dataList.forEach((SgReturngoodsLog data) -> {
                 if (StringUtils.isEmpty(data)) {
                     logger.info("暂无推送失败的信息");
                     return;
