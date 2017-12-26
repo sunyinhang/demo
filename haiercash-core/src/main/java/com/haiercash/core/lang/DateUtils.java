@@ -35,7 +35,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      */
     public static Timestamp nowDate() {
         Timestamp now = now();
-        return new Timestamp(now.getYear(), now.getMonth(), now.getDay(), 0, 0, 0, 0);
+        return new Timestamp(now.getYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
     }
 
     /**
