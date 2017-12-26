@@ -65,7 +65,5 @@
             remark = #{remark, jdbcType=VARCHAR}
         where
           MALL_ORDER_NO = #{mallOrderNo, jdbcType=VARCHAR}
-        and
-          channel_no=#{channelNo,jdbcType=VARCHAR}
     </update>
 </mapper>
