@@ -29,11 +29,21 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     /**
+     * 获取操作系统当前日期
+     *
+     * @return
+     */
+    public static Timestamp nowDate() {
+        Timestamp now = now();
+        return new Timestamp(now.getYear(), now.getMonth(), now.getDay(), 0, 0, 0, 0);
+    }
+
+    /**
      * 获取操作系统当前时间戳的字符串格式 yyyy-MM-dd
      *
      * @return
      */
-    public static String nowDate() {
+    public static String nowDateString() {
         return DateUtils.toDateString(now());
     }
 
@@ -42,7 +52,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *
      * @return
      */
-    public static String nowDateTime() {
+    public static String nowDateTimeString() {
         return DateUtils.toDateTimeString(now());
     }
 
@@ -51,7 +61,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *
      * @return
      */
-    public static String nowDateTimeMs() {
+    public static String nowDateTimeMsString() {
         return DateUtils.toDateTimeMsString(now());
     }
 
@@ -60,7 +70,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *
      * @return
      */
-    public static String nowTime() {
+    public static String nowTimeString() {
         return DateUtils.toTimeString(now());
     }
 
@@ -70,7 +80,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * @param format
      * @return
      */
-    public static String now(String format) {
+    public static String nowString(String format) {
         return DateUtils.toString(now(), format);
     }
 

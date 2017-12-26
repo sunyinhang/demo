@@ -67,7 +67,7 @@ public class BusinessController extends BaseController {
         String applyNo = haiercashPayApplyBean.getApplyNo();
         String tradeCode = haiercashPayApplyBean.getTradeCode();
         String jsonStr = haiercashPayApplyBean.getData();
-        String tradetime = DateUtils.nowDateTime();
+        String tradetime = DateUtils.nowDateTimeString();
         xmllog.info("----------------接口请求数据：-----------------");
         xmllog.info(haiercashPayApplyBean.toString());
         xmllog.info("----------------接口请求数据：-----------------");
