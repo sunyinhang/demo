@@ -1334,8 +1334,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
             if ("00000".equals(retFlag)) {
                 ts.setFlag("Y");//推送成功
+                sg.put("retFlag", "00000");
+                sg.put("retMsg", "处理成功");
+                sg.put("serno", serno);
             } else {
                 ts.setFlag("N");//推送失败
+                sg.put("retFlag", "00099");
+                sg.put("retMsg", retMsg);
+                sg.put("serno", serno);
             }
 
             //根据商城订单号查询退货推送信息
@@ -1349,10 +1355,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 ts.setTimes(Convert.toString(n));
                 shunGuangthLogDao.updateByMallOrderNo(ts);
             }
-
-            sg.put("retFlag", "00000");
-            sg.put("retMsg", "处理成功");
-            sg.put("serno", serno);
 
         } catch (Exception e) {
             if(sgReturngoodsLog != null){
