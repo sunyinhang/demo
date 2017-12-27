@@ -1408,7 +1408,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             dataList.forEach((SgReturngoodsLog data) -> {
                 String dataStr = com.alibaba.fastjson.JSONObject.toJSONString(data);
                 com.alibaba.fastjson.JSONObject dataJs = com.alibaba.fastjson.JSONObject.parseObject(dataStr);
-                dataJs.remove("locId");
+                dataJs.remove("logId");
                 String sgString = com.alibaba.fastjson.JSONObject.toJSONString(dataJs);
                 String tradeCode = "Sg-10011";
                 HashMap<String, Object> encrypt = encrypt(sgString, channelNo, tradeCode);//数据的加密数据  /json/ious/refundNotify.json

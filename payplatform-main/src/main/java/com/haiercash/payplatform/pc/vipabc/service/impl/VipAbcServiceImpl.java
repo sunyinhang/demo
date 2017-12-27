@@ -18,6 +18,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
     private VipAbcDao vipAbcDao;
 
     public Map<String, Object> getIdCardInfo(Map<String, Object> map) {
+        logger.info("获取的参数为：" + map);
         HashMap<String, Object> mapIdCard = new HashMap<>();
         String ordersn = map.get("ordersn") + "";//vipabc方订单号
         String idCard = vipAbcDao.selectIdCard(ordersn);
