@@ -3,7 +3,7 @@ package com.haiercash.spring.rest;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.reflect.GenericTypeReference;
-import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.util.ConstUtil;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;

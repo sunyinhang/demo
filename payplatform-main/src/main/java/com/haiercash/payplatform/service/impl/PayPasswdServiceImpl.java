@@ -15,7 +15,7 @@ import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.util.ConstUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

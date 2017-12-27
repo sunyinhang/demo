@@ -1,9 +1,9 @@
 package com.haiercash.payplatform.pc.cashloan.controller;
 
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.spring.controller.BaseController;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
-import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.controller.BaseController;
+import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

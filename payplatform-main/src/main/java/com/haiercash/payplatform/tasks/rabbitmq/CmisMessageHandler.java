@@ -18,7 +18,7 @@ import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.rest.client.JsonClientUtils;
-import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.util.ConstUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;

@@ -1,7 +1,7 @@
 package com.haiercash.spring.weixin.entity;
 
 import com.haiercash.core.lang.Convert;
-import com.haiercash.spring.utils.BusinessException;
+import com.haiercash.spring.util.BusinessException;
 import lombok.Data;
 
 import java.util.Objects;

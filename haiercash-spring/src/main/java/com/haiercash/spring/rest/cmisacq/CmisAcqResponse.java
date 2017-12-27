@@ -3,7 +3,7 @@ package com.haiercash.spring.rest.cmisacq;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.rest.IResponse;
-import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.util.ConstUtil;
 import lombok.Data;
 
 import java.util.Objects;

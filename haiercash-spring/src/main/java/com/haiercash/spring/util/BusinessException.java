@@ -1,4 +1,4 @@
-package com.haiercash.spring.utils;
+package com.haiercash.spring.util;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

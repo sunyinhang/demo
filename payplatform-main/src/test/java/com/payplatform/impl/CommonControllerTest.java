@@ -3,7 +3,7 @@ package com.payplatform.impl;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.utils.HttpUtil;
+import com.haiercash.spring.util.HttpUtil;
 import com.payplatform.ControllerTest;
 import org.junit.Assert;
 import org.junit.Test;

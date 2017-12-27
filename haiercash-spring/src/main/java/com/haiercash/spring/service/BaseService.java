@@ -1,7 +1,7 @@
 package com.haiercash.spring.service;
 
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.utils.RestUtil;
+import com.haiercash.spring.util.RestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

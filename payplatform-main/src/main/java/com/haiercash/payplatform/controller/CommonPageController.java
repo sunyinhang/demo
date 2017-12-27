@@ -15,7 +15,7 @@ import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
-import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.weixin.WeiXinApi;
 import com.haiercash.spring.weixin.WeiXinUtils;
 import com.haiercash.spring.weixin.entity.WeiXinToken;

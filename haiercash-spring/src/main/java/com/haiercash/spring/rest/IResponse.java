@@ -1,7 +1,7 @@
 package com.haiercash.spring.rest;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.haiercash.spring.utils.BusinessException;
+import com.haiercash.spring.util.BusinessException;
 
 /**
  * Created by 许崇雷 on 2017-10-08.

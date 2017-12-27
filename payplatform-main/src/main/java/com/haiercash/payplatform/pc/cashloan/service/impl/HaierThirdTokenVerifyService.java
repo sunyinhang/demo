@@ -8,8 +8,8 @@ import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.spring.utils.BusinessException;
-import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.util.BusinessException;
+import com.haiercash.spring.util.ConstUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

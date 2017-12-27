@@ -1,4 +1,4 @@
-package com.haiercash.spring.utils;
+package com.haiercash.spring.util;
 
 /**
  * Created by use on 2017/7/25.

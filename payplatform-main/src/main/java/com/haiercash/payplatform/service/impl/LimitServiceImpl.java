@@ -7,7 +7,7 @@ import com.haiercash.payplatform.service.LimitService;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.spring.utils.ConstUtil;
+import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

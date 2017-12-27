@@ -1,4 +1,4 @@
-package com.haiercash.spring.utils;
+package com.haiercash.spring.util;
 
 import com.haiercash.spring.client.RestTemplateProvider;
 import org.apache.commons.logging.Log;
