@@ -1329,7 +1329,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             Map resultMap = HttpUtil.json2DeepMap(result);
             Map headmap = (Map) resultMap.get("head");
             String retMsg = Convert.toString(headmap.get("retMsg"));
-            String retFlag = Convert.toString(headMap.get("retFlag"));
+            String retFlag = Convert.toString(headmap.get("retFlag"));
             logger.info("实时推送流水号：" + applSeq + "   响应数据：" + retMsg);
 
             if ("00000".equals(retFlag)) {
