@@ -7,7 +7,7 @@ import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.rabbit.exception.ConsumeDisabledException;
-import com.haiercash.spring.trace.TraceConfig;
+import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.support.AmqpHeaders;
@@ -30,7 +30,7 @@ public final class IncomingLog {
         log.put("traceID", traceID);
         log.put("msgID", headers.getId());
         log.put("messageHeaders", headers);
-        log.put("messageBody", getBody((byte[]) message.getPayload(), headers));
+        log.put("messageBody", TraceUtils.getBody((byte[]) message.getPayload(), Convert.toString(headers.get(AmqpHeaders.CONTENT_ENCODING))));
         logger.info(String.format("[%s] ==>Rabbit Consume Begin: %s", traceID, JsonSerializer.serialize(log)));
     }
 
@@ -68,14 +68,5 @@ public final class IncomingLog {
         logger.error(String.format("[%s] ==>Rabbit Consume Error: %s", traceID, JsonSerializer.serialize(log)));
         //错误报告
         BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
-    }
-
-    private static String getBody(byte[] body, MessageHeaders headers) {
-        String encoding = headers == null ? TraceConfig.DEFAULT_CHARSET_NAME : Convert.defaultString(headers.get(AmqpHeaders.CONTENT_ENCODING), TraceConfig.DEFAULT_CHARSET_NAME);
-        try {
-            return new String(body, encoding);
-        } catch (Exception e) {
-            return TraceConfig.BODY_PARSE_FAIL;
-        }
     }
 }

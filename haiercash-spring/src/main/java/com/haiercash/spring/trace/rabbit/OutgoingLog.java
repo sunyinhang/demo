@@ -1,13 +1,12 @@
 package com.haiercash.spring.trace.rabbit;
 
-import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
-import com.haiercash.spring.trace.TraceConfig;
+import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.core.Message;
@@ -32,8 +31,8 @@ public final class OutgoingLog {
             log.put("msgID", msgID);
         log.put("exchange", exchange);
         log.put("routingKey", routingKey);
-        log.put("messageHeaders", getHeaders(properties));
-        log.put("messageBody", getBody(message.getBody(), properties.getContentEncoding()));
+        log.put("messageHeaders", TraceUtils.getHeaders(properties));
+        log.put("messageBody", TraceUtils.getBody(message.getBody(), properties.getContentEncoding()));
         return log;
     }
 
@@ -50,21 +49,5 @@ public final class OutgoingLog {
         logger.error(String.format("[%s] ==>Rabbit Produce Error: %s", ThreadContext.getTraceID(), JsonSerializer.serialize(log)));
         //错误报告
         BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
-    }
-
-    private static String getBody(byte[] body, String encoding) {
-        encoding = Convert.defaultString(encoding, TraceConfig.DEFAULT_CHARSET_NAME);
-        try {
-            return new String(body, encoding);
-        } catch (Exception e) {
-            return TraceConfig.BODY_PARSE_FAIL;
-        }
-    }
-
-    private static Map<String, String> getHeaders(MessageProperties properties) {
-        Map<String, String> headers = new LinkedHashMap<>(2);
-        headers.put("content-type", properties.getContentType());
-        headers.put("content-encoding", properties.getContentEncoding());
-        return headers;
     }
 }

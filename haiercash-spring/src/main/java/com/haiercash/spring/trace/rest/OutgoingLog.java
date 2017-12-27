@@ -9,6 +9,7 @@ import com.haiercash.spring.client.ClientResponseWrapper;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
+import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,7 +31,7 @@ public final class OutgoingLog {
         log.put("traceID", traceID);
         log.put("method", method);
         log.put("requestUri", request.getURI().toString());
-        log.put("requestHeaders", request.getHeaders());
+        log.put("requestHeaders", TraceUtils.getHeaders(request));
         log.put("requestPath", request.getURI().getPath());
         log.put("requestQuery", queryString);
         log.put("requestParams", URLSerializer.urlToMap(queryString, CharsetNames.UTF_8));
@@ -41,7 +42,7 @@ public final class OutgoingLog {
 
     public static void writeResponseLog(Map<String, Object> log, ClientResponseWrapper response, long tookMs) throws IOException {
         log.put("responseStatus", response.getRawStatusCode());
-        log.put("responseHeaders", response.getHeaders());
+        log.put("responseHeaders", TraceUtils.getHeaders(response));
         log.put("responseBody", response.getBody().getContent());
         log.put("took", tookMs);
         logger.info(String.format("[%s] ==>Call Rest: %s", ThreadContext.getTraceID(), JsonSerializer.serialize(log)));
