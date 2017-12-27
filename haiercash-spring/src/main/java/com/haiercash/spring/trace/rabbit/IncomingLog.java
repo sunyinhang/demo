@@ -1,6 +1,5 @@
 package com.haiercash.spring.trace.rabbit;
 
-import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.context.ThreadContext;
@@ -10,9 +9,7 @@ import com.haiercash.spring.rabbit.exception.ConsumeDisabledException;
 import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,21 +22,19 @@ public final class IncomingLog {
 
     public static void writeRequestLog(Message message) {
         String traceID = ThreadContext.getTraceID();
-        MessageHeaders headers = message.getHeaders();
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("traceID", traceID);
-        log.put("msgID", headers.getId());
-        log.put("messageHeaders", headers);
-        log.put("messageBody", TraceUtils.getBody((byte[]) message.getPayload(), Convert.toString(headers.get(AmqpHeaders.CONTENT_ENCODING))));
+        log.put("msgID", TraceUtils.getMsgID(message));
+        log.put("messageHeaders", TraceUtils.getHeaders(message));
+        log.put("messageBody", TraceUtils.getBody(message));
         logger.info(String.format("[%s] ==>Rabbit Consume Begin: %s", traceID, JsonSerializer.serialize(log)));
     }
 
     public static void writeResponseLog(Message message, long tookMs) {
         String traceID = ThreadContext.getTraceID();
-        MessageHeaders headers = message.getHeaders();
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("traceID", traceID);
-        log.put("msgID", headers.getId());
+        log.put("msgID", TraceUtils.getMsgID(message));
         log.put("result", "消费成功");
         log.put("took", tookMs);
         logger.info(String.format("[%s] ==>Rabbit Consume End: %s", traceID, JsonSerializer.serialize(log)));
@@ -47,22 +42,20 @@ public final class IncomingLog {
 
     public static void writeDisabled(Message message, long tookMs) {
         String traceID = ThreadContext.getTraceID();
-        MessageHeaders headers = message.getHeaders();
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("traceID", traceID);
-        log.put("msgID", headers.getId());
+        log.put("msgID", TraceUtils.getMsgID(message));
         log.put("result", ConsumeDisabledException.MESSAGE);
         log.put("took", tookMs);
         logger.warn(String.format("[%s] ==>Rabbit Consume Disabled: %s", traceID, JsonSerializer.serialize(log)));
     }
 
     public static void writeError(Message message, Exception e, long tookMs) {
-        String msg = ThrowableUtils.getString(e);
         String traceID = ThreadContext.getTraceID();
-        MessageHeaders headers = message.getHeaders();
+        String msg = ThrowableUtils.getString(e);
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("traceID", traceID);
-        log.put("msgID", headers.getId());
+        log.put("msgID", TraceUtils.getMsgID(message));
         log.put("error", msg);
         log.put("took", tookMs);
         logger.error(String.format("[%s] ==>Rabbit Consume Error: %s", traceID, JsonSerializer.serialize(log)));

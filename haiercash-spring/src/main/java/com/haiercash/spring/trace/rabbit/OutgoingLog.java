@@ -10,7 +10,6 @@ import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,16 +22,15 @@ public final class OutgoingLog {
 
     public static Map<String, Object> writeRequestLog(Message message, String exchange, String routingKey) {
         String traceID = ThreadContext.getTraceID();
-        MessageProperties properties = message.getMessageProperties();
-        String msgID = properties.getMessageId();
+        String msgID = TraceUtils.getMsgID(message);
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("traceID", traceID);
         if (StringUtils.isNotEmpty(msgID))
             log.put("msgID", msgID);
         log.put("exchange", exchange);
         log.put("routingKey", routingKey);
-        log.put("messageHeaders", TraceUtils.getHeaders(properties));
-        log.put("messageBody", TraceUtils.getBody(message.getBody(), properties.getContentEncoding()));
+        log.put("messageHeaders", TraceUtils.getHeaders(message));
+        log.put("messageBody", TraceUtils.getBody(message));
         return log;
     }
 

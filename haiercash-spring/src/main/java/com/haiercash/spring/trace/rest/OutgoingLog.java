@@ -1,9 +1,7 @@
 package com.haiercash.spring.trace.rest;
 
-import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.core.serialization.JsonSerializer;
-import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.spring.client.ClientRequestWrapper;
 import com.haiercash.spring.client.ClientResponseWrapper;
 import com.haiercash.spring.context.ThreadContext;
@@ -26,24 +24,23 @@ public final class OutgoingLog {
     public static Map<String, Object> writeRequestLog(ClientRequestWrapper request) throws IOException {
         String traceID = ThreadContext.getTraceID();
         String method = request.getMethod().name().toUpperCase();
-        String queryString = request.getURI().getRawQuery();
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("traceID", traceID);
         log.put("method", method);
         log.put("requestUri", request.getURI().toString());
         log.put("requestHeaders", TraceUtils.getHeaders(request));
         log.put("requestPath", request.getURI().getPath());
-        log.put("requestQuery", queryString);
-        log.put("requestParams", URLSerializer.urlToMap(queryString, CharsetNames.UTF_8));
+        log.put("requestQuery", request.getURI().getRawQuery());
+        log.put("requestParams", TraceUtils.getParams(request));
         if (method.equals("POST") || method.equals("PUT"))
-            log.put("requestBody", request.getBodyInternal(null).getContent());
+            log.put("requestBody", TraceUtils.getBody(request));
         return log;
     }
 
     public static void writeResponseLog(Map<String, Object> log, ClientResponseWrapper response, long tookMs) throws IOException {
         log.put("responseStatus", response.getRawStatusCode());
         log.put("responseHeaders", TraceUtils.getHeaders(response));
-        log.put("responseBody", response.getBody().getContent());
+        log.put("responseBody", TraceUtils.getBody(response));
         log.put("took", tookMs);
         logger.info(String.format("[%s] ==>Call Rest: %s", ThreadContext.getTraceID(), JsonSerializer.serialize(log)));
     }
