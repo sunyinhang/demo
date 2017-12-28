@@ -174,7 +174,7 @@ public final class ControllerInterceptor {
         //更新参数
         this.setCommonArgs(params, paramNames, args, commonArgs);
         //打印日志
-        this.logger.info(String.format("常用参数 token:%s channel:%s channelNo:%s", commonArgs.getToken(), commonArgs.getChannel(), commonArgs.getChannelNo()));
+        this.logger.info(String.format("[%s] 常用参数 token:%s channel:%s channelNo:%s", ThreadContext.getTraceID(), commonArgs.getToken(), commonArgs.getChannel(), commonArgs.getChannelNo()));
     }
 
     @Pointcut("execution(* com.haiercash..*.*(..)) && (@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
