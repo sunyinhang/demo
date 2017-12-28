@@ -87,7 +87,7 @@ public interface AcquirerService {
      * @param map
      * @return Map
      */
-    public Map<String, Object> saveRiskInfo(Map<String, Object> map);
+    Map<String, Object> saveRiskInfo(Map<String, Object> map);
 
 //    /**
 //     * 2.1.5	(POST) ACQ-1133贷款申请取消
@@ -112,7 +112,7 @@ public interface AcquirerService {
      * @author yu jianwei
      * @date 2017/11/6 17:47
      */
-    public Map<String, Object> returnGoods(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map);
+    Map<String, Object> returnGoods(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map);
 
     /**
      * @Title getReturnGoodsInfo
@@ -120,5 +120,5 @@ public interface AcquirerService {
      * @author yu jianwei
      * @date 2017/12/15 11:22
      */
-    public Map<String, Object> getReturnGoodsInfo(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map);
+    Map<String, Object> getReturnGoodsInfo(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map);
 }

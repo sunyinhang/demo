@@ -119,7 +119,7 @@ public class ShunguangController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/checkEdAppl", method = RequestMethod.POST)
-    public Map<String, Object> checkEdAppl(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> checkEdAppl(@RequestBody Map<String, Object> map) {
         Map<String, Object> queryAppmap = confirmData(map);
         if (!HttpUtil.isSuccess(queryAppmap)) {
             return queryAppmap;

@@ -828,7 +828,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     //6.1.31.	(GET)影像下载
     @Override
     public Map<String, Object> attachPic(String token, Map<String, Object> paramMap) {
-        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/attachPic?attachId="+(Integer)paramMap.get("attachId");
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/attachPic?attachId=" + paramMap.get("attachId");
         logger.info("影像下载口, 请求地址：" + url);
         logger.info("影像下载口, 请求数据：" + paramMap);
 //        Map<String, Object> result = HttpUtil.restGetMap(url, token,paramMap);
@@ -949,7 +949,6 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     @Override
     public Map<String, Object> getLoanDic(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/pub/gm/getLoanDic";
-        ;
         logger.info("根据商户门店查询贷款品种,请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("根据商户门店查询贷款品种,返回信息：" + map);

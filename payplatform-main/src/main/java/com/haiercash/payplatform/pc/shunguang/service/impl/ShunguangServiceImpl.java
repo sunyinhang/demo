@@ -161,7 +161,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     @Override
-    public Map<String, Object> payApply(Map<String, Object> map) throws Exception {
+    public Map<String, Object> payApply(Map<String, Object> map) {
         logger.info("白条支付申请接口*******************开始");
         Map cachemap = new HashMap<String, Object>();
         String applyNo = (String) map.get("applyNo");//交易流水号
@@ -333,7 +333,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     @Override
-    public Map<String, Object> edApply(Map<String, Object> map) throws Exception {
+    public Map<String, Object> edApply(Map<String, Object> map) {
         logger.info("白条额度申请接口*******************开始");
         Map cachemap = new HashMap<String, Object>();
         String applyNo = (String) map.get("applyNo");//交易流水号
@@ -696,7 +696,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //9 白条额度进行贷款支付结果主动查询接口
-    public Map<String, Object> queryAppLoanAndGoods(Map<String, Object> map) throws Exception {
+    public Map<String, Object> queryAppLoanAndGoods(Map<String, Object> map) {
         logger.info("白条额度进行贷款支付结果主动查询接口*******************开始");
         Map cachemap = new HashMap<String, Object>();
         String applyNo = (String) map.get("applyNo");//交易流水号
@@ -812,7 +812,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //10.  白条支付实名认证同步接口    Sg-10009
-    public Map<String, Object> queryAppLoanAndGoodsOne(Map<String, Object> map) throws Exception {
+    public Map<String, Object> queryAppLoanAndGoodsOne(Map<String, Object> map) {
         logger.info("白条支付实名认证同步接口************开始");
         String channelNo = (String) map.get("channelNo");
         String userId = (String) map.get("userId");//海尔集团用户ID
@@ -1045,7 +1045,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //额度测试入口
-    public Map<String, Object> edApplytest(Map<String, Object> map) throws Exception {
+    public Map<String, Object> edApplytest(Map<String, Object> map) {
         String userId = map.get("userId").toString();
         //String phone = map.get("phone").toString();
         String token = map.get("token").toString();
@@ -1185,7 +1185,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
     //贷款测试入口
     @Override
-    public Map<String, Object> payApplytest(AppOrder appOrder) throws Exception {
+    public Map<String, Object> payApplytest(AppOrder appOrder) {
         String token = super.getToken();
         if (StringUtils.isEmpty(token)) {
             return fail(ConstUtil.ERROR_CODE, "请在header中传入token");

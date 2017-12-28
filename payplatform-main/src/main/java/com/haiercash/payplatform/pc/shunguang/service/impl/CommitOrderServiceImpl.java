@@ -66,7 +66,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
      * @return
      */
     @Override
-    public Map<String, Object> commitOrder(Map<String, Object> map)  throws Exception{
+    public Map<String, Object> commitOrder(Map<String, Object> map) {
         logger.info("订单提交****************开始");
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");

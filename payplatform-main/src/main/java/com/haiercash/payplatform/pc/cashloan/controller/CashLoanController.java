@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -27,7 +25,7 @@ public class CashLoanController extends BaseController {
     }
 
     @RequestMapping(value = "/api/payment/activity", method = RequestMethod.POST)
-    public String activity() throws ServletException, IOException {
+    public String activity() {
         String channelNo = this.getChannelNo();
         if (StringUtils.isEmpty(channelNo))
             return StringUtils.EMPTY;

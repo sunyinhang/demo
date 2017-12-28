@@ -748,8 +748,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             }
             Map<String, Object> typResultMap = (Map<String, Object>) pLoanTypMap.get("body");
 
-            String typVer = (Integer) typResultMap.get("typVer") + "";
-            String typSeq = (Integer) typResultMap.get("typSeq") + "";
+            String typVer = typResultMap.get("typVer") + "";
+            String typSeq = typResultMap.get("typSeq") + "";
             order.setTypVer(typVer);
             order.setTypSeq(typSeq);
             // 还款间隔（loanFreq） 每期还款日（dueDayOpt） 还款日(dueDay) 进件通路(docChannel)
@@ -827,7 +827,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if (bankList.size() > 0) {
             for (Map<String, Object> bank : bankList) {
                 // 银行卡号
-                if (((String) bank.get("cardNo")).equals(hkNo)) {
+                if (bank.get("cardNo").equals(hkNo)) {
                     String singleCollLimited = String.valueOf(bank.get("singleCollLimited"));
                     if (Objects.equals("-1", singleCollLimited)) {
                         logger.info("该银行卡不限额，直接返回成功：orderNo=" + order.getOrderNo() + ";hkNo=" + hkNo);
@@ -1001,7 +1001,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             // boolean flag = false;
             for (Map<String, Object> bank : bankList) {
                 // 银行卡号
-                if (((String) bank.get("isRealnameCard")).equals("Y")) {
+                if (bank.get("isRealnameCard").equals("Y")) {
                     String bankName = (String) bank.get("bankName");
                     String bankCode = (String) bank.get("bankCode");
                     String accBchCde = (String) bank.get("accBchCde");
@@ -1087,7 +1087,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             // boolean flag = false;
             for (Map<String, Object> bank : bankList) {
                 // 银行卡号
-                if (((String) bank.get("isDefaultCard")).equals("Y")) {
+                if (bank.get("isDefaultCard").equals("Y")) {
                     String bankName = FormatUtil.getStrDealNull(bank.get("bankName"));
                     String bankCode = FormatUtil.getStrDealNull(bank.get("bankCode"));
                     String accBchCde = FormatUtil.getStrDealNull(bank.get("accBchCde"));

@@ -8,7 +8,10 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import static java.lang.System.out;
@@ -21,8 +24,8 @@ public class OCRIdentityTC {
 
     public static Demo engineOCR = new Demo();
     public Log logger = LogFactory.getLog(getClass());
-    
-    public ReturnMessage OCRIDUpload(InputStream image_files) throws IOException{
+
+    public ReturnMessage OCRIDUpload(InputStream image_files) {
 
         ReturnMessage returnMessage = new ReturnMessage();
 
@@ -138,9 +141,9 @@ public class OCRIdentityTC {
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
         if (!com.alibaba.druid.util.StringUtils.isEmpty(osName) && osName.startsWith("win")) { //window
             String timeKey = "ed969133dd0eece08b478d9478ff3c06";
-            ret = engineOCR.Start(timeKey);
+            ret = Demo.Start(timeKey);
         } else { //linux
-            ret = engineOCR.Start(engineOCR.Byte2String(engineOCR.GetEngineTimeKey()));//初始化
+            ret = Demo.Start(engineOCR.Byte2String(Demo.GetEngineTimeKey()));//初始化
         }
         if (ret == 100) {
             out.println("天诚OCR身份证识别：该版本为试用版本，时间过期，请联系技术员\n");
@@ -151,13 +154,13 @@ public class OCRIdentityTC {
             logger.info("天诚OCR身份证识别：引擎初始化失败，请联系技术员\n");
         }
 
-        logger.info("天诚OCR身份证识别,timeKey:"+engineOCR.Byte2String(engineOCR.GetEngineTimeKey())+",Version:"+engineOCR.Byte2String(engineOCR.GetVersion())
-                +",UserTimes:" + engineOCR.Byte2String(engineOCR.GetUseTimeString()));
+        logger.info("天诚OCR身份证识别,timeKey:" + engineOCR.Byte2String(Demo.GetEngineTimeKey()) + ",Version:" + engineOCR.Byte2String(Demo.GetVersion())
+                + ",UserTimes:" + engineOCR.Byte2String(Demo.GetUseTimeString()));
 
-        engineOCR.SetParam(GlobalData.T_SET_HEADIMG, 1);
-        engineOCR.SetParam(GlobalData.T_SET_HEADIMGBUFMODE, 1);
+        Demo.SetParam(GlobalData.T_SET_HEADIMG, 1);
+        Demo.SetParam(GlobalData.T_SET_HEADIMGBUFMODE, 1);
 
-        byte [] jsonbuf = engineOCR.RECOCROFMEM(GlobalData.TIDCARD2,pImgBuff,pImgBuff.length);
+        byte[] jsonbuf = Demo.RECOCROFMEM(GlobalData.TIDCARD2, pImgBuff, pImgBuff.length);
         if(jsonbuf != null)
         {
             try {

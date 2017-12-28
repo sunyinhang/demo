@@ -166,7 +166,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         // 多商品处理
         String goodCode = null;
         List<AppOrderGoods> appOrderGoodsList = appOrder.getAppOrderGoodsList();
-        boolean isGoodsList = (appOrderGoodsList != null && appOrderGoodsList.size() > 0) ? true : false;
+        boolean isGoodsList = appOrderGoodsList != null && appOrderGoodsList.size() > 0;
         logger.info("是否是多个商品：" + isGoodsList);
         if (!StringUtils.isEmpty(appOrder.getGoodsCode()) || isGoodsList) {
             goodCode = appOrder.getGoodsCode();

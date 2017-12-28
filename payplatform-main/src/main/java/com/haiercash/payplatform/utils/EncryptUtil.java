@@ -1,9 +1,9 @@
 package com.haiercash.payplatform.utils;
 
+import org.apache.commons.codec.binary.Base64;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * @author liuhongbin
@@ -56,7 +56,7 @@ public class EncryptUtil {
     }
 
     // 解密
-    public static String AesDecrypt(String sSrc, String sKey) throws Exception {
+    public static String AesDecrypt(String sSrc, String sKey) {
         try {
             // 判断Key是否正确
             if (sKey == null) {

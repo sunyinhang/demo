@@ -50,7 +50,7 @@ public interface CashLoanService {
      * @return
      * @throws Exception
      */
-    public Map<String, Object> commitOrder(Map<String, Object> map) throws Exception;
+    Map<String, Object> commitOrder(Map<String, Object> map) throws Exception;
 
     /**
      * 现金贷订单保存

@@ -570,7 +570,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
      * @author yu jianwei
      * @date 2017/9/14 16:07
      */
-    public Map<String, Object> approveStatus(String token) throws Exception {
+    public Map<String, Object> approveStatus(String token) {
         if (StringUtils.isEmpty(token)) {
             logger.info("获取token失败token:" + token);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);

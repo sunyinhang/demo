@@ -102,28 +102,28 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         Object retObj = returnMessage.getRetObj();
         JSONObject cardsResJson = new JSONObject(retObj.toString());
         if (!StringUtils.isEmpty(cardsResJson.get("name"))) {
-            cacheMap.put("name", (String) cardsResJson.get("name"));//姓名
+            cacheMap.put("name", cardsResJson.get("name"));//姓名
         }
         if (!StringUtils.isEmpty(cardsResJson.get("gender"))) {
-            cacheMap.put("gender", (String) cardsResJson.get("gender"));//性别
+            cacheMap.put("gender", cardsResJson.get("gender"));//性别
         }
         if (!StringUtils.isEmpty(cardsResJson.get("birthday"))) {
-            cacheMap.put("birthday", (String) cardsResJson.get("birthday"));//出生年月日
+            cacheMap.put("birthday", cardsResJson.get("birthday"));//出生年月日
         }
         if (!StringUtils.isEmpty(cardsResJson.get("race"))) {
-            cacheMap.put("race", (String) cardsResJson.get("race"));//民族
+            cacheMap.put("race", cardsResJson.get("race"));//民族
         }
         if (!StringUtils.isEmpty(cardsResJson.get("address"))) {
-            cacheMap.put("address", (String) cardsResJson.get("address"));//地址
+            cacheMap.put("address", cardsResJson.get("address"));//地址
         }
         if (!StringUtils.isEmpty(cardsResJson.get("id_card_number"))) {
-            cacheMap.put("idCard", (String) cardsResJson.get("id_card_number"));//身份证号
+            cacheMap.put("idCard", cardsResJson.get("id_card_number"));//身份证号
         }
         if (!StringUtils.isEmpty(cardsResJson.get("issued_by"))) {
-            cacheMap.put("issued", (String) cardsResJson.get("issued_by"));//签发机关
+            cacheMap.put("issued", cardsResJson.get("issued_by"));//签发机关
         }
         if (!StringUtils.isEmpty(cardsResJson.get("valid_date"))) {
-            cacheMap.put("validDate", (String) cardsResJson.get("valid_date"));//有效期
+            cacheMap.put("validDate", cardsResJson.get("valid_date"));//有效期
         }
 
         String cardSide = (String) cardsResJson.get("side");
@@ -157,7 +157,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         return success(cardsResJson);
     }
 
-    private String saveImage2Disk(String userId, String imageStr) throws IOException {
+    private String saveImage2Disk(String userId, String imageStr) {
         String imgPath = "";
         try {
             String fn = storageConfig.getOcrPath() + "/certImage/" + userId;
@@ -432,8 +432,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号
         //7.验证并新增实名认证信息
         String[] officeArea_split = cityCode.split(",");
-        String acctProvince = (String) officeArea_split[0];//省代码
-        String acctCity = (String) officeArea_split[1];//市代码
+        String acctProvince = officeArea_split[0];//省代码
+        String acctCity = officeArea_split[1];//市代码
         Map<String, Object> identityMap = new HashMap<String, Object>();
         identityMap.put("token", token);
         identityMap.put("channel", channel);

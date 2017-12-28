@@ -169,7 +169,7 @@ public class IdCardUtils {
         String start = idCard.substring(0, 1);
         String mid = idCard.substring(1, 9);
         String end = idCard.substring(9, 10);
-        Integer iStart = (Integer)twFirstCode.get(start);
+        Integer iStart = twFirstCode.get(start);
         Integer sum = iStart.intValue() / 10 + iStart.intValue() % 10 * 9;
         char[] chars = mid.toCharArray();
         Integer iflag = Integer.valueOf(8);
@@ -376,12 +376,12 @@ public class IdCardUtils {
             sProvinNum = idCard.substring(0, 2);
         }
 
-        sProvince = (String)cityCodes.get(sProvinNum);
+        sProvince = cityCodes.get(sProvinNum);
         return sProvince;
     }
 
     public static boolean isNum(String val) {
-        return val != null && !"".equals(val) ? val.matches("^[0-9]*$") : false;
+        return (val != null && !"".equals(val)) && val.matches("^[0-9]*$");
     }
 
     public static boolean valiDate(int iYear, int iMonth, int iDate) {

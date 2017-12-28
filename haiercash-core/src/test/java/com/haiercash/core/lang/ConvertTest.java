@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public class ConvertTest {
     @Test
-    public void toType() throws Exception {
+    public void toType() {
         String str = "2017-1-2 01:02:03";
         Date date = Convert.toType(str, Date.class);
         Assert.assertEquals(Date.class, date.getClass());

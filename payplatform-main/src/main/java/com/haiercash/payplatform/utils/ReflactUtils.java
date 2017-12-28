@@ -125,12 +125,12 @@ public class ReflactUtils {
                         + propertyName.substring(1);
                 sb.append("set" + methodEnd);// 构建set方法
                 setMethod = clazz.getDeclaredMethod(sb.toString(),
-                        new Class[] {f.getType()});
+                        f.getType());
                 sb.delete(0, sb.length());// 清空整个可变字符串
                 sb.append("get" + methodEnd);// 构建get方法
                 // 构建get 方法
                 getMethod =
-                        clazz.getDeclaredMethod(sb.toString(), new Class[] {});
+                        clazz.getDeclaredMethod(sb.toString());
                 // 构建一个属性描述器 把对应属性 propertyName 的 get 和 set 方法保存到属性描述器中
                 pd = new PropertyDescriptor(propertyName, getMethod, setMethod);
             }
@@ -151,7 +151,7 @@ public class ReflactUtils {
         // 的属性描述器
         Method setMethod = pd.getWriteMethod();// 从属性描述器中获取 set 方法
         try {
-            setMethod.invoke(obj, new Object[] {value});// 调用 set 方法将传入的value值保存属性中去
+            setMethod.invoke(obj, value);// 调用 set 方法将传入的value值保存属性中去
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -168,7 +168,7 @@ public class ReflactUtils {
         Method getMethod = pd.getReadMethod();// 从属性描述器中获取 get 方法
         Object value = null;
         try {
-            value = getMethod.invoke(obj, new Object[] {});// 调用方法获取方法的返回值
+            value = getMethod.invoke(obj);// 调用方法获取方法的返回值
         } catch (Exception e) {
             e.printStackTrace();
         }

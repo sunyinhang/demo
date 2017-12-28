@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.haiercash.core.lang.Convert;
@@ -190,7 +191,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String certNo = (String) cacheMap.get("idNo");//身份证号
         String name = (String) cacheMap.get("name");//姓名
         JSONObject body = jb.getJSONObject("body");
-        String applSeq = (String) body.getString("applSeq");
+        String applSeq = body.getString("applSeq");
         //上传风险数据 经纬度
         ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
         ArrayList<String> listOne = new ArrayList<>();
@@ -269,7 +270,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String type = (String) params.get("type");
             if (type == null || type.equals("get")) {
                 retMap = new HashMap<String, Object>();
-                Map<String, Object> sessionMap = (Map<String, Object>) RedisUtils.getExpireMap(token);
+                Map<String, Object> sessionMap = RedisUtils.getExpireMap(token);
                 if (sessionMap == null) {
                     return success();
                 }
@@ -281,7 +282,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     }
                 }
             } else if (type.equals("set")) {
-                retMap = (Map<String, Object>) RedisUtils.getExpireMap(token);
+                retMap = RedisUtils.getExpireMap(token);
                 if (retMap == null) {
                     retMap = new HashMap<>();
                 }
@@ -971,7 +972,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                         return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                     }
                     //JSONObject jsonOne = new JSONObject(resOne);
-                    String resOne = jsonObject.toJSONString(queryApplListBySeqmap);
+                    String resOne = JSON.toJSONString(queryApplListBySeqmap);
                     JSONObject jsonOne = JSONObject.parseObject(resOne);
                     JSONObject jsonOneHead = jsonOne.getJSONObject("head");
                     String retOneFlag = jsonOneHead.getString("retFlag");
@@ -1011,7 +1012,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                                     logger.info("网络异常,全部还款试算接口,响应数据为空！");
                                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                                 }
-                                String resThree = jsonObject.toJSONString(resThreemap);
+                                String resThree = JSON.toJSONString(resThreemap);
                                 //JSONObject jsonObjectresThree = new JSONObject(resThree);
                                 JSONObject jsonObjectresThree = JSONObject.parseObject(resThree);
                                 String codeOne = jsonObjectresThree.getString("retMsg");

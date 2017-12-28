@@ -28,7 +28,7 @@ public class LimitServiceImpl extends BaseService implements LimitService {
     private ShunguangConfig shunguangConfig;
 
     @Override
-    public Map<String, Object> CreditLineApply(String token, String channel, String channelNo) throws Exception {
+    public Map<String, Object> CreditLineApply(String token, String channel, String channelNo) {
         logger.info("*********点击额度激活判断跳转页面**************开始");
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();

@@ -195,7 +195,7 @@ public class CommonPageController extends BaseController {
      * 获取jssdk签名
      */
     @RequestMapping(value = "/api/payment/wx/signature", method = RequestMethod.GET)
-    public Map<String, Object> wxSignature(@RequestParam String url) throws Exception {
+    public Map<String, Object> wxSignature(@RequestParam String url) {
         return success(WeiXinUtils.sign(url));
     }
 
@@ -456,7 +456,7 @@ public class CommonPageController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/attachDelete", method = RequestMethod.POST)
-    public Map<String, Object> attachDelete(@RequestBody Map<String, Object> params) throws Exception {
+    public Map<String, Object> attachDelete(@RequestBody Map<String, Object> params) {
         return custExtInfoService.attachDelete(super.getToken(), super.getChannel(), super.getChannelNo(), params);
     }
 
@@ -777,7 +777,7 @@ public class CommonPageController extends BaseController {
      * @date 2017/11/21 17:11
      */
     @RequestMapping(value = "/api/payment/personalEd", method = RequestMethod.POST)
-    public Map<String, Object> personalEd() throws Exception {
+    public Map<String, Object> personalEd() {
         return commonPageService.personalEd();
     }
 
@@ -788,7 +788,7 @@ public class CommonPageController extends BaseController {
      * @date
      */
     @RequestMapping(value = "/api/payment/getAreaCode", method = RequestMethod.POST)
-    public Map<String, Object> getAreaCode(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> getAreaCode(@RequestBody Map<String, Object> map) {
         return commonPageService.getAreaCode(map.get("provinceName").toString(), map.get("cityName").toString(), map.get("districtName").toString());
     }
 

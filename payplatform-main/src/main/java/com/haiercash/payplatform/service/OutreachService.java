@@ -14,5 +14,5 @@ public interface OutreachService {
      * @author yu jianwei
      * @date 2017/11/22 10:42
      */
-    public Map<String, Object> protocolauth(Map<String, Object> params);
+    Map<String, Object> protocolauth(Map<String, Object> params);
 }

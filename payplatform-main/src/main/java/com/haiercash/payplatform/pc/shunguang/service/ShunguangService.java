@@ -121,7 +121,7 @@ public interface ShunguangService {
      * @param map
      * @return
      */
-    public Map<String,Object> shunguangth(Map<String, Object> map);
+    Map<String, Object> shunguangth(Map<String, Object> map);
 
     /**
      * @Title pushMessage
@@ -129,7 +129,7 @@ public interface ShunguangService {
      * @author yu jianwei
      * @date 2017/12/25 18:12
      */
-    public Map<String, Object> pushMessage();
+    Map<String, Object> pushMessage();
 
 
 }

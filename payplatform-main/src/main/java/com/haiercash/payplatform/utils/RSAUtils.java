@@ -2,6 +2,7 @@ package com.haiercash.payplatform.utils;
 
 import com.haiercash.core.lang.Base64Utils;
 
+import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -16,8 +17,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.crypto.Cipher;
 
 
 /** *//** 
@@ -301,9 +300,8 @@ public class RSAUtils {
      * @param keyMap 密钥对 
      * @return 
      * @throws Exception 
-     */  
-    public static String getPrivateKey(Map<String, Object> keyMap)  
-            throws Exception {  
+     */
+    public static String getPrivateKey(Map<String, Object> keyMap) {
         Key key = (Key) keyMap.get(PRIVATE_KEY);  
         return Base64Utils.encode(key.getEncoded());  
     }  
@@ -316,9 +314,8 @@ public class RSAUtils {
      * @param keyMap 密钥对 
      * @return 
      * @throws Exception 
-     */  
-    public static String getPublicKey(Map<String, Object> keyMap)  
-            throws Exception {  
+     */
+    public static String getPublicKey(Map<String, Object> keyMap) {
         Key key = (Key) keyMap.get(PUBLIC_KEY);  
         return Base64Utils.encode(key.getEncoded());  
     }  

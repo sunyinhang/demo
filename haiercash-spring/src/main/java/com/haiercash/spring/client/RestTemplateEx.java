@@ -72,7 +72,7 @@ public class RestTemplateEx extends RestTemplate {
         }
 
         //放入 Header
-        private void putContextHeaders(ClientHttpRequest ribbonRequest) throws IOException {
+        private void putContextHeaders(ClientHttpRequest ribbonRequest) {
             //通用 Header
             if (ThreadContext.exists()) {
                 ribbonRequest.getHeaders().set(TraceID.NAME, ThreadContext.getTraceID());

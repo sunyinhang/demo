@@ -6,5 +6,5 @@ import java.util.Map;
  * Created by Administrator on 2017/12/25.
  */
 public interface VipAbcService {
-    public Map<String, Object> getIdCardInfo(Map<String, Object> map);
+    Map<String, Object> getIdCardInfo(Map<String, Object> map);
 }

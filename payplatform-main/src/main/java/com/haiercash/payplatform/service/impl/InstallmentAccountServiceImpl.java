@@ -238,7 +238,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         List<Map<String, Object>> order = (List<Map<String, Object>>) body.get("orders");
         List<Map<String, Object>> order_rep = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < order.size(); i++) {
-            Map<String, Object> ordermap = (Map<String, Object>) order.get(i);
+            Map<String, Object> ordermap = order.get(i);
             BigDecimal sybj = Convert.toDecimal(ordermap.get("sybj"));
             Integer remainDays = Convert.toInteger(ordermap.get("remainDays"));
 //            String psDueDt = Convert.toString(ordermap.get("psDueDt"));

@@ -28,7 +28,7 @@ public final class DispatcherRequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public BufferedReader getReader() throws IOException {
+    public BufferedReader getReader() {
         throw new NotSupportedException("not support read request by reader");
     }
 }

@@ -8,16 +8,16 @@ import java.util.Map;
  */
 public interface InstallmentAccountService {
     //查询全部贷款信息列表
-    public Map<String, Object> queryAllLoanInfo(String token, String channelNo, String channel, Map<String,Object> map);
+    Map<String, Object> queryAllLoanInfo(String token, String channelNo, String channel, Map<String, Object> map);
     //查询待提交订单列表
-    public Map<String, Object> QueryPendingLoanInfo(String token, String channelNo, String channel, Map<String,Object> map);
+    Map<String, Object> QueryPendingLoanInfo(String token, String channelNo, String channel, Map<String, Object> map);
     //待还款信息查询(全部)
-    public Map<String, Object> queryPendingRepaymentInfo(String token, String channelNo, String channel, Map<String,Object> map);
+    Map<String, Object> queryPendingRepaymentInfo(String token, String channelNo, String channel, Map<String, Object> map);
     //查询已提交贷款申请列表
-    public Map<String,Object> queryApplLoanInfo(String token, String channelNo, String channel, Map<String, Object> map);
+    Map<String, Object> queryApplLoanInfo(String token, String channelNo, String channel, Map<String, Object> map);
     //订单详情查询
-    public Map<String,Object> queryOrderInfo(String token, String channelNo, String channel, Map<String, Object> map);
+    Map<String, Object> queryOrderInfo(String token, String channelNo, String channel, Map<String, Object> map);
 
     //贷款详情查询（现金贷）
-    public Map<String, Object> orderQueryXjd(String token, String channelNo, String channel, Map<String, Object> params) throws Exception;
+    Map<String, Object> orderQueryXjd(String token, String channelNo, String channel, Map<String, Object> params) throws Exception;
 }

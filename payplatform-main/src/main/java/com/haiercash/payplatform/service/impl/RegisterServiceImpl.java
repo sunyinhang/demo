@@ -34,7 +34,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     private CashLoanService cashLoanService;
 
     @Override
-    public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+    public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********判断用户是否注册**************开始");
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         //参数非空判断
@@ -92,7 +92,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 
 
     @Override
-    public Map<String, Object> isRegisterNotoken(String channel, String channelNo, Map<String, Object> params) throws Exception {
+    public Map<String, Object> isRegisterNotoken(String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********判断用户是否注册**************开始");
         Map<String, Object> resultparamMap = new HashMap<String, Object>();
         if (channel.isEmpty()) {
@@ -150,7 +150,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
      * @date 2017/10/9 9:48
      */
     @Override
-    public Map<String, Object> saveUauthUsers(String token, Map<String, Object> params) throws Exception {
+    public Map<String, Object> saveUauthUsers(String token, Map<String, Object> params) {
         Map returnmap = new HashMap<String, Object>();//返回的map
         String mobile = Convert.toString(params.get("mobile"));
         String password = Convert.toString(params.get("password"));
@@ -434,7 +434,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
      * @date 2017/10/13 15:36
      */
     @Override
-    public Map<String, Object> custUpdatePwd(Map<String, Object> params) throws Exception {
+    public Map<String, Object> custUpdatePwd(Map<String, Object> params) {
         Map returnmap = new HashMap<String, Object>();//返回的map
         Map<String, Object> verifyNoMap = new HashMap<String, Object>();
         verifyNoMap.put("phone", params.get("userId"));

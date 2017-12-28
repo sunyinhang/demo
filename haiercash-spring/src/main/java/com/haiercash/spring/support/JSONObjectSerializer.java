@@ -23,7 +23,7 @@ public class JSONObjectSerializer implements ObjectSerializer {
      * @throws IOException
      */
     @Override
-    public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType, int features) throws IOException {
+    public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType, int features) {
         if (object == null) {
             serializer.writeNull();
             return;

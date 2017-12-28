@@ -14,27 +14,27 @@ import java.util.Map;
  */
 public interface CustExtInfoService {
     //获取客户个人扩展信息及影像
-    public Map<String, Object> getAllCustExtInfoAndDocCde(String token,String channel,String channelNo) throws Exception;
+    Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) throws Exception;
     //获取客户个人扩展信息
-    public Map<String, Object> getAllCustExtInfo(String token,String channel,String channelNo) throws Exception;
+    Map<String, Object> getAllCustExtInfo(String token, String channel, String channelNo) throws Exception;
     //保存客户个人扩展信息
-    public Map<String, Object> saveAllCustExtInfo(String token,String channel,String channelNo,Map<String, Object> params) throws Exception;
+    Map<String, Object> saveAllCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
     //保存客户个人扩展信息(现金贷)
-    public Map<String, Object> saveAllCustExtInfoForXjd(String token,String channel,String channelNo,Map<String, Object> params) throws Exception;
+    Map<String, Object> saveAllCustExtInfoForXjd(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
     //个人扩展信息上传影像
-    public Map<String, Object> upIconPic(MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    Map<String, Object> upIconPic(MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception;
     //个人扩展信息删除影像
-    public Map<String,Object> attachDelete(String token, String channel, String channelNo, Map<String, Object> params);
+    Map<String, Object> attachDelete(String token, String channel, String channelNo, Map<String, Object> params);
     //影像下载
     Map<String,Object> attachPic(String token, String channelNo, String channel, Map<String, Object> map);
     //获取客户个人银行卡信息
-    public Map<String, Object> getBankCard(String token,String channel,String channelNo) throws Exception;
+    Map<String, Object> getBankCard(String token, String channel, String channelNo) throws Exception;
     //获取客户个人银行卡信息及贷款品种信息
-    public IResponse<Map> getLoanTypeAndBankInfo(String token, String channel, String channelNo) throws Exception;
+    IResponse<Map> getLoanTypeAndBankInfo(String token, String channel, String channelNo) throws Exception;
     //还款试算
-    public Map<String, Object> getPaySs(String token,String channel,String channelNo, Map<String, Object> params) throws Exception;
+    Map<String, Object> getPaySs(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
     //查询白名单列表
-    public Map<String, Object> getCustWhiteListCmis(String token,String channel,String channelNo, Map<String, Object> params) throws Exception;
+    Map<String, Object> getCustWhiteListCmis(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
     //查询海尔员工预授信额度
-    public Map<String, Object> getCustYsxEd(String token,String channel,String channelNo) throws Exception;
+    Map<String, Object> getCustYsxEd(String token, String channel, String channelNo) throws Exception;
 }

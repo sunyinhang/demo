@@ -53,7 +53,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     private StorageConfig storageConfig;
 
     @Override
-    public Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) throws Exception {
+    public Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         List<JSONObject> resultList = new ArrayList<JSONObject>();
 
@@ -159,7 +159,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //                continue;
 //            }
         }
-        resultMap.put("CustExtInfoMap", (Map<String, Object>) allCustExtInfo.get("body"));
+        resultMap.put("CustExtInfoMap", allCustExtInfo.get("body"));
         resultMap.put("docList", resultList);
         return success(resultMap);
     }
@@ -174,7 +174,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getAllCustExtInfo(String token, String channel, String channelNo) throws Exception {
+    public Map<String, Object> getAllCustExtInfo(String token, String channel, String channelNo) {
         logger.info("*********查询个人扩展信息**************开始");
         Map<String, Object> redisMap = null;
         Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -232,7 +232,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 
 
     @Override
-    public Map<String, Object> saveAllCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+    public Map<String, Object> saveAllCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********保存个人扩展信息**************开始");
         String typCde = "";//贷款品种
         Map<String, Object> redisMap = null;
@@ -594,7 +594,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> saveAllCustExtInfoForXjd(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+    public Map<String, Object> saveAllCustExtInfoForXjd(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********保存个人扩展信息**************开始");
         String typCde = "";//贷款品种
         Map<String, Object> redisMap = null;
@@ -827,7 +827,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getBankCard(String token, String channel, String channelNo) throws Exception {
+    public Map<String, Object> getBankCard(String token, String channel, String channelNo) {
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -863,7 +863,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public IResponse<Map> getLoanTypeAndBankInfo(String token, String channel, String channelNo) throws Exception {
+    public IResponse<Map> getLoanTypeAndBankInfo(String token, String channel, String channelNo) {
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -913,7 +913,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getPaySs(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+    public Map<String, Object> getPaySs(String token, String channel, String channelNo, Map<String, Object> params) {
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -968,7 +968,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getCustWhiteListCmis(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+    public Map<String, Object> getCustWhiteListCmis(String token, String channel, String channelNo, Map<String, Object> params) {
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -1004,7 +1004,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getCustYsxEd(String token, String channel, String channelNo) throws Exception {
+    public Map<String, Object> getCustYsxEd(String token, String channel, String channelNo) {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         Map<String, Object> returnParamMap = new HashMap<String, Object>();
         //参数非空判断

@@ -54,7 +54,7 @@ public class BusinessController extends BaseController {
     }
 
     @PostMapping(value = "/api/HaiercashPayApplyForJson")
-    public String doPost(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+    public String doPost(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) {
         String retFlag = null;
         String retMsg = null;
         String ret = null;
