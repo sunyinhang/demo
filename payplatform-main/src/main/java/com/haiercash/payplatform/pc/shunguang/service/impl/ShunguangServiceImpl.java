@@ -1253,22 +1253,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         ts.setTime(time);
         ts.setChannelNo(channelNo);
         try {
-//            HashMap<String, Object> sgts = new HashMap<>();
-//            sgts.put("msgTyp", msgType);//
-//            sgts.put("applSeq", applSeq);//
-//            sgts.put("mallOrderNo", mallOrderNo);
-//            sgts.put("loanNo", loanNo);
-//            sgts.put("idNo", idNo);
-//            sgts.put("custName", custName);
-//            sgts.put("businessId", businessId);
-//            sgts.put("businessType", businessType);
-//            sgts.put("status", status);
-//            sgts.put("content", content);
             String sgString = com.alibaba.fastjson.JSONObject.toJSONString(bodyMap);
 
             HashMap<String, Object> encrypt = encrypt(sgString, channelNo, "Sg-10011");//数据的加密数据  /json/ious/refundNotify.json
-            String result = JsonClientUtils.postForString(url_ts + "/paycenter/json/ious/refundNotify.json", encrypt);
-            Map resultMap = HttpUtil.json2DeepMap(result);
+            Map resultMap = JsonClientUtils.postForMap(url_ts + "/paycenter/json/ious/refundNotify.json", encrypt);
             Map headmap = (Map) resultMap.get("head");
             String retMsg = Convert.toString(headmap.get("retMsg"));
             String retFlag = Convert.toString(headmap.get("retFlag"));
