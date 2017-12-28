@@ -123,6 +123,7 @@ public final class ControllerInterceptor {
         return new CommonArgs(token, channel, channelNo);
     }
 
+    @SuppressWarnings("unchecked")
     private void setCommonArgs(Parameter[] params, String[] paramNames, Object[] args, CommonArgs commonArgs) {
         String token = commonArgs.getToken();
         String channel = commonArgs.getChannel();
@@ -151,7 +152,7 @@ public final class ControllerInterceptor {
                     if (arg == null)
                         break;
                     if (arg instanceof Map) {
-                        Map map = (Map) arg;
+                        Map<String, Object> map = (Map<String, Object>) arg;
                         map.put(NAME_TOKEN, token);
                         map.put(NAME_CHANNEL, channel);
                         map.put(NAME_CHANNEL_NO, channelNo);

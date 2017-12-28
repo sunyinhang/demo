@@ -25,6 +25,7 @@ public final class CmisAcqUtils {
         return MAP_STRING_OBJECT_TYPE;
     }
 
+    @SuppressWarnings("unchecked")
     private static <TBody> AbstractRestUtils<IResponse<TBody>> getRestUtils() {
         return REST_UTILS;
     }

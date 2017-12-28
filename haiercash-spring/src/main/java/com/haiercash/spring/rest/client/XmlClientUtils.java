@@ -24,6 +24,7 @@ public class XmlClientUtils {
         return MAP_STRING_OBJECT_TYPE;
     }
 
+    @SuppressWarnings("unchecked")
     private static <TResponse> AbstractClientUtils<TResponse> getClientUtils() {
         return CLIENT_UTILS;
     }
