@@ -13,7 +13,7 @@ import java.util.function.Function;
  */
 public abstract class ThreadLocalHashPool<TKey, TValue> {
     //容器
-    private ThreadLocalHashMap<TKey, TValue> threadLocalMap = new ThreadLocalHashMap<>();
+    private final ThreadLocalHashMap<TKey, TValue> threadLocalMap = new ThreadLocalHashMap<>();
 
     /**
      * 创建线程本地池
@@ -97,7 +97,7 @@ public abstract class ThreadLocalHashPool<TKey, TValue> {
      */
     static final class FuncThreadLocalHashPool<TKey, TValue> extends ThreadLocalHashPool<TKey, TValue> {
         //创建对象的方法
-        private Function<? super TKey, ? extends TValue> function;
+        private final Function<? super TKey, ? extends TValue> function;
 
         /**
          * 构造函数

@@ -81,7 +81,7 @@ public class MyBatisAutoConfiguration {
     }
 
     private static class ResourceComparator implements Comparator<String> {
-        private Comparator<String> comparer = Comparer.Default();
+        private final Comparator<String> comparer = Comparer.Default();
 
         @Override
         public int compare(String left, String right) {

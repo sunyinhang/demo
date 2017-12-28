@@ -22,9 +22,9 @@ public final class ConstUtil {
     public static final String ATTACHTYPE_APP01 = "App01";//影像类型
     public static final String ATTACHTYPE_APP01_DESC = "本人手持身份证与本人面部合照照片";//影像类型名称
     public static final String ATTACHTYPE_DOC099 = "DOC012";//影像类型 其他
-    public static String APP_CODE = "P";
-    public static String CHANNEL = "11";
-    public static String SOURCE = "11";
-    public static String ERROR_PARAM_INVALID_CODE = "91";
-    public static String ERROR_PARAM_INVALID_MSG = "参数无效";
+    public static final String APP_CODE = "P";
+    public static final String CHANNEL = "11";
+    public static final String SOURCE = "11";
+    public static final String ERROR_PARAM_INVALID_CODE = "91";
+    public static final String ERROR_PARAM_INVALID_MSG = "参数无效";
 }

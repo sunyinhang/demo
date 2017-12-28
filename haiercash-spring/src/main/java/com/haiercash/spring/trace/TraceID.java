@@ -18,7 +18,7 @@ public final class TraceID {
     private static final char[] IP_LAST_BIT_SEPARATOR = new char[]{'.'};
     private static final String IP_LAST_BIT;
     private static final int LEN_APPLICATION_NAME = 3;
-    private static String APPLICATION_NAME;
+    private static final String APPLICATION_NAME;
 
     static {
         //初始化 IP_LAST_BIT

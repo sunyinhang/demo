@@ -105,6 +105,6 @@ public final class ThreadContext {
         private String token;
         private String channel;
         private String channelNo;
-        private Stack<BaseController> controllerStack = new Stack<>();
+        private final Stack<BaseController> controllerStack = new Stack<>();
     }
 }

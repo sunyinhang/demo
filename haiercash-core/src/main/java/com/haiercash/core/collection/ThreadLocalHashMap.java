@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public class ThreadLocalHashMap<TKey, TValue> implements Map<TKey, TValue> {
     //容器
-    private ThreadLocal<Map<TKey, TValue>> maps = ThreadLocal.withInitial(LinkedHashMap::new);
+    private final ThreadLocal<Map<TKey, TValue>> maps = ThreadLocal.withInitial(LinkedHashMap::new);
 
     //region Map
 
