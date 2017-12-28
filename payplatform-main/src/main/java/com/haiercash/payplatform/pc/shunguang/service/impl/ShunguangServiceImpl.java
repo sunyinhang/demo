@@ -1251,7 +1251,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         ts.setChannelNo(channelNo);
         ts.setContent(content);
         ts.setTime(time);
-        ts.setChannelNo(channelNo);
         try {
             String sgString = com.alibaba.fastjson.JSONObject.toJSONString(bodyMap);
 
