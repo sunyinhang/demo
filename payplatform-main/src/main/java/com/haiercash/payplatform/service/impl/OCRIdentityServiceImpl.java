@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.collection.MapUtils;
-import com.haiercash.mybatis.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.config.StorageConfig;
@@ -9,6 +8,7 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;

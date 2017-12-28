@@ -1,10 +1,10 @@
 package com.haiercash.payplatform.pc.moxie.service.impl;
 
-import com.haiercash.mybatis.util.EncryptUtil;
 import com.haiercash.payplatform.common.dao.MoxieInfoDao;
 import com.haiercash.payplatform.common.data.MoxieInfo;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.service.BaseService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
