@@ -269,7 +269,7 @@ public class FormatUtil {
      * 把一个Object转换成指定pojo类
      *
      * @param object
-     * @param t
+     * @param clazz
      * @return
      */
     public static <T> T obj2Obj(Object object, Class<T> clazz) {

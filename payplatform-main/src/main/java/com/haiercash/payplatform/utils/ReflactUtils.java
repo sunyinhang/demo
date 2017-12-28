@@ -44,7 +44,7 @@ public class ReflactUtils {
     /**
      * 把一个Bean对象转换成Map对象</br>
      *
-     * @param clazz
+     * @param obj
      * @param ignores
      * @return
      * @throws IllegalAccessException
@@ -82,7 +82,7 @@ public class ReflactUtils {
     /**
      * 把一个Bean对象转换成Map对象</br>
      *
-     * @param clazz
+     * @param obj
      * @return
      */
     public static Map convertBean2Map(Object obj) {

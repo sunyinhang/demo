@@ -1,12 +1,11 @@
 package com.haiercash.payplatform.utils;
 
-import java.security.SecureRandom;
-import java.util.Random;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+import java.security.SecureRandom;
+import java.util.Random;
 
 public class DesUtil {
 	/**
@@ -20,7 +19,7 @@ public class DesUtil {
 	}
 	/**
 	* 加密
-	* @param src byte[]
+     * @param datasource byte[]
 	* @param password String
 	* @return byte[]
 	* @throws Exception

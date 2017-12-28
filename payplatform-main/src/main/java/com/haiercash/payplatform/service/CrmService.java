@@ -55,8 +55,7 @@ public interface CrmService {
     /**
      * (GET)查询指定客户的所有银行卡（根据客户编号）列表
      *
-     * @param userId
-     * @param password
+     * @param custNo
      * @return
      */
     Map<String, Object>  getBankCard(String custNo);
