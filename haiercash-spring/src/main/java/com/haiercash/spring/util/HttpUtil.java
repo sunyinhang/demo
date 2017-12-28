@@ -76,11 +76,11 @@ public final class HttpUtil {
     }
 
     public static String restPost(String url, String token, String data, int responseCode) {
-        return restExchange(HttpMethod.POST, url, token, data, Integer.valueOf(responseCode));
+        return restExchange(HttpMethod.POST, url, token, data, responseCode);
     }
 
     public static String restPut(String url, String token, String data, int responseCode) {
-        return restExchange(HttpMethod.PUT, url, token, data, Integer.valueOf(responseCode));
+        return restExchange(HttpMethod.PUT, url, token, data, responseCode);
     }
 
     public static String restGet(String url, String token, Integer responseCode) {
@@ -88,7 +88,7 @@ public final class HttpUtil {
     }
 
     public static String restGet(String url, String token) {
-        return restGet(url, token, Integer.valueOf(HttpStatus.OK.value()));
+        return restGet(url, token, HttpStatus.OK.value());
     }
 
     public static String restGet(String url) {
@@ -121,11 +121,11 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restPostMap(String url, String token, Map<String, Object> data) {
-        return restPostMap(url, token, data, Integer.valueOf(HttpStatus.OK.value()));
+        return restPostMap(url, token, data, HttpStatus.OK.value());
     }
 
     public static Map<String, Object> restPostMap(String url, Map<String, Object> data) {
-        return restPostMap(url, null, data, Integer.valueOf(HttpStatus.OK.value()));
+        return restPostMap(url, null, data, HttpStatus.OK.value());
     }
 
     public static Map<String, Object> restPutMap(String url, String token, Map<String, Object> data, Integer responseCode) {
@@ -137,15 +137,15 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restPutMap(String url, String token, Map<String, Object> data) {
-        return restPutMap(url, token, data, Integer.valueOf(HttpStatus.OK.value()));
+        return restPutMap(url, token, data, HttpStatus.OK.value());
     }
 
     public static Map<String, Object> restPutMap(String url, Map<String, Object> data) {
-        return restPutMap(url, null, data, Integer.valueOf(HttpStatus.OK.value()));
+        return restPutMap(url, null, data, HttpStatus.OK.value());
     }
 
     public static Map<String, Object> restGetMap(String url, String token, int responseCode) {
-        return restExchangeMap(HttpMethod.GET, url, token, (Map) null, Integer.valueOf(responseCode));
+        return restExchangeMap(HttpMethod.GET, url, token, (Map) null, responseCode);
     }
 
     public static Map<String, Object> restGetMap(String url, int responseCode) {
@@ -159,7 +159,7 @@ public final class HttpUtil {
                 .reduce((p1, p2) -> p1 + "&" + p2)
                 .map(s -> "?" + s)
                 .orElse("");
-        return restExchangeMap(HttpMethod.GET, url + param, token, map, Integer.valueOf(responseCode));
+        return restExchangeMap(HttpMethod.GET, url + param, token, map, responseCode);
     }
 
     public static Map<String, Object> restGetMap(String url) {
