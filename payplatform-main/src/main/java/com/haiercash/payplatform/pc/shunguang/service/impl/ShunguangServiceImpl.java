@@ -1261,6 +1261,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String retFlag = Convert.toString(headmap.get("retFlag"));
             logger.info("实时推送流水号：" + applSeq + "   响应数据：" + retMsg);
 
+            int n = Convert.toInteger(sgReturngoodsLog.getTimes());
+            n = n + 1;
             if ("00000".equals(retFlag)) {
                 ts.setFlag("Y");//推送成功
                 sg.put("retFlag", "00000");
@@ -1268,8 +1270,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 sg.put("serno", serno);
             } else {
                 ts.setFlag("N");//推送失败
-                sg.put("retFlag", "00099");
-                sg.put("retMsg", retMsg);
+                if(n == 3){
+                    sg.put("retFlag", "00000");
+                    sg.put("retMsg", "处理成功");
+                }else{
+                    sg.put("retFlag", "00099");
+                    sg.put("retMsg", retMsg);
+                }
                 sg.put("serno", serno);
             }
 
@@ -1279,8 +1286,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 ts.setTimes("1");
                 shunGuangthLogDao.insert(ts);
             } else {
-                int n = Convert.toInteger(sgReturngoodsLog.getTimes());
-                n = n + 1;
                 ts.setTimes(Convert.toString(n));
                 shunGuangthLogDao.updateByMallOrderNo(ts);
             }
@@ -1288,9 +1293,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         } catch (Exception e) {
             if (sgReturngoodsLog != null) {
                 int n = Convert.toInteger(sgReturngoodsLog.getTimes());
-                if (n == 2) {//第3次推送失败  则结束推送
+                n = n + 1;
+                if (n == 3) {//第3次推送失败  则结束推送
                     ts.setFlag("N");//推送失败
-                    n = n + 1;
                     ts.setTimes(Convert.toString(n));
                     shunGuangthLogDao.updateByMallOrderNo(ts);
                     sg.put("retFlag", "00000");
