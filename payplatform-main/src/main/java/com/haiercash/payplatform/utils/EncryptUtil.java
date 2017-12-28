@@ -16,7 +16,7 @@ public class EncryptUtil {
      * @param md
      * @return
      */
-    public static String MD5(byte[] md) {
+    public static String md5(byte[] md) {
         char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'a', 'b', 'c', 'd', 'e', 'f'};
         try {
