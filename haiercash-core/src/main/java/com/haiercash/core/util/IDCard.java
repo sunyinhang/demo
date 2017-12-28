@@ -223,6 +223,11 @@ public final class IDCard {
         }
     }
 
+    //获取性别代码,男:10 女:20
+    public String getGenderCode() {
+        return this.getGender() == Gender.MALE ? "10" : "20";
+    }
+
     //转换为 18 位身份证
     public IDCard toCommon18() {
         if (!this.valid)
