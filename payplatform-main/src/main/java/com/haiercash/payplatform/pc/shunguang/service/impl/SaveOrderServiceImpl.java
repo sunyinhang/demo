@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.config.ShunguangConfig;
@@ -66,7 +67,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //appOrder缓存获取（放开）
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -90,7 +91,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //获取客户信息
         logger.info("订单保存，根据userId获取客户信息");
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", userId);
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
@@ -128,8 +129,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         //
         Boolean b = false;
         List<Map<String, Object>> body = (List<Map<String, Object>>) tagmapresult.get("body");
-        for (int i = 0; i < body.size(); i++) {
-            Map<String, Object> m = body.get(i);
+        for (Map<String, Object> m : body) {
             String tagid = m.get("tagId").toString();
             if (tagid.equals(tagId)) {
                 b = true;
@@ -151,7 +151,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         //获取订单金额  总利息 金额
         logger.info("订单保存，获取订单金额，总利息金额");
         //applyTnrTyp = applyTnr;
-        Map<String, Object> payMap = new HashMap<String, Object>();
+        Map<String, Object> payMap = new HashMap<>();
         payMap.put("typCde", appOrder.getTypCde());
         payMap.put("apprvAmt", appOrder.getApplyAmt());
         payMap.put("applyTnrTyp", applyTnrTyp);
@@ -166,7 +166,6 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         String payresult = com.alibaba.fastjson.JSONObject.toJSONString(payresultMap);
         com.alibaba.fastjson.JSONObject payBody = com.alibaba.fastjson.JSONObject.parseObject(payresult).getJSONObject("body");
         logger.info("payBody:" + payBody);
-        String totalAmt = payBody.get("totalAmt").toString();
         String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
         String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
 
@@ -211,7 +210,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //0.准入资格校验
         logger.info("进行准入资格校验");
-        Map<String, Object> ispassmap = new HashMap<String, Object>();
+        Map<String, Object> ispassmap = new HashMap<>();
         ispassmap.put("custName", custName);//姓名
         ispassmap.put("certNo", certNo);//身份证
         ispassmap.put("phonenumber", mobile);//手机号
@@ -230,8 +229,8 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //1.录单校验（所在城市开通服务）
         //获取市代码
-        String cityCode = "";
-        String provinceCode = "";
+        String cityCode;
+        String provinceCode;
 //        String areaType = "";
         if (StringUtils.isEmpty(province) && StringUtils.isEmpty(city)) {
             provinceCode = "990000";//未知省
@@ -249,7 +248,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         }
         //录单校验
         logger.info("进行录单校验,省编码：" + provinceCode + ",市编码：" + cityCode);
-        Map<String, Object> ordercheakmap = new HashMap<String, Object>();
+        Map<String, Object> ordercheakmap = new HashMap<>();
         ordercheakmap.put("userId", userId);
         ordercheakmap.put("provinceCode", provinceCode);
         ordercheakmap.put("cityCode", cityCode);
@@ -266,7 +265,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
         //String typCde = appOrder.getTypCde();
         SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
         String date = dateFormater.format(new Date());
-        Map<String, Object> queryordermap = new HashMap<String, Object>();
+        Map<String, Object> queryordermap = new HashMap<>();
         queryordermap.put("typCde", typCde);
         queryordermap.put("date", date);
         queryordermap.put("channel", channel);

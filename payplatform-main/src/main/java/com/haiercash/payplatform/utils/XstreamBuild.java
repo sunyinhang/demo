@@ -24,7 +24,7 @@ import java.util.Map;
  *
  */
 public class XstreamBuild {
-	Log logger= LogFactory.getLog(XstreamBuild.class);
+    final Log logger = LogFactory.getLog(XstreamBuild.class);
 	/**
 	 * 
 	 * DESCRIPTION:核心请求报文组装工具
@@ -46,14 +46,14 @@ public class XstreamBuild {
 		XStream stream = new XStream();
 		stream.autodetectAnnotations(true);// 打开注解
 		stream.aliasSystemAttribute(null, "class");// 去掉class属性
-		StringBuffer sbf = new StringBuffer();
+        StringBuilder sbf = new StringBuilder();
 		sbf.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
 		String xml = stream.toXML(request).replaceAll("__","_");//xstream转换双下划线BUG解决
 		sbf.append(xml);
 		// 打印请求报文
 		StringBuffer loggerBugffer = new StringBuffer();
 		loggerBugffer.append("\n*************客户登录请求报文************ \n");
-		loggerBugffer.append(sbf + "\n");
+        loggerBugffer.append(sbf).append("\n");
 		loggerBugffer.append("*************客户登录请求报文************");
 		logger.info(loggerBugffer);
 		return sbf.toString();
@@ -98,13 +98,13 @@ public class XstreamBuild {
 		XStream stream = new XStream();
 		stream.autodetectAnnotations(true);// 打开注解
 		stream.aliasSystemAttribute(null, "class");// 去掉class属性
-		
-		StringBuffer sbf = new StringBuffer();
+
+        StringBuilder sbf = new StringBuilder();
 		sbf.append(stream.toXML(request));
 		// 打印请求报文
 		StringBuffer loggerBugffer = new StringBuffer();
 		loggerBugffer.append("\n*************客户登录请求报文************ \n");
-		loggerBugffer.append(sbf + "\n");
+        loggerBugffer.append(sbf).append("\n");
 		loggerBugffer.append("*************客户登录请求报文************");
 		logger.info(loggerBugffer);
 		return sbf.toString();

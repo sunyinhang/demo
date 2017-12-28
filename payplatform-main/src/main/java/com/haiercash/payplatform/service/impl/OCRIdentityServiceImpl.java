@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.mybatis.util.EncryptUtil;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.config.ShunguangConfig;
@@ -45,7 +46,7 @@ import java.util.UUID;
  */
 @Service
 public class OCRIdentityServiceImpl extends BaseService implements OCRIdentityService {
-    public Log logger = LogFactory.getLog(getClass());
+    public final Log logger = LogFactory.getLog(getClass());
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -73,7 +74,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -129,10 +130,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String cardSide = (String) cardsResJson.get("side");
 
         //OCR调用成功，进行图片本地上传
-        byte[] data = null;
+        byte[] data;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buf = new byte[1024];
-        int numBytesRead = 0;
+        int numBytesRead;
         while ((numBytesRead = instream0.read(buf)) != -1) {
             output.write(buf, 0, numBytesRead);
         }
@@ -168,23 +169,17 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("身份证正反面照片缓存路径:" + fn);
             String uuId = UUID.randomUUID().toString().replaceAll("-", "");
             imgPath = path + "/" + uuId + ".jpg";
-            String filestream = imageStr;
             BASE64Decoder decoder = new BASE64Decoder();
 
-            byte[] bt = null;
-            bt = decoder.decodeBuffer(filestream);
-            InputStream inputStream = new ByteArrayInputStream(bt);
-
-
-            FileOutputStream fos = new FileOutputStream(imgPath);
-            byte[] bytes = new byte[1024 * 1024];
-            int readLen;
-            while ((readLen = inputStream.read(bytes)) != -1) {
-                fos.write(bytes, 0, readLen);
+            byte[] bt;
+            bt = decoder.decodeBuffer(imageStr);
+            try (InputStream inputStream = new ByteArrayInputStream(bt); FileOutputStream fos = new FileOutputStream(imgPath)) {
+                byte[] bytes = new byte[1024 * 1024];
+                int readLen;
+                while ((readLen = inputStream.read(bytes)) != -1) {
+                    fos.write(bytes, 0, readLen);
+                }
             }
-            fos.close();
-            inputStream.close();
-
         } catch (IOException e) {
             e.printStackTrace();
             logger.info("身份证照片保存失败:" + e.getMessage());
@@ -204,7 +199,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -234,7 +229,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             flag = "province";
         }
 
-        Map<String, Object> reqmap = new HashMap<String, Object>();
+        Map<String, Object> reqmap = new HashMap<>();
         reqmap.put("areaCode", areaCode);
         reqmap.put("flag", flag);
         reqmap.put("channel", channel);
@@ -279,7 +274,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
         String phone = (String) cacheMap.get("phoneNo");////得到绑定手机号
         String phoneEncrypt = EncryptUtil.simpleEncrypt(phone);
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("channel", channel);
         map.put("channelNo", channelNo);
         map.put("phone", phoneEncrypt);
@@ -303,7 +298,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
 
         String phoneEncrypt = EncryptUtil.simpleEncrypt(phone);
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("channel", channel);
         map.put("channelNo", channelNo);
         map.put("phone", phoneEncrypt);
@@ -336,7 +331,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         //3.jedis缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -376,7 +371,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //5.校验短信验证码
-        Map<String, Object> verifyNoMap = new HashMap<String, Object>();
+        Map<String, Object> verifyNoMap = new HashMap<>();
         verifyNoMap.put("phone", mobile);
         verifyNoMap.put("verifyNo", verifyNo);
         verifyNoMap.put("token", token);
@@ -405,7 +400,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             gender = "20";
         }
 
-        Map<String, Object> ocrMap = new HashMap<String, Object>();
+        Map<String, Object> ocrMap = new HashMap<>();
         ocrMap.put("custName", name);
         ocrMap.put("afterCustName", name);
         ocrMap.put("birthDt", birthDt);
@@ -434,7 +429,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String[] officeArea_split = cityCode.split(",");
         String acctProvince = officeArea_split[0];//省代码
         String acctCity = officeArea_split[1];//市代码
-        Map<String, Object> identityMap = new HashMap<String, Object>();
+        Map<String, Object> identityMap = new HashMap<>();
         identityMap.put("token", token);
         identityMap.put("channel", channel);
         identityMap.put("channelNo", channelNo);
@@ -495,8 +490,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         //
         Boolean b = false;
         List<Map<String, Object>> body = (List<Map<String, Object>>) tagmapresult.get("body");
-        for (int i = 0; i < body.size(); i++) {
-            Map<String, Object> m = body.get(i);
+        for (Map<String, Object> m : body) {
             String tagid = m.get("tagId").toString();
             if (tagid.equals(tagId)) {
                 b = true;
@@ -536,11 +530,11 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         cacheMap.put("phoneNo", mobile);
         RedisUtils.setExpire(token, cacheMap);
         //OCR图片路径上送
-        Map<String, String> pathMap = new HashMap<String, String>();
+        Map<String, String> pathMap = new HashMap<>();
         pathMap.put("certImagePathA", (String) cacheMap.get("certImagePathA"));//正面共享盘位置
         pathMap.put("certImagePathB", (String) cacheMap.get("certImagePathB"));//反面共享盘位置
         for (Map.Entry<String, String> entry : pathMap.entrySet()) {
-            Map<String, Object> paramMap = new HashMap<String, Object>();
+            Map<String, Object> paramMap = new HashMap<>();
             if ("certImagePathA".equals(entry.getKey())) {//正面
                 paramMap.put("attachType", ConstUtil.CERT_FILE_TYPE_A);//影像类型
                 paramMap.put("attachName", ConstUtil.CERT_FILE_NAME_A);//影像名称
@@ -613,7 +607,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -632,7 +626,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
      * @return
      */
     public Map<String, Object> treatyShowServlet(String token, Map<String, Object> params) throws Exception {
-        String realmName = "";
+        String realmName;
         String flag = (String) params.get("flag");
         HashMap<String, Object> map = new HashMap<>();
         if (StringUtils.isEmpty(flag)) {
@@ -649,7 +643,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 map.put("realmName", realmName);
             } else {
                 Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-                if (cacheMap == null || "".equals(cacheMap)) {
+                if (MapUtils.isEmpty(cacheMap)) {
                     logger.info("Jedis获取失败");
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
                 }
@@ -672,39 +666,46 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             }
 
             Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-            if (cacheMap == null || "".equals(cacheMap)) {
+            if (MapUtils.isEmpty(cacheMap)) {
                 logger.info("Jedis获取失败");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
             }
-            if ("contract".equals(flag)) {
-                String custNo = cacheMap.get("custNo") + "";
-                String applSeq = cacheMap.get("applSeq") + "";
-                if (!StringUtils.isEmpty(custNo) && !StringUtils.isEmpty(applSeq)) {
-                    realmName = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
-                    logger.info("------------个人借款合同地址---------" + realmName);
-                    map.put("realmName", realmName);
+            switch (flag) {
+                case "contract":
+                    String custNo = cacheMap.get("custNo") + "";
+                    String applSeq = cacheMap.get("applSeq") + "";
+                    if (!StringUtils.isEmpty(custNo) && !StringUtils.isEmpty(applSeq)) {
+                        realmName = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applSeq;
+                        logger.info("------------个人借款合同地址---------" + realmName);
+                        map.put("realmName", realmName);
+                    }
+                    break;
+                case "credit": {
+                    String custName = (String) cacheMap.get("name");
+                    String certNo = (String) cacheMap.get("idNo");
+                    if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
+                        String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                        /// String custNameB = URLEncoder.encode(new String(Base64.encode(custName), "UTF-8"), "UTF-8");
+                        realmName = "/app/appserver/edCredit?custName=" + custNameB + "&certNo=" + certNo;
+                        logger.info("--------------征信查询------------" + realmName);
+                        map.put("realmName", realmName);
+                    }
+                    break;
                 }
-            } else if ("credit".equals(flag)) {
-                String custName = (String) cacheMap.get("name");
-                String certNo = (String) cacheMap.get("idNo");
-                if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
-                    String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
-                    /// String custNameB = URLEncoder.encode(new String(Base64.encode(custName), "UTF-8"), "UTF-8");
-                    realmName = "/app/appserver/edCredit?custName=" + custNameB + "&certNo=" + certNo;
-                    logger.info("--------------征信查询------------" + realmName);
-                    map.put("realmName", realmName);
-                }
-            } else if ("person".equals(flag)) {
-                realmName = "/app/ht/agreement/PersonInfo.html";
+                case "person":
+                    realmName = "/app/ht/agreement/PersonInfo.html";
 //            realmName = "/static/agreement/PersonInfo.html";
-                logger.info("----------个人信息协议-----------" + realmName);
-                map.put("realmName", realmName);
-            } else if ("sesame".equals(flag)) {
-                String custName = (String) cacheMap.get("name");
-                String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
-                realmName = "/app/appserver/seSameCredit?custName=" + custNameB;
-                logger.info("------------芝麻信用授权书展示地址---------" + realmName);
-                map.put("realmName", realmName);
+                    logger.info("----------个人信息协议-----------" + realmName);
+                    map.put("realmName", realmName);
+                    break;
+                case "sesame": {
+                    String custName = (String) cacheMap.get("name");
+                    String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                    realmName = "/app/appserver/seSameCredit?custName=" + custNameB;
+                    logger.info("------------芝麻信用授权书展示地址---------" + realmName);
+                    map.put("realmName", realmName);
+                    break;
+                }
             }
 
         }
@@ -717,7 +718,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     @Override
     public Map<String, Object> getPhoneNo(String token) {
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -754,7 +755,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         //3.jedis缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -784,7 +785,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         //5.校验短信验证码
-        Map<String, Object> verifyNoMap = new HashMap<String, Object>();
+        Map<String, Object> verifyNoMap = new HashMap<>();
         verifyNoMap.put("phone", mobile);
         verifyNoMap.put("verifyNo", verifyNo);
         verifyNoMap.put("token", token);
@@ -813,7 +814,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             gender = "20";
         }
 
-        Map<String, Object> ocrMap = new HashMap<String, Object>();
+        Map<String, Object> ocrMap = new HashMap<>();
         ocrMap.put("custName", name);
         ocrMap.put("afterCustName", name);
         ocrMap.put("birthDt", birthDt);
@@ -839,7 +840,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 //        String[] officeArea_split = cityCode.split(",");
 //        String acctProvince = (String) officeArea_split[0];//省代码
 //        String acctCity = (String) officeArea_split[1];//市代码
-        Map<String, Object> identityMap = new HashMap<String, Object>();
+        Map<String, Object> identityMap = new HashMap<>();
         identityMap.put("token", token);
         identityMap.put("channel", channel);
         identityMap.put("channelNo", channelNo);
@@ -942,11 +943,11 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         cacheMap.put("phoneNo", mobile);
         RedisUtils.setExpire(token, cacheMap);
         //OCR图片路径上送
-        Map<String, String> pathMap = new HashMap<String, String>();
+        Map<String, String> pathMap = new HashMap<>();
         pathMap.put("certImagePathA", (String) cacheMap.get("certImagePathA"));//正面共享盘位置
         pathMap.put("certImagePathB", (String) cacheMap.get("certImagePathB"));//反面共享盘位置
         for (Map.Entry<String, String> entry : pathMap.entrySet()) {
-            Map<String, Object> paramMap = new HashMap<String, Object>();
+            Map<String, Object> paramMap = new HashMap<>();
             if ("certImagePathA".equals(entry.getKey())) {//正面
                 paramMap.put("attachType", ConstUtil.CERT_FILE_TYPE_A);//影像类型
                 paramMap.put("attachName", ConstUtil.CERT_FILE_NAME_A);//影像名称
@@ -986,7 +987,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         logger.info("实名认证***********************结束");
 
         if (!phone.equals(mobile)) {//旧手机号与新手机号不同则修改
-            Map<String, Object> updmobilemap = new HashMap<String, Object>();
+            Map<String, Object> updmobilemap = new HashMap<>();
             updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
             updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
             updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
@@ -1003,7 +1004,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         logger.info("绑定手机号***********************结束");
 
-        Map<String, Object> hrparamMap = new HashMap<String, Object>();
+        Map<String, Object> hrparamMap = new HashMap<>();
         hrparamMap.put("custName", custName);
         hrparamMap.put("idTyp", idType);
         hrparamMap.put("idNo", idNo);
@@ -1014,50 +1015,9 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String retMsg = (String) updmobileheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        boolean hehyflag = false; //海尔会员标识
-//        List<Map<String,String>> custWhiteListCmisList = (List<Map<String,String>>) custWhiteListCmis.get("body");
-//        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
-//            if(custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")){
-//                hehyflag = true;
-//                break;
-//            }
-//        }
-        Map<String, Object> resultparamMap = new HashMap<String, Object>();
-        if (hehyflag) {
-            Map<String, Object> cacheedmap = new HashMap<>();
-            cacheedmap.put("channel", "11");
-            cacheedmap.put("channelNo", channelNo);
-            cacheedmap.put("userId", userId);
-            Map<String, Object> mapcache = appServerService.checkEdAppl(token, cacheedmap);
-            logger.info("额度申请校验接口返回数据：" + mapcache);
-            if (!HttpUtil.isSuccess(mapcache)) {
-                Map<String, Object> head = (Map) mapcache.get("head");
-                String retFlag = (String) head.get("retFlag");
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-            }
-            Object head2 = mapcache.get("head");
-            Map<String, Object> retinfo = (Map) head2;
-            String retFlag_ = (String) retinfo.get("retFlag");
-            String retMsg_ = (String) retinfo.get("retMsg");
 
-            if ("00000".equals(retFlag_)) {
-                Map<String, Object> headinfo = (Map) (mapcache.get("body"));
-                String applType = (String) headinfo.get("applType");
-                String flag = (String) headinfo.get("flag");
-                String retmsg = "01";//未申请
-                if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
-                    resultparamMap.put("flag", "3");//预授信额度
-                } else if ("2".equals(applType)) {
-
-                } else if ("".equals(flag)) {
-                    resultparamMap.put("flag", "2");//通过  我的额度
-                }
-            }
-        } else {
-            resultparamMap.put("flag", "1");//通过  个人扩展信息
-        }
+        Map<String, Object> resultparamMap = new HashMap<>();
+        resultparamMap.put("flag", "1");//通过  个人扩展信息
         return success(resultparamMap);
     }
-
-
 }

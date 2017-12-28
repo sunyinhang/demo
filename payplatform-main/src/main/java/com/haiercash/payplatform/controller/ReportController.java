@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class ReportController extends BaseController {
-    private static String MODULE_NO = "01";
+    private static final String MODULE_NO = "01";
 
     public ReportController() {
         super(MODULE_NO);

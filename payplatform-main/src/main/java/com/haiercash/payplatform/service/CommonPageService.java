@@ -56,7 +56,7 @@ public interface CommonPageService {
      * @author yu jianwei
      * @date 2017/11/6 13:49
      */
-    Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) throws Exception;
+    Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params);
 
     /**
      * 预约
@@ -74,7 +74,7 @@ public interface CommonPageService {
      * @author yu jianwei
      * @date 2017/11/20 10:56
      */
-    Map<String, Object> joinActivity() throws Exception;
+    Map<String, Object> joinActivity();
 
     /**
      * @Title personalEd

@@ -54,6 +54,6 @@ public interface SgInnerService {
      * @author yu jianwei
      * @date 2017/9/14 16:34
      */
-    Map<String, Object> approveStatus(String token) throws Exception;
+    Map<String, Object> approveStatus(String token);
 
 }

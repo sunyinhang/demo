@@ -3,7 +3,6 @@ package com.haiercash.payplatform.common.data;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.nio.channels.Channel;
 
 /**
  * Created by yuanli on 2017/10/15.

@@ -27,8 +27,8 @@ import java.util.Map;
 @RestController
 public class SgInnerController extends BaseController {
     //模块编码  02
-    private static String MODULE_NO = "02";
-    public Log logger = LogFactory.getLog(getClass());
+    private static final String MODULE_NO = "02";
+    public final Log logger = LogFactory.getLog(getClass());
     @Autowired
     private SgInnerService sgInnerService;
     @Autowired
@@ -94,7 +94,7 @@ public class SgInnerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/payment/shunguang/commitOrder", method = RequestMethod.POST)
-    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) {
         return commitOrderService.commitOrder(map);
     }
 
@@ -127,13 +127,13 @@ public class SgInnerController extends BaseController {
      * @date 2017/9/14 16:34
      */
     @RequestMapping(value = "/api/payment/shunguang/approveStatus", method = RequestMethod.POST)
-    public Map<String, Object> approveStatus() throws Exception {
+    public Map<String, Object> approveStatus() {
         return sgInnerService.approveStatus(super.getToken());
     }
 
     @RequestMapping(value = "/api/payment/shunguang/test", method = RequestMethod.GET)
     public Map<String, Object> test() {
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("merchantCode", "EHAIER");
         paramMap.put("storeCode", "SHUNGUANG");
         Map<String, Object> loanmap = appServerService.getLoanDic("", paramMap);
@@ -143,8 +143,8 @@ public class SgInnerController extends BaseController {
         }
         List jsonArray = (List) loanmap.get("body");
         logger.info("jsonArray大小" + jsonArray.size());
-        for (int j = 0; j < jsonArray.size(); j++) {
-            JSONObject jsonm = new JSONObject(jsonArray.get(j).toString());
+        for (Object aJsonArray : jsonArray) {
+            JSONObject jsonm = new JSONObject(aJsonArray.toString());
             String loanCode = (String) jsonm.get("loanCode");
             if ("17100a".equals(loanCode)) {
                 logger.info("success");

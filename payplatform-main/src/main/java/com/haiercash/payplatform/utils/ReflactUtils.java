@@ -12,6 +12,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,16 +26,14 @@ public class ReflactUtils {
      * @return
      */
     public static List<Field> findAllFieldsOfSelfAndSuperClass(Class clazz) {
-        Field[] fields = null;
-        List fieldList = new ArrayList();
+        Field[] fields;
+        List<Field> fieldList = new ArrayList<>();
         while (true) {
             if (clazz == null) {
                 break;
             } else {
                 fields = clazz.getDeclaredFields();
-                for (int i = 0; i < fields.length; i++) {
-                    fieldList.add(fields[i]);
-                }
+                Collections.addAll(fieldList, fields);
                 clazz = clazz.getSuperclass();
             }
         }
@@ -53,10 +52,10 @@ public class ReflactUtils {
         Map map = new HashMap();
         Class clazz = obj.getClass();
         List<Field> fieldList = findAllFieldsOfSelfAndSuperClass(clazz);
-        Field field = null;
+        Field field;
         try {
-            for (int i = 0; i < fieldList.size(); i++) {
-                field = fieldList.get(i);
+            for (Field aFieldList : fieldList) {
+                field = aFieldList;
                 // 定义fieldName是否在拷贝忽略的范畴内
                 boolean flag = false;
                 if (ignores != null && ignores.length != 0) {
@@ -71,9 +70,7 @@ public class ReflactUtils {
                     }
                 }
             }
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
+        } catch (SecurityException | IllegalArgumentException e) {
             e.printStackTrace();
         }
         return map;
@@ -113,9 +110,9 @@ public class ReflactUtils {
 
     public static PropertyDescriptor getPropertyDescriptor(Class clazz,
                                                            String propertyName) {
-        StringBuffer sb = new StringBuffer();// 构建一个可变字符串用来构建方法名称
-        Method setMethod = null;
-        Method getMethod = null;
+        StringBuilder sb = new StringBuilder();// 构建一个可变字符串用来构建方法名称
+        Method setMethod;
+        Method getMethod;
         PropertyDescriptor pd = null;
         try {
             Field f = clazz.getDeclaredField(propertyName);// 根据字段名来获取字段
@@ -123,11 +120,11 @@ public class ReflactUtils {
                 // 构建方法的后缀
                 String methodEnd = propertyName.substring(0, 1).toUpperCase()
                         + propertyName.substring(1);
-                sb.append("set" + methodEnd);// 构建set方法
+                sb.append("set").append(methodEnd);// 构建set方法
                 setMethod = clazz.getDeclaredMethod(sb.toString(),
                         f.getType());
                 sb.delete(0, sb.length());// 清空整个可变字符串
-                sb.append("get" + methodEnd);// 构建get方法
+                sb.append("get").append(methodEnd);// 构建get方法
                 // 构建get 方法
                 getMethod =
                         clazz.getDeclaredMethod(sb.toString());

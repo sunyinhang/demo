@@ -60,8 +60,7 @@ public final class CmisUtil {
 
     public static Map<String, Object> getCmisResponse(String tradeCode, String token, String tradeType, Map<String, Object> map) {
         HashMap requestMap = makeParamMap(tradeCode, tradeType, map);
-        Map<String, Object> responseMap = HttpUtil.restPostMap(EurekaServer.CMISFRONTSERVER + "/pub/cmisfront", "", requestMap);
-        return responseMap;
+        return (Map<String, Object>) HttpUtil.restPostMap(EurekaServer.CMISFRONTSERVER + "/pub/cmisfront", "", requestMap);
     }
 
     public static Map<String, Object> getCmisResponse(String tradeCode, String token, Map<String, Object> map) {

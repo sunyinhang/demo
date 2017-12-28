@@ -35,7 +35,7 @@ public interface ShunguangService {
      * @return
      * @throws Exception
      */
-    Map<String, Object> payApply(Map<String, Object> map) throws Exception;
+    Map<String, Object> payApply(Map<String, Object> map);
 
     /**
      * 白条额度申请接口
@@ -44,7 +44,7 @@ public interface ShunguangService {
      * @return Map
      * @throws Exception
      */
-    Map<String, Object> edApply(Map<String, Object> map) throws Exception;
+    Map<String, Object> edApply(Map<String, Object> map);
 
     /**
      * 7.白条额度申请状态查询    Sg-10006    checkEdAppl
@@ -62,7 +62,7 @@ public interface ShunguangService {
      * @return
      * @throws Exception
      */
-    Map<String, Object> queryAppLoanAndGoods(Map<String, Object> map) throws Exception;
+    Map<String, Object> queryAppLoanAndGoods(Map<String, Object> map);
 
     /**
      * 10.  白条额度进行贷款支付结果主动查询接口    Sg-10009
@@ -72,7 +72,7 @@ public interface ShunguangService {
      * @throws Exception
      */
 
-    Map<String, Object> queryAppLoanAndGoodsOne(Map<String, Object> map) throws Exception;
+    Map<String, Object> queryAppLoanAndGoodsOne(Map<String, Object> map);
 
 
     /**
@@ -82,7 +82,7 @@ public interface ShunguangService {
      * @return
      * @throws Exception
      */
-    Map<String, Object> edcheck(Map<String, Object> map) throws Exception;
+    Map<String, Object> edcheck(Map<String, Object> map);
 
     /**
      * 额度测试入口
@@ -90,7 +90,7 @@ public interface ShunguangService {
      * @return
      * @throws Exception
      */
-    Map<String, Object> edApplytest(Map<String, Object> map) throws Exception;
+    Map<String, Object> edApplytest(Map<String, Object> map);
 
     /**
      * 贷款测试入口
@@ -98,14 +98,14 @@ public interface ShunguangService {
      * @return
      * @throws Exception
      */
-    Map<String, Object> payApplytest(AppOrder appOrder) throws Exception;
+    Map<String, Object> payApplytest(AppOrder appOrder);
     /**
      * @Title returnGoods
      * @Description: 退货接口
      * @author yu jianwei
      * @date 2017/11/6 17:41
      */
-    Map<String, Object> returnGoods(Map<String, Object> map) throws Exception;
+    Map<String, Object> returnGoods(Map<String, Object> map);
 
     /**
      * @Title getReturnGoodsInfo
@@ -113,7 +113,7 @@ public interface ShunguangService {
      * @author yu jianwei
      * @date 2017/12/15 11:13
      */
-    Map<String, Object> getReturnGoodsInfo(Map<String, Object> map) throws Exception;
+    Map<String, Object> getReturnGoodsInfo(Map<String, Object> map);
 
 
     /**

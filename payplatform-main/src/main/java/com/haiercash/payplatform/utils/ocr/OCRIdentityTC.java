@@ -22,21 +22,19 @@ import static java.lang.System.out;
  */
 public class OCRIdentityTC {
 
-    public static Demo engineOCR = new Demo();
-    public Log logger = LogFactory.getLog(getClass());
+    public static final Demo engineOCR = new Demo();
+    public final Log logger = LogFactory.getLog(getClass());
 
     public ReturnMessage OCRIDUpload(InputStream image_files) {
 
         ReturnMessage returnMessage = new ReturnMessage();
 
-        InputStream image_file = image_files;
-
         try {
-            if (StringUtils.isEmpty(image_file)) {
+            if (StringUtils.isEmpty(image_files)) {
                 returnMessage.setCode("0001");
                 returnMessage.setMessage("所上传的照片数据为空");
             }
-            byte[] pImgBuff = GetImgByte(image_file);
+            byte[] pImgBuff = getImgByte(image_files);
             String result = getOCR(pImgBuff);
 
             if (StringUtils.isEmpty(result)) {
@@ -102,41 +100,21 @@ public class OCRIdentityTC {
 
     }
 
-    public byte[] GetImgByte(InputStream image_files) throws IOException {
-
-        byte[] data = null;
-        InputStream input = image_files;
-        //input = (InputStream) imgFileMap.get("image_file");//new FileImageInputStream(new File(image_file));
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try{
+    public byte[] getImgByte(InputStream image_files) throws IOException {
+        byte[] data;
+        try (InputStream input = image_files; ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] buf = new byte[1024];
-            int numBytesRead = 0;
+            int numBytesRead;
             while ((numBytesRead = input.read(buf)) != -1) {
                 output.write(buf, 0, numBytesRead);
             }
             data = output.toByteArray();
-
-        }catch (Exception e){
-            //logger.info("图片Byte获取失败");
-            return null;
-
-        }finally{
-            output.close();
-            input.close();
-            return data;
         }
-
-
+        return data;
     }
+
     public String getOCR(byte[] pImgBuff){
-
         String strResult = null;
-        //window
-        //String timeKey = "ed969133dd0eece08b478d9478ff3c06";
-        //int ret = engineOCR.Start(timeKey);
-        //linux
-        //int ret = engineOCR.Start(engineOCR.Byte2String(engineOCR.GetEngineTimeKey()));//初始化
-
         int ret;
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
         if (!com.alibaba.druid.util.StringUtils.isEmpty(osName) && osName.startsWith("win")) { //window

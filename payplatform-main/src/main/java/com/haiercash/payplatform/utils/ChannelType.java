@@ -48,9 +48,9 @@ public enum ChannelType {
      */
     EnoughSpend("18", "42", null);
 
-    private String channel;
-    private String channelNo;
-    private String source;
+    private final String channel;
+    private final String channelNo;
+    private final String source;
 
     /**
      * 构造函数

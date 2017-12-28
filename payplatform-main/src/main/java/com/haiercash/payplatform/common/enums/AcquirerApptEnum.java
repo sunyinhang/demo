@@ -19,8 +19,8 @@ public enum AcquirerApptEnum {
     INDIV_EMP_NAME      ("officeName",          "indiv_emp_name"),      //现单位名称
     INDIV_EMP_TEL       ("officeTel",           "indiv_emp_tel");       //办公电话
 
-    private String orderAttr;
-    private String acquirerAttr;
+    private final String orderAttr;
+    private final String acquirerAttr;
 
     AcquirerApptEnum(String orderName, String acquirerName) {
         this.orderAttr = orderName;

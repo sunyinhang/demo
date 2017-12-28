@@ -64,7 +64,7 @@ public class MoxieServiceImpl extends BaseService implements MoxieService {
         String mobile = m.get("mobile").toString();//mobile
         String custNo = m.get("custNo").toString();//得到客户编号
 
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> list = new ArrayList<>();
         Map map0 = new HashMap<>();
         map0.put("content", EncryptUtil.simpleEncrypt(taskid));
         map0.put("reserved6",applseq);
@@ -80,7 +80,7 @@ public class MoxieServiceImpl extends BaseService implements MoxieService {
         }
         list.add(map0);
 
-        List<Object> l1 = new ArrayList<Object>();
+        List<Object> l1 = new ArrayList<>();
         l1.add(list);
 
         Map<String, Object> map = new LinkedHashMap<>();
@@ -155,7 +155,6 @@ public class MoxieServiceImpl extends BaseService implements MoxieService {
         Map paramMap = new HashMap<>();
         paramMap.put("applseq", applseq);
         Map moxiemap = appServerService.getMoxieByApplseq("", paramMap);
-        Map bodyMap = (Map) moxiemap.get("body");
-        return bodyMap;
+        return (Map) moxiemap.get("body");
     }
 }

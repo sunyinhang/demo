@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.pc.moxie.controller;
 
-import com.haiercash.spring.controller.BaseController;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
+import com.haiercash.spring.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class MoxieController extends BaseController{
     @Autowired
     private MoxieService moxieService;
-    private static String MODULE_NO = "04";
+    private static final String MODULE_NO = "04";
     public MoxieController() {
         super(MODULE_NO);
     }

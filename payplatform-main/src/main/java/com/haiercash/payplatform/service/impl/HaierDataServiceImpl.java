@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class HaierDataServiceImpl implements HaierDataService {
-    public Log logger = LogFactory.getLog(getClass());
+    public final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
     private HaierConfig haierConfig;

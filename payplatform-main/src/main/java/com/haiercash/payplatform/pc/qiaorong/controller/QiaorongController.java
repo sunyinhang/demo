@@ -1,11 +1,13 @@
 package com.haiercash.payplatform.pc.qiaorong.controller;
 
-import com.alibaba.druid.support.logging.Log;
-import com.alibaba.druid.support.logging.LogFactory;
-import com.haiercash.spring.controller.BaseController;
 import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
+import com.haiercash.spring.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -14,8 +16,7 @@ import java.util.Map;
  */
 @RestController
 public class QiaorongController extends BaseController {
-    public Log logger = LogFactory.getLog(getClass());
-    private static String MODULE_NO = "04";
+    private static final String MODULE_NO = "04";
     public QiaorongController() {
         super(MODULE_NO);
     }

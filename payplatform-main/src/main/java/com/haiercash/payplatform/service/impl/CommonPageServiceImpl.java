@@ -1,6 +1,8 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
@@ -109,7 +111,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -282,7 +284,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     //合同签订
     public Map<String, Object> signContract(String custName, String custIdCode, String applseq, String phone, String typCde,
                                             String channelNo, String token) {
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("typCdeList", typCde);
         Map<String, Object> loanmap = appServerService.pLoanTypList(token, paramMap);
         if (!HttpUtil.isSuccess(loanmap)) {
@@ -290,8 +292,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         List<Map<String, Object>> loanbody = (List<Map<String, Object>>) loanmap.get("body");
         String typLevelTwo = "";
-        for (int i = 0; i < loanbody.size(); i++) {
-            Map<String, Object> m = loanbody.get(i);
+        for (Map<String, Object> m : loanbody) {
             typLevelTwo = m.get("levelTwo").toString();
         }
         logger.info("贷款品种小类：" + typLevelTwo);
@@ -413,7 +414,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             appOrder.setMtdCde(typResultList.get(0).get("mtdCde").toString());
         }
 
-        boolean ifAccessEd = false;
+        boolean ifAccessEd;
         try {
             logger.info("个人版保存订单校验银行卡限额策略, custNo:" + appOrder.getCustNo());
             ifAccessEd = this.ifAccessEd(appOrder);
@@ -426,8 +427,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         // 个人版：扫码分期提交给商户(S)，现金贷提交给信贷系统(N)
         //String autoFlag = appOrder.getTypGrp().equals("02") ? "N" : "S";
 
-        String orderNo = "";
-        String applSeq = "";
+        String orderNo;
+        String applSeq;
         if ("02".equals(appOrder.getTypGrp())) {//现金贷
 
             // 现金贷
@@ -448,7 +449,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 Map<String, Object> bodyMap = (Map<String, Object>) ((Map<String, Object>) resultResponseMap
                         .get("response")).get("body");
                 applSeq = (String) bodyMap.get("applSeq");
-                orderNo = (String) bodyMap.get("applSeq");
                 this.saveRelation(applSeq, appOrder.getTypGrp(), applSeq, appOrder.getCustNo());
                 Map responsemap = (Map<String, Object>) resultResponseMap.get("response");
                 Map bodymap = (Map<String, Object>) responsemap.get("body");
@@ -475,7 +475,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
     @Override
     public Map<String, Object> getCode(String token, Map<String, Object> citymap) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> resultMap = new HashMap<>();
         String cityCode = "";
         String areaType = "";
         // 根据区号获取市
@@ -487,8 +487,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         List<Map<String, Object>> body = (List<Map<String, Object>>) result.get("body");
 
-        for (int i = 0; i < body.size(); i++) {
-            Map<String, Object> m = body.get(i);
+        for (Map<String, Object> m : body) {
             cityCode = m.get("areaCode").toString();
             areaType = m.get("areaType").toString();
         }
@@ -506,8 +505,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     @Override
     public Map<String, Object> getPurpose(Map<String, Object> params) {
         String token = super.getToken();
-        Map<String, Object> resultMap = appServerService.getPurpose(token, params);
-        return resultMap;
+        return appServerService.getPurpose(token, params);
     }
 
     /*
@@ -559,7 +557,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         JSONObject jb = new JSONObject(resData);
         String retFlag = jb.getString("RET_CODE");
-        String retMsg = jb.getString("RET_MSG");
         if (!"00000".equals(retFlag)) {
             return fail(ConstUtil.ERROR_CODE, "四要素验证失败");
         }
@@ -577,12 +574,11 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 
         //请求数据解析
-        String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
         //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
         //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
 
-        return params;
+        return new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
     }
 
 
@@ -781,9 +777,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 order.setpLoanTypMaxAmt(StringUtils.isEmpty(typResultMap.get("maxAmt")) ?
                         null :
                         new BigDecimal(String.valueOf(typResultMap.get("maxAmt"))).doubleValue());
-                order.setpLoanTypGoodMaxNum(StringUtils.isEmpty(typResultMap.get("goodMaxNum")) ?
-                        0 :
-                        (Integer) typResultMap.get("goodMaxNum"));
+                order.setpLoanTypGoodMaxNum(StringUtils.isEmpty(typResultMap.get("goodMaxNum")) ? 0 : Convert.toInteger(typResultMap.get("goodMaxNum")));
                 order.setpLoanTypTnrOpt((String) typResultMap.get("tnrOpt"));
             }
         }
@@ -873,7 +867,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 relation = new AppOrdernoTypgrpRelation();
             } else {
                 // 重复创建的情况
-                String orderno = relation.getOrderNo();
                 if (!StringUtils.isEmpty(orderNo)) {
                     appOrdernoTypgrpRelationDao.deleteByOrderNo(orderNo);
                 }
@@ -1148,7 +1141,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     public boolean judgeApplAmt(String idTyp, String idNo, String applyAmt, String token) {
         boolean resultFlag = false;
         logger.info("====检验可用额度是否满足申请金额====");
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<>();
         map.put("idTyp", idTyp);
         map.put("idNo", idNo);
         map.put("sysFlag", super.getChannel());
@@ -1197,8 +1190,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             logger.info("CRM28接口【查询未实名认证客户的准入资格】请求获得结果为空！");
             return fail("10", "CRM28返回为空！");
         }
-        Map<String, Object> isPassMap = HttpUtil.json2Map(json);
-        return isPassMap;
+        return HttpUtil.json2Map(json);
     }
 
     //根据原始订单的客户信息，更新订单手机号为绑定手机号，并保存数据库
@@ -1306,7 +1298,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
      * @return
      */
     public String getMobileBySmrz(String userId, String custName, String idNo, String token) {
-        String mobile = "";//要返回的手机号
+        String mobile;//要返回的手机号
         String cust_url = "";
         /** 调用实名认证接口5.13，查询手机号和客户号 **/
         //若用户id
@@ -1321,7 +1313,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String cust_json = HttpUtil.restGet(cust_url, super.getToken());
         if (StringUtils.isEmpty(cust_json)) {
             logger.info("CRM  该订单的实名认证信息接口查询失败，返回异常！");
-            mobile = "";
         }
         Map<String, Object> custMap = HttpUtil.json2Map(cust_json);
         logger.info("CRM 实名认证（17或13）接口返回custMap==" + custMap);
@@ -1381,8 +1372,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String verifyUrl = setting.getVerifyUrlThird() + thirdToken;
         String uidLocal;//统一认证userid
         String phoneNo;//统一认证绑定手机号
-        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
-        Map<String, Object> validateUserFlagMap = new HashMap<>();
         logger.info("验证第三方 token:" + verifyUrl);
         //验证客户信息
         ThirdTokenVerifyService thirdTokenVerifyService;
@@ -1423,7 +1412,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //5.查询实名信息
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", uidLocal);//内部userId
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
@@ -1464,20 +1453,15 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         Map<String, Object> mapcache = appServerService.checkEdAppl(thirdToken, cacheedmap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
-            Map<String, Object> head = (Map<String, Object>) mapcache.get("head");
-            String _retFlag_ = (String) head.get("retFlag");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map<String, Object>) head2;
         String retFlag_ = (String) retinfo.get("retFlag");
-        String retMsg_ = (String) retinfo.get("retMsg");
         if ("00000".equals(retFlag_)) {
             Map<String, Object> headinfo = (Map<String, Object>) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
-            String _outSts = (String) headinfo.get("outSts");
-            String retmsg = "01";//未申请
             if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
                 returnmap.put("flag", "1");//活动页
                 return success(returnmap);
@@ -1601,12 +1585,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String channelNo = this.getChannelNo();
         String token = this.getToken();
         String userId;//统一认证userid
-        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
-        Map<String, Object> validateUserFlagMap = new HashMap<>();
         logger.info("token:" + token);
-//        //获取缓存数据
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -1653,17 +1634,20 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                     return fail(ConstUtil.ERROR_CODE, (String) head.get("retMsg"));
                 }
                 Map<String, Object> body = (Map<String, Object>) edApplProgress.get("body");
-                Integer crdSeqInt = (Integer) body.get("applSeq");
-                String crdSeq = Integer.toString(crdSeqInt);
                 String outSts = body.get("outSts").toString();
-                if ("27".equals(outSts)) {
-                    returnmap.put("flag", "1");//通过  我的额度
-                } else if ("25".equals(outSts)) {
-                    returnmap.put("flag", "3");// 拒绝
-                } else if ("22".equals(outSts)) {
-                    returnmap.put("flag", "2");// 退回
-                } else {//审批中
-                    returnmap.put("flag", "4");// 审批中
+                switch (outSts) {
+                    case "27":
+                        returnmap.put("flag", "1");//通过  我的额度
+                        break;
+                    case "25":
+                        returnmap.put("flag", "3");// 拒绝
+                        break;
+                    case "22":
+                        returnmap.put("flag", "2");// 退回
+                        break;
+                    default: //审批中
+                        returnmap.put("flag", "4");// 审批中
+                        break;
                 }
             } else if ("".equals(flag)) {
                 returnmap.put("flag", "1");//通过  我的额度
@@ -1683,7 +1667,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
      */
     @Override
     public Map<String, Object> getAreaCode(String provinceName, String cityName, String districtName) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         String province = "";
         String city = "";
         if (StringUtils.isEmpty(cityName)) {
@@ -1718,11 +1702,11 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 if (StringUtils.isEmpty(sAreas)) {
                     return fail(ConstUtil.ERROR_CODE, "所在城市暂未查到");
                 }
-                for (int i = 0; i < sAreas.size(); i++) {
-                    if ("province".equals(sAreas.get(i).getAreaType())) {
-                        province = sAreas.get(i).getAreaCode();
-                    } else if ("city".equals(sAreas.get(i).getAreaType())) {
-                        city = sAreas.get(i).getAreaCode();
+                for (SArea sArea : sAreas) {
+                    if ("province".equals(sArea.getAreaType())) {
+                        province = sArea.getAreaCode();
+                    } else if ("city".equals(sArea.getAreaType())) {
+                        city = sArea.getAreaCode();
                     }
                 }
                 map.put("province", province);
@@ -1769,7 +1753,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if (StringUtils.isEmpty(province)) {
             //根据城市编码查询省名称
             SArea city1 = sAreaDao.selectByCodeAndAreaType(city, "city");
-            province = city1.getAreaParentCode();
         }
         return success(map);
     }

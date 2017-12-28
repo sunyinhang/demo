@@ -23,8 +23,7 @@ public class EncryptUtil {
             int j = md.length;
             char str[] = new char[j * 2];
             int k = 0;
-            for (int i = 0; i < j; i++) {
-                byte byte0 = md[i];
+            for (byte byte0 : md) {
                 str[k++] = hexDigits[byte0 >>> 4 & 0xf];
                 str[k++] = hexDigits[byte0 & 0xf];
             }
@@ -35,7 +34,7 @@ public class EncryptUtil {
     }
 
     // 加密
-    public static String AesEncrypt(String sSrc, String sKey) throws Exception {
+    public static String aesEncrypt(String sSrc, String sKey) throws Exception {
         if (sKey == null) {
             System.out.print("Key为空null");
             return null;
@@ -56,7 +55,7 @@ public class EncryptUtil {
     }
 
     // 解密
-    public static String AesDecrypt(String sSrc, String sKey) {
+    public static String aesDecrypt(String sSrc, String sKey) {
         try {
             // 判断Key是否正确
             if (sKey == null) {
@@ -76,8 +75,7 @@ public class EncryptUtil {
             byte[] encrypted1 = new Base64().decode(sSrc);//先用base64解密
             try {
                 byte[] original = cipher.doFinal(encrypted1);
-                String originalString = new String(original,"utf-8");
-                return originalString;
+                return new String(original, "utf-8");
             } catch (Exception e) {
                 System.out.println(e.toString());
                 return null;
@@ -96,7 +94,7 @@ public class EncryptUtil {
         }
         int half = bas.length / 2;
         for (int i = 0; i < half; i ++) {
-            if (i % 2 == 1) {
+            if (i % 2 != 0) {
                 //奇数位调换
                 byte b = bas[i];
                 bas[i] = bas[i + half];
@@ -110,7 +108,7 @@ public class EncryptUtil {
         byte[] bas = new Base64().decode(sSrc);
         int half = bas.length / 2;
         for (int i = 0; i < half; i ++) {
-            if (i % 2 == 1) {
+            if (i % 2 != 0) {
                 //奇数位调换
                 byte b = bas[i];
                 bas[i] = bas[i + half];
@@ -144,10 +142,10 @@ public class EncryptUtil {
         //String cSrc = "";
         System.out.println(cSrc);
         // 加密
-        String enString = AesEncrypt(cSrc, cKey);
+        String enString = aesEncrypt(cSrc, cKey);
         System.out.println("加密后的字串是：" + enString);
         // 解密
-        String DeString = AesDecrypt(enString, cKey);
+        String DeString = aesDecrypt(enString, cKey);
         System.out.println("解密后的字串是：" + DeString);
     }*/
 }

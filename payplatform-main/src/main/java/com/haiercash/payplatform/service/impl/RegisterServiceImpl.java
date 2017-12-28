@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.service.AppServerService;
@@ -36,7 +37,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     @Override
     public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********判断用户是否注册**************开始");
-        Map<String, Object> resultparamMap = new HashMap<String, Object>();
+        Map<String, Object> resultparamMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -57,11 +58,11 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String userIdEncrypt = EncryptUtil.simpleEncrypt((String) params.get("userId"));
         //缓存数据获取
 //        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-//        if(cacheMap == null || "".equals(cacheMap)){
+//        if(MapUtils.isEmpty(cacheMap)){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 //        }
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", channel);
         paramMap.put("mobile", userIdEncrypt);
@@ -94,7 +95,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     @Override
     public Map<String, Object> isRegisterNotoken(String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********判断用户是否注册**************开始");
-        Map<String, Object> resultparamMap = new HashMap<String, Object>();
+        Map<String, Object> resultparamMap = new HashMap<>();
         if (channel.isEmpty()) {
             logger.info("channel为空");
             return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
@@ -110,11 +111,11 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         String userIdEncrypt = EncryptUtil.simpleEncrypt((String) params.get("userId"));
         //缓存数据获取
 //        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-//        if(cacheMap == null || "".equals(cacheMap)){
+//        if(MapUtils.isEmpty(cacheMap)){
 //            logger.info("Redis数据获取失败");
 //            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 //        }
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", channel);
         paramMap.put("mobile", userIdEncrypt);
@@ -164,27 +165,30 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         params.put("password", password);
         Map usermap = appServerService.saveUauthUsers(token, params);
         String userretFlag = String.valueOf(((Map<String, Object>) (usermap.get("head"))).get("retFlag"));
-        if ("00000".equals(userretFlag)) {
-            //注册成功
+        switch (userretFlag) {
+            case "00000":
+                //注册成功
 //            String uidLocal = usermap.get("body").toString();//统一认证内userId
-            returnmap.put("flag", "1");//注册成功
-            return success(returnmap);
-        } else if ("U0143".equals(userretFlag)) {
-            returnmap.put("flag", "2");
-            return success(returnmap);//用户已注册
-        } else {
-            //注册失败
-            String userretmsg = ((Map<String, Object>) (usermap.get("head"))).get("retMsg").toString();
-            return fail(ConstUtil.ERROR_CODE, userretmsg);
+                returnmap.put("flag", "1");//注册成功
+
+                return success(returnmap);
+            case "U0143":
+                returnmap.put("flag", "2");
+                return success(returnmap);//用户已注册
+
+            default:
+                //注册失败
+                String userretmsg = ((Map<String, Object>) (usermap.get("head"))).get("retMsg").toString();
+                return fail(ConstUtil.ERROR_CODE, userretmsg);
         }
     }
 
     @Override
-    public Map<String, Object> validateUsers(String channel, String channelNo, Map<String, Object> params) throws Exception {
-        Map<String, Object> resultparamMap = new HashMap<String, Object>();
-        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
-        Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
-        Map<String, Object> hrparamMap = new HashMap<String, Object>();
+    public Map<String, Object> validateUsers(String channel, String channelNo, Map<String, Object> params) {
+        Map<String, Object> resultparamMap = new HashMap<>();
+        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
+        Map<String, Object> validateUserFlagMap = new HashMap<>();
+        Map<String, Object> hrparamMap = new HashMap<>();
         String typCde = "";//贷款品种
         if (channel.isEmpty()) {
             logger.info("channel为空");
@@ -205,14 +209,13 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         Map cacheMap = new HashMap<String, Object>();
         cacheMap.put("token", token);
         String tag = "SHH";
-        String userId = mobile;
-        cacheMap.put("userId", userId);
+        cacheMap.put("userId", mobile);
         String phoneNo = (String) response.getBody().get("mobile");
         cacheMap.put("phoneNo", phoneNo);
         RedisUtils.setExpire(token, cacheMap);
         //5.查询实名信息
-        Map<String, Object> custMap = new HashMap<String, Object>();
-        custMap.put("userId", userId);//内部userId
+        Map<String, Object> custMap = new HashMap<>();
+        custMap.put("userId", mobile);//内部userId
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
@@ -265,18 +268,15 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         Map<String, Object> cacheedmap = new HashMap<>();
         cacheedmap.put("channel", "11");
         cacheedmap.put("channelNo", channelNo);
-        cacheedmap.put("userId", userId);
+        cacheedmap.put("userId", mobile);
         Map<String, Object> mapcache = appServerService.checkEdAppl(token, cacheedmap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
-            Map<String, Object> head = (Map) mapcache.get("head");
-            String retFlag = (String) head.get("retFlag");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map) head2;
         String retFlag_ = (String) retinfo.get("retFlag");
-        String retMsg_ = (String) retinfo.get("retMsg");
         if ("00000".equals(retFlag_)) {
             Map<String, Object> headinfo = (Map) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
@@ -295,7 +295,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                     return success(resultparamMap);
                 }
                 logger.info("没有额度申请");
-                Map<String, Object> paramMap = new HashMap<String, Object>();
+                Map<String, Object> paramMap = new HashMap<>();
                 paramMap.put("channelNo", channelNo);
                 paramMap.put("tag", tag);//标签
                 paramMap.put("businessType", "EDJH");//业务类型 现金贷：XJD   商品分期：SPFQ      额度激活：EDJH    提额：TE   额度申请：EDSQ   个人信息维护：GRXX
@@ -303,7 +303,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 paramMap.put("isOrder", "N");//是否为订单
                 paramMap.put("orderNo", "");//订单编号
                 paramMap.put("applSeq", "");//订单流水号
-                paramMap.put("userId", userId);//用户id
+                paramMap.put("userId", mobile);//用户id
                 paramMap.put("custNo", custNo);//用户编号
                 paramMap.put("typCde", typCde);//贷款品种代码
                 paramMap.put("custName", custName);//用户名称
@@ -353,36 +353,43 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
                         if (code != null && !"".equals(code)) {
                             logger.info("*********人脸识别标识码：" + code);
-                            if ("00".equals(code)) {// 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
-                                validateUserFlagMap.put("channelNo", channelNo);// 渠道
-                                validateUserFlagMap.put("channel", channel);
-                                validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userId));//客户编号18254561920
-                                Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
-                                if (alidateUserMap == null) {
-                                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                                }
-                                Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
-                                String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
-                                if (!"00000".equals(alidateUserHeadMapFlag)) {
-                                    String retMsg = (String) alidateUserHeadMap.get("retMsg");
-                                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                                }
-                                Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
-                                String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
-                                if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                                }
-                                if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
-                                    resultparamMap.put("flag", "1");
-                                } else {//没有设置支付密码
-                                    resultparamMap.put("flag", "2");
-                                }
-                            } else if ("01".equals(code)) {// 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                                resultparamMap.put("flag", "3");
-                            } else if ("02".equals(code)) {// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                                resultparamMap.put("flag", "4");
-                            } else {//跳转人脸识别
-                                resultparamMap.put("flag", "5");
+                            switch (code) {
+                                case "00": // 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
+                                    validateUserFlagMap.put("channelNo", channelNo);// 渠道
+
+                                    validateUserFlagMap.put("channel", channel);
+                                    validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(mobile));//客户编号18254561920
+
+                                    Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
+                                    if (alidateUserMap == null) {
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                    }
+                                    Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
+                                    String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
+                                    if (!"00000".equals(alidateUserHeadMapFlag)) {
+                                        String retMsg = (String) alidateUserHeadMap.get("retMsg");
+                                        return fail(ConstUtil.ERROR_CODE, retMsg);
+                                    }
+                                    Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
+                                    String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
+                                    if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                    }
+                                    if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
+                                        resultparamMap.put("flag", "1");
+                                    } else {//没有设置支付密码
+                                        resultparamMap.put("flag", "2");
+                                    }
+                                    break;
+                                case "01": // 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                                    resultparamMap.put("flag", "3");
+                                    break;
+                                case "02": // 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                                    resultparamMap.put("flag", "4");
+                                    break;
+                                default: //跳转人脸识别
+                                    resultparamMap.put("flag", "5");
+                                    break;
                             }
 
                         }
@@ -409,14 +416,23 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 cacheMap.put("crdSeq", crdSeq);
                 RedisUtils.setExpire(token, cacheMap);
                 String outSts = body.get("outSts").toString();
-                if ("27".equals(outSts)) {
-                    resultparamMap.put("flag", "9");//通过  我的额度
-                } else if ("25".equals(outSts)) {
-                    resultparamMap.put("flag", "10");// 拒绝
-                } else if ("22".equals(outSts)) {
-                    resultparamMap.put("flag", "11");// 退回
-                } else {//审批中
-                    resultparamMap.put("flag", "8");// 审批中
+                switch (outSts) {
+                    case "27":
+                        resultparamMap.put("flag", "9");//通过  我的额度
+
+                        break;
+                    case "25":
+                        resultparamMap.put("flag", "10");// 拒绝
+
+                        break;
+                    case "22":
+                        resultparamMap.put("flag", "11");// 退回
+
+                        break;
+                    default: //审批中
+                        resultparamMap.put("flag", "8");// 审批中
+
+                        break;
                 }
             } else if ("".equals(flag)) {
                 resultparamMap.put("flag", "9");//通过  我的额度
@@ -436,7 +452,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     @Override
     public Map<String, Object> custUpdatePwd(Map<String, Object> params) {
         Map returnmap = new HashMap<String, Object>();//返回的map
-        Map<String, Object> verifyNoMap = new HashMap<String, Object>();
+        Map<String, Object> verifyNoMap = new HashMap<>();
         verifyNoMap.put("phone", params.get("userId"));
         verifyNoMap.put("verifyNo", params.get("verifyNo"));
         verifyNoMap.put("token", getToken());
@@ -449,7 +465,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             String retMsg = (String) verifyheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        Map<String, Object> landparamMap = new HashMap<String, Object>();
+        Map<String, Object> landparamMap = new HashMap<>();
         landparamMap.put("userId", EncryptUtil.simpleEncrypt(String.valueOf(params.get("userId"))));
         landparamMap.put("verifyNo", EncryptUtil.simpleEncrypt(String.valueOf(params.get("verifyNo"))));
         landparamMap.put("newPassword", EncryptUtil.simpleEncrypt(String.valueOf(params.get("newPassword"))));
@@ -469,11 +485,11 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
     }
 
     @Override
-    public Map<String, Object> validateAndBindOtherUser(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+    public Map<String, Object> validateAndBindOtherUser(String token, String channel, String channelNo, Map<String, Object> params) {
         Map<String, Object> map = new HashMap<>();
-        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
-        Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
-        Map<String, Object> hrparamMap = new HashMap<String, Object>();
+        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
+        Map<String, Object> validateUserFlagMap = new HashMap<>();
+        Map<String, Object> hrparamMap = new HashMap<>();
         String tag = "SHH";
         String typCde = "";//贷款品种
         String password = (String) params.get("password");
@@ -484,7 +500,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         }
         //获取缓存数据
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -501,7 +517,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //验证并绑定集团用户
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("mobile", EncryptUtil.simpleEncrypt(uidLocal));
         paramMap.put("password", EncryptUtil.simpleEncrypt(password));
         paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
@@ -516,7 +532,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         cacheMap.put("userId", uidLocal);//统一认证userId
         cacheMap.put("phoneNo", phoneNo);//绑定手机号
         //4.token绑定
-        Map<String, Object> bindMap = new HashMap<String, Object>();
+        Map<String, Object> bindMap = new HashMap<>();
         bindMap.put("userId", uidLocal);//内部userId
         bindMap.put("token", token);
         Map bindresult = appServerService.saveThirdPartToken(bindMap);
@@ -524,7 +540,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         //5.查询实名信息
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", uidLocal);//内部userId
         Map custresult = appServerService.queryPerCustInfo(token, custMap);
         String custretflag = (String) ((Map<String, Object>) (custresult.get("head"))).get("retFlag");
@@ -573,21 +589,18 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 //            }
 //        }
         //6.查询客户额度
-        Map<String, Object> edMap = new HashMap<String, Object>();
+        Map<String, Object> edMap = new HashMap<>();
         edMap.put("userId", uidLocal);//内部userId
         edMap.put("channel", "11");
         edMap.put("channelNo", channelNo);
         Map mapcache = appServerService.checkEdAppl(token, edMap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
-            Map<String, Object> head = (Map) mapcache.get("head");
-            String retFlag = (String) head.get("retFlag");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map) head2;
         String retFlag_ = (String) retinfo.get("retFlag");
-        String retMsg_ = (String) retinfo.get("retMsg");
         if ("00000".equals(retFlag_)) {
             Map<String, Object> headinfo = (Map) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
@@ -605,7 +618,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                     return success(map);
                 }
                 logger.info("没有额度申请");
-                Map<String, Object> checkparamMap = new HashMap<String, Object>();
+                Map<String, Object> checkparamMap = new HashMap<>();
                 checkparamMap.put("channelNo", channelNo);
                 checkparamMap.put("tag", tag);//标签
                 checkparamMap.put("businessType", "EDJH");//业务类型 现金贷：XJD   商品分期：SPFQ      额度激活：EDJH    提额：TE   额度申请：EDSQ   个人信息维护：GRXX
@@ -663,36 +676,43 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
                         if (code != null && !"".equals(code)) {
                             logger.info("*********人脸识别标识码：" + code);
-                            if ("00".equals(code)) {// 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
-                                validateUserFlagMap.put("channelNo", channelNo);// 渠道
-                                validateUserFlagMap.put("channel", channel);
-                                validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));//客户编号18254561920
-                                Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
-                                if (alidateUserMap == null) {
-                                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                                }
-                                Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
-                                String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
-                                if (!"00000".equals(alidateUserHeadMapFlag)) {
-                                    String retMsg = (String) alidateUserHeadMap.get("retMsg");
-                                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                                }
-                                Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
-                                String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
-                                if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                                }
-                                if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
-                                    map.put("flag", "1");
-                                } else {//没有设置支付密码
-                                    map.put("flag", "2");
-                                }
-                            } else if ("01".equals(code)) {// 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                                map.put("flag", "3");
-                            } else if ("02".equals(code)) {// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                                map.put("flag", "4");
-                            } else {//跳转人脸识别
-                                map.put("flag", "5");
+                            switch (code) {
+                                case "00": // 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
+                                    validateUserFlagMap.put("channelNo", channelNo);// 渠道
+
+                                    validateUserFlagMap.put("channel", channel);
+                                    validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));//客户编号18254561920
+
+                                    Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
+                                    if (alidateUserMap == null) {
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                    }
+                                    Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
+                                    String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
+                                    if (!"00000".equals(alidateUserHeadMapFlag)) {
+                                        String retMsg = (String) alidateUserHeadMap.get("retMsg");
+                                        return fail(ConstUtil.ERROR_CODE, retMsg);
+                                    }
+                                    Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
+                                    String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
+                                    if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                    }
+                                    if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
+                                        map.put("flag", "1");
+                                    } else {//没有设置支付密码
+                                        map.put("flag", "2");
+                                    }
+                                    break;
+                                case "01": // 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                                    map.put("flag", "3");
+                                    break;
+                                case "02": // 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                                    map.put("flag", "4");
+                                    break;
+                                default: //跳转人脸识别
+                                    map.put("flag", "5");
+                                    break;
                             }
 
                         }
@@ -719,14 +739,23 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 cacheMap.put("crdSeq", crdSeq);
                 RedisUtils.setExpire(token, cacheMap);
                 String outSts = body.get("outSts").toString();
-                if ("27".equals(outSts)) {
-                    map.put("flag", "9");//通过  我的额度
-                } else if ("25".equals(outSts)) {
-                    map.put("flag", "10");// 拒绝
-                } else if ("22".equals(outSts)) {
-                    map.put("flag", "11");// 退回
-                } else {//审批中
-                    map.put("flag", "8");// 审批中
+                switch (outSts) {
+                    case "27":
+                        map.put("flag", "9");//通过  我的额度
+
+                        break;
+                    case "25":
+                        map.put("flag", "10");// 拒绝
+
+                        break;
+                    case "22":
+                        map.put("flag", "11");// 退回
+
+                        break;
+                    default: //审批中
+                        map.put("flag", "8");// 审批中
+
+                        break;
                 }
             } else if ("".equals(flag)) {
                 map.put("flag", "9");//通过  我的额度

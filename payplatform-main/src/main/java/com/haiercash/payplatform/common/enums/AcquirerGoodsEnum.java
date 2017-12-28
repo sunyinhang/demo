@@ -15,8 +15,8 @@ public enum AcquirerGoodsEnum {
     GOODS_NUM       ("goodsNum",    "goods_num"),   // 商品数量
     GOODS_PRICE     ("goodsPrice",  "goods_price"); // 商品单价(元)
 
-    private String orderAttr;
-    private String acquirerAttr;
+    private final String orderAttr;
+    private final String acquirerAttr;
     AcquirerGoodsEnum(String orderAttr, String acquirerAttr) {
         this.orderAttr = orderAttr;
         this.acquirerAttr = acquirerAttr;

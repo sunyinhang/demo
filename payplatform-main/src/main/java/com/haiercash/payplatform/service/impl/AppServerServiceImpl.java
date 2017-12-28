@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Service
 public class AppServerServiceImpl extends BaseService implements AppServerService {
-    public Log logger = LogFactory.getLog(getClass());
+    public final Log logger = LogFactory.getLog(getClass());
 
     /**
      * 获取省市区
@@ -137,15 +137,12 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @return
      */
     public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params) {
-        String channel = (String) params.get("channel");
-        String channelNo = (String) params.get("channelNo");
         String custNo = (String) params.get("custNo");// 客户编号
         String attachType = (String) params.get("attachType");// 影像类型
         String attachName = (String) params.get("attachName");// 人脸照片
         String md5 = (String) params.get("md5");//文件md5码
         String filePath = params.get("filePath").toString();//路径
         String id = (String) params.get("id");
-        //String applSeq = (String) params.get("applSeq");
         String idNo = (String) params.get("idNo");
 
         String url;
@@ -296,7 +293,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> getEdApplInfo(String token, Map<String, Object> edapplInfoMap) {
         String verifyMobile = (String) edapplInfoMap.get("verifyMobile");
         String verifyNo = (String) edapplInfoMap.get("verifyNo");
-        String url = "";
+        String url;
         if("46".equals(this.getChannelNo())){
             if(verifyMobile != null && !"".equals(verifyMobile) && verifyNo!= null && !"".equals(verifyNo)){
                 url = AppServerUtils.getAppServerUrl() + "/app/appserver/customer/getEdApplInfo/needVerify";
@@ -628,8 +625,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/attachDeletePerson?id="+id;
         logger.info("影像删除接口，请求地址：" + url);
         String param = HttpUtil.restDelete(url, null,200);
-        Map<String, Object> stringObjectMap = HttpUtil.json2Map(param);
-        return stringObjectMap;
+        return HttpUtil.json2Map(param);
     }
 
     //用户是否注册
@@ -648,8 +644,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> custUpdatePwd(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/custUpdatePwd";
         logger.info("客户登录密码设置、修改（验证码）接口，请求地址：" + url);
-        Map<String, Object> map = HttpUtil.restPutMap(url, token, paramMap);
-        return map;
+        return HttpUtil.restPutMap(url, token, paramMap);
     }
 
     //查询全部贷款信息列表-个人版
@@ -657,8 +652,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> getDateAppOrderPerson(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/getDateAppOrderPerson";
         logger.info("查询全部贷款信息列表-个人版接口，请求地址：" + url);
-        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        return map;
+        return HttpUtil.restGetMap(url, token, paramMap);
     }
 
     //查询待提交订单列表
@@ -666,8 +660,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> getWtjAppOrderCust(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/getWtjAppOrderCust";
         logger.info("查询待提交订单列表接口，请求地址：" + url);
-        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        return map;
+        return HttpUtil.restGetMap(url, token, paramMap);
     }
 
     //待还款信息查询
@@ -675,8 +668,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> queryApplAllByIdNo(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/queryApplAllByIdNo";
         logger.info("待还款信息查询接口，请求地址：" + url);
-        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        return map;
+        return HttpUtil.restGetMap(url, token, paramMap);
     }
 
 
@@ -685,8 +677,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     public Map<String, Object> queryApplListPerson(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/cmis/queryApplListPerson";
         logger.info("查询已提交贷款申请列表接口，请求地址：" + url);
-        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
-        return map;
+        return HttpUtil.restGetMap(url, token, paramMap);
     }
     //查询订单详情（暂不用）
     @Override
@@ -707,8 +698,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         }
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/deleteAppOrder?orderNo="+orderNo;
         logger.info("删除订单接口，请求地址：" + url);
-        Map<String, Object> stringObjectMap = HttpUtil.restPostMap(url, token, paramMap);
-        return stringObjectMap;
+        return HttpUtil.restPostMap(url, token, paramMap);
     }
 
     //6.2.12.	(GET) 录单校验（个人版）

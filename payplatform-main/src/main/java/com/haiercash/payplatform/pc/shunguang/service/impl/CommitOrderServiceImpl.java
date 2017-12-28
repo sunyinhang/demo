@@ -110,7 +110,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
         //根据userId获取客户编号
         logger.info("获取客户实名信息");
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", userId);
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
@@ -151,7 +151,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         logger.info("订单提交，合同签订成功");
 
         //3.影像上传
-        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
+        Map<String, Object> uploadimgmap = new HashMap<>();
         uploadimgmap.put("custNo", custNo);//客户编号
         uploadimgmap.put("applSeq", applSeq);//订单号
         uploadimgmap.put("channel", channel);
@@ -177,9 +177,9 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
         ArrayList<String> listOne = new ArrayList<>();
         ArrayList<String> listTwo = new ArrayList<>();
-        HashMap<String, Object> hashMap = new HashMap<String, Object>();
-        HashMap<String, Object> hashMapOne = new HashMap<String, Object>();
-        HashMap<String, Object> hashMapTwo = new HashMap<String, Object>();
+        HashMap<String, Object> hashMap = new HashMap<>();
+        HashMap<String, Object> hashMapOne = new HashMap<>();
+        HashMap<String, Object> hashMapTwo = new HashMap<>();
         String longLatitude = "经度" + longitude + "维度" + latitude;
         logger.info("经维度解析前:" + longLatitude);
         String longLatitudeEncrypt = com.haiercash.mybatis.util.EncryptUtil.simpleEncrypt(longLatitude);

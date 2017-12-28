@@ -50,7 +50,7 @@ public class XmlUtilTool {
         if (StringUtils.isEmpty(xmlStr)) {
             return null;
         }
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         //将xml格式的字符串转换成Document对象
         Document doc = DocumentHelper.parseText(xmlStr);
         //获取根节点
@@ -59,8 +59,8 @@ public class XmlUtilTool {
         List children = root.elements();
         //循环所有子元素
         if (children != null && children.size() > 0) {
-            for (int i = 0; i < children.size(); i++) {
-                Element child = (Element) children.get(i);
+            for (Object aChildren : children) {
+                Element child = (Element) aChildren;
                 map.put(child.getName(), child.getTextTrim());
             }
         }
@@ -76,12 +76,12 @@ public class XmlUtilTool {
     @SuppressWarnings("unchecked")
     public static Map iterateElement(Element element) {
         List jiedian = element.elements();
-        Element et = null;
+        Element et;
         Map obj = new HashMap();
-        List list = null;
-        for (int i = 0; i < jiedian.size(); i++) {
+        List list;
+        for (Object aJiedian : jiedian) {
             list = new ArrayList();
-            et = (Element) jiedian.get(i);
+            et = (Element) aJiedian;
             if (et.getTextTrim().equals("")) {
                 if (et.elements().size() == 0)
                     continue;
@@ -114,12 +114,9 @@ public class XmlUtilTool {
      */
     public static void initElement(Element element) {
         List jiedian = element.elements();
-        Element et = null;
-        Map obj = new HashMap();
-        List list = null;
-        for (int i = 0; i < jiedian.size(); i++) {
-            list = new ArrayList();
-            et = (Element) jiedian.get(i);
+        Element et;
+        for (Object aJiedian : jiedian) {
+            et = (Element) aJiedian;
             et.setText("");
             initElement(et);
         }
@@ -141,8 +138,8 @@ public class XmlUtilTool {
         try {
             System.out.println("以行为单位读取文件内容，一次读一整行：");
             reader = new BufferedReader(new FileReader(file));
-            String tempString = null;
-            StringBuffer sb = new StringBuffer();
+            String tempString;
+            StringBuilder sb = new StringBuilder();
             int line = 1;
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
@@ -160,7 +157,7 @@ public class XmlUtilTool {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException e1) {
+                } catch (IOException ignored) {
                 }
             }
         }

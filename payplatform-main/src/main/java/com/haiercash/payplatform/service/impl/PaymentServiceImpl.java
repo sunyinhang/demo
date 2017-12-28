@@ -48,7 +48,7 @@ import java.util.Map;
  */
 @Service
 public class PaymentServiceImpl implements PaymentServiceInterface {
-    private Log logger = LogFactory.getLog(PaymentServiceImpl.class);
+    private final Log logger = LogFactory.getLog(PaymentServiceImpl.class);
 
     @Autowired
     private CmisConfig cmisConfig;

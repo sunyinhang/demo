@@ -1,7 +1,5 @@
 package com.haiercash.payplatform.common.data;
 
-import java.math.BigDecimal;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("FileTransLog")
 public class FileTransLog {

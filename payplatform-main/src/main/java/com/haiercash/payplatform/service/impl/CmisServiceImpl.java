@@ -1,9 +1,10 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.util.IDCard;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.service.CmisService;
-import com.haiercash.payplatform.utils.IdCardUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
@@ -181,7 +182,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
 
     public Map<String, Object> getCommonPayPersonMap(String custNo, String source, String typGrp,
             CommonRepaymentPerson person, String version) {
-        HashMap<String, Object> apptmap = new HashMap<String, Object>();
+        HashMap<String, Object> apptmap = new HashMap<>();
         // attpmap封装从crm中调取的个人信息的数据
         String url = EurekaServer.CRM + "/app/crm/cust/getCustExtInfo?pageName=1&custNo=" + custNo;
         logger.debug("CRM getCustExtInfo...");
@@ -225,10 +226,10 @@ public class CmisServiceImpl extends BaseService implements CmisService{
             }
         }
         String idNo = String.valueOf(apptmap.get("appt_id_no"));
+        IDCard idCard = new IDCard(idNo);
         if (!StringUtils.isEmpty(idNo)) {
-            apptmap.put("appt_indiv_sex", IdCardUtils.getGenderByIdCard(idNo));
-            apptmap.put("appt_start_date", IdCardUtils.getYearByIdCard(idNo) + "-"
-                    + IdCardUtils.getMonthByIdCard(idNo) + "-" + IdCardUtils.getDateByIdCard(idNo));
+            apptmap.put("appt_indiv_sex", idCard.getGenderCode());
+            apptmap.put("appt_start_date", DateUtils.toDateString(idCard.getBirthday()));
         }
 
         // 获取联系人
@@ -242,7 +243,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
         }
 
         Map<String, Object> lxrMap = HttpUtil.json2Map(lxrJson);
-        List<Map<String, Object>> lxrlist = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> lxrlist = new ArrayList<>();
         if (!StringUtils.isEmpty(lxrMap.get("body"))) {
             lxrlist = (List) lxrMap.get("body");
 
@@ -429,11 +430,11 @@ public class CmisServiceImpl extends BaseService implements CmisService{
         apptmap.put("ppty_loan_year", custExtInfoBodyMap.get("pptyLoanYear"));
         apptmap.put("ppty_loan_bank", custExtInfoBodyMap.get("pptyLoanBank"));
         //////////////////////
-        HashMap<String, Object> relMap = new HashMap<String, Object>();
+        HashMap<String, Object> relMap = new HashMap<>();
 
         List rellist = new ArrayList();
         for (Map<String, Object> obj : lxrlist) {
-            HashMap<String, Object> rel = new HashMap<String, Object>();
+            HashMap<String, Object> rel = new HashMap<>();
             rel.put("rel_name", obj.get("contactName"));
             rel.put("rel_id_typ", obj.get("certType"));
             rel.put("rel_id_no", obj.get("certNo"));

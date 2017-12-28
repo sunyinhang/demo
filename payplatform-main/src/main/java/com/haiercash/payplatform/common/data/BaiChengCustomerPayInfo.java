@@ -1,7 +1,5 @@
 package com.haiercash.payplatform.common.data;
 
-import java.util.Date;
-
 public class BaiChengCustomerPayInfo {
 	private String customerId;	//客户ID	
 	private String customerName;//客户名称

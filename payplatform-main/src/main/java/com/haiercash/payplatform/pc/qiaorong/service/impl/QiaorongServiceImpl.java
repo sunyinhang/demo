@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.qiaorong.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.mybatis.util.EncryptUtil;
@@ -129,7 +130,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
 
         Map<String, Object> cachemap = RedisUtils.getExpireMap(token);
-        if (cachemap == null || "".equals(cachemap)) {
+        if (MapUtils.isEmpty(cachemap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -164,7 +165,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             resultMap.put("goods", goodsname);//分期产品
         }
         //还款试算获取分期金额
-        Map<String, Object> payMap = new HashMap<String, Object>();
+        Map<String, Object> payMap = new HashMap<>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", totalamount);
         payMap.put("applyTnrTyp", apply_tnr_typ);
@@ -218,10 +219,10 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map<String, Object> returnmap = new HashMap<String, Object>();
+        Map<String, Object> returnmap = new HashMap<>();
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -230,11 +231,9 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String phone = (String) cacheMap.get("phoneNo");
         String idNo = (String) cacheMap.get("idCard");//身份证
         String cardnumber = (String) cacheMap.get("cardnumber");//银行卡
-        String totalamount = cacheMap.get("totalamount").toString();
-        String applseq = (String) cacheMap.get("applSeq");
         String typCde = (String) cacheMap.get("typCde");
         //1.新增并验证实名信息
-        Map<String, Object> identityMap = new HashMap<String, Object>();
+        Map<String, Object> identityMap = new HashMap<>();
         identityMap.put("token", token);
         identityMap.put("channel", channel);
         identityMap.put("channelNo", channelNo);
@@ -269,7 +268,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 
 
         //3.手机号已注册，判断是否需要人脸识别
-        Map<String, Object> faceparamMap = new HashMap<String, Object>();
+        Map<String, Object> faceparamMap = new HashMap<>();
         faceparamMap.put("typCde", typCde);
         faceparamMap.put("source", channel);
         faceparamMap.put("custNo", custNo);
@@ -287,31 +286,34 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map body = (Map) resultmap.get("body");
         String code = (String) body.get("code"); //结果标识码
-        if ("00".equals(code)) {//人脸识别通过
-            logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
-            double amount = Double.parseDouble(totalamount);
+        switch (code) {
+            case "00": //人脸识别通过
+                logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
 
-            logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-            returnmap.put("flag", "05");//跳转合同
-            return success(returnmap);//跳转合同展示页面
+                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+                returnmap.put("flag", "05");//跳转合同
 
-        } else if ("01".equals(code)) {//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-            //终止
-            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
-            return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
-        } else if ("02".equals(code)) {//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-            //跳转替代影像
-            //终止
-            logger.info("人脸识别，剩余次数为0，录单终止");
-            return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
+                return success(returnmap);//跳转合同展示页面
+
+
+            case "01": //01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                //终止
+                logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
+                return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
+            case "02": //02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                //跳转替代影像
+                //终止
+                logger.info("人脸识别，剩余次数为0，录单终止");
+                return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
 //            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
 //            returnmap.put("flag", "03");// 手持身份证
 //            return success(returnmap);
-        } else if ("10".equals(code)) {//10：未通过人脸识别，可以再做人脸识别
-            //可以做人脸识别
-            logger.info("未通过人脸识别，可以再做人脸识别");
-            returnmap.put("flag", "02");// 人脸识别
-            return success(returnmap);
+            case "10": //10：未通过人脸识别，可以再做人脸识别
+                //可以做人脸识别
+                logger.info("未通过人脸识别，可以再做人脸识别");
+                returnmap.put("flag", "02");// 人脸识别
+
+                return success(returnmap);
         }
 
         return returnmap;
@@ -334,56 +336,34 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo + "  password" + password);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map<String, Object> returnmap = new HashMap<String, Object>();
+        Map<String, Object> returnmap = new HashMap<>();
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //
         String name = (String) cacheMap.get("name");
         String idNo = (String) cacheMap.get("idCard");//身份证
-        String totalamount = cacheMap.get("totalamount").toString();
         String applseq = (String) cacheMap.get("applSeq");
         String typCde = (String) cacheMap.get("typCde");
         String custNo = (String) cacheMap.get("custNo");
         String phone = (String) cacheMap.get("phoneNo");
 
         //注册事件
-        Map<String, Object> riskmap = new HashMap<String, Object>();
-        List<List<Map<String, String>>> content = new ArrayList<>();
-        List<Map<String, String>> contentList = new ArrayList<>();
-
-
         logger.info("百融注册事件：registerNum：" + registerNum + "********registerEvent:" + registerEvent);
         if (!StringUtils.isEmpty(registerNum)) {
             Map<String, String> mapLoginEvent = new HashMap();
             mapLoginEvent.put("content", EncryptUtil.simpleEncrypt(registerNum));
             mapLoginEvent.put("reserved6", applseq);
             mapLoginEvent.put("reserved7", "antifraud_login");
-            contentList.add(mapLoginEvent);
-
-            content.add(contentList);
-            riskmap.put("content", content);
-            riskmap.put("reserved7", "antifraud_register");
-
-            riskmap.put("applSeq", applseq);
-
-            riskmap.put("idNo", EncryptUtil.simpleEncrypt(idNo));
-            riskmap.put("name", EncryptUtil.simpleEncrypt(name));
-            riskmap.put("mobile", EncryptUtil.simpleEncrypt(phone));
-            riskmap.put("dataTyp", "A501");
-            riskmap.put("source", "2");
-            riskmap.put("token", token);
-            riskmap.put("channel", channel);
-            riskmap.put("channelNo", channelNo);
             appServerService.updateRiskInfo("", map);
         }
 
 
         //注册
-        Map<String, Object> registermap = new HashMap<String, Object>();
+        Map<String, Object> registermap = new HashMap<>();
         registermap.put("mobile", EncryptUtil.simpleEncrypt(phone));
         registermap.put("password", EncryptUtil.simpleEncrypt(password));
         registermap.put("deviceId", EncryptUtil.simpleEncrypt(UUID.randomUUID().toString().replace("-", "")));
@@ -402,7 +382,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
 
         //3.手机号已注册，判断是否需要人脸识别
-        Map<String, Object> faceparamMap = new HashMap<String, Object>();
+        Map<String, Object> faceparamMap = new HashMap<>();
         faceparamMap.put("typCde", typCde);
         faceparamMap.put("source", channel);
         faceparamMap.put("custNo", custNo);
@@ -420,30 +400,33 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         Map body = (Map) resultmap.get("body");
         String code = (String) body.get("code"); //结果标识码
-        if ("00".equals(code)) {//人脸识别通过
-            logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
-            double amount = Double.parseDouble(totalamount);
+        switch (code) {
+            case "00": //人脸识别通过
+                logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
 
-            logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-            returnmap.put("flag", "05");//跳转合同
-            return success(returnmap);//跳转合同展示页面
+                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
+                returnmap.put("flag", "05");//跳转合同
 
-        } else if ("01".equals(code)) {//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-            //终止
-            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
-            return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
-        } else if ("02".equals(code)) {//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-            //跳转替代影像
-            logger.info("人脸识别，剩余次数为0，录单终止");
-            return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
+                return success(returnmap);//跳转合同展示页面
+
+
+            case "01": //01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                //终止
+                logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
+                return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
+            case "02": //02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                //跳转替代影像
+                logger.info("人脸识别，剩余次数为0，录单终止");
+                return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
 //            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
 //            returnmap.put("flag", "03");// 手持身份证
 //            return success(returnmap);
-        } else if ("10".equals(code)) {//10：未通过人脸识别，可以再做人脸识别
-            //可以做人脸识别
-            logger.info("未通过人脸识别，可以再做人脸识别");
-            returnmap.put("flag", "02");// 人脸识别
-            return success(returnmap);
+            case "10": //10：未通过人脸识别，可以再做人脸识别
+                //可以做人脸识别
+                logger.info("未通过人脸识别，可以再做人脸识别");
+                returnmap.put("flag", "02");// 人脸识别
+
+                return success(returnmap);
         }
 
 
@@ -460,18 +443,13 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map<String, Object> returnmap = new HashMap<String, Object>();
+        Map<String, Object> returnmap = new HashMap<>();
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-
-        String totalamount = cacheMap.get("totalamount").toString();
-        String applseq = (String) cacheMap.get("applSeq");
-
-        double amount = Double.parseDouble(totalamount);
 
         logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
         returnmap.put("flag", "05");//跳转合同
@@ -489,18 +467,14 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
 
-        String totalamount = cacheMap.get("totalamount").toString();
         String applseq = (String) cacheMap.get("applSeq");
-
-        double amount = Double.parseDouble(totalamount);
 
         Map bodymoxie = moxieService.getMoxieByApplseq(applseq);
         return success(bodymoxie);
@@ -516,15 +490,13 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
-        Map<String, Object> returnmap = new HashMap<String, Object>();
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
 
-        String totalamount = cacheMap.get("totalamount").toString();
         String applseq = (String) cacheMap.get("applSeq");
         String idNo = (String) cacheMap.get("idCard");//身份证
 
@@ -558,7 +530,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -577,7 +549,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 
 
         //短信验证码校验
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("phone", phone);
         paramMap.put("verifyNo", verifyNo);
         paramMap.put("channel", channel);
@@ -591,11 +563,10 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (!"00000".equals(resultmapFlag)) {
             return fail(ConstUtil.ERROR_CODE, "短信验证码校验失败");
         }
-        Map<String, Object> returnmap = new HashMap<String, Object>();
 
 
         //2.图片上传
-        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
+        Map<String, Object> uploadimgmap = new HashMap<>();
         uploadimgmap.put("custNo", custNo);//客户编号
         uploadimgmap.put("applSeq", applseq);//订单号
         uploadimgmap.put("channel", channel);
@@ -611,7 +582,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         //3.个人借款合同
 
         //获取贷款品种小类
-        Map<String, Object> loanparamMap = new HashMap<String, Object>();
+        Map<String, Object> loanparamMap = new HashMap<>();
         loanparamMap.put("typCdeList", typCde);
         Map<String, Object> loanmap = appServerService.pLoanTypList(token, loanparamMap);
         if (!HttpUtil.isSuccess(loanmap)) {
@@ -619,8 +590,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         List<Map<String, Object>> loanbody = (List<Map<String, Object>>) loanmap.get("body");
         String typLevelTwo = "";
-        for (int i = 0; i < loanbody.size(); i++) {
-            Map<String, Object> m = loanbody.get(i);
+        for (Map<String, Object> m : loanbody) {
             typLevelTwo = m.get("levelTwo").toString();
         }
 
@@ -639,22 +609,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (signContractInfo == null) {
             return fail(ConstUtil.ERROR_CODE, "贷款品种" + typCde + "没有配置签章类型");
         }
-        String signType = signContractInfo.getSigntype();//签章类型
-        Map contractmap = new HashMap();//
-        contractmap.put("custName", name);// 客户姓名
-        contractmap.put("custIdCode", idNo);// 客户身份证号
-        contractmap.put("applseq", applseq);// 请求流水号
-        contractmap.put("signType", signType);// 签章类型
-//        if("17057a".equals(typCde)){//不同的贷款品种对应不同的签章类型
-//            contractmap.put("signType", "DOUZIPERSONAL");// 签章类型
-//        }else if("17105a".equals(typCde)){
-//            contractmap.put("signType", "DOUZIBUSINESS");// 签章类型
-//        }
-        contractmap.put("flag", "0");//1 代表合同  0 代表 协议
-        contractmap.put("orderJson", orderJson.toString());
-        contractmap.put("sysFlag", "11");// 系统标识：支付平台
-        contractmap.put("channelNo", channelNo);
-        Map camap = appServerService.caRequest(null, contractmap);
 
         //4.征信借款合同
         JSONObject orderZX = new JSONObject();
@@ -665,17 +619,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 
         JSONObject orderZXJson = new JSONObject();// 订单信息json串
         orderZXJson.put("order", orderZX.toString());
-
-        Map reqZXJson = new HashMap();// 征信
-        reqZXJson.put("custName", name);// 客户姓名
-        reqZXJson.put("custIdCode", idNo);// 客户身份证号
-        reqZXJson.put("applseq", applseq);// 请求流水号
-        reqZXJson.put("signType", "credit");// 签章类型
-        reqZXJson.put("flag", "0");//1 代表合同  0 代表 协议
-        reqZXJson.put("orderJson", orderZXJson.toString());
-        reqZXJson.put("sysFlag", "11");// 系统标识：支付平台
-        reqZXJson.put("channelNo", channelNo);
-        Map zxmap = appServerService.caRequest(token, reqZXJson);
 
 
         //5.注册合同
@@ -688,21 +631,10 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         JSONObject orderZCJson = new JSONObject();// 订单信息json串
         orderZCJson.put("order", orderRegister.toString());
 
-        Map reqZCJson = new HashMap();// 征信
-        reqZCJson.put("custName", name);// 客户姓名
-        reqZCJson.put("custIdCode", idNo);// 客户身份证号
-        reqZCJson.put("applseq", applseq);// 请求流水号
-        reqZCJson.put("signType", "register");// 签章类型
-        reqZCJson.put("flag", "0");//1 代表合同  0 代表 协议
-        reqZCJson.put("orderJson", orderZCJson.toString());
-        reqZCJson.put("sysFlag", "11");// 系统标识：支付平台
-        reqZCJson.put("channelNo", channelNo);
-        Map zcmap = appServerService.caRequest(token, reqZCJson);
-
         //6.百融风险信息推送
         logger.info("百融登录事件：loginEvent：" + loginEvent + "********loginEventNum:" + loginNum + "  lendEvent" + lendEvent + "  lendNum:" + lendNum);
         if (!StringUtils.isEmpty(loginNum) && !StringUtils.isEmpty(lendNum)) {
-            Map<String, Object> riskmap = new HashMap<String, Object>();
+            Map<String, Object> riskmap = new HashMap<>();
             List<List<Map<String, String>>> content = new ArrayList<>();
             List<Map<String, String>> contentList = new ArrayList<>();
 
@@ -756,8 +688,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             logger.info("乔融豆子*******签章回调接口返回数据：" + resData);
         }
 
-        Map<String, Object> mapRes = (Map) result.get("response");
-        return mapRes;
+        return (Map) result.get("response");
 
         // 调信贷贷款提交接口.
 //        HashMap<String, Object> mapSubmit = new HashMap<>();
@@ -792,8 +723,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (StringUtils.isEmpty(json)) {
             return null;
         }
-        Map<String, Object> resultMap = HttpUtil.json2Map(json);
-        return resultMap;
+        return HttpUtil.json2Map(json);
     }
 
     private String decryptData(String data, String channelNo) throws Exception {
@@ -805,12 +735,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 
-        //请求数据解析
-        String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
-        //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
-        //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
-        //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
-
-        return params;
+        return new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
     }
 }

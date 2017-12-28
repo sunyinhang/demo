@@ -23,10 +23,6 @@ package com.haiercash.payplatform.service;
 
 import com.haiercash.payplatform.common.entity.QueryLimitMessage;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
-import com.haiercash.payplatform.common.entity.UserLogin;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  *  DESCRIPTION:

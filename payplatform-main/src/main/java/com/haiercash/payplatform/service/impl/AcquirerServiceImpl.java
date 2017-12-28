@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.util.IDCard;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
@@ -19,7 +21,6 @@ import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.ChannelType;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.payplatform.utils.IdCardUtils;
 import com.haiercash.payplatform.utils.ReflactUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.service.BaseService;
@@ -197,13 +198,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
                     }
                 }
             }
-        } catch (IntrospectionException e) {
-            logger.error(e);
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            logger.error(e);
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
+        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
             logger.error(e);
             throw new RuntimeException(e);
         }
@@ -256,11 +251,9 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         apptmap.put("appt_id_typ_oth", "");
         apptmap.put("appt_id_no", apporder.getIdNo());
         apptmap.put("appt_cust_name", apporder.getCustName());
-        apptmap.put("appt_indiv_sex", IdCardUtils.getGenderByIdCard(apporder.getIdNo()));
-        apptmap.put("appt_start_date",
-                IdCardUtils.getYearByIdCard(apporder.getIdNo()) + "-" + IdCardUtils
-                        .getMonthByIdCard(apporder.getIdNo())
-                        + "-" + IdCardUtils.getDateByIdCard(apporder.getIdNo()));
+        IDCard idCard = new IDCard(apporder.getIdNo());
+        apptmap.put("appt_indiv_sex", idCard.getGenderCode());
+        apptmap.put("appt_start_date", DateUtils.toDateString(idCard.getBirthday()));
         apptmap.put("indiv_marital", custExtInfoBodyMap.get("maritalStatus"));
         apptmap.put("indiv_edu", custExtInfoBodyMap.get("education"));
         // 个人/够花/美分期/大数据/星巢贷 教育为空,大专
@@ -391,7 +384,6 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         apptmap.put("manage_no", "");
         apptmap.put("pur_sale_cont_no", "");
         apptmap.put("indiv_emp_name", custExtInfoBodyMap.get("officeName"));
-        apptmap.put("indiv_branch", ObjectUtils.toString(custExtInfoBodyMap.get("officeDept"), "默认"));
         apptmap.put("indiv_branch", StringUtils.isEmpty(custExtInfoBodyMap.get("officeDept")) ? "默认" : custExtInfoBodyMap.get("officeDept"));
         String indiv_branch = (String) apptmap.get("indiv_branch");
         logger.info("所在部门：" + indiv_branch);
@@ -463,11 +455,11 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
                 custExtInfoBodyMap.get("pptyLoanAmt"));
         apptmap.put("ppty_loan_year", custExtInfoBodyMap.get("pptyLoanYear"));
         apptmap.put("ppty_loan_bank", custExtInfoBodyMap.get("pptyLoanBank"));
-        HashMap<String, Object> relMap = new HashMap<String, Object>();
+        HashMap<String, Object> relMap = new HashMap<>();
 
         List rellist = new ArrayList();
         for (Map<String, Object> obj : lxrlist) {
-            HashMap<String, Object> rel = new HashMap<String, Object>();
+            HashMap<String, Object> rel = new HashMap<>();
             rel.put("rel_name", obj.get("contactName"));
             rel.put("rel_id_typ", obj.get("certType"));
             rel.put("rel_id_no", obj.get("certNo"));
@@ -565,7 +557,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
             headMap.put("applSeq", relation.getApplSeq());
         }
         logger.info("向收单系统发起贷款申请, 参数:" + acquirer);
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result;
 //        if ("46".equals(getChannelNo())) {
 //            result = AcqUtil
 //                    .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcApplEK", headMap, acquirer);
@@ -792,15 +784,13 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     public Map<String, Object> returnGoods(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map) {
         String url = EurekaServer.ACQUIRER + "/api/appl/returnGoods";
         Map headMap = AcqUtil.getAcqHead(tradeCode, sysFlag, channelNo, cooprCode, tradeType);
-        Map<String, Object> result = AcqUtil.getAcqResponse(url, headMap, map);
-        return result;
+        return (Map<String, Object>) AcqUtil.getAcqResponse(url, headMap, map);
     }
 
     @Override
     public Map<String, Object> getReturnGoodsInfo(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map) {
         String url = EurekaServer.ACQUIRER + "/api/appl/getReturnGoodsInfo";
         Map headMap = AcqUtil.getAcqHead(tradeCode, sysFlag, channelNo, cooprCode, tradeType);
-        Map<String, Object> result = AcqUtil.getAcqResponse(url, headMap, map);
-        return result;
+        return (Map<String, Object>) AcqUtil.getAcqResponse(url, headMap, map);
     }
 }

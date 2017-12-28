@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.config.ShunguangConfig;
@@ -40,7 +41,7 @@ import java.util.UUID;
 
 @Service
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService {
-    public Log logger = LogFactory.getLog(getClass());
+    public final Log logger = LogFactory.getLog(getClass());
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -52,10 +53,28 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     @Autowired
     private StorageConfig storageConfig;
 
+    public static void createDir(String destDirName) {
+        File dir = new File(destDirName);
+        if (dir.exists()) {
+            return;
+        }
+        // 创建目录
+        dir.mkdirs();
+    }
+
+    private boolean ifError(Map<String, Object> map) {
+        boolean ifError = true;
+        String retFlag = (String) map.get("retFlag");
+        if (!"00000".equals(retFlag)) {
+            ifError = false;
+        }
+        return ifError;
+    }
+
     @Override
     public Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        List<JSONObject> resultList = new ArrayList<JSONObject>();
+        Map<String, Object> resultMap = new HashMap<>();
+        List<JSONObject> resultList = new ArrayList<>();
 
         String typCde = "";//贷款品种
 
@@ -74,33 +93,32 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         } else {
             //查询贷款品种类型
         }
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         paramMap.put("typCde", typCde);
         Map<String, Object> pLoanTypImagesMap = appServerService.pLoanTypImages(token, paramMap);
         Map pLoanTypImagesHeadMap = (Map<String, Object>) pLoanTypImagesMap.get("head");
-        String resultmapFlag = (String) pLoanTypImagesHeadMap.get("retFlag");
         String pLoanTypImagesretMsg = (String) pLoanTypImagesHeadMap.get("retMsg");
         if (!ifError(pLoanTypImagesHeadMap)) {
             return fail(ConstUtil.ERROR_CODE, pLoanTypImagesretMsg);
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String custNo = (String) cacheMap.get("custNo");
 //        String custNo = "C201607151029101937960";
-        Map<String, Object> paramYXMap = new HashMap<String, Object>();
+        Map<String, Object> paramYXMap = new HashMap<>();
         //获取贷款类型查询客户所有影像ID
 //        JSONObject pLoanTypImagesBodyjson = new JSONObject(pLoanTypImagesMap.get("body"));
         List<Map<String, String>> list = (List<Map<String, String>>) pLoanTypImagesMap.get("body");
-        for (int i = 0; i < list.size(); i++) {
-            List<JSONObject> resultList_ = new ArrayList<JSONObject>();
-            String docCde = list.get(i).get("docCde");//影像代码
-            String docDesc = list.get(i).get("docDesc");//影像名称
+        for (Map<String, String> aList : list) {
+            List<JSONObject> resultList_ = new ArrayList<>();
+            String docCde = aList.get("docCde");//影像代码
+            String docDesc = aList.get("docDesc");//影像名称
             paramYXMap.put("attachType", docCde);
             paramYXMap.put("custNo", custNo);
             paramYXMap.put("channel", channel);
@@ -113,9 +131,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             }
             List<Map<String, Object>> list_ = (List<Map<String, Object>>) stringObjectMap.get("body");
             if (list_.size() > 0) {
-                for (int j = 0; j < list_.size(); j++) {
-                    int id = (int) list_.get(j).get("id");
-                    Map<String, Object> paramYXbyIDMap = new HashMap<String, Object>();
+                for (Map<String, Object> aList_ : list_) {
+                    int id = (int) aList_.get("id");
+                    Map<String, Object> paramYXbyIDMap = new HashMap<>();
                     //TODO
                     paramYXbyIDMap.put("id", id);
                     paramYXbyIDMap.put("channel", channel);
@@ -164,20 +182,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         return success(resultMap);
     }
 
-    private boolean ifError(Map<String, Object> map) {
-        boolean ifError = true;
-        String retFlag = (String) map.get("retFlag");
-        if (!"00000".equals(retFlag)) {
-            ifError = false;
-        }
-        return ifError;
-    }
-
     @Override
     public Map<String, Object> getAllCustExtInfo(String token, String channel, String channelNo) {
         logger.info("*********查询个人扩展信息**************开始");
         Map<String, Object> redisMap = null;
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -193,7 +202,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -230,18 +239,17 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         return resultmap;
     }
 
-
     @Override
     public Map<String, Object> saveAllCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********保存个人扩展信息**************开始");
         String typCde = "";//贷款品种
         Map<String, Object> redisMap = null;
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        Map<String, Object> custparamMap_one = new HashMap<String, Object>();
-        Map<String, Object> custparamMap_two = new HashMap<String, Object>();
-        Map<String, Object> resultparamMap = new HashMap<String, Object>();
-        Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
-        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
+        Map<String, Object> custparamMap_one = new HashMap<>();
+        Map<String, Object> custparamMap_two = new HashMap<>();
+        Map<String, Object> resultparamMap = new HashMap<>();
+        Map<String, Object> validateUserFlagMap = new HashMap<>();
+        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -257,7 +265,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -328,7 +336,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存个人扩展信息**************结束");
         logger.info("*********保存联系人一**************开始");
         Integer id_one = (Integer) params.get("id_one");
-        if (id_one != null && !"null".equals(id_one)) {
+        if (id_one != null) {
             custparamMap_one.put("id", id_one);// 联系人ID
         }
         custparamMap_one.put("channelNo", channelNo);// 渠道
@@ -350,7 +358,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
         Integer id_two = (Integer) params.get("id_two");
-        if (id_two != null && !"null".equals(id_two)) {
+        if (id_two != null) {
             custparamMap_two.put("id", id_two);// 联系人ID
         }
         custparamMap_two.put("channelNo", channelNo);// 渠道
@@ -396,127 +404,48 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
         if (code != null && !"".equals(code)) {
             logger.info("*********人脸识别标识码：" + code);
-            if ("00".equals(code)) {// 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
+            switch (code) {
+                case "00": // 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
 //                resultparamMap.put("faceFlag", "1");
-                validateUserFlagMap.put("channelNo", channelNo);// 渠道
-                validateUserFlagMap.put("channel", channel);
-                validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userid));//客户编号
-                Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
-                if (alidateUserMap == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                }
-                Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
-                String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
-                if (!"00000".equals(alidateUserHeadMapFlag)) {
-                    String retMsg = (String) alidateUserHeadMap.get("retMsg");
-                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                }
-                Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
-                String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
-                if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                }
-                if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
-                    resultparamMap.put("flag", "1");
-                } else {//没有设置支付密码
-                    resultparamMap.put("flag", "2");
-                }
-            } else if ("01".equals(code)) {// 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                resultparamMap.put("flag", "3");
-            } else if ("02".equals(code)) {// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                resultparamMap.put("flag", "4");
-            } else {//跳转人脸识别
-                resultparamMap.put("flag", "5");
+                    validateUserFlagMap.put("channelNo", channelNo);// 渠道
+
+                    validateUserFlagMap.put("channel", channel);
+                    validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userid));//客户编号
+
+                    Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
+                    if (alidateUserMap == null) {
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    }
+                    Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
+                    String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
+                    if (!"00000".equals(alidateUserHeadMapFlag)) {
+                        String retMsg = (String) alidateUserHeadMap.get("retMsg");
+                        return fail(ConstUtil.ERROR_CODE, retMsg);
+                    }
+                    Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
+                    String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
+                    if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    }
+                    if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
+                        resultparamMap.put("flag", "1");
+                    } else {//没有设置支付密码
+                        resultparamMap.put("flag", "2");
+                    }
+                    break;
+                case "01": // 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                    resultparamMap.put("flag", "3");
+                    break;
+                case "02": // 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                    resultparamMap.put("flag", "4");
+                    break;
+                default: //跳转人脸识别
+                    resultparamMap.put("flag", "5");
+                    break;
             }
 
         }
         return success(resultparamMap);
-    }
-
-    @Override
-    public Map<String, Object> upIconPic(MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        logger.info("上传影像*****************开始");
-        if (iconImg.isEmpty()) {
-            logger.info("图片为空");
-            return fail(ConstUtil.ERROR_CODE, "图片为空");
-        }
-        //前台参数获取
-        String token = request.getHeader("token");
-        String channel = request.getHeader("channel");
-        String channelNo = request.getHeader("channelNo");
-        String docCde = request.getParameter("docCde");//影像代码
-        String docDesc = request.getParameter("docDesc");//影像名称
-        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
-            logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo + "    docCde:" + docCde + "    docDesc:" + docDesc);
-            logger.info("前台传入数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
-        }
-        //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null) {
-            logger.info("Redis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        String typCde = (String) cacheMap.get("typCde");// 贷款品种
-        String idNumber = (String) cacheMap.get("idCard");// 身份证号
-        String name = (String) cacheMap.get("name");// 姓名
-        String mobile = (String) cacheMap.get("phoneNo");// 手机号
-        String custNo = (String) cacheMap.get("custNo");
-        String userId = (String) cacheMap.get("userId");
-//        String typCde = "17044a";// 贷款品种
-//        String idNumber = "37040319910722561X";// 身份证号
-//        String name = "李甲团";// 姓名
-//        String mobile = "15264826872";// 手机号
-//        String custNo = "C201708010722561X68720";
-//        String userId = "18678282831";
-        if (StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
-                || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)) {
-            logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
-            logger.info("redis获取数据为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
-        InputStream inputStream = iconImg.getInputStream();
-        //TODO
-        StringBuffer filePath = new StringBuffer(storageConfig.getFacePath()).append(File.separator).append(custNo).append(File.separator).append(docCde).append(File.separator);
-        createDir(String.valueOf(filePath));
-        String filestreamname = custNo + ".jpg";
-        String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-//        fileName = "1111";
-        filePath = filePath.append(fileName).append(".jpg"); // 测试打开
-        FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
-        byte[] bufferOut = new byte[1024];
-        int bytes = 0;
-        while ((bytes = inputStream.read(bufferOut)) != -1) {
-            outImag.write(bufferOut, 0, bytes);
-        }
-        outImag.close();
-        inputStream.close();
-        InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
-        String MD5 = DigestUtils.md5Hex(is);
-        is.close();
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("channel", channel);
-        paramMap.put("channelNo", channelNo);
-        paramMap.put("custNo", custNo);// 客户编号
-        paramMap.put("attachType", docCde);// 影像类型
-        paramMap.put("attachName", docDesc);//影像名称
-        paramMap.put("md5", MD5);//文件md5码
-        paramMap.put("filePath", filePath.toString());
-        paramMap.put("commonCustNo", null);
-        paramMap.put("id", request.getParameter("id"));//删除的id
-        //影像上传
-        Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
-        Map uploadheadjson = (Map<String, Object>) uploadresultmap.get("head");
-        String uploadretFlag = (String) uploadheadjson.get("retFlag");
-        /*if(!"00000".equals(uploadretFlag)){
-            String retMsg = (String) uploadheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }*/
-        logger.info("上传影像*****************结束");
-//        uploadresultmap = new HashMap<String, Object>();
-//        uploadresultmap.put("id", 9999999);
-//        return success(uploadresultmap);
-        return uploadresultmap;
     }
 
     @Override
@@ -550,23 +479,77 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         return uploadheadjson;
     }
 
-    public static void createDir(String destDirName) {
-        File dir = new File(destDirName);
-        if (dir.exists()) {
-            return;
+    @Override
+    public Map<String, Object> upIconPic(MultipartFile iconImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info("上传影像*****************开始");
+        if (iconImg.isEmpty()) {
+            logger.info("图片为空");
+            return fail(ConstUtil.ERROR_CODE, "图片为空");
         }
-        if (!destDirName.endsWith(File.separator)) {
-            destDirName = destDirName + File.separator;
+        //前台参数获取
+        String token = request.getHeader("token");
+        String channel = request.getHeader("channel");
+        String channelNo = request.getHeader("channelNo");
+        String docCde = request.getParameter("docCde");//影像代码
+        String docDesc = request.getParameter("docDesc");//影像名称
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo + "    docCde:" + docCde + "    docDesc:" + docDesc);
+            logger.info("前台传入数据有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        // 创建目录
-        if (dir.mkdirs()) {
-            return;
+        //缓存数据获取
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
+        if (cacheMap == null) {
+            logger.info("Redis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+        String idNumber = (String) cacheMap.get("idCard");// 身份证号
+        String name = (String) cacheMap.get("name");// 姓名
+        String mobile = (String) cacheMap.get("phoneNo");// 手机号
+        String custNo = (String) cacheMap.get("custNo");
+        String userId = (String) cacheMap.get("userId");
+        if (StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
+                || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)) {
+            logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
+            logger.info("redis获取数据为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        InputStream inputStream = iconImg.getInputStream();
+        //TODO
+        StringBuffer filePath = new StringBuffer(storageConfig.getFacePath()).append(File.separator).append(custNo).append(File.separator).append(docCde).append(File.separator);
+        createDir(String.valueOf(filePath));
+        String fileName = UUID.randomUUID().toString().replaceAll("-", "");
+        filePath = filePath.append(fileName).append(".jpg"); // 测试打开
+        FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
+        byte[] bufferOut = new byte[1024];
+        int bytes;
+        while ((bytes = inputStream.read(bufferOut)) != -1) {
+            outImag.write(bufferOut, 0, bytes);
+        }
+        outImag.close();
+        inputStream.close();
+        InputStream is = new BufferedInputStream(new FileInputStream(String.valueOf(filePath)));
+        String MD5 = DigestUtils.md5Hex(is);
+        is.close();
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("custNo", custNo);// 客户编号
+        paramMap.put("attachType", docCde);// 影像类型
+        paramMap.put("attachName", docDesc);//影像名称
+        paramMap.put("md5", MD5);//文件md5码
+        paramMap.put("filePath", filePath.toString());
+        paramMap.put("commonCustNo", null);
+        paramMap.put("id", request.getParameter("id"));//删除的id
+        //影像上传
+        Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
+        logger.info("上传影像*****************结束");
+        return uploadresultmap;
     }
 
     @Override
     public Map<String, Object> attachPic(String token, String channelNo, String channel, Map<String, Object> map) {
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -581,29 +564,28 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
         }
         Integer id = (Integer) map.get("id");
-        if (id == null && "null".equals(id)) {
+        if (id == null) {
             logger.info("影像ID为空");
             return fail(ConstUtil.ERROR_CODE, "参数影像ID为空!");
         }
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         paramMap.put("attachId", id);// 用户ID
-        Map<String, Object> uploadresultmap = appServerService.attachPic(token, paramMap);
 
-        return uploadresultmap;
+        return appServerService.attachPic(token, paramMap);
     }
 
     @Override
     public Map<String, Object> saveAllCustExtInfoForXjd(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********保存个人扩展信息**************开始");
-        String typCde = "";//贷款品种
+        String typCde;//贷款品种
         Map<String, Object> redisMap = null;
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        Map<String, Object> custparamMap_one = new HashMap<String, Object>();
-        Map<String, Object> custparamMap_two = new HashMap<String, Object>();
-        Map<String, Object> resultparamMap = new HashMap<String, Object>();
-        Map<String, Object> validateUserFlagMap = new HashMap<String, Object>();
-        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
+        Map<String, Object> custparamMap_one = new HashMap<>();
+        Map<String, Object> custparamMap_two = new HashMap<>();
+        Map<String, Object> resultparamMap = new HashMap<>();
+        Map<String, Object> validateUserFlagMap = new HashMap<>();
+        Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -619,7 +601,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -678,25 +660,38 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         //（标准化现金贷字段）
         paramMap.put("providerNum", 0);// 供养人数
         paramMap.put("positionType", positionType);// 工作性质
-        if ("10".equals(positionType)) {//受薪人士
-            paramMap.put("officeName", params.get("officeName"));// 工作单位
-            paramMap.put("officeProvince", "990000");// 单位地址（省）990000  370000
-            paramMap.put("officeCity", "990100");// 单位地址（市） 990100   370200
-            paramMap.put("officeArea", "990101");// 单位地址（区）990101  370212
-            paramMap.put("officeAddr", "未知");// 单位详细地址
-            paramMap.put("officeTel", params.get("officeTel"));// 单位电话
-        }/*else if ("20".equals(positionType)){//自雇人士
+        switch (positionType) {
+            case "10": //受薪人士
+                paramMap.put("officeName", params.get("officeName"));// 工作单位
 
-        }*/ else if ("50".equals(positionType)) {    //其他 默认值
-            paramMap.put("officeName", "未知");// 工作单位
-            paramMap.put("officeProvince", "990000");// 单位地址（省）990000
-            paramMap.put("officeCity", "990100");// 单位地址（市）990100
-            paramMap.put("officeArea", "990101");// 单位地址（区）990101
-            paramMap.put("officeAddr", "未知");// 单位详细地址
-            paramMap.put("officeTel", "13800000000");// 单位电话
-        } else {
-            logger.info("从业性质positionType传参有误！ positionType=" + positionType);
-            return fail(ConstUtil.ERROR_CODE, "从业性质传参有误！");
+                paramMap.put("officeProvince", "990000");// 单位地址（省）990000  370000
+
+                paramMap.put("officeCity", "990100");// 单位地址（市） 990100   370200
+
+                paramMap.put("officeArea", "990101");// 单位地址（区）990101  370212
+
+                paramMap.put("officeAddr", "未知");// 单位详细地址
+
+                paramMap.put("officeTel", params.get("officeTel"));// 单位电话
+
+                break;
+            case "50":     //其他 默认值
+                paramMap.put("officeName", "未知");// 工作单位
+
+                paramMap.put("officeProvince", "990000");// 单位地址（省）990000
+
+                paramMap.put("officeCity", "990100");// 单位地址（市）990100
+
+                paramMap.put("officeArea", "990101");// 单位地址（区）990101
+
+                paramMap.put("officeAddr", "未知");// 单位详细地址
+
+                paramMap.put("officeTel", "13800000000");// 单位电话
+
+                break;
+            default:
+                logger.info("从业性质positionType传参有误！ positionType=" + positionType);
+                return fail(ConstUtil.ERROR_CODE, "从业性质传参有误！");
         }
 //        }
         Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
@@ -712,7 +707,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存个人扩展信息**************结束");
         logger.info("*********保存联系人一**************开始");
         Integer id_one = (Integer) params.get("id_one");
-        if (id_one != null && !"null".equals(id_one)) {
+        if (id_one != null) {
             custparamMap_one.put("id", id_one);// 联系人ID
         }
         custparamMap_one.put("channelNo", channelNo);// 渠道
@@ -734,7 +729,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
         Integer id_two = (Integer) params.get("id_two");
-        if (id_two != null && !"null".equals(id_two)) {
+        if (id_two != null) {
             custparamMap_two.put("id", id_two);// 联系人ID
         }
         custparamMap_two.put("channelNo", channelNo);// 渠道
@@ -779,47 +774,54 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
         if (code != null && !"".equals(code)) {
             logger.info("*********人脸识别标识码：" + code);
-            if ("00".equals(code)) {// 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
+            switch (code) {
+                case "00": // 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
 //                resultparamMap.put("faceFlag", "1");
-                validateUserFlagMap.put("channelNo", channelNo);// 渠道
-                validateUserFlagMap.put("channel", channel);
-                validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userid));//客户编号
-                Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
-                if (alidateUserMap == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                }
-                Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
-                String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
-                if (!"00000".equals(alidateUserHeadMapFlag)) {
-                    String retMsg = (String) alidateUserHeadMap.get("retMsg");
-                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                }
-                Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
-                String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
-                if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                }
-                if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
+                    validateUserFlagMap.put("channelNo", channelNo);// 渠道
+
+                    validateUserFlagMap.put("channel", channel);
+                    validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userid));//客户编号
+
+                    Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
+                    if (alidateUserMap == null) {
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    }
+                    Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
+                    String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
+                    if (!"00000".equals(alidateUserHeadMapFlag)) {
+                        String retMsg = (String) alidateUserHeadMap.get("retMsg");
+                        return fail(ConstUtil.ERROR_CODE, retMsg);
+                    }
+                    Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
+                    String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
+                    if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    }
+                    if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
+                        if ("1".equals(preAmountFlag)) {
+                            cacheMap.put("preAmountFlag", preAmountFlag);
+                            RedisUtils.setExpire(token, cacheMap);
+                            resultparamMap.put("flag", "6");//跳转借款页面
+                            return success(resultparamMap);
+                        }
+                        resultparamMap.put("flag", "1");
+                    } else {//没有设置支付密码
+                        resultparamMap.put("flag", "2");
+                    }
+                    break;
+                case "01": // 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                    resultparamMap.put("flag", "3");
+                    break;
+                case "02": // 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                    resultparamMap.put("flag", "4");
+                    break;
+                default: //跳转人脸识别
                     if ("1".equals(preAmountFlag)) {
                         cacheMap.put("preAmountFlag", preAmountFlag);
                         RedisUtils.setExpire(token, cacheMap);
-                        resultparamMap.put("flag", "6");//跳转借款页面
-                        return success(resultparamMap);
                     }
-                    resultparamMap.put("flag", "1");
-                } else {//没有设置支付密码
-                    resultparamMap.put("flag", "2");
-                }
-            } else if ("01".equals(code)) {// 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                resultparamMap.put("flag", "3");
-            } else if ("02".equals(code)) {// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                resultparamMap.put("flag", "4");
-            } else {//跳转人脸识别
-                if ("1".equals(preAmountFlag)) {
-                    cacheMap.put("preAmountFlag", preAmountFlag);
-                    RedisUtils.setExpire(token, cacheMap);
-                }
-                resultparamMap.put("flag", "5");
+                    resultparamMap.put("flag", "5");
+                    break;
             }
 
         }
@@ -843,7 +845,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -879,7 +881,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -929,7 +931,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -944,7 +946,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
 //        BigDecimal apprvAmt = new BigDecimal(_apprvAmt);
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         paramMap.put("typCde", typCde);
@@ -984,7 +986,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -995,18 +997,17 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             logger.info("custName=" + custName + "  idTyp=" + idTyp + "  idNo=" + idNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("custName", custName);
         paramMap.put("idTyp", idTyp);
         paramMap.put("idNo", idNo);
-        Map<String, Object> custWhiteListCmis = crmService.getCustWhiteListCmis(paramMap);
-        return custWhiteListCmis;
+        return crmService.getCustWhiteListCmis(paramMap);
     }
 
     @Override
     public Map<String, Object> getCustYsxEd(String token, String channel, String channelNo) {
-        Map<String, Object> paramMap = new HashMap<String, Object>();
-        Map<String, Object> returnParamMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
+        Map<String, Object> returnParamMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -1022,7 +1023,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -1040,9 +1041,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         List<Map<String, String>> custWhiteListCmisList = (List<Map<String, String>>) custWhiteListCmis.get("body");
-        for (int i = 0; i < custWhiteListCmisList.size(); i++) {
-            if (custWhiteListCmisList.get(i).get("whiteName").startsWith("海尔员工-")) {
-                String haierCreditInt = custWhiteListCmisList.get(i).get("haierCredit");
+        for (Map<String, String> aCustWhiteListCmisList : custWhiteListCmisList) {
+            if (aCustWhiteListCmisList.get("whiteName").startsWith("海尔员工-")) {
+                String haierCreditInt = aCustWhiteListCmisList.get("haierCredit");
                 returnParamMap.put("haierCredit", haierCreditInt);
                 break;
             }

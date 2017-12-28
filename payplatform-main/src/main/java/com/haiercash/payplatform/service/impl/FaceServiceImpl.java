@@ -40,7 +40,7 @@ import java.util.UUID;
  */
 @Service
 public class FaceServiceImpl extends BaseService implements FaceService {
-    public Log logger = LogFactory.getLog(getClass());
+    public final Log logger = LogFactory.getLog(getClass());
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -217,7 +217,6 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String token = request.getHeader("token");
         String channel = request.getHeader("channel");
         String channelNo = request.getHeader("channelNo");
-        String edflag = request.getParameter("edflag");//1:额度申请
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo);
             logger.info("前台传入数据有误");
@@ -225,14 +224,12 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String typCde = (String) cacheMap.get("typCde");// 贷款品种
         String idNumber = cacheMap.get("idCard").toString();// 身份证号
         String name = cacheMap.get("name").toString();// 姓名
-        //String mobile = cacheMap.get("phoneNo").toString();// 手机号
         String custNo = cacheMap.get("custNo").toString();
         String userId = cacheMap.get("userId").toString();
         if (StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name)
@@ -251,7 +248,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         filePath = filePath.append(fileName).append(".jpg"); // 测试打开
         FileImageOutputStream outImag = new FileImageOutputStream(new File(String.valueOf(filePath)));
         byte[] bufferOut = new byte[1024];
-        int bytes = 0;
+        int bytes;
         while ((bytes = inputStream.read(bufferOut)) != -1) {
             outImag.write(bufferOut, 0, bytes);
         }
@@ -270,8 +267,6 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         paramMap.put("attachName", ConstUtil.ATTACHTYPE_APP01_DESC);
         paramMap.put("md5", MD5);
         paramMap.put("filePath", filePath);
-        String applSeq = (String) cacheMap.get("applSeq");
-        //paramMap.put("applSeq", applSeq);
         //影像上传
         Map<String, Object> uploadresultmap = appServerService.attachUploadPersonByFilePath(token, paramMap);
         Map uploadheadjson = (Map<String, Object>) (uploadresultmap.get("head"));
@@ -311,7 +306,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
         //缓存数据获取及非空判断
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -349,25 +344,31 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
         JSONObject body = new JSONObject((Map) resultmap.get("body"));
         String code = body.getString("code"); //结果标识码
-        if ("00".equals(code)) {//人脸识别通过
-            validateUserFlag(userId, token, channel, channelNo, cacheMap);
+        switch (code) {
+            case "00": //人脸识别通过
+                validateUserFlag(userId, token, channel, channelNo, cacheMap);
 
-        } else if ("01".equals(code)) {//01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-            //终止
-            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
-            return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
-        } else if ("02".equals(code)) {//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-            //跳转替代影像
-            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
-            Map<String, Object> map = new HashMap<>();
-            map.put("faceFlag", "2");// 手持身份证
-            return success(map);
-        } else if ("10".equals(code)) {//10：未通过人脸识别，可以再做人脸识别
-            //可以做人脸识别
-            logger.info("未通过人脸识别，可以再做人脸识别");
-            Map<String, Object> map = new HashMap<>();
-            map.put("faceFlag", "3");// 人脸识别
-            return success(map);
+                break;
+            case "01": //01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                //终止
+                logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
+                return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
+            case "02": {//02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                //跳转替代影像
+                logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
+                Map<String, Object> map = new HashMap<>();
+                map.put("faceFlag", "2");// 手持身份证
+
+                return success(map);
+            }
+            case "10": {//10：未通过人脸识别，可以再做人脸识别
+                //可以做人脸识别
+                logger.info("未通过人脸识别，可以再做人脸识别");
+                Map<String, Object> map = new HashMap<>();
+                map.put("faceFlag", "3");// 人脸识别
+
+                return success(map);
+            }
         }
 
         return success();

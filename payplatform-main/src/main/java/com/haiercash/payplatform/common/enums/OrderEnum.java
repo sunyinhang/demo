@@ -53,8 +53,8 @@ public enum OrderEnum {
     MALLORDERNO     ("mallOrderNo",     "mallOrderNo"),  //商城订单号
     CORDERSN        ("cOrderSn",        "cOrderSn");    //网单号
 
-    private String appOrderAttr;
-    private String orderAttr;
+    private final String appOrderAttr;
+    private final String orderAttr;
 
     OrderEnum(String appOrderAttr, String orderAttr) {
         this.appOrderAttr = appOrderAttr;

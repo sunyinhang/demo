@@ -20,8 +20,6 @@
 
 package com.haiercash.payplatform.common.consts;
 
-import java.util.Map;
-
 /**
  *  DESCRIPTION:常量类
  *

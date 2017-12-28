@@ -78,8 +78,8 @@ public enum AcquirerEnum {
     ACC_AC_BCH_NAME     ("accAcBchName",    "acc_ac_bch_name");            //放款卡支行名称
 
 
-    private String orderAttr;
-    private String acquirerAttr;
+    private final String orderAttr;
+    private final String acquirerAttr;
 
     AcquirerEnum(String orderName, String acquirerName) {
         this.orderAttr = orderName;

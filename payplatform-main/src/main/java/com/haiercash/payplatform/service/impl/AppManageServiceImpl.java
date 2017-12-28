@@ -24,7 +24,7 @@ import java.util.Map;
 public class AppManageServiceImpl implements AppManageService{
 
 
-    private Log logger = LogFactory.getLog(this.getClass());
+    private final Log logger = LogFactory.getLog(this.getClass());
 
     @Override
     public Map<String, Object> getSaleMsg(String typCde) {
@@ -45,8 +45,7 @@ public class AppManageServiceImpl implements AppManageService{
         if (!HttpUtil.isSuccess(jsonMap)) {
             return null;
         }
-        Map<String, Object> bodyMap = (Map<String, Object>) jsonMap.get("body");
-        return bodyMap;
+        return (Map<String, Object>) jsonMap.get("body");
     }
 
     /**
@@ -131,7 +130,6 @@ public class AppManageServiceImpl implements AppManageService{
         map.put("cooprCde", "CD9998");// 门店编号
         map.put("cooprName", "海尔消费金融线上");// 门店名称
         logger.debug("写入默认合作商户数据");
-        return;
     }
 
     public Map<String, Object> jsonObjectToMap(JSONObject jsonObject) {

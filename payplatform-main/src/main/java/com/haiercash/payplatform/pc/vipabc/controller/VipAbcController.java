@@ -2,8 +2,6 @@ package com.haiercash.payplatform.pc.vipabc.controller;
 
 import com.haiercash.payplatform.pc.vipabc.service.VipAbcService;
 import com.haiercash.spring.controller.BaseController;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +15,7 @@ import java.util.Map;
  */
 @RestController
 public class VipAbcController extends BaseController {
-    private static String MODULE_NO = "03";
-    public Log logger = LogFactory.getLog(getClass());
+    private static final String MODULE_NO = "03";
     @Autowired
     private VipAbcService vipAbcService;
 

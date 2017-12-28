@@ -1,8 +1,5 @@
 package com.haiercash.payplatform.common.data;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 public class BaiChengBusinessInfo {
 	private String businessId;// 业务ID
 	private String customerid;// 客户ID

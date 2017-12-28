@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.shunguang.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.mybatis.util.DateUtil;
@@ -43,7 +44,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -120,14 +120,11 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
      * @return 处理结果Map
      */
     private Map<String, Object> savePeopleInfo(Map<String, Object> info) {
-        String applyNo = (String) info.get("applyNo");//交易流水号
         String channelNo = info.get("channelNo").toString();
         String tradeCode = (String) info.get("tradeCode");//交易编码
         String data = (String) info.get("data");//交易信息
         String key = (String) info.get("key");
 
-//        String userId = (String) info.get("userId");
-//        String data = (String) info.get("data");
         logger.info("交易编码：" + tradeCode);
         String params;
         try {
@@ -164,9 +161,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     public Map<String, Object> payApply(Map<String, Object> map) {
         logger.info("白条支付申请接口*******************开始");
         Map cachemap = new HashMap<String, Object>();
-        String applyNo = (String) map.get("applyNo");//交易流水号
         String channelNo = map.get("channelNo").toString();
-        String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
         String key = (String) map.get("key");
 
@@ -199,7 +194,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
 
         //根据userId获取客户编号
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", userId);
         custMap.put("channel", ConstUtil.CHANNEL);
         custMap.put("channelNo", channelNo);
@@ -210,7 +205,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
         com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
-        String custNo = (String) custresult.get("custNo");
         String custName = (String) custresult.get("custName");
         String certNo = (String) custresult.get("certNo");
 
@@ -229,14 +223,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("单笔支付金额需大于等于600元");
             return fail(ConstUtil.ERROR_CODE, "单笔支付金额需大于等于600元");
         }
-        String province = bodyjson.getString("province");//省
-        String city = bodyjson.getString("city");//市
+        String province;//省
+        String city;//市
         String country = bodyjson.getString("country");//区
         String detailAddress = bodyjson.getString("detailAddress");//详细地址
-        String orderDate = bodyjson.getString("orderDate");//下单时间
         String ordermessage = bodyjson.get("ordermessage").toString();//网单信息
         JSONArray jsonArray = new JSONArray(ordermessage);
-        List<AppOrderGoods> appOrderGoodsList = new ArrayList<AppOrderGoods>();
+        List<AppOrderGoods> appOrderGoodsList = new ArrayList<>();
         Double totalcOrderAmt = 0.0;
         for (int j = 0; j < jsonArray.length(); j++) {
             JSONObject jsonm = new JSONObject(jsonArray.get(j).toString());
@@ -321,7 +314,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         RedisUtils.setExpire(token, cachemap);
         logger.info("name:" + custName + "  idNo:" + certNo + "  userId:" + userId);
         Map returnmap = new HashMap<>();
-        String backurl = "";
+        String backurl;
         if ("1".equals(f)) {//订单已提交成功
             backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/loanResult.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&applSeq=" + applSeq;
         } else {
@@ -336,9 +329,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     public Map<String, Object> edApply(Map<String, Object> map) {
         logger.info("白条额度申请接口*******************开始");
         Map cachemap = new HashMap<String, Object>();
-        String applyNo = (String) map.get("applyNo");//交易流水号
         String channelNo = map.get("channelNo").toString();
-        String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
         String key = (String) map.get("key");
 
@@ -402,8 +393,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //3.查看外部uid绑定   /app/appserver/uauth/queryHaierUserInfo?externUid
         //未绑定   去注册    1.注册成功（OK）   2.嗨付已注册未与集团绑定   （走登录）
         //已绑定   去统一认证查询内部userid
-        String uidLocal = "";//统一认证userid
-        String phoneNo = "";//统一认证绑定手机号
+        String uidLocal;//统一认证userid
+        String phoneNo;//统一认证绑定手机号
         Map returnmap = new HashMap<String, Object>();//返回的map
         if (uidHaier.isEmpty()) {
             return fail(ConstUtil.ERROR_CODE, "未获取到userId");
@@ -417,18 +408,24 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String head = resultMap.get("head").toString();
         Map<String, Object> headMap = HttpUtil.json2Map(head);
         String retFlag = headMap.get("retFlag").toString();
-        if ("U0157".equals(retFlag)) {//U0157：未查到该集团用户的信息
-            //用户未注册   进行注册
-            Map<String, Object> paramMap = new HashMap<String, Object>();
-            paramMap.put("mobile", EncryptUtil.simpleEncrypt(custPhoneNo)); //海尔集团登录用户名
-            paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier)); //海尔集团userId
-            //paramMap.put("userName", EncryptUtil.simpleEncrypt(userName == null ? "" : userName));
-            Map usermap = appServerService.saveUauthUsersByHaier(paramMap);
-            String userretFlag = ((Map<String, Object>) (usermap.get("head"))).get("retFlag").toString();
-            if ("00000".equals(userretFlag)) {
-                //注册成功
-                uidLocal = usermap.get("body").toString();//统一认证内userId
-                phoneNo = custPhoneNo;//统一认绑定手机号
+        switch (retFlag) {
+            case "U0157": //U0157：未查到该集团用户的信息
+                //用户未注册   进行注册
+                Map<String, Object> paramMap = new HashMap<>();
+                paramMap.put("mobile", EncryptUtil.simpleEncrypt(custPhoneNo)); //海尔集团登录用户名
+
+                paramMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier)); //海尔集团userId
+
+                //paramMap.put("userName", EncryptUtil.simpleEncrypt(userName == null ? "" : userName));
+                Map usermap = appServerService.saveUauthUsersByHaier(paramMap);
+                String userretFlag = ((Map<String, Object>) (usermap.get("head"))).get("retFlag").toString();
+                switch (userretFlag) {
+                    case "00000":
+                        //注册成功
+                        uidLocal = usermap.get("body").toString();//统一认证内userId
+
+                        phoneNo = custPhoneNo;//统一认绑定手机号
+
 //                //验证并绑定集团用户
 //                Map<String, Object> bindMap = new HashMap<String, Object>();
 //                bindMap.put("externUid", EncryptUtil.simpleEncrypt(uidHaier));
@@ -438,30 +435,35 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //                if(!HttpUtil.isSuccess(usermap)){
 //                    return fail(ConstUtil.ERROR_CODE, "会员绑定失败");
 //                }
-            } else if ("U0160".equals(userretFlag)) {
-                //U0160:该用户已注册，无法注册
-                //跳转登录页面进行登录
-                RedisUtils.setExpire(token, cachemap);
-                String backurl = commonConfig.getGateUrl() + "/sgbt/#!/login/login.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token;
-                returnmap.put("backurl", backurl);
-                logger.info("页面跳转到：" + backurl);
-                return success(returnmap);
-            } else {
-                //注册失败
-                String userretmsg = ((Map<String, Object>) (usermap.get("head"))).get("retMsg").toString();
-                return fail(ConstUtil.ERROR_CODE, userretmsg);
-            }
-        } else if ("00000".equals(retFlag)) {
-            //集团uid已在统一认证做过绑定
-            String body = resultMap.get("body").toString();
-            //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
-            JSONObject bodyMap = new JSONObject(body);
-            uidLocal = bodyMap.get("userId").toString();//统一认证内userId
-            phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
+                        break;
+                    case "U0160":
+                        //U0160:该用户已注册，无法注册
+                        //跳转登录页面进行登录
+                        RedisUtils.setExpire(token, cachemap);
+                        String backurl = commonConfig.getGateUrl() + "/sgbt/#!/login/login.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token;
+                        returnmap.put("backurl", backurl);
+                        logger.info("页面跳转到：" + backurl);
+                        return success(returnmap);
+                    default:
+                        //注册失败
+                        String userretmsg = ((Map<String, Object>) (usermap.get("head"))).get("retMsg").toString();
+                        return fail(ConstUtil.ERROR_CODE, userretmsg);
+                }
+                break;
+            case "00000":
+                //集团uid已在统一认证做过绑定
+                String body = resultMap.get("body").toString();
+                //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+                JSONObject bodyMap = new JSONObject(body);
+                uidLocal = bodyMap.get("userId").toString();//统一认证内userId
 
-        } else {
-            String retMsg = headMap.get("retMsg").toString();
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+                phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
+
+
+                break;
+            default:
+                String retMsg = headMap.get("retMsg").toString();
+                return fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
         cachemap.put("userId", uidLocal);//统一认证userId
@@ -469,7 +471,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         RedisUtils.setExpire(token, cachemap);
         logger.info("进行token绑定");
         //4.token绑定
-        Map<String, Object> bindMap = new HashMap<String, Object>();
+        Map<String, Object> bindMap = new HashMap<>();
         bindMap.put("userId", uidLocal);//内部userId
         bindMap.put("token", token);
         bindMap.put("channel", "11");
@@ -480,7 +482,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
 
         //5.查询实名信息
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", uidLocal);//内部userId
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
@@ -534,10 +536,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     //7.白条额度申请状态查询    Sg-10006    checkEdAppl
     public Map<String, Object> checkEdAppl(Map<String, Object> map) {
         logger.info("白条额度申请状态查询接口*******************开始");
-        Map cachemap = new HashMap<String, Object>();
-        String applyNo = (String) map.get("applyNo");//交易流水号
         String channelNo = map.get("channelNo").toString();
-        String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
         String key = (String) map.get("key");
         String params;
@@ -630,7 +629,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                     //String retmsgo = "当前返回的状态不符合";
                     return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
                 }
-                String retMsginfo = (String) headin.get("retMsg");
                 Map<String, Object> bodyinfo = (Map) map1.get("body");
                 String idNo = (String) bodyinfo.get("certNo");
                 logger.info("获取的客户证件号码idNo:" + idNo);
@@ -664,22 +662,27 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 mapone.put("applSeq", body.get("applSeq"));//申请流水号
                 String outSts = body.get("outSts").toString();
                 //outSts="01";
-                if ("01".equals(outSts) || "22".equals(outSts)) {//APP 审批中  01
-                    mapone.put("outSts", "02");//顺逛 审批中  02
-                    logger.info("返回顺逛数据：" + mapone);
-                    return success(mapone);
-                } else if ("27".equals(outSts)) {// APP 通过
-                    mapone.put("outSts", "03");//顺逛  通过
-                    logger.info("返回顺逛数据：" + mapone);
-                    return success(mapone);
-                } else if ("25".equals(outSts)) {//APP 拒绝
-                    mapone.put("outSts", "04");//顺逛 拒绝
-                    logger.info("返回顺逛数据：" + mapone);
-                    return success(mapone);
-                } else {
-                    logger.info("APP接口返回的状态是:" + outSts + "    ,与顺逛无法对应");
-                    //String retmsgo = "当前返回的状态不符合";
-                    return fail(ConstUtil.ERROR_CODE, outSts);
+                switch (outSts) {
+                    case "01":
+                    case "22": //APP 审批中  01
+                        mapone.put("outSts", "02");//顺逛 审批中  02
+
+                        logger.info("返回顺逛数据：" + mapone);
+                        return success(mapone);
+                    case "27": // APP 通过
+                        mapone.put("outSts", "03");//顺逛  通过
+
+                        logger.info("返回顺逛数据：" + mapone);
+                        return success(mapone);
+                    case "25": //APP 拒绝
+                        mapone.put("outSts", "04");//顺逛 拒绝
+
+                        logger.info("返回顺逛数据：" + mapone);
+                        return success(mapone);
+                    default:
+                        logger.info("APP接口返回的状态是:" + outSts + "    ,与顺逛无法对应");
+                        //String retmsgo = "当前返回的状态不符合";
+                        return fail(ConstUtil.ERROR_CODE, outSts);
                 }
             } else if ("".equals(flag)) {
                 Map flagmap = new HashMap<String, Object>();
@@ -698,8 +701,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     //9 白条额度进行贷款支付结果主动查询接口
     public Map<String, Object> queryAppLoanAndGoods(Map<String, Object> map) {
         logger.info("白条额度进行贷款支付结果主动查询接口*******************开始");
-        Map cachemap = new HashMap<String, Object>();
-        String applyNo = (String) map.get("applyNo");//交易流水号
         String channelNo = (String) map.get("channelNo");
         String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
@@ -726,27 +727,15 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, "没有获取到客户信息");
         }
         Object uid = userjson.get("user_id");//会员id
-        String orderNo = (String) json.get("orderNo");//订单号 非必输
         String applSeq = (String) json.get("applseq");//支付流水号  必输
         if (StringUtils.isEmpty(uid)) {
             String error = userjson.get("error").toString();
             return fail(ConstUtil.ERROR_CODE, error);
         }
-        String uidHaier = uid.toString();//1000030088
-        //String uidHaier = "100003008";
-        Map<String, Object> userIdOne = getUserId(uidHaier);//获取用户userId
-        JSONObject jsonObject = new JSONObject((Map) userIdOne.get("head"));
-        String retMsg1 = (String) jsonObject.get("retMsg");
-        //String applSeq="918653";
         if (StringUtils.isEmpty(applSeq)) {
             logger.info("获取信息失败,为空:applSeq" + applSeq);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        //String applSeq="1265216";//1265216    953808
-//        HashMap<String, Object> applmap = new HashMap<>();
-//        applmap.put("channel", "11");
-//        applmap.put("channelNo", channelNo);
-//        applmap.put("applSeq", applSeq);
         Map<String, Object> acqHead = getAcqHead(tradeCode, "11", channelNo, "", "");
         HashMap<String, Object> maphead = new HashMap<>();
         HashMap<String, Object> maprequest = new HashMap<>();
@@ -755,10 +744,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         maphead.put("head", acqHead);
         maphead.put("body", mapappl);
         maprequest.put("request", maphead);
-        //Map<String, Object> queryApplmap = appServerService.queryApplLoanDetail(token, maprequest);
         Map<String, Object> queryApplmap = appServerService.queryApplLoanDetail(maprequest);
         logger.info("查询贷款详情接口，响应数据：" + map);
-        if (queryApplmap == null || "".equals(queryApplmap)) {//response
+        if (MapUtils.isEmpty(queryApplmap)) {//response
             logger.info("网络异常,查询贷款详情接口,响应数据为空！" + map);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -776,18 +764,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String applyAmt = applyAmto.toString();
             Object apprvAmto = body.get("apprvAmt");//核准金额（审批金额）apprvAmt
             String apprvAmt = apprvAmto.toString();
-            String repayApplAcNam = (String) body.get("repayApplAcNam");//还款账号户名
             String repayApplCardNo = (String) body.get("repayApplCardNo");//还款卡号
             String repayAccBankCde = (String) body.get("repayAccBankCde");//还款开户银行代码
             String repayAcProvince = (String) body.get("repayAcProvince");//还款账户所在省
             String repayAcCity = (String) body.get("repayAcCity");//还款账户所在市
             String applyDt = (String) body.get("applyDt");//申请注册日期
-            String loanActvDt = (String) body.get("loanActvDt");//放款日期
-            String apprvTnr = (String) body.get("apprvTnr");//贷款期数
             String mtdCde = (String) body.get("mtdCde");//还款方式
-            String dueDay = (String) body.get("dueDay");//还款日
-            String lastDueDay = (String) body.get("lastDueDay");//到期日
-            String outSts = (String) body.get("outSts");//审批状态
             String demo = (String) body.get("demo");//拒绝原因
             HashMap<String, String> mapone = new HashMap<>();
             mapone.put("applSeq", applSeq1);
@@ -802,7 +784,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             mapone.put("applyDt", applyDt);
             mapone.put("mtdCde", mtdCde);
             mapone.put("demo", demo);
-            //ifParamsIsNull(mapone);
             logger.info("查询贷款详情接口返回数据是：" + mapone);
             return success(mapone);
         } else {
@@ -814,15 +795,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     //10.  白条支付实名认证同步接口    Sg-10009
     public Map<String, Object> queryAppLoanAndGoodsOne(Map<String, Object> map) {
         logger.info("白条支付实名认证同步接口************开始");
-        String channelNo = (String) map.get("channelNo");
         String userId = (String) map.get("userId");//海尔集团用户ID
-        String data = (String) map.get("data");
         if (StringUtils.isEmpty(userId)) {
             logger.info("获取的参数为空：userId" + userId);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
         }
         Map<String, Object> userIdOne = getUserIdif(userId);//获取用户userId
-        //String userIdone = (String) userIdOne.get("body");//用户信息
         Object body1 = userIdOne.get("body");//用户信息
         Map<String, Object> body11 = (Map) body1;
         String userIdone = (String) body11.get("userId");
@@ -846,10 +824,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     //11.  白条额度进行主动查询接口    Sg-10010
     public Map<String, Object> edcheck(Map<String, Object> map) {
         logger.info("白条额度进行主动查询接口*********************开始");
-        Map cachemap = new HashMap<String, Object>();
-        String applyNo = (String) map.get("applyNo");//交易流水号
         String channelNo = map.get("channelNo").toString();
-        String tradeCode = (String) map.get("tradeCode");//交易编码
         String data = (String) map.get("data");//交易信息
         String key = (String) map.get("key");
         String params;
@@ -961,45 +936,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 //        String ss = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey));
         //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
-        String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
 
-        return params;
-    }
-
-    /*
-     * 判断参数是否有空值
-	 */
-    private void ifParamsIsNull(Map<String, String> map) throws Exception {
-        Set<String> keys = map.keySet();
-        for (String key : keys) {
-            if (map.get(key) == null || "".equals(map.get(key)) || "null".equals(map.get(key))) {
-                throw new Exception("参数" + key + "不能为空！");
-            }
-        }
-    }
-
-    public Map<String, Object> getUinfoserId(String userId) {//根据集团userId查统一认证userId
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("externUid", EncryptUtil.simpleEncrypt(userId));
-        //map.put("channel", "11");
-        //map.put("channelNo", channelNo);
-        Map<String, Object> userIdmap = appServerService.getUserId(null, map);
-        if (!HttpUtil.isSuccess(userIdmap)) {
-            Map<String, Object> head = (Map) userIdmap.get("head");
-            String retFlag = (String) head.get("retFlag");
-            if ("U0157".equals(retFlag)) {//未查到该集团用户的信息
-                String retmsg = "01";//未申请
-                return fail(ConstUtil.ERROR_CODE, retmsg);
-            }
-            logger.info("调集团用户id查询用户信息接口返回信息错误userIdmap" + userIdmap);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
-        Object body1 = userIdmap.get("body");
-        Map<String, Object> body11 = (Map) body1;
-        String userIdone = (String) body11.get("userId");
-        HashMap<Object, Object> mapone = new HashMap<>();
-        mapone.put("userId", userIdone);
-        return success(mapone);
+        return new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
     }
 
     public Map<String, Object> getUserId(String userId) {// Sg-10006接口专用   根据集团userId查统一认证userId
@@ -1054,7 +992,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map returnmap = new HashMap<String, Object>();
         //查询是否已注册
 
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+        Map<String, Object> paramMap = new HashMap<>();
         String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", "11");
@@ -1075,7 +1013,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
 
         //4.token绑定
-        Map<String, Object> bindMap = new HashMap<String, Object>();
+        Map<String, Object> bindMap = new HashMap<>();
         bindMap.put("userId", userId);//内部userId
         bindMap.put("token", token);
         bindMap.put("channel", "11");
@@ -1086,7 +1024,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
 
         //5.查询实名信息
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", userId);//内部userId
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
@@ -1140,9 +1078,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
 
         //6.查询客户额度
-        Map<String, Object> edMap = new HashMap<String, Object>();
+        Map<String, Object> edMap = new HashMap<>();
         edMap.put("userId", userId);//内部userId
-        edMap.put("channelNo", channelNo);
         edMap.put("channel", "11");
         edMap.put("channelNo", channelNo);
         Map edresult = appServerService.checkEdAppl(token, edMap);
@@ -1160,25 +1097,30 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         }
         //审批状态判断
         String outSts = (String) ((Map<String, Object>) (edresult.get("body"))).get("outSts");
-        if ("01".equals(outSts)) {//额度正在审批中
-            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyIn.html?token=" + token;
-            returnmap.put("backurl", backurl);
-            return success(returnmap);
-        } else if ("22".equals(outSts)) {//审批被退回
-            String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
-            cachemap.put("crdSeq", crdSeq);
-            RedisUtils.setExpire(token, cachemap);
-            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyReturn.html?token=" + token;
-            returnmap.put("backurl", backurl);
-            return success(returnmap);
-        } else if ("25".equals(outSts)) {//审批被拒绝
-            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyFail.html?token=" + token;
-            returnmap.put("backurl", backurl);
-            return success(returnmap);
-        } else {//没有额度  额度激活
-            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountActive.html?token=" + token;
-            returnmap.put("backurl", backurl);
-            return success(returnmap);
+        switch (outSts) {
+            case "01": {//额度正在审批中
+                String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyIn.html?token=" + token;
+                returnmap.put("backurl", backurl);
+                return success(returnmap);
+            }
+            case "22": {//审批被退回
+                String crdSeq = (String) ((Map<String, Object>) (edresult.get("body"))).get("crdSeq");
+                cachemap.put("crdSeq", crdSeq);
+                RedisUtils.setExpire(token, cachemap);
+                String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyReturn.html?token=" + token;
+                returnmap.put("backurl", backurl);
+                return success(returnmap);
+            }
+            case "25": {//审批被拒绝
+                String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/applyFail.html?token=" + token;
+                returnmap.put("backurl", backurl);
+                return success(returnmap);
+            }
+            default: {//没有额度  额度激活
+                String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountActive.html?token=" + token;
+                returnmap.put("backurl", backurl);
+                return success(returnmap);
+            }
         }
 
     }
@@ -1191,8 +1133,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             return fail(ConstUtil.ERROR_CODE, "请在header中传入token");
         }
         Map<String, Object> cachemap = RedisUtils.getExpireMap(token);
-        if (cachemap == null || "".equals(cachemap)) {
-            cachemap = new HashMap<String, Object>();
+        if (MapUtils.isEmpty(cachemap)) {
+            cachemap = new HashMap<>();
         }
         cachemap.put("apporder", appOrder);
         cachemap.put("userId", appOrder.getUserId());
@@ -1268,7 +1210,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         HashMap sg = new HashMap<>();
         HashMap sgtwo = new HashMap<>();
         HashMap sgsrs = new HashMap<>();
-        String serno = "";
+        String serno;
 
         String url_ts = shunguangConfig.getTsUrl();
         logger.info("Sg-10011退货通知推送地址：" + url_ts);
@@ -1311,7 +1253,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         ts.setTime(time);
         ts.setChannelNo(channelNo);
         try {
-            HashMap<String, Object> sgts = new HashMap<String, Object>();
+            HashMap<String, Object> sgts = new HashMap<>();
             sgts.put("msgTyp", msgType);//
             sgts.put("applSeq", applSeq);//
             sgts.put("mallOrderNo", mallOrderNo);

@@ -1,6 +1,8 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.service.AcquirerService;
@@ -15,7 +17,6 @@ import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
     @Override
     public Map<String, Object> queryAllLoanInfo(String token, String channelNo, String channel, Map<String, Object> map) {
         logger.info("*********查询全部贷款信息列表**************开始");
-        int page = 0;
-        int size = 0;
+        int page;
+        int size;
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -68,7 +69,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -107,17 +108,17 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         Map resultmapbodyMap = (Map<String, Object>) dateAppOrderPerson.get("body");
         List<Map> ordersList = (List) resultmapbodyMap.get("orders");
-        Map<String, Object> orders = new HashMap<String, Object>();
+        Map<String, Object> orders = new HashMap<>();
         orders.put("orders", ordersList);
         dateAppOrderPerson.put("body", orders);
         return dateAppOrderPerson;
     }
 
     @Override
-    public Map<String, Object> QueryPendingLoanInfo(String token, String channelNo, String channel, Map<String, Object> map) {
+    public Map<String, Object> queryPendingLoanInfo(String token, String channelNo, String channel, Map<String, Object> map) {
         logger.info("*********查询待提交订单列表**************开始");
-        int page = 0;
-        int size = 0;
+        int page;
+        int size;
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -141,7 +142,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -179,8 +180,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
     @Override
     public Map<String, Object> queryPendingRepaymentInfo(String token, String channelNo, String channel, Map<String, Object> map) {
         logger.info("*********待还款信息查询(全部)**************开始");
-        int page = 0;
-        int size = 0;
+        int page;
+        int size;
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -204,7 +205,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -236,23 +237,19 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         Map<String, Object> body = (Map<String, Object>) dateAppOrderPerson.get("body");
         List<Map<String, Object>> order = (List<Map<String, Object>>) body.get("orders");
-        List<Map<String, Object>> order_rep = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < order.size(); i++) {
-            Map<String, Object> ordermap = order.get(i);
+        List<Map<String, Object>> order_rep = new ArrayList<>();
+        for (Map<String, Object> ordermap : order) {
             BigDecimal sybj = Convert.toDecimal(ordermap.get("sybj"));
             Integer remainDays = Convert.toInteger(ordermap.get("remainDays"));
 //            String psDueDt = Convert.toString(ordermap.get("psDueDt"));
-            if (remainDays.intValue() >= 0) {
+            if (remainDays >= 0) {
                 ordermap.put("outSts", "DH");//待还款
             } else {
                 ordermap.put("outSts", "OD");//逾期
             }
-//            ordermap.put("applyDt", psDueDt);//把申请日替换成到期日，PS 前端需要
             ordermap.put("apprvAmt", sybj);
             order_rep.add(ordermap);
         }
-        Map<String, Object> orders = new HashMap<String, Object>();
-//        orders.put("orders", order);
         body.put("orders", order_rep);
         dateAppOrderPerson.put("body", body);
         return dateAppOrderPerson;
@@ -262,8 +259,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
     @Override
     public Map<String, Object> queryApplLoanInfo(String token, String channelNo, String channel, Map<String, Object> map) {
         logger.info("*********查询已提交贷款申请列表**************开始");
-        int page = 0;
-        int size = 0;
+        int page;
+        int size;
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -291,7 +288,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Redis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -326,7 +323,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         List<Map<String, Object>> body = (List<Map<String, Object>>) dateAppOrderPerson.get("body");
-        Map<String, Object> orders = new HashMap<String, Object>();
+        Map<String, Object> orders = new HashMap<>();
         orders.put("orders", body);
         dateAppOrderPerson.put("body", orders);
         return dateAppOrderPerson;
@@ -370,7 +367,6 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         //获取申请流水号
         String applseq = AppOrdernoTypgrpRelation.getApplSeq();
         Map<String, Object> queryOrderInfo = acquirerService.getOrderFromAcquirer(applseq, channel, channelNo, null, null, "2");
-//        Map<String, Object> queryOrderInfo = appServerService.queryOrderInfo(token, req);
         if (queryOrderInfo == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -380,70 +376,43 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
             String retMsg = (String) resultHeadMap.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        BigDecimal xfze = new BigDecimal(0);
-        BigDecimal applyAmt = new BigDecimal(0);
-        String ordertotal = "";
+        BigDecimal xfze;
+        String ordertotal;
         Map<String, Object> resMap = (Map<String, Object>) queryOrderInfo.get("body");
-//        AppOrder appOrder = acquirerService.acquirerMap2OrderObject(resMap, new AppOrder());
-//        String applyTnrTyp = (String) resMap.get("applyTnrTyp");
         String applyTnrTyp = (String) resMap.get("apply_tnr_typ");
-//                appOrder.getApplyTnrTyp();
         logger.info("--日志输出：");
         BigDecimal totalnormint = new BigDecimal(resMap.get("totalnormint").toString());
         BigDecimal totalfeeamt = new BigDecimal(resMap.get("totalfeeamt").toString());
-        BigDecimal Totalnormint = new BigDecimal(0);
-        BigDecimal Totalfeeamt = new BigDecimal(0);
-        if ("null".equals(totalnormint) || "".equals(totalnormint) || totalnormint == null) {
-            Totalnormint = new BigDecimal(0);
-        } else {
-            Totalnormint = totalnormint;
-        }
-        if ("null".equals(totalfeeamt) || "".equals(totalfeeamt) || totalfeeamt == null) {
-            Totalfeeamt = new BigDecimal(0);
-        } else {
-            Totalfeeamt = totalfeeamt;
-        }
-        BigDecimal xfzeBig = new BigDecimal(0);
+        BigDecimal Totalnormint;
+        BigDecimal Totalfeeamt;
+        Totalnormint = totalnormint;
+        Totalfeeamt = totalfeeamt;
+        BigDecimal xfzeBig;
         xfzeBig = Totalnormint.add(Totalfeeamt);
 
-        if (!applyTnrTyp.equals("D") && !applyTnrTyp.equals("d") && (applyTnrTyp != null && !"".equals(applyTnrTyp))) {
+        BigDecimal applyAmt;
+        if (StringUtils.isNotEmpty(applyTnrTyp) && !applyTnrTyp.equals("D") && !applyTnrTyp.equals("d")) {
             String xfzeStr = String.valueOf(xfzeBig);//息费总额
             if (xfzeStr.equals("null")) {
                 xfze = new BigDecimal(0);
             } else {
                 xfze = new BigDecimal(xfzeStr);
             }
-//            Integer applyAmtStr = (Integer)resMap.get("apply_amt");
-            BigDecimal applyAmtStr = new BigDecimal(resMap.get("apply_amt").toString());
-//            String applyAmtStr = (String) resMap.get("apply_amt");
-//                    appOrder.getApplyAmt();//借款总额
-            if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null) {
-                applyAmt = new BigDecimal(0);
-            } else {
-                applyAmt = applyAmtStr;
-            }
-            BigDecimal total = new BigDecimal(0);
+            applyAmt = new BigDecimal(resMap.get("apply_amt").toString());
+            BigDecimal total;
             total = xfze.add(applyAmt);
             ordertotal = total.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_UP) + "";
             resMap.put("ordertotal", ordertotal);
             resMap.put("xfze", xfzeStr);
-        } else if ((applyTnrTyp != null && !"".equals(applyTnrTyp)) && ("D".equals(applyTnrTyp) || "d".equals(applyTnrTyp))) {
+        } else if (StringUtils.isNotEmpty(applyTnrTyp) && ("D".equals(applyTnrTyp) || "d".equals(applyTnrTyp))) {
             String xfzeStr = String.valueOf(xfzeBig);//息费总额
             if (xfzeStr.equals("null")) {
                 xfze = new BigDecimal(0);
             } else {
                 xfze = new BigDecimal(xfzeStr);
             }
-//            Integer applyAmtStr = (Integer)resMap.get("apply_amt");
-            BigDecimal applyAmtStr = new BigDecimal(resMap.get("apply_amt").toString());
-//            String applyAmtStr = (String) resMap.get("apply_amt");
-//                    appOrder.getApplyAmt();//借款总额
-            if ("null".equals(applyAmtStr) || "".equals(applyAmtStr) || applyAmtStr == null) {
-                applyAmt = new BigDecimal(0);
-            } else {
-                applyAmt = applyAmtStr;
-            }
-            BigDecimal total = new BigDecimal(0);
+            applyAmt = new BigDecimal(resMap.get("apply_amt").toString());
+            BigDecimal total;
             total = xfze.add(applyAmt);
             ordertotal = total + "";
             resMap.put("ordertotal", ordertotal);
@@ -454,8 +423,8 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
 
 
     @Override
-    public Map<String, Object> orderQueryXjd(String token, String channelNo, String channel, Map<String, Object> params) throws Exception {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
+    public Map<String, Object> orderQueryXjd(String token, String channelNo, String channel, Map<String, Object> params) {
+        Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> stringObjectMap = queryOrderInfo(token, channelNo, channel, params);
         logger.info("stringObjectMap:" + stringObjectMap);
         if (!HttpUtil.isSuccess(stringObjectMap)) {
@@ -467,7 +436,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         String apply_tnr_typ = Convert.toString(resMap.get("apply_tnr_typ"));//期限类型
         String typ_cde = Convert.toString(resMap.get("typ_cde"));//贷款品种
         String mtd_cde = Convert.toString(resMap.get("mtd_cde"));//还款方式
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("typCde", typ_cde);
         map.put("apprvAmt", apply_amt);
         map.put("applyTnrTyp", apply_tnr_typ);

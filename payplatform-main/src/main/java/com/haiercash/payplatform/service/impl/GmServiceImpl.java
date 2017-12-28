@@ -22,7 +22,7 @@ public class GmServiceImpl extends BaseService implements GmService{
     /**
      * log .
      */
-    private Log logger = LogFactory.getLog(GmServiceImpl.class);
+    private final Log logger = LogFactory.getLog(GmServiceImpl.class);
 
     @Override
     public Map<String, Object> getGoodsByCode(String goodsCode) {

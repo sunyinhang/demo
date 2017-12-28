@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @Service
 public class CrmManageServiceImpl  extends BaseService implements CrmManageService {
-    public Log logger = LogFactory.getLog(getClass());
+    public final Log logger = LogFactory.getLog(getClass());
 
     @Override
     public Map<String, Object> getCustTag(String token, Map<String, Object> paramMap) {

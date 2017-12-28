@@ -7,7 +7,7 @@ public enum CooperativeMsgEnum {
     INACTIVE("00"),//未激活
     ACTIVE("01");//激活
 
-    private String value;
+    private final String value;
 
     public String value() {
         return this.value;

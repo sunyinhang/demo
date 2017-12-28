@@ -49,7 +49,7 @@ public class CashLoanController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/cashLoan/commitOrder", method = RequestMethod.POST)
-    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> commitOrder(@RequestBody Map<String, Object> map) {
         return cashLoanService.commitOrder(map);
     }
 

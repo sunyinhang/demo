@@ -29,9 +29,9 @@ import java.util.Map;
  */
 @RestController
 public class ShunguangController extends BaseController {
-    public Log logger = LogFactory.getLog(getClass());
     //模块编码  02
-    private static String MODULE_NO = "02";
+    private static final String MODULE_NO = "02";
+    public final Log logger = LogFactory.getLog(getClass());
 
     public ShunguangController() {
         super(MODULE_NO);
@@ -84,7 +84,7 @@ public class ShunguangController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/payApply", method = RequestMethod.POST)
-    public Map<String, Object> payApply(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> payApply(@RequestBody Map<String, Object> map) {
         // 参数非空校验
         Map<String, Object> confirmMsg = confirmData(map);
         if (!HttpUtil.isSuccess(confirmMsg)) {
@@ -101,7 +101,7 @@ public class ShunguangController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/edApply", method = RequestMethod.POST)
-    public Map<String, Object> edApply(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> edApply(@RequestBody Map<String, Object> map) {
         // 参数非空校验
         Map<String, Object> confirmMsg = confirmData(map);
         if (!HttpUtil.isSuccess(confirmMsg)) {
@@ -135,7 +135,7 @@ public class ShunguangController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/queryAppLoanAndGoods", method = RequestMethod.POST)
-    public Map<String, Object> queryAppLoanAndGoods(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> queryAppLoanAndGoods(@RequestBody Map<String, Object> map) {
         Map<String, Object> queryAppmap = confirmData(map);
         if (!HttpUtil.isSuccess(queryAppmap)) {
             return queryAppmap;
@@ -151,7 +151,7 @@ public class ShunguangController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/queryAppLoanAndGoodsOne", method = RequestMethod.POST)
-    public Map<String, Object> queryAppLoanAndGoodsOne(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> queryAppLoanAndGoodsOne(@RequestBody Map<String, Object> map) {
         Map<String, Object> queryAppmap = confirmData(map);
         if (!HttpUtil.isSuccess(queryAppmap)) {
             return queryAppmap;
@@ -167,7 +167,7 @@ public class ShunguangController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/edcheck", method = RequestMethod.POST)
-    public Map<String, Object> edcheck(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> edcheck(@RequestBody Map<String, Object> map) {
         Map<String, Object> queryAppmap = confirmData(map);
         if (!HttpUtil.isSuccess(queryAppmap)) {
             return queryAppmap;
@@ -213,7 +213,7 @@ public class ShunguangController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/edApplytest", method = RequestMethod.POST)
-    public Map<String, Object> edApplytest(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> edApplytest(@RequestBody Map<String, Object> map) {
         // 参数非空校验
         return shunguangService.edApplytest(map);
     }
@@ -226,7 +226,7 @@ public class ShunguangController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/shunguang/payApplytest", method = RequestMethod.POST)
-    public Map<String, Object> payApplytest(@RequestBody AppOrder appOrder) throws Exception {
+    public Map<String, Object> payApplytest(@RequestBody AppOrder appOrder) {
         // 参数非空校验
         return shunguangService.payApplytest(appOrder);
     }
@@ -271,7 +271,7 @@ public class ShunguangController extends BaseController {
      * @date 2017/11/6 17:40
      */
     @RequestMapping(value = "/api/payment/shunguang/returnGoods", method = RequestMethod.POST)
-    public Map<String, Object> returnGoods(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> returnGoods(@RequestBody Map<String, Object> map) {
         Map<String, Object> checkMap = this.confirmData(map);
         if (!HttpUtil.isSuccess(checkMap)) {
             return checkMap;
@@ -286,7 +286,7 @@ public class ShunguangController extends BaseController {
      * @date 2017/12/15 11:12
      */
     @RequestMapping(value = "/api/payment/shunguang/getReturnGoodsInfo", method = RequestMethod.POST)
-    public Map<String, Object> getReturnGoodsInfo(@RequestBody Map<String, Object> map) throws Exception {
+    public Map<String, Object> getReturnGoodsInfo(@RequestBody Map<String, Object> map) {
         Map<String, Object> checkMap = this.confirmData(map);
         if (!HttpUtil.isSuccess(checkMap)) {
             return checkMap;

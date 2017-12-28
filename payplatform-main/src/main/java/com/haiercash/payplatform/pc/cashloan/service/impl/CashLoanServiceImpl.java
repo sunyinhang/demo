@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.cashloan.service.impl;
 import com.bestvike.linq.IEnumerable;
 import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.CollectionUtils;
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.reflect.GenericType;
@@ -49,7 +50,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-10.
@@ -276,33 +276,44 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //从后台查询用户信息
         Map<String, Object> userInfo = this.queryUserByExternUid(channelNo, userId__);
         String retFlag = HttpUtil.getRetFlag(userInfo);
-        if (Objects.equals(retFlag, "00000")) {
-            //集团uid已在统一认证做过绑定
-            String body = userInfo.get("body").toString();
-            //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
-            JSONObject bodyMap = new JSONObject(body);
-            uidLocal = bodyMap.get("userId").toString();//统一认证内userId
-            phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
-        } else if (Objects.equals(retFlag, "U0178")) {//U0157：未查到该用户的信息
-            //向后台注册用户信息
-            Map<String, Object> registerResult = this.saveUserByExternUid(this.getChannelNo(), userId__, phoneNo_);
-            String registerResultFlag = HttpUtil.getRetFlag(registerResult);
-            if ("00000".equals(registerResultFlag)) {
-                uidLocal = registerResult.get("body").toString();//统一认证内userId
-                phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
-            } else if ("U0160".equals(registerResultFlag)) {//U0160:该用户已注册，无法注册
-                RedisUtils.setExpire(thirdToken, cachemap);
-                returnmap.put("flag", "2");//跳转登陆绑定页
-                returnmap.put("phone", phoneNo_);//手机号
+        switch (retFlag) {
+            case "00000":
+                //集团uid已在统一认证做过绑定
+                String body = userInfo.get("body").toString();
+                //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
+                JSONObject bodyMap = new JSONObject(body);
+                uidLocal = bodyMap.get("userId").toString();//统一认证内userId
+
+                phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
+
+                break;
+            case "U0178": //U0157：未查到该用户的信息
+                //向后台注册用户信息
+                Map<String, Object> registerResult = this.saveUserByExternUid(this.getChannelNo(), userId__, phoneNo_);
+                String registerResultFlag = HttpUtil.getRetFlag(registerResult);
+                switch (registerResultFlag) {
+                    case "00000":
+                        uidLocal = registerResult.get("body").toString();//统一认证内userId
+
+                        phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
+
+                        break;
+                    case "U0160": //U0160:该用户已注册，无法注册
+                        RedisUtils.setExpire(thirdToken, cachemap);
+                        returnmap.put("flag", "2");//跳转登陆绑定页
+
+                        returnmap.put("phone", phoneNo_);//手机号
+
 //                returnmap.put("token", thirdToken);
-                return success(returnmap);
-            } else {
-                //注册失败
-                String userretmsg = HttpUtil.getRetMsg(registerResult);
-                return fail(ConstUtil.ERROR_CODE, userretmsg);
-            }
-        } else {
-            throw new BusinessException(HttpUtil.getRetFlag(userInfo), HttpUtil.getRetMsg(userInfo));
+                        return success(returnmap);
+                    default:
+                        //注册失败
+                        String userretmsg = HttpUtil.getRetMsg(registerResult);
+                        return fail(ConstUtil.ERROR_CODE, userretmsg);
+                }
+                break;
+            default:
+                throw new BusinessException(HttpUtil.getRetFlag(userInfo), HttpUtil.getRetMsg(userInfo));
         }
 
         cachemap.put("userId", uidLocal);//统一认证userId
@@ -322,7 +333,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         //5.查询实名信息
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", uidLocal);//内部userId
         custMap.put("channel", "11");
         custMap.put("channelNo", channelNo);
@@ -378,7 +389,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map<String, Object>) head2;
         String retFlag_ = (String) retinfo.get("retFlag");
-        String retMsg_ = (String) retinfo.get("retMsg");
         if ("00000".equals(retFlag_)) {
             Map<String, Object> headinfo = (Map<String, Object>) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
@@ -393,7 +403,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             }
             if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
                 logger.info("没有额度申请");
-                Map<String, Object> paramMap = new HashMap<String, Object>();
+                Map<String, Object> paramMap = new HashMap<>();
                 paramMap.put("channelNo", channelNo);
                 paramMap.put("tag", tag);//标签
                 paramMap.put("businessType", "EDJH");//业务类型 现金贷：XJD   商品分期：SPFQ      额度激活：EDJH    提额：TE   额度申请：EDSQ   个人信息维护：GRXX
@@ -451,36 +461,43 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
                         if (code != null && !"".equals(code)) {
                             logger.info("*********人脸识别标识码：" + code);
-                            if ("00".equals(code)) {// 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
-                                validateUserFlagMap.put("channelNo", channelNo);// 渠道
-                                validateUserFlagMap.put("channel", getChannel());
-                                validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));//客户编号18254561920
-                                Map<String, Object> alidateUserMap = appServerService.validateUserFlag(thirdToken, validateUserFlagMap);
-                                if (alidateUserMap == null) {
-                                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                                }
-                                Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
-                                String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
-                                if (!"00000".equals(alidateUserHeadMapFlag)) {
-                                    String retMsg = (String) alidateUserHeadMap.get("retMsg");
-                                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                                }
-                                Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
-                                String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
-                                if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                                }
-                                if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
-                                    returnmap.put("flag", "4");
-                                } else {//没有设置支付密码
-                                    returnmap.put("flag", "5");
-                                }
-                            } else if ("01".equals(code)) {// 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                                returnmap.put("flag", "6");
-                            } else if ("02".equals(code)) {// 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                                returnmap.put("flag", "7");
-                            } else {//跳转人脸识别
-                                returnmap.put("flag", "8");
+                            switch (code) {
+                                case "00": // 00：已经通过了人脸识别（得分合格），不需要再做人脸识别
+                                    validateUserFlagMap.put("channelNo", channelNo);// 渠道
+
+                                    validateUserFlagMap.put("channel", getChannel());
+                                    validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(uidLocal));//客户编号18254561920
+
+                                    Map<String, Object> alidateUserMap = appServerService.validateUserFlag(thirdToken, validateUserFlagMap);
+                                    if (alidateUserMap == null) {
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                    }
+                                    Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
+                                    String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
+                                    if (!"00000".equals(alidateUserHeadMapFlag)) {
+                                        String retMsg = (String) alidateUserHeadMap.get("retMsg");
+                                        return fail(ConstUtil.ERROR_CODE, retMsg);
+                                    }
+                                    Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
+                                    String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
+                                    if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                    }
+                                    if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
+                                        returnmap.put("flag", "4");
+                                    } else {//没有设置支付密码
+                                        returnmap.put("flag", "5");
+                                    }
+                                    break;
+                                case "01": // 01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                                    returnmap.put("flag", "6");
+                                    break;
+                                case "02": // 02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                                    returnmap.put("flag", "7");
+                                    break;
+                                default: //跳转人脸识别
+                                    returnmap.put("flag", "8");
+                                    break;
                             }
 
                         }
@@ -507,14 +524,23 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 cachemap.put("crdSeq", crdSeq);
                 RedisUtils.setExpire(thirdToken, cachemap);
                 String outSts = body.get("outSts").toString();
-                if ("27".equals(outSts)) {
-                    returnmap.put("flag", "12");//通过  我的额度
-                } else if ("25".equals(outSts)) {
-                    returnmap.put("flag", "10");// 拒绝
-                } else if ("22".equals(outSts)) {
-                    returnmap.put("flag", "11");// 退回
-                } else {//审批中
-                    returnmap.put("flag", "13");// 审批中
+                switch (outSts) {
+                    case "27":
+                        returnmap.put("flag", "12");//通过  我的额度
+
+                        break;
+                    case "25":
+                        returnmap.put("flag", "10");// 拒绝
+
+                        break;
+                    case "22":
+                        returnmap.put("flag", "11");// 退回
+
+                        break;
+                    default: //审批中
+                        returnmap.put("flag", "13");// 审批中
+
+                        break;
                 }
             } else if ("".equals(flag)) {
                 returnmap.put("flag", "12");//通过  我的额度
@@ -593,7 +619,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         //缓存获取（放开）
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -602,7 +628,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         //根据userId获取客户编号
         logger.info("获取客户实名信息");
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", userId);
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
@@ -623,8 +649,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         IResponse<List<LoanType>> loanType = this.getLoanType(null, custName, "20", certNo);
         List<LoanType> body = loanType.getBody();
         boolean flag = false;
-        for (int i = 0; i < body.size(); i++) {
-            String retypCde = body.get(i).getTypCde();
+        for (LoanType aBody : body) {
+            String retypCde = aBody.getTypCde();
             logger.info("retypCde==" + retypCde + ";typCde==" + typCde);
             if (typCde.equals(retypCde)) {
                 flag = true;
@@ -633,7 +659,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if (!flag) {
             return fail("error", "账单已过期，请重新选择还款方式与借款期数！");
         }
-        logger.info(flag);
         //1.支付密码验证
         HashMap<String, Object> pwdmap = new HashMap<>();
         String userIdEncrypt = EncryptUtil.simpleEncrypt(userId);
@@ -658,7 +683,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         logger.info("订单提交，合同签订成功");
 
         //3.影像上传
-        Map<String, Object> uploadimgmap = new HashMap<String, Object>();
+        Map<String, Object> uploadimgmap = new HashMap<>();
         uploadimgmap.put("custNo", custNo);//客户编号
         uploadimgmap.put("applSeq", applSeq);//订单号
         uploadimgmap.put("channel", channel);
@@ -684,9 +709,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
         ArrayList<String> listOne = new ArrayList<>();
         ArrayList<String> listTwo = new ArrayList<>();
-        HashMap<String, Object> hashMap = new HashMap<String, Object>();
-        HashMap<String, Object> hashMapOne = new HashMap<String, Object>();
-        HashMap<String, Object> hashMapTwo = new HashMap<String, Object>();
+        HashMap<String, Object> hashMap = new HashMap<>();
+        HashMap<String, Object> hashMapOne = new HashMap<>();
+        HashMap<String, Object> hashMapTwo = new HashMap<>();
         String longLatitude = "经度" + longitude + "维度" + latitude;
         logger.info("经维度解析前:" + longLatitude);
         String longLatitudeEncrypt = com.haiercash.mybatis.util.EncryptUtil.simpleEncrypt(longLatitude);
@@ -776,14 +801,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         //appOrder缓存获取（放开）
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (cacheMap == null || "".equals(cacheMap)) {
+        if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String userId = (String) cacheMap.get("userId");
         //获取客户信息
         logger.info("订单保存，根据userId获取客户信息");
-        Map<String, Object> custMap = new HashMap<String, Object>();
+        Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", userId);
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
@@ -802,7 +827,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //获取订单金额  总利息 金额
         logger.info("订单保存，获取订单金额，总利息金额");
         //IResponse<List<LoanType>> IResponse= this.getLoanType(null, channelNo, custName, "20", certNo);
-        Map<String, Object> payMap = new HashMap<String, Object>();
+        Map<String, Object> payMap = new HashMap<>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", applyAmt);
         payMap.put("applyTnrTyp", applyTnrTyp);
@@ -817,7 +842,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String payresult = com.alibaba.fastjson.JSONObject.toJSONString(payresultMap);
         com.alibaba.fastjson.JSONObject payBody = com.alibaba.fastjson.JSONObject.parseObject(payresult).getJSONObject("body");
         logger.info("payBody:" + payBody);
-        String totalAmt = payBody.get("totalAmt").toString();
         String totalNormInt = payBody.get("totalNormInt").toString();//订单保存（totalNormInt）
         String totalFeeAmt = payBody.get("totalFeeAmt").toString();//订单保存总利息金额（totalAmt）
 
@@ -879,7 +903,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         //0.准入资格校验
         logger.info("进行准入资格校验");
-        Map<String, Object> ispassmap = new HashMap<String, Object>();
+        Map<String, Object> ispassmap = new HashMap<>();
         ispassmap.put("custName", custName);//姓名
         ispassmap.put("certNo", certNo);//身份证
         ispassmap.put("phonenumber", mobile);//手机号
@@ -905,8 +929,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         //1.录单校验（所在城市开通服务）
         //获取市代码
-        String cityCode = "";
-        String provinceCode = "";
+        String cityCode;
+        String provinceCode;
 //        String areaType = "";
         if (org.springframework.util.StringUtils.isEmpty(province) && org.springframework.util.StringUtils.isEmpty(city)) {
             provinceCode = "370000";
@@ -967,7 +991,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //录单校验
 //        logger.info("进行录单校验");
         logger.info("进行录单校验,省编码：" + provinceCode + ",市编码：" + cityCode);
-        Map<String, Object> ordercheakmap = new HashMap<String, Object>();
+        Map<String, Object> ordercheakmap = new HashMap<>();
         ordercheakmap.put("userId", userId);
         ordercheakmap.put("provinceCode", provinceCode);
         ordercheakmap.put("cityCode", cityCode);
@@ -984,7 +1008,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 //        String typCde = appOrder.getTypCde();
         SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
         String date = dateFormater.format(new Date());
-        Map<String, Object> queryordermap = new HashMap<String, Object>();
+        Map<String, Object> queryordermap = new HashMap<>();
         queryordermap.put("typCde", typCde);
         queryordermap.put("date", date);
         queryordermap.put("channel", channel);

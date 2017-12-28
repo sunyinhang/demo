@@ -20,7 +20,7 @@ public enum FileTypeEnum {
      */
     ApplyIDCard("DOC002");
 
-    private String value;
+    private final String value;
 
     public String getValue() {
         return this.value;

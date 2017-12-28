@@ -9,23 +9,17 @@ import java.util.Locale;
  * 请勿修改包名,否则会导致报错,非常重要
  */
 public class Demo {
-	static
-    {
+	private static int isBootOK = 0;
 
-		//System.loadLibrary("IDCARD_THR");
+	static {
 		String osName = System.getProperty("os.name").toLowerCase(Locale.US);
 		if (!StringUtils.isEmpty(osName) && osName.startsWith("win")) { //window
 			System.loadLibrary("OCRDLL_THR");
 		} else { //linux
 			System.loadLibrary("IDCARD_THR");
 		}
-//			System.out.println("java.library.path:"+System.getProperty("java.library.path"));
-//
-//			System.loadLibrary("IDCARD_THR");
-//			System.out.println("天诚OCR：java.library.path:"+System.getProperty("java.library.path"));
-
     }
-	public static int isBootOK = 0;
+
 	/**  获取版权信息*/
 	public native static byte [] GetCopyrightInfo();
 
@@ -43,8 +37,10 @@ public class Demo {
 
 	/**设置引擎参数*/
 	public native static int SetParam(int param,int val);
+
 	/**设置引擎带String参数*/
 	public native static int SetParamString(int param,String val);
+
 	/**识别入口 路径形式识别*/
 	public native static byte[] RECOCROFPATH(int typeid, String path);
 
@@ -67,6 +63,7 @@ public class Demo {
 		}
 		return str;
 	}
+
 	public static int Start(String TimeKey)
 	{
 		if (isBootOK == 0) {

@@ -81,8 +81,8 @@ public class RSAUtils {
         keyPairGen.initialize(512);  
         KeyPair keyPair = keyPairGen.generateKeyPair();  
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();  
-        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();  
-        Map<String, Object> keyMap = new HashMap<String, Object>(2);  
+        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+        Map<String, Object> keyMap = new HashMap<>(2);
         keyMap.put(PUBLIC_KEY, publicKey);  
         keyMap.put(PRIVATE_KEY, privateKey);  
         return keyMap;  

@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @RestController
 public class BusinessController extends BaseController {
-    private Log xmllog = LogFactory.getLog(BusinessController.class);
+    private final Log xmllog = LogFactory.getLog(BusinessController.class);
 
     @Autowired
     private CooperativeBusinessDao cooperativeBusinessDao;
@@ -99,13 +99,17 @@ public class BusinessController extends BaseController {
 
                 case "100026":
                     String flag = Convert.toString(jsonbody.get("flag"));//操作标识
-                    if ("0".equals(flag) || "1".equals(flag)) {// 0：贷款取消；1:申请提交
-                        xmllog.info("----------------收单系统贷款取消-----------------");
-                        url = acquirerUrl + "api/appl/commitAppl";
-                    } else if ("2".equals(flag)) {//合同提交
-                        url = cmisfrontUrl;
-                    } else {
-                        throw new BusinessException(ConstUtil.ERROR_CODE, "错误的操作标识");
+                    switch (flag) {
+                        case "0":
+                        case "1": // 0：贷款取消；1:申请提交
+                            xmllog.info("----------------收单系统贷款取消-----------------");
+                            url = acquirerUrl + "api/appl/commitAppl";
+                            break;
+                        case "2": //合同提交
+                            url = cmisfrontUrl;
+                            break;
+                        default:
+                            throw new BusinessException(ConstUtil.ERROR_CODE, "错误的操作标识");
                     }
                     break;
                 case "100030":

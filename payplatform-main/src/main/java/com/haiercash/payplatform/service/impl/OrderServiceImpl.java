@@ -74,13 +74,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
                     }
                 }
             }
-        } catch (IntrospectionException e) {
-            logger.error(e);
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            logger.error(e);
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
+        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
             logger.error(e);
             throw new RuntimeException(e);
         }
@@ -116,16 +110,9 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         Stream<String> addrInfStream = Stream
                 .of("deliverTyp", "adProvince", "adCity", "adArea", "adAddr", "adName", "adPhone", "adType");
         FormatUtil.moveEntryBetweenMap(addrInfStream, map, childMap);
-        oldMap = (Map<String, Object>) map.get("addr_inf");
-        if (oldMap == null) {
-            oldMap = new HashMap<>();
-        }
-        oldMap.putAll(childMap);
         map.put("addr_inf", childMap);
-
         // version固定传1
         map.put("version", "1");
-
         return map;
     }
 
@@ -295,17 +282,13 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         } else {
             params.put("type", type);
         }
-        Map<String, Object> result = HttpUtil.restPostMap(EurekaServer.ORDER + "/api/order/submit", params);
-        return result;
+        return HttpUtil.restPostMap(EurekaServer.ORDER + "/api/order/submit", params);
     }
 
 
     @Override
     public Map<String, Object> cancelOrder(String formId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("formId", formId);
-        Map<String, Object> result = HttpUtil.restGetMap(EurekaServer.ORDER + "/api/order/cancel?formId="+formId);
-        return result;
+        return HttpUtil.restGetMap(EurekaServer.ORDER + "/api/order/cancel?formId=" + formId);
     }
 
     @Override
@@ -406,7 +389,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             return custIsPass;
         }
         Map<String, Object> bodyMap = (Map<String, Object>) custIsPass.get("body");
-        String whiteType = "";
+        String whiteType;
         if (StringUtils.isEmpty(bodyMap.get("isPass")) || "shh".equalsIgnoreCase((String) bodyMap.get("isPass"))) {
             whiteType = "SHH";
         } else {
@@ -414,33 +397,48 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         }
         Map<String, Object> result = new HashMap<>();
         // 来源，1商户（13） 2 个人（14）
-        if ("1".equals(appOrder.getSource()) || "13".equals(appOrder.getSource())) {
-            result.put("sysFlag", "13");
-        } else if ("2".equals(appOrder.getSource()) || "14".equals(appOrder.getSource())) {
-            result.put("sysFlag", "14");
-        } else if ("3".equals(appOrder.getSource()) || "11".equals(appOrder.getSource())) {
-            result.put("sysFlag", "11");
+        switch (appOrder.getSource()) {
+            case "1":
+            case "13":
+                result.put("sysFlag", "13");
+                break;
+            case "2":
+            case "14":
+                result.put("sysFlag", "14");
+                break;
+            case "3":
+            case "11":
+                result.put("sysFlag", "11");
+                break;
+            default:
+                break;
         }
         if ("1".equals(appOrder.getSource())) {
             result.put("channelNo", "05");
         } else {
             // 白名单类型设置channelNo
-            if ("A".equals(whiteType)) {
-                result.put("channelNo", "17");
-            } else if ("B".equals(whiteType)) {
-                result.put("channelNo", "18");
-            } else if ("SHH".equals(whiteType)) {
-                result.put("channelNo", "19");
-            } else if ("C".equals(whiteType)) {
-                if ("34".equals(appOrder.getChannelNo())) {
-                    // H5集团大数据存量用户
-                    result.put("channelNo", "34");
-                } else if ("2".equals(appOrder.getSource())) {
-                    // App集团大数据存量用户
-                    result.put("channelNo", "41");
-                }
-            } else {
-                result.put("channelNo", "19");
+            switch (whiteType) {
+                case "A":
+                    result.put("channelNo", "17");
+                    break;
+                case "B":
+                    result.put("channelNo", "18");
+                    break;
+                case "SHH":
+                    result.put("channelNo", "19");
+                    break;
+                case "C":
+                    if ("34".equals(appOrder.getChannelNo())) {
+                        // H5集团大数据存量用户
+                        result.put("channelNo", "34");
+                    } else if ("2".equals(appOrder.getSource())) {
+                        // App集团大数据存量用户
+                        result.put("channelNo", "41");
+                    }
+                    break;
+                default:
+                    result.put("channelNo", "19");
+                    break;
             }
         }
         if (!StringUtils.isEmpty(super.getChannel())) {

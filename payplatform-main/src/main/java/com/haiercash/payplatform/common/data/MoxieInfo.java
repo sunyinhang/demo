@@ -1,7 +1,5 @@
 package com.haiercash.payplatform.common.data;
 
-import lombok.Data;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;

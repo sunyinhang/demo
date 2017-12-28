@@ -110,7 +110,6 @@ public class CommonRepaymentPersonServiceImpl extends BaseService implements Com
         if (personList == null || personList.isEmpty()) {
             return fail("10", "要删除的共同还款人不存在！");
         }
-        CommonRepaymentPerson person = personList.get(0);
         //删除共同还款人信息
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("applSeq", applSeq);

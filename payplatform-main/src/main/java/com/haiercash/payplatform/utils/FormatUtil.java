@@ -41,12 +41,12 @@ public class FormatUtil {
     /**
      * global logger.
      */
-    private static Logger logger = LoggerFactory.getLogger(FormatUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(FormatUtil.class);
 
     /**
      * reuse ObjectMapper.
      */
-    private static ObjectMapper jsonMapper = new ObjectMapper();
+    private static final ObjectMapper jsonMapper = new ObjectMapper();
 
     static {
         jsonMapper.setSerializationInclusion(Include.NON_EMPTY);
@@ -67,7 +67,7 @@ public class FormatUtil {
      */
     public static <E> List<E> toObjectList(String jsonString, Class<E> clazz) {
 
-        List<E> list = new ArrayList<E>();
+        List<E> list = new ArrayList<>();
         try {
             TypeFactory typeFactory = jsonMapper.getTypeFactory();
             list = jsonMapper.readValue(jsonString, typeFactory.constructCollectionType(List.class, clazz));
@@ -88,7 +88,7 @@ public class FormatUtil {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static List<Map> toMapList(String jsonString) {
-        List<Map> list = new ArrayList<Map>();
+        List<Map> list = new ArrayList<>();
         try {
             list = jsonMapper.readValue(jsonString, List.class);
         } catch (JsonParseException e) {
@@ -239,19 +239,17 @@ public class FormatUtil {
         if (StringUtils.isEmpty(camel)) {
             return "";
         }
+        StringBuilder builder = new StringBuilder();
         char[] chars = camel.toCharArray();
-        List<Character> resultList = new ArrayList<>();
-        for (int i = 0; i < chars.length; i++) {
-            if (Character.isUpperCase(chars[i])) {
-                resultList.add('_');
-                resultList.add(Character.toLowerCase(chars[i]));
+        for (char aChar : chars) {
+            if (Character.isUpperCase(aChar)) {
+                builder.append('_');
+                builder.append(Character.toLowerCase(aChar));
             } else {
-                resultList.add(chars[i]);
+                builder.append(aChar);
             }
         }
-        StringBuffer sb = new StringBuffer();
-        resultList.stream().forEach(ch -> sb.append(ch));
-        return sb.toString();
+        return builder.toString();
     }
 
     /**
@@ -295,7 +293,7 @@ public class FormatUtil {
      * @param inMap
      */
     public static void moveEntryBetweenMap(Stream<String> keys, Map<String, Object> outMap, Map<String, Object> inMap) {
-        keys.filter(key -> outMap.containsKey(key)).forEach(key -> {
+        keys.filter(outMap::containsKey).forEach(key -> {
             inMap.put(key, outMap.get(key));
             outMap.remove(key);
         });
@@ -358,8 +356,8 @@ public class FormatUtil {
         }
         StringBuilder sb = new StringBuilder(url);
         sb.append("?");
-        for (String key : params.keySet()) {
-            sb.append(key).append("=").append(params.get(key)).append("&");
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
         String result = sb.toString();
         return result.substring(0, result.length() - 1);

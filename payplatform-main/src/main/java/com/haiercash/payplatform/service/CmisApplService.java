@@ -32,7 +32,7 @@ import java.util.Objects;
  **/
 @Service
 public class CmisApplService extends BaseService {
-    private Log logger = LogFactory.getLog(this.getClass());
+    private final Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     private AcquirerService acquirerService;
@@ -118,7 +118,7 @@ public class CmisApplService extends BaseService {
         if (!map.containsKey("flag")) {
             map.put("flag", "0");
         }
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         logger.debug("map==" + map);
         try {
             map.put("sysFlag", super.getChannel());
@@ -137,7 +137,7 @@ public class CmisApplService extends BaseService {
         }
         Map<String, Object> bodyMap = (Map<String, Object>) responseMap.get("body");
         logger.debug("=======" + result);
-        HashMap<String, Object> returnmap = new HashMap<String, Object>();
+        HashMap<String, Object> returnmap = new HashMap<>();
         System.out.println(result);
         List relist = new ArrayList();
         Map<String, Object> payList = (Map<String, Object>) bodyMap.get("payList");
@@ -149,7 +149,7 @@ public class CmisApplService extends BaseService {
             BigDecimal actualArriveAmt = BigDecimal.ZERO;//实际到账金额
             logger.debug("===还款试算的还款计划列表:" + mx);
             for (Map<String, Object> hm : mx) {
-                HashMap<String, Object> newhm = new HashMap<String, Object>();
+                HashMap<String, Object> newhm = new HashMap<>();
                 if (Convert.toInteger(hm.get("psPerdNo")) == 0) {
                     logger.debug("===第0期:" + hm);
                     // 获取第0期的费用并转String
@@ -217,8 +217,7 @@ public class CmisApplService extends BaseService {
         if (StringUtils.isEmpty(cust_json)) {
             logger.info("CRM  该订单的实名认证信息接口查询失败，返回异常！");
         }
-        Map<String, Object> custMap = HttpUtil.json2Map(cust_json);
-        return custMap;
+        return HttpUtil.json2Map(cust_json);
     }
 
     /**
@@ -260,8 +259,7 @@ public class CmisApplService extends BaseService {
 //                }
 //            }
             logger.debug("订单系统接口提交订单开始");
-            Map<String, Object> result = orderService.submitOrder(order.getOrderNo(), "0");
-            return result;
+            return orderService.submitOrder(order.getOrderNo(), "0");
         }
     }
 

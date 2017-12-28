@@ -1,10 +1,10 @@
 package com.haiercash.payplatform.common.enums;
 
-import java.util.Map;
-
 import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.ReflactUtils;
+
+import java.util.Map;
 
 /**
  * enum for common person.
@@ -22,8 +22,8 @@ public enum AcquirerCommonPersonEnum {
     MOBILE          ("mobile",          "indiv_mobile");    // 电话号码
 
 
-    private String commonPersonAttr;
-    private String acquirerAttr;
+    private final String commonPersonAttr;
+    private final String acquirerAttr;
 
     AcquirerCommonPersonEnum(String commonPersonAttr, String acquirerName) {
         this.commonPersonAttr = commonPersonAttr;

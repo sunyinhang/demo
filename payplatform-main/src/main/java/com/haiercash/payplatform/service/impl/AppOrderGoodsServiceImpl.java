@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @Service
 public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoodsService{
-    private Log logger = LogFactory.getLog(this.getClass());
+    private final Log logger = LogFactory.getLog(this.getClass());
 
     @Override
     public Map<String, Object> saveAppOrderGoods(AppOrderGoods appOrderGoods) {
@@ -84,7 +84,7 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
             return resultMap;
         }
         Map<String, Object> bodyMap = (Map<String, Object>) resultMap.get("body");
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<>();
         // 商品总价
         map.put("SumPrice", bodyMap.get("goodsTotal"));
         map.put("goodsSize", bodyMap.get("goodsCount"));
@@ -115,8 +115,7 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
         List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) bodyMap.get("orderGoodsMapList");
         List<Map<String, Object>> goods = new ArrayList<>();
         orderGoodsList.forEach(goodsMap -> {
-            Map<String, Object> appGoodsMap = new HashMap<>();
-            appGoodsMap.putAll(goodsMap);
+            Map<String, Object> appGoodsMap = new HashMap<>(goodsMap);
             FormatUtil.changeKeyName(Arrays.asList("goodsInfId", "formId"), Arrays.asList("seqNo", "orderNo"), appGoodsMap);
             goods.add(appGoodsMap);
         });
@@ -153,7 +152,7 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
             logger.info("商品代码为空！调商品管理的新增商品接口:url" + url);
             //Map<String,Object> parmMap= ReflactUtils.convertBean2Map(appOrderGoods);
             /**请求参数封装**/
-            Map<String, Object> parmMap = new HashMap<String, Object>();
+            Map<String, Object> parmMap = new HashMap<>();
             parmMap.put("goodsName", appOrderGoods.getGoodsName());
             parmMap.put("brandCode", appOrderGoods.getBrandCode());
             parmMap.put("kindCode", appOrderGoods.getKindCode());
