@@ -25,7 +25,7 @@ public final class ServletUtils {
         return StringUtils.isEmpty(ip) || StringUtils.equalsIgnoreCase(ip, UNKNOWN);
     }
 
-    //获取多个 ip 连接的字符串.格式 unknow,1.1.2.2,unknow,2.1.2.1
+    //获取多个 ip 连接的字符串.格式 unknown,1.1.2.2,unknown,2.1.2.1
     private static String getIps(HttpServletRequest request) {
         String xForwardedFor = request.getHeader("X-Forwarded-For");
         if (isValid(xForwardedFor))
