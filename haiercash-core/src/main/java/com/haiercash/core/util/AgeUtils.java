@@ -9,6 +9,7 @@ import java.util.Date;
  * Created by 许崇雷 on 2017-12-26.
  */
 public final class AgeUtils {
+    @SuppressWarnings("deprecation")
     public static int getAge(Date birthday, Date now) {
         Assert.notNull(birthday, "birthday can not be null");
         Assert.notNull(now, "now can not be null");
