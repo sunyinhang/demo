@@ -103,11 +103,11 @@ public final class ThreadContext {
     }
 
     private static final class ThreadContextData {
+        private final Stack<BaseController> controllerStack = new Stack<>();
         private boolean exists;
         private String traceID;
         private String token;
         private String channel;
         private String channelNo;
-        private final Stack<BaseController> controllerStack = new Stack<>();
     }
 }
