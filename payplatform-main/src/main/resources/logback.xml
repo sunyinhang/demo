@@ -2,12 +2,10 @@
 
 <configuration scan="true" scanPeriod="30 seconds">
     <property name="LOG_PATH" value="./log"/>
-    <property name="APP_NAME" value="payplatform"/>
-    <contextName>${APP_NAME}</contextName>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceID}] %-5level %logger{36} %L - %msg%n</pattern>
         </encoder>
     </appender>
     <root level="info">
@@ -19,7 +17,7 @@
             <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceID}] %-5level %logger{36} %L - %msg%n</pattern>
         </encoder>
     </appender>
     <appender name="ASYNC_LOG" class="ch.qos.logback.classic.AsyncAppender">
@@ -36,7 +34,7 @@
             <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.report.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceID}] %-5level %logger{36} %L - %msg%n</pattern>
         </encoder>
     </appender>
     <appender name="ASYNC_REPORT_LOG" class="ch.qos.logback.classic.AsyncAppender">
@@ -53,7 +51,7 @@
             <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.task.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceID}] %-5level %logger{36} %L - %msg%n</pattern>
         </encoder>
     </appender>
     <appender name="ASYNC_TASK_LOG" class="ch.qos.logback.classic.AsyncAppender">
@@ -70,7 +68,7 @@
             <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.trace.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceID}] %-5level %logger{36} %L - %msg%n</pattern>
         </encoder>
     </appender>
     <appender name="ASYNC_TRACE_LOG" class="ch.qos.logback.classic.AsyncAppender">
