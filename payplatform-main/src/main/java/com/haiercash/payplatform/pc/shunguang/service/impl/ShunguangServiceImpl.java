@@ -607,7 +607,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String flag = (String) headinfo.get("flag");
             //applType="2";
             String retmsg = "01";//未申请
-            if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+            if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
                 logger.info("没有额度申请");
                 HashMap<Object, Object> map1 = new HashMap<>();
                 map1.put("outSts", "01");
@@ -684,7 +684,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                         //String retmsgo = "当前返回的状态不符合";
                         return fail(ConstUtil.ERROR_CODE, outSts);
                 }
-            } else if ("".equals(flag)) {
+            } else if (StringUtils.isEmpty(flag)) {
                 Map flagmap = new HashMap<String, Object>();
                 flagmap.put("outSts", "03");//顺逛 通过
                 logger.info("返回顺逛数据：" + flagmap);

@@ -1462,7 +1462,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             Map<String, Object> headinfo = (Map<String, Object>) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
-            if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+            if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
                 returnmap.put("flag", "1");//活动页
                 return success(returnmap);
             } else if ("2".equals(applType)) {
@@ -1486,7 +1486,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 if ("27".equals(outSts)) {
                     returnmap.put("flag", "2");//通过  我的额度
                 }
-            } else if ("".equals(flag)) {
+            } else if (StringUtils.isEmpty(flag)) {
                 returnmap.put("flag", "2");//通过  我的额度
             }
         }
@@ -1619,7 +1619,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 returnmap.put("token", token);
                 return success(returnmap);
             }
-            if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+            if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
                 //没有额度申请
             } else if ("2".equals(applType)) {
                 HashMap<String, Object> edCheckmap = new HashMap<>();

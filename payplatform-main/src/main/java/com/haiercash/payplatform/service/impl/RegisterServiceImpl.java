@@ -288,7 +288,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 return success(resultparamMap);
             }
             String retmsg = "01";//未申请
-            if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+            if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
                 if (hehyflag) {
                     resultparamMap.put("flag", "12");//预授信额度
                     resultparamMap.put("token", token);
@@ -434,7 +434,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 
                         break;
                 }
-            } else if ("".equals(flag)) {
+            } else if (StringUtils.isEmpty(flag)) {
                 resultparamMap.put("flag", "9");//通过  我的额度
             }
 
@@ -612,7 +612,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 return success(map);
             }
             String retmsg = "01";//未申请
-            if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+            if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
                 if (hehyflag) {
                     map.put("flag", "12");//预授信额度
                     return success(map);
@@ -757,7 +757,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 
                         break;
                 }
-            } else if ("".equals(flag)) {
+            } else if (StringUtils.isEmpty(flag)) {
                 map.put("flag", "9");//通过  我的额度
             }
         }

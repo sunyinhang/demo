@@ -401,7 +401,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 returnmap.put("token", thirdToken);
                 return success(returnmap);
             }
-            if ("1".equals(applType) || ("".equals(applType) && "Y".equals(flag))) {
+
+            if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
                 logger.info("没有额度申请");
                 Map<String, Object> paramMap = new HashMap<>();
                 paramMap.put("channelNo", channelNo);
@@ -542,7 +543,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
                         break;
                 }
-            } else if ("".equals(flag)) {
+            } else if (StringUtils.isEmpty(flag)) {
                 returnmap.put("flag", "12");//通过  我的额度
             }
 
