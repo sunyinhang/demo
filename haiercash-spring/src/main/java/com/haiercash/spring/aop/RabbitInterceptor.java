@@ -1,6 +1,5 @@
 package com.haiercash.spring.aop;
 
-import com.haiercash.spring.context.ThreadContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,11 +28,12 @@ public final class RabbitInterceptor {
     @Around(value = "doRabbitPointcut()")
     public Object doRabbit(ProceedingJoinPoint joinPoint) throws Throwable {
         String action = joinPoint.getSignature().toLongString();
-        this.logger.info(String.format("[%s] ==>RabbitHandler Begin: %s", ThreadContext.getTraceID(), action));
+        this.logger.info("==>@RabbitHandler Begin: " + action);
+        long begin = System.currentTimeMillis();
         try {
             return joinPoint.proceed();
         } finally {
-            this.logger.info(String.format("[%s] ==>RabbitHandler End: %s", ThreadContext.getTraceID(), action));
+            this.logger.info(String.format("==>@RabbitHandler End: %s Took: %d", action, System.currentTimeMillis() - begin));
         }
     }
 }

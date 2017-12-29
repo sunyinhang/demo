@@ -1,6 +1,5 @@
 package com.haiercash.spring.aop;
 
-import com.haiercash.spring.context.ThreadContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,12 +28,12 @@ public final class ScheduledInterceptor {
     public Object doScheduled(ProceedingJoinPoint joinPoint) throws Throwable {
         //打印日志
         String action = joinPoint.getSignature().toLongString();
-        this.logger.info(String.format("[%s] ==>Scheduled Begin: %s", ThreadContext.getTraceID(), action));
+        this.logger.info("==>@Scheduled Begin: " + action);
         long begin = System.currentTimeMillis();
         try {
             return joinPoint.proceed();
         } finally {
-            this.logger.info(String.format("[%s] ==>Scheduled End (Took: %s ms): %s", ThreadContext.getTraceID(), System.currentTimeMillis() - begin, action));
+            this.logger.info(String.format("==>@Scheduled End: %s Took: %s", action, System.currentTimeMillis() - begin));
         }
     }
 }

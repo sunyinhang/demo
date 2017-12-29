@@ -2,7 +2,6 @@ package com.haiercash.spring.trace.rest;
 
 import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.core.serialization.JsonSerializer;
-import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.servlet.DispatcherRequestWrapper;
@@ -22,10 +21,8 @@ public final class IncomingLog {
     private static final Log logger = LogFactory.getLog(IncomingLog.class);
 
     public static void writeRequestLog(DispatcherRequestWrapper request) throws IOException {
-        String traceID = ThreadContext.getTraceID();
         String method = request.getMethod().toUpperCase();
         Map<String, Object> log = new LinkedHashMap<>();
-        log.put("traceID", traceID);
         log.put("method", method);
         log.put("servletPath", request.getServletPath());
         log.put("requestHeaders", TraceUtils.getHeaders(request));
@@ -33,34 +30,30 @@ public final class IncomingLog {
         log.put("requestParams", TraceUtils.getParams(request));
         if (method.equals("POST") || method.equals("PUT"))
             log.put("requestBody", TraceUtils.getBody(request));
-        logger.info(String.format("[%s] ==>Servlet Begin: %s", traceID, JsonSerializer.serialize(log)));
+        logger.info("==>Servlet Begin: " + JsonSerializer.serialize(log));
     }
 
     public static void writeResponseLog(DispatcherRequestWrapper request, DispatcherResponseWrapper response, long tookMs) throws IOException {
-        String traceID = ThreadContext.getTraceID();
         String method = request.getMethod().toUpperCase();
         Map<String, Object> log = new LinkedHashMap<>();
-        log.put("traceID", traceID);
         log.put("method", method);
         log.put("servletPath", request.getServletPath());
         log.put("responseStatus", response.getStatus());
         log.put("responseHeaders", TraceUtils.getHeaders(response));
         log.put("responseBody", TraceUtils.getBody(response));
         log.put("took", tookMs);
-        logger.info(String.format("[%s] ==>Servlet End: %s", traceID, JsonSerializer.serialize(log)));
+        logger.info("==>Servlet End: " + JsonSerializer.serialize(log));
     }
 
     public static void writeErrorLog(DispatcherRequestWrapper request, Exception e, long tookMs) {
-        String traceID = ThreadContext.getTraceID();
         String method = request.getMethod().toUpperCase();
         String msg = ThrowableUtils.getString(e);
         Map<String, Object> log = new LinkedHashMap<>();
-        log.put("traceID", traceID);
         log.put("method", method);
         log.put("servletPath", request.getServletPath());
         log.put("error", msg);
         log.put("took", tookMs);
-        logger.error(String.format("[%s] ==>Servlet Error: %s", traceID, JsonSerializer.serialize(log)));
+        logger.error("==>Servlet Error: " + JsonSerializer.serialize(log));
         //错误报告
         BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
     }

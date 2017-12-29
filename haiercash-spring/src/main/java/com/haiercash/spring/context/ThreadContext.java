@@ -3,6 +3,7 @@ package com.haiercash.spring.context;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.trace.TraceID;
+import org.slf4j.MDC;
 import org.springframework.util.Assert;
 
 import java.util.Stack;
@@ -64,6 +65,7 @@ public final class ThreadContext {
         String traceID = RequestContext.exists() ? RequestContext.getRequest().getHeader(TraceID.NAME) : null;
         if (StringUtils.isEmpty(traceID))
             traceID = TraceID.generate();
+        MDC.put(TraceID.NAME, traceID);
         ThreadContextData data = contexts.get();
         data.exists = true;
         data.traceID = traceID;
@@ -88,6 +90,7 @@ public final class ThreadContext {
         data.channel = StringUtils.EMPTY;
         data.channelNo = StringUtils.EMPTY;
         data.controllerStack.clear();
+        MDC.remove(TraceID.NAME);
     }
 
     public static void enterController(BaseController controller) {
@@ -100,11 +103,11 @@ public final class ThreadContext {
     }
 
     private static final class ThreadContextData {
+        private final Stack<BaseController> controllerStack = new Stack<>();
         private boolean exists;
         private String traceID;
         private String token;
         private String channel;
         private String channelNo;
-        private final Stack<BaseController> controllerStack = new Stack<>();
     }
 }
