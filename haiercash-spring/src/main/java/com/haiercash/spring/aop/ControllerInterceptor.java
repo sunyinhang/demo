@@ -166,15 +166,12 @@ public final class ControllerInterceptor {
         }
     }
 
-    private void updateArgs(Parameter[] params, String[] paramNames, Object[] args) {
+    private CommonArgs updateArgs(Parameter[] params, String[] paramNames, Object[] args) {
         if (!ThreadContext.exists())
             throw new RuntimeException("must init thread context first");
-        //合并参数
-        CommonArgs commonArgs = this.getCommonArgs(params, args);
-        //更新参数
-        this.setCommonArgs(params, paramNames, args, commonArgs);
-        //打印日志
-        this.logger.info(String.format("[%s] 常用参数 token:%s channel:%s channelNo:%s", ThreadContext.getTraceID(), commonArgs.getToken(), commonArgs.getChannel(), commonArgs.getChannelNo()));
+        CommonArgs commonArgs = this.getCommonArgs(params, args);//合并参数
+        this.setCommonArgs(params, paramNames, args, commonArgs);//更新参数
+        return commonArgs;
     }
 
     @Pointcut("execution(* com.haiercash..*.*(..)) && (@annotation(org.springframework.web.bind.annotation.RequestMapping)" +
@@ -201,12 +198,16 @@ public final class ControllerInterceptor {
         Parameter[] params = methodSignature.getMethod().getParameters();
         String[] paramNames = methodSignature.getParameterNames();
         Object[] args = joinPoint.getArgs();
-        this.updateArgs(params, paramNames, args);
+        CommonArgs commonArgs = this.updateArgs(params, paramNames, args);
         //执行
         ThreadContext.enterController(controller);//进入
+        String action = signature.toLongString();
+        this.logger.info(String.format("==>@RequestMapping Begin: %s token: %s channel: %s channelNo: %s", action, commonArgs.getToken(), commonArgs.getChannel(), commonArgs.getChannelNo()));
+        long begin = System.currentTimeMillis();
         try {
             return joinPoint.proceed(args);
         } finally {
+            this.logger.info(String.format("==>@RequestMapping End: %s Took: %d", action, System.currentTimeMillis() - begin));
             ThreadContext.exitController();//退出
         }
     }
