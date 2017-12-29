@@ -400,8 +400,11 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 returnmap.put("flag", "10");// 拒绝
                 returnmap.put("token", thirdToken);
                 return success(returnmap);
+            } else if ("22".equals(_outSts)) {
+                returnmap.put("flag", "11");//退回
+                returnmap.put("token", thirdToken);
+                return success(returnmap);
             }
-
             if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
                 logger.info("没有额度申请");
                 Map<String, Object> paramMap = new HashMap<>();

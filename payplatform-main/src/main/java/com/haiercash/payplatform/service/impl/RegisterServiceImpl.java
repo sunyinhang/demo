@@ -286,6 +286,10 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 resultparamMap.put("flag", "10");// 拒绝
                 resultparamMap.put("token", token);
                 return success(resultparamMap);
+            } else if ("22".equals(outSts_f)) {
+                resultparamMap.put("flag", "11");//退回
+                resultparamMap.put("token", token);
+                return success(resultparamMap);
             }
             String retmsg = "01";//未申请
             if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
@@ -608,6 +612,10 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
             String outSts_f = (String) headinfo.get("outSts");
             if ("25".equals(outSts_f)) {
                 map.put("flag", "10");// 拒绝
+                map.put("token", token);
+                return success(map);
+            } else if ("22".equals(outSts_f)) {
+                map.put("flag", "11");//退回
                 map.put("token", token);
                 return success(map);
             }

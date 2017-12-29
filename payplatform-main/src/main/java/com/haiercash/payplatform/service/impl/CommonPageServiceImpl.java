@@ -1618,7 +1618,12 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 returnmap.put("flag", "3");// 拒绝
                 returnmap.put("token", token);
                 return success(returnmap);
+            } else if ("22".equals(_outSts)) {
+                returnmap.put("flag", "2");//退回
+                returnmap.put("token", token);
+                return success(returnmap);
             }
+
             if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
                 //没有额度申请
             } else if ("2".equals(applType)) {
