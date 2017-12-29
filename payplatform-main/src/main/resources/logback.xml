@@ -2,6 +2,7 @@
 
 <configuration scan="true" scanPeriod="30 seconds">
     <property name="LOG_PATH" value="./log"/>
+    <property name="APP_NAME" value="payplatform"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
