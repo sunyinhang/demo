@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.utils;
 
+import com.haiercash.core.lang.RandomUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
@@ -18,7 +19,7 @@ public final class CmisUtil {
     public static HashMap<String, Object> makeHeadMap(String tradeCode, String tradeType, Map<String, Object> params) {
         HashMap headMap = new HashMap();
         headMap.put("tradeCode", tradeCode);
-        headMap.put("serno", (new Date()).getTime() + "" + (int) (Math.random() * 100.0D));
+        headMap.put("serno", (new Date()).getTime() + "" + RandomUtils.nextInt(100));
         if (StringUtils.isEmpty(params.get("sysFlag"))) {
             headMap.put("sysFlag", "04");
         } else {

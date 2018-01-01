@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -735,6 +736,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         }
         String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
 
-        return new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
+        return new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey), StandardCharsets.UTF_8);
     }
 }

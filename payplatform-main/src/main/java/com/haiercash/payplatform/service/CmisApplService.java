@@ -40,6 +40,7 @@ public class CmisApplService extends BaseService {
     private OrderService orderService;
     @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
+
     /**
      * 查询贷款品种详情
      *
@@ -63,7 +64,7 @@ public class CmisApplService extends BaseService {
     /**
      * 还款试算的service
      *
-     * @param map 必输：typCde, apprvAmt, applyTnrTyp, applyTnr
+     * @param map     必输：typCde, apprvAmt, applyTnrTyp, applyTnr
      * @param gateUrl
      * @param token
      * @return
@@ -168,14 +169,15 @@ public class CmisApplService extends BaseService {
                     continue;
                 }
                 newhm.put("psPerdNo", hm.get("psPerdNo"));
-                BigDecimal defee = null;
+                BigDecimal instmAmt = new BigDecimal(String.valueOf(hm.get("instmAmt")));
                 String feeString = String.valueOf(StringUtils.isEmpty(hm.get("psFeeAmt")) ? "0" : hm.get("psFeeAmt"));
                 if (!StringUtils.isEmpty(feeString) && (!Objects.equals(feeString, "null"))) {
-                    defee = new BigDecimal(feeString);
+                    BigDecimal defee = new BigDecimal(feeString);
+                    instmAmt = instmAmt.add(defee);
                 }
+                instmAmt = instmAmt.setScale(2, BigDecimal.ROUND_HALF_UP);
                 // 每期应归还的期供等于期供+费用
-                newhm.put("instmAmt", String.valueOf(new BigDecimal(String.valueOf(hm.get("instmAmt"))).add(defee)
-                        .setScale(2, BigDecimal.ROUND_HALF_UP)));
+                newhm.put("instmAmt", instmAmt.toString());
                 //每期的到期日
                 newhm.put("dueDt", hm.get("dueDt"));
                 relist.add(newhm);
@@ -247,8 +249,7 @@ public class CmisApplService extends BaseService {
             Map<String, Object> result = acquirerService.commitAppl(order, "1", null);//
             logger.debug("收单系统接口" + AcqTradeCode.COMMIT_APPL + "结束");
             return result;
-        }
-        else {
+        } else {
 //            if (!"2".equals(order.getStatus())) {
 //                this.cleanGoodsInfo(order);
 //                // 防止个人版保存商户版提交时修改系统标识信息

@@ -1,10 +1,10 @@
 /*
  * 功  能：简单说明该类的功能
- * 
+ *
  * 文件名：PaymentServiceImpl.java
- * 
+ *
  * 描  述：
- * 
+ *
  * [变更履历]
  * Version   变更日         部署              作者           变更内容
  * -----------------------------------------------------------------------------
@@ -59,9 +59,7 @@ public class PaymentServiceImpl implements PaymentServiceInterface {
         corehead.setTradeCode("100012");
 
         XstreamBuild xstreamBuild = new XstreamBuild();
-        String requestXml = xstreamBuild.bulidCorerequestXml(queryLimitMessage,
-                corehead);
-
+        String requestXml = xstreamBuild.bulidCorerequestXml(queryLimitMessage, corehead);
         String response = XmlClientUtils.postForString(cmisConfig.getUrl(), requestXml);
         logger.info(response);
         Map map = (Map) xstreamBuild.bulidCoreresponseBean(response);

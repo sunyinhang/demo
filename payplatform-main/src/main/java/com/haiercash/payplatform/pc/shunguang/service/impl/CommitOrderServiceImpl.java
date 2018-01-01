@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +63,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
     /**
      * 订单提交
+     *
      * @param map
      * @return
      */
@@ -76,19 +78,19 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         String paypwd = (String) map.get("paypwd");
         BigDecimal longitude = new BigDecimal(0);
         BigDecimal latitude = new BigDecimal(0);
-        if(!StringUtils.isEmpty(map.get("longitude"))){
-            longitude = (BigDecimal)map.get("longitude");//经度
+        if (!StringUtils.isEmpty(map.get("longitude"))) {
+            longitude = (BigDecimal) map.get("longitude");//经度
         }
-        if(!StringUtils.isEmpty(map.get("latitude"))){
-            latitude = (BigDecimal)map.get("latitude");//维度
+        if (!StringUtils.isEmpty(map.get("latitude"))) {
+            latitude = (BigDecimal) map.get("latitude");//维度
         }
         String area = (String) map.get("area");//区域
 
         //参数非空校验
-        if(StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
-                || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq)){
+        if (StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(token)
+                || StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(applSeq)) {
             logger.info("channel:" + channel + "  channelNo:" + channelNo + "   token:" + token
-                + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
+                    + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
             logger.info("前台获取数据有误");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -103,7 +105,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
         //根据用户中心token获取统一认证userId
         String userId = sgInnerService.getuserId(token);
-        if(StringUtils.isEmpty(userId)){
+        if (StringUtils.isEmpty(userId)) {
             logger.info("根据用户中心token获取统一认证userId失败");
             return fail(ConstUtil.ERROR_CODE, "获取内部注册信息失败");
         }
@@ -115,7 +117,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         custMap.put("channel", channel);
         custMap.put("channelNo", channelNo);
         Map<String, Object> custInforesult = appServerService.queryPerCustInfo(token, custMap);
-        if (!HttpUtil.isSuccess(custInforesult) ) {
+        if (!HttpUtil.isSuccess(custInforesult)) {
             logger.info("订单提交，获取实名信息失败");
             return fail(ConstUtil.ERROR_CODE, "获取实名信息失败");
         }
@@ -136,7 +138,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         pwdmap.put("channel", channel);
         pwdmap.put("channelNo", channelNo);
         Map<String, Object> resmap = appServerService.validatePayPasswd(token, pwdmap);
-        if(!HttpUtil.isSuccess(resmap)){
+        if (!HttpUtil.isSuccess(resmap)) {
             logger.info("订单提交，支付密码验证失败");
             return fail("error", "支付密码校验失败");
         }
@@ -144,7 +146,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 
         //2.合同签订
         Map<String, Object> contractmap = commonPageService.signContract(custName, certNo, applSeq, mobile, typCde, channelNo, token);
-        if(!HttpUtil.isSuccess(contractmap)){
+        if (!HttpUtil.isSuccess(contractmap)) {
             logger.info("订单提交，合同签订失败");
             return contractmap;
         }
@@ -156,8 +158,8 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         uploadimgmap.put("applSeq", applSeq);//订单号
         uploadimgmap.put("channel", channel);
         uploadimgmap.put("channelNo", channelNo);
-        Map<String,Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
-        if(!HttpUtil.isSuccess(uploadimgresultmap)){
+        Map<String, Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
+        if (!HttpUtil.isSuccess(uploadimgresultmap)) {
             logger.info("订单提交，影像上传失败失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
@@ -228,7 +230,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
     }
 
 
-    private String encrypt(String data, String channelNo,String tradeCode) throws Exception {
+    private String encrypt(String data, String channelNo, String tradeCode) throws Exception {
         //byte[] bytes = key.getBytes();
         //获取渠道私钥
         logger.info("获取渠道" + channelNo + "私钥");
@@ -241,9 +243,9 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         //1.生成随机密钥
         String password = DesUtil.productKey();
         //2.des加密
-        String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(), password));
+        String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(StandardCharsets.UTF_8), password));
         //3.加密des的key
-        String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(), publicKey));
+        String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(StandardCharsets.UTF_8), publicKey));
         org.json.JSONObject reqjson = new org.json.JSONObject();
         reqjson.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
         reqjson.put("channelNo", super.getChannelNo());

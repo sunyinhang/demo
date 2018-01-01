@@ -4,6 +4,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Random;
 
@@ -27,7 +28,7 @@ public class DesUtil {
 	public static byte[] encrypt(byte[] datasource, String password) {
 		try{
 		SecureRandom random = new SecureRandom();
-		DESKeySpec desKey = new DESKeySpec(password.getBytes());
+			DESKeySpec desKey = new DESKeySpec(password.getBytes(StandardCharsets.UTF_8));
 		//创建一个密匙工厂，然后用它把DESKeySpec转换成
 		SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
 		SecretKey securekey = keyFactory.generateSecret(desKey);
@@ -54,7 +55,7 @@ public class DesUtil {
 		// DES算法要求有一个可信任的随机数源
 		SecureRandom random = new SecureRandom();
 		// 创建一个DESKeySpec对象
-		DESKeySpec desKey = new DESKeySpec(password.getBytes());
+			DESKeySpec desKey = new DESKeySpec(password.getBytes(StandardCharsets.UTF_8));
 		// 创建一个密匙工厂
 		SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
 		// 将DESKeySpec对象转换成SecretKey对象

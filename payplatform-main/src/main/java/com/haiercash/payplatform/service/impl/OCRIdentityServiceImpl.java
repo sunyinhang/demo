@@ -1,6 +1,10 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.collection.MapUtils;
+import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.ObjectUtils;
+import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.config.StorageConfig;
@@ -20,10 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +36,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +90,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         //调用OCR
         OCRIdentityTC ocrIdentityTC = new OCRIdentityTC();
         ReturnMessage returnMessage = ocrIdentityTC.OCRIDUpload(input);
-        if (StringUtils.isEmpty(returnMessage)) {
+        if (returnMessage == null) {
             return fail("02", "OCR读取身份信息失败");
         }
         logger.info("OCR返回信息：" + returnMessage.toString());
@@ -102,28 +102,28 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         //获取OCR返回信息进行redis存储
         Object retObj = returnMessage.getRetObj();
         JSONObject cardsResJson = new JSONObject(retObj.toString());
-        if (!StringUtils.isEmpty(cardsResJson.get("name"))) {
+        if (!ObjectUtils.isEmpty(cardsResJson.get("name"))) {
             cacheMap.put("name", cardsResJson.get("name"));//姓名
         }
-        if (!StringUtils.isEmpty(cardsResJson.get("gender"))) {
+        if (!ObjectUtils.isEmpty(cardsResJson.get("gender"))) {
             cacheMap.put("gender", cardsResJson.get("gender"));//性别
         }
-        if (!StringUtils.isEmpty(cardsResJson.get("birthday"))) {
+        if (!ObjectUtils.isEmpty(cardsResJson.get("birthday"))) {
             cacheMap.put("birthday", cardsResJson.get("birthday"));//出生年月日
         }
-        if (!StringUtils.isEmpty(cardsResJson.get("race"))) {
+        if (!ObjectUtils.isEmpty(cardsResJson.get("race"))) {
             cacheMap.put("race", cardsResJson.get("race"));//民族
         }
-        if (!StringUtils.isEmpty(cardsResJson.get("address"))) {
+        if (!ObjectUtils.isEmpty(cardsResJson.get("address"))) {
             cacheMap.put("address", cardsResJson.get("address"));//地址
         }
-        if (!StringUtils.isEmpty(cardsResJson.get("id_card_number"))) {
+        if (!ObjectUtils.isEmpty(cardsResJson.get("id_card_number"))) {
             cacheMap.put("idCard", cardsResJson.get("id_card_number"));//身份证号
         }
-        if (!StringUtils.isEmpty(cardsResJson.get("issued_by"))) {
+        if (!ObjectUtils.isEmpty(cardsResJson.get("issued_by"))) {
             cacheMap.put("issued", cardsResJson.get("issued_by"));//签发机关
         }
-        if (!StringUtils.isEmpty(cardsResJson.get("valid_date"))) {
+        if (!ObjectUtils.isEmpty(cardsResJson.get("valid_date"))) {
             cacheMap.put("validDate", cardsResJson.get("valid_date"));//有效期
         }
 
@@ -141,8 +141,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         output.close();
         instream0.close();
 
-        BASE64Encoder encode = new BASE64Encoder();
-        String imageStr = encode.encode(data);
+        String imageStr = Base64Utils.encode(data);
         String certImagePath = saveImage2Disk(userId, imageStr);
 
         if (!StringUtils.isEmpty(cardSide) && "front".equals(cardSide)) {
@@ -169,10 +168,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("身份证正反面照片缓存路径:" + fn);
             String uuId = UUID.randomUUID().toString().replaceAll("-", "");
             imgPath = path + "/" + uuId + ".jpg";
-            BASE64Decoder decoder = new BASE64Decoder();
-
             byte[] bt;
-            bt = decoder.decodeBuffer(imageStr);
+            bt = Base64Utils.decode(imageStr);
             try (InputStream inputStream = new ByteArrayInputStream(bt); FileOutputStream fos = new FileOutputStream(imgPath)) {
                 byte[] bytes = new byte[1024 * 1024];
                 int readLen;
@@ -637,7 +634,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         if ("register".equals(flag)) {
             if (StringUtils.isEmpty(token)) {
                 String custName = "";
-                custName = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                custName = URLSerializer.encode(Base64Utils.encodeString(custName));
                 realmName = "/app/appserver/register?custName=" + custName;
                 logger.info("------------注册协议------------" + realmName);
                 map.put("realmName", realmName);
@@ -653,7 +650,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                     if (orderNo == null) {
                         orderNo = "";
                     }
-                    realmName = "/app/appserver/register?orderNo=" + orderNo + "&custName=" + URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                    realmName = "/app/appserver/register?orderNo=" + orderNo + "&custName=" + URLSerializer.encode(Base64Utils.encodeString(custName));
                     logger.info("------------注册协议------------" + realmName);
                     map.put("realmName", realmName);
                 }
@@ -684,8 +681,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                     String custName = (String) cacheMap.get("name");
                     String certNo = (String) cacheMap.get("idNo");
                     if (!StringUtils.isEmpty(custName) && !StringUtils.isEmpty(certNo)) {
-                        String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
-                        /// String custNameB = URLEncoder.encode(new String(Base64.encode(custName), "UTF-8"), "UTF-8");
+                        String custNameB = URLSerializer.encode(Base64Utils.encodeString(custName));
+                        /// String custNameB = URLSerializer.encode(new String(Base64.encode(custName), "UTF-8"), "UTF-8");
                         realmName = "/app/appserver/edCredit?custName=" + custNameB + "&certNo=" + certNo;
                         logger.info("--------------征信查询------------" + realmName);
                         map.put("realmName", realmName);
@@ -700,7 +697,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                     break;
                 case "sesame": {
                     String custName = (String) cacheMap.get("name");
-                    String custNameB = URLEncoder.encode(new BASE64Encoder().encodeBuffer(custName.getBytes()), "UTF-8");
+                    String custNameB = URLSerializer.encode(Base64Utils.encodeString(custName));
                     realmName = "/app/appserver/seSameCredit?custName=" + custNameB;
                     logger.info("------------芝麻信用授权书展示地址---------" + realmName);
                     map.put("realmName", realmName);

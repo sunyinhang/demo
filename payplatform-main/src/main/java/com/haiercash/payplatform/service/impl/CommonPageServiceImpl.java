@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
@@ -51,6 +52,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -123,7 +125,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String url = "";
         //征信协议展示
         if ("1".equals(flag)) {
-            String name = new String(Base64.encode(custName.getBytes()), "UTF-8");
+            String name = Base64Utils.encodeString(custName);
             name = URLEncoder.encode(name, "UTF-8");
             url = "/app/appserver/edCredit?custName=" + name + "&certNo=" + certNo;
             result.put("url", url);
@@ -140,7 +142,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         //注册协议展示
         if ("3".equals(flag)) {
-            String name = new String(Base64.encode(custName.getBytes()), "UTF-8");
+            String name = new String(Base64.encode(custName.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
             name = URLEncoder.encode(name, "UTF-8");
             url = "/app/appserver/register?custName=" + name;
             result.put("url", url);
@@ -578,7 +580,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
         //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
 
-        return new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
+        return new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey), StandardCharsets.UTF_8);
     }
 
 
@@ -594,13 +596,13 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return;
         }
 
-		/*
+        /*
          * 接口返回值参考： {"head":{"retFlag":"00000","retMsg":"处理成功"},
-		 * "body":{"storeNo":"DZHW01","merchNo":"8800125101","storeName":
-		 * "银川市大展宏伟工贸有限公司",
-		 * "storePhoneZone":"","storePhone":"","storePhoneSub":"","cumNo":
-		 * "01376256"}}
-		 */
+         * "body":{"storeNo":"DZHW01","merchNo":"8800125101","storeName":
+         * "银川市大展宏伟工贸有限公司",
+         * "storePhoneZone":"","storePhone":"","storePhoneSub":"","cumNo":
+         * "01376256"}}
+         */
         String url = EurekaServer.CRM + "/app/crm/cust/getStoreInfo" + "?storeNo=" + storeNo;
         String json = HttpUtil.restGet(url, token);
         if (StringUtils.isEmpty(json)) {
@@ -631,10 +633,10 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             return;
         }
 
-		/*
+        /*
          * 接口返回值参考： {"head":{"retFlag":"00000","retMsg":"处理成功"},
-		 * "body":{"mobileNum":"","userName":"陈琳琳","userId":"chenlinlin"}}
-		 */
+         * "body":{"mobileNum":"","userName":"陈琳琳","userId":"chenlinlin"}}
+         */
         String url = EurekaServer.CRM + "/app/crm/cust/getSalesInfo" + "?userid=" + salesNo;
         String json = HttpUtil.restGet(url, token);
         if (StringUtils.isEmpty(json)) {
@@ -987,8 +989,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             }
             Map<String, Object> infoMap = (Map<String, Object>) bankmap.get("body");
             List<Map<String, Object>> bankList = (List<Map<String, Object>>) infoMap.get("info");
-            if (bankList == null || bankList.size() == 0) {
+            if (CollectionUtils.isEmpty(bankList)) {
                 logger.info("银行卡列表获取失败！！");
+                return;
             }
             // 是否更新的标识位
             // boolean flag = false;

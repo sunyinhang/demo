@@ -4,6 +4,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author liuhongbin
@@ -87,7 +88,7 @@ public class EncryptUtil {
     }
 
     public static String simpleEncrypt(String sSrc) {
-        byte[] bas = sSrc.getBytes();
+        byte[] bas = sSrc.getBytes(StandardCharsets.UTF_8);
         //按位取反
         for (int i = 0; i < bas.length; i++) {
             bas[i] = (byte)~bas[i];
@@ -119,7 +120,7 @@ public class EncryptUtil {
         for (int i = 0; i < bas.length; i++) {
             bas[i] = (byte)~bas[i];
         }
-        return new String(bas);
+        return new String(bas, StandardCharsets.UTF_8);
     }
 
     /*public static void main(String[] args) throws Exception {

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +79,7 @@ public class BusinessController extends BaseController {
         //========
         try {
             CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channleNo);
-            jsonStr = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(jsonStr), cooperativeBusiness.getRsapublic()));
+            jsonStr = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(jsonStr), cooperativeBusiness.getRsapublic()), StandardCharsets.UTF_8);
             xmllog.info("HaiercashPayApplyForJson--JSON:" + jsonStr.getBytes("utf-8").length);
             xmllog.info("----------------报文解密明文：-----------------" + jsonStr);
             Map jsonObject = JsonSerializer.deserialize(jsonStr, Map.class);

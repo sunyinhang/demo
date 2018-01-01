@@ -27,6 +27,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -417,9 +418,9 @@ public class CmisMessageHandler {
         //1.生成随机密钥
         String password = DesUtil.productKey();
         //2.des加密
-        String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(), password));
+        String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(StandardCharsets.UTF_8), password));
         //3.加密des的key
-        String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(), publicKey));
+        String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(StandardCharsets.UTF_8), publicKey));
         Map<String, Object> map = new HashMap<>();
         map.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
         map.put("channelNo", "46");

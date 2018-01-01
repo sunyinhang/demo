@@ -30,6 +30,7 @@ import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
 import org.json.JSONArray;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -937,7 +939,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         //String params = new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
         //String params = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey));
 
-        return new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey))));
+        return new String(DesUtil.decrypt(Base64Utils.decode(data), new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(key), publicKey), StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
     }
 
     public Map<String, Object> getUserId(String userId) {// Sg-10006接口专用   根据集团userId查统一认证userId
@@ -1233,7 +1235,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String content = Convert.toString(bodyMap.get("content"));//提示描述
         String status = Convert.toString(bodyMap.get("status"));//状态
         SgReturngoodsLog sgReturngoodsLog = shunGuangthLogDao.getByMallOrderNo(mallOrderNo);
-
+        if (sgReturngoodsLog == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "查询退货推送信息失败");
         SgReturngoodsLog ts = new SgReturngoodsLog();
         SimpleDateFormat tm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
@@ -1260,7 +1263,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String retMsg = Convert.toString(headmap.get("retMsg"));
             String retFlag = Convert.toString(headmap.get("retFlag"));
             logger.info("实时推送流水号：" + applSeq + "   响应数据：" + retMsg);
-
             int n = Convert.toInteger(sgReturngoodsLog.getTimes());
             n = n + 1;
             if ("00000".equals(retFlag)) {
@@ -1270,10 +1272,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 sg.put("serno", serno);
             } else {
                 ts.setFlag("N");//推送失败
-                if(n == 3){
+                if (n == 3) {
                     sg.put("retFlag", "00000");
                     sg.put("retMsg", "处理成功");
-                }else{
+                } else {
                     sg.put("retFlag", "00099");
                     sg.put("retMsg", retMsg);
                 }
@@ -1383,9 +1385,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String publicKey = cooperativeBusiness.getRsapublic();//获取公钥
             String password = DesUtil.productKey();
             //2.des加密
-            String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(), password));
+            String desData = Base64Utils.encode(DesUtil.encrypt(data.getBytes(StandardCharsets.UTF_8), password));
             //3.加密des的key
-            String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(), publicKey));
+            String password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey(password.getBytes(StandardCharsets.UTF_8), publicKey));
             map.put("applyNo", UUID.randomUUID().toString().replace("-", ""));
             map.put("channelNo", "46");
             map.put("tradeCode", tradeCode);

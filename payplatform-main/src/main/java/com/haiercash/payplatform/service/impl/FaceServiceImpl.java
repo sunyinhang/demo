@@ -1,7 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.collection.MapUtils;
-import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.URLSerializer;
@@ -96,7 +95,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         //人脸识别
         String appno = UUID.randomUUID().toString().replace("-", "");
         String filestreamname = custNo + ".jpg";
-        String filestream = URLSerializer.encode(Base64Utils.encode(faceBytes), CharsetNames.UTF_8);
+        String filestream = URLSerializer.encode(Base64Utils.encode(faceBytes));
         String url = outreachConfig.getUrl() + "/Outreachplatform/api/face/isface";
         logger.info("调用外联人脸识别接口，请求地址：" + url);
         Map<String, Object> jsonMap = new HashMap<>();
