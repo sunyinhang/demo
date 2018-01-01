@@ -5,6 +5,7 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Type;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * @author 许崇雷
@@ -58,7 +59,9 @@ public final class ArrayUtils extends org.apache.commons.lang3.ArrayUtils {
             }
 
             @Override
-            public T next() {
+            public T next() throws NoSuchElementException {
+                if (this.index < 0 || this.index >= args.length)
+                    throw new NoSuchElementException();
                 return args[this.index++];
             }
         };
