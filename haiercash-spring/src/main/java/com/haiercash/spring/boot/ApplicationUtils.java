@@ -3,7 +3,7 @@ package com.haiercash.spring.boot;
 /**
  * Created by 许崇雷 on 2017-11-22.
  */
-public class ApplicationUtils {
+public final class ApplicationUtils {
     private ApplicationUtils() {
     }
 

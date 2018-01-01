@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 /**
  * Created by 许崇雷 on 2017-11-01.
  */
-public class JSONObjectSerializer implements ObjectSerializer {
+public final class JSONObjectSerializer implements ObjectSerializer {
     /**
      * fastjson invokes this call-back method during serialization when it encounters a field of the
      * specified type.

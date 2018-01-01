@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Data
 @ConfigurationProperties(prefix = "zuul")
-public class ZuulProperties {
+public final class ZuulProperties {
     //该配置项只为消除警告，其实际应用在 spring 框架中
     private Boolean setContentLength;
 }

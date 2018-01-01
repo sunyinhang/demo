@@ -10,7 +10,7 @@ import java.util.List;
  */
 @Data
 @ConfigurationProperties(prefix = "spring.mybatis")
-public class MyBatisProperties {
+public final class MyBatisProperties {
     private String dialect;
     private String basePackage;
     private String aliasesPackage;
