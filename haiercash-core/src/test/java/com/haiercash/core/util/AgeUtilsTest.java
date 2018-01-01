@@ -9,6 +9,7 @@ import java.util.Date;
  * Created by 许崇雷 on 2017-12-26.
  */
 public class AgeUtilsTest {
+    @SuppressWarnings("deprecation")
     @Test
     public void getAge() {
         Date birthday = new Date(2000 - 1900, 1, 29);
