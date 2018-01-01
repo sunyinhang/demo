@@ -1,6 +1,7 @@
 package com.haiercash.spring.rest.cmisacq;
 
 import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.lang.RandomUtils;
 import com.haiercash.spring.context.ThreadContext;
 
 import java.util.Date;
@@ -20,7 +21,7 @@ public final class CmisAcqRequestBuilder {
     private Object body;
 
     private CmisAcqRequestBuilder() {
-        this.serno = String.valueOf(new Date().getTime()) + (int) (Math.random() * 100.0D);
+        this.serno = String.valueOf(new Date().getTime()) + RandomUtils.nextInt(100);
         this.sysFlag = ThreadContext.getChannel();
         Date now = DateUtils.now();
         this.tradeDate = DateUtils.toDateString(now);
