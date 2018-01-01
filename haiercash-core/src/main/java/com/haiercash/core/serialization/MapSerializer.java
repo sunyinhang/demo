@@ -82,19 +82,19 @@ public final class MapSerializer {
         Map<String, String> map = new LinkedHashMap<>();
         StringBuilder key = new StringBuilder();
         StringBuilder value = new StringBuilder();
-        boolean iskey = true;
+        boolean isKey = true;
         for (char c : new CharSequenceIterable(keyValueString, startIndex, endIndex)) {
             if (Objects.equals(c, keyValueSeparator)) {
-                iskey = false;
+                isKey = false;
             } else if (Objects.equals(c, pairSeparator)) {
-                iskey = true;
+                isKey = true;
                 //冲刷
                 if (key.length() > 0)
                     map.put(key.toString(), value.toString());
                 key.setLength(0);
                 value.setLength(0);
             } else {
-                if (iskey)
+                if (isKey)
                     key.append(c);
                 else
                     value.append(c);

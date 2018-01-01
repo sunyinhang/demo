@@ -1,7 +1,6 @@
 package com.haiercash.spring.trace;
 
 import com.haiercash.core.collection.EnumerationUtils;
-import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.URLSerializer;
@@ -107,7 +106,7 @@ public final class TraceUtils {
     }
 
     public static Map<String, String> getParams(HttpRequest request) {
-        return URLSerializer.urlToMap(request.getURI().getRawQuery(), CharsetNames.UTF_8);
+        return URLSerializer.urlToMap(request.getURI().getRawQuery());
     }
 
     public static String getBody(DispatcherRequestWrapper request) throws IOException {

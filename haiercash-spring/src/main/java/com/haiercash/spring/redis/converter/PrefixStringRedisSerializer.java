@@ -6,6 +6,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.Assert;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by 许崇雷 on 2017-12-07.
@@ -26,6 +27,6 @@ public final class PrefixStringRedisSerializer implements RedisSerializer<String
     }
 
     public byte[] serialize(String key) {
-        return this.properties.addPrefix(key).getBytes();
+        return this.properties.addPrefix(key).getBytes(StandardCharsets.UTF_8);
     }
 }
