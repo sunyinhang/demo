@@ -48,6 +48,7 @@ public class MyBatisAutoConfiguration {
     @Primary
     @ConditionalOnProperty(prefix = PREFIX, name = BASE_PACKAGE)
     @ConditionalOnMissingBean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     SqlSessionFactory sqlSessionFactory(DataSource dataSource) {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);

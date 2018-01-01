@@ -24,6 +24,7 @@ public final class ArrayUtils extends org.apache.commons.lang3.ArrayUtils {
      * @param <T>  类型
      * @return 枚举对象
      */
+    @SafeVarargs
     public static <T> Enumeration<T> asEnumeration(T... args) {
         Assert.notNull(args, "args can not be null");
         return new Enumeration<T>() {
@@ -48,6 +49,7 @@ public final class ArrayUtils extends org.apache.commons.lang3.ArrayUtils {
      * @param <T>  类型
      * @return 迭代器
      */
+    @SafeVarargs
     public static <T> Iterator<T> asIterator(T... args) {
         Assert.notNull(args, "args can not be null");
         return new Iterator<T>() {
@@ -74,6 +76,7 @@ public final class ArrayUtils extends org.apache.commons.lang3.ArrayUtils {
      * @param <T>  类型
      * @return 可迭代对象
      */
+    @SafeVarargs
     public static <T> Iterable<T> asIterable(T... args) {
         Assert.notNull(args, "args can not be null");
         return () -> asIterator(args);

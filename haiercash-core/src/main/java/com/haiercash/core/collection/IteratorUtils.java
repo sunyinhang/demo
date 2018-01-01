@@ -75,6 +75,7 @@ public final class IteratorUtils {
      * @param <T>   类型
      * @return 新的迭代器
      */
+    @SafeVarargs
     public static <T> Iterator<T> append(Iterator<? extends T> first, T... args) {
         return concat(first, ArrayUtils.asIterator(args));
     }

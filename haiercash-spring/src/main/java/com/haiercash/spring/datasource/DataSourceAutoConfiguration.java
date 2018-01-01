@@ -20,6 +20,7 @@ public class DataSourceAutoConfiguration {
     @Bean
     @Primary
     @ConditionalOnMissingBean(name = "transactionManager")
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     PlatformTransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }

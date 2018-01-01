@@ -80,6 +80,7 @@ public final class IterableUtils {
      * @param <T>   类型
      * @return 新的枚举器
      */
+    @SafeVarargs
     public static <T> Iterable<T> append(Iterable<? extends T> first, T... args) {
         return concat(first, ArrayUtils.asIterable(args));
     }
