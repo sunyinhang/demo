@@ -598,10 +598,11 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         edMap.put("userId", uidLocal);//内部userId
         edMap.put("channel", channel);
         edMap.put("channelNo", channelNo);
-        Map edresult = appServerService.checkEdAppl(token, edMap);
+        Map<String, Object> edresult = appServerService.checkEdAppl(token, edMap);
+        if (edresult == null)
+            return super.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
-            String retmsg = ((Map<String, Object>) (edresult.get("head"))).get("retMsg").toString();
-            return fail(ConstUtil.ERROR_CODE, retmsg);
+            return edresult;
         }
         String flag;//页面跳转标识
         //获取自主支付可用额度金额
