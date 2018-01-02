@@ -4,8 +4,6 @@ import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.client.ClientRequestWrapper;
 import com.haiercash.spring.client.ClientResponseWrapper;
-import com.haiercash.spring.mail.bugreport.BugReportLevel;
-import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,11 +41,8 @@ public final class OutgoingLog {
     }
 
     public static void writeError(Map<String, Object> log, Exception e, long tookMs) {
-        String msg = ThrowableUtils.getMessage(e);
-        log.put("error", msg);
+        log.put("error", ThrowableUtils.getMessage(e));
         log.put("took", tookMs);
         logger.error("==>Call Rest Error: " + JsonSerializer.serialize(log));
-        //错误报告
-        BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
     }
 }
