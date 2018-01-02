@@ -610,6 +610,17 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (signContractInfo == null) {
             return fail(ConstUtil.ERROR_CODE, "贷款品种" + typCde + "没有配置签章类型");
         }
+        String signType = signContractInfo.getSigntype();//签章类型
+        Map<String, Object> contractmap = new HashMap<>();//
+        contractmap.put("custName", name);// 客户姓名
+        contractmap.put("custIdCode", idNo);// 客户身份证号
+        contractmap.put("applseq", applseq);// 请求流水号
+        contractmap.put("signType", signType);// 签章类型
+        contractmap.put("flag", "0");//1 代表合同  0 代表 协议
+        contractmap.put("orderJson", orderJson.toString());
+        contractmap.put("sysFlag", "11");// 系统标识：支付平台
+        contractmap.put("channelNo", channelNo);
+        appServerService.caRequest(null, contractmap);
 
         //4.征信借款合同
         JSONObject orderZX = new JSONObject();
@@ -621,6 +632,17 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         JSONObject orderZXJson = new JSONObject();// 订单信息json串
         orderZXJson.put("order", orderZX.toString());
 
+        Map<String, Object> reqZXJson = new HashMap<>();// 征信
+        reqZXJson.put("custName", name);// 客户姓名
+        reqZXJson.put("custIdCode", idNo);// 客户身份证号
+        reqZXJson.put("applseq", applseq);// 请求流水号
+        reqZXJson.put("signType", "credit");// 签章类型
+        reqZXJson.put("flag", "0");//1 代表合同  0 代表 协议
+        reqZXJson.put("orderJson", orderZXJson.toString());
+        reqZXJson.put("sysFlag", "11");// 系统标识：支付平台
+        reqZXJson.put("channelNo", channelNo);
+        appServerService.caRequest(token, reqZXJson);
+
 
         //5.注册合同
         JSONObject orderRegister = new JSONObject();
@@ -631,6 +653,17 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 
         JSONObject orderZCJson = new JSONObject();// 订单信息json串
         orderZCJson.put("order", orderRegister.toString());
+
+        Map<String, Object> reqZCJson = new HashMap<>();// 征信
+        reqZCJson.put("custName", name);// 客户姓名
+        reqZCJson.put("custIdCode", idNo);// 客户身份证号
+        reqZCJson.put("applseq", applseq);// 请求流水号
+        reqZCJson.put("signType", "register");// 签章类型
+        reqZCJson.put("flag", "0");//1 代表合同  0 代表 协议
+        reqZCJson.put("orderJson", orderZCJson.toString());
+        reqZCJson.put("sysFlag", "11");// 系统标识：支付平台
+        reqZCJson.put("channelNo", channelNo);
+        appServerService.caRequest(token, reqZCJson);
 
         //6.百融风险信息推送
         logger.info("百融登录事件：loginEvent：" + loginEvent + "********loginEventNum:" + loginNum + "  lendEvent" + lendEvent + "  lendNum:" + lendNum);

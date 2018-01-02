@@ -231,6 +231,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         arrayList.add(hashMapOne);
         arrayList.add(hashMapTwo);
         hashMap.put("list", arrayList);
+        appServerService.updateListRiskInfo(token, hashMap);
         HashMap<String, Object> outMap = new HashMap<>();
         outMap.put("applseq", applSeq);
         outMap.put("name", name);
