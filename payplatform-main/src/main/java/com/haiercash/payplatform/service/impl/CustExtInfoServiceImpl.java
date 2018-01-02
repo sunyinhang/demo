@@ -55,10 +55,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 
     public static void createDir(String destDirName) {
         File dir = new File(destDirName);
-        if (dir.exists()) {
-            return;
-        }
-        // 创建目录
         dir.mkdirs();
     }
 

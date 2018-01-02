@@ -162,9 +162,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         try {
             String fn = storageConfig.getOcrPath() + "/certImage/" + userId;
             File path = new File(fn);
-            if (!path.exists()) {
-                path.mkdirs();
-            }
+            path.mkdirs();
             logger.info("身份证正反面照片缓存路径:" + fn);
             String uuId = UUID.randomUUID().toString().replaceAll("-", "");
             imgPath = path + "/" + uuId + ".jpg";

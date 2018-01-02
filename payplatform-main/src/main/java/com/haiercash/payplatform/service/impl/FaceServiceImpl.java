@@ -51,10 +51,6 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if (!destDirName.endsWith(File.separator))
             destDirName = destDirName + File.separator;
         File dir = new File(destDirName);
-        if (dir.exists())
-            return;
-        // 创建目录
-        //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
     }
 
