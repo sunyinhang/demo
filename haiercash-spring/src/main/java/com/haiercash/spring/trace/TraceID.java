@@ -6,6 +6,7 @@ import com.haiercash.core.net.HostInfo;
 import com.haiercash.spring.boot.ApplicationUtils;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -58,8 +59,8 @@ public final class TraceID {
     //序列号
     private static class Sequence {
         private static final ReentrantLock lock = new ReentrantLock();
-        private static LocalDate Last_Date;
-        private static long Counter = 1;
+        private static volatile LocalDate lastDate;
+        private static volatile AtomicLong counter = new AtomicLong(1L);
 
         private Sequence() {
         }
@@ -68,13 +69,11 @@ public final class TraceID {
             lock.lock();
             try {
                 LocalDate now = LocalDate.now();
-                if (now.equals(Last_Date)) {
-                    return Counter++;
-                } else {
-                    Last_Date = now;
-                    Counter = 1;
-                    return Counter++;
+                if (!now.equals(lastDate)) {
+                    lastDate = now;
+                    counter.set(1L);
                 }
+                return counter.getAndIncrement();
             } finally {
                 lock.unlock();
             }
