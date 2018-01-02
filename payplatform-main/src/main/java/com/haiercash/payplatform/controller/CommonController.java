@@ -43,7 +43,7 @@ import java.util.Map;
  * Created by yuanli on 2017/7/24.
  */
 @RestController
-public class CommonPageController extends BaseController {
+public class CommonController extends BaseController {
     //模块编码  01
     private static final String MODULE_NO = "01";
     private final Log logger = LogFactory.getLog(getClass());
@@ -64,7 +64,7 @@ public class CommonPageController extends BaseController {
     @Autowired
     private CommonPageService commonPageService;
 
-    public CommonPageController() {
+    public CommonController() {
         super(MODULE_NO);
     }
 
