@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.common.aop;
 
 import com.haiercash.core.collection.MapUtils;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.annotation.Progress;
 import com.haiercash.payplatform.common.data.ProgressLog;
 import com.haiercash.spring.context.ThreadContext;
@@ -45,7 +46,7 @@ public final class ProgressInterceptor {
         Method method = ((MethodSignature) signature).getMethod();
         Progress progress = method.getAnnotation(Progress.class);
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(ThreadContext.getToken());
-        if (MapUtils.isEmpty(cacheMap))
+        if (MapUtils.isEmpty(cacheMap) || cacheMap.get("idCard") == null)
             return result;
         ProgressLog progressLog = new ProgressLog();
         progressLog.setName(String.valueOf(cacheMap.get("name")));
@@ -53,6 +54,7 @@ public final class ProgressInterceptor {
         progressLog.setProgress(progress.progress());
         progressLog.setNode(progress.node());
         progressLog.setNextNode(progress.nextNode());
+        logger.info("流程日志:" + JsonSerializer.serialize(progressLog));
         // TODO 保存日志
         return result;
     }
