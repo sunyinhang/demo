@@ -44,11 +44,12 @@ public final class TraceID {
      *
      * @return 调用链 ID
      */
+    @SuppressWarnings("StringBufferReplaceableByString")
     public static String generate() {
-        StringBuilder builder = new StringBuilder(25);
+        StringBuilder builder = new StringBuilder(50);
         builder.append(DateUtils.toString(DateUtils.now(), DATE_FORMAT))//年月日时分秒毫秒
                 .append("-")
-                .append(APPLICATION_NAME)
+                .append(APPLICATION_NAME)//程序名前三位
                 .append("-")
                 .append(IP_LAST_BIT)//IP 地址最后一个数字 0-255
                 .append("-")
