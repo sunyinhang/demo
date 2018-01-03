@@ -6,7 +6,7 @@
 
     <!--额度申请URL-->
     <select id="selectIdCard" resultType="java.lang.String">
-        select idcard from VIPABC_ORDER_INFO where ordersn=#{ordersn}
+        select idcard from VIPABC_ORDER_INFO where ordersn LIKE '${ordersn}%'
     </select>
 
 </mapper>
