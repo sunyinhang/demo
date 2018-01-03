@@ -5,11 +5,10 @@ import com.haiercash.payplatform.common.annotation.Progress;
 import com.haiercash.payplatform.common.data.ProgressLog;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.spring.util.ConstUtil;
-import com.haiercash.spring.util.RestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-
-import static com.haiercash.spring.util.RestUtil.fail;
 
 /**
  * 流程处理日志拦截器.
@@ -39,42 +36,18 @@ public final class ProgressInterceptor {
     }
 
     @Around(value = "progressPointcut()")
-    public Object doProgress(ProceedingJoinPoint joinPoint) {
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Method method = methodSignature.getMethod();
-        boolean ifReturn = false;
-        Progress progress = null;
-        if (method == null) {
-            ifReturn = true;
-        } else {
-            progress = method.getAnnotation(Progress.class);
-            if (progress == null ) {
-                ifReturn = true;
-            }
-        }
+    public Object doProgress(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object result = joinPoint.proceed();
 
-        StringBuffer argsBuffer = new StringBuffer();
-        Object[] args = joinPoint.getArgs();
-        for (int i = 0; i < args.length; i ++) {
-            argsBuffer.append(", ").append(args[i]);
-        }
-
-        Object result = null;
-        if (ifReturn) {
-            try {
-                result = joinPoint.proceed();
-            } catch (Throwable throwable) {
-                logger.error(throwable);
-                result = fail("99999", "服务异常");
-            }
-        }
-
-        ProgressLog progressLog = new ProgressLog();
+        Signature signature = joinPoint.getSignature();
+        if (!(signature instanceof MethodSignature))
+            return result;
+        Method method = ((MethodSignature) signature).getMethod();
+        Progress progress = method.getAnnotation(Progress.class);
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(ThreadContext.getToken());
-        if (MapUtils.isEmpty(cacheMap)) {
-            logger.info("Jedis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
+        if (MapUtils.isEmpty(cacheMap))
+            return result;
+        ProgressLog progressLog = new ProgressLog();
         progressLog.setName(String.valueOf(cacheMap.get("name")));
         progressLog.setIdCard(String.valueOf(cacheMap.get("idCard")));
         progressLog.setProgress(progress.progress());
