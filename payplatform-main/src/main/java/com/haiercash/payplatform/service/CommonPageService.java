@@ -64,9 +64,10 @@ public interface CommonPageService {
      * @param phone
      * @param name
      * @param education
+     * @param location 省市
      * @return
      */
-    IResponse appointment(String phone, String name, String education);
+    IResponse appointment(String phone, String name, String education, String location);
 
     /**
      * @Title joinActivityRedirect

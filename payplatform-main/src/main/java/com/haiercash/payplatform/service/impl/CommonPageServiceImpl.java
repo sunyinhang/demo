@@ -1353,12 +1353,13 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     }
 
     @Override
-    public IResponse appointment(String phone, String name, String education) {
+    public IResponse appointment(String phone, String name, String education, String location) {
         AppointmentRecord record = new AppointmentRecord();
         record.setId(UUID.randomUUID().toString());
         record.setPhone(phone);
         record.setName(name);
         record.setEducation(education);
+        record.setLocation(location);
         record.setCreatedate(DateUtils.nowDateTime());
         appointmentRecordDao.insert(record);
         return CommonResponse.success();
