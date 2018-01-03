@@ -18,5 +18,6 @@ public class AppointmentRecord {
     private String phone;
     private String name;
     private String education;
+    private String location;//省市定位
     private String createdate;
 }

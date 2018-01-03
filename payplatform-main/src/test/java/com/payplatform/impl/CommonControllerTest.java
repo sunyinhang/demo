@@ -36,6 +36,7 @@ public class CommonControllerTest extends ControllerTest {
         data.put("phone", "18612341234");
         data.put("name", "姓名A");
         data.put("education", "大本");
+        data.put("location", "山东省日照市");
         String json = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/payment/appointment")
                 .content(JsonSerializer.serialize(data))
         ).andDo(MockMvcResultHandlers.print())
