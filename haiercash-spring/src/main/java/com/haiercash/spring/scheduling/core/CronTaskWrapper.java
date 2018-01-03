@@ -1,5 +1,6 @@
 package com.haiercash.spring.scheduling.core;
 
+import com.haiercash.spring.scheduling.util.RunnableUtils;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.support.CronTrigger;
 
@@ -8,6 +9,6 @@ import org.springframework.scheduling.support.CronTrigger;
  */
 public final class CronTaskWrapper extends CronTask {
     public CronTaskWrapper(CronTask cronTask) {
-        super(new ContextRunnable(cronTask.getRunnable()), (CronTrigger) cronTask.getTrigger());
+        super(RunnableUtils.getRunnable(cronTask.getRunnable()), (CronTrigger) cronTask.getTrigger());
     }
 }

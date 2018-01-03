@@ -1,5 +1,6 @@
 package com.haiercash.spring.scheduling.core;
 
+import com.haiercash.spring.scheduling.util.RunnableUtils;
 import org.springframework.scheduling.config.IntervalTask;
 
 /**
@@ -7,6 +8,6 @@ import org.springframework.scheduling.config.IntervalTask;
  */
 public final class IntervalTaskWrapper extends IntervalTask {
     public IntervalTaskWrapper(IntervalTask intervalTask) {
-        super(new ContextRunnable(intervalTask.getRunnable()), intervalTask.getInterval(), intervalTask.getInitialDelay());
+        super(RunnableUtils.getRunnable(intervalTask.getRunnable()), intervalTask.getInterval(), intervalTask.getInitialDelay());
     }
 }

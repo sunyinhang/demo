@@ -1,5 +1,6 @@
 package com.haiercash.spring.scheduling.core;
 
+import com.haiercash.spring.scheduling.util.RunnableUtils;
 import org.springframework.scheduling.config.TriggerTask;
 
 /**
@@ -7,6 +8,6 @@ import org.springframework.scheduling.config.TriggerTask;
  */
 public final class TriggerTaskWrapper extends TriggerTask {
     public TriggerTaskWrapper(TriggerTask triggerTask) {
-        super(new ContextRunnable(triggerTask.getRunnable()), triggerTask.getTrigger());
+        super(RunnableUtils.getRunnable(triggerTask.getRunnable()), triggerTask.getTrigger());
     }
 }
