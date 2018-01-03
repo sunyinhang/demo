@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * 使用方式demo：
  * <pre> {@code
  * public class ProgressDemo{
- *     @code @Progress(progress="贷款", node="实名认证", nextNode="贷款提交")
+ *     @code @FlowNode(name="贷款", node="实名认证")
  *      public String lain(String x, double y) {
  *           doSomething();
  *           return String;
@@ -26,12 +26,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Progress {
+public @interface FlowNode {
+    String flow();
 
-    // 流程   贷款或额度申请
-    String progress() default "贷款";
-    // 节点 如：实名认证、贷款提交等
     String node();
-    // 下一节点
-    String nextNode();
 }
