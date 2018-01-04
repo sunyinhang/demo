@@ -1466,7 +1466,13 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             Map<String, Object> headinfo = (Map<String, Object>) (mapcache.get("body"));
             String applType = (String) headinfo.get("applType");
             String flag = (String) headinfo.get("flag");
+            String outSts_ = (String) headinfo.get("outSts");
             if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
+                if (StringUtils.isEmpty(outSts_) && "22".equals(outSts_)) {//退回
+                    String crdSeq = (String) headinfo.get("crdSeq");
+                    cachemap.put("crdSeq", crdSeq);
+                    RedisUtils.setExpire(thirdToken, cachemap);
+                }
                 returnmap.put("flag", "1");//活动页
                 return success(returnmap);
             } else if ("2".equals(applType)) {
