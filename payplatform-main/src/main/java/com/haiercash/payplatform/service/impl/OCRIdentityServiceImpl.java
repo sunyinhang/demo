@@ -935,8 +935,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 //            }
 //        }
 
-        cacheMap.put("phoneNo", mobile);
-        RedisUtils.setExpire(token, cacheMap);
+//        cacheMap.put("phoneNo", mobile);
+//        RedisUtils.setExpire(token, cacheMap);
         //OCR图片路径上送
         Map<String, String> pathMap = new HashMap<>();
         pathMap.put("certImagePathA", (String) cacheMap.get("certImagePathA"));//正面共享盘位置
@@ -997,6 +997,11 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 return fail(ConstUtil.ERROR_CODE, retMsg);
             }
         }
+
+        cacheMap.put("phoneNo", mobile);
+        RedisUtils.setExpire(token, cacheMap);
+
+
         logger.info("绑定手机号***********************结束");
 
         Map<String, Object> hrparamMap = new HashMap<>();
