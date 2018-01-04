@@ -1468,7 +1468,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             String flag = (String) headinfo.get("flag");
             String outSts_ = (String) headinfo.get("outSts");
             if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(flag))) {
-                if (StringUtils.isEmpty(outSts_) && "22".equals(outSts_)) {//退回
+                if ("22".equals(outSts_)) {//退回
                     String crdSeq = (String) headinfo.get("crdSeq");
                     cachemap.put("crdSeq", crdSeq);
                     RedisUtils.setExpire(thirdToken, cachemap);
