@@ -831,6 +831,12 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String retMsg = (String) ocrheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
+
+        //绑定手机号修改为实名认证手机号
+        String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)
+
+        cacheMap.put("phoneNo", mobile);
+        RedisUtils.setExpire(token, cacheMap);
         //7.验证并新增实名认证信息
 //        String[] officeArea_split = cityCode.split(",");
 //        String acctProvince = (String) officeArea_split[0];//省代码
@@ -848,6 +854,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         identityMap.put("userId", userId); //客户userId
 //        identityMap.put("acctProvince", acctProvince); //开户行省代码
 //        identityMap.put("acctCity", acctCity); //开户行市代码
+        identityMap.put("bindMobile", phone);
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
         Map identityheadjson = (Map<String, Object>) identityresultmap.get("head");
         String identityretFlag = (String) identityheadjson.get("retFlag");
@@ -876,67 +883,6 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         cacheMap.put("cardPhone", cardPhone);
         RedisUtils.setExpire(token, cacheMap);
 
-/*        //获取客户标签
-        Map tagmap = new HashMap<>();
-        tagmap.put("custName", name);//姓名
-        tagmap.put("idTyp", "20");//证件类型
-        tagmap.put("idNo", idCard);//证件号码
-        Map tagmapresult = crmManageService.getCustTag("", tagmap);
-        if (!HttpUtil.isSuccess(tagmapresult)) {
-            return tagmapresult;
-        }
-        //
-        String userType = (String) cacheMap.get("userType");
-        String tagId = "";
-        if ("01".equals(userType)) {//微店主
-            tagId = sg_shopkeeper;
-        }
-        if ("02".equals(userType)) {//消费者
-            tagId = sg_consumer;
-        }
-        //
-        Boolean b = false;
-        List<Map<String, Object>> body = (List<Map<String, Object>>) tagmapresult.get("body");
-        for (int i = 0; i < body.size(); i++) {
-            Map<String, Object> m = body.get(i);
-            String tagid = m.get("tagId").toString();
-            if (tagid.equals(tagId)) {
-                b = true;
-            }
-        }
-        //若不存在进行添加  /app/crm/cust/setCustTag
-        if (!b) {
-            logger.info("打标签");
-            Map addtagmap = new HashMap<>();
-            addtagmap.put("certNo", idCard);//身份证号
-            addtagmap.put("tagId", tagId);//自定义标签ID
-            Map addtagmapresult = crmManageService.setCustTag("", addtagmap);
-            if (!HttpUtil.isSuccess(addtagmapresult)) {
-                return addtagmapresult;
-            }
-        }*/
-
-        //绑定手机号修改为实名认证手机号
-        String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)
-//        if (!phone.equals(mobile)) {//旧手机号与新手机号不同则修改
-//            Map<String, Object> updmobilemap = new HashMap<String, Object>();
-//            updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
-//            updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
-//            updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
-//            updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
-//            updmobilemap.put("channel", channel);
-//            updmobilemap.put("channelNo", channelNo);
-//            Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
-//            Map updmobileheadjson = (Map<String, Object>) updmobileresultmap.get("head");
-//            String updmobileretflag = (String) updmobileheadjson.get("retFlag");
-//            if (!"00000".equals(updmobileretflag)) {
-//                String retMsg = (String) updmobileheadjson.get("retMsg");
-//                return fail(ConstUtil.ERROR_CODE, retMsg);
-//            }
-//        }
-
-//        cacheMap.put("phoneNo", mobile);
-//        RedisUtils.setExpire(token, cacheMap);
         //OCR图片路径上送
         Map<String, String> pathMap = new HashMap<>();
         pathMap.put("certImagePathA", (String) cacheMap.get("certImagePathA"));//正面共享盘位置
@@ -971,33 +917,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             } else {
                 logger.info("实名绑卡，上传身份证" + (isA ? "正" : "反") + "面失败");
             }
-//            JSONObject uploadheadjson = new JSONObject(uploadresultmap.get("head").toString());
-//            String uploadretFlag = uploadheadjson.getString("retFlag");
-//            if (!"00000".equals(uploadretFlag)) {
-//                String retMsg = uploadheadjson.getString("retMsg");
-//                return fail(ConstUtil.ERROR_CODE, retMsg);
-////            }
-//            return uploadresultmap;
         }
         logger.info("实名认证***********************结束");
-
-        if (!phone.equals(mobile)) {//旧手机号与新手机号不同则修改
-            Map<String, Object> updmobilemap = new HashMap<>();
-            updmobilemap.put("userId", EncryptUtil.simpleEncrypt(userId));
-            updmobilemap.put("oldMobile", EncryptUtil.simpleEncrypt(phone));//旧手机号
-            updmobilemap.put("newMobile", EncryptUtil.simpleEncrypt(mobile));//新手机号
-            updmobilemap.put("verifyNo", EncryptUtil.simpleEncrypt(verifyNo));
-            updmobilemap.put("channel", channel);
-            updmobilemap.put("channelNo", channelNo);
-            Map<String, Object> updmobileresultmap = appServerService.updateMobile(token, updmobilemap);
-            Map updmobileheadjson = (Map<String, Object>) updmobileresultmap.get("head");
-            String updmobileretflag = (String) updmobileheadjson.get("retFlag");
-            if (!"00000".equals(updmobileretflag)) {
-                String retMsg = (String) updmobileheadjson.get("retMsg");
-                return fail(ConstUtil.ERROR_CODE, retMsg);
-            }
-        }
-
         cacheMap.put("phoneNo", mobile);
         RedisUtils.setExpire(token, cacheMap);
 
