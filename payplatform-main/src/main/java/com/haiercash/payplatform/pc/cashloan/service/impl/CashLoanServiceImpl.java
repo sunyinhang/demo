@@ -401,6 +401,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 returnmap.put("token", thirdToken);
                 return success(returnmap);
             } else if ("22".equals(_outSts)) {
+                String crdSeq = (String) headinfo.get("crdSeq");
+                cachemap.put("crdSeq", crdSeq);
+                RedisUtils.setExpire(thirdToken, cachemap);
                 returnmap.put("flag", "11");//退回
                 returnmap.put("token", thirdToken);
                 return success(returnmap);
