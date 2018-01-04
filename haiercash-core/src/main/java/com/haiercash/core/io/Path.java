@@ -1,12 +1,11 @@
 package com.haiercash.core.io;
 
-
 import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 
 /**
+ * 路径拼合,不可变
  * Created by 许崇雷 on 2016/7/15.
- * 路径拼合
  */
 public final class Path {
     private String path;//路径
@@ -15,11 +14,6 @@ public final class Path {
         this.path = Environment.Slash;
     }
 
-    /**
-     * 构造函数
-     *
-     * @param path 路径
-     */
     public Path(String path) {
         if (StringUtils.isEmpty(path)) {
             this.path = Environment.Slash;
@@ -28,38 +22,41 @@ public final class Path {
         this.path = path.replace(Environment.BackSlashChar, Environment.SlashChar);
     }
 
+    private Path(String path, boolean b) {
+        this.path = path;
+    }
+
     /**
      * 获取绝对路径
      *
      * @return
      */
     public String getPath() {
-        return path;
+        return this.path;
     }
 
     /**
-     * 在当前路径的基础上追加新路径,并返回当前实例
+     * 在当前路径的基础上追加新路径,并返回新实例
      *
      * @param path
      * @return
      */
     public Path combine(String path) {
         if (StringUtils.isEmpty(path))
-            return this;
+            return new Path(this.path, true);
         path = path.replace(Environment.BackSlashChar, Environment.SlashChar);
 
         if (this.path.endsWith(Environment.Slash)) {
             if (path.startsWith(Environment.Slash))
-                this.path += StringUtils.trimStart(path, Environment.SlashChar);
+                return new Path(this.path + StringUtils.trimStart(path, Environment.SlashChar), true);
             else
-                this.path += path;
+                return new Path(this.path + path, true);
         } else {
             if (path.startsWith(Environment.Slash))
-                this.path += path;
+                return new Path(this.path + path, true);
             else
-                this.path += Environment.Slash + path;
+                return new Path(this.path + Environment.Slash + path, true);
         }
-        return this;
     }
 
     /**
