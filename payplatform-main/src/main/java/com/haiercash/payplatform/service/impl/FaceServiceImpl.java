@@ -2,15 +2,19 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
+import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -31,6 +35,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -94,13 +100,13 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String filestream = URLSerializer.encode(Base64Utils.encode(faceBytes));
         String url = outreachConfig.getUrl() + "/Outreachplatform/api/face/isface";
         logger.info("调用外联人脸识别接口，请求地址：" + url);
-        Map<String, Object> jsonMap = new HashMap<>();
+        LinkedHashMap<String, Object> jsonMap = new LinkedHashMap<>();
         jsonMap.put("personalName", name);//客户姓名
         jsonMap.put("identityCardNo", idNumber);//身份证号
-        jsonMap.put("filestream", filestream);//识别图像文件流
         jsonMap.put("appno", appno);//申请编号
         jsonMap.put("filestreamname", filestreamname);//文件名
         jsonMap.put("organization", "02");//机构号(国政通)
+        jsonMap.put("filestream", filestream);//识别图像文件流
         String resData = JsonClientUtils.postForString(url, jsonMap);
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
         //人脸分值
@@ -149,6 +155,22 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
+        String providerNo = "";//人脸机构
+        if("33".equals(channelNo)){//乔融查询人脸机构配置
+            logger.info("查询人脸机构配置");
+            Map<String, Object> params = new HashMap<>();
+            params.put("typCde", typCde);
+            String urlface = AppServerUtils.getAppServerUrl() + "/app/appserver/getCmisFacedOrg";
+            IResponse<Map> response2 = CommonRestUtils.getForMap(urlface, params);
+            response2.assertSuccessNeedBody();
+            Map map1 = response2.getBody();
+            List list = (List) map1.get("faceConfigList");
+            if(list.size() > 0){
+                Map m = (Map) list.get(0);
+                providerNo = Convert.toString(m.get("providerNo"));
+            }
+        }
+
         //通过人脸分数判断人脸识别是否通过
         String md5ForFaceCheck;
         try (InputStream inputStream = new FileInputStream(filePath)) {
@@ -170,6 +192,9 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
         checkMap.put("channel", channel);
         checkMap.put("channelNo", channelNo);
+        if("33".equals(channelNo)){//乔融增加厂商号
+            checkMap.put("providerNo", providerNo);
+        }
         Map<String, Object> checkresultmap = appServerService.faceCheckByFaceValue(token, checkMap);
         Map checkheadjson = (Map<String, Object>) checkresultmap.get("head");
         String checkretFlag = (String) checkheadjson.get("retFlag");

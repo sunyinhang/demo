@@ -13,7 +13,7 @@ public class AppServerUtils {
         String channelNo = ThreadContext.getChannelNo();
         switch (channelNo) {
             case "33":  //乔融
-                return EurekaServer.APPSERVERNOAUTH;
+                return EurekaServer.APPSERVERNOAUTHNEW;
             case "46": //顺逛白条
                 return EurekaServer.APPSERVERNOAUTHNEW;
             default:
