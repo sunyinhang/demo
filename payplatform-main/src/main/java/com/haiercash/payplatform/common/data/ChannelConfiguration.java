@@ -1,19 +1,20 @@
 package com.haiercash.payplatform.common.data;
 
+import lombok.Data;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Data
+@Entity
+@Table(name = "CHANNEL_CONFIGURATION")
 public class ChannelConfiguration {
-	private String ChannelNo;
-	private String sysCode;
-	public String getChannelNo() {
-		return ChannelNo;
-	}
-	public void setChannelNo(String channelNo) {
-		ChannelNo = channelNo;
-	}
-	public String getSysCode() {
-		return sysCode;
-	}
-	public void setSysCode(String sysCode) {
-		this.sysCode = sysCode;
-	}
-	
+    @Id
+    private String id;
+    private String channelNo;
+    private String channelName;
+    private String sysCode;
+    private String sysName;
+    private String activeflag;
 }

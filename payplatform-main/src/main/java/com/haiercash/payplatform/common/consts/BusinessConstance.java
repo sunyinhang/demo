@@ -124,11 +124,11 @@ public class BusinessConstance {
 //	public  final static String  TASK_FILEUPLOAD= "B";//附件上传异步任务
 //	public  final static String  TASK_OUTERTASK= "C";//第三方合作审批异步任务
 //
-//	/**
-//	 * 商户初始化表状态
-//	 */
-//	public  final static String  COOPERATIVEBUSINESS_INACTIVE= "00";//未激活
-//	public  final static String  COOPERATIVEBUSINESS_ACTIVE= "01";//激活
+    /**
+     * 商户初始化表状态
+     */
+    public final static String COOPERATIVEBUSINESS_INACTIVE = "00";//未激活
+    public final static String COOPERATIVEBUSINESS_ACTIVE = "01";//激活
 //
 //	/**
 //	 * 进件类型
