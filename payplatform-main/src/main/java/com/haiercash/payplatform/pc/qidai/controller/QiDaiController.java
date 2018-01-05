@@ -128,6 +128,7 @@ public class QiDaiController extends BaseController {
         CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
         String publicKey = cooperativeBusiness.getRsapublic();
 
+
         // 上传路径中的日期，如：yyyy_MM;
         final String sysId = "00";
         final String busId = "LcAppl";
@@ -564,7 +565,6 @@ public class QiDaiController extends BaseController {
         return CommonResponse.fail(ConstUtil.ERROR_CODE, "不支持的渠道");
     }
 
-
     @PostMapping(value = "/api/HaiercashCrmfCiCustRealThreeInfo.do")
     public IResponse<Map> crmfCiCustRealThreeInfo(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         IResponse<Map> result = null;
@@ -635,6 +635,50 @@ public class QiDaiController extends BaseController {
         }
     }
 
+    @PostMapping(value = "/api/HaiercashCrmAddWhiteListCmis")
+    public IResponse<Map> haiercashCrmAddWhiteListCmis(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+        IResponse<Map> result = null;
+        String channleNo = haiercashPayApplyBean.getChannleNo();
+        String applyNo = haiercashPayApplyBean.getApplyNo();
+        String tradeCode = haiercashPayApplyBean.getTradeCode();
+        String data = haiercashPayApplyBean.getData();
+        try {
+            logger.info("----------------接口请求数据：-----------------");
+            logger.info("applyNo:" + applyNo + "||tradeCode:" + tradeCode + "||channleNo:" + channleNo + "||data:" + data);
+            logger.info("----------------接口请求数据：-----------------");
+            if (StringUtils.isEmpty(data)) {
+                logger.info("第三方发送的报文信息不符合条件！！！");
+                return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "请确认发送的报文中的加密信息是否符合条件！");
+            }
+            CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channleNo);
+            data = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(URLSerializer.decode(data)), cooperativeBusiness.getRsapublic()));
+            logger.info("HaiercashCrmAddWhiteListCmis--JSON:" + data.getBytes("utf-8").length);
+            logger.info("----------------报文解密明文：-----------------" + data);
+
+            String url = EurekaServer.CRM + "app/crm/cust/addWhiteListCmis";
+            return result = CommonRestUtils.postForMap(url, data);
+        } catch (Exception e) {
+            logger.error("HaiercashCrmAddWhiteListCmis白名单接口，出现异常:" + e.getMessage(), e);
+            return result = CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        } finally {
+            //写入渠道交易日志表
+            if (StringUtils.isNotEmpty(applyNo)) {
+                ChannelTradeLog channelTradeLog = new ChannelTradeLog();
+                channelTradeLog.setApplyno(applyNo);
+                channelTradeLog.setChannelno(channleNo);
+                channelTradeLog.setTradecode(tradeCode);
+                channelTradeLog.setTradetime(DateUtils.nowDateTimeMsString());
+                if (result != null) {
+                    channelTradeLog.setRetflag(result.getRetFlag());
+                    channelTradeLog.setRetflag(result.getRetMsg());
+                } else {
+                    channelTradeLog.setRetflag(ConstUtil.ERROR_CODE);
+                    channelTradeLog.setRetflag(ConstUtil.ERROR_INFO);
+                }
+                channelTradeLogDao.insert(channelTradeLog);
+            }
+        }
+    }
 
     private void saveFile(String attachPath, String pdfName, byte[] bt) {
         try (OutputStream outputStream = new FileOutputStream(new Path(attachPath).combine(pdfName).toString())) {
