@@ -27,15 +27,6 @@ public final class Path {
     }
 
     /**
-     * 获取绝对路径
-     *
-     * @return
-     */
-    public String getPath() {
-        return this.path;
-    }
-
-    /**
      * 在当前路径的基础上追加新路径,并返回新实例
      *
      * @param path
