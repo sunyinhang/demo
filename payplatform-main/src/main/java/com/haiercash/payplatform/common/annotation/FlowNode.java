@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
  *      }
  *}
  * }</pre>
- * @author Qingxiang.Li
+ * @author Qingxiang.Liu
  * @since v1.3.0
  */
 @Target(ElementType.METHOD)

@@ -36,7 +36,7 @@ public final class FlowNodeInterceptor {
             return result;
         Method method = ((MethodSignature) signature).getMethod();
         FlowNode flowNode = method.getAnnotation(FlowNode.class);
-        FlowNodeLogger.info(flowNode);
+        FlowNodeLogger.info(flowNode, String.valueOf(result));
         return result;
     }
 }

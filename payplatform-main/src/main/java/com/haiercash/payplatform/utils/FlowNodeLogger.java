@@ -19,7 +19,7 @@ import java.util.Map;
 public final class FlowNodeLogger {
     private static final Log logger = LogFactory.getLog(FlowNodeLogger.class);
 
-    public static void info(FlowNode flowNode) {
+    public static void info(FlowNode flowNode, String result) {
         Map<String, Object> userInfo = RedisUtils.getExpireMap(ThreadContext.getToken());
         if (MapUtils.isEmpty(userInfo))
             return;
@@ -32,7 +32,7 @@ public final class FlowNodeLogger {
         flowLog.setIdCard(idCard);
         flowLog.setFlow(flowNode.flow());
         flowLog.setNode(flowNode.node());
-        logger.info("流程日志:" + JsonSerializer.serialize(flowLog));
+        logger.info("流程日志:" + JsonSerializer.serialize(flowLog) + "，流程处理结果:" + result);
         //TODO save to database
     }
 }
