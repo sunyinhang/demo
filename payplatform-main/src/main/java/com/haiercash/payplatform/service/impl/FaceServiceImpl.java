@@ -94,6 +94,23 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
         }
 
+        String providerNo = "";//人脸机构
+        if("33".equals(channelNo)){//乔融查询人脸机构配置
+            logger.info("查询人脸机构配置");
+            Map<String, Object> params = new HashMap<>();
+            params.put("typCde", typCde);
+            String urlface = AppServerUtils.getAppServerUrl() + "/app/appserver/getCmisFacedOrg";
+            IResponse<Map> response2 = CommonRestUtils.getForMap(urlface, params);
+            response2.assertSuccessNeedBody();
+            Map map1 = response2.getBody();
+            List list = (List) map1.get("faceConfigList");
+            if(list.size() == 0){
+                return fail(ConstUtil.ERROR_CODE, "贷款品种"+typCde+"没有配置人脸机构");
+            }
+            Map m = (Map) list.get(0);
+            providerNo = Convert.toString(m.get("providerNo"));
+        }
+
         //人脸识别
         String appno = UUID.randomUUID().toString().replace("-", "");
         String filestreamname = custNo + ".jpg";
@@ -105,7 +122,11 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         jsonMap.put("identityCardNo", idNumber);//身份证号
         jsonMap.put("appno", appno);//申请编号
         jsonMap.put("filestreamname", filestreamname);//文件名
-        jsonMap.put("organization", "02");//机构号(国政通)
+        if("33".equals(channelNo)){
+            jsonMap.put("organization", providerNo);
+        }else{
+            jsonMap.put("organization", "02");//机构号(国政通)
+        }
         jsonMap.put("filestream", filestream);//识别图像文件流
         String resData = JsonClientUtils.postForString(url, jsonMap);
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
@@ -153,22 +174,6 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if (!"00000".equals(uploadretFlag)) {
             String retMsg = (String) uploadheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
-
-        String providerNo = "";//人脸机构
-        if("33".equals(channelNo)){//乔融查询人脸机构配置
-            logger.info("查询人脸机构配置");
-            Map<String, Object> params = new HashMap<>();
-            params.put("typCde", typCde);
-            String urlface = AppServerUtils.getAppServerUrl() + "/app/appserver/getCmisFacedOrg";
-            IResponse<Map> response2 = CommonRestUtils.getForMap(urlface, params);
-            response2.assertSuccessNeedBody();
-            Map map1 = response2.getBody();
-            List list = (List) map1.get("faceConfigList");
-            if(list.size() > 0){
-                Map m = (Map) list.get(0);
-                providerNo = Convert.toString(m.get("providerNo"));
-            }
         }
 
         //通过人脸分数判断人脸识别是否通过

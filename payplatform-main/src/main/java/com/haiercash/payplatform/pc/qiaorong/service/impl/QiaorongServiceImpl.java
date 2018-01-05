@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.qiaorong.service.impl;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.payplatform.common.annotation.FlowNode;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
@@ -210,6 +211,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     }
 
     @Override
+    @FlowNode(flow = "贷款", node = "实名认证")
     public Map<String, Object> checkFourKeys(Map<String, Object> map) {
         logger.info("实名四要素验证****************开始");
         String token = (String) map.get("token");
