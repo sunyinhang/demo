@@ -1208,10 +1208,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     //顺逛退货消息推送
     public Map<String, Object> shunguangth(Map<String, Object> map) {
         logger.info("从收单获取退货通知信息为：" + map);
-        HashMap sg = new HashMap<>();
-        HashMap sgtwo = new HashMap<>();
-        HashMap sgsrs = new HashMap<>();
-        String serno;
 
         String url_ts = shunguangConfig.getTsUrl();
         logger.info("Sg-10011退货通知推送地址：" + url_ts);
@@ -1221,7 +1217,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map bodyMap = (Map) m.get("body");
         //获取头部信息
         String channelNo = Convert.toString(headMap.get("channelNo"));
-        serno = Convert.toString(headMap.get("serno"));
         //
         String msgType = Convert.toString(bodyMap.get("msgType"));//推送类型
         String applSeq = Convert.toString(bodyMap.get("applSeq"));//申请流水号
@@ -1252,6 +1247,8 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         ts.setChannelNo(channelNo);
         ts.setContent(content);
         ts.setTime(time);
+
+        int returnflag = 0;//0:推送成功   1：推送失败
         try {
             String sgString = com.alibaba.fastjson.JSONObject.toJSONString(bodyMap);
 
@@ -1268,19 +1265,15 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             n = n + 1;
             if ("00000".equals(retFlag)) {
                 ts.setFlag("Y");//推送成功
-                sg.put("retFlag", "00000");
-                sg.put("retMsg", "处理成功");
-                sg.put("serno", serno);
+                returnflag = 0;
             } else {
                 ts.setFlag("N");//推送失败
                 if (n == 3) {
-                    sg.put("retFlag", "00000");
-                    sg.put("retMsg", "处理成功");
+                    returnflag = 0;
                 } else {
-                    sg.put("retFlag", "00099");
-                    sg.put("retMsg", retMsg);
+                    returnflag = 1;
                 }
-                sg.put("serno", serno);
+                //sg.put("serno", serno);
             }
 
             //根据商城订单号查询退货推送信息
@@ -1301,28 +1294,25 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                     ts.setFlag("N");//推送失败
                     ts.setTimes(Convert.toString(n));
                     shunGuangthLogDao.updateByMallOrderNo(ts);
-                    sg.put("retFlag", "00000");
-                    sg.put("retMsg", "处理成功");
-                    sg.put("serno", serno);
                     logger.error("退货实时推送接口(JSON格式)， 出现异常 :" + e.getMessage(), e);
-                    sgtwo.put("head", sg);
-                    sgtwo.put("body", "");
-                    sgsrs.put("response", sgtwo);
-                    return sgsrs;
+                    return success();
                 }
             }
 
             String retMsg = e.getMessage();
-            sg.put("retFlag", "00099");
-            sg.put("retMsg", retMsg);
-            sg.put("serno", serno);
+//            sg.put("retFlag", "00099");
+//            sg.put("retMsg", retMsg);
+//            sg.put("serno", serno);
+
+            returnflag = 1;
             logger.error("退货实时推送接口(JSON格式)， 出现异常 :" + retMsg, e);
         }
 
-        sgtwo.put("head", sg);
-        sgtwo.put("body", "");
-        sgsrs.put("response", sgtwo);
-        return sgsrs;
+        if(returnflag == 0){
+            return success();
+        }else{
+            return fail("00099", "推送失败");
+        }
     }
 
     /**
