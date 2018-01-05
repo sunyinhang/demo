@@ -111,6 +111,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     合同初始化
      */
     @Override
+    @FlowNode(flow = "贷款", node = "合同展示初始化")
     public Map<String, Object> contractInit(Map<String, Object> map) {
         logger.info("合同展示页面初始化*******开始");
         String applseq = (String) map.get("applseq");
@@ -514,6 +515,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
     }
 
     @Override
+    @FlowNode(flow = "贷款", node = "合同签订贷款提交")
     public Map<String, Object> loanContract(Map<String, Object> map) {
         //1.基础信息获取
         String token = super.getToken();

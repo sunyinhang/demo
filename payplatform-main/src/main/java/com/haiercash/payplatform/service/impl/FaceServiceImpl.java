@@ -5,6 +5,7 @@ import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.URLSerializer;
+import com.haiercash.payplatform.common.annotation.FlowNode;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.service.AppServerService;
@@ -62,6 +63,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
     //人脸识别
     @Override
+    @FlowNode(flow = "贷款", node = "人脸识别")
     public Map<String, Object> uploadFacePic(byte[] faceBytes, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("人脸识别*****************开始");
         //前台参数获取
