@@ -3,15 +3,21 @@ package com.haiercash.payplatform.pc.qidai.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.haiercash.core.collection.ArrayUtils;
 import com.haiercash.core.collection.CollectionUtils;
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.io.Path;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.common.dao.ChannelConfigurationDao;
+import com.haiercash.payplatform.common.dao.ChannelTradeLogDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.data.ChannelConfiguration;
+import com.haiercash.payplatform.common.data.ChannelTradeLog;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.entity.HaiercashPayApplyBean;
 import com.haiercash.payplatform.common.entity.QueryLoanDetails;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.pc.qidai.bean.ImageUploadPO;
@@ -22,9 +28,12 @@ import com.haiercash.payplatform.pc.qidai.service.ImageSystemService;
 import com.haiercash.payplatform.pc.qidai.service.PaymentService;
 import com.haiercash.payplatform.pc.qidai.util.FTPOperation;
 import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.controller.BaseController;
+import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -51,6 +60,8 @@ import java.util.UUID;
  */
 @RestController
 public class QiDaiController extends BaseController {
+    private static final String SESSION_PREFIX = "SESSION:";
+
     @Autowired
     private QiDaiConfig qiDaiConfig;
     @Autowired
@@ -63,11 +74,12 @@ public class QiDaiController extends BaseController {
     private AppServerInterfaceService appServerInterfaceService;
     @Autowired
     private ImageSystemService imageSystemService;
+    @Autowired
+    private ChannelTradeLogDao channelTradeLogDao;
 
     public QiDaiController() {
         super("90");
     }
-
 
     @PostMapping(value = "/api/HaiercashFileUploadForMd5.do")
     public IResponse<Map> fileUploadForMd5(@RequestBody ImageUploadPO imagePO) throws Exception {
@@ -115,7 +127,6 @@ public class QiDaiController extends BaseController {
 
         CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
         String publicKey = cooperativeBusiness.getRsapublic();
-
 
         // 上传路径中的日期，如：yyyy_MM;
         final String sysId = "00";
@@ -551,6 +562,77 @@ public class QiDaiController extends BaseController {
             }
         }
         return CommonResponse.fail(ConstUtil.ERROR_CODE, "不支持的渠道");
+    }
+
+
+    @PostMapping(value = "/api/HaiercashCrmfCiCustRealThreeInfo.do")
+    public IResponse<Map> crmfCiCustRealThreeInfo(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+        IResponse<Map> result = null;
+        String applyNo = haiercashPayApplyBean.getApplyNo();
+        String channleNo = haiercashPayApplyBean.getChannleNo();
+        String tradeCode = haiercashPayApplyBean.getTradeCode();
+        String data = haiercashPayApplyBean.getData();
+        logger.info("applyNo:" + applyNo + "||tradeCode:" + tradeCode + "||channleNo:" + channleNo + "||data:" + data);
+        try {
+            if (StringUtils.isEmpty(data)) {
+                logger.info("第三方发送的加密信息为空！！！");
+                return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "请确认发送的报文中的加密信息是否符合条件！");
+            }
+            CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channleNo);
+            data = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), cooperativeBusiness.getRsapublic()));
+            logger.info("----------------报文解密明文：-----------------" + data);
+            Map<String, Object> dataMap = JsonSerializer.deserializeMap(data);
+            if ("47".equals(channleNo)) {
+                String verifyCode = Convert.toString(dataMap.get("verifyCode"));
+                if (StringUtils.isEmpty(verifyCode)) {
+                    return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "输入的短信验证码为空！");
+                }
+                String sessionId = Convert.toString(dataMap.get("sessionId"));
+                if (StringUtils.isEmpty(sessionId))
+                    return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "实名认证接口，sessionId不能为空！");
+                Map<String, Object> sessionMap = RedisUtils.getExpireMap(SESSION_PREFIX + sessionId);
+                if (MapUtils.isEmpty(sessionMap)) {
+                    return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "实名认证接口，网络异常！");
+                }
+                String randomNum = Convert.toString(sessionMap.get("verifyCode"));
+                if (StringUtils.equals(verifyCode, randomNum)) {
+                    return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "实名认证接口，输入的验证码校验不通过！");
+                }
+                dataMap.remove("verifyCode");
+                dataMap.remove("sessionId");
+            }
+            logger.info("----------------实名认证接口，请求报文：-----------------" + data);
+            if (dataMap.containsKey("threeParamVal")) {
+                String threeParamVal = Convert.toString(dataMap.get("threeParamVal"));
+                List<String> channelNos = qiDaiConfig.getNoThreeParamChannelNos();
+                if ("1".equals(threeParamVal) && channelNos.contains(channleNo)) {
+                    return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "请使用四要素验证信息！");
+                }
+            }
+
+            String url = EurekaServer.CRM + "/app/crm/cust/fCiCustRealThreeInfo";
+            return result = CommonRestUtils.postForMap(url, dataMap);
+        } catch (Exception e) {
+            logger.error("HaiercashCrmfCiCustRealThreeInfo实名认证接口，出现异常:" + e.getMessage(), e);
+            return result = CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        } finally {
+            //写入渠道交易日志表
+            if (StringUtils.isNotEmpty(applyNo)) {
+                ChannelTradeLog channelTradeLog = new ChannelTradeLog();
+                channelTradeLog.setApplyno(applyNo);
+                channelTradeLog.setChannelno(channleNo);
+                channelTradeLog.setTradecode(tradeCode);
+                channelTradeLog.setTradetime(DateUtils.nowDateTimeMsString());
+                if (result != null) {
+                    channelTradeLog.setRetflag(result.getRetFlag());
+                    channelTradeLog.setRetflag(result.getRetMsg());
+                } else {
+                    channelTradeLog.setRetflag(ConstUtil.ERROR_CODE);
+                    channelTradeLog.setRetflag(ConstUtil.ERROR_INFO);
+                }
+                channelTradeLogDao.insert(channelTradeLog);
+            }
+        }
     }
 
 

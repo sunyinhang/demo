@@ -184,3 +184,4 @@ app:
     cmis-ftp-port: 2021
     cmis-ftp-username: admin
     cmis-ftp-password: admin&YGNBDNM#321
+    no-three-param-channel-nos: 38,45,47
