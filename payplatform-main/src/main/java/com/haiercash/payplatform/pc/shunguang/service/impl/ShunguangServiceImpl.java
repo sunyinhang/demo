@@ -30,7 +30,6 @@ import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
 import org.json.JSONArray;
@@ -1235,8 +1234,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String content = Convert.toString(bodyMap.get("content"));//提示描述
         String status = Convert.toString(bodyMap.get("status"));//状态
         SgReturngoodsLog sgReturngoodsLog = shunGuangthLogDao.getByMallOrderNo(mallOrderNo);
-        if (sgReturngoodsLog == null)
-            throw new BusinessException(ConstUtil.ERROR_CODE, "查询退货推送信息失败");
+
         SgReturngoodsLog ts = new SgReturngoodsLog();
         SimpleDateFormat tm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
@@ -1263,7 +1261,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             String retMsg = Convert.toString(headmap.get("retMsg"));
             String retFlag = Convert.toString(headmap.get("retFlag"));
             logger.info("实时推送流水号：" + applSeq + "   响应数据：" + retMsg);
-            int n = Convert.toInteger(sgReturngoodsLog.getTimes());
+            int n = 0;
+            if (sgReturngoodsLog != null){
+                n = Convert.toInteger(sgReturngoodsLog.getTimes());
+            }
             n = n + 1;
             if ("00000".equals(retFlag)) {
                 ts.setFlag("Y");//推送成功
