@@ -5,13 +5,17 @@ import com.haiercash.core.io.IOUtils;
 import com.haiercash.core.io.Path;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.common.dao.ChannelConfigurationDao;
 import com.haiercash.payplatform.common.dao.ChannelTradeLogDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.data.ChannelConfiguration;
+import com.haiercash.payplatform.common.data.ChannelTradeLog;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.entity.HaiercashPayApplyBean;
 import com.haiercash.payplatform.common.entity.QueryLoanDetails;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.pc.qidai.bean.DownFileBean;
@@ -19,8 +23,10 @@ import com.haiercash.payplatform.pc.qidai.bean.ImageUploadVO;
 import com.haiercash.payplatform.pc.qidai.config.QiDaiConfig;
 import com.haiercash.payplatform.pc.qidai.util.VFSUtils;
 import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
@@ -667,6 +673,48 @@ public class QiDaiService extends BaseService {
         }
     }
 
+    public IResponse<Map> riskInfoApply(HaiercashPayApplyBean haiercashPayApplyBean) {
+        String channelNo = haiercashPayApplyBean.getChannleNo();
+        String applyNo = haiercashPayApplyBean.getApplyNo();
+        String tradeCode = haiercashPayApplyBean.getTradeCode();
+        String data = haiercashPayApplyBean.getData();
+        logger.info("applyNo:" + applyNo + "||tradeCode:" + tradeCode + "||channleNo:" + channelNo + "||data:" + data);
+        if (StringUtils.isEmpty(data)) {
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "第三方发送的加密信息为空");
+        }
+        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
+        if (cooperativeBusiness == null || StringUtils.isEmpty(cooperativeBusiness.getRsapublic()))
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "不支持的渠道");
+        String publicKey = cooperativeBusiness.getRsapublic();
+        IResponse<Map> res = null;
+        try {
+            data = decryptData(data, publicKey);
+            logger.info("----------------报文解密明文：-----------------" + data);
+            String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/externalData/savaExternalData";
+            String response = CommonRestUtils.postForString(url, data);
+            Map<String, Object> responseMap = JsonSerializer.deserializeMap(response);
+            String code = Convert.toString(responseMap.get("code"));
+            String message = Convert.toString(responseMap.get("message"));
+            if (StringUtils.equals(code, ConstUtil.SUCCESS_CODE2))
+                return res = CommonResponse.success();
+            else
+                return res = CommonResponse.fail(code, message);
+        } catch (Exception e) {
+            return res = CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        } finally {
+            if (StringUtils.isEmpty(applyNo) && res != null) {
+                ChannelTradeLog channelTradeLog = new ChannelTradeLog();
+                channelTradeLog.setApplyno(applyNo);
+                channelTradeLog.setChannelno(channelNo);
+                channelTradeLog.setTradecode(tradeCode);
+                channelTradeLog.setRetflag(res.getRetFlag());
+                channelTradeLog.setRetmsg(res.getRetMsg());
+                channelTradeLog.setTradetime(DateUtils.nowDateTimeMsString());
+                channelTradeLogDao.insert(channelTradeLog);
+            }
+        }
+    }
+
     private String getSysCode(String channelNo) {
         ChannelConfiguration channelConfiguration = channelConfigurationDao.selectActiveConfig(channelNo);
         if (channelConfiguration == null)
@@ -681,5 +729,10 @@ public class QiDaiService extends BaseService {
     private String getMd5(byte[] buff, String publicKey) throws Exception {
         String md5 = DigestUtils.md5Hex(buff);
         return URLSerializer.encode(Base64Utils.encode(RSAUtils.encryptByPublicKey(md5.getBytes(StandardCharsets.UTF_8), publicKey)));
+    }
+
+    private String decryptData(String data, String publicKey) throws Exception {
+        byte[] buffer = RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey);
+        return new String(buffer, StandardCharsets.UTF_8);
     }
 }

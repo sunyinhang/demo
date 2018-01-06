@@ -84,7 +84,8 @@ public class QiDaiController extends BaseController {
         super("90");
     }
 
-    @PostMapping(value = "/api/HaiercashFileUploadForMd5.do")
+    //文件上传
+    @PostMapping(value = "/api/HaiercashFileUploadForMd5")
     public IResponse<Map> fileUploadForMd5(@RequestBody ImageUploadPO imagePO) throws Exception {
         String channelNo = imagePO.getChannelno();
         if (StringUtils.isEmpty(channelNo)) {
@@ -566,8 +567,9 @@ public class QiDaiController extends BaseController {
         return CommonResponse.fail(ConstUtil.ERROR_CODE, "不支持的渠道");
     }
 
-    @PostMapping(value = "/api/HaiercashCrmfCiCustRealThreeInfo.do")
-    public IResponse<Map> crmfCiCustRealThreeInfo(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+    //实名认证
+    @PostMapping(value = "/api/HaiercashCrmfCiCustRealThreeInfo")
+    public IResponse<Map> crmfCiCustRealThreeInfo(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) {
         IResponse<Map> result = null;
         String applyNo = haiercashPayApplyBean.getApplyNo();
         String channleNo = haiercashPayApplyBean.getChannleNo();
@@ -636,8 +638,9 @@ public class QiDaiController extends BaseController {
         }
     }
 
+    //白名单
     @PostMapping(value = "/api/HaiercashCrmAddWhiteListCmis")
-    public IResponse<Map> haiercashCrmAddWhiteListCmis(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+    public IResponse<Map> haiercashCrmAddWhiteListCmis(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) {
         IResponse<Map> result = null;
         String channleNo = haiercashPayApplyBean.getChannleNo();
         String applyNo = haiercashPayApplyBean.getApplyNo();
@@ -681,10 +684,18 @@ public class QiDaiController extends BaseController {
         }
     }
 
-    @PostMapping(value = "/api/HaiercashFileDownloadForMd5.do")
-    public IResponse<List> fileDownloadForMd5(DownFileBean downFileBean) throws Exception {
+    //文件下载
+    @PostMapping(value = "/api/HaiercashFileDownloadForMd5")
+    public IResponse<List> fileDownloadForMd5(@RequestBody DownFileBean downFileBean) throws Exception {
         return qiDaiService.fileDownloadForMd5(downFileBean);
     }
+
+    //风险信息
+    @PostMapping(value = "/api/HaiercashPayRiskInfoApply")
+    public IResponse<Map> payRiskInfoApply(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) {
+        return qiDaiService.riskInfoApply(haiercashPayApplyBean);
+    }
+
 
     private void saveFile(String attachPath, String pdfName, byte[] bt) {
         try (OutputStream outputStream = new FileOutputStream(new Path(attachPath).combine(pdfName).toString())) {
