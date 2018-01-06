@@ -148,6 +148,7 @@ app:
     UAUTH: http://UAUTH
     ACQUIRER: http://ACQUIRER
     ORDER: http://ORDER
+    OUTREACHPLATFORM: http://OUTREACH
   storage:
     ocr-path: /storage2018/00/Data/haierData
     face-path: /storage2018/crm/image

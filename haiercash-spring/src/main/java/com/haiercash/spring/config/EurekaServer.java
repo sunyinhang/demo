@@ -26,6 +26,7 @@ public class EurekaServer {
     public static String APPSERVER;
     public static String APPSERVERNOAUTH;
     public static String APPSERVERNOAUTHNEW;
+    public static String OUTREACHPLATFORM;
 
     public static String getAPPCA() {
         return APPCA;
@@ -137,5 +138,13 @@ public class EurekaServer {
 
     public static void setAPPSERVERNOAUTHNEW(String APPSERVERNOAUTHNEW) {
         EurekaServer.APPSERVERNOAUTHNEW = APPSERVERNOAUTHNEW;
+    }
+
+    public static String getOUTREACHPLATFORM() {
+        return OUTREACHPLATFORM;
+    }
+
+    public static void setOUTREACHPLATFORM(String OUTREACHPLATFORM) {
+        EurekaServer.OUTREACHPLATFORM = OUTREACHPLATFORM;
     }
 }

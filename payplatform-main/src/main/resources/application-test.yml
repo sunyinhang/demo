@@ -148,6 +148,7 @@ app:
     UAUTH: http://UAUTH-BETA
     ACQUIRER: http://ACQUIRER
     ORDER: http://ORDER
+    OUTREACHPLATFORM: http://OUTREACHPLATFORM-TEST
   storage:
     ocr-path: /testshare01/00/Data/haierData/
     face-path: /testshare01/crm/image/
