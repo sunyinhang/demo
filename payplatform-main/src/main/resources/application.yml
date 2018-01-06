@@ -30,8 +30,9 @@ spring:
     route-headers-enabled: false
     ignore-headers:
   redis:
-    host: 10.164.194.123
-    port: 10001
+    cluster:
+      nodes: 10.164.204.22:10001,10.164.204.22:10002,10.164.204.22:10003,10.164.204.22:10004,10.164.204.22:10005,10.164.204.22:10006
+      max-redirects: 3
     timeout: 10000
     pool:
       max-idle: 100
