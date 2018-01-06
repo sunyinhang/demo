@@ -52,8 +52,10 @@ dependencies {
     compile('com.oracle:ojdbc6:11g')
     compile('com.alibaba:druid-spring-boot-starter:1.1.5')
     compile('com.haiercash:haiercash-mybatis:1.0.4')
-    //网络
+    //文件
+    compile('org.apache.commons:commons-vfs2:2.2')
     compile('commons-net:commons-net:3.6')
+    compile('com.jcraft:jsch:0.1.54')
     //支持
     compile('org.json:json')
     //==编译时==

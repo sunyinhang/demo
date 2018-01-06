@@ -1,6 +1,5 @@
 package com.haiercash.payplatform.pc.qidai.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.haiercash.core.collection.ArrayUtils;
 import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
@@ -20,12 +19,14 @@ import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.entity.HaiercashPayApplyBean;
 import com.haiercash.payplatform.common.entity.QueryLoanDetails;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
+import com.haiercash.payplatform.pc.qidai.bean.DownFileBean;
 import com.haiercash.payplatform.pc.qidai.bean.ImageUploadPO;
 import com.haiercash.payplatform.pc.qidai.bean.ImageUploadVO;
 import com.haiercash.payplatform.pc.qidai.config.QiDaiConfig;
 import com.haiercash.payplatform.pc.qidai.service.AppServerInterfaceService;
 import com.haiercash.payplatform.pc.qidai.service.ImageSystemService;
 import com.haiercash.payplatform.pc.qidai.service.PaymentService;
+import com.haiercash.payplatform.pc.qidai.service.QiDaiService;
 import com.haiercash.payplatform.pc.qidai.util.FTPOperation;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
@@ -76,6 +77,8 @@ public class QiDaiController extends BaseController {
     private ImageSystemService imageSystemService;
     @Autowired
     private ChannelTradeLogDao channelTradeLogDao;
+    @Autowired
+    private QiDaiService qiDaiService;
 
     public QiDaiController() {
         super("90");
@@ -429,8 +432,6 @@ public class QiDaiController extends BaseController {
                             return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请号为：" + applSeq + "贷款信息不存在！");
                         }
                         List list = returnMessage_.getData();
-                        JSONObject reqJson = new JSONObject();//签章
-                        JSONObject order = new JSONObject();
                         if (list != null && list.size() > 0) {
                             Map map = (Map) list.get(0);
                             userName = (String) ((List) map.get("cust_name")).get(0);
@@ -678,6 +679,11 @@ public class QiDaiController extends BaseController {
                 channelTradeLogDao.insert(channelTradeLog);
             }
         }
+    }
+
+    @PostMapping(value = "/api/HaiercashFileDownloadForMd5.do")
+    public IResponse<List> fileDownloadForMd5(DownFileBean downFileBean) throws Exception {
+        return qiDaiService.fileDownloadForMd5(downFileBean);
     }
 
     private void saveFile(String attachPath, String pdfName, byte[] bt) {

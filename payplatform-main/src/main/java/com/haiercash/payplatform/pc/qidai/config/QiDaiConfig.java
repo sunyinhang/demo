@@ -18,5 +18,9 @@ public class QiDaiConfig {
     private Integer cmisFtpPort;
     private String cmisFtpUsername;
     private String cmisFtpPassword;
+    private String pgwFtpHost;
+    private Integer pgwFtpPort;
+    private String pgwFtpUsername;
+    private String pgwFtpPassword;
     private List<String> noThreeParamChannelNos;
 }
