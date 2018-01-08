@@ -99,7 +99,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         Map<String, Object> validateUserFlagMap = new HashMap<>();
         validateUserFlagMap.put("channelNo", channelNo);// 渠道
         validateUserFlagMap.put("channel", channel);
-        validateUserFlagMap.put("userId", com.haiercash.payplatform.utils.EncryptUtil.simpleEncrypt(userId));//客户编号
+        validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userId));//客户编号
         Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
         if (alidateUserMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
@@ -876,7 +876,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         String retOneMsg = jsonOneHead.getString("retMsg");
         if (retOneFlag.equals("00000")) {
             //JSONArray body = jsonOne.getJSONArray("body");
-            com.alibaba.fastjson.JSONArray body = jsonOne.getJSONArray("body");
+            JSONArray body = jsonOne.getJSONArray("body");
             BigDecimal bigDecimal = new BigDecimal(0);
             for (Object aBody : body) {
                 JSONObject jobj = (JSONObject) aBody;

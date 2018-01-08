@@ -1381,6 +1381,34 @@ public class QiDaiService extends BaseService {
         return CommonRestUtils.postForMap(url, dataMap);
     }
 
+    public IResponse<Map> repayment(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+        IResponse<Map> result = null;
+        logger.info("还款计划查询,开始");
+        String channleNo = haiercashPayApplyBean.getChannelNo();
+        String data = haiercashPayApplyBean.getData();
+        if (StringUtils.isEmpty(data)) {
+            logger.info("第三方发送的请求报文信息不能为空！！！");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "第三方发送的请求报文信息不能为空！！！");
+        }
+        CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channleNo);
+        if (cooperativeBusiness == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "不支持的渠道");
+        String publicKey = cooperativeBusiness.getRsapublic();
+        if (publicKey == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "不支持的渠道");
+        String json = decryptData(data, publicKey);
+        logger.info("----------------报文解密明文：-----------------" + json);
+        String xml = DataConverUtil.jsonToXml(json);
+        Map<String, Object> response = XmlClientUtils.postForMap(qiDaiConfig.getCmisYcLoanURL(), xml);
+        String errorCode = Convert.toString(response.get("errorCode"));
+        Map<String, Object> lmPmShdListMap = (Map<String, Object>) response.get("LmPmShdList");
+        if ("00000".equals(errorCode))
+            return CommonResponse.success(lmPmShdListMap);
+        else
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+    }
+
+
     private boolean upLodeFileNew(String sysId, String busId, List<ImageUploadVO> fileList, String applSeq, String username, String attachPath, String channelNo) throws Exception {
         // 1、从update中得到文件列表
         if (fileList == null) {

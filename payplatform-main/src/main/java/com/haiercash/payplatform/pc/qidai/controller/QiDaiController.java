@@ -90,6 +90,16 @@ public class QiDaiController extends BaseController {
         }
     }
 
+    //返款计划
+    @PostMapping(value = "/api/HaierCashRepayment")
+    public IResponse<Map> haierCashRepayment(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+        IResponse<Map> result = null;
+        try {
+            return result = qiDaiService.repayment(haiercashPayApplyBean);
+        } finally {
+            writeLog(haiercashPayApplyBean, result);
+        }
+    }
 
     private void writeLog(HaiercashPayApplyBean haiercashPayApplyBean, IResponse<Map> result) {
         if (StringUtils.isNotEmpty(haiercashPayApplyBean.getApplyNo())) {

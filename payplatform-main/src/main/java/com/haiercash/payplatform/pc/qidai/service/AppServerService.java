@@ -17,7 +17,7 @@ import java.util.Map;
  * @date 2017年2月15日 上午10:47:47
  */
 @Service
-public class AppServerService extends BaseService   {
+public class AppServerService extends BaseService {
     /**
      * @param paramMap  请求数据
      * @param channel   系统标识

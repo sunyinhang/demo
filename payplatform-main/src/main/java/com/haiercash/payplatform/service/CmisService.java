@@ -53,7 +53,7 @@ public interface CmisService {
      * @return
      */
     Map<String, Object> getCommonPayPersonMap(String custNo, String source, String typGrp,
-            CommonRepaymentPerson person, String version);
+                                              CommonRepaymentPerson person, String version);
 
 
 
