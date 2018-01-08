@@ -49,7 +49,6 @@ import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.provider.AbstractFileObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -756,12 +755,10 @@ public class QiDaiService extends BaseService {
                 if (uploadOKFile.exists()) {
                     FileObject[] children = remoteDir.getChildren();
                     for (FileObject child : children) {
-                        if (!(child instanceof AbstractFileObject))
-                            continue;
                         String fileName = child.getName().getBaseName();
                         if (!fileName.contains("UP"))
                             continue;
-                        try (InputStream inputStream = ((AbstractFileObject) child).getInputStream()) {
+                        try (InputStream inputStream = child.getContent().getInputStream()) {
                             byte[] data = IOUtils.toByteArray(inputStream);
                             ImageUploadVO imageVO = new ImageUploadVO();
                             imageVO.setFile(encodeBuff(data));
@@ -1183,12 +1180,10 @@ public class QiDaiService extends BaseService {
                 if (uploadOKFile.exists()) {
                     FileObject[] children = remoteDir.getChildren();
                     for (FileObject child : children) {
-                        if (!(child instanceof AbstractFileObject))
-                            continue;
                         String fileName = child.getName().getBaseName();
                         if (!fileName.contains("MD"))
                             continue;
-                        try (InputStream inputStream = ((AbstractFileObject) child).getInputStream()) {
+                        try (InputStream inputStream = child.getContent().getInputStream()) {
                             byte[] data = IOUtils.toByteArray(inputStream);
                             ImageUploadVO imageVO = new ImageUploadVO();
                             imageVO.setFile(encodeBuff(data));
@@ -1225,12 +1220,10 @@ public class QiDaiService extends BaseService {
                 if (uploadOKFile.exists()) {
                     FileObject[] children = remoteDir.getChildren();
                     for (FileObject child : children) {
-                        if (!(child instanceof AbstractFileObject))
-                            continue;
                         String fileName = child.getName().getBaseName();
                         if (!fileName.contains("JQ"))
                             continue;
-                        try (InputStream inputStream = ((AbstractFileObject) child).getInputStream()) {
+                        try (InputStream inputStream = child.getContent().getInputStream()) {
                             byte[] data = IOUtils.toByteArray(inputStream);
                             ImageUploadVO imageVO = new ImageUploadVO();
                             imageVO.setFile(encodeBuff(data));
@@ -1265,12 +1258,10 @@ public class QiDaiService extends BaseService {
                 FileObject[] children = remoteDir.getChildren();
                 List<ImageUploadVO> fileList = new ArrayList<>();
                 for (FileObject child : children) {
-                    if (!(child instanceof AbstractFileObject))
-                        continue;
                     String fileName = child.getName().getBaseName();
                     if (!fileName.contains("transferFlow"))
                         continue;
-                    try (InputStream inputStream = ((AbstractFileObject) child).getInputStream()) {
+                    try (InputStream inputStream = child.getContent().getInputStream()) {
                         byte[] data = IOUtils.toByteArray(inputStream);
                         ImageUploadVO imageVO = new ImageUploadVO();
                         imageVO.setFile(encodeBuff(data));
