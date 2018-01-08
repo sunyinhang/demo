@@ -23,5 +23,5 @@ public class QiDaiConfig {
     private String pgwFtpUsername;
     private String pgwFtpPassword;
     private List<String> noThreeParamChannelNos;
-    private String cmisYcLoanURL;
+    private String cmisYcLoanUrl;
 }
