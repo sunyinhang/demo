@@ -44,7 +44,7 @@ dependencies {
     compile('com.alibaba:fastjson:1.2.38')
     //xml
     compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml')
-    //文件
+    //vfs
     compile('org.apache.commons:commons-vfs2:2.2')
     compile('commons-httpclient:commons-httpclient:3.1')
     compile('commons-net:commons-net:3.6')
