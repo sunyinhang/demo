@@ -27,12 +27,14 @@ import com.haiercash.payplatform.pc.qidai.service.AppServerInterfaceService;
 import com.haiercash.payplatform.pc.qidai.service.ImageSystemService;
 import com.haiercash.payplatform.pc.qidai.service.PaymentService;
 import com.haiercash.payplatform.pc.qidai.service.QiDaiService;
+import com.haiercash.payplatform.pc.qidai.util.DataConverUtil;
 import com.haiercash.payplatform.pc.qidai.util.FTPOperation;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.client.XmlClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.util.BusinessException;
@@ -696,6 +698,60 @@ public class QiDaiController extends BaseController {
         return qiDaiService.riskInfoApply(haiercashPayApplyBean);
     }
 
+    //返款计划
+    @PostMapping(value = "/api/HaierCashRepayment")
+    public IResponse<Map> haierCashRepayment(@RequestBody Map<String, Object> applyBeanMap) throws Exception {
+        IResponse<Map> result = null;
+        logger.info("还款计划查询,开始");
+        String channleNo = Convert.toString(applyBeanMap.get("channleNo"));
+        String applyNo = Convert.toString(applyBeanMap.get("applyNo"));
+        String tradeCode = Convert.toString(applyBeanMap.get("tradeCode"));
+        String xml = Convert.toString(applyBeanMap.get("data"));
+        try {
+            logger.info("---------------------HaiercashRepayment-------------------------:");
+            logger.info("----------------接口请求数据：-----------------");
+            logger.info("applyNo:" + applyNo + "||tradeCode:" + tradeCode + "||channleNo:" + channleNo + "||xml:" + xml);
+            logger.info("----------------接口请求数据：-----------------");
+            if (StringUtils.isEmpty(xml)) {
+                logger.info("第三方发送的请求报文信息不能为空！！！");
+                return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "第三方发送的请求报文信息不能为空！！！");
+            }
+            CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channleNo);
+            xml = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(xml), cooperativeBusiness.getRsapublic()));
+            logger.info("----------------报文解密明文：-----------------" + xml);
+            String responseXml = XmlClientUtils.postForString(qiDaiConfig.getCmisYcLoanURL(), xml);
+            if (StringUtils.isEmpty(responseXml)) {
+                logger.info("还款计划查询,响应数据为空！");
+                return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "网络通讯异常！");
+            }
+            String json = DataConverUtil.xmlToJson(responseXml);
+            Map<String, Object> dataMap = JsonSerializer.deserializeMap(json);
+            String errorCode = Convert.toString(dataMap.get("errorCode"));
+            Map<String, Object> lmPmShdListMap = (Map<String, Object>) dataMap.get("LmPmShdList");
+            if ("00000".equals(errorCode)) {
+                return result = CommonResponse.success(lmPmShdListMap);
+            } else
+                return result = CommonResponse.fail(ConstUtil.ERROR_CODE, "响应异常");
+        } catch (Exception e) {
+            logger.error("HaiercashRepayment.doPost occur exception:" + e.getMessage(), e);
+            return result = CommonResponse.fail(ConstUtil.ERROR_CODE, e.getMessage());
+        } finally {
+            //写入渠道交易日志表
+            ChannelTradeLog channelTradeLog = new ChannelTradeLog();
+            channelTradeLog.setApplyno(applyNo);
+            channelTradeLog.setChannelno(channleNo);
+            channelTradeLog.setTradecode(tradeCode);
+            channelTradeLog.setTradetime(DateUtils.nowDateTimeMsString());
+            if (result != null) {
+                channelTradeLog.setRetflag(result.getRetFlag());
+                channelTradeLog.setRetflag(result.getRetMsg());
+            } else {
+                channelTradeLog.setRetflag(ConstUtil.ERROR_CODE);
+                channelTradeLog.setRetflag(ConstUtil.ERROR_INFO);
+            }
+            channelTradeLogDao.insert(channelTradeLog);
+        }
+    }
 
     private void saveFile(String attachPath, String pdfName, byte[] bt) {
         try (OutputStream outputStream = new FileOutputStream(new Path(attachPath).combine(pdfName).toString())) {
