@@ -36,7 +36,7 @@ import java.util.List;
 @Data
 public class ImageUploadPO {
     private byte[] securityKey;//签名
-    private String channelno;//渠道编码
+    private String channelNo;//渠道编码
     private String appno;//姓名
     private String apptime;//性别
     private String appl;//身份证号

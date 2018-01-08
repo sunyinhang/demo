@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.common.entity;
+package com.haiercash.payplatform.pc.qidai.bean;
 
 import lombok.Data;
 
@@ -9,6 +9,6 @@ import lombok.Data;
 public class HaiercashPayApplyBean {
     private String applyNo;
     private String tradeCode;
-    private String channleNo;
+    private String channelNo;
     private String data;
 }

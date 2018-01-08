@@ -17,7 +17,7 @@ import java.util.Map;
  * @date 2017年2月15日 上午10:47:47
  */
 @Service
-public class AppServerInterfaceServiceImpl extends BaseService implements AppServerInterfaceService {
+public class AppServerService extends BaseService   {
     /**
      * @param paramMap  请求数据
      * @param channel   系统标识
@@ -40,5 +40,4 @@ public class AppServerInterfaceServiceImpl extends BaseService implements AppSer
         String caUrl = EurekaServer.APPCA + "/app/appServer/ca/signPDFResult";
         return CommonRestUtils.getForMap(caUrl, map);
     }
-
 }
