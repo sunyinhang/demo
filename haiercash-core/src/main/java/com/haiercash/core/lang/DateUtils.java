@@ -20,6 +20,52 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     private static final ThreadLocalHashPool<String, SimpleDateFormat> FORMAT_POOL = ThreadLocalHashPool.withInitial(SimpleDateFormat::new);
 
     /**
+     * 获取 SimpleDateFormat 实例
+     *
+     * @return yyyy-MM-dd 格式
+     */
+    public static SimpleDateFormat dateFormat() {
+        return FORMAT_POOL.get(YYYY_MM_DD);
+    }
+
+    /**
+     * 获取 SimpleDateFormat 实例
+     *
+     * @return yyyy-MM-dd HH:mm:ss 格式
+     */
+    public static SimpleDateFormat dateTimeFormat() {
+        return FORMAT_POOL.get(YYYY_MM_DD_HH_MM_SS);
+    }
+
+    /**
+     * 获取 SimpleDateFormat 实例
+     *
+     * @return yyyy-MM-dd HH:mm:ss.SSS 格式
+     */
+    public static SimpleDateFormat dateTimeMsFormat() {
+        return FORMAT_POOL.get(YYYY_MM_DD_HH_MM_SS_SSS);
+    }
+
+    /**
+     * 获取 SimpleDateFormat 实例
+     *
+     * @return HH:mm:ss 格式
+     */
+    public static SimpleDateFormat timeFormat() {
+        return FORMAT_POOL.get(HH_MM_SS);
+    }
+
+    /**
+     * 获取 SimpleDateFormat 实例
+     *
+     * @param format 格式
+     * @return 时间格式
+     */
+    public static SimpleDateFormat getFormat(String format) {
+        return FORMAT_POOL.get(format);
+    }
+
+    /**
      * 获取操作系统当前时间戳
      *
      * @return
@@ -92,7 +138,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * @return
      */
     public static String toDateString(Date value) {
-        return value == null ? null : FORMAT_POOL.get(YYYY_MM_DD).format(value);
+        return value == null ? null : dateFormat().format(value);
     }
 
     /**
@@ -102,7 +148,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * @return
      */
     public static String toDateTimeString(Date value) {
-        return value == null ? null : FORMAT_POOL.get(YYYY_MM_DD_HH_MM_SS).format(value);
+        return value == null ? null : dateTimeFormat().format(value);
     }
 
     /**
@@ -112,7 +158,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * @return
      */
     public static String toDateTimeMsString(Date value) {
-        return value == null ? null : FORMAT_POOL.get(YYYY_MM_DD_HH_MM_SS_SSS).format(value);
+        return value == null ? null : dateTimeMsFormat().format(value);
     }
 
     /**
@@ -122,7 +168,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * @return
      */
     public static String toTimeString(Date value) {
-        return value == null ? null : FORMAT_POOL.get(HH_MM_SS).format(value);
+        return value == null ? null : timeFormat().format(value);
     }
 
     /**
@@ -135,7 +181,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static String toString(Date value, String format) {
         if (format == null)
             throw new NullArgumentException("format");
-        return value == null ? null : FORMAT_POOL.get(format).format(value);
+        return value == null ? null : getFormat(format).format(value);
     }
 
     /**
@@ -146,7 +192,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      */
     public static Date fromDateString(String value) {
         try {
-            return value == null ? null : FORMAT_POOL.get(YYYY_MM_DD).parse(value);
+            return value == null ? null : dateFormat().parse(value);
         } catch (ParseException e) {
             throw new ClassCastException("can not convert \"" + value + "\" to Date");
         }
@@ -160,7 +206,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      */
     public static Date fromDateTimeString(String value) {
         try {
-            return value == null ? null : FORMAT_POOL.get(YYYY_MM_DD_HH_MM_SS).parse(value);
+            return value == null ? null : dateTimeFormat().parse(value);
         } catch (ParseException e) {
             throw new ClassCastException("can not convert \"" + value + "\" to Date");
         }
@@ -174,7 +220,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      */
     public static Date fromDateTimeMsString(String value) {
         try {
-            return value == null ? null : FORMAT_POOL.get(YYYY_MM_DD_HH_MM_SS_SSS).parse(value);
+            return value == null ? null : dateTimeMsFormat().parse(value);
         } catch (ParseException e) {
             throw new ClassCastException("can not convert \"" + value + "\" to Date");
         }
@@ -191,7 +237,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         if (format == null)
             throw new NullArgumentException("format");
         try {
-            return value == null ? null : FORMAT_POOL.get(format).parse(value);
+            return value == null ? null : getFormat(format).parse(value);
         } catch (ParseException e) {
             throw new ClassCastException("can not convert \"" + value + "\" to Date");
         }
@@ -215,7 +261,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         } catch (Exception ignored) {
         }
         try {
-            return num == null ? (str.length() < 11 ? FORMAT_POOL.get(YYYY_MM_DD).parse(str) : (str.length() < 20 ? FORMAT_POOL.get(YYYY_MM_DD_HH_MM_SS).parse(str) : FORMAT_POOL.get(YYYY_MM_DD_HH_MM_SS_SSS).parse(str))) : new Date(num);
+            return num == null ? (str.length() < 11 ? dateFormat().parse(str) : (str.length() < 20 ? dateTimeFormat().parse(str) : dateTimeMsFormat().parse(str))) : new Date(num);
         } catch (Exception e) {
             throw new ClassCastException("can not convert \"" + str + "\" to Date");
         }
