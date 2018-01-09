@@ -44,6 +44,12 @@ public final class CommonResponse<TBody> implements IResponse<TBody> {
 
     @JSONField(serialize = false, deserialize = false)
     @Override
+    public String getSerNo() {
+        return null;
+    }
+
+    @JSONField(serialize = false, deserialize = false)
+    @Override
     public String getRetFlag() {
         CommonResponseHead head = this.getHead();
         if (head == null)
@@ -58,12 +64,6 @@ public final class CommonResponse<TBody> implements IResponse<TBody> {
         if (head == null)
             return StringUtils.EMPTY;
         return head.getRetMsg();
-    }
-
-    @JSONField(serialize = false, deserialize = false)
-    @Override
-    public String getSerNo() {
-        return null;
     }
 
     @Override

@@ -7,11 +7,11 @@ import com.haiercash.spring.util.BusinessException;
  * Created by 许崇雷 on 2017-10-08.
  */
 public interface IResponse<TBody> {
+    String getSerNo();
+
     String getRetFlag();
 
     String getRetMsg();
-
-    String getSerNo();
 
     Object getHead();
 
