@@ -134,21 +134,22 @@ app:
   common:
     gate-url: http://testpm.haiercash.com # 程序前缀
   rest:
+    ACQUIRER: http://ACQUIRER
     APPCA: http://APPCA
     APPMANAGE: http://APPMANAGE
     APPMSG: http://APPSERVER-MSG
     APPSERVER: http://APPSERVER
     APPSERVERNOAUTH: http://APPSERVERNOAUTH
     APPSERVERNOAUTHNEW: http://APPSERVERNOAUTHNEW
+    CMISFRONTSERVER: http://CMIS-FRONT-SERVER
+    CMISINTERFACESERVER: http://CMIS-INTERFACE-SERVER
     CMISPROXY: http://CMISPROXY
     CRM: http://CRM-BETA
-    HCPORTAL: http://HCPORTAL-BETA
-    CMISFRONTSERVER: http://CMIS-FRONT-SERVER
     GM: http://GM-BETA
-    UAUTH: http://UAUTH-BETA
-    ACQUIRER: http://ACQUIRER
+    HCPORTAL: http://HCPORTAL-BETA
     ORDER: http://ORDER
     OUTREACHPLATFORM: http://OUTREACHPLATFORM-TEST
+    UAUTH: http://UAUTH-BETA
   storage:
     ocr-path: /testshare01/00/Data/haierData/
     face-path: /testshare01/crm/image/

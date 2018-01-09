@@ -134,21 +134,22 @@ app:
   common:
     gate-url: https://www.haiercash.com:15006 # 程序前缀
   rest:
+    ACQUIRER: http://ACQUIRER
     APPCA: http://APPCA
     APPMANAGE: http://APPMANAGE
     APPMSG: http://APPSERVER-MSG
     APPSERVER: http://APPSERVER
     APPSERVERNOAUTH: http://APPSERVERNOAUTH
     APPSERVERNOAUTHNEW: http://APPSERVERNOAUTHNEW
+    CMISFRONTSERVER: http://CMIS-FRONT-SERVER
+    CMISINTERFACESERVER: http://CMIS-INTERFACE-SERVER
     CMISPROXY: http://CMISPROXY
     CRM: http://CRM
-    HCPORTAL: http://HCPORTAL
-    CMISFRONTSERVER: http://CMIS-FRONT-SERVER
     GM: http://GM
-    UAUTH: http://UAUTH
-    ACQUIRER: http://ACQUIRER
+    HCPORTAL: http://HCPORTAL
     ORDER: http://ORDER
     OUTREACHPLATFORM: http://OUTREACH
+    UAUTH: http://UAUTH
   storage:
     ocr-path: /storage2018/00/Data/haierData
     face-path: /storage2018/crm/image
