@@ -70,9 +70,11 @@ public final class CmisAcqRequestBuilder {
         head.setTradeTime(this.tradeTime);
         head.setChannelNo(this.channelNo);
         head.setCooprCode(this.cooprCode);
+        CmisAcqRequestRoot root = new CmisAcqRequestRoot();
+        root.setHead(head);
+        root.setBody(this.body);
         CmisAcqRequest request = new CmisAcqRequest();
-        request.setHead(head);
-        request.setBody(this.body);
+        request.setRequest(root);
         return request;
     }
 }
