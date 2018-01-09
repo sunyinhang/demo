@@ -39,9 +39,11 @@ import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.acq.AcqRestUtils;
 import com.haiercash.spring.rest.client.XmlClientUtils;
-import com.haiercash.spring.rest.cmisacq.CmisAcqResponse;
-import com.haiercash.spring.rest.cmisacq.CmisAcqUtils;
+import com.haiercash.spring.rest.cmis.CmisRestUtils;
+import com.haiercash.spring.rest.cmis.v1.CmisRequest;
+import com.haiercash.spring.rest.cmis.v1.CmisResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
@@ -91,27 +93,25 @@ public class QiDaiService extends BaseService {
     public IResponse<Map> applyForJson(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         String channelNo = haiercashPayApplyBean.getChannelNo();
         String tradeCode = haiercashPayApplyBean.getTradeCode();
-        String jsonStr = haiercashPayApplyBean.getData();
-        if (StringUtils.isEmpty(jsonStr)) {
+        String data = haiercashPayApplyBean.getData();
+        if (StringUtils.isEmpty(data)) {
             throw new BusinessException(ConstUtil.ERROR_PARAM_INVALID_CODE, "请确认发送的报文信息是否符合条件！");
         }
         //========
         CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        jsonStr = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(jsonStr), cooperativeBusiness.getRsapublic()), StandardCharsets.UTF_8);
-        logger.info("----------------报文解密明文：-----------------" + jsonStr);
-        Map jsonObject = JsonSerializer.deserialize(jsonStr, Map.class);
-        Map jsonRequest = (Map) jsonObject.get("request");
+        data = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), cooperativeBusiness.getRsapublic()), StandardCharsets.UTF_8);
+        logger.info("----------------报文解密明文：-----------------" + data);
+        Map<String, Object> dataMap = JsonSerializer.deserializeMap(data);
+        Map jsonRequest = (Map) dataMap.get("request");
         Map jsonbody = (Map) jsonRequest.get("body");
-        String acquirerUrl = EurekaServer.ACQUIRER;
-        String cmisfrontUrl = EurekaServer.CMISFRONTSERVER;
         String url;
         switch (tradeCode) {
             case "100001":
-                url = acquirerUrl + "api/appl/saveLcAppl";
+                url = EurekaServer.ACQUIRER + "api/appl/saveLcAppl";
                 break;
 
             case "100021":
-                url = acquirerUrl + "api/appl/getApplInfo";
+                url = EurekaServer.ACQUIRER + "api/appl/getApplInfo";
                 break;
 
             case "100026":
@@ -120,11 +120,10 @@ public class QiDaiService extends BaseService {
                     case "0":
                     case "1": // 0：贷款取消；1:申请提交
                         logger.info("----------------收单系统贷款取消-----------------");
-                        url = acquirerUrl + "api/appl/commitAppl";
+                        url = EurekaServer.ACQUIRER + "api/appl/commitAppl";
                         break;
                     case "2": //合同提交
-                        url = cmisfrontUrl;
-                        break;
+                        return callCmisFront(data);
                     default:
                         throw new BusinessException(ConstUtil.ERROR_CODE, "错误的操作标识");
                 }
@@ -189,18 +188,25 @@ public class QiDaiService extends BaseService {
                     res.assertSuccess();
                     logger.info("外围渠道" + channelNo + ",征信、服务协议签名签章结束");
                 }
-                url = cmisfrontUrl;
-                break;
+                return callCmisFront(data);
 
             default:
-                url = cmisfrontUrl;
-                break;
+                return callCmisFront(data);
         }
-        logger.info("通用接口JSON格式,请求地址为：" + url);
-        logger.info("通用接口JSON格式,请求数据为：" + jsonStr);
         if (StringUtils.isEmpty(url))
             throw new BusinessException(ConstUtil.ERROR_CODE, "url 地址为空");
-        IResponse<Map> response = CmisAcqUtils.postForMap(url, jsonStr);
+        return this.callAcq(url, data);
+    }
+
+    private IResponse<Map> callAcq(String url, String json) {
+        IResponse<Map> response = AcqRestUtils.postForMap(url, json);
+        response.assertSuccess();
+        return CommonResponse.success(response.getBody());
+    }
+
+    private IResponse<Map> callCmisFront(String json) {
+        CmisRequest request = JsonSerializer.deserialize(json, CmisRequest.class);
+        IResponse<Map> response = CmisRestUtils.postForMap(request);
         response.assertSuccess();
         return CommonResponse.success(response.getBody());
     }
@@ -1534,7 +1540,7 @@ public class QiDaiService extends BaseService {
             logger.info("信贷方响应支付平台数据" + cmisresdata);
             if (StringUtils.isNotEmpty(cmisresdata)) {// 判断信贷方响应信息
                 String cmisresdataJson = DataConverUtil.xmlToJson(cmisresdata);// 信贷方响应数据xml转为json
-                IResponse<Map> response = JsonSerializer.deserialize(cmisresdataJson, new TypeReference<CmisAcqResponse<Map>>() {
+                IResponse<Map> response = JsonSerializer.deserialize(cmisresdataJson, new TypeReference<CmisResponse<Map>>() {
                 });
                 response.assertSuccess();
                 retflag = "000000";

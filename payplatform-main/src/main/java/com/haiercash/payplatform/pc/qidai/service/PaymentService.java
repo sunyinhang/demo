@@ -7,11 +7,11 @@ import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.config.CmisConfig;
 import com.haiercash.payplatform.utils.XstreamBuild;
 import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.rest.IRequest;
 import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.acq.AcqRequestBuilder;
+import com.haiercash.spring.rest.acq.AcqRestUtils;
 import com.haiercash.spring.rest.client.XmlClientUtils;
-import com.haiercash.spring.rest.cmisacq.CmisAcqRequest;
-import com.haiercash.spring.rest.cmisacq.CmisAcqRequestBuilder;
-import com.haiercash.spring.rest.cmisacq.CmisAcqUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import org.apache.commons.logging.Log;
@@ -46,12 +46,12 @@ public class PaymentService extends BaseService {
         body.put("applSeq", applSeq);
         body.put("channelNo", channelNo);
 
-        CmisAcqRequest request = CmisAcqRequestBuilder.newBuilder("ACQ-1145")
+        IRequest request = AcqRequestBuilder.newBuilder("ACQ-1145")
                 .sysFlag(ConstUtil.CHANNEL)
                 .channelNo(channelNo)
                 .body(body)
                 .build();
-        return CmisAcqUtils.postForMap(url, request);
+        return AcqRestUtils.postForMap(url, request);
     }
 
     /**
