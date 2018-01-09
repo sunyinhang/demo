@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 该类已过时, 请使用 负载均衡: CommonRestUtils/CmisAcqUtils  非负载均衡: CmisDirectUtils/JsonClientUtils/XmlClientUtils
+ * 该类已过时, 请使用 负载均衡: CommonRestUtils/AcqRestUtils/CmisRestUtils  非负载均衡: JsonClientUtils/XmlClientUtils
  * Created by use on 2017/7/25.
  */
 @Deprecated
