@@ -2,9 +2,12 @@ package com.haiercash.core.lang;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import com.haiercash.core.serialization.JsonSerializer;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -35,5 +38,29 @@ public final class BeanUtils {
      */
     public static <T> T mapToBean(Map map, Class<T> clazz) {
         return TypeUtils.castToJavaBean(map, clazz);
+    }
+
+    /**
+     * map 转为 bean
+     *
+     * @param map  字典
+     * @param type 类型
+     * @param <T>  类型
+     * @return 对象
+     */
+    public static <T> T mapToBean(Map map, ParameterizedType type) {
+        return TypeUtils.cast(map, type, ParserConfig.getGlobalInstance());
+    }
+
+    /**
+     * map 转为 bean
+     *
+     * @param map  字典
+     * @param type 类型
+     * @param <T>  类型
+     * @return 对象
+     */
+    public static <T> T mapToBean(Map map, Type type) {
+        return TypeUtils.cast(map, type, ParserConfig.getGlobalInstance());
     }
 }
