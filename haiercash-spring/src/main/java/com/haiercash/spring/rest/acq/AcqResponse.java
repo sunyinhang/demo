@@ -1,4 +1,4 @@
-package com.haiercash.spring.rest.cmisacq;
+package com.haiercash.spring.rest.acq;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.haiercash.core.lang.StringUtils;
@@ -12,30 +12,30 @@ import java.util.Objects;
  * Created by 许崇雷 on 2017-10-08.
  */
 @Data
-public final class CmisAcqResponse<TBody> implements IResponse<TBody> {
+public final class AcqResponse<TBody> implements IResponse<TBody> {
     @JSONField(ordinal = 1)
-    private CmisAcqResponseRoot<TBody> response;
+    private AcqResponseRoot<TBody> response;
 
-    CmisAcqResponse() {
+    AcqResponse() {
     }
 
-    public static <TBody> CmisAcqResponse<TBody> fail(String retFlag, String retMsg) {
-        CmisAcqResponseHead head = new CmisAcqResponseHead();
+    public static <TBody> AcqResponse<TBody> fail(String retFlag, String retMsg) {
+        AcqResponseHead head = new AcqResponseHead();
         head.setRetFlag(retFlag);
         head.setRetMsg(retMsg);
-        CmisAcqResponseRoot<TBody> root = new CmisAcqResponseRoot<>();
+        AcqResponseRoot<TBody> root = new AcqResponseRoot<>();
         root.setHead(head);
-        CmisAcqResponse<TBody> response = new CmisAcqResponse<>();
+        AcqResponse<TBody> response = new AcqResponse<>();
         response.setResponse(root);
         return response;
     }
 
-    public static <TBody> CmisAcqResponse<TBody> success() {
+    public static <TBody> AcqResponse<TBody> success() {
         return fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
     }
 
-    public static <TBody> CmisAcqResponse<TBody> success(TBody body) {
-        CmisAcqResponse<TBody> response = success();
+    public static <TBody> AcqResponse<TBody> success(TBody body) {
+        AcqResponse<TBody> response = success();
         if (body != null)
             response.getResponse().setBody(body);
         return response;
@@ -43,8 +43,17 @@ public final class CmisAcqResponse<TBody> implements IResponse<TBody> {
 
     @JSONField(serialize = false, deserialize = false)
     @Override
+    public String getSerNo() {
+        AcqResponseHead head = this.getHead();
+        if (head == null)
+            return StringUtils.EMPTY;
+        return head.getSerno();
+    }
+
+    @JSONField(serialize = false, deserialize = false)
+    @Override
     public String getRetFlag() {
-        CmisAcqResponseHead head = this.getHead();
+        AcqResponseHead head = this.getHead();
         if (head == null)
             return StringUtils.EMPTY;
         return head.getRetFlag();
@@ -53,7 +62,7 @@ public final class CmisAcqResponse<TBody> implements IResponse<TBody> {
     @JSONField(serialize = false, deserialize = false)
     @Override
     public String getRetMsg() {
-        CmisAcqResponseHead head = this.getHead();
+        AcqResponseHead head = this.getHead();
         if (head == null)
             return StringUtils.EMPTY;
         return head.getRetMsg();
@@ -61,17 +70,8 @@ public final class CmisAcqResponse<TBody> implements IResponse<TBody> {
 
     @JSONField(serialize = false, deserialize = false)
     @Override
-    public String getSerNo() {
-        CmisAcqResponseHead head = this.getHead();
-        if (head == null)
-            return StringUtils.EMPTY;
-        return head.getSerno();
-    }
-
-    @JSONField(serialize = false, deserialize = false)
-    @Override
-    public CmisAcqResponseHead getHead() {
-        CmisAcqResponseRoot response = this.response;
+    public AcqResponseHead getHead() {
+        AcqResponseRoot response = this.response;
         if (response == null)
             return null;
         return response.getHead();
@@ -80,7 +80,7 @@ public final class CmisAcqResponse<TBody> implements IResponse<TBody> {
     @JSONField(serialize = false, deserialize = false)
     @Override
     public TBody getBody() {
-        CmisAcqResponseRoot<TBody> response = this.response;
+        AcqResponseRoot<TBody> response = this.response;
         if (response == null)
             return null;
         return response.getBody();
