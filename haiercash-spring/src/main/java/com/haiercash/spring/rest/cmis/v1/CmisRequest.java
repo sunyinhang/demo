@@ -13,6 +13,16 @@ public final class CmisRequest implements ICmisRequest {
     private CmisRequestRoot request;
 
     @Override
+    @JSONField(serialize = false, deserialize = false)
+    public String getSerNo() {
+        if (this.request == null)
+            return null;
+        CmisRequestHead head = this.request.getHead();
+        return head == null ? null : head.getSerno();
+    }
+
+    @Override
+    @JSONField(serialize = false, deserialize = false)
     public String getTradeCode() {
         if (this.request == null)
             return null;
