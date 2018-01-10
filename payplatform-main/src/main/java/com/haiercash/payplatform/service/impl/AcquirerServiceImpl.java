@@ -558,13 +558,10 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         }
         logger.info("向收单系统发起贷款申请, 参数:" + acquirer);
         Map<String, Object> result;
-//        if ("46".equals(getChannelNo())) {
-//            result = AcqUtil
-//                    .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcApplEK", headMap, acquirer);
-//        } else {
         result = AcqUtil
-                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcAppl", headMap, acquirer);
-//        }
+                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcApplEK", headMap, acquirer);
+//        result = AcqUtil
+//                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/saveLcAppl", headMap, acquirer);
         if (AcqUtil.isSuccess(result)) {
             logger.info("更新订单，收单系统保存贷款详情成功, applSeq:" + order.getApplSeq()
                     + ",返回结果:" + result);

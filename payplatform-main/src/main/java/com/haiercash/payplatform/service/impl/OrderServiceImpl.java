@@ -90,9 +90,9 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             oldMap = new HashMap<>();
         }
         oldMap.putAll(childMap);
-        if ("46".equals(getChannelNo())) {
+//        if ("46".equals(getChannelNo())) {
             oldMap.put("creditType", "02");
-        }
+//        }
         map.put("appl_inf", oldMap);
 
         childMap.clear();
@@ -201,19 +201,20 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         }
         orderMap.put("sysNo", "11");
         String url;
-        if ("46".equals(getChannelNo())) {
+//        if ("46".equals(getChannelNo())) {
             if (isGoodsList) {//多商品
                 url = EurekaServer.ORDER + "/api/order/saveOrderEK";
             } else {
                 url = EurekaServer.ORDER + "/api/order/saveEK";
             }
-        } else {
+//        }
+        /* else {
             if (isGoodsList) {//多商品
                 url = EurekaServer.ORDER + "/api/order/saveOrder";
             } else {
                 url = EurekaServer.ORDER + "/api/order/save";
             }
-        }
+        }*/
         logger.info("保存订单请求地址URL：" + url);
         orderMap.entrySet().removeIf(entry -> entry.getValue() == null);
         logger.info("前appOrder：" + JsonSerializer.serialize(appOrder));
@@ -373,8 +374,9 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         // 顺逛白条月均收入默认5000
         if (channelType == ChannelType.Shunguang) {
             orderMap.put("IndivMthInc", "5000");
-//            orderMap.put("creditType", "02");
         }
+        //支用类型
+        orderMap.put("creditType", "02");
     }
 
     public Map<String, Object> getSysFlagAndChannelNo(AppOrder appOrder) {
