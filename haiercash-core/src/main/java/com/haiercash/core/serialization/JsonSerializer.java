@@ -63,6 +63,16 @@ public final class JsonSerializer {
     /**
      * 反序列化
      *
+     * @param json 字符串
+     * @return 对象
+     */
+    public static Object deserialize(String json) {
+        return JSON.parse(json);
+    }
+
+    /**
+     * 反序列化
+     *
      * @param json  字符串
      * @param clazz 类型
      * @return 对象

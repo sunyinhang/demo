@@ -46,7 +46,7 @@ public final class XmlSerializer {
      */
     public static String serialize(Object obj) {
         try {
-            return XML_MAPPER.writeValueAsString(obj);
+            return getXmlMapper().writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -61,7 +61,7 @@ public final class XmlSerializer {
      */
     public static String serialize(Object obj, String rootName) {
         try {
-            return XML_MAPPER.writer().withRootName(rootName).writeValueAsString(obj);
+            return getXmlMapper().writer().withRootName(rootName).writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -76,7 +76,7 @@ public final class XmlSerializer {
      */
     public static <T> T deserialize(String xml, Class<T> clazz) {
         try {
-            return XML_MAPPER.readValue(xml, clazz);
+            return getXmlMapper().readValue(xml, clazz);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -92,7 +92,7 @@ public final class XmlSerializer {
      */
     public static <T> T deserialize(String xml, TypeReference<T> type) {
         try {
-            return XML_MAPPER.readValue(xml, type);
+            return getXmlMapper().readValue(xml, type);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
