@@ -91,11 +91,22 @@ public class QiDaiController extends BaseController {
     }
 
     //返款计划
-    @PostMapping(value = "/api/HaierCashRepayment")
+    @PostMapping(value = "/api/HaiercashRepayment")
     public IResponse<Map> haierCashRepayment(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         IResponse<Map> result = null;
         try {
             return result = qiDaiService.repayment(haiercashPayApplyBean);
+        } finally {
+            writeLog(haiercashPayApplyBean, result);
+        }
+    }
+
+    //支付申请2
+    @PostMapping(value = "/api/HaiercashPayApply")
+    public IResponse<Map> haierCashPayApply(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+        IResponse<Map> result = null;
+        try {
+            return result = qiDaiService.apply(haiercashPayApplyBean);
         } finally {
             writeLog(haiercashPayApplyBean, result);
         }

@@ -21,9 +21,11 @@ import com.haiercash.core.vfs.VFSUtils;
 import com.haiercash.payplatform.common.dao.ChannelConfigurationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.FileTransLogDao;
+import com.haiercash.payplatform.common.dao.PayApplyLogDao;
 import com.haiercash.payplatform.common.data.ChannelConfiguration;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.FileTransLog;
+import com.haiercash.payplatform.common.data.PayApplyLog;
 import com.haiercash.payplatform.common.entity.FileInfo;
 import com.haiercash.payplatform.common.entity.QueryLimitMessage;
 import com.haiercash.payplatform.common.entity.QueryLoanDetails;
@@ -67,6 +69,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -89,6 +92,8 @@ public class QiDaiService extends BaseService {
     private CmisConfig cmisConfig;
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private PayApplyLogDao payApplyLogDao;
 
     public IResponse<Map> applyForJson(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         String channelNo = haiercashPayApplyBean.getChannelNo();
@@ -1404,6 +1409,121 @@ public class QiDaiService extends BaseService {
             return CommonResponse.fail(errorCode, errorMsg);
     }
 
+    public IResponse<Map> apply(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+        String channelNo = haiercashPayApplyBean.getChannelNo();
+        ;
+        String applyNo = haiercashPayApplyBean.getApplyNo();
+        String tradeCode = haiercashPayApplyBean.getTradeCode();
+        String xml = haiercashPayApplyBean.getData();
+        String responsexml;
+        String url = "";
+        logger.info("---------------------HAIERCASHAPPLY-------------------------:");
+        logger.info("----------------接口请求数据：-----------------");
+        logger.info(
+                "applyNo:" + applyNo + "||tradeCode:" + tradeCode + "||channelNo:" + channelNo + "||xml:" + xml);
+        logger.info("----------------接口请求数据：-----------------");
+        CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
+        xml = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(xml), cooperativeBusiness.getRsapublic()));
+        logger.info("HAIERCASHAPPLY--XML:" + xml.getBytes("utf-8").length);
+        logger.info("----------------报文解密明文：-----------------" + xml);
+        System.out.println("xml:" + xml);
+        ChannelConfiguration channelConfiguration = channelConfigurationDao.selectActiveConfig(channelNo);
+        if (channelConfiguration == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "不支持的渠道");
+        String sysCode = channelConfiguration.getSysCode();
+        if ("02".contains(sysCode)) {// 02收单 01信贷
+            logger.info("----------------进入收单系统-----------------");
+            if (xml.indexOf("<") != -1 && xml.lastIndexOf(">") != -1 && xml.lastIndexOf(">") > xml.indexOf("<")) {
+                xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf(">") + 1);
+            }
+            String xmlToJson = DataConverUtil.xmlToJson(xml);
+            Map<String, Object> dataMap = JsonSerializer.deserializeMap(xmlToJson);
+            logger.info("----------------收单系统请求数据-----------------" + dataMap);
+            url = EurekaServer.ACQUIRER;
+            if ("100001".equals(tradeCode)) {
+                url = url + "api/appl/saveLcAppl";
+                logger.info("----------------请求地址-----------------" + url);
+                return CommonRestUtils.postForMap(url, dataMap);
+            } else if ("100026".equals(tradeCode)) {
+                Map<String, Object> requestMap = (Map<String, Object>) dataMap.get("request");
+                Map<String, Object> bodyMap = (Map<String, Object>) requestMap.get("body");
+                String flag = Convert.toString(bodyMap.get("flag"));
+                if ("0".equals(flag) || "1".equals(flag)) {// 0：贷款取消 1:申请提交
+                    logger.info("----------------收单系统贷款取消-----------------");
+                    url = url + "api/appl/commitAppl";
+                    logger.info("----------------请求地址-----------------" + url);
+                    return CommonRestUtils.postForMap(url, dataMap);
+                } else {
+                    // 打印请求报文
+                    url = cmisConfig.getUrl();
+                    logger.info("----------------请求地址-----------------" + url);
+                    responsexml = XmlClientUtils.postForString(url, xml);
+                    logger.info("100026接口，合同提交功能，核心系统响应数据:" + responsexml);
+                    if (StringUtils.isEmpty(responsexml)) {
+                        logger.info("核心系统响应数据为空！");
+                        return CommonResponse.fail(ConstUtil.ERROR_CODE, "网络通讯异常！");
+                    }
+                    return CommonResponse.success();
+                }
+            } else if ("100021".equals(tradeCode)) {
+                url = url + "api/appl/getApplInfo";
+                return CommonRestUtils.postForMap(url, dataMap);
+            } else {//其他接口
+                url = cmisConfig.getUrl();
+                responsexml = XmlClientUtils.postForString(url, xml);
+                if (StringUtils.isEmpty(responsexml)) {
+                    logger.info("核心系统响应数据为空！");
+                    return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+                }
+                return CommonResponse.success();
+            }
+
+        } else {// 核心
+            if ("100001".equals(tradeCode)) {
+                xml = lpad(6, xml.getBytes("utf-8").length) + xml;
+                url = cmisConfig.getUrl();
+                responsexml = XmlClientUtils.postForString(url, xml);
+                if (StringUtils.isEmpty(responsexml)) {
+                    return CommonResponse.fail(ConstUtil.ERROR_CODE, "渠道进件接口，响应数据为空！");
+                }
+                String json = DataConverUtil.xmlToJson(responsexml);
+                Map<String, Object> dataMap = JsonSerializer.deserializeMap(json);
+                //String response = Convert.toString(dataMap.get("response"));
+                Map<String, Object> headMap = (Map<String, Object>) (dataMap.get("head"));
+                Map<String, Object> bodyMap = (Map<String, Object>) (dataMap.get("body"));
+                String retflag = Convert.toString(headMap.get("retFlag"));
+                if ("00000".equals(retflag)) {
+                    String applSeq = Convert.toString(bodyMap.get("appl_seq"));
+                    String applCde = Convert.toString(bodyMap.get("applCde"));
+                    // 写入天行渠道进件日志表
+                    if (Objects.equals(channelNo, "27")) {
+                        writePayApplyLog(applSeq, applCde, channelNo, tradeCode);
+                    }
+                    // 推送至app后台
+                    else if (Objects.equals(channelNo, "28") || Objects.equals(channelNo, "33")) {
+                        // 如果渠道为互动金融
+                        if (!"null".equals(applSeq)) {// 新增
+                            writePayApplyLog(applSeq, applCde, channelNo, tradeCode);
+                        } else {// 修改
+                            try {
+                                payApplyLogDao.updateByApplCde(applCde);
+                            } catch (Exception e) {
+                                logger.error("HaiercashPayApply.doPost occur sqlException:" + e.getMessage(), e);
+                            }
+                        }
+                    }
+                }
+                return CommonResponse.success();
+            } else {
+                url = cmisConfig.getUrl();
+                responsexml = XmlClientUtils.postForString(url, xml);
+                if (StringUtils.isEmpty(responsexml)) {
+                    return CommonResponse.fail(ConstUtil.ERROR_CODE, "渠道进件接口，响应数据为空！");
+                }
+                return CommonResponse.success();
+            }
+        }
+    }
 
     private boolean upLodeFileNew(String sysId, String busId, List<ImageUploadVO> fileList, String applSeq, String username, String attachPath, String channelNo) throws Exception {
         // 1、从update中得到文件列表
@@ -1628,5 +1748,24 @@ public class QiDaiService extends BaseService {
         try (InputStream inputStream = new ByteArrayInputStream(buff)) {
             return uploadFileToCmis(remoteFile, remoteOkFile, inputStream);
         }
+    }
+
+    private String lpad(int length, int number) {
+        String f = "%0" + length + "d";
+        return String.format(f, number);
+    }
+
+    private void writePayApplyLog(String applSeq, String applCde, String channelNo, String tradeCode) {
+        PayApplyLog payApplyLog = new PayApplyLog();
+        String id = UUID.randomUUID().toString().replace("-", "");
+        payApplyLog.setId(id);
+        payApplyLog.setChannelno(channelNo);
+        payApplyLog.setApplseq(applSeq);
+        payApplyLog.setFlag("0");
+        payApplyLog.setTradetime(DateUtils.nowDateTimeMsString());
+        payApplyLog.setTradecode(tradeCode);
+        payApplyLog.setPushnum("0");
+        payApplyLog.setApplcde(applCde);
+        payApplyLogDao.insert(payApplyLog);
     }
 }
