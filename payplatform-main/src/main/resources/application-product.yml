@@ -180,3 +180,14 @@ app:
   weixin:
     appid: wx046cbd2b50704fbc
     secret: 3cff4ee0fd7594270200a8ad55cf1984
+  qidai:
+    attach-path: /storage2018
+    cmis-ftp-host: 10.164.194.7
+    cmis-ftp-port: 21
+    cmis-ftp-username: ftpxdgl
+    cmis-ftp-password: ftpxdgl
+    pgw-ftp-host:
+    pgw-ftp-port:
+    pgw-ftp-username:
+    pgw-ftp-password:
+    cmis-yc-loan-url: http://192.168.1.2:8093
