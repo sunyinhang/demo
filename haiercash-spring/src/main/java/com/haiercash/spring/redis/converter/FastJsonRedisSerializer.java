@@ -11,6 +11,10 @@ public final class FastJsonRedisSerializer {
         return JsonSerializer.serialize(value);
     }
 
+    public Object deserialize(String json) {
+        return JsonSerializer.deserialize(json);
+    }
+
     public <T> T deserialize(String json, Class<T> clazz) {
         return JsonSerializer.deserialize(json, clazz);
     }

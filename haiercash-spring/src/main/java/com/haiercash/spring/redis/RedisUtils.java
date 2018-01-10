@@ -1,6 +1,7 @@
 package com.haiercash.spring.redis;
 
 import com.alibaba.fastjson.TypeReference;
+import com.bestvike.linq.Linq;
 import com.bestvike.linq.exception.InvalidOperationException;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.redis.converter.FastJsonRedisSerializer;
@@ -292,11 +293,13 @@ public final class RedisUtils {
     }
 
     public static void hmset(String key, Map<String, Object> map) {
-        getRedisTemplate().opsForHash().putAll(key, map);
+        Map<String, String> stringMap = Linq.asEnumerable(map).toMap(Map.Entry::getKey, entry -> SERIALIZER.serialize(entry.getValue()));
+        getRedisTemplate().opsForHash().putAll(key, stringMap);
     }
 
     public static Map<String, Object> hgetAll(String key) {
-        return getRedisTemplate().<String, Object>opsForHash().entries(key);
+        Map<String, String> stringMap = getRedisTemplate().<String, String>opsForHash().entries(key);
+        return Linq.asEnumerable(stringMap).toMap(Map.Entry::getKey, entry -> SERIALIZER.deserialize(entry.getValue()));
     }
 
     //endregion
