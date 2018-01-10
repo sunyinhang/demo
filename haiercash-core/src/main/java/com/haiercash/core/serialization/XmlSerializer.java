@@ -30,6 +30,15 @@ public final class XmlSerializer {
     }
 
     /**
+     * 获取全局 XmlMapper 实例
+     *
+     * @return 全局 XmlMapper 实例
+     */
+    public static XmlMapper getXmlMapper() {
+        return XML_MAPPER;
+    }
+
+    /**
      * 序列化
      *
      * @param obj 要序列化的对象

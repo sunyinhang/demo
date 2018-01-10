@@ -3,6 +3,7 @@ package com.haiercash.spring.client;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.client.converter.HttpMessageConvertersAutoConfiguration;
 import com.haiercash.spring.converter.FastJsonHttpMessageConverterEx;
+import com.haiercash.spring.converter.JacksonXmlHttpMessageConverterEx;
 import com.haiercash.spring.converter.StringHttpMessageConverterEx;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,7 +15,6 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
-import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 
 import java.util.ArrayList;
@@ -80,13 +80,13 @@ public final class HttpConvertersProperties {
         String preferredXmlMapper = this.preferredXmlMapper == null ? StringUtils.EMPTY : this.preferredXmlMapper.toLowerCase();
         switch (preferredXmlMapper) {
             case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_JACKSON:
-                messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
+                messageConverters.add(new JacksonXmlHttpMessageConverterEx());
                 break;
             case HttpMessageConvertersAutoConfiguration.PREFERRED_XML_MAPPER_JAXB:
                 messageConverters.add(new Jaxb2RootElementHttpMessageConverter());
                 break;
             default:
-                messageConverters.add(new MappingJackson2XmlHttpMessageConverter());
+                messageConverters.add(new JacksonXmlHttpMessageConverterEx());
                 break;
         }
         return messageConverters;
