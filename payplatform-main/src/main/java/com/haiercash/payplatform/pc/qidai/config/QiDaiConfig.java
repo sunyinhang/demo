@@ -4,8 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
 /**
  * Created by 许崇雷 on 2018-01-04.
  */
@@ -22,6 +20,5 @@ public class QiDaiConfig {
     private Integer pgwFtpPort;
     private String pgwFtpUsername;
     private String pgwFtpPassword;
-    private List<String> noThreeParamChannelNos;
     private String cmisYcLoanUrl;
 }

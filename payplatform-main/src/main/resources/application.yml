@@ -190,5 +190,4 @@ app:
     pgw-ftp-port: 22
     pgw-ftp-username: app
     pgw-ftp-password: app^123
-    no-three-param-channel-nos: 38,45,47
     cmis-yc-loan-url: http://10.164.194.102:8201
