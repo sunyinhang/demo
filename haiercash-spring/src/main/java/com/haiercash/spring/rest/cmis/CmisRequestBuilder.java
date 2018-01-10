@@ -2,15 +2,21 @@ package com.haiercash.spring.rest.cmis;
 
 import com.bestvike.linq.exception.InvalidOperationException;
 import com.haiercash.core.lang.BeanUtils;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.RandomUtils;
+import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.rest.IRequest;
 import com.haiercash.spring.rest.cmis.v1.CmisRequest;
 import com.haiercash.spring.rest.cmis.v1.CmisRequestHead;
 import com.haiercash.spring.rest.cmis.v1.CmisRequestRoot;
 import com.haiercash.spring.rest.cmis.v2.CmisRequest2;
+import org.springframework.util.Assert;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by 许崇雷 on 2017-11-29.
@@ -41,6 +47,81 @@ public final class CmisRequestBuilder {
     public static CmisRequestBuilder newBuilder(String tradeCode) {
         CmisVersion version = CmisVersion.forTradeCode(tradeCode);
         return new CmisRequestBuilder(version, tradeCode);
+    }
+
+    public static IRequest build(Map<String, Object> map) {
+        Assert.notNull(map, "map can not be null");
+
+        //单层 Map
+        String tradeCode = Convert.toString(map.get("tradeCode"));
+        if (StringUtils.isNotEmpty(tradeCode)) {
+            CmisVersion version = CmisVersion.forTradeCode(tradeCode);
+            switch (version) {
+                case V1: {
+                    Map<String, Object> bodyMap = new HashMap<>(map);//复制
+                    CmisRequestHead head = new CmisRequestHead();
+                    head.setSerno(Convert.toString(bodyMap.remove("serno")));
+                    head.setTradeCode(Convert.toString(bodyMap.remove("tradeCode")));
+                    head.setTradeDate(Convert.toString(bodyMap.remove("tradeDate")));
+                    head.setTradeTime(Convert.toString(bodyMap.remove("tradeTime")));
+                    head.setTradeType(Convert.toString(bodyMap.remove("tradeType")));
+                    head.setSysFlag(Convert.toString(bodyMap.remove("sysFlag")));
+                    head.setChannelNo(Convert.toString(bodyMap.remove("channelNo")));
+                    head.setCooprCode(Convert.toString(bodyMap.remove("cooprCode")));
+                    CmisRequestRoot root = new CmisRequestRoot();
+                    root.setHead(head);
+                    root.setBody(bodyMap);
+                    CmisRequest request = new CmisRequest();
+                    request.setRequest(root);
+                    return request;
+                }
+                case V2: {
+                    CmisRequest2 request = new CmisRequest2();
+                    request.putAll(map);
+                    return request;
+                }
+                default:
+                    throw new InvalidOperationException("not supported cmis version");
+            }
+        }
+
+        //如果为三层 Map > request > head body 去掉外层
+        Map<String, Object> requestMap = map.get("request") instanceof Map ? ((Map) map.get("request")) : map;//如果为三层
+        if (requestMap.get("head") instanceof Map) {
+            Map<String, Object> headMap = (Map<String, Object>) requestMap.get("head");
+            Map<String, Object> bodyMap = (Map<String, Object>) requestMap.get("body");
+            tradeCode = Convert.toString(headMap.get("tradeCode"));
+            CmisVersion version = CmisVersion.forTradeCode(tradeCode);
+            switch (version) {
+                case V1: {
+                    CmisRequestHead head = new CmisRequestHead();
+                    head.setSerno(Convert.toString(headMap.remove("serno")));
+                    head.setTradeCode(Convert.toString(headMap.get("tradeCode")));
+                    head.setTradeDate(Convert.toString(headMap.get("tradeDate")));
+                    head.setTradeTime(Convert.toString(headMap.get("tradeTime")));
+                    head.setTradeType(Convert.toString(headMap.get("tradeType")));
+                    head.setSysFlag(Convert.toString(headMap.get("sysFlag")));
+                    head.setChannelNo(Convert.toString(headMap.get("channelNo")));
+                    head.setCooprCode(Convert.toString(headMap.get("cooprCode")));
+                    CmisRequestRoot root = new CmisRequestRoot();
+                    root.setHead(head);
+                    root.setBody(bodyMap);
+                    CmisRequest request = new CmisRequest();
+                    request.setRequest(root);
+                    return request;
+                }
+                case V2: {
+                    CmisRequest2 request = new CmisRequest2();
+                    request.putAll(headMap);
+                    request.putAll(bodyMap);
+                    return request;
+                }
+                default:
+                    throw new InvalidOperationException("not supported cmis version");
+            }
+        }
+
+        throw new InvalidOperationException("错误的格式");
     }
 
     public CmisRequestBuilder tradeType(String tradeType) {
