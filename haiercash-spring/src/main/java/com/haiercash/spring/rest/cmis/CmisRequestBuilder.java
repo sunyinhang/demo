@@ -7,7 +7,6 @@ import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.RandomUtils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.rest.IRequest;
 import com.haiercash.spring.rest.cmis.v1.CmisRequest;
 import com.haiercash.spring.rest.cmis.v1.CmisRequestHead;
 import com.haiercash.spring.rest.cmis.v1.CmisRequestRoot;
@@ -49,7 +48,7 @@ public final class CmisRequestBuilder {
         return new CmisRequestBuilder(version, tradeCode);
     }
 
-    public static IRequest build(Map<String, Object> map) {
+    public static ICmisRequest build(Map<String, Object> map) {
         Assert.notNull(map, "map can not be null");
 
         //单层 Map
