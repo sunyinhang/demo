@@ -1,5 +1,6 @@
 package com.haiercash.core.serialization;
 
+import com.alibaba.fastjson.JSONArray;
 import com.bestvike.linq.Linq;
 import com.haiercash.core.lang.Convert;
 import org.junit.Assert;
@@ -54,5 +55,17 @@ public class JsonSerializerTest {
         Long num2 = JsonSerializer.deserialize(numJson, Long.class);
         Assert.assertEquals("100", numJson);
         Assert.assertEquals(num, num2);
+    }
+
+    @Test
+    public void deserialize() {
+        String json = JsonSerializer.serialize("test");
+        String object = (String) JsonSerializer.deserialize(json);
+        Assert.assertEquals("test", object);
+
+        String[] array = {"test", "test2"};
+        json = JsonSerializer.serialize(array);
+        JSONArray jsonArray = (JSONArray) JsonSerializer.deserialize(json);
+        Assert.assertTrue(Linq.asEnumerable(array).sequenceEqual(Linq.asEnumerable(jsonArray).select(a -> (String) a)));
     }
 }
