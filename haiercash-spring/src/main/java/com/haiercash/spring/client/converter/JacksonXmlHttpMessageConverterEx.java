@@ -1,4 +1,4 @@
-package com.haiercash.spring.converter;
+package com.haiercash.spring.client.converter;
 
 import com.haiercash.core.serialization.XmlSerializer;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;

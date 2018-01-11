@@ -1,9 +1,9 @@
-package com.haiercash.spring.client.converter;
+package com.haiercash.spring.client.configure;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.haiercash.spring.client.HttpConvertersProperties;
-import com.haiercash.spring.converter.FastJsonHttpMessageConverterEx;
+import com.haiercash.spring.client.converter.FastJsonHttpMessageConverterEx;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

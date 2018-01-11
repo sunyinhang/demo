@@ -1,4 +1,4 @@
-package com.haiercash.spring.client.converter;
+package com.haiercash.spring.client.configure;
 
 /**
  * Created by 许崇雷 on 2017-09-27.

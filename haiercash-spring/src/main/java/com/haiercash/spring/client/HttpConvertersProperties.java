@@ -1,10 +1,10 @@
 package com.haiercash.spring.client;
 
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.spring.client.converter.HttpMessageConvertersAutoConfiguration;
-import com.haiercash.spring.converter.FastJsonHttpMessageConverterEx;
-import com.haiercash.spring.converter.JacksonXmlHttpMessageConverterEx;
-import com.haiercash.spring.converter.StringHttpMessageConverterEx;
+import com.haiercash.spring.client.configure.HttpMessageConvertersAutoConfiguration;
+import com.haiercash.spring.client.converter.FastJsonHttpMessageConverterEx;
+import com.haiercash.spring.client.converter.JacksonXmlHttpMessageConverterEx;
+import com.haiercash.spring.client.converter.StringHttpMessageConverterEx;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.MediaType;

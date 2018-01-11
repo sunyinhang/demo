@@ -1,4 +1,4 @@
-package com.haiercash.spring.converter;
+package com.haiercash.spring.client.converter;
 
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
