@@ -37,7 +37,8 @@ public final class JsonSerializer {
                 SerializerFeature.SkipTransientField,
                 SerializerFeature.SortField,
                 SerializerFeature.WriteEnumUsingName,
-                SerializerFeature.WriteDateUseDateFormat);
+                SerializerFeature.WriteDateUseDateFormat,
+                SerializerFeature.IgnoreNonFieldGetter);
         GLOBAL_CONFIG.setSerializeFilters(new CommonValueFilter());
     }
 
