@@ -66,6 +66,8 @@ public final class ThreadContext {
         if (StringUtils.isEmpty(traceID))
             traceID = TraceID.generate();
         MDC.put(TraceID.NAME, traceID);
+        if (RequestContext.exists())
+            RequestContext.getResponse().setHeader(TraceID.NAME, traceID);
         ThreadContextData data = contexts.get();
         data.exists = true;
         data.traceID = traceID;
