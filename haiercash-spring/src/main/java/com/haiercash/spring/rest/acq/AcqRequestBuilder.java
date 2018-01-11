@@ -5,8 +5,8 @@ import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.RandomUtils;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.rest.IRequest;
 import org.springframework.util.Assert;
 
 import java.util.Date;
@@ -43,7 +43,7 @@ public final class AcqRequestBuilder {
         return new AcqRequestBuilder(tradeCode);
     }
 
-    public static IRequest build(Map<String, Object> map) {
+    public static IAcqRequest build(Map<String, Object> map) {
         Assert.notNull(map, "map can not be null");
 
         //单层 Map
@@ -92,6 +92,10 @@ public final class AcqRequestBuilder {
         throw new InvalidOperationException("错误的格式");
     }
 
+    public static IAcqRequest build(String json) {
+        return build(JsonSerializer.deserializeMap(json));
+    }
+
     public AcqRequestBuilder tradeType(String tradeType) {
         this.tradeType = tradeType;
         return this;
@@ -117,7 +121,7 @@ public final class AcqRequestBuilder {
         return this;
     }
 
-    public IRequest build() {
+    public IAcqRequest build() {
         AcqRequestHead head = new AcqRequestHead();
         head.setSerno(this.serno);
         head.setTradeCode(this.tradeCode);

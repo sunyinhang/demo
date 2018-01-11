@@ -6,6 +6,7 @@ import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.RandomUtils;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.rest.cmis.v1.CmisRequest;
 import com.haiercash.spring.rest.cmis.v1.CmisRequestHead;
@@ -121,6 +122,10 @@ public final class CmisRequestBuilder {
         }
 
         throw new InvalidOperationException("错误的格式");
+    }
+
+    public static ICmisRequest build(String json) {
+        return build(JsonSerializer.deserializeMap(json));
     }
 
     public CmisRequestBuilder tradeType(String tradeType) {

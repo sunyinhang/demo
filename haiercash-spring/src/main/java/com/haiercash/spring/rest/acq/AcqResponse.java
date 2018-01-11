@@ -2,14 +2,13 @@ package com.haiercash.spring.rest.acq;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.spring.rest.IResponse;
 import lombok.Data;
 
 /**
  * Created by 许崇雷 on 2017-10-08.
  */
 @Data
-public final class AcqResponse<TBody> implements IResponse<TBody> {
+public final class AcqResponse<TBody> implements IAcqResponse<TBody> {
     @JSONField(ordinal = 1)
     private AcqResponseRoot<TBody> response;
 
