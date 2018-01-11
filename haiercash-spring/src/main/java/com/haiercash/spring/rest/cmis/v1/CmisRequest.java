@@ -13,7 +13,6 @@ public final class CmisRequest implements ICmisRequest {
     private CmisRequestRoot request;
 
     @Override
-    @JSONField(serialize = false, deserialize = false)
     public String getSerNo() {
         if (this.request == null)
             return null;
@@ -22,7 +21,6 @@ public final class CmisRequest implements ICmisRequest {
     }
 
     @Override
-    @JSONField(serialize = false, deserialize = false)
     public String getTradeCode() {
         if (this.request == null)
             return null;

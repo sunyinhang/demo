@@ -1,7 +1,12 @@
 package com.haiercash.spring.rest;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.haiercash.spring.rest.common.CommonResponse;
+import com.haiercash.spring.rest.common.CommonResponseHead;
 import com.haiercash.spring.util.BusinessException;
+import com.haiercash.spring.util.ConstUtil;
+
+import java.lang.reflect.Type;
+import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2017-10-08.
@@ -17,32 +22,44 @@ public interface IResponse<TBody> {
 
     TBody getBody();
 
-    @JSONField(serialize = false, deserialize = false)
-    boolean isSuccess(boolean needBody);
+    default IResponse<TBody> afterPropertiesSet(Type bodyType) {
+        return this;
+    }
 
-    @JSONField(serialize = false, deserialize = false)
+    default IResponse<TBody> toCommonResponse() {
+        if (this instanceof CommonResponse)
+            return this;
+        CommonResponse<TBody> response = CommonResponse.fail(this.getRetFlag(), this.getRetMsg());
+        CommonResponseHead head = response.getHead();
+        head.setSerno(this.getSerNo());
+        response.setBody(this.getBody());
+        return response;
+    }
+
+    default boolean isSuccess(boolean needBody) {
+        String retFlag = this.getRetFlag();
+        boolean retFlagOK = Objects.equals(retFlag, ConstUtil.SUCCESS_CODE) || Objects.equals(retFlag, ConstUtil.SUCCESS_CODE2);
+        return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
+    }
+
     default boolean isSuccess() {
         return this.isSuccess(false);
     }
 
-    @JSONField(serialize = false, deserialize = false)
     default boolean isSuccessNeedBody() {
         return this.isSuccess(true);
     }
 
-    @JSONField(serialize = false, deserialize = false)
     default void assertSuccess(boolean needBody) {
         if (this.isSuccess(needBody))
             return;
         throw new BusinessException(this.getRetFlag(), this.getRetMsg());
     }
 
-    @JSONField(serialize = false, deserialize = false)
     default void assertSuccess() {
         this.assertSuccess(false);
     }
 
-    @JSONField(serialize = false, deserialize = false)
     default void assertSuccessNeedBody() {
         this.assertSuccess(true);
     }

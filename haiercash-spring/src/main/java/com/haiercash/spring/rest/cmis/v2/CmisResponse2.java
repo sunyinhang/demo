@@ -4,11 +4,11 @@ import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.spring.rest.cmis.ICmisResponse;
 import com.haiercash.spring.trace.rest.ErrorHandler;
-import com.haiercash.spring.util.ConstUtil;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.Map;
 
 /**
  * Created by 许崇雷 on 2018-01-09.
@@ -42,20 +42,13 @@ public final class CmisResponse2<TBody> extends HashMap<String, Object> implemen
     }
 
     @Override
-    public boolean isSuccess(boolean needBody) {
-        String retFlag = this.getRetFlag();
-        boolean retFlagOK = Objects.equals(retFlag, ConstUtil.SUCCESS_CODE) || Objects.equals(retFlag, ConstUtil.SUCCESS_CODE2);
-        return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
-    public ICmisResponse<TBody> init(Type bodyType) {
+    public ICmisResponse<TBody> afterPropertiesSet(Type bodyType) {
         if (this.body == null) {
             this.put("retFlag", ErrorHandler.getRetFlag(this.getRetFlag()));
-            this.body = (bodyType instanceof Class && ((Class<?>) bodyType).isAssignableFrom(HashMap.class))
-                    ? (TBody) this
-                    : BeanUtils.mapToBean(this, bodyType);
+            if (bodyType instanceof ParameterizedType)
+                bodyType = ((ParameterizedType) bodyType).getRawType();
+            this.body = bodyType == Map.class || bodyType == HashMap.class ? (TBody) this : BeanUtils.mapToBean(this, bodyType);
         }
         return this;
     }
