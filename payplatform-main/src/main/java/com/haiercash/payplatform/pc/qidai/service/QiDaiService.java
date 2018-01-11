@@ -141,10 +141,6 @@ public class QiDaiService extends BaseService {
                     queryLimitMessage.setApplSeq(applSeq);
                     //额度申请信息查询接口
                     ReturnMessage returnMessage = paymentService.queryLimitMessage(queryLimitMessage);
-                    if (returnMessage == null) {
-                        logger.info("申请号为：" + applSeq + "额度申请信息不存在！");
-                        throw new BusinessException(ConstUtil.ERROR_PARAM_INVALID_CODE, "额度申请提交，失败！");
-                    }
                     List list = returnMessage.getData();
                     if (CollectionUtils.isNotEmpty(list)) {
                         Map map = (Map) list.get(0);
@@ -604,11 +600,8 @@ public class QiDaiService extends BaseService {
                     QueryLoanDetails queryLoanDetails = new QueryLoanDetails();
                     queryLoanDetails.setApplSeq(applSeq);
                     // 100035 贷款信息接口
-                    ReturnMessage returnMessage_ = paymentService.queryLoanMessage(queryLoanDetails);
-                    if (returnMessage_ == null) {
-                        return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请号为：" + applSeq + "贷款信息不存在！");
-                    }
-                    List list = returnMessage_.getData();
+                    ReturnMessage returnMessage = paymentService.queryLoanMessage(queryLoanDetails);
+                    List list = returnMessage.getData();
                     if (CollectionUtils.isNotEmpty(list)) {
                         Map map = (Map) list.get(0);
                         String userName = (String) ((List) map.get("cust_name")).get(0);
@@ -909,7 +902,7 @@ public class QiDaiService extends BaseService {
                                 return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请号为：" + appl + "贷款信息不存在！");
                             }
                         }
-                        String signType = "";// 合同模板名称
+                        String signType;// 合同模板名称
                         switch (channelNo) {
                             case "37": // 亨元
                                 signType = "HENGYUAN_DD";
@@ -919,6 +912,9 @@ public class QiDaiService extends BaseService {
                                 break;
                             case "38": // 七贷
                                 signType = "QIDAI2";
+                                break;
+                            default:
+                                signType = StringUtils.EMPTY;
                                 break;
                         }
                         caNewName = "app_" + idno + "_" + signType + ".pdf";
@@ -1311,7 +1307,8 @@ public class QiDaiService extends BaseService {
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "请确认发送的报文中的加密信息是否符合条件！");
         }
         CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        data = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(URLSerializer.decode(data)), cooperativeBusiness.getRsapublic()));
+        String publicKey = cooperativeBusiness.getRsapublic();
+        data = decryptString(data, publicKey);
         logger.info("HaiercashCrmAddWhiteListCmis--JSON:" + data.getBytes("utf-8").length);
         logger.info("----------------报文解密明文：-----------------" + data);
 
@@ -1331,7 +1328,8 @@ public class QiDaiService extends BaseService {
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "请确认发送的报文中的加密信息是否符合条件！");
         }
         CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        data = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), cooperativeBusiness.getRsapublic()));
+        String publicKey = cooperativeBusiness.getRsapublic();
+        data = decryptString(data, publicKey);
         logger.info("----------------报文解密明文：-----------------" + data);
         Map<String, Object> dataMap = JsonSerializer.deserializeMap(data);
         if ("47".equals(channelNo)) {
@@ -1394,9 +1392,9 @@ public class QiDaiService extends BaseService {
     public IResponse<Map> apply(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         String channelNo = haiercashPayApplyBean.getChannelNo();
         String tradeCode = haiercashPayApplyBean.getTradeCode();
-
         CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        String json = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(haiercashPayApplyBean.getData()), cooperativeBusiness.getRsapublic()));
+        String publicKey = cooperativeBusiness.getRsapublic();
+        String json = decryptString(haiercashPayApplyBean.getData(), publicKey);
         logger.info("----------------报文解密明文：-----------------" + json);
         ChannelConfiguration channelConfiguration = channelConfigurationDao.selectActiveConfig(channelNo);
         if (channelConfiguration == null)
