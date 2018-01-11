@@ -42,10 +42,7 @@ public final class CommonResponse<TBody> implements IResponse<TBody> {
 
     @Override
     public String getSerNo() {
-        CommonResponseHead head = this.getHead();
-        if (head == null)
-            return StringUtils.EMPTY;
-        return head.getSerno();
+        return null;
     }
 
     @Override

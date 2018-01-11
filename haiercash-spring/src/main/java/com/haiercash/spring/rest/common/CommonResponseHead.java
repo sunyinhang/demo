@@ -10,12 +10,9 @@ import lombok.Data;
 @Data
 public final class CommonResponseHead {
     @JSONField(ordinal = 1)
-    private String serno;
-
-    @JSONField(ordinal = 2)
     private String retFlag;
 
-    @JSONField(ordinal = 3)
+    @JSONField(ordinal = 2)
     private String retMsg;
 
     CommonResponseHead() {

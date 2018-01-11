@@ -1,7 +1,6 @@
 package com.haiercash.spring.rest;
 
 import com.haiercash.spring.rest.common.CommonResponse;
-import com.haiercash.spring.rest.common.CommonResponseHead;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 
@@ -30,8 +29,6 @@ public interface IResponse<TBody> {
         if (this instanceof CommonResponse)
             return this;
         CommonResponse<TBody> response = CommonResponse.fail(this.getRetFlag(), this.getRetMsg());
-        CommonResponseHead head = response.getHead();
-        head.setSerno(this.getSerNo());
         response.setBody(this.getBody());
         return response;
     }
