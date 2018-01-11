@@ -1,9 +1,20 @@
 package com.haiercash.spring.boot;
 
+import com.haiercash.core.lang.StringUtils;
+
 /**
  * Created by 许崇雷 on 2017-11-22.
  */
 public final class ApplicationUtils {
+    private static final ApplicationProperties EMPTY_PROPERTIES;
+
+    static {
+        EMPTY_PROPERTIES = new ApplicationProperties();
+        EMPTY_PROPERTIES.setName(StringUtils.EMPTY);
+        EMPTY_PROPERTIES.setDescription(StringUtils.EMPTY);
+        EMPTY_PROPERTIES.setVersion(StringUtils.EMPTY);
+    }
+
     private ApplicationUtils() {
     }
 
@@ -12,18 +23,22 @@ public final class ApplicationUtils {
     }
 
     public static Object getBean(String name) {
-        return getApplicationTemplate().getBean(name);
+        ApplicationTemplate applicationTemplate = getApplicationTemplate();
+        return applicationTemplate == null ? null : applicationTemplate.getBean(name);
     }
 
     public static <T> T getBean(Class<T> clazz) {
-        return getApplicationTemplate().getBean(clazz);
+        ApplicationTemplate applicationTemplate = getApplicationTemplate();
+        return applicationTemplate == null ? null : applicationTemplate.getBean(clazz);
     }
 
     public static <T> T getBean(String name, Class<T> clazz) {
-        return getApplicationTemplate().getBean(name, clazz);
+        ApplicationTemplate applicationTemplate = getApplicationTemplate();
+        return applicationTemplate == null ? null : applicationTemplate.getBean(name, clazz);
     }
 
     public static ApplicationProperties getProperties() {
-        return getApplicationTemplate().getProperties();
+        ApplicationTemplate applicationTemplate = getApplicationTemplate();
+        return applicationTemplate == null ? EMPTY_PROPERTIES : applicationTemplate.getProperties();
     }
 }
