@@ -35,7 +35,6 @@ import com.haiercash.payplatform.pc.qidai.config.QiDaiConfig;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.spring.rest.IRequest;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.acq.AcqRequestBuilder;
 import com.haiercash.spring.rest.acq.AcqRestUtils;
@@ -43,7 +42,6 @@ import com.haiercash.spring.rest.client.XmlClientUtils;
 import com.haiercash.spring.rest.cmis.CmisRequestBuilder;
 import com.haiercash.spring.rest.cmis.CmisRestUtils;
 import com.haiercash.spring.rest.cmis.ICmisRequest;
-import com.haiercash.spring.rest.cmis.v1.CmisRequest;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
@@ -125,7 +123,7 @@ public class QiDaiService extends BaseService {
                         url = EurekaServer.ACQUIRER + "api/appl/commitAppl";
                         break;
                     case "2": //合同提交
-                        return callCmisFront(data);
+                        return CmisRestUtils.postForMap(CmisRequestBuilder.build(data)).toCommonResponse();
                     default:
                         throw new BusinessException(ConstUtil.ERROR_CODE, "错误的操作标识");
                 }
@@ -190,27 +188,14 @@ public class QiDaiService extends BaseService {
                     res.assertSuccess();
                     logger.info("外围渠道" + channelNo + ",征信、服务协议签名签章结束");
                 }
-                return callCmisFront(data);
+                return CmisRestUtils.postForMap(CmisRequestBuilder.build(data)).toCommonResponse();
 
             default:
-                return callCmisFront(data);
+                return CmisRestUtils.postForMap(CmisRequestBuilder.build(data)).toCommonResponse();
         }
         if (StringUtils.isEmpty(url))
             throw new BusinessException(ConstUtil.ERROR_CODE, "url 地址为空");
-        return this.callAcq(url, data);
-    }
-
-    private IResponse<Map> callAcq(String url, String json) {
-        IResponse<Map> response = AcqRestUtils.postForMap(url, json);
-        response.assertSuccess();
-        return CommonResponse.success(response.getBody());
-    }
-
-    private IResponse<Map> callCmisFront(String json) {
-        CmisRequest request = JsonSerializer.deserialize(json, CmisRequest.class);
-        IResponse<Map> response = CmisRestUtils.postForMap(request);
-        response.assertSuccess();
-        return CommonResponse.success(response.getBody());
+        return AcqRestUtils.postForMap(url, AcqRequestBuilder.build(data)).toCommonResponse();
     }
 
     public IResponse<Map> fileUploadForMd5(ImageUploadPO imagePO) throws Exception {
@@ -1422,10 +1407,7 @@ public class QiDaiService extends BaseService {
             logger.info("----------------进入收单系统-----------------");
             if ("100001".equals(tradeCode)) {
                 String url = EurekaServer.ACQUIRER + "/api/appl/saveLcAppl";
-                IRequest request = AcqRequestBuilder.build(jsonMap);
-                IResponse<Map> response = AcqRestUtils.postForMap(url, request);
-                response.assertSuccess();
-                return CommonResponse.success(response.getBody());
+                return AcqRestUtils.postForMap(url, AcqRequestBuilder.build(jsonMap)).toCommonResponse();
             } else if ("100026".equals(tradeCode)) {
                 Map<String, Object> requestMap = (Map<String, Object>) jsonMap.get("request");
                 Map<String, Object> bodyMap = (Map<String, Object>) requestMap.get("body");
@@ -1433,33 +1415,20 @@ public class QiDaiService extends BaseService {
                 if ("0".equals(flag) || "1".equals(flag)) {// 0：贷款取消 1:申请提交
                     logger.info("----------------收单系统贷款取消-----------------");
                     String url = EurekaServer.ACQUIRER + "/api/appl/commitAppl";
-                    IRequest request = AcqRequestBuilder.build(jsonMap);
-                    IResponse<Map> response = AcqRestUtils.postForMap(url, request);
-                    response.assertSuccess();
-                    return CommonResponse.success(response.getBody());
+                    return AcqRestUtils.postForMap(url, AcqRequestBuilder.build(jsonMap)).toCommonResponse();
                 } else {
-                    ICmisRequest request = CmisRequestBuilder.build(jsonMap);
-                    IResponse<Map> response = CmisRestUtils.postForMap(request);
-                    response.assertSuccess();
-                    return CommonResponse.success(response.getBody());
+                    return CmisRestUtils.postForMap(CmisRequestBuilder.build(jsonMap)).toCommonResponse();
                 }
             } else if ("100021".equals(tradeCode)) {
                 String url = EurekaServer.ACQUIRER + "/api/appl/getApplInfo";
-                IRequest request = AcqRequestBuilder.build(jsonMap);
-                IResponse<Map> response = AcqRestUtils.postForMap(url, request);
-                response.assertSuccess();
-                return CommonResponse.success(response.getBody());
+                return AcqRestUtils.postForMap(url, AcqRequestBuilder.build(jsonMap)).toCommonResponse();
             } else {//其他接口
-                ICmisRequest request = CmisRequestBuilder.build(jsonMap);
-                IResponse<Map> response = CmisRestUtils.postForMap(request);
-                response.assertSuccess();
-                return CommonResponse.success(response.getBody());
+                return CmisRestUtils.postForMap(CmisRequestBuilder.build(jsonMap)).toCommonResponse();
             }
         }
         // 核心
         if ("100001".equals(tradeCode)) {
-            ICmisRequest request = CmisRequestBuilder.build(jsonMap);
-            IResponse<Map> response = CmisRestUtils.postForMap(request);
+            IResponse<Map> response = CmisRestUtils.postForMap(CmisRequestBuilder.build(jsonMap));
             response.assertSuccessNeedBody();
             Map<String, Object> bodyMap = response.getBody();
             String applSeq = Convert.toString(bodyMap.get("appl_seq"));
@@ -1479,10 +1448,7 @@ public class QiDaiService extends BaseService {
             }
             return CommonResponse.success(bodyMap);
         }
-        ICmisRequest request = CmisRequestBuilder.build(jsonMap);
-        IResponse<Map> response = CmisRestUtils.postForMap(request);
-        response.assertSuccessNeedBody();
-        return CommonResponse.success(response.getBody());
+        return CmisRestUtils.postForMap(CmisRequestBuilder.build(jsonMap)).toCommonResponse();
     }
 
     private boolean upLodeFileNew(String sysId, String busId, List<ImageUploadVO> fileList, String applSeq, String username, String attachPath, String channelNo) throws Exception {
@@ -1507,22 +1473,22 @@ public class QiDaiService extends BaseService {
                     success = false;
                     break;
                 }
-                    int num2 = filename.lastIndexOf(".");
-                    if (num2 == -1) { // 没有"."的文件名说明没有后缀
-                        throw new BusinessException(ConstUtil.ERROR_CODE, "文件格式不明!");
-                    }
-                    FileInfo info = new FileInfo();
+                int num2 = filename.lastIndexOf(".");
+                if (num2 == -1) { // 没有"."的文件名说明没有后缀
+                    throw new BusinessException(ConstUtil.ERROR_CODE, "文件格式不明!");
+                }
+                FileInfo info = new FileInfo();
                 count++;// 下载文件数目
-                    String sequenceId = UUID.randomUUID().toString().replace("-", "");
-                    info.setSequenceId(sequenceId); // 文件上传序列号,原需要传值，无法传值，现自动生成
-                    info.setAttachPath(attachPath + filename); // 文件路径
-                    info.setAttachName(filename); // 原文件名称
-                    info.setAttachNameNew(filename);// 文件名称
-                    info.setState("1"); // 状态,原需要传值，无法传值，现自动生成
-                    info.setCrtUsr(username); // 上传人员
+                String sequenceId = UUID.randomUUID().toString().replace("-", "");
+                info.setSequenceId(sequenceId); // 文件上传序列号,原需要传值，无法传值，现自动生成
+                info.setAttachPath(attachPath + filename); // 文件路径
+                info.setAttachName(filename); // 原文件名称
+                info.setAttachNameNew(filename);// 文件名称
+                info.setState("1"); // 状态,原需要传值，无法传值，现自动生成
+                info.setCrtUsr(username); // 上传人员
                 info.setCrtDt(DateUtils.nowDateString()); // 上传时间
-                    info.setLoseEffectUsr(""); // 失效人员,原需要传值，无法传值，现自动生成
-                    info.setAttachTyp(fileType); // 上传类型(身份证),原需要传值，无法传值，现自动生成
+                info.setLoseEffectUsr(""); // 失效人员,原需要传值，无法传值，现自动生成
+                info.setAttachTyp(fileType); // 上传类型(身份证),原需要传值，无法传值，现自动生成
                 uploadList.add(info);
             }
         } catch (Exception e) {
