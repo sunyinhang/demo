@@ -754,7 +754,7 @@ public class QiDaiService extends BaseService {
                         try (InputStream inputStream = child.getContent().getInputStream()) {
                             byte[] data = IOUtils.toByteArray(inputStream);
                             ImageUploadVO imageVO = new ImageUploadVO();
-                            imageVO.setFile(encodeBuff(data));
+                            imageVO.setFile(encodeFile(data));
                             imageVO.setFilename(fileName);// 文件名
                             imageVO.setFileoper("0");// 类型新增
                             imageVO.setFileType("UP");// 文件类型
@@ -846,7 +846,7 @@ public class QiDaiService extends BaseService {
                             try (InputStream input = new FileInputStream(new File(attachPath + caName))) {
                                 byte[] data = IOUtils.toByteArray(input);
                                 ImageUploadVO imageVO = new ImageUploadVO();
-                                imageVO.setFile(encodeBuff(data));
+                                imageVO.setFile(encodeFile(data));
                                 imageVO.setFilename(caName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("CA");// 文件类型无实际用途
@@ -933,7 +933,7 @@ public class QiDaiService extends BaseService {
                             try (InputStream input = new FileInputStream(new File(attachPath + caNewName))) {
                                 byte[] data = IOUtils.toByteArray(input);
                                 ImageUploadVO imageVO = new ImageUploadVO();
-                                imageVO.setFile(encodeBuff(data));
+                                imageVO.setFile(encodeFile(data));
                                 imageVO.setFilename(caNewName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("CANew");// 文件类型无实际用途
@@ -994,7 +994,7 @@ public class QiDaiService extends BaseService {
                             try (InputStream input = new FileInputStream(new File(attachPath + caName))) {
                                 byte[] data = IOUtils.toByteArray(input);
                                 ImageUploadVO imageVO = new ImageUploadVO();
-                                imageVO.setFile(encodeBuff(data));
+                                imageVO.setFile(encodeFile(data));
                                 imageVO.setFilename(caName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("ZQZRXY");// 文件类型无实际用途
@@ -1071,7 +1071,7 @@ public class QiDaiService extends BaseService {
                             try (InputStream input = new FileInputStream(new File(attachPath + caWholeName))) {
                                 byte[] data = IOUtils.toByteArray(input);
                                 ImageUploadVO imageVO = new ImageUploadVO();
-                                imageVO.setFile(encodeBuff(data));
+                                imageVO.setFile(encodeFile(data));
                                 imageVO.setFilename(caWholeName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("CAWhole");// 文件类型无实际用途
@@ -1140,7 +1140,7 @@ public class QiDaiService extends BaseService {
                             try (InputStream input = new FileInputStream(new File(attachPath + creditName))) {
                                 byte[] data = IOUtils.toByteArray(input);
                                 ImageUploadVO imageVO = new ImageUploadVO();
-                                imageVO.setFile(encodeBuff(data));
+                                imageVO.setFile(encodeFile(data));
                                 imageVO.setFilename(creditName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("credit");// 文件类型无实际用途
@@ -1179,7 +1179,7 @@ public class QiDaiService extends BaseService {
                         try (InputStream inputStream = child.getContent().getInputStream()) {
                             byte[] data = IOUtils.toByteArray(inputStream);
                             ImageUploadVO imageVO = new ImageUploadVO();
-                            imageVO.setFile(encodeBuff(data));
+                            imageVO.setFile(encodeFile(data));
                             imageVO.setFilename(fileName);// 文件名
                             imageVO.setFileoper("0");// 类型新增
                             imageVO.setFileType("MD");// 文件类型
@@ -1219,7 +1219,7 @@ public class QiDaiService extends BaseService {
                         try (InputStream inputStream = child.getContent().getInputStream()) {
                             byte[] data = IOUtils.toByteArray(inputStream);
                             ImageUploadVO imageVO = new ImageUploadVO();
-                            imageVO.setFile(encodeBuff(data));
+                            imageVO.setFile(encodeFile(data));
                             imageVO.setFilename(fileName);// 文件名
                             imageVO.setFileoper("0");// 类型新增
                             imageVO.setFileType("JQ");// 文件类型
@@ -1257,7 +1257,7 @@ public class QiDaiService extends BaseService {
                     try (InputStream inputStream = child.getContent().getInputStream()) {
                         byte[] data = IOUtils.toByteArray(inputStream);
                         ImageUploadVO imageVO = new ImageUploadVO();
-                        imageVO.setFile(encodeBuff(data));
+                        imageVO.setFile(encodeFile(data));
                         imageVO.setFilename(fileName);// 文件名
                         imageVO.setFileoper("0");// 类型新增
                         imageVO.setFileType("CK");// 文件类型
@@ -1285,7 +1285,7 @@ public class QiDaiService extends BaseService {
         if (cooperativeBusiness == null || StringUtils.isEmpty(cooperativeBusiness.getRsapublic()))
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "不支持的渠道");
         String publicKey = cooperativeBusiness.getRsapublic();
-        data = decryptData(data, publicKey);
+        data = decryptString(data, publicKey);
         logger.info("----------------报文解密明文：-----------------" + data);
         String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/externalData/savaExternalData";
         String response = CommonRestUtils.postForString(url, data);
@@ -1377,7 +1377,7 @@ public class QiDaiService extends BaseService {
         String publicKey = cooperativeBusiness.getRsapublic();
         if (publicKey == null)
             throw new BusinessException(ConstUtil.ERROR_CODE, "不支持的渠道");
-        String json = decryptData(data, publicKey);
+        String json = decryptString(data, publicKey);
         logger.info("----------------报文解密明文：-----------------" + json);
         Map<String, Object> dataMap = JsonSerializer.deserializeMap(json);
         String url = qiDaiConfig.getCmisYcLoanUrl() + "/ycloans/Cmis2YcloansHttpChannel";
@@ -1582,20 +1582,6 @@ public class QiDaiService extends BaseService {
         return channelConfiguration.getSysCode();
     }
 
-    private String encodeBuff(byte[] buff) {
-        return URLSerializer.encode(Base64Utils.encode(buff));
-    }
-
-    private String getMd5(byte[] buff, String publicKey) throws Exception {
-        String md5 = DigestUtils.md5Hex(buff);
-        return URLSerializer.encode(Base64Utils.encode(RSAUtils.encryptByPublicKey(md5.getBytes(StandardCharsets.UTF_8), publicKey)));
-    }
-
-    private String decryptData(String data, String publicKey) throws Exception {
-        byte[] buffer = RSAUtils.decryptByPublicKey(Base64Utils.decode(data), publicKey);
-        return new String(buffer, StandardCharsets.UTF_8);
-    }
-
     private void saveFile(String attachPath, String pdfName, byte[] bt) {
         try (OutputStream outputStream = new FileOutputStream(new Path(attachPath).combine(pdfName).toString())) {
             outputStream.write(bt);
@@ -1634,11 +1620,6 @@ public class QiDaiService extends BaseService {
         }
     }
 
-    private String lpad(int length, int number) {
-        String f = "%0" + length + "d";
-        return String.format(f, number);
-    }
-
     private void writePayApplyLog(String applSeq, String applCde, String channelNo, String tradeCode) {
         PayApplyLog payApplyLog = new PayApplyLog();
         String id = UUID.randomUUID().toString().replace("-", "");
@@ -1651,5 +1632,28 @@ public class QiDaiService extends BaseService {
         payApplyLog.setPushnum("0");
         payApplyLog.setApplcde(applCde);
         payApplyLogDao.insert(payApplyLog);
+    }
+
+    private String encryptString(String value, String publicKey) throws Exception {
+        byte[] buffer = RSAUtils.encryptByPublicKey(value.getBytes(StandardCharsets.UTF_8), publicKey);
+        return Base64Utils.encode(buffer);
+    }
+
+    private String decryptString(String value, String publicKey) throws Exception {
+        byte[] buffer = Base64Utils.decode(value);
+        return new String(RSAUtils.decryptByPublicKey(buffer, publicKey), StandardCharsets.UTF_8);
+    }
+
+    private String encodeFile(byte[] buffer) {
+        return Base64Utils.encode(buffer);
+    }
+
+    private byte[] decodeFile(String value) {
+        return Base64Utils.decode(value);
+    }
+
+    private String getMd5(byte[] buff, String publicKey) throws Exception {
+        String md5 = DigestUtils.md5Hex(buff);
+        return encryptString(md5, publicKey);
     }
 }
