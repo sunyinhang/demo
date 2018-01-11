@@ -1,8 +1,6 @@
 package com.haiercash.spring.util;
 
 import com.haiercash.spring.client.RestTemplateProvider;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,7 +26,10 @@ import java.util.Map;
  */
 @Deprecated
 public final class HttpUtil {
-    private static final Log logger = LogFactory.getLog(HttpUtil.class);
+    private static final String ERROR_SERVER = ConstUtil.ERROR_CODE;
+    private static final String ERROR_SERVER_MSG = "外部服务发生错误:HTTP-%s";
+    private static final String ERROR_NULL = ConstUtil.ERROR_CODE;
+    private static final String ERROR_NULL_MSG = "外部服务未返回任何数据";
 
     private HttpUtil() {
     }
@@ -100,16 +101,15 @@ public final class HttpUtil {
     }
 
     public static String restExchange(HttpMethod method, String url, String token, String data, Integer responseCode) {
-        try {
-            HttpHeaders headers = getHeaders(token);
-            HttpEntity<?> requestEntity = new HttpEntity<>(data, headers);
-            ResponseEntity<String> responseEntity = getRestTemplate().exchange(url, method, requestEntity, String.class);
-            HttpStatus httpStatus = responseEntity.getStatusCode();
-            return responseCode != null && httpStatus.value() != responseCode ? null : responseEntity.getBody();
-        } catch (Exception var8) {
-            logger.error("restExchange 失败：" + var8.getMessage());
-            return null;
+        HttpHeaders headers = getHeaders(token);
+        HttpEntity<?> requestEntity = new HttpEntity<>(data, headers);
+        ResponseEntity<String> responseEntity = getRestTemplate().exchange(url, method, requestEntity, String.class);
+        if (responseEntity.getStatusCode() == HttpStatus.valueOf(responseCode)) {
+            if (responseEntity.getBody() == null)
+                throw new BusinessException(ERROR_NULL, ERROR_NULL_MSG);
+            return responseEntity.getBody();
         }
+        throw new BusinessException(ERROR_SERVER, ERROR_SERVER_MSG + responseEntity.getStatusCodeValue());
     }
 
     public static Map<String, Object> restPostMap(String url, String token, Map<String, Object> data, Integer responseCode) {
@@ -171,21 +171,16 @@ public final class HttpUtil {
     }
 
     public static Map<String, Object> restExchangeMap(HttpMethod method, String url, String token, Map<String, Object> data, Integer responseCode) {
-        try {
-            HttpHeaders headers = getHeaders(token, data);
-            HttpEntity<?> requestEntity = new HttpEntity<>(data, headers);
-            ResponseEntity<Map<String, Object>> responseEntity = getRestTemplate().exchange(url, method, requestEntity, new ParameterizedTypeReference<Map<String, Object>>() {
-            });
-            HttpStatus statusCode = responseEntity.getStatusCode();
-            if (responseCode != null && statusCode.value() != responseCode) {
-                return null;
-            } else {
-                return responseEntity.getBody();
-            }
-        } catch (Exception e) {
-            logger.error("restExchangeMap 失败：" + e.getMessage());
-            return null;
+        HttpHeaders headers = getHeaders(token, data);
+        HttpEntity<?> requestEntity = new HttpEntity<>(data, headers);
+        ResponseEntity<Map<String, Object>> responseEntity = getRestTemplate().exchange(url, method, requestEntity, new ParameterizedTypeReference<Map<String, Object>>() {
+        });
+        if (responseEntity.getStatusCode() == HttpStatus.valueOf(responseCode)) {
+            if (responseEntity.getBody() == null)
+                throw new BusinessException(ERROR_NULL, ERROR_NULL_MSG);
+            return responseEntity.getBody();
         }
+        throw new BusinessException(ERROR_SERVER, ERROR_SERVER_MSG + responseEntity.getStatusCodeValue());
     }
 
     public static Map<String, Object> json2Map(String json) {
