@@ -7,14 +7,14 @@ import java.util.Date;
  * 时间跨度
  */
 public final class TimeSpan {
-    public final static long MillisecondsPerSecond = 1000;
-    public final static long MillisecondsPerMinute = MillisecondsPerSecond * 60;
-    public final static long MillisecondsPerHour = MillisecondsPerMinute * 60;
-    public final static long MillisecondsPerDay = MillisecondsPerHour * 24;
-    private final static double SecondsPerMillisecond = 1.0d / MillisecondsPerSecond;
-    private final static double MinutesPerMillisecond = 1.0d / MillisecondsPerMinute;
-    private final static double HoursPerMillisecond = 1.0d / MillisecondsPerHour;
-    private final static double DaysPerMillisecond = 1.0d / MillisecondsPerDay;
+    public static final long MillisecondsPerSecond = 1000;
+    public static final long MillisecondsPerMinute = MillisecondsPerSecond * 60;
+    public static final long MillisecondsPerHour = MillisecondsPerMinute * 60;
+    public static final long MillisecondsPerDay = MillisecondsPerHour * 24;
+    private static final double SecondsPerMillisecond = 1.0d / MillisecondsPerSecond;
+    private static final double MinutesPerMillisecond = 1.0d / MillisecondsPerMinute;
+    private static final double HoursPerMillisecond = 1.0d / MillisecondsPerHour;
+    private static final double DaysPerMillisecond = 1.0d / MillisecondsPerDay;
 
     private final long milliseconds;//总差异毫秒数
 

@@ -39,7 +39,7 @@ public final class RabbitConditionalRejectingErrorHandler extends ConditionalRej
         return false;
     }
 
-    public final static class RabbitExceptionStrategy extends ConditionalRejectingErrorHandler.DefaultExceptionStrategy {
+    public static final class RabbitExceptionStrategy extends ConditionalRejectingErrorHandler.DefaultExceptionStrategy {
         @Override
         public boolean isFatal(Throwable throwable) {
             return throwable instanceof ListenerExecutionFailedException && this.isCauseFatal(throwable.getCause());
