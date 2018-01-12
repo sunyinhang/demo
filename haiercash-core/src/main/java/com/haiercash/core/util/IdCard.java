@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2017-12-11.
  */
-public final class IDCard {
+public final class IdCard {
     private static final int[] COMMON_POWER = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
     private static final char[] COMMON_VERIFY = {'1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'};
     private static final Map<String, String> COMMON_PROVINCES = new HashMap<>();
@@ -108,7 +108,7 @@ public final class IDCard {
     private CardType cardType;
 
     //构造函数
-    public IDCard(String idNo) {
+    public IdCard(String idNo) {
         this.idNo = idNo;
         this.verify();
     }
@@ -229,7 +229,7 @@ public final class IDCard {
     }
 
     //转换为 18 位身份证
-    public IDCard toCommon18() {
+    public IdCard toCommon18() {
         if (!this.valid)
             throw new InvalidOperationException("无效的身份证");
         switch (this.cardType) {
@@ -240,7 +240,7 @@ public final class IDCard {
                 for (int i = 0; i < 17; i++)
                     sum += toInt10(idNo.charAt(i)) * COMMON_POWER[i];
                 char verifyCode = COMMON_VERIFY[sum % COMMON_VERIFY.length];
-                return new IDCard(idNo + verifyCode);
+                return new IdCard(idNo + verifyCode);
             case COMMON18:
                 return this;
             default:

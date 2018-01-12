@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.lang.DateUtils;
-import com.haiercash.core.util.IDCard;
+import com.haiercash.core.util.IdCard;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.service.CmisService;
@@ -226,7 +226,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
             }
         }
         String idNo = String.valueOf(apptmap.get("appt_id_no"));
-        IDCard idCard = new IDCard(idNo);
+        IdCard idCard = new IdCard(idNo);
         if (!StringUtils.isEmpty(idNo)) {
             apptmap.put("appt_indiv_sex", idCard.getGenderCode());
             apptmap.put("appt_start_date", DateUtils.toDateString(idCard.getBirthday()));
