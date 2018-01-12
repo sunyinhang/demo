@@ -7,27 +7,43 @@ import java.io.File;
  */
 public final class Environment {
     /**
-     * 获取"."字符串
+     * 获取 "." 字符串
      */
     public static final String Dot = ".";
     /**
-     * 获取"."字符
+     * 获取 "." 字符
      */
     public static final char DotChar = '.';
     /**
-     * 获取"/"字符串
+     * 获取 "-" 字符串
+     */
+    public static final String Minus = "-";
+    /**
+     * 获取 "-" 字符
+     */
+    public static final char MinusChar = '-';
+    /**
+     * 获取 "_" 字符串
+     */
+    public static final String Underline = "_";
+    /**
+     * 获取 "_" 字符
+     */
+    public static final char UnderlineChar = '_';
+    /**
+     * 获取 "/"  字符串
      */
     public static final String Slash = "/";
     /**
-     * 获取'/'字符
+     * 获取 "/" 字符
      */
     public static final char SlashChar = '/';
     /**
-     * 获取"\"字符串
+     * 获取 "\" 字符串
      */
     public static final String BackSlash = "\\";
     /**
-     * 获取"\"字符
+     * 获取 "\" 字符
      */
     public static final char BackSlashChar = '\\';
     /**
