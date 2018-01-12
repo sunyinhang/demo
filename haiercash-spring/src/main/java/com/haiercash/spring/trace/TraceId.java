@@ -1,25 +1,30 @@
 package com.haiercash.spring.trace;
 
+import com.haiercash.core.collection.iterator.CharSequenceIterable;
+import com.haiercash.core.lang.CharUtils;
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.net.HostInfo;
 import com.haiercash.spring.boot.ApplicationUtils;
+import com.haiercash.spring.context.RequestContext;
 
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 调用链 ID 生成器
+ * 调用链 Id 生成器
  * Created by 许崇雷 on 2017-10-14.
  */
-public final class TraceID {
-    public static final String NAME = "TraceID";
+public final class TraceId {
+    public static final String NAME = "TraceId";
+    public static final String NAME_HEADER = "Trace-Id";
     private static final String DATE_FORMAT = "yyyyMMdd-HHmmss";
     private static final char[] IP_LAST_BIT_SEPARATOR = new char[]{'.'};
     private static final String IP_LAST_BIT;
     private static final int LEN_APPLICATION_NAME = 3;
     private static final String APPLICATION_NAME;
+    private static final int MAX_LENGTH = 50;
 
     static {
         //初始化 IP_LAST_BIT
@@ -36,16 +41,22 @@ public final class TraceID {
         APPLICATION_NAME = (appName.length() <= LEN_APPLICATION_NAME ? appName : appName.substring(0, LEN_APPLICATION_NAME)).toUpperCase();
     }
 
-    private TraceID() {
+    private TraceId() {
     }
 
     /**
-     * 生成调用链 ID
+     * 生成调用链 Id. 优先从请求上下文中获取, 如果无效则重新生成
      *
-     * @return 调用链 ID
+     * @return 调用链 Id
      */
-    @SuppressWarnings("StringBufferReplaceableByString")
     public static String generate() {
+        String traceId = RequestContext.exists() ? RequestContext.getRequest().getHeader(TraceId.NAME_HEADER) : null;
+        return TraceId.verify(traceId) ? traceId : generateCore();
+    }
+
+    //生成调用链 Id
+    @SuppressWarnings("StringBufferReplaceableByString")
+    private static String generateCore() {
         StringBuilder builder = new StringBuilder(50);
         builder.append(DateUtils.toString(DateUtils.now(), DATE_FORMAT))//年月日时分秒毫秒
                 .append("-")
@@ -55,6 +66,18 @@ public final class TraceID {
                 .append("-")
                 .append(Sequence.getAndIncrement());//序号
         return builder.toString();
+    }
+
+    //验证调用链 Id 是否有效
+    private static boolean verify(String traceId) {
+        if (StringUtils.isEmpty(traceId) || traceId.length() > MAX_LENGTH)
+            return false;
+        for (Character ch : new CharSequenceIterable(traceId)) {
+            if (CharUtils.isAsciiAlphanumeric(ch) || ch.equals('-') || ch.equals('_'))
+                continue;
+            return false;
+        }
+        return true;
     }
 
     //序列号

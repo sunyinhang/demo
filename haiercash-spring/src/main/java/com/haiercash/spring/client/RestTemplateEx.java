@@ -3,7 +3,7 @@ package com.haiercash.spring.client;
 import com.haiercash.core.collection.EnumerationUtils;
 import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.trace.TraceID;
+import com.haiercash.spring.trace.TraceId;
 import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.AbstractClientHttpRequest;
@@ -75,7 +75,7 @@ public class RestTemplateEx extends RestTemplate {
         private void putContextHeaders(ClientHttpRequest ribbonRequest) {
             //通用 Header
             if (ThreadContext.exists()) {
-                ribbonRequest.getHeaders().set(TraceID.NAME, ThreadContext.getTraceID());
+                ribbonRequest.getHeaders().set(TraceId.NAME_HEADER, ThreadContext.getTraceId());
                 if (!ribbonRequest.getHeaders().containsKey(NAME_TOKEN))
                     ribbonRequest.getHeaders().set(NAME_TOKEN, ThreadContext.getToken());
                 if (!ribbonRequest.getHeaders().containsKey(NAME_CHANNEL))

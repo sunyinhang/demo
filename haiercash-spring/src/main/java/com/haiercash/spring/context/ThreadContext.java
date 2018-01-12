@@ -2,7 +2,7 @@ package com.haiercash.spring.context;
 
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.controller.BaseController;
-import com.haiercash.spring.trace.TraceID;
+import com.haiercash.spring.trace.TraceId;
 import org.slf4j.MDC;
 import org.springframework.util.Assert;
 
@@ -14,7 +14,7 @@ import java.util.Stack;
  */
 public final class ThreadContext {
     //线程本地存储
-    private final static ThreadLocal<ThreadContextData> contexts = ThreadLocal.withInitial(ThreadContextData::new);
+    private static final ThreadLocal<ThreadContextData> contexts = ThreadLocal.withInitial(ThreadContextData::new);
 
     //region property
 
@@ -22,8 +22,8 @@ public final class ThreadContext {
         return contexts.get().exists;
     }
 
-    public static String getTraceID() {
-        return contexts.get().traceID;
+    public static String getTraceId() {
+        return contexts.get().traceId;
     }
 
     public static String getToken() {
@@ -62,15 +62,13 @@ public final class ThreadContext {
 
     public static void init(String token, String channel, String channelNo) {
         //可在此处添加验证
-        String traceID = RequestContext.exists() ? RequestContext.getRequest().getHeader(TraceID.NAME) : null;
-        if (StringUtils.isEmpty(traceID))
-            traceID = TraceID.generate();
-        MDC.put(TraceID.NAME, traceID);
+        String traceId = TraceId.generate();
+        MDC.put(TraceId.NAME, traceId);
         if (RequestContext.exists())
-            RequestContext.getResponse().setHeader(TraceID.NAME, traceID);
+            RequestContext.getResponse().setHeader(TraceId.NAME_HEADER, traceId);
         ThreadContextData data = contexts.get();
         data.exists = true;
-        data.traceID = traceID;
+        data.traceId = traceId;
         data.token = token == null ? StringUtils.EMPTY : token;
         data.channel = channel == null ? StringUtils.EMPTY : channel;
         data.channelNo = channelNo == null ? StringUtils.EMPTY : channelNo;
@@ -87,12 +85,12 @@ public final class ThreadContext {
     public static void reset() {
         ThreadContextData data = contexts.get();
         data.exists = false;
-        data.traceID = StringUtils.EMPTY;
+        data.traceId = StringUtils.EMPTY;
         data.token = StringUtils.EMPTY;
         data.channel = StringUtils.EMPTY;
         data.channelNo = StringUtils.EMPTY;
         data.controllerStack.clear();
-        MDC.remove(TraceID.NAME);
+        MDC.remove(TraceId.NAME);
     }
 
     public static void enterController(BaseController controller) {
@@ -107,7 +105,7 @@ public final class ThreadContext {
     private static final class ThreadContextData {
         private final Stack<BaseController> controllerStack = new Stack<>();
         private boolean exists;
-        private String traceID;
+        private String traceId;
         private String token;
         private String channel;
         private String channelNo;
