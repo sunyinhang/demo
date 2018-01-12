@@ -15,6 +15,7 @@ import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.core.vfs.VFSType;
 import com.haiercash.core.vfs.VFSUserAuthenticator;
 import com.haiercash.core.vfs.VFSUtils;
+import com.haiercash.core.zip.GZipUtils;
 import com.haiercash.payplatform.common.dao.ChannelConfigurationDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.FileTransLogDao;
@@ -99,7 +100,8 @@ public class QiDaiService extends BaseService {
         }
         //========
         CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        data = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(data), cooperativeBusiness.getRsapublic()), StandardCharsets.UTF_8);
+        String publicKey = cooperativeBusiness.getRsapublic();
+        data = decryptString(data, publicKey);
         logger.info("----------------报文解密明文：-----------------" + data);
         Map<String, Object> dataMap = JsonSerializer.deserializeMap(data);
         Map jsonRequest = (Map) dataMap.get("request");
@@ -740,7 +742,7 @@ public class QiDaiService extends BaseService {
                             imageVO.setFilename(fileName);// 文件名
                             imageVO.setFileoper("0");// 类型新增
                             imageVO.setFileType("UP");// 文件类型
-                            imageVO.setMd5(getMd5(data, publicKey));
+                            imageVO.setMd5(getMd5(data));
                             fileList.add(imageVO);
                         }
                     }
@@ -832,7 +834,7 @@ public class QiDaiService extends BaseService {
                                 imageVO.setFilename(caName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("CA");// 文件类型无实际用途
-                                imageVO.setMd5(getMd5(data, publicKey));
+                                imageVO.setMd5(getMd5(data));
                                 filelist.add(imageVO);
                             }
                         } catch (Exception e) {
@@ -922,7 +924,7 @@ public class QiDaiService extends BaseService {
                                 imageVO.setFilename(caNewName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("CANew");// 文件类型无实际用途
-                                imageVO.setMd5(getMd5(data, publicKey));
+                                imageVO.setMd5(getMd5(data));
                                 filelist.add(imageVO);
                             }
                         } catch (Exception e) {
@@ -983,7 +985,7 @@ public class QiDaiService extends BaseService {
                                 imageVO.setFilename(caName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("ZQZRXY");// 文件类型无实际用途
-                                imageVO.setMd5(getMd5(data, publicKey));
+                                imageVO.setMd5(getMd5(data));
                                 filelist.add(imageVO);
                             }
                         } catch (Exception e) {
@@ -1060,7 +1062,7 @@ public class QiDaiService extends BaseService {
                                 imageVO.setFilename(caWholeName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("CAWhole");// 文件类型无实际用途
-                                imageVO.setMd5(getMd5(data, publicKey));
+                                imageVO.setMd5(getMd5(data));
                                 filelist.add(imageVO);
                             }
                         } catch (Exception e) {
@@ -1129,7 +1131,7 @@ public class QiDaiService extends BaseService {
                                 imageVO.setFilename(creditName);// 文件名
                                 imageVO.setFileoper("0");// 类型新增
                                 imageVO.setFileType("credit");// 文件类型无实际用途
-                                imageVO.setMd5(getMd5(data, publicKey));
+                                imageVO.setMd5(getMd5(data));
                                 filelist.add(imageVO);
                             }
                         } catch (Exception e) {
@@ -1168,7 +1170,7 @@ public class QiDaiService extends BaseService {
                             imageVO.setFilename(fileName);// 文件名
                             imageVO.setFileoper("0");// 类型新增
                             imageVO.setFileType("MD");// 文件类型
-                            imageVO.setMd5(getMd5(data, publicKey));
+                            imageVO.setMd5(getMd5(data));
                             fileList.add(imageVO);
                         }
                     }
@@ -1208,7 +1210,7 @@ public class QiDaiService extends BaseService {
                             imageVO.setFilename(fileName);// 文件名
                             imageVO.setFileoper("0");// 类型新增
                             imageVO.setFileType("JQ");// 文件类型
-                            imageVO.setMd5(getMd5(data, publicKey));
+                            imageVO.setMd5(getMd5(data));
                             fileList.add(imageVO);
                         }
                     }
@@ -1246,7 +1248,7 @@ public class QiDaiService extends BaseService {
                         imageVO.setFilename(fileName);// 文件名
                         imageVO.setFileoper("0");// 类型新增
                         imageVO.setFileType("CK");// 文件类型
-                        imageVO.setMd5(getMd5(data, publicKey));
+                        imageVO.setMd5(getMd5(data));
                         fileList.add(imageVO);
                     }
                 }
@@ -1622,13 +1624,17 @@ public class QiDaiService extends BaseService {
     }
 
     private String encryptString(String value, String publicKey) throws Exception {
-        byte[] buffer = RSAUtils.encryptByPublicKey(value.getBytes(StandardCharsets.UTF_8), publicKey);
+        byte[] buffer = value.getBytes(StandardCharsets.UTF_8);
+        buffer = GZipUtils.compress(buffer);
+        buffer = RSAUtils.encryptByPublicKey(buffer, publicKey);
         return Base64Utils.encode(buffer);
     }
 
     private String decryptString(String value, String publicKey) throws Exception {
         byte[] buffer = Base64Utils.decode(value);
-        return new String(RSAUtils.decryptByPublicKey(buffer, publicKey), StandardCharsets.UTF_8);
+        buffer = RSAUtils.decryptByPublicKey(buffer, publicKey);
+        buffer = GZipUtils.decompress(buffer);
+        return new String(buffer, StandardCharsets.UTF_8);
     }
 
     private String encodeFile(byte[] buffer) {
@@ -1639,8 +1645,7 @@ public class QiDaiService extends BaseService {
         return Base64Utils.decode(value);
     }
 
-    private String getMd5(byte[] buff, String publicKey) throws Exception {
-        String md5 = DigestUtils.md5Hex(buff);
-        return encryptString(md5, publicKey);
+    private String getMd5(byte[] buff) {
+        return DigestUtils.md5Hex(buff);
     }
 }
