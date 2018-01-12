@@ -21,7 +21,7 @@ public final class IncomingLog {
 
     public static void writeRequestLog(Message message) {
         Map<String, Object> log = new LinkedHashMap<>();
-        log.put("msgID", TraceUtils.getMsgID(message));
+        log.put("msgId", TraceUtils.getMsgId(message));
         log.put("messageHeaders", TraceUtils.getHeaders(message));
         log.put("messageBody", TraceUtils.getBody(message));
         logger.info("==>Rabbit Consume Begin: " + JsonSerializer.serialize(log));
@@ -29,7 +29,7 @@ public final class IncomingLog {
 
     public static void writeResponseLog(Message message, long tookMs) {
         Map<String, Object> log = new LinkedHashMap<>();
-        log.put("msgID", TraceUtils.getMsgID(message));
+        log.put("msgId", TraceUtils.getMsgId(message));
         log.put("result", "消费成功");
         log.put("took", tookMs);
         logger.info("==>Rabbit Consume End: " + JsonSerializer.serialize(log));
@@ -37,7 +37,7 @@ public final class IncomingLog {
 
     public static void writeDisabled(Message message, long tookMs) {
         Map<String, Object> log = new LinkedHashMap<>();
-        log.put("msgID", TraceUtils.getMsgID(message));
+        log.put("msgId", TraceUtils.getMsgId(message));
         log.put("result", ConsumeDisabledException.MESSAGE);
         log.put("took", tookMs);
         logger.warn("==>Rabbit Consume Disabled: " + JsonSerializer.serialize(log));
@@ -46,7 +46,7 @@ public final class IncomingLog {
     public static void writeError(Message message, Exception e, long tookMs) {
         String msg = ThrowableUtils.getString(e);
         Map<String, Object> log = new LinkedHashMap<>();
-        log.put("msgID", TraceUtils.getMsgID(message));
+        log.put("msgId", TraceUtils.getMsgId(message));
         log.put("error", msg);
         log.put("took", tookMs);
         logger.error("==>Rabbit Consume Error: " + JsonSerializer.serialize(log));

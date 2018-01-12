@@ -18,10 +18,10 @@ public final class OutgoingLog {
     private static final Log logger = LogFactory.getLog(OutgoingLog.class);
 
     public static Map<String, Object> writeRequestLog(Message message, String exchange, String routingKey) {
-        String msgID = TraceUtils.getMsgID(message);
+        String msgId = TraceUtils.getMsgId(message);
         Map<String, Object> log = new LinkedHashMap<>();
-        if (StringUtils.isNotEmpty(msgID))
-            log.put("msgID", msgID);
+        if (StringUtils.isNotEmpty(msgId))
+            log.put("msgId", msgId);
         log.put("exchange", exchange);
         log.put("routingKey", routingKey);
         log.put("messageHeaders", TraceUtils.getHeaders(message));

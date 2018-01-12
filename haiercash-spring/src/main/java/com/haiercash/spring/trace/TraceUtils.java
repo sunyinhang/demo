@@ -32,11 +32,11 @@ public final class TraceUtils {
 
     //region rabbit
 
-    public static String getMsgID(Message message) {
+    public static String getMsgId(Message message) {
         return message.getHeaders().getId().toString();
     }
 
-    public static String getMsgID(org.springframework.amqp.core.Message message) {
+    public static String getMsgId(org.springframework.amqp.core.Message message) {
         return message.getMessageProperties().getMessageId();
     }
 
