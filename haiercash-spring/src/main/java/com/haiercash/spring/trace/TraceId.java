@@ -3,6 +3,7 @@ package com.haiercash.spring.trace;
 import com.haiercash.core.collection.iterator.CharSequenceIterable;
 import com.haiercash.core.lang.CharUtils;
 import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.net.HostInfo;
 import com.haiercash.spring.boot.ApplicationUtils;
@@ -24,6 +25,7 @@ public final class TraceId {
     private static final String IP_LAST_BIT;
     private static final int LEN_APPLICATION_NAME = 3;
     private static final String APPLICATION_NAME;
+    private static final int MIN_LENGTH = 10;
     private static final int MAX_LENGTH = 50;
 
     static {
@@ -70,10 +72,13 @@ public final class TraceId {
 
     //验证调用链 Id 是否有效
     private static boolean verify(String traceId) {
-        if (StringUtils.isEmpty(traceId) || traceId.length() > MAX_LENGTH)
+        if (traceId == null || traceId.length() < MIN_LENGTH || traceId.length() > MAX_LENGTH)
             return false;
         for (Character ch : new CharSequenceIterable(traceId)) {
-            if (CharUtils.isAsciiAlphanumeric(ch) || ch.equals('-') || ch.equals('_'))
+            if (CharUtils.isAsciiAlphanumeric(ch)
+                    || ch.equals(Environment.DotChar)
+                    || ch.equals(Environment.MinusChar)
+                    || ch.equals(Environment.UnderlineChar))
                 continue;
             return false;
         }
