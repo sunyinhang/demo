@@ -278,7 +278,7 @@ public class QiDaiService extends BaseService {
             }
 
             // 2016-09-01 先进行验证再上传文件
-            String mdString = new String(RSAUtils.decryptByPublicKey(Base64Utils.decode(URLSerializer.decode(vo.getMd5())), publicKey));
+            String mdString = decryptString(vo.getMd5(), publicKey);
             logger.info("文件上传接口传过来的MD5为:" + mdString);
             String filestream = vo.getFile();
             // 2016-09-06 去掉一层加密
@@ -323,12 +323,8 @@ public class QiDaiService extends BaseService {
                     uploadCount = uploadCount + 1;
                     vo.setFilename(attachNameNew);
                     imageList.add(vo);// 保存附件到影像通知文件列表
-                } catch (Exception e) {
-                    if ("DOC001".equals(fileType)) {
-                        logger.info("申请表(DOC001类型),上传异常,流水号为" + appno + ",申请号为" + applSeq);
-                    } else {
-                        logger.info("申请表(DOC002类型),上传异常,流水号为" + appno + ",申请号为" + applSeq);
-                    }
+                } catch (IOException e) {
+                    logger.info(String.format("申请表(%s 类型),上传异常,流水号为 %s,申请号为 %s", fileType, appno, applSeq), e);
                     return CommonResponse.fail(ConstUtil.ERROR_CODE, "文件md5加密失败！");
                 }
             } else if ("DOC014".equals(fileType) || "DOC53".equals(fileType) || "DOC54".equals(fileType) || "DOC066".equals(fileType) || "DOC067".equals(fileType) ||
@@ -365,11 +361,10 @@ public class QiDaiService extends BaseService {
                     uploadCount = uploadCount + 1;
                     vo.setFilename(attachNameNew);
                     imageList.add(vo);// 保存附件到影像通知文件列表
-                } catch (Exception e) {
-                    logger.info("影像文件(" + fileType + "类型),上传异常,流水号为" + appno + ",申请号为" + applSeq);
+                } catch (IOException e) {
+                    logger.info("影像文件(" + fileType + "类型),上传异常,流水号为" + appno + ",申请号为" + applSeq, e);
                     return CommonResponse.fail(ConstUtil.ERROR_CODE, "文件md5加密失败！");
                 }
-
             } // 上传影像结束 上传固定的文件
             // 扣款结果文件&代偿标志修改文件
             else if ("DL".equals(fileType) || "UD".equals(fileType)) {
@@ -454,11 +449,8 @@ public class QiDaiService extends BaseService {
                         QueryLoanDetails queryLoanDetails = new QueryLoanDetails();
                         queryLoanDetails.setApplSeq(applSeq);
                         // 100035 贷款信息接口
-                        ReturnMessage returnMessage_ = paymentService.queryLoanMessage(queryLoanDetails);
-                        if (returnMessage_ == null) {
-                            return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请号为：" + applSeq + "贷款信息不存在！");
-                        }
-                        List list = returnMessage_.getData();
+                        ReturnMessage returnMessage = paymentService.queryLoanMessage(queryLoanDetails);
+                        List list = returnMessage.getData();
                         if (list != null && list.size() > 0) {
                             Map map = (Map) list.get(0);
                             userName = (String) ((List) map.get("cust_name")).get(0);
@@ -537,9 +529,6 @@ public class QiDaiService extends BaseService {
                         queryLoanDetails.setApplSeq(applSeq);
                         // 100035 贷款信息接口
                         ReturnMessage returnMessage_ = paymentService.queryLoanMessage(queryLoanDetails);
-                        if (returnMessage_ == null) {
-                            return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请号为：" + applSeq + "贷款信息不存在！");
-                        }
                         List list = returnMessage_.getData();
                         if (list != null && list.size() > 0) {
                             Map map = (Map) list.get(0);
