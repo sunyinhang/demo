@@ -1,7 +1,6 @@
 package com.haiercash.spring.trace.rabbit;
 
 import com.haiercash.core.lang.ThrowableUtils;
-import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.rabbit.exception.ConsumeDisabledException;
@@ -24,7 +23,7 @@ public final class IncomingLog {
         log.put("msgId", TraceUtils.getMsgId(message));
         log.put("messageHeaders", TraceUtils.getHeaders(message));
         log.put("messageBody", TraceUtils.getBody(message));
-        logger.info("==>Rabbit Consume Begin: " + JsonSerializer.serialize(log));
+        logger.info("==>Rabbit Consume Begin: " + log);
     }
 
     public static void writeResponseLog(Message message, long tookMs) {
@@ -32,7 +31,7 @@ public final class IncomingLog {
         log.put("msgId", TraceUtils.getMsgId(message));
         log.put("result", "消费成功");
         log.put("took", tookMs);
-        logger.info("==>Rabbit Consume End: " + JsonSerializer.serialize(log));
+        logger.info("==>Rabbit Consume End: " + log);
     }
 
     public static void writeDisabled(Message message, long tookMs) {
@@ -40,7 +39,7 @@ public final class IncomingLog {
         log.put("msgId", TraceUtils.getMsgId(message));
         log.put("result", ConsumeDisabledException.MESSAGE);
         log.put("took", tookMs);
-        logger.warn("==>Rabbit Consume Disabled: " + JsonSerializer.serialize(log));
+        logger.warn("==>Rabbit Consume Disabled: " + log);
     }
 
     public static void writeError(Message message, Exception e, long tookMs) {
@@ -49,7 +48,7 @@ public final class IncomingLog {
         log.put("msgId", TraceUtils.getMsgId(message));
         log.put("error", msg);
         log.put("took", tookMs);
-        logger.error("==>Rabbit Consume Error: " + JsonSerializer.serialize(log));
+        logger.error("==>Rabbit Consume Error: " + log);
         //错误报告
         BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
     }

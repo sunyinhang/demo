@@ -2,7 +2,6 @@ package com.haiercash.spring.trace.rabbit;
 
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.lang.ThrowableUtils;
-import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,12 +31,12 @@ public final class OutgoingLog {
     public static void writeResponseLog(Map<String, Object> log, long tookMs) {
         log.put("result", "成功");
         log.put("took", tookMs);
-        logger.info("==>Rabbit Produce: " + JsonSerializer.serialize(log));
+        logger.info("==>Rabbit Produce: " + log);
     }
 
     public static void writeErrorLog(Map<String, Object> log, Exception e, long tookMs) {
         log.put("error", ThrowableUtils.getMessage(e));
         log.put("took", tookMs);
-        logger.error("==>Rabbit Produce Error: " + JsonSerializer.serialize(log));
+        logger.error("==>Rabbit Produce Error: " + log);
     }
 }

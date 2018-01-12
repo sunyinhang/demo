@@ -1,7 +1,6 @@
 package com.haiercash.spring.trace.rest;
 
 import com.haiercash.core.lang.ThrowableUtils;
-import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.servlet.DispatcherRequestWrapper;
@@ -30,7 +29,7 @@ public final class IncomingLog {
         log.put("requestParams", TraceUtils.getParams(request));
         if (method.equals("POST") || method.equals("PUT"))
             log.put("requestBody", TraceUtils.getBody(request));
-        logger.info("==>Servlet Begin: " + JsonSerializer.serialize(log));
+        logger.info("==>Servlet Begin: " + log);
     }
 
     public static void writeResponseLog(DispatcherRequestWrapper request, DispatcherResponseWrapper response, long tookMs) throws IOException {
@@ -42,7 +41,7 @@ public final class IncomingLog {
         log.put("responseHeaders", TraceUtils.getHeaders(response));
         log.put("responseBody", TraceUtils.getBody(response));
         log.put("took", tookMs);
-        logger.info("==>Servlet End: " + JsonSerializer.serialize(log));
+        logger.info("==>Servlet End: " + log);
     }
 
     public static void writeErrorLog(DispatcherRequestWrapper request, Exception e, long tookMs) {
@@ -53,7 +52,7 @@ public final class IncomingLog {
         log.put("servletPath", request.getServletPath());
         log.put("error", msg);
         log.put("took", tookMs);
-        logger.error("==>Servlet Error: " + JsonSerializer.serialize(log));
+        logger.error("==>Servlet Error: " + log);
         //错误报告
         BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
     }
