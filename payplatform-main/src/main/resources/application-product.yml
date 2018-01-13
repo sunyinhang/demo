@@ -51,7 +51,7 @@ spring:
         acknowledge-mode: auto # 确认模式
         concurrency: 1 # 最小消费者数量
   datasource:
-    url: jdbc:oracle:thin:@10.164.193.114:1521:ibank
+    url: jdbc:oracle:thin:@10.164.193.69:1521:ibank
     username: haiercashpay
     password: haiercashpay
     driver-class-name: oracle.jdbc.OracleDriver
