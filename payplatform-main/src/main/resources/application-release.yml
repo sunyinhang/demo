@@ -35,8 +35,8 @@ spring:
       max-redirects: 3
     timeout: 10000
     pool:
-      max-idle: 100
-      min-idle: 10
+      max-idle: 200
+      min-idle: 100
       max-active: 1000
     global-key-prefix: PAYPLATFORM # 全局前缀, 自动用 ':' 分割
     default-value-expire: 3600 # 默认字符串过期时间, 单位:秒
@@ -52,7 +52,7 @@ spring:
         acknowledge-mode: auto # 确认模式
         concurrency: 1 # 最小消费者数量
   datasource:
-    url: jdbc:oracle:thin:@10.164.197.49:1521/ibank
+    url: jdbc:oracle:thin:@10.164.197.49:1521:ibank
     username: haiercashpay
     password: haiercashpay
     driver-class-name: oracle.jdbc.OracleDriver
