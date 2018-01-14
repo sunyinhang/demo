@@ -309,6 +309,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("dataFrom", channelNo);// 数据来源
         //CRM 为额度激活填写默认值
         if ("46".equals(channelNo)) {
+            paramMap.put("positionType", "10");// 工作性质
             paramMap.put("education", "20");// 最高学历   大专
             paramMap.put("liveInfo", "99");//现居住情况    其他
             paramMap.put("localResid", "10");//户口性质   本地城镇
