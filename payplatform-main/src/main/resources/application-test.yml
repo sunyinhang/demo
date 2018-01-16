@@ -97,7 +97,7 @@ spring:
       routing-key:
       queue:
     bug-report:
-      enabled: false
+      enabled: true
       level: error
       queue-size: 10
       send-interval-seconds: 120
