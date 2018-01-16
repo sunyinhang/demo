@@ -34,19 +34,19 @@ public class QiDaiController extends BaseController {
     }
 
     //文件上传
-    @PostMapping(value = "/api/HaiercashFileUploadForMd5")
+    @PostMapping(value = "/api/payment/general/HaiercashFileUploadForMd5")
     public IResponse<Map> fileUploadForMd5(@RequestBody ImageUploadPO imagePO) throws Exception {
         return qiDaiService.fileUploadForMd5(imagePO);
     }
 
     //文件下载
-    @PostMapping(value = "/api/HaiercashFileDownloadForMd5")
+    @PostMapping(value = "/api/payment/general/HaiercashFileDownloadForMd5")
     public IResponse<List> fileDownloadForMd5(@RequestBody DownFileBean downFileBean) throws Exception {
         return qiDaiService.fileDownloadForMd5(downFileBean);
     }
 
     //支付申请
-    @PostMapping(value = "/api/HaiercashPayApplyForJson")
+    @PostMapping(value = "/api/payment/general/HaiercashPayApplyForJson")
     public IResponse<Map> applyForJson(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         IResponse<Map> result = null;
         try {
@@ -58,7 +58,7 @@ public class QiDaiController extends BaseController {
     }
 
     //实名认证
-    @PostMapping(value = "/api/HaiercashCrmfCiCustRealThreeInfo")
+    @PostMapping(value = "/api/payment/general/HaiercashCrmfCiCustRealThreeInfo")
     public IResponse<Map> crmfCiCustRealThreeInfo(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         IResponse<Map> result = null;
         try {
@@ -69,7 +69,7 @@ public class QiDaiController extends BaseController {
     }
 
     //白名单
-    @PostMapping(value = "/api/HaiercashCrmAddWhiteListCmis")
+    @PostMapping(value = "/api/payment/general/HaiercashCrmAddWhiteListCmis")
     public IResponse<Map> haiercashCrmAddWhiteListCmis(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         IResponse<Map> result = null;
         try {
@@ -80,7 +80,7 @@ public class QiDaiController extends BaseController {
     }
 
     //风险信息
-    @PostMapping(value = "/api/HaiercashPayRiskInfoApply")
+    @PostMapping(value = "/api/payment/general/HaiercashPayRiskInfoApply")
     public IResponse<Map> riskInfoApply(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         IResponse<Map> result = null;
         try {
@@ -90,9 +90,10 @@ public class QiDaiController extends BaseController {
         }
     }
 
-    //返款计划
-    @PostMapping(value = "/api/HaiercashRepayment")
+    //还款计划
+    @PostMapping(value = "/api/payment/general/HaiercashRepayment")
     public IResponse<Map> haierCashRepayment(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+        logger.info("还款计划查询,开始");
         IResponse<Map> result = null;
         try {
             return result = qiDaiService.repayment(haiercashPayApplyBean);
@@ -102,7 +103,7 @@ public class QiDaiController extends BaseController {
     }
 
     //支付申请2
-    @PostMapping(value = "/api/HaiercashPayApply")
+    @PostMapping(value = "/api/payment/general/HaiercashPayApply")
     public IResponse<Map> haierCashPayApply(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
         IResponse<Map> result = null;
         try {
@@ -111,6 +112,17 @@ public class QiDaiController extends BaseController {
             writeLog(haiercashPayApplyBean, result);
         }
     }
+
+//    //查询签章消息推送
+//    @PostMapping(value = "/api/payment/general/HaiercashQueryCAData")
+//    public IResponse<Map> haiercashQueryCAData(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+//        IResponse<Map> result = null;
+//        try {
+//            return result = qiDaiService.apply(haiercashPayApplyBean);
+//        } finally {
+//            writeLog(haiercashPayApplyBean, result);
+//        }
+//    }
 
     private void writeLog(HaiercashPayApplyBean haiercashPayApplyBean, IResponse<Map> result) {
         if (StringUtils.isNotEmpty(haiercashPayApplyBean.getApplyNo())) {
