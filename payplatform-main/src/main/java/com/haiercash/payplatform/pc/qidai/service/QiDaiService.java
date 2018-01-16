@@ -101,12 +101,11 @@ public class QiDaiService extends BaseService {
             throw new BusinessException(ConstUtil.ERROR_PARAM_INVALID_CODE, "请确认发送的报文信息是否符合条件！");
         }
         //========
-        CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        json = decryptString(json, cooperativeBusiness.getRsapublic());
+        String publicKey = getPublicKey(channelNo);
+        json = decryptString(json, publicKey);
         logger.info("接口请求数据:applyNo:" + haiercashPayApplyBean.getApplyNo() + "||tradeCode:" + tradeCode + "||channelNo:" + channelNo + "||json:" + json);
         Map<String, Object> dataMap = JsonSerializer.deserializeMap(json);
-        Map jsonRequest = (Map) dataMap.get("request");
-        Map jsonBody = (Map) jsonRequest.get("body");
+        Map bodyMap = (Map) dataMap.get("body");
         String url;
         String sysCode = getSysCode(channelNo);
         if ("02".contains(sysCode)) {// 收单系统
@@ -120,7 +119,7 @@ public class QiDaiService extends BaseService {
                     break;
 
                 case "100026":
-                    String flag = Convert.toString(jsonBody.get("flag"));//操作标识
+                    String flag = Convert.toString(bodyMap.get("flag"));//操作标识
                     switch (flag) {
                         case "0":
                         case "1": // 0：贷款取消；1:申请提交
@@ -136,7 +135,7 @@ public class QiDaiService extends BaseService {
                     break;
                 case "100030":
                     if ("47".equals(channelNo)) {//积分时代，额度申请提交接口
-                        String applSeq = Convert.toString(jsonBody.get("applSeq"));//申请编号
+                        String applSeq = Convert.toString(bodyMap.get("applSeq"));//申请编号
 
                         //1、查询额度申请信息
                         logger.info("外围渠道" + channelNo + ",查询额度申请信息开始");
@@ -166,6 +165,7 @@ public class QiDaiService extends BaseService {
                         // 2、进行征信、服务协议签名签章
                         logger.info("外围渠道" + channelNo + ",征信、服务协议签名签章开始");
                         String caUrl = EurekaServer.APPCA + "/app/appserver/caRequest";// CA签章地址
+                        logger.info("接口请求url：" + caUrl);
                         JSONObject reqZXJson = new JSONObject();// 征信
                         JSONObject orderZX = new JSONObject();
                         reqZXJson.put("custName", userName);// 客户姓名
@@ -190,6 +190,7 @@ public class QiDaiService extends BaseService {
                         resZX.assertSuccess();
                         //服务协议
                         reqZXJson.put("signType", "register");// 服务协议 签章类型
+                        logger.info("外围渠道" + channelNo + ",服务协议签名签章，请求报文：" + reqZXJson.toString());
                         IResponse<Map> res = CommonRestUtils.postForMap(caUrl, reqZXJson);// 服务协议签名签章请求
                         res.assertSuccess();
                         logger.info("外围渠道" + channelNo + ",征信、服务协议签名签章结束");
@@ -1262,7 +1263,7 @@ public class QiDaiService extends BaseService {
     }
 
     public IResponse<Map> riskInfoApply(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
-        logger.info("---HaiercashPayRiskInfoApply风险信息接口，开始----");
+        logger.info("---HaiercashPayRiskInfoApply风险信息接口----");
         String channelNo = haiercashPayApplyBean.getChannelNo();
         String tradeCode = haiercashPayApplyBean.getTradeCode();
         String json = haiercashPayApplyBean.getData();
@@ -1271,11 +1272,8 @@ public class QiDaiService extends BaseService {
             logger.info("第三方发送的报文信息为空！！！");
             throw new BusinessException(ConstUtil.ERROR_PARAM_INVALID_CODE, "请确认发送的报文信息是否符合条件！");
         }
-
-        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        if (cooperativeBusiness == null || StringUtils.isEmpty(cooperativeBusiness.getRsapublic()))
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, "不支持的渠道");
-        json = decryptString(json, cooperativeBusiness.getRsapublic());
+        String publicKey = getPublicKey(channelNo);
+        json = decryptString(json, publicKey);
         logger.info("接口请求数据: applyNo:" + haiercashPayApplyBean.getApplyNo() + "||tradeCode:" + tradeCode + "||channelNo:" + channelNo + "||data:" + json);
         String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/externalData/savaExternalData";
         logger.info("风险信息接口，url为：" + url);
@@ -1295,7 +1293,7 @@ public class QiDaiService extends BaseService {
     }
 
     public IResponse<Map> crmAddWhiteListCmis(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
-        logger.info("---HaiercashCrmAddWhiteListCmiscrm新增白名单接口----开始----");
+        logger.info("---HaiercashCrmAddWhiteListCmiscrm新增白名单接口----");
         String channelNo = haiercashPayApplyBean.getChannelNo();
         String tradeCode = haiercashPayApplyBean.getTradeCode();
         String json = haiercashPayApplyBean.getData();
@@ -1304,8 +1302,8 @@ public class QiDaiService extends BaseService {
             logger.info("第三方发送的报文信息不符合条件！！！");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "请确认发送的报文中的加密信息是否符合条件！");
         }
-        CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        json = decryptString(json, cooperativeBusiness.getRsapublic());
+        String publicKey = getPublicKey(channelNo);
+        json = decryptString(json, publicKey);
         logger.info("接口请求数据：applyNo:" + haiercashPayApplyBean.getApplyNo() + "||tradeCode:" + tradeCode + "||channelNo:" + channelNo + "||data:" + json);
 
         String url = EurekaServer.CRM + "app/crm/cust/addWhiteListCmis";
@@ -1314,18 +1312,18 @@ public class QiDaiService extends BaseService {
     }
 
     public IResponse<Map> crmfCiCustRealThreeInfo(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
-        logger.info("---HaiercashCrmfCiCustRealThreeInfocrm实名认证接口----开始----");
+        logger.info("---HaiercashCrmfCiCustRealThreeInfocrm实名认证接口----");
         String channelNo = haiercashPayApplyBean.getChannelNo();
         String tradeCode = haiercashPayApplyBean.getTradeCode();
         String json = haiercashPayApplyBean.getData();
-        logger.info("接口请求数据: applyNo:" + haiercashPayApplyBean.getApplyNo() + "||tradeCode:" + tradeCode + "||channelNo:" + channelNo + "||data:" + json);
 
         if (StringUtils.isEmpty(json)) {
             logger.info("第三方发送的加密信息为空！！！");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "请确认发送的报文中的加密信息是否符合条件！");
         }
-        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        json = decryptString(json, cooperativeBusiness.getRsapublic());
+        String publicKey = getPublicKey(channelNo);
+        json = decryptString(json, publicKey);
+        logger.info("接口请求数据: applyNo:" + haiercashPayApplyBean.getApplyNo() + "||tradeCode:" + tradeCode + "||channelNo:" + channelNo + "||data:" + json);
         Map<String, Object> dataMap = JsonSerializer.deserializeMap(json);
         if ("47".equals(channelNo)) {
             String verifyCode = Convert.toString(dataMap.get("verifyCode"));
@@ -1365,7 +1363,7 @@ public class QiDaiService extends BaseService {
     }
 
     public IResponse<Map> repayment(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
-        logger.info("---HaiercashRepayment还款计划接口----开始----");
+        logger.info("---HaiercashRepayment还款计划接口---");
         String channelNo = haiercashPayApplyBean.getChannelNo();
         String json = haiercashPayApplyBean.getData();
         if (StringUtils.isEmpty(json)) {
@@ -1394,14 +1392,18 @@ public class QiDaiService extends BaseService {
         logger.info("---HaiercashPayApply接口----开始----");
         String channelNo = haiercashPayApplyBean.getChannelNo();
         String tradeCode = haiercashPayApplyBean.getTradeCode();
+        String json = haiercashPayApplyBean.getData();
 
-        String publickey = getPublicKey(channelNo);
-        String json = decryptString(haiercashPayApplyBean.getData(), publickey);
+        if (StringUtils.isEmpty(json)) {
+            logger.info("第三方发送的请求报文信息不能为空！！！");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "第三方发送的请求报文信息不能为空！！！");
+        }
+        String publicKey = getPublicKey(channelNo);
+        json = decryptString(json, publicKey);
         logger.info("接口请求数据: applyNo:" + haiercashPayApplyBean.getApplyNo() + "||tradeCode:" + haiercashPayApplyBean.getTradeCode() + "||channelNo:" + channelNo + "||data:" + json);
         String sysCode = getSysCode(channelNo);
         Map<String, Object> jsonMap = JsonSerializer.deserializeMap(json);
-        Map<String, Object> requestMap = (Map<String, Object>) jsonMap.get("request");
-        Map<String, Object> bodyMap = (Map<String, Object>) requestMap.get("body");
+        Map<String, Object> bodyMap = (Map<String, Object>) jsonMap.get("body");
         if ("02".contains(sysCode)) {// 02收单 01信贷
             logger.info("----------------进入收单系统-----------------");
             if ("100001".equals(tradeCode)) {
@@ -1467,6 +1469,36 @@ public class QiDaiService extends BaseService {
             }
             return CmisRestUtils.postForMap(CmisRequestBuilder.build(jsonMap)).toCommonResponse();
         }
+    }
+
+    public IResponse<Map> queryCAData(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
+        logger.info("---haiercashQueryCAData查询签章消息推送----开始----");
+        String channelNo = haiercashPayApplyBean.getChannelNo();
+        String json = haiercashPayApplyBean.getData();
+        String tradeCode = haiercashPayApplyBean.getTradeCode();
+        if (StringUtils.isEmpty(json)) {
+            logger.info("第三方发送的报文信息不符合条件！！！");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "请确认发送的报文中的加密信息是否符合条件！");
+        }
+        String publicKey = getPublicKey(channelNo);
+        json = decryptString(json, publicKey);
+        logger.info("接口请求数据：applyNo:" + haiercashPayApplyBean.getApplyNo() + "||tradeCode:" + tradeCode + "||channelNo:" + channelNo + "||data:" + json);
+        Map<String, Object> dataMap = JsonSerializer.deserializeMap(json);
+        String applSeq = Convert.toString(dataMap.get("applSeq"));
+        String date = Convert.toString(dataMap.get("date"));
+        String page = Convert.toString(dataMap.get("page"));
+        String size = Convert.toString(dataMap.get("size"));
+        String signType = Convert.toString(dataMap.get("signType"));
+        String param = "applSeq=" + applSeq + "&date=" + date + "&channelNo=" + channelNo + "&page=" + page + "&size=" + size + "&signType=" + signType;
+        logger.info("--------param:" + param + "--------");
+        String url = qiDaiConfig.getCmisYcLoanUrl() + "/app/appserver/ca/SelectCaSignPush";
+        logger.info("请求地址为：" + url);
+        String response = CommonRestUtils.getForString(url);
+        if (StringUtils.isEmpty(response)) {
+            logger.info("查询签章状态信息，响应数据为空！");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        return CommonResponse.success();
     }
 
     private boolean upLodeFileNew(String sysId, String busId, List<ImageUploadVO> fileList, String applSeq, String username, String attachPath, String channelNo) throws Exception {

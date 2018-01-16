@@ -118,7 +118,7 @@ public class QiDaiController extends BaseController {
 //    public IResponse<Map> haiercashQueryCAData(@RequestBody HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
 //        IResponse<Map> result = null;
 //        try {
-//            return result = qiDaiService.apply(haiercashPayApplyBean);
+//            return result = qiDaiService.queryCAData(haiercashPayApplyBean);
 //        } finally {
 //            writeLog(haiercashPayApplyBean, result);
 //        }
