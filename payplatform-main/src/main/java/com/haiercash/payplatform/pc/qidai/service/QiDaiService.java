@@ -11,7 +11,6 @@ import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.JsonSerializer;
-import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.core.vfs.VFSType;
 import com.haiercash.core.vfs.VFSUserAuthenticator;
 import com.haiercash.core.vfs.VFSUtils;
@@ -111,10 +110,12 @@ public class QiDaiService extends BaseService {
         if ("02".contains(sysCode)) {// 收单系统
             switch (tradeCode) {
                 case "100001":
+                    logger.info("-------额度申请-------");
                     url = EurekaServer.ACQUIRER + "api/appl/saveLcAppl";
                     break;
 
                 case "100021"://贷款详情查询接口
+                    logger.info("-------贷款详情查询-------");
                     url = EurekaServer.ACQUIRER + "api/appl/getApplInfo";
                     break;
 
@@ -222,10 +223,12 @@ public class QiDaiService extends BaseService {
         }
         String apptime = imagePO.getApptime();
         if (StringUtils.isEmpty(apptime)) {
+            logger.info("文件上传,申请时间为空,流水号为" + appno);
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请时间不允许为空！");
         }
         List<ImageUploadVO> fileList = imagePO.getFilelist();
         if (CollectionUtils.isEmpty(fileList)) {
+            logger.info("文件上传,文件列表不存在,流水号为" + appno);
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "文件列表不存在！");
         }
         // 根据渠道编号取对账文件地址，后期改造为从cooperativeBusiness获取。
@@ -253,11 +256,7 @@ public class QiDaiService extends BaseService {
                 checkDir = "3202";//美利 扣款渠道
                 break;
         }
-
-        CooperativeBusiness cooperativeBusiness = this.cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        String publicKey = cooperativeBusiness.getRsapublic();
-
-
+        String publicKey = getPublicKey(channelNo);
         // 上传路径中的日期，如：yyyy_MM;
         final String sysId = "00";
         final String busId = "LcAppl";
@@ -274,6 +273,7 @@ public class QiDaiService extends BaseService {
             boolean transResult;
 
             if (StringUtils.isEmpty(fileName)) {
+                logger.info("文件上传,文件名不允许为空,流水号为" + appno);
                 return CommonResponse.fail(ConstUtil.ERROR_CODE, "文件名不允许为空！");
             }
             if (StringUtils.isEmpty(fileType)) {
@@ -282,6 +282,7 @@ public class QiDaiService extends BaseService {
             }
             int num2 = fileName.lastIndexOf(".");
             if (num2 == ArrayUtils.INDEX_NOT_FOUND) { // 没有"."的文件名说明没有后缀
+                logger.info("文件上传,文件格式不明,流水号为" + appno);
                 return CommonResponse.fail(ConstUtil.ERROR_CODE, "文件格式不明！");
             }
             String fileExt = fileName.substring(num2 + 1); // 文件后缀名(去掉点号)
@@ -299,8 +300,7 @@ public class QiDaiService extends BaseService {
             logger.info("文件上传接口传过来的MD5为:" + mdString);
             String filestream = vo.getFile();
             // 2016-09-06 去掉一层加密
-            filestream = URLSerializer.decode(filestream);
-            byte[] bt = Base64Utils.decode(filestream);
+            byte[] bt = decodeFile(filestream);
             String myMd5 = DigestUtils.md5Hex(bt);
             logger.info("文件上传接口新生成的MD5为:" + myMd5);
             if (!myMd5.equals(mdString)) {
@@ -349,7 +349,7 @@ public class QiDaiService extends BaseService {
                     "DOC009".equals(fileType) || "DOC010".equals(fileType) || "DOC011".equals(fileType) || "DOC012".equals(fileType) || "DOC013".equals(fileType) ||
                     "DOC003".equals(fileType) || "DOC73".equals(fileType) || "DOC065".equals(fileType) || "App01".equals(fileType) || "DOC021".equals(fileType) ||
                     "DOC035".equals(fileType) || "DOC041".equals(fileType) || "DOC078".equals(fileType)) {// 文件为zip类型，上传至新影像系统
-                if (applSeq == null || "".equals(applSeq)) {
+                if (StringUtils.isEmpty(applSeq)) {
                     logger.info("影像文件(" + fileType + "类型)上传,申请号为空,流水号为" + appno);
                     return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请号不能为空！");
                 }
@@ -720,9 +720,6 @@ public class QiDaiService extends BaseService {
         }
 
         // 1.获取JSON数据
-        CooperativeBusiness cooperativeBusiness = cooperativeBusinessDao.selectBycooperationcoed(channelNo);
-        String publicKey = cooperativeBusiness.getRsapublic();
-
         String sysId = "00";
         String busId = "LcAppl";
         final String attachPath = qiDaiConfig.getAttachPath();
@@ -1389,7 +1386,7 @@ public class QiDaiService extends BaseService {
     }
 
     public IResponse<Map> apply(HaiercashPayApplyBean haiercashPayApplyBean) throws Exception {
-        logger.info("---HaiercashPayApply接口----开始----");
+        logger.info("---HaiercashPayApply接口----");
         String channelNo = haiercashPayApplyBean.getChannelNo();
         String tradeCode = haiercashPayApplyBean.getTradeCode();
         String json = haiercashPayApplyBean.getData();
@@ -1420,6 +1417,7 @@ public class QiDaiService extends BaseService {
                     return CmisRestUtils.postForMap(CmisRequestBuilder.build(jsonMap)).toCommonResponse();
                 }
             } else if ("100021".equals(tradeCode)) {
+                logger.info("--------贷款详情,审批状态查询--------");
                 String url = EurekaServer.ACQUIRER + "/api/appl/getApplInfo";
                 return AcqRestUtils.postForMap(url, AcqRequestBuilder.build(jsonMap)).toCommonResponse();
             } else if ("100030".equals(tradeCode)) {
@@ -1447,11 +1445,13 @@ public class QiDaiService extends BaseService {
                 return CmisRestUtils.postForMap(CmisRequestBuilder.build(jsonMap)).toCommonResponse();
             }
         } else {
+            logger.info("----------------进入核心系统-----------------");
             if ("100001".equals(tradeCode)) {// 核心
                 IResponse<Map> response = CmisRestUtils.postForMap(CmisRequestBuilder.build(jsonMap));
                 response.assertSuccessNeedBody();
                 String applSeq = Convert.toString(bodyMap.get("appl_seq"));
                 String applCde = Convert.toString(bodyMap.get("applCde"));
+                logger.info("------appl_seq: " + applSeq + "applCde: " + applCde + "------");
                 if (Objects.equals(channelNo, "27")) {
                     writePayApplyLog(applSeq, applCde, channelNo, tradeCode);
                 } else if (Objects.equals(channelNo, "28") || Objects.equals(channelNo, "33")) {
