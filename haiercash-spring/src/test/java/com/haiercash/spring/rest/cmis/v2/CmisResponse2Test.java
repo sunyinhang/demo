@@ -11,9 +11,9 @@ public class CmisResponse2Test {
 
     @Test
     public void test() {
-        CmisResponse2 response2 = new CmisResponse2();
+        CmisResponse2<Object> response2 = new CmisResponse2<>();
         response2.put("retFlg", "00000");
         String json = JsonSerializer.serialize(response2);
-        Assert.assertEquals("{}", json);
+        Assert.assertEquals("{\"retFlg\":\"00000\"}", json);
     }
 }
