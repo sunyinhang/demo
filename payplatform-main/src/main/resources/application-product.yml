@@ -30,8 +30,9 @@ spring:
     route-headers-enabled: false
     ignore-headers:
   redis:
-    host: 10.164.194.195
-    port: 10001
+    cluster:
+      nodes: 10.164.207.69:10001,10.164.207.69:10002,10.164.207.70:10001,10.164.207.70:10002,10.164.207.71:10001,10.164.207.71:10002
+      max-redirects: 3
     timeout: 10000
     pool:
       max-idle: 200
@@ -138,8 +139,7 @@ app:
     APPCA: http://APPCA
     APPMANAGE: http://APPMANAGE
     APPMSG: http://APPSERVER-MSG
-    APPSERVER: http://APPSERVER
-    APPSERVERNOAUTH: http://APPSERVERNOAUTH
+    APPSERVER: http://APPSERVER-NEW
     APPSERVERNOAUTHNEW: http://APPSERVERNOAUTHNEW
     CMISFRONTSERVER: http://CMIS-FRONT-SERVER
     CMISINTERFACESERVER: http://CMIS-INTERFACE-SERVER
