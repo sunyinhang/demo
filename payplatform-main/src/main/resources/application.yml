@@ -8,7 +8,7 @@ logging:
 security:
   sessions: never
 info:
-  name: paypaltform-develop
+  name: payplatform-develop
   description: 支付平台-开发环境
 spring:
   application:
