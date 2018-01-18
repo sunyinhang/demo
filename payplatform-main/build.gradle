@@ -35,8 +35,6 @@ dependencyManagement {
 
 dependencies {
     compile project(':haiercash-spring')
-    //xml
-    compile('de.odysseus.staxon:staxon:1.3')
 
     //==运行时==
     runtime('org.springframework.boot:spring-boot-devtools')
