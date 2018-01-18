@@ -37,7 +37,8 @@ public final class JsonSerializer {
                 SerializerFeature.SkipTransientField,
                 SerializerFeature.SortField,
                 SerializerFeature.WriteEnumUsingName,
-                SerializerFeature.WriteDateUseDateFormat);
+                SerializerFeature.WriteDateUseDateFormat,
+                SerializerFeature.IgnoreNonFieldGetter);
         GLOBAL_CONFIG.setSerializeFilters(new CommonValueFilter());
     }
 
@@ -58,6 +59,16 @@ public final class JsonSerializer {
                 getGlobalConfig().getDateFormat(),
                 Feature.of(getGlobalConfig().getFeatures()),
                 getGlobalConfig().getSerializerFeatures());
+    }
+
+    /**
+     * 反序列化
+     *
+     * @param json 字符串
+     * @return 对象
+     */
+    public static Object deserialize(String json) {
+        return JSON.parse(json);
     }
 
     /**

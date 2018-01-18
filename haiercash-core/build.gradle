@@ -44,6 +44,11 @@ dependencies {
     compile('com.alibaba:fastjson:1.2.38')
     //xml
     compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml')
+    //vfs
+    compile('org.apache.commons:commons-vfs2:2.2')
+    compile('commons-httpclient:commons-httpclient:3.1')
+    compile('commons-net:commons-net:3.6')
+    compile('com.jcraft:jsch:0.1.54')
     //==编译时==
     compileOnly('org.springframework.boot:spring-boot-configuration-processor')
     compileOnly('org.projectlombok:lombok')

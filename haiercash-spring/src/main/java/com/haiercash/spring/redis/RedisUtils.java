@@ -1,13 +1,13 @@
 package com.haiercash.spring.redis;
 
 import com.alibaba.fastjson.TypeReference;
-import com.bestvike.linq.exception.InvalidOperationException;
-import com.haiercash.core.lang.StringUtils;
+import com.bestvike.linq.Linq;
 import com.haiercash.spring.redis.converter.FastJsonRedisSerializer;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundValueOperations;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -110,8 +110,7 @@ public final class RedisUtils {
         if (getRedisProperties().valueExpireEnabled()) {
             BoundValueOperations<String, String> operations = getRedisTemplate().boundValueOps(key);
             boolean success = operations.setIfAbsent(SERIALIZER.serialize(value));
-            if (success)
-                operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
             return success;
         } else {
             return getRedisTemplate().opsForValue().setIfAbsent(key, SERIALIZER.serialize(value));
@@ -201,55 +200,78 @@ public final class RedisUtils {
 
     //region 哈希命令-常用
 
-    private static String getOpsForHashKey(String key, String field) {
-        if (StringUtils.isEmpty(key))
-            throw new InvalidOperationException("redis ops for hash key can not be empty");
-        if (StringUtils.isEmpty(field))
-            throw new InvalidOperationException("redis ops for hash field can not be empty");
-        return key + ":" + field;
-    }
-
     public static void hsetExpire(String key, String field, Object value) {
-        setExpire(getOpsForHashKey(key, field), value);
+        if (getRedisProperties().valueExpireEnabled()) {
+            BoundHashOperations<String, String, String> operations = getRedisTemplate().boundHashOps(key);
+            operations.put(field, SERIALIZER.serialize(value));
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+        } else {
+            getRedisTemplate().<String, String>opsForHash().put(key, field, SERIALIZER.serialize(value));
+        }
     }
 
+    @SuppressWarnings("Duplicates")
     public static <T> T hgetExpire(String key, String field, Class<T> clazz) {
-        return getExpire(getOpsForHashKey(key, field), clazz);
+        if (getRedisProperties().valueExpireEnabled()) {
+            BoundHashOperations<String, String, String> operations = getRedisTemplate().boundHashOps(key);
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+            return SERIALIZER.deserialize(operations.get(field), clazz);
+        } else {
+            return SERIALIZER.deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), clazz);
+        }
     }
 
+    @SuppressWarnings("Duplicates")
     public static <T> T hgetExpire(String key, String field, TypeReference<T> type) {
-        return getExpire(getOpsForHashKey(key, field), type);
+        if (getRedisProperties().valueExpireEnabled()) {
+            BoundHashOperations<String, String, String> operations = getRedisTemplate().boundHashOps(key);
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+            return SERIALIZER.deserialize(operations.get(field), type);
+        } else {
+            return SERIALIZER.deserialize(getRedisTemplate().<String, String>opsForHash().get(key, field), type);
+        }
     }
 
     public static String hgetExpireString(String key, String field) {
-        return getExpireString(getOpsForHashKey(key, field));
+        return hgetExpire(key, field, String.class);
     }
 
     public static Map<String, Object> hgetExpireMap(String key, String field) {
-        return getExpireMap(getOpsForHashKey(key, field));
+        return hgetExpire(key, field, new TypeReference<Map<String, Object>>() {
+        });
     }
 
     public static boolean hsetnxExpire(String key, String field, Object value) {
-        return setnxExpire(getOpsForHashKey(key, field), value);
+        if (getRedisProperties().valueExpireEnabled()) {
+            BoundHashOperations<String, String, String> operations = getRedisTemplate().boundHashOps(key);
+            boolean success = operations.putIfAbsent(field, SERIALIZER.serialize(value));
+            operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
+            return success;
+        } else {
+            return getRedisTemplate().<String, String>opsForHash().putIfAbsent(key, field, SERIALIZER.serialize(value));
+        }
     }
 
     public static void hmsetExpire(String key, Map<String, Object> map) {
+        Map<String, String> stringMap = Linq.asEnumerable(map).toMap(Map.Entry::getKey, entry -> SERIALIZER.serialize(entry.getValue()));
         if (getRedisProperties().valueExpireEnabled()) {
-            BoundHashOperations<String, String, Object> operations = getRedisTemplate().boundHashOps(key);
-            operations.putAll(map);
+            BoundHashOperations<String, String, String> operations = getRedisTemplate().boundHashOps(key);
+            operations.putAll(stringMap);
             operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
         } else {
-            getRedisTemplate().opsForHash().putAll(key, map);
+            getRedisTemplate().<String, String>opsForHash().putAll(key, stringMap);
         }
     }
 
     public static Map<String, Object> hgetAllExpire(String key) {
         if (getRedisProperties().valueExpireEnabled()) {
-            BoundHashOperations<String, String, Object> operations = getRedisTemplate().boundHashOps(key);
+            BoundHashOperations<String, String, String> operations = getRedisTemplate().boundHashOps(key);
             operations.expire(getRedisProperties().getDefaultValueExpire(), getRedisProperties().getTimeUnit());
-            return operations.entries();
+            Map<String, String> stringMap = operations.entries();
+            return Linq.asEnumerable(stringMap).toMap(Map.Entry::getKey, entry -> SERIALIZER.deserialize(entry.getValue()));
         } else {
-            return getRedisTemplate().<String, Object>opsForHash().entries(key);
+            Map<String, String> stringMap = getRedisTemplate().<String, String>opsForHash().entries(key);
+            return Linq.asEnumerable(stringMap).toMap(Map.Entry::getKey, entry -> SERIALIZER.deserialize(entry.getValue()));
         }
     }
 
@@ -292,11 +314,13 @@ public final class RedisUtils {
     }
 
     public static void hmset(String key, Map<String, Object> map) {
-        getRedisTemplate().opsForHash().putAll(key, map);
+        Map<String, String> stringMap = Linq.asEnumerable(map).toMap(Map.Entry::getKey, entry -> SERIALIZER.serialize(entry.getValue()));
+        getRedisTemplate().opsForHash().putAll(key, stringMap);
     }
 
     public static Map<String, Object> hgetAll(String key) {
-        return getRedisTemplate().<String, Object>opsForHash().entries(key);
+        Map<String, String> stringMap = getRedisTemplate().<String, String>opsForHash().entries(key);
+        return Linq.asEnumerable(stringMap).toMap(Map.Entry::getKey, entry -> SERIALIZER.deserialize(entry.getValue()));
     }
 
     //endregion
@@ -305,7 +329,11 @@ public final class RedisUtils {
     //region 列表操作
 
     public static long lrem(String key, long count, Object value) {
-        return getRedisTemplate().opsForList().remove(key, count, value);
+        return getRedisTemplate().opsForList().remove(key, count, SERIALIZER.serialize(value));
+    }
+
+    public static List<String> lrange(String key, long start, long end) {
+        return getRedisTemplate().opsForList().range(key, start, end);
     }
 
     public static <T> T blpop(String key, long timeout, TimeUnit unit, Class<T> clazz) {
@@ -365,10 +393,6 @@ public final class RedisUtils {
 
     public static long lpushx(String key, Object value) {
         return getRedisTemplate().opsForList().leftPushIfPresent(key, SERIALIZER.serialize(value));
-    }
-
-    public static long lpushx(String key, long count, Object value) {
-        return getRedisTemplate().opsForList().remove(key, count, SERIALIZER.serialize(value));
     }
 
     public static <T> T rpop(String key, Class<T> clazz) {

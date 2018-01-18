@@ -1,7 +1,6 @@
 package com.haiercash.spring.trace.rest;
 
 import com.haiercash.core.lang.ThrowableUtils;
-import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.client.ClientRequestWrapper;
 import com.haiercash.spring.client.ClientResponseWrapper;
 import com.haiercash.spring.trace.TraceUtils;
@@ -37,12 +36,12 @@ public final class OutgoingLog {
         log.put("responseHeaders", TraceUtils.getHeaders(response));
         log.put("responseBody", TraceUtils.getBody(response));
         log.put("took", tookMs);
-        logger.info("==>Call Rest: " + JsonSerializer.serialize(log));
+        logger.info("==>Call Rest: " + log);
     }
 
     public static void writeError(Map<String, Object> log, Exception e, long tookMs) {
         log.put("error", ThrowableUtils.getMessage(e));
         log.put("took", tookMs);
-        logger.error("==>Call Rest Error: " + JsonSerializer.serialize(log));
+        logger.error("==>Call Rest Error: " + log);
     }
 }

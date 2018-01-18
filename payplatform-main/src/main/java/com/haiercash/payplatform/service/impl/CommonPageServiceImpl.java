@@ -1505,10 +1505,10 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     }
 
     public void calcFstPct(AppOrder order) {
-        if (org.springframework.util.StringUtils.isEmpty(order.getFstPay())) {
+        if (StringUtils.isEmpty(order.getFstPay())) {
             order.setFstPay("0.0");
             order.setFstPct("0.0");
-        } else if (!org.springframework.util.StringUtils.isEmpty(order.getProPurAmt())) {
+        } else if (!StringUtils.isEmpty(order.getProPurAmt())) {
             // 首付
             BigDecimal fstPay_big = new BigDecimal(order.getFstPay());
             BigDecimal propurAmt_big = new BigDecimal(order.getProPurAmt());

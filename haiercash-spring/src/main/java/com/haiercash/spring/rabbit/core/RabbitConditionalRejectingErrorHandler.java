@@ -24,7 +24,7 @@ public final class RabbitConditionalRejectingErrorHandler extends ConditionalRej
 
     @Override
     public void handleError(Throwable throwable) {
-        //isFatal() true 说明错误非常严重. 如果设置了死信队列将被发往死信队列, 否则将被
+        //isFatal() true 说明错误非常严重. 如果设置了死信队列将被发往死信队列, 否则将被丢弃
         if (!this.causeChainContainsARADRE(throwable) && this.exceptionStrategy.isFatal(throwable))
             throw new AmqpRejectAndDontRequeueException("Error Handler converted exception to fatal", throwable);
     }
@@ -39,7 +39,7 @@ public final class RabbitConditionalRejectingErrorHandler extends ConditionalRej
         return false;
     }
 
-    public final static class RabbitExceptionStrategy extends ConditionalRejectingErrorHandler.DefaultExceptionStrategy {
+    public static final class RabbitExceptionStrategy extends ConditionalRejectingErrorHandler.DefaultExceptionStrategy {
         @Override
         public boolean isFatal(Throwable throwable) {
             return throwable instanceof ListenerExecutionFailedException && this.isCauseFatal(throwable.getCause());

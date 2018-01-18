@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.lang.DateUtils;
-import com.haiercash.core.util.IDCard;
+import com.haiercash.core.util.IdCard;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
@@ -251,7 +251,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         apptmap.put("appt_id_typ_oth", "");
         apptmap.put("appt_id_no", apporder.getIdNo());
         apptmap.put("appt_cust_name", apporder.getCustName());
-        IDCard idCard = new IDCard(apporder.getIdNo());
+        IdCard idCard = new IdCard(apporder.getIdNo());
         apptmap.put("appt_indiv_sex", idCard.getGenderCode());
         apptmap.put("appt_start_date", DateUtils.toDateString(idCard.getBirthday()));
         apptmap.put("indiv_marital", custExtInfoBodyMap.get("maritalStatus"));

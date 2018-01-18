@@ -6,8 +6,6 @@ import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.util.ConstUtil;
 import lombok.Data;
 
-import java.util.Objects;
-
 /**
  * Created by 许崇雷 on 2017-10-08.
  */
@@ -42,7 +40,11 @@ public final class CommonResponse<TBody> implements IResponse<TBody> {
         return response;
     }
 
-    @JSONField(serialize = false, deserialize = false)
+    @Override
+    public String getSerNo() {
+        return null;
+    }
+
     @Override
     public String getRetFlag() {
         CommonResponseHead head = this.getHead();
@@ -51,19 +53,12 @@ public final class CommonResponse<TBody> implements IResponse<TBody> {
         return head.getRetFlag();
     }
 
-    @JSONField(serialize = false, deserialize = false)
     @Override
     public String getRetMsg() {
         CommonResponseHead head = this.getHead();
         if (head == null)
             return StringUtils.EMPTY;
         return head.getRetMsg();
-    }
-
-    @JSONField(serialize = false, deserialize = false)
-    @Override
-    public String getSerNo() {
-        return null;
     }
 
     @Override
@@ -74,13 +69,5 @@ public final class CommonResponse<TBody> implements IResponse<TBody> {
     @Override
     public TBody getBody() {
         return this.body;
-    }
-
-    @JSONField(serialize = false, deserialize = false)
-    @Override
-    public boolean isSuccess(boolean needBody) {
-        String retFlag = this.getRetFlag();
-        boolean retFlagOK = Objects.equals(retFlag, ConstUtil.SUCCESS_CODE) || Objects.equals(retFlag, ConstUtil.SUCCESS_CODE2);
-        return needBody ? retFlagOK && this.getBody() != null : retFlagOK;
     }
 }

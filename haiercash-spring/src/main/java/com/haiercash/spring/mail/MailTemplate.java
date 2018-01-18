@@ -55,7 +55,7 @@ public final class MailTemplate {
 
     //转给消息平台
     private void sendForward(Mail mail) {
-        String url = EurekaServer.getAPPMSG() + MailController.API_SEND_MAIL;
+        String url = EurekaServer.APPMSG + MailController.API_SEND_MAIL;
         IResponse response = CommonRestUtils.postForMap(url, mail);
         if (response.isSuccess())
             return;
