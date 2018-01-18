@@ -36,6 +36,8 @@ dependencyManagement {
 dependencies {
     compile project(':haiercash-spring')
 
+    //支付宝 sdk
+    compile('com.alipay:alipay-sdk:20180104135026')
     //==运行时==
     runtime('org.springframework.boot:spring-boot-devtools')
     //==编译时==
