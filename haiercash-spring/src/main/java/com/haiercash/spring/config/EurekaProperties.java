@@ -14,7 +14,6 @@ public final class EurekaProperties {
     private String APPMANAGE;
     private String APPMSG;
     private String APPSERVER;
-    private String APPSERVERNOAUTH;
     private String APPSERVERNOAUTHNEW;
     private String CMISFRONTSERVER;
     private String CMISINTERFACESERVER;

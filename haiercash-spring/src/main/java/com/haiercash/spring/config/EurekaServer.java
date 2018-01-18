@@ -12,7 +12,6 @@ public class EurekaServer {
     public static String APPMANAGE;
     public static String APPMSG;
     public static String APPSERVER;
-    public static String APPSERVERNOAUTH;
     public static String APPSERVERNOAUTHNEW;
     public static String CMISFRONTSERVER;
     public static String CMISINTERFACESERVER;

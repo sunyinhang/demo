@@ -15,7 +15,6 @@ public class EurekaAutoConfiguration {
         EurekaServer.APPMANAGE = eurekaProperties.getAPPMANAGE();
         EurekaServer.APPMSG = eurekaProperties.getAPPMSG();
         EurekaServer.APPSERVER = eurekaProperties.getAPPSERVER();
-        EurekaServer.APPSERVERNOAUTH = eurekaProperties.getAPPSERVERNOAUTH();
         EurekaServer.APPSERVERNOAUTHNEW = eurekaProperties.getAPPSERVERNOAUTHNEW();
         EurekaServer.CMISFRONTSERVER = eurekaProperties.getCMISFRONTSERVER();
         EurekaServer.CMISINTERFACESERVER = eurekaProperties.getCMISINTERFACESERVER();
