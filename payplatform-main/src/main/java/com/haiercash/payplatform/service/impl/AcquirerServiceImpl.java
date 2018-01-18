@@ -218,7 +218,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         String json = HttpUtil.restGet(url, getToken());
         if (StringUtils.isEmpty(json)) {
             logger.error("客户扩展信息接口返回异常！-->CRM 1.4");
-            return fail("51", ConstUtil.ERROR_INFO);
+            return fail("51", ConstUtil.ERROR_MSG);
         }
         logger.debug("CRM 获取客户拓展信息返回json:" + json);
         Map<String, Object> custExtInfoMap = HttpUtil.json2Map(json);
@@ -238,7 +238,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         logger.debug("CRM 获取客户基本信息:" + lxrJson);
         if (StringUtils.isEmpty(lxrJson)) {
             logger.error("联系人列表查询失败！——>CRM 1.8");
-            return fail("52", ConstUtil.ERROR_INFO);
+            return fail("52", ConstUtil.ERROR_MSG);
         }
         Map<String, Object> lxrMap = HttpUtil.json2Map(lxrJson);
         List<Map<String, Object>> lxrlist = new ArrayList<>();

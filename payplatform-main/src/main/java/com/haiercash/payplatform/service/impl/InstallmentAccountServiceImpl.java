@@ -98,7 +98,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         logger.info("查询全部贷款信息列表接口，请求数据：" + req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.getDateAppOrderPerson(token, req);
         if (dateAppOrderPerson == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) dateAppOrderPerson.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -165,7 +165,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         logger.info("查询待提交订单列表接口，请求数据：" + req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.getWtjAppOrderCust(token, req);
         if (dateAppOrderPerson == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) dateAppOrderPerson.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -227,7 +227,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         logger.info("待还款信息查询(全部)接口，请求数据：" + req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.queryApplAllByIdNo(token, req);
         if (dateAppOrderPerson == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) dateAppOrderPerson.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -314,7 +314,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         logger.info("查询已提交贷款申请列表接口，请求数据：" + req.toString());
         Map<String, Object> dateAppOrderPerson = appServerService.queryApplListPerson(token, req);
         if (dateAppOrderPerson == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) dateAppOrderPerson.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -368,7 +368,7 @@ public class InstallmentAccountServiceImpl extends BaseService implements Instal
         String applseq = AppOrdernoTypgrpRelation.getApplSeq();
         Map<String, Object> queryOrderInfo = acquirerService.getOrderFromAcquirer(applseq, channel, channelNo, null, null, "2");
         if (queryOrderInfo == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> resultHeadMap = (Map<String, Object>) queryOrderInfo.get("head");
         String retFlag = (String) resultHeadMap.get("retFlag");

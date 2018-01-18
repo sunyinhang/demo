@@ -153,7 +153,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         logger.info("推送外联风险信息，返回数据：" + resData);
         JSONObject result = new JSONObject(resData);
         if (!"0000".equals(result.get("code"))) {
-            return fail("02", ConstUtil.ERROR_INFO);
+            return fail("02", ConstUtil.ERROR_MSG);
         }
         return success();
     }
@@ -479,7 +479,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         bindMap.put("channelNo", channelNo);
         Map bindresult = appServerService.saveThirdPartToken(bindMap);
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //5.查询实名信息
@@ -596,7 +596,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 map1.put("outSts", "01");
                 return success(map1);
             }
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map) head2;
@@ -622,13 +622,13 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 Map<String, Object> map1 = appServerService.queryPerCustInfo(token, mapinfo);//3.1.29.(GET)查询客户实名认证信息（根据userid）(APP_person)(CRM17)
                 if (StringUtils.isEmpty(map1)) {
                     logger.info("查询客户实名认证信息接口返回数据为空" + map1);
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
                 Map<String, Object> headin = (Map) map1.get("head");
                 if (!"00000".equals(headin.get("retFlag"))) {
                     logger.info("查询客户实名认证信息接口,返回错误：" + headin.get("retMsg"));
                     //String retmsgo = "当前返回的状态不符合";
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
                 Map<String, Object> bodyinfo = (Map) map1.get("body");
                 String idNo = (String) bodyinfo.get("certNo");
@@ -692,7 +692,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 return success(flagmap);
             } else {
                 logger.info("返回的申请类型为空：applType" + applType);
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
             }
         } else {
             return fail(ConstUtil.ERROR_CODE, retMsg);
@@ -749,7 +749,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         logger.info("查询贷款详情接口，响应数据：" + map);
         if (MapUtils.isEmpty(queryApplmap)) {//response
             logger.info("网络异常,查询贷款详情接口,响应数据为空！" + map);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> response = (Map) queryApplmap.get("response");
         Map<String, Object> head = (Map) response.get("head");
@@ -799,7 +799,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String userId = (String) map.get("userId");//海尔集团用户ID
         if (StringUtils.isEmpty(userId)) {
             logger.info("获取的参数为空：userId" + userId);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> userIdOne = getUserIdif(userId);//获取用户userId
         Object body1 = userIdOne.get("body");//用户信息
@@ -840,7 +840,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         String token = (String) json.get("token");
         if (StringUtils.isEmpty(token)) {
             logger.info("获取token失败token:" + token);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //1.根据token获取客户信息
         String userjsonstr = haierDataService.userinfo(token);
@@ -894,7 +894,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> edCheck = appServerService.getEdCheck(token, edCheckmap);// 获取额度剩余额度=crdComAvailAnt+crdNorAvailAmt
         if (StringUtils.isEmpty(edCheck)) {
             logger.info("调用接口返回的数据为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         JSONObject jsonObject = new JSONObject(edCheck);
 //        String limit = com.alibaba.fastjson.JSONObject.toJSONString(edCheck);
@@ -955,7 +955,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 return fail(ConstUtil.ERROR_CODE, retmsg);
             }
             logger.info("调集团用户id查询用户信息接口返回信息错误userIdmap" + userIdmap);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Object body1 = userIdmap.get("body");
         Map<String, Object> body11 = (Map) body1;
@@ -973,7 +973,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> userIdmap = appServerService.getUserId(null, map);
         if (!HttpUtil.isSuccess(userIdmap)) {
             logger.info("调集团用户id查询用户信息接口返回信息错误userIdmap" + userIdmap);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Object body1 = userIdmap.get("body");
         Map<String, Object> body11 = (Map) body1;
@@ -1021,7 +1021,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         bindMap.put("channelNo", channelNo);
         Map bindresult = appServerService.saveThirdPartToken(bindMap);
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //5.查询实名信息
@@ -1075,7 +1075,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map<String, Object> edCheck = appServerService.getEdCheck(token, edCheckmap);// 获取额度剩余额度=crdComAvailAnt+crdNorAvailAmt
         if (StringUtils.isEmpty(edCheck)) {
             logger.info("调用接口返回的数据为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //6.查询客户额度
@@ -1170,7 +1170,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             Map<String, Object> paramMap = HttpUtil.json2Map(params);
             Map<String, Object> returnMap = acquirerService.returnGoods(AcqTradeCode.ACQ_RETURNGODDS_TREADECODE, ConstUtil.CHANNEL, channelNo, "", "", paramMap);
             if (returnMap == null) {
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
             }
             return (Map<String, Object>) returnMap.get("response");
         } catch (Exception e) {
@@ -1196,7 +1196,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             Map<String, Object> paramMap = HttpUtil.json2Map(params);
             Map<String, Object> returnMap = acquirerService.getReturnGoodsInfo(AcqTradeCode.ACQ_RETURNGODDS_TREADECODE, ConstUtil.CHANNEL, channelNo, "", "", paramMap);
             if (returnMap == null) {
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
             }
             return (Map<String, Object>) returnMap.get("response");
         } catch (Exception e) {

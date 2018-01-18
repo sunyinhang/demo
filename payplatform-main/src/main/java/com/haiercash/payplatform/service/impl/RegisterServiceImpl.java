@@ -68,7 +68,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         paramMap.put("mobile", userIdEncrypt);
         Map<String, Object> registerMap = appServerService.isRegister(token, paramMap);
         if (registerMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -121,7 +121,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         paramMap.put("mobile", userIdEncrypt);
         Map<String, Object> registerMap = appServerService.isRegister("", paramMap);
         if (registerMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) registerMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -272,7 +272,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         Map<String, Object> mapcache = appServerService.checkEdAppl(token, cacheedmap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map) head2;
@@ -315,7 +315,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 paramMap.put("idNo", idNumber);//身份证号
                 Map<String, Object> stringObjectMap = appServerService.checkIfMsgComplete(token, paramMap);
                 if (stringObjectMap == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
                 Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
                 String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -345,7 +345,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                         ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
                         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
                         if (saveCustFCiCustContactMap == null) {
-                            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                         }
                         Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
                         String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
@@ -366,7 +366,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 
                                     Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
                                     if (alidateUserMap == null) {
-                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                                     }
                                     Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
                                     String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
@@ -377,7 +377,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                                     Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
                                     String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
                                     if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                                     }
                                     if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
                                         resultparamMap.put("flag", "1");
@@ -475,7 +475,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         landparamMap.put("newPassword", EncryptUtil.simpleEncrypt(String.valueOf(params.get("newPassword"))));
         Map<String, Object> landparamreturnMap = appServerService.custUpdatePwd("", landparamMap);
         if (landparamreturnMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map landparamreturnHeadMap = (Map<String, Object>) landparamreturnMap.get("head");
         String reFlag = (String) landparamreturnHeadMap.get("retFlag");
@@ -500,7 +500,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         if (StringUtils.isEmpty(password)) {
             logger.info("password:" + password);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //获取缓存数据
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -541,7 +541,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         bindMap.put("token", token);
         Map bindresult = appServerService.saveThirdPartToken(bindMap);
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //5.查询实名信息
         Map<String, Object> custMap = new HashMap<>();
@@ -600,7 +600,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         Map mapcache = appServerService.checkEdAppl(token, edMap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map) head2;
@@ -642,7 +642,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 checkparamMap.put("idNo", certNo);//身份证号
                 Map<String, Object> stringObjectMap = appServerService.checkIfMsgComplete(token, checkparamMap);
                 if (stringObjectMap == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
                 Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
                 String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -672,7 +672,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                         ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
                         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
                         if (saveCustFCiCustContactMap == null) {
-                            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                         }
                         Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
                         String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
@@ -693,7 +693,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 
                                     Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
                                     if (alidateUserMap == null) {
-                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                                     }
                                     Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
                                     String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
@@ -704,7 +704,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                                     Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
                                     String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
                                     if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                                     }
                                     if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
                                         map.put("flag", "1");

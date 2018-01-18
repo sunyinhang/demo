@@ -211,7 +211,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("channel", channel);
         Map<String, Object> resultmap = appServerService.getAllCustExtInfo(token, paramMap);
 //        if (resultmap == null){
-//            String retMsg = ConstUtil.ERROR_INFO;
+//            String retMsg = ConstUtil.ERROR_MSG;
 //            return fail(ConstUtil.ERROR_CODE, retMsg);
 //        }
 //        Map resultmapjsonMap = (Map<String, Object>) resultmap.get("head");
@@ -322,7 +322,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
         if (stringObjectMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -344,7 +344,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         custparamMap_one.put("contactMobile", params.get("contactMobile_one"));//联系人手机
         Map<String, Object> CustFCiCustContactMap = appServerService.saveCustFCiCustContact(token, custparamMap_one);
         if (CustFCiCustContactMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map CustFCiCustContactHeadMap = (Map<String, Object>) CustFCiCustContactMap.get("head");
         String CustFCiCustContactHeadMapFlag = (String) CustFCiCustContactHeadMap.get("retFlag");
@@ -366,7 +366,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         custparamMap_two.put("contactMobile", params.get("contactMobile_two"));//联系人手机
         Map<String, Object> CustFCiCustContactTwoMap = appServerService.saveCustFCiCustContact(token, custparamMap_two);
         if (CustFCiCustContactTwoMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map CustFCiCustContactTwoMapHeadMap = (Map<String, Object>) CustFCiCustContactTwoMap.get("head");
         String CustFCiCustContactTwoMapHeadMapFlag = (String) CustFCiCustContactTwoMapHeadMap.get("retFlag");
@@ -389,7 +389,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
         if (saveCustFCiCustContactMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
         String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
@@ -411,7 +411,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 
                     Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
                     if (alidateUserMap == null) {
-                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                     }
                     Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
                     String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
@@ -422,7 +422,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                     Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
                     String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
                     if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                     }
                     if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
                         resultparamMap.put("flag", "1");
@@ -492,7 +492,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo + "    docCde:" + docCde + "    docDesc:" + docDesc);
             logger.info("前台传入数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -509,7 +509,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)) {
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
             logger.info("redis获取数据为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         InputStream inputStream = iconImg.getInputStream();
         //TODO
@@ -693,7 +693,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 //        }
         Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
         if (stringObjectMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -715,7 +715,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         custparamMap_one.put("contactMobile", params.get("contactMobile_one"));//联系人手机
         Map<String, Object> CustFCiCustContactMap = appServerService.saveCustFCiCustContact(token, custparamMap_one);
         if (CustFCiCustContactMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map CustFCiCustContactHeadMap = (Map<String, Object>) CustFCiCustContactMap.get("head");
         String CustFCiCustContactHeadMapFlag = (String) CustFCiCustContactHeadMap.get("retFlag");
@@ -737,7 +737,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         custparamMap_two.put("contactMobile", params.get("contactMobile_two"));//联系人手机
         Map<String, Object> CustFCiCustContactTwoMap = appServerService.saveCustFCiCustContact(token, custparamMap_two);
         if (CustFCiCustContactTwoMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map CustFCiCustContactTwoMapHeadMap = (Map<String, Object>) CustFCiCustContactTwoMap.get("head");
         String CustFCiCustContactTwoMapHeadMapFlag = (String) CustFCiCustContactTwoMapHeadMap.get("retFlag");
@@ -759,7 +759,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
         if (saveCustFCiCustContactMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
         String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
@@ -781,7 +781,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 
                     Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
                     if (alidateUserMap == null) {
-                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                     }
                     Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
                     String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
@@ -792,7 +792,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                     Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
                     String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
                     if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                     }
                     if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
                         if ("1".equals(preAmountFlag)) {
@@ -940,7 +940,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         if (StringUtils.isEmpty(typCde) || StringUtils.isEmpty(apprvAmt) || StringUtils.isEmpty(applyTnrTyp) ||
                 StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(mtdCde)) {
             logger.info("typCde=" + typCde + "  apprvAmt=" + apprvAmt + "  applyTnrTyp=" + applyTnrTyp + "  applyTnr=" + applyTnr + "mtdCde=" + mtdCde);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 //        BigDecimal apprvAmt = new BigDecimal(_apprvAmt);
         Map<String, Object> paramMap = new HashMap<>();
@@ -992,7 +992,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String idNo = (String) params.get("idNo");
         if (StringUtils.isEmpty(custName) || StringUtils.isEmpty(idTyp) || StringUtils.isEmpty(idNo)) {
             logger.info("custName=" + custName + "  idTyp=" + idTyp + "  idNo=" + idNo);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("custName", custName);

@@ -191,7 +191,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
         logger.debug("CRM个人扩展信息接口返回json==" + json);
         if (StringUtils.isEmpty(json)) {
             logger.error("客户扩展信息接口返回异常!——》 CRM 1.4");
-            return fail("51", ConstUtil.ERROR_INFO);
+            return fail("51", ConstUtil.ERROR_MSG);
         }
         Map<String, Object> custExtInfoMap = HttpUtil.json2Map(json);
         logger.debug("custExtInfoMap==" + custExtInfoMap);
@@ -215,7 +215,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
             logger.info("CRM 1.26 smrzResult==" + smrzJson);
             if (StringUtils.isEmpty(smrzJson)) {
                 logger.error("实名认证信息查询失败！——》CRM 1.26");
-                return fail("54", ConstUtil.ERROR_INFO);
+                return fail("54", ConstUtil.ERROR_MSG);
             }
             Map<String, Object> smrzMap = HttpUtil.json2Map(smrzJson);
             if (!StringUtils.isEmpty(smrzMap.get("body"))) {
@@ -239,7 +239,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
         logger.debug("CRM findCustFCiCustContactByCustNo DONE");
         if (StringUtils.isEmpty(lxrJson)) {
             logger.error("联系人列表查询失败!——》CRM 1.8");
-            return fail("52", ConstUtil.ERROR_INFO);
+            return fail("52", ConstUtil.ERROR_MSG);
         }
 
         Map<String, Object> lxrMap = HttpUtil.json2Map(lxrJson);

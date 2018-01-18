@@ -121,15 +121,15 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         logger.info("申请流水号：" + applseq);
         if (StringUtils.isEmpty(applseq)) {
             logger.info("申请流水号为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         if (StringUtils.isEmpty(token)) {
             logger.info("token不能为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         if (StringUtils.isEmpty(channelNo)) {
             logger.info("渠道编码不能为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         Map<String, Object> cachemap = RedisUtils.getExpireMap(token);
@@ -221,7 +221,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> returnmap = new HashMap<>();
         //缓存数据获取
@@ -338,7 +338,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(password)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo + "  password" + password);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> returnmap = new HashMap<>();
         //缓存数据获取
@@ -445,7 +445,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> returnmap = new HashMap<>();
         //缓存数据获取
@@ -469,7 +469,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -492,7 +492,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -531,7 +531,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(verifyNo)) {
             logger.info("前台传入参数有误");
             logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo + "  verifyNo" + verifyNo);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -561,7 +561,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         paramMap.put("channelNo", channelNo);
         Map<String, Object> stringObjectMap = appServerService.smsVerify(token, paramMap);
         if (stringObjectMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -579,7 +579,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map<String, Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
         if (!HttpUtil.isSuccess(uploadimgresultmap)) {
             logger.info("订单提交，影像上传失败失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         logger.info("订单提交，影像上传成功");
 

@@ -109,7 +109,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if (StringUtils.isEmpty(flag) || StringUtils.isEmpty(token)) {
             logger.info("前台传入参数为空");
             logger.info("flag:" + flag + "  token:" + token);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -135,7 +135,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             String applseq = (String) map.get("applseq");
             if (StringUtils.isEmpty(applseq)) {
                 logger.info("applseq:" + applseq);
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
             }
             url = "/app/appserver/contract?custNo=" + custNo + "&applseq=" + applseq;
             result.put("url", url);
@@ -555,7 +555,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         logger.info("实名认证(外联)响应数据==>" + resData);
         if (resData == null || "".equals(resData)) {
             logger.info("实名认证(外联)响应数据为空");
-            return fail(ConstUtil.FAILED_INFO, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         JSONObject jb = new JSONObject(resData);
         String retFlag = jb.getString("RET_CODE");
@@ -1413,7 +1413,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         bindMap.put("channelNo", channelNo);
         Map<String, Object> bindresult = appServerService.saveThirdPartToken(bindMap);
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //5.查询实名信息
         Map<String, Object> custMap = new HashMap<>();
@@ -1457,7 +1457,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         Map<String, Object> mapcache = appServerService.checkEdAppl(thirdToken, cacheedmap);
         logger.info("额度申请校验接口返回数据：" + mapcache);
         if (!HttpUtil.isSuccess(mapcache)) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map<String, Object>) head2;
@@ -1613,7 +1613,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         if (!HttpUtil.isSuccess(mapcache)) {
             Map<String, Object> head = (Map<String, Object>) mapcache.get("head");
             String _retFlag_ = (String) head.get("retFlag");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map<String, Object>) head2;

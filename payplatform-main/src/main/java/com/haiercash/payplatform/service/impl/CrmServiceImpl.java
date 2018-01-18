@@ -69,7 +69,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         logger.debug("CRM13 queryMerchCustInfo:" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             logger.error("CRM13 查询实名认证客户信息失败！");
-            return fail("52", ConstUtil.ERROR_INFO);
+            return fail("52", ConstUtil.ERROR_MSG);
         }
         return HttpUtil.json2DeepMap(jsonStr);
     }
@@ -93,7 +93,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         logger.debug("App validateUsers :" + response);
         if (StringUtils.isEmpty(response)) {
             logger.error("登录验证信息失败！");
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         return response;
     }
@@ -114,7 +114,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         Map<String, Object> map =  HttpUtil.restGetMap(url,getToken(),params);
         if (StringUtils.isEmpty(map)) {
             logger.error("查询白名单列表！");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         return map;
     }
@@ -124,7 +124,7 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         Map<String, Object> map =  HttpUtil.restGetMap(url,getToken(),params);
         if (StringUtils.isEmpty(map)) {
             logger.error("还款计划查询！");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         return map;
     }

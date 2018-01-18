@@ -329,7 +329,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         bindMap.put("channelNo", channelNo);
         Map<String, Object> bindresult = appServerService.saveThirdPartToken(bindMap);
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //5.查询实名信息
@@ -384,7 +384,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if (!HttpUtil.isSuccess(mapcache)) {
             Map<String, Object> head = (Map<String, Object>) mapcache.get("head");
             String _retFlag_ = (String) head.get("retFlag");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Object head2 = mapcache.get("head");
         Map<String, Object> retinfo = (Map<String, Object>) head2;
@@ -426,7 +426,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 paramMap.put("idNo", certNo);//身份证号
                 Map<String, Object> stringObjectMap = appServerService.checkIfMsgComplete(thirdToken, paramMap);
                 if (stringObjectMap == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
                 Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
                 String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -456,7 +456,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                         ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
                         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(thirdToken, ifNeedFaceChkByTypCdeMap);
                         if (saveCustFCiCustContactMap == null) {
-                            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                         }
                         Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
                         String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
@@ -477,7 +477,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
                                     Map<String, Object> alidateUserMap = appServerService.validateUserFlag(thirdToken, validateUserFlagMap);
                                     if (alidateUserMap == null) {
-                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                                     }
                                     Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
                                     String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
@@ -488,7 +488,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                                     Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
                                     String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
                                     if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                                     }
                                     if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
                                         returnmap.put("flag", "4");
@@ -621,7 +621,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                     + "   applSeq:" + applSeq + "   paypwd" + paypwd + "   typCde:" + typCde
                     + "  orderNo:" + orderNo);
             logger.info("前台获取数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //缓存获取（放开）
@@ -698,7 +698,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         Map<String, Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
         if (!HttpUtil.isSuccess(uploadimgresultmap)) {
             logger.info("订单提交，影像上传失败失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         logger.info("订单提交，影像上传成功");
 
@@ -708,7 +708,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         AppOrdernoTypgrpRelation relation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
         if (relation == null) {
             logger.debug("订单编号为" + orderNo + "的订单不存在！");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 //        applSeq = relation.getApplSeq();
 
@@ -748,7 +748,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 //        hashMap.put("channelNo", channelNo);
         Map<String, Object> stringObjectMap = appServerService.updateListRiskInfo(token, hashMap);
         if (stringObjectMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 //        Map setcustTagHeadMap = (Map<String, Object>) stringObjectMap.get("head");
         Map<String, Object> setcustTagMapFlag = (Map<String, Object>) stringObjectMap.get("response");
@@ -803,7 +803,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                     + "  orderNo:" + orderNo + "   applyAmt:" + applyAmt + "   typcde:" + typCde
                     + "  purpose:" + purpose + "  applCardNo:" + applCardNo + "   repayApplCardNo:" + repayApplCardNo);
             logger.info("前台获取数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //appOrder缓存获取（放开）
@@ -969,7 +969,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 //            logger.info("cityCode------" + cityCode + "---------" + areaType);
 //            if (org.springframework.util.StringUtils.isEmpty(cityCode)) {
 //                logger.info("获取市编码失败");
-//                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
 //            }
 //            if ("province".equals(areaType)) {
 //                provinceCode = cityCode;
@@ -991,7 +991,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 ////                provinceCode = (String) provinceCodeMap.get("cityCode");
 //                if (org.springframework.util.StringUtils.isEmpty(provinceCode)) {
 //                    logger.info("获取省编码失败");
-//                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+//                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
 //                }
 //            }
         }

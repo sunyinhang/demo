@@ -74,7 +74,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo);
             logger.info("前台传入数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //缓存数据获取
@@ -93,7 +93,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)) {
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
             logger.info("redis获取数据为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         String providerNo = "";//人脸机构
@@ -138,7 +138,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String code0 = jsonob.getString("code");
         if (!"0000".equals(code0)) {
             logger.info("调用外联人脸识别失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         String message = jsonob.getString("message");
         JSONObject jsonmsg = new JSONObject(message);
@@ -247,7 +247,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("token：" + token + "   channel:" + channel + "    channelNo:" + channelNo);
             logger.info("前台传入数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -263,7 +263,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)) {
             logger.info("idNumber:" + idNumber + "  name:" + name + "   custNo:" + custNo + "    userId:" + userId);
             logger.info("redis获取数据为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //
@@ -329,7 +329,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("前端获取数据有误");
             logger.info("token:" + token + "   edflag:" + edflag + "   channel:" + channel + "   channelNo:" + channelNo);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //缓存数据获取及非空判断
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -347,7 +347,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)) {
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
             logger.info("redis获取数据为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //判断是否需要做人脸识别
         Map<String, Object> paramMap = new HashMap<>();

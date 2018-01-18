@@ -113,7 +113,7 @@ public class LimitServiceImpl extends BaseService implements LimitService {
         paramMap.put("idNo", idNumber);//身份证号
         Map<String, Object> stringObjectMap = appServerService.checkIfMsgComplete(token, paramMap);
         if (stringObjectMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
         String resultmapFlag = (String) resultmapjsonMap.get("retFlag");
@@ -139,7 +139,7 @@ public class LimitServiceImpl extends BaseService implements LimitService {
             gettigIDMap.put("idNo", idNumber);
             Map<String, Object> custTag = crmManageService.getCustTag(token, gettigIDMap);
             if (custTag == null) {
-                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
             }
             Map custTagHeadMap = (Map<String, Object>) custTag.get("head");
             String custTagHeadMapHeadFlag = (String) custTagHeadMap.get("retFlag");
@@ -161,7 +161,7 @@ public class LimitServiceImpl extends BaseService implements LimitService {
                 settigIDMap.put("tagId", sg_tig);
                 Map<String, Object> setcustTag = crmManageService.setCustTag(token, settigIDMap);
                 if (setcustTag == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
                 Map setcustTagHeadMap = (Map<String, Object>) custTag.get("head");
                 String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
@@ -184,7 +184,7 @@ public class LimitServiceImpl extends BaseService implements LimitService {
                 ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
                 Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
                 if (saveCustFCiCustContactMap == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
                 Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
                 String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
@@ -206,7 +206,7 @@ public class LimitServiceImpl extends BaseService implements LimitService {
 
                             Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
                             if (alidateUserMap == null) {
-                                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                             }
                             Map alidateUserHeadMap = (Map<String, Object>) alidateUserMap.get("head");
                             String alidateUserHeadMapFlag = (String) alidateUserHeadMap.get("retFlag");
@@ -217,7 +217,7 @@ public class LimitServiceImpl extends BaseService implements LimitService {
                             Map alidateUserBodyMap = (Map<String, Object>) alidateUserMap.get("body");
                             String payPasswdFlag = (String) alidateUserBodyMap.get("payPasswdFlag");
                             if (payPasswdFlag == null || "".equals(payPasswdFlag)) {
-                                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                             }
                             if ("1".equals(payPasswdFlag)) {//1.已设置支付密码
                                 resultparamMap.put("flag", "1");

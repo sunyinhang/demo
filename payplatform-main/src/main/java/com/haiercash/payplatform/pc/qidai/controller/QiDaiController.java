@@ -131,7 +131,7 @@ public class QiDaiController extends BaseController {
             channelTradeLog.setChannelno(haiercashPayApplyBean.getChannelNo());
             channelTradeLog.setTradecode(haiercashPayApplyBean.getTradeCode());
             channelTradeLog.setRetflag(result != null ? result.getRetFlag() : ConstUtil.ERROR_CODE);
-            channelTradeLog.setRetmsg(result != null ? result.getRetMsg() : ConstUtil.ERROR_INFO);
+            channelTradeLog.setRetmsg(result != null ? result.getRetMsg() : ConstUtil.ERROR_MSG);
             channelTradeLog.setTradetime(DateUtils.nowDateTimeMsString());
             channelTradeLogDao.insert(channelTradeLog);
         }

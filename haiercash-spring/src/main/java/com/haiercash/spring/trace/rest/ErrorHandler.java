@@ -43,7 +43,7 @@ public final class ErrorHandler {
         String msg = ThrowableUtils.getString(e);
         logger.error(msg);
         BugReportUtils.sendAsync(BugReportLevel.ERROR, msg);
-        CommonResponse response = CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        CommonResponse response = CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

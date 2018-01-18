@@ -92,7 +92,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
             logger.info("channel:" + channel + "  channelNo:" + channelNo + "   token:" + token
                     + "  orderNo:" + orderNo + "  applSeq:" + applSeq /*+ "  longitude:" + longitude + "  latitude:" + latitude + "  area:" + area*/);
             logger.info("前台获取数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //查询订单详情
@@ -161,7 +161,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         Map<String, Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
         if (!HttpUtil.isSuccess(uploadimgresultmap)) {
             logger.info("订单提交，影像上传失败失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         logger.info("订单提交，影像上传成功");
 
@@ -171,7 +171,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
         AppOrdernoTypgrpRelation relation = appOrdernoTypgrpRelationDao.selectByOrderNo(orderNo);
         if (relation == null) {
             logger.debug("订单编号为" + orderNo + "的订单不存在！");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         applSeq = relation.getApplSeq();
 
@@ -211,7 +211,7 @@ public class CommitOrderServiceImpl extends BaseService implements CommitOrderSe
 //        hashMap.put("channelNo", channelNo);
         Map<String, Object> stringObjectMap = appServerService.updateListRiskInfo(token, hashMap);
         if (stringObjectMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 //        Map setcustTagHeadMap = (Map<String, Object>) stringObjectMap.get("head");
         Map<String, Object> setcustTagMapFlag = (Map<String, Object>) stringObjectMap.get("response");

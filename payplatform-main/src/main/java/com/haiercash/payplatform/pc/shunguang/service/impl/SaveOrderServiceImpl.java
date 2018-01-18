@@ -62,7 +62,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
                     + "   applyTnr:" + applyTnr + "   applyTnrTyp" + applyTnrTyp
                     + "   updflag:" + updflag + "  orderNo:" + orderNo + "   typCde:" + typCde);
             logger.info("前台获取数据有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //appOrder缓存获取（放开）
@@ -197,7 +197,7 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
             if ("1".equals(updflag)) {
                 if (StringUtils.isEmpty(orderNo)) {
                     logger.info("前台传入参数有误");
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
                 appOrder.setOrderNo(orderNo);
             } else {

@@ -70,7 +70,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String token = request.getHeader("token");
         if (StringUtils.isEmpty(token)) {
             logger.info("获取token为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -82,7 +82,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String userId = (String) cacheMap.get("userId");
         if (StringUtils.isEmpty(userId)) {
             logger.info("jedis获取数据失效");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //
         InputStream input = ocrImg.getInputStream();
@@ -190,7 +190,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(name)) {
             logger.info("token:" + token + "  name:" + name);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -215,7 +215,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("token:" + token + "   channel:" + channel + "   channelNo:" + channelNo);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         String flag = "children"; //查询标志
@@ -241,7 +241,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         if (StringUtils.isEmpty(cardNo)) {
             logger.info("cardNo:" + cardNo);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         Map<String, Object> resultmap = appServerService.getBankInfo(cardNo);
@@ -258,7 +258,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("token:" + token);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -289,7 +289,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         if (StringUtils.isEmpty(phone)) {
             logger.info("phone:" + phone);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         String phoneEncrypt = EncryptUtil.simpleEncrypt(phone);
@@ -322,7 +322,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("token:" + token + "  verifyNo:" + verifyNo + "  cityCode:" + cityCode +
                     "  cardnumber:" + cardnumber + "  mobile:" + mobile + "   channel:" + channel + "   channelNo:" + channelNo);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //3.jedis缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -363,7 +363,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("name:" + name + "  birthDt:" + birthDt + "  gender:" + gender + "  validDate:" + validDate + "  certOrga:" + certOrga
                     + "   ethnic:" + ethnic + "    idCard:" + idCard + "   userId:" + userId);
             logger.info("Jedis缓存获取信息失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //5.校验短信验证码
         Map<String, Object> verifyNoMap = new HashMap<>();
@@ -594,12 +594,12 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         if (StringUtils.isEmpty(token)) {
             logger.info("token:" + token);
             logger.info("从前端获取的的token为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         if (StringUtils.isEmpty(payPasswd)) {
             logger.info("payPasswd:" + payPasswd);
             logger.info("从前端获取的支付密码为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (MapUtils.isEmpty(cacheMap)) {
@@ -627,7 +627,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         if (StringUtils.isEmpty(flag)) {
             logger.info("从前端获取的flag:" + flag);
             logger.info("从前端h获取的flag为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         if ("register".equals(flag)) {
             if (StringUtils.isEmpty(token)) {
@@ -720,7 +720,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String phoneNo = (String) cacheMap.get("phoneNo");
         if (StringUtils.isEmpty(phoneNo)) {
             logger.info("获取手机号为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map m = new HashMap();
         m.put("phoneNo", phoneNo);
@@ -746,7 +746,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("token:" + token + "  verifyNo:" + verifyNo +
                     "  cardnumber:" + cardnumber + "  mobile:" + mobile + "   channel:" + channel + "   channelNo:" + channelNo);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //3.jedis缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -777,7 +777,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("name:" + name + "  birthDt:" + birthDt + "  gender:" + gender + "  validDate:" + validDate + "  certOrga:" + certOrga
                     + "   ethnic:" + ethnic + "    idCard:" + idCard + "   userId:" + userId);
             logger.info("Jedis缓存获取信息失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //5.校验短信验证码
         Map<String, Object> verifyNoMap = new HashMap<>();

@@ -1281,7 +1281,7 @@ public class QiDaiService extends BaseService {
         Map<String, Object> dataMap = JsonSerializer.deserializeMap(json);
         String response = CommonRestUtils.postForString(url, dataMap);
         if (StringUtils.isEmpty(response)) {
-            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> responseMap = JsonSerializer.deserializeMap(response);
         String code = Convert.toString(responseMap.get("code"));
@@ -1500,7 +1500,7 @@ public class QiDaiService extends BaseService {
         String response = CommonRestUtils.getForString(url);
         if (StringUtils.isEmpty(response)) {
             logger.info("查询签章状态信息，响应数据为空！");
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         return CommonResponse.success();
     }

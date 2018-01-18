@@ -61,7 +61,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
                 || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("userId:" + uidLocal + "   token:" + token + "   channelNo:" + channelNo + "   channel:" + channel);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //获取缓存数据
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
@@ -95,7 +95,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         bindMap.put("token", token);
         Map bindresult = appServerService.saveThirdPartToken(bindMap);
         if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
 
         //5.查询实名信息
@@ -220,7 +220,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
             if ("1".equals(flag)) {
                 if (StringUtils.isEmpty(orderNo)) {
                     logger.info("前台传入参数有误");
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
                 }
             } else {
                 logger.info("退回及待提交进行订单修改");
@@ -577,7 +577,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
     public Map<String, Object> approveStatus(String token) {
         if (StringUtils.isEmpty(token)) {
             logger.info("获取token失败token:" + token);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> cachemap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(cachemap)) {
@@ -600,7 +600,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
         edMap.put("channelNo", channelNo);
         Map<String, Object> edresult = appServerService.checkEdAppl(token, edMap);
         if (edresult == null)
-            return super.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+            return super.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         if (!HttpUtil.isSuccess(edresult)) {//额度校验失败
             return edresult;
         }
