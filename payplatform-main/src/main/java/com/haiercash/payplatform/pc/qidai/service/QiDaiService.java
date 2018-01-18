@@ -435,6 +435,7 @@ public class QiDaiService extends BaseService {
             // CA签章 1 将客户传过来的文件流存放到本地 2 将文件上传到影像系统 3 在影像系统上签章 4 将签章传回本地 5
             // 调用100055 接口 ，给返回结果
             else if ("CA".equals(fileType)) {
+                logger.info("一期签章，开始！");
                 if (StringUtils.isEmpty(applSeq)) {
                     logger.info("文件上传,申请号为空,流水号为" + applSeq);
                     return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请号不能为空！");
@@ -451,6 +452,7 @@ public class QiDaiService extends BaseService {
                     String idno;//申请人手机号
                     String sysCode = getSysCode(channelNo);
                     if ("02".contains(sysCode)) {// 收单系统
+                        logger.info("收单系统查询");
                         //ACQ-1145贷款详情查询
                         IResponse<Map> result = paymentService.getLoanMessage(applSeq, channelNo);
                         if (!result.isSuccess()) {
@@ -460,12 +462,13 @@ public class QiDaiService extends BaseService {
                         userName = Convert.toString(repbodyjson.get("cust_name"));
                         idno = Convert.toString(repbodyjson.get("id_no"));
                     } else {//核心系统
+                        logger.info("核心系统查询");
                         QueryLoanDetails queryLoanDetails = new QueryLoanDetails();
                         queryLoanDetails.setApplSeq(applSeq);
                         // 100035 贷款信息接口
                         ReturnMessage returnMessage = paymentService.queryLoanMessage(queryLoanDetails);
                         List list = returnMessage.getData();
-                        if (list != null && list.size() > 0) {
+                        if (CollectionUtils.isNotEmpty(list)) {
                             Map map = (Map) list.get(0);
                             userName = (String) ((List) map.get("cust_name")).get(0);
                             idno = (String) ((List) map.get("id_no")).get(0);
@@ -513,6 +516,7 @@ public class QiDaiService extends BaseService {
             } // CA签章结束
             //二期签章与一期签章不同的合同签章
             else if ("CANew".equals(fileType)) {
+                logger.info("二期签章，开始！");
                 if (applSeq == null || "".equals(applSeq)) {
                     logger.info("文件上传,申请号为空,流水号为" + applSeq);
                     return CommonResponse.fail(ConstUtil.ERROR_CODE, "申请号不能为空");
@@ -541,7 +545,7 @@ public class QiDaiService extends BaseService {
                         // 100035 贷款信息接口
                         ReturnMessage returnMessage_ = paymentService.queryLoanMessage(queryLoanDetails);
                         List list = returnMessage_.getData();
-                        if (list != null && list.size() > 0) {
+                        if (CollectionUtils.isNotEmpty(list)) {
                             Map map = (Map) list.get(0);
                             userName = (String) ((List) map.get("cust_name")).get(0);
                             idno = (String) ((List) map.get("id_no")).get(0);
