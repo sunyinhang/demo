@@ -80,25 +80,25 @@ public class AlipayFuwuService extends BaseService {
         switch (checkEdResp.getRetFlag()) {
             case "01": {//审批中=已提交
                 Map<String, Object> bodyRet = new HashMap<>();
-                bodyRet.put("flag", "02");
+                bodyRet.put("flag", "10");
                 bodyRet.put("token", makeToken);
                 return CommonResponse.success(bodyRet);
             }
             case "22": {//退回
                 Map<String, Object> bodyRet = new HashMap<>();
-                bodyRet.put("flag", "03");
+                bodyRet.put("flag", "11");
                 bodyRet.put("token", makeToken);
                 return CommonResponse.success(bodyRet);
             }
             case "25": {//被拒绝
                 Map<String, Object> bodyRet = new HashMap<>();
-                bodyRet.put("flag", "04");
+                bodyRet.put("flag", "12");
                 bodyRet.put("token", makeToken);
                 return CommonResponse.success(bodyRet);
             }
             case "27": {//有额度
                 Map<String, Object> bodyRet = new HashMap<>();
-                bodyRet.put("flag", "05");
+                bodyRet.put("flag", "13");
                 bodyRet.put("token", makeToken);
                 return CommonResponse.success(bodyRet);
             }
