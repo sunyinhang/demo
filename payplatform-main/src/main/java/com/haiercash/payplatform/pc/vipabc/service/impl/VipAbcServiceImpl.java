@@ -1,12 +1,9 @@
 package com.haiercash.payplatform.pc.vipabc.service.impl;
 
-import com.haiercash.core.collection.CollectionUtils;
-import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.common.dao.VipAbcDao;
 import com.haiercash.payplatform.common.data.VipAbcAppOrderGoods;
 import com.haiercash.payplatform.pc.vipabc.service.VipAbcService;
 import com.haiercash.spring.service.BaseService;
-import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,12 +32,13 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         String ordersn = (String) map.get("ordersn");//vipabc方订单号
         String idcard = (String) map.get("idcard");
         List<VipAbcAppOrderGoods> idCards = vipAbcDao.selectIdCard(ordersn, idcard);
-        if (CollectionUtils.isEmpty(idCards))
-            mapIdCard.put("VipAbcAppOrderGoods", StringUtils.EMPTY);
-        else if (idCards.size() > 1)
-            return fail(ConstUtil.ERROR_CODE, "结果不唯一");
-        else
-            mapIdCard.put("VipAbcAppOrderGoods", idCards.get(0));
-        return success(mapIdCard);
+//        if (CollectionUtils.isEmpty(idCards))
+//            mapIdCard.put("VipAbcAppOrderGoods", StringUtils.EMPTY);
+//        else if (idCards.size() > 1)
+//            return fail(ConstUtil.ERROR_CODE, "结果不唯一");
+//        else
+//            mapIdCard.put("VipAbcAppOrderGoods", idCards.get(0));
+
+        return success(idCards);
     }
 }

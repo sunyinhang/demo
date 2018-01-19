@@ -6,7 +6,17 @@
 
     <!--额度申请URL-->
     <select id="selectIdCard" resultType="com.haiercash.payplatform.common.data.VipAbcAppOrderGoods">
-        select * from VIPABC_ORDER_INFO WHERE ordersn LIKE concat(concat('%',#{ordersn}),'%') or idcard = #{idcard, jdbcType=VARCHAR}
+        select * from VIPABC_ORDER_INFO
+        WHERE 1=1
+        <if test="ordersn != null and ordersn != ''">
+            AND ordersn LIKE
+            '%${ordersn}%'
+        </if>
+        <if test="idcard != null and idcard != ''">
+            AND idcard = #{idcard}
+        </if>
+
+
     </select>
 
 </mapper>
