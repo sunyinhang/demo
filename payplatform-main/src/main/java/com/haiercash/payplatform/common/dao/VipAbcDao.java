@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Repository
 public interface VipAbcDao extends BaseMapper<VipAbcAppOrderGoods> {
-    List<String> selectIdCard(@Param("ordersn") String ordersn);
+    List<VipAbcAppOrderGoods> selectIdCard(@Param("ordersn") String ordersn, @Param("idcard") String idcard);
 }

@@ -5,8 +5,8 @@
 <mapper namespace="com.haiercash.payplatform.common.dao.VipAbcDao">
 
     <!--额度申请URL-->
-    <select id="selectIdCard" resultType="java.lang.String">
-        select idcard from VIPABC_ORDER_INFO where ordersn LIKE '${ordersn}%'
+    <select id="selectIdCard" resultType="com.haiercash.payplatform.common.data.VipAbcAppOrderGoods">
+        select * from VIPABC_ORDER_INFO WHERE ordersn LIKE concat(concat('%',#{ordersn}),'%') or idcard = #{idcard, jdbcType=VARCHAR}
     </select>
 
 </mapper>
