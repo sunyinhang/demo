@@ -18,33 +18,37 @@ import java.util.Map;
 public final class IncomingLog {
     private static final Log logger = LogFactory.getLog(IncomingLog.class);
 
-    public static void writeRequestLog(Message message) {
+    public static void writeBeginLog(String action, Message message) {
         Map<String, Object> log = new LinkedHashMap<>();
+        log.put("action", action);
         log.put("msgId", TraceUtils.getMsgId(message));
         log.put("messageHeaders", TraceUtils.getHeaders(message));
         log.put("messageBody", TraceUtils.getBody(message));
         logger.info("==>Rabbit Consume Begin: " + log);
     }
 
-    public static void writeResponseLog(Message message, long tookMs) {
+    public static void writeEndLog(String action, Message message, long tookMs) {
         Map<String, Object> log = new LinkedHashMap<>();
+        log.put("action", action);
         log.put("msgId", TraceUtils.getMsgId(message));
         log.put("result", "消费成功");
         log.put("took", tookMs);
         logger.info("==>Rabbit Consume End: " + log);
     }
 
-    public static void writeDisabled(Message message, long tookMs) {
+    public static void writeDisabledLog(String action, Message message, long tookMs) {
         Map<String, Object> log = new LinkedHashMap<>();
+        log.put("action", action);
         log.put("msgId", TraceUtils.getMsgId(message));
         log.put("result", ConsumeDisabledException.MESSAGE);
         log.put("took", tookMs);
         logger.warn("==>Rabbit Consume Disabled: " + log);
     }
 
-    public static void writeError(Message message, Exception e, long tookMs) {
+    public static void writeErrorLog(String action, Message message, Exception e, long tookMs) {
         String msg = ThrowableUtils.getString(e);
         Map<String, Object> log = new LinkedHashMap<>();
+        log.put("action", action);
         log.put("msgId", TraceUtils.getMsgId(message));
         log.put("error", msg);
         log.put("took", tookMs);

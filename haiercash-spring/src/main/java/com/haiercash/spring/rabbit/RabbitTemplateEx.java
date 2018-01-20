@@ -19,11 +19,11 @@ public final class RabbitTemplateEx extends RabbitTemplate {
 
     @Override
     protected void doSend(Channel channel, String exchange, String routingKey, Message message, boolean mandatory, CorrelationData correlationData) throws Exception {
-        Map<String, Object> log = OutgoingLog.writeRequestLog(message, exchange, routingKey);
+        Map<String, Object> log = OutgoingLog.writeBeginLog(message, exchange, routingKey);
         long begin = System.currentTimeMillis();
         try {
             super.doSend(channel, exchange, routingKey, message, mandatory, correlationData);
-            OutgoingLog.writeResponseLog(log, System.currentTimeMillis() - begin);
+            OutgoingLog.writeEndLog(log, System.currentTimeMillis() - begin);
         } catch (Exception e) {
             OutgoingLog.writeErrorLog(log, e, System.currentTimeMillis() - begin);
             throw e;

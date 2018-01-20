@@ -23,17 +23,18 @@ public final class RabbitHandlerAdapter extends HandlerAdapter {
     @Override
     public Object invoke(Message<?> message, Object... providedArgs) throws Exception {
         ThreadContext.init(null, null, null);
-        IncomingLog.writeRequestLog(message);
+        String action = this.getMethodAsString(message.getPayload());
+        IncomingLog.writeBeginLog(action, message);
         long begin = System.currentTimeMillis();
         try {
             Object result = super.invoke(message, providedArgs);
-            IncomingLog.writeResponseLog(message, System.currentTimeMillis() - begin);
+            IncomingLog.writeEndLog(action, message, System.currentTimeMillis() - begin);
             return result;
         } catch (ConsumeDisabledException e) {
-            IncomingLog.writeDisabled(message, System.currentTimeMillis() - begin);
+            IncomingLog.writeDisabledLog(action, message, System.currentTimeMillis() - begin);
             throw e;
         } catch (Exception e) {
-            IncomingLog.writeError(message, e, System.currentTimeMillis() - begin);
+            IncomingLog.writeErrorLog(action, message, e, System.currentTimeMillis() - begin);
             throw e;
         } finally {
             ThreadContext.reset();

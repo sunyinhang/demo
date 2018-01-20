@@ -16,7 +16,7 @@ import java.util.Map;
 public final class OutgoingLog {
     private static final Log logger = LogFactory.getLog(OutgoingLog.class);
 
-    public static Map<String, Object> writeRequestLog(Message message, String exchange, String routingKey) {
+    public static Map<String, Object> writeBeginLog(Message message, String exchange, String routingKey) {
         String msgId = TraceUtils.getMsgId(message);
         Map<String, Object> log = new LinkedHashMap<>();
         if (StringUtils.isNotEmpty(msgId))
@@ -28,7 +28,7 @@ public final class OutgoingLog {
         return log;
     }
 
-    public static void writeResponseLog(Map<String, Object> log, long tookMs) {
+    public static void writeEndLog(Map<String, Object> log, long tookMs) {
         log.put("result", "成功");
         log.put("took", tookMs);
         logger.info("==>Rabbit Produce: " + log);
