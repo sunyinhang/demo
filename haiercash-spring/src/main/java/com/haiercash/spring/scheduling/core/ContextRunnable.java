@@ -1,16 +1,17 @@
 package com.haiercash.spring.scheduling.core;
 
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.trace.scheduling.ErrorHandler;
+import com.haiercash.spring.trace.scheduling.IncomingLog;
+import org.springframework.scheduling.support.ScheduledMethodRunnable;
 import org.springframework.util.Assert;
 
 /**
  * Created by 许崇雷 on 2017-12-04.
  */
 public final class ContextRunnable implements Runnable {
-    private final Runnable runnable;
+    private final ScheduledMethodRunnable runnable;
 
-    public ContextRunnable(Runnable runnable) {
+    public ContextRunnable(ScheduledMethodRunnable runnable) {
         Assert.notNull(runnable, "runnable can not be null");
         this.runnable = runnable;
     }
@@ -18,10 +19,14 @@ public final class ContextRunnable implements Runnable {
     @Override
     public void run() {
         ThreadContext.init(null, null, null);
+        String action = this.runnable.getMethod().toGenericString();
+        IncomingLog.writeBeginLog(action);
+        long begin = System.currentTimeMillis();
         try {
             runnable.run();
+            IncomingLog.writeEndLog(action, System.currentTimeMillis() - begin);
         } catch (Exception e) {
-            ErrorHandler.handleException(e);
+            IncomingLog.writeErrorLog(action, e, System.currentTimeMillis() - begin);
         } finally {
             ThreadContext.reset();
         }

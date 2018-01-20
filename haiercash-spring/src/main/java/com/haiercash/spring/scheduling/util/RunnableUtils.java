@@ -15,7 +15,7 @@ public final class RunnableUtils {
         if (runnable instanceof ScheduledMethodRunnable) {
             Method method = ((ScheduledMethodRunnable) runnable).getMethod();
             String packageName = method.getDeclaringClass().getPackage().getName();
-            return packageName.startsWith(EXCLUDE_PACKAGE) ? runnable : new ContextRunnable(runnable);
+            return packageName.startsWith(EXCLUDE_PACKAGE) ? runnable : new ContextRunnable((ScheduledMethodRunnable) runnable);
         }
         return runnable;
     }
