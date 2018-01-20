@@ -8,7 +8,7 @@ logging:
 security:
   sessions: never
 info:
-  name: payplatform_test
+  name: payplatform-test
   description: 支付平台-测试环境
 spring:
   application:
