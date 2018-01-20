@@ -52,11 +52,11 @@ public final class DispatcherFilter implements Filter {
         DispatcherResponseWrapper response = new DispatcherResponseWrapper((HttpServletResponse) servletResponse);
         RequestContext.init(request, response);
         ThreadContext.init(this.getArg(request, NAME_TOKEN), this.getArg(request, NAME_CHANNEL), Convert.defaultString(this.getArg(request, NAME_CHANNEL_NO_PRIMARY), this.getArg(request, NAME_CHANNEL_NO_SECONDARY)));
-        IncomingLog.writeRequestLog(request);
+        IncomingLog.writeBeginLog(request);
         long begin = System.currentTimeMillis();
         try {
             filterChain.doFilter(request, response);
-            IncomingLog.writeResponseLog(request, response, System.currentTimeMillis() - begin);
+            IncomingLog.writeEndLog(request, response, System.currentTimeMillis() - begin);
         } catch (Exception e) {
             IncomingLog.writeErrorLog(request, e, System.currentTimeMillis() - begin);
             throw e;

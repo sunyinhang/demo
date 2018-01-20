@@ -40,16 +40,16 @@ public final class ClientRequestWrapper extends AbstractClientHttpRequest {
     @Override
     protected ClientResponseWrapper executeInternal(HttpHeaders headers) throws IOException {
         this.request.getHeaders().putAll(headers);
-        Map<String, Object> log = OutgoingLog.writeRequestLog(this);
+        Map<String, Object> log = OutgoingLog.writeBeginLog(this);
         long begin = System.currentTimeMillis();
         ClientResponseWrapper response;
         try {
             response = new ClientResponseWrapper(this.request.execute());
         } catch (Exception e) {
-            OutgoingLog.writeError(log, e, System.currentTimeMillis() - begin);
+            OutgoingLog.writeErrorLog(log, e, System.currentTimeMillis() - begin);
             throw e;
         }
-        OutgoingLog.writeResponseLog(log, response, System.currentTimeMillis() - begin);
+        OutgoingLog.writeEndLog(log, response, System.currentTimeMillis() - begin);
         return response;
     }
 }

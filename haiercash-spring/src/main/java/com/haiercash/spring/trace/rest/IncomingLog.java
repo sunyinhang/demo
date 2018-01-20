@@ -19,7 +19,7 @@ import java.util.Map;
 public final class IncomingLog {
     private static final Log logger = LogFactory.getLog(IncomingLog.class);
 
-    public static void writeRequestLog(DispatcherRequestWrapper request) throws IOException {
+    public static void writeBeginLog(DispatcherRequestWrapper request) throws IOException {
         String method = request.getMethod().toUpperCase();
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("method", method);
@@ -32,7 +32,7 @@ public final class IncomingLog {
         logger.info("==>Servlet Begin: " + log);
     }
 
-    public static void writeResponseLog(DispatcherRequestWrapper request, DispatcherResponseWrapper response, long tookMs) throws IOException {
+    public static void writeEndLog(DispatcherRequestWrapper request, DispatcherResponseWrapper response, long tookMs) throws IOException {
         String method = request.getMethod().toUpperCase();
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("method", method);

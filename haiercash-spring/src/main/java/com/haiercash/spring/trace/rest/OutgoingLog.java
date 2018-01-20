@@ -17,7 +17,7 @@ import java.util.Map;
 public final class OutgoingLog {
     private static final Log logger = LogFactory.getLog(OutgoingLog.class);
 
-    public static Map<String, Object> writeRequestLog(ClientRequestWrapper request) throws IOException {
+    public static Map<String, Object> writeBeginLog(ClientRequestWrapper request) throws IOException {
         String method = request.getMethod().name().toUpperCase();
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("method", method);
@@ -31,7 +31,7 @@ public final class OutgoingLog {
         return log;
     }
 
-    public static void writeResponseLog(Map<String, Object> log, ClientResponseWrapper response, long tookMs) throws IOException {
+    public static void writeEndLog(Map<String, Object> log, ClientResponseWrapper response, long tookMs) throws IOException {
         log.put("responseStatus", response.getRawStatusCode());
         log.put("responseHeaders", TraceUtils.getHeaders(response));
         log.put("responseBody", TraceUtils.getBody(response));
@@ -39,7 +39,7 @@ public final class OutgoingLog {
         logger.info("==>Call Rest: " + log);
     }
 
-    public static void writeError(Map<String, Object> log, Exception e, long tookMs) {
+    public static void writeErrorLog(Map<String, Object> log, Exception e, long tookMs) {
         log.put("error", ThrowableUtils.getMessage(e));
         log.put("took", tookMs);
         logger.error("==>Call Rest Error: " + log);
