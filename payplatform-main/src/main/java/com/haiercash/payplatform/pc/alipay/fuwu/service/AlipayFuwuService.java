@@ -43,7 +43,7 @@ public class AlipayFuwuService extends BaseService {
         String userId = externUidBody.get("userId");
         String phone = externUidBody.get("mobile");
 
-        //查询个人资料
+        //查询实名信息
         IResponse<Map> custInfoResp = this.queryPerCustInfo(userId);
         if (!custInfoResp.isSuccessNeedBody()) {
             Map<String, Object> body = new HashMap<>();
@@ -136,7 +136,7 @@ public class AlipayFuwuService extends BaseService {
         return CommonRestUtils.getForMap(url, params);
     }
 
-    //查询个人资料
+    //查询实名信息
     private IResponse<Map> queryPerCustInfo(String userId) {
         Map<String, Object> params = new HashMap<>();
         params.put("channel", ConstUtil.CHANNEL);
