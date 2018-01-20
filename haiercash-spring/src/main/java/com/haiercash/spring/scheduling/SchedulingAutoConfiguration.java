@@ -1,12 +1,12 @@
 package com.haiercash.spring.scheduling;
 
 import com.bestvike.linq.Linq;
+import com.haiercash.core.threading.ThreadPool;
 import com.haiercash.spring.scheduling.core.CronTaskWrapper;
 import com.haiercash.spring.scheduling.core.IntervalTaskWrapper;
 import com.haiercash.spring.scheduling.core.TriggerTaskWrapper;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.IntervalTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
@@ -24,13 +24,7 @@ public class SchedulingAutoConfiguration implements SchedulingConfigurer {
     }
 
     private void setTaskScheduler(ScheduledTaskRegistrar taskRegistrar) {
-        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-        taskScheduler.setPoolSize(64);
-        taskScheduler.setThreadNamePrefix("task-");
-        taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
-        taskScheduler.setAwaitTerminationSeconds(60);
-        taskScheduler.initialize();
-        taskRegistrar.setTaskScheduler(taskScheduler);
+        taskRegistrar.setTaskScheduler(ThreadPool.getScheduler());
     }
 
     private void wrapTasks(ScheduledTaskRegistrar taskRegistrar) {
