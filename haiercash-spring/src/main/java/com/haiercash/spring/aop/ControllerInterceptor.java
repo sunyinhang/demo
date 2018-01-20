@@ -179,11 +179,11 @@ public final class ControllerInterceptor {
             " || @annotation(org.springframework.web.bind.annotation.DeleteMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.PostMapping)" +
             " || @annotation(org.springframework.web.bind.annotation.PutMapping))")
-    private void doControllerPointcut() {
+    private void requestMappingPointcut() {
     }
 
-    @Around(value = "doControllerPointcut()")
-    public Object doController(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around(value = "requestMappingPointcut()")
+    public Object proceedRequestMappingPointcut(ProceedingJoinPoint joinPoint) throws Throwable {
         //获取实例
         Object target = joinPoint.getTarget();
         if (!(target instanceof BaseController))
