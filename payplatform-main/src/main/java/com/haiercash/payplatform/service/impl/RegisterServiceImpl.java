@@ -287,6 +287,9 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
                 resultparamMap.put("token", token);
                 return success(resultparamMap);
             } else if ("22".equals(outSts_f)) {
+                String crdSeq = (String) headinfo.get("crdSeq");
+                cacheMap.put("crdSeq", crdSeq);
+                RedisUtils.setExpire(token, cacheMap);
                 resultparamMap.put("flag", "11");//退回
                 resultparamMap.put("token", token);
                 return success(resultparamMap);
