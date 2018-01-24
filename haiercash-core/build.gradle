@@ -14,8 +14,8 @@ buildscript {
         isReleaseVersion = project.hasProperty('release')
     }
     repositories {
-        mavenLocal()
         maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+        mavenLocal()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -23,8 +23,8 @@ buildscript {
 }
 
 repositories {
-    mavenLocal()
     maven { url 'http://10.164.194.139:8081/nexus/content/repositories/public/' }
+    mavenLocal()
 }
 
 dependencyManagement {
