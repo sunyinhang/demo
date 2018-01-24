@@ -107,14 +107,16 @@ public class AlipayFuwuService extends BaseService {
         }
     }
 
+    //额度入口,点击loading 页后 支付宝 重定向到该接口
     public IResponse<Map> creditEntry(String authCode) throws AlipayApiException {
         AlipayToken token = AlipayUtils.getOauthTokenByAuthCode(authCode);
         AlipayUserInfoShareResponse alipayUserInfo = AlipayUtils.getUserInfo(token.getToken());
-        if (!Objects.equals(alipayUserInfo.getUserType(), "2"))
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, "不是个人账号");
-        if (!Objects.equals(alipayUserInfo.getUserStatus(), "T"))
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, "用户未认证");
-        return null;
+        if (Objects.equals(alipayUserInfo.getUserType(), "2")
+                && Objects.equals(alipayUserInfo.getUserStatus(), "T")
+                && Objects.equals(alipayUserInfo.getIsCertified(), "T")
+                && Objects.equals(alipayUserInfo.getIsStudentCertified(), "T"))
+            return CommonResponse.success();
+        return CommonResponse.fail(ConstUtil.ERROR_CODE, "用户不符合准入规则");
     }
 
     //查询第三方账号
