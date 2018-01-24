@@ -15,12 +15,15 @@ import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.AcqUtil;
+import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
@@ -270,6 +273,38 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         logger.info("userflag:1");
         RedisUtils.setExpire(token, cacheMap);
 
+        String providerNo = "";//人脸机构
+        if("33".equals(channelNo)){//乔融查询人脸机构配置
+            logger.info("查询人脸机构配置");
+            Map<String, Object> params = new HashMap<>();
+            params.put("typCde", typCde);
+            String urlface = AppServerUtils.getAppServerUrl() + "/app/appserver/getCmisFacedOrg";
+            IResponse<Map> response2 = CommonRestUtils.getForMap(urlface, params);
+            response2.assertSuccessNeedBody();
+            Map map1 = response2.getBody();
+            List list = (List) map1.get("faceConfigList");
+            if(list.size() == 0){
+                return fail(ConstUtil.ERROR_CODE, "贷款品种"+typCde+"没有配置人脸机构");
+            }
+            Map m = (Map) list.get(0);
+            providerNo = Convert.toString(m.get("providerNo"));
+        }
+
+        if("03".equals(providerNo)){//人脸机构为face++则不进行是否需要人脸的检查
+            //1.查看redis取值  如果redis存储已经人脸成功则直接跳转提交页面
+            //2.如果人脸未成功  查看人脸次数  若人脸不够次数  继续走人脸    若人脸次数达到上限则  终止
+            String faceflag = (String) cacheMap.get("faceflag");
+            String facecount = Convert.toString(cacheMap.get("facecount"));
+            if("Y".equals(faceflag)){
+                returnmap.put("flag", "05");//跳转合同
+                return success(returnmap);//跳转合同展示页面
+            }
+            if("5".equals(facecount)){
+                logger.info("人脸识别，剩余次数为0，录单终止");
+                return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
+            }
+
+        }
 
         //3.手机号已注册，判断是否需要人脸识别
         Map<String, Object> faceparamMap = new HashMap<>();
@@ -293,13 +328,9 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         switch (code) {
             case "00": //人脸识别通过
                 logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
-
                 logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
                 returnmap.put("flag", "05");//跳转合同
-
                 return success(returnmap);//跳转合同展示页面
-
-
             case "01": //01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
                 //终止
                 logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
@@ -309,9 +340,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
                 //终止
                 logger.info("人脸识别，剩余次数为0，录单终止");
                 return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
-//            logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像");
-//            returnmap.put("flag", "03");// 手持身份证
-//            return success(returnmap);
             case "10": //10：未通过人脸识别，可以再做人脸识别
                 //可以做人脸识别
                 logger.info("未通过人脸识别，可以再做人脸识别");
