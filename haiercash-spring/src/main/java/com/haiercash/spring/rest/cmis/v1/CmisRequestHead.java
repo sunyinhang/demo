@@ -31,4 +31,13 @@ public final class CmisRequestHead {
 
     @JSONField(ordinal = 8)
     private String cooprCode;
+
+    @JSONField(ordinal = 9)
+    private String autoFlag;
+
+    @JSONField(ordinal = 10)
+    private String applCde;
+
+    @JSONField(ordinal = 11)
+    private Long applSeq;
 }

@@ -25,6 +25,9 @@ public final class AcqRequestBuilder {
     private String sysFlag;
     private String channelNo;
     private String cooprCode;
+    private String autoFlag;
+    private String applCde;
+    private Long applSeq;
     private Object body;
 
     private AcqRequestBuilder(String tradeCode) {
@@ -59,6 +62,9 @@ public final class AcqRequestBuilder {
             head.setSysFlag(Convert.toString(bodyMap.remove("sysFlag")));
             head.setChannelNo(Convert.toString(bodyMap.remove("channelNo")));
             head.setCooprCode(Convert.toString(bodyMap.remove("cooprCode")));
+            head.setAutoFlag(Convert.toString(bodyMap.remove("autoFlag")));
+            head.setApplCde(Convert.toString(bodyMap.remove("applCde")));
+            head.setApplSeq(Convert.nullLong(bodyMap.remove("applSeq")));
             AcqRequestRoot root = new AcqRequestRoot();
             root.setHead(head);
             root.setBody(bodyMap);
@@ -81,6 +87,9 @@ public final class AcqRequestBuilder {
             head.setSysFlag(Convert.toString(headMap.get("sysFlag")));
             head.setChannelNo(Convert.toString(headMap.get("channelNo")));
             head.setCooprCode(Convert.toString(headMap.get("cooprCode")));
+            head.setAutoFlag(Convert.toString(headMap.get("autoFlag")));
+            head.setApplCde(Convert.toString(headMap.get("applCde")));
+            head.setApplSeq(Convert.nullLong(headMap.get("applSeq")));
             AcqRequestRoot root = new AcqRequestRoot();
             root.setHead(head);
             root.setBody(bodyMap);
@@ -116,6 +125,21 @@ public final class AcqRequestBuilder {
         return this;
     }
 
+    public AcqRequestBuilder autoFlag(String autoFlag) {
+        this.autoFlag = autoFlag;
+        return this;
+    }
+
+    public AcqRequestBuilder applCde(String applCde) {
+        this.applCde = applCde;
+        return this;
+    }
+
+    public AcqRequestBuilder applSeq(Long applSeq) {
+        this.applSeq = applSeq;
+        return this;
+    }
+
     public AcqRequestBuilder body(Object body) {
         this.body = body;
         return this;
@@ -131,6 +155,9 @@ public final class AcqRequestBuilder {
         head.setSysFlag(this.sysFlag);
         head.setChannelNo(this.channelNo);
         head.setCooprCode(this.cooprCode);
+        head.setAutoFlag(this.autoFlag);
+        head.setApplCde(this.applCde);
+        head.setApplSeq(this.applSeq);
         AcqRequestRoot root = new AcqRequestRoot();
         root.setHead(head);
         root.setBody(this.body);
