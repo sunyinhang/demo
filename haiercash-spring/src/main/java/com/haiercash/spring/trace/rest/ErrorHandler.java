@@ -2,6 +2,7 @@ package com.haiercash.spring.trace.rest;
 
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.ThrowableUtils;
+import com.haiercash.spring.boot.ApplicationUtils;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
@@ -18,15 +19,22 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
  * Created by 许崇雷 on 2017-10-25.
  */
 public final class ErrorHandler {
+    private static final int LEN_APP_CODE = 1;
+    private static final String APP_CODE;
     private static final String MSG_MISSING_SERVLET_REQUEST_PARAMETER = "缺少必须的参数:";
     private static final Log logger = LogFactory.getLog(ErrorHandler.class);
+
+    static {
+        String appName = ApplicationUtils.getProperties().getName();
+        APP_CODE = (appName.length() <= LEN_APP_CODE ? appName : appName.substring(0, LEN_APP_CODE)).toUpperCase();
+    }
 
     private ErrorHandler() {
     }
 
     public static String getRetFlag(String retFlag) {
         String moduleNo = Convert.defaultString(ThreadContext.getExecutingModuleNo(), "00");
-        return (retFlag == null || retFlag.length() <= 2) ? (ConstUtil.APP_CODE + moduleNo + retFlag) : retFlag;
+        return (retFlag == null || retFlag.length() <= 2) ? (APP_CODE + moduleNo + retFlag) : retFlag;
     }
 
     public static ResponseEntity<CommonResponse> handleBusinessException(BusinessException e) {
