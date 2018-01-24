@@ -22,6 +22,7 @@ public final class IncomingLog {
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("action", action);
         log.put("msgId", TraceUtils.getMsgId(message));
+        log.put("retry", TraceUtils.getRetry(message));
         log.put("messageHeaders", TraceUtils.getHeaders(message));
         log.put("messageBody", TraceUtils.getBody(message));
         logger.info("==>Rabbit Consume Begin: " + log);
@@ -31,6 +32,7 @@ public final class IncomingLog {
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("action", action);
         log.put("msgId", TraceUtils.getMsgId(message));
+        log.put("retry", TraceUtils.getRetry(message));
         log.put("result", "消费成功");
         log.put("took", tookMs);
         logger.info("==>Rabbit Consume End: " + log);
@@ -40,9 +42,20 @@ public final class IncomingLog {
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("action", action);
         log.put("msgId", TraceUtils.getMsgId(message));
+        log.put("retry", TraceUtils.getRetry(message));
         log.put("result", ConsumeDisabledException.MESSAGE);
         log.put("took", tookMs);
         logger.warn("==>Rabbit Consume Disabled: " + log);
+    }
+
+    public static void writeWarnLog(String action, Message message, int retry, Exception e, long tookMs) {
+        Map<String, Object> log = new LinkedHashMap<>();
+        log.put("action", action);
+        log.put("msgId", TraceUtils.getMsgId(message));
+        log.put("retry", TraceUtils.getRetry(message));
+        log.put("result", String.format("消费异常: %s, 将进行第 %d 次重试", ThrowableUtils.getMessage(e), retry));
+        log.put("took", tookMs);
+        logger.warn("==>Rabbit Consume Warn: " + log);
     }
 
     public static void writeErrorLog(String action, Message message, Exception e, long tookMs) {
@@ -50,6 +63,7 @@ public final class IncomingLog {
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("action", action);
         log.put("msgId", TraceUtils.getMsgId(message));
+        log.put("retry", TraceUtils.getRetry(message));
         log.put("error", msg);
         log.put("took", tookMs);
         logger.error("==>Rabbit Consume Error: " + log);

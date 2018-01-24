@@ -1,11 +1,16 @@
 package com.haiercash.spring.rabbit.core;
 
+import com.haiercash.core.lang.Convert;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.rabbit.RabbitRetryMessage;
+import com.haiercash.spring.rabbit.RabbitUtils;
 import com.haiercash.spring.rabbit.exception.ConsumeDisabledException;
 import com.haiercash.spring.trace.rabbit.IncomingLog;
 import org.springframework.amqp.rabbit.listener.adapter.DelegatingInvocableHandler;
 import org.springframework.amqp.rabbit.listener.adapter.HandlerAdapter;
+import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.invocation.InvocableHandlerMethod;
 
 /**
@@ -21,7 +26,7 @@ public final class RabbitHandlerAdapter extends HandlerAdapter {
     }
 
     @Override
-    public Object invoke(Message<?> message, Object... providedArgs) throws Exception {
+    public Object invoke(Message<?> message, Object... providedArgs) {
         ThreadContext.init(null, null, null);
         String action = this.getMethodAsString(message.getPayload());
         IncomingLog.writeBeginLog(action, message);
@@ -34,8 +39,20 @@ public final class RabbitHandlerAdapter extends HandlerAdapter {
             IncomingLog.writeDisabledLog(action, message, System.currentTimeMillis() - begin);
             throw e;
         } catch (Exception e) {
+            //重试
+            MessageHeaders headers = message.getHeaders();
+            int retry = Convert.defaultInteger(headers.get(RabbitRetryMessage.RETRY_NAME));
+            if (retry < RabbitRetryMessage.RETRY_COUNT) {
+                retry++;
+                IncomingLog.writeWarnLog(action, message, retry, e, System.currentTimeMillis() - begin);
+                String queue = (String) headers.get(AmqpHeaders.CONSUMER_QUEUE);
+                RabbitRetryMessage retryMessage = new RabbitRetryMessage(message, retry);
+                RabbitUtils.retry(queue, retryMessage);
+                return null;
+            }
+            //超过最大重试次数
             IncomingLog.writeErrorLog(action, message, e, System.currentTimeMillis() - begin);
-            throw e;
+            return null;
         } finally {
             ThreadContext.reset();
         }

@@ -1,5 +1,6 @@
 package com.haiercash.spring.rabbit;
 
+import com.haiercash.core.lang.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.util.Assert;
 
@@ -20,5 +21,13 @@ public final class RabbitUtils {
 
         RabbitTemplate rabbitTemplate = getRabbitTemplate();
         rabbitTemplate.convertAndSend(rabbitInfo.getExchange(), rabbitInfo.getRoutingKey(), object);
+    }
+
+    public static void retry(String queue, RabbitRetryMessage message) {
+        Assert.notNull(queue, "queue can not be null");
+        Assert.notNull(message, "message can not be null");
+
+        RabbitTemplate rabbitTemplate = getRabbitTemplate();
+        rabbitTemplate.convertAndSend(StringUtils.EMPTY, queue, message);
     }
 }
