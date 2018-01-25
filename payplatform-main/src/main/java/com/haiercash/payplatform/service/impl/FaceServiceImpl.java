@@ -236,12 +236,17 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                     if(facecount == 5){
                         return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
                     }
+                    facecount = facecount + 1;
                     cacheMap.put("faceflag", "N");
-                    cacheMap.put("facecount", facecount + 1);
+                    cacheMap.put("facecount", facecount);
                     RedisUtils.setExpire(token, cacheMap);
                     RedisUtils.expire(token, 24, TimeUnit.HOURS);
                     Map<String, Object> m = new HashMap<>();
-                    m.put("faceFlag", "3");
+                    if(facecount == 5){//人脸次数达到上限录单终止
+                        m.put("faceFlag", "4");
+                    }else{//人脸次数未达到上限可继续做人脸
+                        m.put("faceFlag", "3");
+                    }
                     return success(m);
                 }
             }
