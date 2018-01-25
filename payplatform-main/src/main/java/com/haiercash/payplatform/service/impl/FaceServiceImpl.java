@@ -238,7 +238,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                     cacheMap.put("facecount", facecount + 1);
                     RedisUtils.setExpire(token, cacheMap);
                     Map<String, Object> m = new HashMap<>();
-                    m.put("faceFlag", "1");
+                    m.put("faceFlag", "3");
                     return success(m);
                 }
             }
