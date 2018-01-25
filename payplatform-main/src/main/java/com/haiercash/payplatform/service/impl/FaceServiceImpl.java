@@ -214,20 +214,19 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if ("00000".equals(checkretFlag)) {//
             //人脸识别成功
             //判断是否已经设置过支付密码
-            if ("33".equals(channelNo) && "".equals(status)) {//是乔融且不是face++厂商
+            if ("33".equals(channelNo) && !"03".equals(providerNo)) {//是乔融且不是face++厂商
                 Map<String, Object> m = new HashMap<>();
                 m.put("faceFlag", "1");
                 return success(m);
             }
-            if("33".equals(channelNo) && !"".equals(status)){//是乔融且是face++厂商
+            if("33".equals(channelNo) && "03".equals(providerNo)){//是乔融且是face++厂商
                 if("01".equals(status)){//01同一人，返回成功   redis存储faceflag  Y
                     cacheMap.put("faceflag", "Y");
                     RedisUtils.setExpire(token, cacheMap);
                     Map<String, Object> m = new HashMap<>();
                     m.put("faceFlag", "1");
                     return success(m);
-                }
-                if("02".equals(status)){//02不同人，若redis存储次数等于5次终止，不足5次可继续
+                } else {//02不同人，若redis存储次数等于5次终止，不足5次可继续
                     Integer facecount = Convert.asInteger(cacheMap.get("facecount"));
                     if(facecount == null){
                         facecount = 0;
