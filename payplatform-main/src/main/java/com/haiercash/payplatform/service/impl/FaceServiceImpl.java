@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yuanli on 2017/8/1.
@@ -223,6 +224,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 if("01".equals(status)){//01同一人，返回成功   redis存储faceflag  Y
                     cacheMap.put("faceflag", "Y");
                     RedisUtils.setExpire(token, cacheMap);
+                    RedisUtils.expire(token, 24, TimeUnit.HOURS);
                     Map<String, Object> m = new HashMap<>();
                     m.put("faceFlag", "1");
                     return success(m);
@@ -237,6 +239,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                     cacheMap.put("faceflag", "N");
                     cacheMap.put("facecount", facecount + 1);
                     RedisUtils.setExpire(token, cacheMap);
+                    RedisUtils.expire(token, 24, TimeUnit.HOURS);
                     Map<String, Object> m = new HashMap<>();
                     m.put("faceFlag", "3");
                     return success(m);
