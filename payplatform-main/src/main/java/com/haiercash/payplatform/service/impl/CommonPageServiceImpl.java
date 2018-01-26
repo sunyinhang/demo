@@ -172,11 +172,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
         logger.info("订单提交业务类型:" + applSeq + ", typgrp:" + apporder.getTypGrp());
         // 检验可用额度是否满足申请金额
-        if ("46".equals(getChannelNo())) {
-            if (!judgeApplAmt(apporder.getIdTyp(), apporder.getIdNo(), apporder.getApplyAmt(), super.getToken())) {
-                logger.info("对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
-                return fail("07", "对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
-            }
+        if (!judgeApplAmt(apporder.getIdTyp(), apporder.getIdNo(), apporder.getApplyAmt(), super.getToken(), apporder.getTypGrp())) {
+            logger.info("对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
+            return fail("07", "对不起，您的剩余额度低于借款金额，建议您可以在额度恢复后再借款");
         }
         // 商户版直接提交核心
         if ("13".equals(super.getChannel()) || "11".equals(super.getChannel())) {
@@ -1141,7 +1139,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         logger.debug("还款卡手机号：" + order.getRepayAccMobile());
     }
 
-    public boolean judgeApplAmt(String idTyp, String idNo, String applyAmt, String token) {
+    public boolean judgeApplAmt(String idTyp, String idNo, String applyAmt, String token, String typGrp) {
         boolean resultFlag = false;
         logger.info("====检验可用额度是否满足申请金额====");
         HashMap<String, Object> map = new HashMap<>();
@@ -1149,8 +1147,11 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         map.put("idNo", idNo);
         map.put("sysFlag", super.getChannel());
         map.put("channelNo", super.getChannelNo());
-        logger.info("检验参数:" + map + ",申请金额:" + applyAmt);
-
+        logger.info("检验参数:" + map + ",申请金额:" + applyAmt + "贷款类型:" + typGrp);
+        if (typGrp == null) {
+            logger.info("贷款类型为空");
+            return false;
+        }
         //调用信贷系统失败或者返回失败 直接返回true
         /**
          * { "response": { "head": { "retMsg": "交易成功！", "retFlag": "00000" },
@@ -1172,7 +1173,15 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         Map<String, Object> speCrdList = (Map<String, Object>) _repbodyMap.get("speCrdList");
         Map<String, Object> bodyMap = (Map<String, Object>) speCrdList.get("speCrdInfo");
         applyAmt = String.valueOf(StringUtils.isEmpty(applyAmt) ? 0 : applyAmt);
-        String crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAmt")) ? 0 : bodyMap.get("crdComAvailAmt"));//商品贷用crdComAvailAmt   现金贷用crdNorAvailAmt
+        String crdComAvailAmt = "";
+        if ("01".equals(typGrp)) {//商品贷
+            crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAmt")) ? 0 : bodyMap.get("crdComAvailAmt"));//商品贷用crdComAvailAmt   现金贷用crdNorAvailAmt
+        } else if ("02".equals(typGrp)) {//现金贷
+            crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdNorAvailAmt")) ? 0 : bodyMap.get("crdNorAvailAmt"));//商品贷用crdComAvailAmt   现金贷用crdNorAvailAmt
+        } else {
+            logger.info("贷款类型错误");
+            return false;
+        }
         logger.info("可用额度:" + crdComAvailAmt);
         if (new BigDecimal(crdComAvailAmt).compareTo(new BigDecimal(applyAmt)) >= 0) {
             logger.info("可用额度满足申请金额");
