@@ -1175,9 +1175,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         applyAmt = String.valueOf(StringUtils.isEmpty(applyAmt) ? 0 : applyAmt);
         String crdComAvailAmt = "";
         if ("01".equals(typGrp)) {//商品贷
-            crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAmt")) ? 0 : bodyMap.get("crdComAvailAmt"));//商品贷用crdComAvailAmt   现金贷用crdNorAvailAmt
+            crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdComAvailAmt")) ? 0 : bodyMap.get("crdComAvailAmt"));//商品贷用crdComAvailAmt
         } else if ("02".equals(typGrp)) {//现金贷
-            crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdNorAvailAmt")) ? 0 : bodyMap.get("crdNorAvailAmt"));//商品贷用crdComAvailAmt   现金贷用crdNorAvailAmt
+            crdComAvailAmt = String.valueOf(StringUtils.isEmpty(bodyMap.get("crdNorAvailAmt")) ? 0 : bodyMap.get("crdNorAvailAmt"));//现金贷用crdNorAvailAmt
         } else {
             logger.info("贷款类型错误");
             return false;
