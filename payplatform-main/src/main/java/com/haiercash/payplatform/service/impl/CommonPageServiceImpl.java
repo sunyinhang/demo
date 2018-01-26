@@ -1147,7 +1147,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         map.put("idNo", idNo);
         map.put("sysFlag", super.getChannel());
         map.put("channelNo", super.getChannelNo());
-        logger.info("检验参数:" + map + ",申请金额:" + applyAmt + "贷款类型:" + typGrp);
+        logger.info("检验参数:" + map + ",申请金额:" + applyAmt + ",贷款类型:" + typGrp);
         if (typGrp == null) {
             logger.info("贷款类型为空");
             return false;
