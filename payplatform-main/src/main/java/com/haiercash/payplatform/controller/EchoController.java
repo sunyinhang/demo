@@ -2,6 +2,7 @@ package com.haiercash.payplatform.controller;
 
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.spring.controller.BaseController;
+import com.haiercash.spring.rest.client.JsonClientUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +44,7 @@ public class EchoController extends BaseController {
 
     @PostMapping("/api/echo/post")
     public Map<String, Object> echoPost(@RequestBody Map map) {
+        JsonClientUtils.getForString("http://www.baidu.com");
         DemoBean bean = new DemoBean(DateUtils.fromDateTimeString("2017-01-02 03:04:05"), DateUtils.fromDateString("2017-01-02"));
         bean.setValue(map.get("value").toString());
         return success(bean);
