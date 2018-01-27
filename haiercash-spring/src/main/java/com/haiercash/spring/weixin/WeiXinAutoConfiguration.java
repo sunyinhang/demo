@@ -1,5 +1,6 @@
 package com.haiercash.spring.weixin;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ public class WeiXinAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     WeiXinApi weiXinApi() {
         return new WeiXinApi(this.properties);
     }

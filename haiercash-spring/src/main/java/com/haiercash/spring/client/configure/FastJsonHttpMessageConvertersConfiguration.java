@@ -20,7 +20,7 @@ public class FastJsonHttpMessageConvertersConfiguration {
     @ConditionalOnProperty(name = HttpConvertersProperties.PREFERRED_JSON_MAPPER_PROPERTY, havingValue = HttpMessageConvertersAutoConfiguration.PREFERRED_JSON_MAPPER_FASTJSON, matchIfMissing = false)
     protected static class FastJsonHttpMessageConverterConfiguration {
         @Bean
-        @ConditionalOnMissingBean(value = FastJsonHttpMessageConverterEx.class)
+        @ConditionalOnMissingBean
         public FastJsonHttpMessageConverterEx fastJsonHttpMessageConverter() {
             return new FastJsonHttpMessageConverterEx();
         }

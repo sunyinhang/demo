@@ -28,6 +28,7 @@ public class RabbitAutoConfiguration {
 
     @Bean
     @Primary
+    @ConditionalOnMissingBean
     MessageConverter messageConverter() {
         return new FastJsonRabbitMessageConverter();
     }
