@@ -2,8 +2,6 @@ package com.haiercash.spring.context;
 
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.controller.BaseController;
-import com.haiercash.spring.trace.TraceId;
-import org.slf4j.MDC;
 import org.springframework.util.Assert;
 
 import java.util.Stack;
@@ -20,10 +18,6 @@ public final class ThreadContext {
 
     public static boolean exists() {
         return contexts.get().exists;
-    }
-
-    public static String getTraceId() {
-        return contexts.get().traceId;
     }
 
     public static String getToken() {
@@ -62,13 +56,8 @@ public final class ThreadContext {
 
     public static void init(String token, String channel, String channelNo) {
         //可在此处添加验证
-        String traceId = TraceId.generate();
-        MDC.put(TraceId.NAME, traceId);
-        if (RequestContext.exists())
-            RequestContext.getResponse().setHeader(TraceId.NAME_HEADER, traceId);
         ThreadContextData data = contexts.get();
         data.exists = true;
-        data.traceId = traceId;
         data.token = token == null ? StringUtils.EMPTY : token;
         data.channel = channel == null ? StringUtils.EMPTY : channel;
         data.channelNo = channelNo == null ? StringUtils.EMPTY : channelNo;
@@ -85,12 +74,10 @@ public final class ThreadContext {
     public static void reset() {
         ThreadContextData data = contexts.get();
         data.exists = false;
-        data.traceId = StringUtils.EMPTY;
         data.token = StringUtils.EMPTY;
         data.channel = StringUtils.EMPTY;
         data.channelNo = StringUtils.EMPTY;
         data.controllerStack.clear();
-        MDC.remove(TraceId.NAME);
     }
 
     public static void enterController(BaseController controller) {
@@ -105,7 +92,6 @@ public final class ThreadContext {
     private static final class ThreadContextData {
         private final Stack<BaseController> controllerStack = new Stack<>();
         private boolean exists;
-        private String traceId;
         private String token;
         private String channel;
         private String channelNo;

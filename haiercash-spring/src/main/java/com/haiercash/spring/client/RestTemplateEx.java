@@ -3,7 +3,8 @@ package com.haiercash.spring.client;
 import com.haiercash.core.collection.EnumerationUtils;
 import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
-import com.haiercash.spring.trace.TraceId;
+import com.haiercash.spring.context.TraceContext;
+import com.haiercash.spring.trace.TraceHeaders;
 import org.apache.tomcat.util.collections.CaseInsensitiveKeyMap;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.AbstractClientHttpRequest;
@@ -46,7 +47,12 @@ public class RestTemplateEx extends RestTemplate {
     //发起请求
     @Override
     protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback, ResponseExtractor<T> responseExtractor) throws RestClientException {
-        return super.doExecute(url, method, new RequestCallbackWrapper(requestCallback), responseExtractor);
+        TraceContext.beginSpan();
+        try {
+            return super.doExecute(url, method, new RequestCallbackWrapper(requestCallback), responseExtractor);
+        } finally {
+            TraceContext.endSpan();
+        }
     }
 
     //创建请求
@@ -75,7 +81,9 @@ public class RestTemplateEx extends RestTemplate {
         private void putContextHeaders(ClientHttpRequest ribbonRequest) {
             //通用 Header
             if (ThreadContext.exists()) {
-                ribbonRequest.getHeaders().set(TraceId.NAME_HEADER, ThreadContext.getTraceId());
+                ribbonRequest.getHeaders().set(TraceHeaders.TRACE_ID_NAME, TraceContext.getTraceId());
+                ribbonRequest.getHeaders().set(TraceHeaders.SPAN_ID_NAME, TraceContext.getSpanId());
+                ribbonRequest.getHeaders().set(TraceHeaders.PARENT_SPAN_ID_NAME, TraceContext.getParentSpanId());
                 if (!ribbonRequest.getHeaders().containsKey(NAME_TOKEN))
                     ribbonRequest.getHeaders().set(NAME_TOKEN, ThreadContext.getToken());
                 if (!ribbonRequest.getHeaders().containsKey(NAME_CHANNEL))

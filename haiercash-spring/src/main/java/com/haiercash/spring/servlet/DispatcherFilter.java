@@ -4,6 +4,7 @@ import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.trace.rest.IncomingLog;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -52,6 +53,7 @@ public final class DispatcherFilter implements Filter {
         DispatcherResponseWrapper response = new DispatcherResponseWrapper((HttpServletResponse) servletResponse);
         RequestContext.init(request, response);
         ThreadContext.init(this.getArg(request, NAME_TOKEN), this.getArg(request, NAME_CHANNEL), Convert.defaultString(this.getArg(request, NAME_CHANNEL_NO_PRIMARY), this.getArg(request, NAME_CHANNEL_NO_SECONDARY)));
+        TraceContext.init();
         IncomingLog.writeBeginLog(request);
         long begin = System.currentTimeMillis();
         try {
@@ -61,6 +63,7 @@ public final class DispatcherFilter implements Filter {
             IncomingLog.writeErrorLog(request, e, System.currentTimeMillis() - begin);
             throw e;
         } finally {
+            TraceContext.reset();
             ThreadContext.reset();
             RequestContext.reset();
         }

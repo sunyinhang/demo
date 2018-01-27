@@ -1,6 +1,7 @@
 package com.haiercash.spring.scheduling.core;
 
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.trace.scheduling.IncomingLog;
 import org.springframework.scheduling.support.ScheduledMethodRunnable;
 import org.springframework.util.Assert;
@@ -19,6 +20,7 @@ public final class ContextRunnable implements Runnable {
     @Override
     public void run() {
         ThreadContext.init(null, null, null);
+        TraceContext.init();
         String action = this.runnable.getMethod().toGenericString();
         IncomingLog.writeBeginLog(action);
         long begin = System.currentTimeMillis();
@@ -28,6 +30,7 @@ public final class ContextRunnable implements Runnable {
         } catch (Exception e) {
             IncomingLog.writeErrorLog(action, e, System.currentTimeMillis() - begin);
         } finally {
+            TraceContext.reset();
             ThreadContext.reset();
         }
     }

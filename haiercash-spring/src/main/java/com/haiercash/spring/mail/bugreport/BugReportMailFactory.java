@@ -6,6 +6,7 @@ import com.haiercash.spring.boot.ApplicationProperties;
 import com.haiercash.spring.boot.ApplicationUtils;
 import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.mail.core.Mail;
 import com.haiercash.spring.mail.core.MailType;
 
@@ -43,7 +44,7 @@ public final class BugReportMailFactory {
         builder.append("<tr><td>时间</td><td>").append(DateUtils.nowDateTimeString()).append("</td></tr>");
         builder.append("<tr><td>线程</td><td>").append(Thread.currentThread().getName()).append("</td></tr>");
         if (ThreadContext.exists()) {
-            builder.append("<tr><td>追踪</td><td>").append(ThreadContext.getTraceId()).append("</td></tr>");
+            builder.append("<tr><td>追踪</td><td>").append(TraceContext.getTraceSpanId()).append("</td></tr>");
         }
         if (RequestContext.exists()) {
             HttpServletRequest request = RequestContext.getRequest();
