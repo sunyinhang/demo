@@ -9,10 +9,12 @@ public final class TracerUtils {
     }
 
     public static ISpan createSpan() {
-        return getTracer().createSpan();
+        ITracer tracer = getTracer();
+        return tracer == null ? ISpan.EMPTY : tracer.createSpan();
     }
 
     public static ISpan createContinueSpan(ISpan span) {
-        return getTracer().createContinueSpan(span);
+        ITracer tracer = getTracer();
+        return tracer == null ? ISpan.EMPTY : tracer.createContinueSpan(span);
     }
 }
