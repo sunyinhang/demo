@@ -3,7 +3,6 @@ package com.haiercash.spring.trace.rest;
 import com.haiercash.core.lang.ThrowableUtils;
 import com.haiercash.spring.client.ClientRequestWrapper;
 import com.haiercash.spring.client.ClientResponseWrapper;
-import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,19 +21,19 @@ public final class OutgoingLog {
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("method", method);
         log.put("requestUri", request.getURI().toString());
-        log.put("requestHeaders", TraceUtils.getHeaders(request));
+        log.put("requestHeaders", RestLogUtils.getHeaders(request));
         log.put("requestPath", request.getURI().getPath());
         log.put("requestQuery", request.getURI().getRawQuery());
-        log.put("requestParams", TraceUtils.getParams(request));
+        log.put("requestParams", RestLogUtils.getParams(request));
         if (method.equals("POST") || method.equals("PUT"))
-            log.put("requestBody", TraceUtils.getBody(request));
+            log.put("requestBody", RestLogUtils.getBody(request));
         return log;
     }
 
     public static void writeEndLog(Map<String, Object> log, ClientResponseWrapper response, long tookMs) throws IOException {
         log.put("responseStatus", response.getRawStatusCode());
-        log.put("responseHeaders", TraceUtils.getHeaders(response));
-        log.put("responseBody", TraceUtils.getBody(response));
+        log.put("responseHeaders", RestLogUtils.getHeaders(response));
+        log.put("responseBody", RestLogUtils.getBody(response));
         log.put("took", tookMs);
         logger.info("==>Call Rest: " + log);
     }

@@ -2,6 +2,7 @@ package com.haiercash.spring.rabbit.core;
 
 import com.haiercash.core.lang.Convert;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.rabbit.RabbitRetryMessage;
 import com.haiercash.spring.rabbit.RabbitUtils;
 import com.haiercash.spring.rabbit.exception.ConsumeDisabledException;
@@ -28,6 +29,7 @@ public final class RabbitHandlerAdapter extends HandlerAdapter {
     @Override
     public Object invoke(Message<?> message, Object... providedArgs) {
         ThreadContext.init(null, null, null);
+        TraceContext.init();
         String action = this.getMethodAsString(message.getPayload());
         IncomingLog.writeBeginLog(action, message);
         long begin = System.currentTimeMillis();
@@ -54,6 +56,7 @@ public final class RabbitHandlerAdapter extends HandlerAdapter {
             IncomingLog.writeErrorLog(action, message, e, System.currentTimeMillis() - begin);
             return null;
         } finally {
+            TraceContext.reset();
             ThreadContext.reset();
         }
     }

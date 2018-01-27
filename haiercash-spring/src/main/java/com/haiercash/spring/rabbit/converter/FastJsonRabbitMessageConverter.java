@@ -5,7 +5,7 @@ import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.spring.rabbit.RabbitRetryMessage;
-import com.haiercash.spring.trace.TraceUtils;
+import com.haiercash.spring.trace.rabbit.RabbitLogUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.support.AmqpHeaders;
@@ -65,7 +65,7 @@ public final class FastJsonRabbitMessageConverter extends WhiteListDeserializing
         } else if (object instanceof RabbitRetryMessage) {
             RabbitRetryMessage retryMessage = (RabbitRetryMessage) object;
             bytes = retryMessage.getPayload();
-            messageProperties.setMessageId(TraceUtils.getMsgId(retryMessage.getMessage()));
+            messageProperties.setMessageId(RabbitLogUtils.getMsgId(retryMessage.getMessage()));
             messageProperties.setContentType(Convert.toString(retryMessage.getHeader(AmqpHeaders.CONTENT_TYPE)));
             messageProperties.setContentEncoding(Convert.toString(retryMessage.getHeader(AmqpHeaders.CONTENT_ENCODING)));
             messageProperties.setHeader(RabbitRetryMessage.RETRY_NAME, retryMessage.getRetry());

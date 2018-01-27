@@ -1,8 +1,11 @@
 package com.haiercash.spring.rabbit;
 
+import com.haiercash.core.lang.StringUtils;
+import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.trace.rabbit.OutgoingLog;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.support.CorrelationData;
@@ -19,6 +22,10 @@ public final class RabbitTemplateEx extends RabbitTemplate {
 
     @Override
     protected void doSend(Channel channel, String exchange, String routingKey, Message message, boolean mandatory, CorrelationData correlationData) throws Exception {
+        TraceContext.beginSpan();
+        MessageProperties properties = message.getMessageProperties();
+        if (StringUtils.isEmpty(properties.getMessageId()))
+            properties.setMessageId(TraceContext.getTraceSpanId());
         Map<String, Object> log = OutgoingLog.writeBeginLog(message, exchange, routingKey);
         long begin = System.currentTimeMillis();
         try {
@@ -27,6 +34,8 @@ public final class RabbitTemplateEx extends RabbitTemplate {
         } catch (Exception e) {
             OutgoingLog.writeErrorLog(log, e, System.currentTimeMillis() - begin);
             throw e;
+        } finally {
+            TraceContext.endSpan();
         }
     }
 }

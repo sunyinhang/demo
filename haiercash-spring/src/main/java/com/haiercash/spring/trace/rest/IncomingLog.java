@@ -5,7 +5,6 @@ import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.servlet.DispatcherRequestWrapper;
 import com.haiercash.spring.servlet.DispatcherResponseWrapper;
-import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,11 +23,11 @@ public final class IncomingLog {
         Map<String, Object> log = new LinkedHashMap<>();
         log.put("method", method);
         log.put("servletPath", request.getServletPath());
-        log.put("requestHeaders", TraceUtils.getHeaders(request));
+        log.put("requestHeaders", RestLogUtils.getHeaders(request));
         log.put("requestQuery", request.getQueryString());
-        log.put("requestParams", TraceUtils.getParams(request));
+        log.put("requestParams", RestLogUtils.getParams(request));
         if (method.equals("POST") || method.equals("PUT"))
-            log.put("requestBody", TraceUtils.getBody(request));
+            log.put("requestBody", RestLogUtils.getBody(request));
         logger.info("==>Servlet Begin: " + log);
     }
 
@@ -38,8 +37,8 @@ public final class IncomingLog {
         log.put("method", method);
         log.put("servletPath", request.getServletPath());
         log.put("responseStatus", response.getStatus());
-        log.put("responseHeaders", TraceUtils.getHeaders(response));
-        log.put("responseBody", TraceUtils.getBody(response));
+        log.put("responseHeaders", RestLogUtils.getHeaders(response));
+        log.put("responseBody", RestLogUtils.getBody(response));
         log.put("took", tookMs);
         logger.info("==>Servlet End: " + log);
     }

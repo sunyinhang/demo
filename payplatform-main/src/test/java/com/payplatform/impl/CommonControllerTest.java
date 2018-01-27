@@ -3,6 +3,7 @@ package com.payplatform.impl;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.util.HttpUtil;
 import com.payplatform.ControllerTest;
 import org.junit.Assert;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class CommonControllerTest extends ControllerTest {
     static {
         ThreadContext.init("", "", "");
+        TraceContext.init();
     }
 
     @Autowired

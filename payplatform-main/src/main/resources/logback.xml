@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="true" scanPeriod="30 seconds">
-    <property name="LOG_PATH" value="./log"/>
     <property name="APP_NAME" value="payplatform"/>
+    <property name="FILE_PATTERN" value="./log/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}"/>
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] [%X{Trace-Span-Id}] %-5level %logger{36} %L - %msg%n"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceId}] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
     <root level="info">
@@ -15,10 +16,10 @@
 
     <appender name="LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATTERN}.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceId}] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
     <appender name="ASYNC_LOG" class="ch.qos.logback.classic.AsyncAppender">
@@ -32,10 +33,10 @@
 
     <appender name="REPORT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.report.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATTERN}.report.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceId}] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
     <appender name="ASYNC_REPORT_LOG" class="ch.qos.logback.classic.AsyncAppender">
@@ -49,10 +50,10 @@
 
     <appender name="TASK_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.task.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATTERN}.task.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceId}] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
     <appender name="ASYNC_TASK_LOG" class="ch.qos.logback.classic.AsyncAppender">
@@ -66,10 +67,10 @@
 
     <appender name="TRACE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}.trace.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATTERN}.trace.log</FileNamePattern>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] [%X{TraceId}] %-5level %logger{36} %L - %msg%n</pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
     <appender name="ASYNC_TRACE_LOG" class="ch.qos.logback.classic.AsyncAppender">

@@ -2,7 +2,6 @@ package com.haiercash.spring.trace.rabbit;
 
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.lang.ThrowableUtils;
-import com.haiercash.spring.trace.TraceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.amqp.core.Message;
@@ -17,14 +16,14 @@ public final class OutgoingLog {
     private static final Log logger = LogFactory.getLog(OutgoingLog.class);
 
     public static Map<String, Object> writeBeginLog(Message message, String exchange, String routingKey) {
-        String msgId = TraceUtils.getMsgId(message);
+        String msgId = RabbitLogUtils.getMsgId(message);
         Map<String, Object> log = new LinkedHashMap<>();
         if (StringUtils.isNotEmpty(msgId))
             log.put("msgId", msgId);
         log.put("exchange", exchange);
         log.put("routingKey", routingKey);
-        log.put("messageHeaders", TraceUtils.getHeaders(message));
-        log.put("messageBody", TraceUtils.getBody(message));
+        log.put("messageHeaders", RabbitLogUtils.getHeaders(message));
+        log.put("messageBody", RabbitLogUtils.getBody(message));
         return log;
     }
 

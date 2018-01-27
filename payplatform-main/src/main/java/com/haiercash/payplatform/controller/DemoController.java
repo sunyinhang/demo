@@ -24,7 +24,7 @@ public class DemoController extends BaseController {
 
     @GetMapping("/api/test/get")
     public Object testGet() {
-        String url = "http://payplatform-develop-tim/api/echo/get?value=哈哈&c=&a=b==";
+        String url = "http://TIM/api/echo/get?value=哈哈&c=&a=b==";
         IResponse<DemoBean> response = CommonRestUtils.getForObject(url, DemoBean.class);
         response.assertSuccess(true);
         DemoBean bean = response.getBody();
@@ -33,7 +33,7 @@ public class DemoController extends BaseController {
         Map<String, Object> params = new HashMap<>();
         params.put("value", "哈哈&c=");
         params.put("a", "b==");
-        url = "http://payplatform-develop-tim/api/echo/get";
+        url = "http://TIM/api/echo/get";
         IResponse<Map> response2 = CommonRestUtils.getForMap(url, params);
         response2.assertSuccess(true);
         Map map = response2.getBody();
@@ -43,7 +43,7 @@ public class DemoController extends BaseController {
 
     @GetMapping("/api/test/delete")
     public IResponse<Map> testDelete() {
-        String url = "http://payplatform-develop-tim/api/echo/delete";
+        String url = "http://TIM/api/echo/delete";
         Map<String, Object> params = new HashMap<>();
         params.put("value", "世界哈哈66你好==");
         IResponse<DemoBean> response = CommonRestUtils.deleteForObject(url, DemoBean.class, params);
@@ -60,7 +60,7 @@ public class DemoController extends BaseController {
 
     @GetMapping("/api/test/post")
     public IResponse<Map> testPost() {
-        String url = "http://payplatform-develop-tim/api/echo/post";
+        String url = "http://TIM/api/echo/post";
         Map<String, Object> params = new HashMap<>();
         params.put("value", "&a=世界哈哈66你好==");
         IResponse<DemoBean> response = CommonRestUtils.postForObject(url, params, new GenericType<DemoBean>() {
@@ -78,7 +78,7 @@ public class DemoController extends BaseController {
 
     @GetMapping("/api/test/put")
     public Object testPut() {
-        String url = "http://payplatform-develop-tim/api/echo/put";
+        String url = "http://TIM/api/echo/put";
         Map<String, Object> params = new HashMap<>();
         params.put("value", "&a=世界哈哈66你好==");
         IResponse<DemoBean> response = CommonRestUtils.putForObject(url, params, DemoBean.class);
