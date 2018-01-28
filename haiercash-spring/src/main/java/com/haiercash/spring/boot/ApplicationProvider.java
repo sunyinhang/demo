@@ -10,8 +10,9 @@ import javax.annotation.PostConstruct;
 /**
  * Created by 许崇雷 on 2017-11-22.
  */
-@Component
+@Component(ApplicationProvider.BEAN_NAME)
 public final class ApplicationProvider {
+    public static final String BEAN_NAME = "applicationProvider";
     private static ApplicationTemplate applicationTemplate;
     private final Log log = LogFactory.getLog(ApplicationProvider.class);
     @Autowired

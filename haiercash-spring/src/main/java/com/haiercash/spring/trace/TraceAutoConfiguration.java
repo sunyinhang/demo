@@ -1,5 +1,6 @@
 package com.haiercash.spring.trace;
 
+import com.haiercash.spring.boot.ApplicationProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,7 @@ public class TraceAutoConfiguration {
     }
 
     @Bean
-    @DependsOn("applicationProvider")
+    @DependsOn(ApplicationProvider.BEAN_NAME)
     @ConditionalOnMissingBean
     public ITracer tracer(ISequence sequence) {
         return new Tracer(sequence);
