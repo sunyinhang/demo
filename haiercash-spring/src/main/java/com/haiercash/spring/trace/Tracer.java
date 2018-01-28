@@ -76,6 +76,20 @@ public final class Tracer implements ITracer {
         return false;
     }
 
+    //生成 traceId
+    private String createTraceId() {
+        @SuppressWarnings("StringBufferReplaceableByString")
+        StringBuilder builder = new StringBuilder(50);
+        builder.append(this.applicationName)//程序名前三位
+                .append(TRACE_ID_SEPARATOR)
+                .append(this.ipAddressLast)//IP 地址最后一个数字 0-255
+                .append(TRACE_ID_SEPARATOR)
+                .append(DateUtils.toString(DateUtils.now(), DATE_FORMAT))//年月日-时分秒毫秒
+                .append(TRACE_ID_SEPARATOR)
+                .append(this.sequence.getAndIncrement());//序号
+        return builder.toString();
+    }
+
     @Override
     public ISpan createSpan() {
         String traceId = null;
@@ -107,19 +121,5 @@ public final class Tracer implements ITracer {
     @Override
     public ISpan createContinueSpan(ISpan span) {
         return (span == null || span == ISpan.EMPTY) ? this.createSpan() : span.continueSpan();
-    }
-
-    //生成 traceId
-    private String createTraceId() {
-        @SuppressWarnings("StringBufferReplaceableByString")
-        StringBuilder builder = new StringBuilder(50);
-        builder.append(this.applicationName)//程序名前三位
-                .append(TRACE_ID_SEPARATOR)
-                .append(this.ipAddressLast)//IP 地址最后一个数字 0-255
-                .append(TRACE_ID_SEPARATOR)
-                .append(DateUtils.toString(DateUtils.now(), DATE_FORMAT))//年月日-时分秒毫秒
-                .append(TRACE_ID_SEPARATOR)
-                .append(this.sequence.getAndIncrement());//序号
-        return builder.toString();
     }
 }

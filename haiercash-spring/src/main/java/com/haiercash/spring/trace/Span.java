@@ -12,7 +12,6 @@ public final class Span implements ISpan {
     private static final String ROOT_PARENT_SPAN_ID = StringUtils.EMPTY;
     private static final String SEPARATOR_SPAN_ID_INDEX = Environment.Dot;
     private static final String SEPARATOR_TRACE_ID_SPAN_ID = Environment.Dot;
-
     private final String traceId;
     private final String spanId;
     private final String parentSpanId;

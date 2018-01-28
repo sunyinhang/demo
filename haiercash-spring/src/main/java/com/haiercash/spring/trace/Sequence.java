@@ -7,7 +7,6 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by 许崇雷 on 2018-01-27.
  */
-//序列号
 public final class Sequence implements ISequence {
     private final ReentrantLock lock = new ReentrantLock();
     private volatile LocalDate lastDate;
