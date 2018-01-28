@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Created by 许崇雷 on 2018-01-18.
@@ -26,17 +27,16 @@ import java.util.Objects;
 public class AlipayFuwuService extends BaseService {
     //联合登陆 auth_base 模式
     public IResponse<Map> login(String authCode) throws AlipayApiException {
-        String channelNo = getChannelNo();
         AlipayToken token = AlipayUtils.getOauthTokenByAuthCode(authCode);
         String thirdUserId = token.getUserId();
-        String makeToken = channelNo + "-" + thirdUserId;//自定义 token:渠道号+第三方 userId
+        String sysToken = UUID.randomUUID().toString();//支付平台的 token
 
         //查询第三方账号信息
         IResponse<Map> externUidResp = this.queryUserByExternUid(thirdUserId);
         if (!externUidResp.isSuccessNeedBody()) {
             Map<String, Object> body = new HashMap<>();
             body.put("flag", "01");//失败 -> loading 页
-            body.put("token", makeToken);
+            body.put("token", sysToken);
             return CommonResponse.success(body);
         }
         Map<String, String> externUidBody = externUidResp.getBody();
@@ -48,7 +48,7 @@ public class AlipayFuwuService extends BaseService {
         if (!custInfoResp.isSuccessNeedBody()) {
             Map<String, Object> body = new HashMap<>();
             body.put("flag", "02");//资料录入
-            body.put("token", makeToken);
+            body.put("token", sysToken);
             return CommonResponse.success(body);
         }
         Map<String, String> custInfoBody = custInfoResp.getBody();
@@ -65,7 +65,7 @@ public class AlipayFuwuService extends BaseService {
         cachemap.put("idNo", custInfoBody.get("certNo"));//身份证号
         cachemap.put("idCard", custInfoBody.get("certNo"));//身份证号
         cachemap.put("idType", custInfoBody.get("certType"));
-        RedisUtils.setExpire(makeToken, cachemap);
+        RedisUtils.setExpire(sysToken, cachemap);
 
         //查询额度信息
         IResponse<Map> checkEdResp = this.checkEdAppl(userId);
@@ -81,25 +81,25 @@ public class AlipayFuwuService extends BaseService {
             case "01": {//审批中=已提交
                 Map<String, Object> bodyRet = new HashMap<>();
                 bodyRet.put("flag", "10");
-                bodyRet.put("token", makeToken);
+                bodyRet.put("token", sysToken);
                 return CommonResponse.success(bodyRet);
             }
             case "22": {//退回
                 Map<String, Object> bodyRet = new HashMap<>();
                 bodyRet.put("flag", "11");
-                bodyRet.put("token", makeToken);
+                bodyRet.put("token", sysToken);
                 return CommonResponse.success(bodyRet);
             }
             case "25": {//被拒绝
                 Map<String, Object> bodyRet = new HashMap<>();
                 bodyRet.put("flag", "12");
-                bodyRet.put("token", makeToken);
+                bodyRet.put("token", sysToken);
                 return CommonResponse.success(bodyRet);
             }
             case "27": {//有额度
                 Map<String, Object> bodyRet = new HashMap<>();
                 bodyRet.put("flag", "13");
-                bodyRet.put("token", makeToken);
+                bodyRet.put("token", sysToken);
                 return CommonResponse.success(bodyRet);
             }
             default:
