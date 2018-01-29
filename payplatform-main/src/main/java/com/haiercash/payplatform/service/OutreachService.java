@@ -1,5 +1,7 @@
 package com.haiercash.payplatform.service;
 
+import com.haiercash.spring.rest.IResponse;
+
 import java.util.Map;
 
 /**
@@ -14,5 +16,13 @@ public interface OutreachService {
      * @author yu jianwei
      * @date 2017/11/22 10:42
      */
-    Map<String, Object> protocolauth(Map<String, Object> params);
+    IResponse<Map> protocolauth(Map<String, Object> params);
+
+    /**
+     * 获取芝麻分
+     *
+     * @param params
+     * @return
+     */
+    IResponse<Map> score(Map<String, Object> params);
 }
