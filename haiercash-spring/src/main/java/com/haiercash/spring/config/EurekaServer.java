@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @DependsOn(EurekaProvider.BEAN_NAME)
-public class EurekaServer {
+public final class EurekaServer {
     public static final String ACQUIRER;
     public static final String APPCA;
     public static final String APPMANAGE;

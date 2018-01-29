@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
  * Created by 许崇雷 on 2018-01-27.
  */
 @Component
-public class TracerProvider {
+public final class TracerProvider {
     private static ITracer tracer;
     @Autowired
     private ITracer tracerInstance;
