@@ -302,6 +302,10 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             if("5".equals(facecount)){
                 logger.info("人脸识别，剩余次数为0，录单终止");
                 return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
+            }else{
+                logger.info("未通过人脸识别，可以再做人脸识别");
+                returnmap.put("flag", "02");// 人脸识别
+                return success(returnmap);
             }
 
         }
