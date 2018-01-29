@@ -7,9 +7,12 @@ import com.alipay.api.AlipayResponse;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipaySystemOauthTokenRequest;
 import com.alipay.api.request.AlipayUserInfoShareRequest;
+import com.alipay.api.request.ZhimaCreditScoreBriefGetRequest;
 import com.alipay.api.response.AlipaySystemOauthTokenResponse;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
+import com.alipay.api.response.ZhimaCreditScoreBriefGetResponse;
 import com.haiercash.core.io.CharsetNames;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.spring.redis.RedisUtils;
@@ -19,6 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Created by 许崇雷 on 2018-01-18.
@@ -29,7 +36,7 @@ public class AlipayUtils {
     private static final String SIGN_TYPE = "RSA2";
     private static final String CHARSET = CharsetNames.UTF_8;
     private static final String GATEWAY = "/gateway.do";
-    private static final String TOKEN_PREFIX = "ALIPAY:TOKEN:";
+    private static final String TOKEN_PREFIX = "ALIPAY:TOKEN:";//key:alipay_token,value
     private static AlipayConfig alipayConfig;
     @Autowired
     private AlipayConfig alipayConfigInstance;
@@ -96,6 +103,20 @@ public class AlipayUtils {
         AlipayToken token = new AlipayToken(response);
         RedisUtils.set(getRedisKey(response.getUserId()), token);
         return token;
+    }
+
+    //判断芝麻信用分数是否达标
+    public static boolean assertScoreByUserId(String alipayUserId, int score) throws AlipayApiException {
+        Map<String, Object> params = new HashMap<>();
+        params.put("transaction_id", UUID.randomUUID().toString());
+        params.put("product_code", "w1010100000000002733");
+        params.put("cert_type", "ALIPAY_USER_ID");
+        params.put("cert_no", alipayUserId);
+        params.put("admittance_score", score);
+        ZhimaCreditScoreBriefGetRequest request = new ZhimaCreditScoreBriefGetRequest();
+        request.setBizContent(JsonSerializer.serialize(params));
+        ZhimaCreditScoreBriefGetResponse response = execute(request);
+        return Objects.equals(response.getIsAdmittance(), "Y");
     }
 
     @PostConstruct
