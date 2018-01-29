@@ -4,16 +4,19 @@ import com.alipay.api.AlipayApiException;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.pc.alipay.fuwu.service.AlipayFuwuService;
+import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.util.ConstUtil;
+import com.haiercash.spring.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,11 +26,10 @@ import java.util.Objects;
  */
 @RestController
 public class AlipayFuwuController extends BaseController {
-    private static final String ERROR_URL = "/error";
-    private static final String CHANNEL_NO = "127";
     @Autowired
     private AlipayConfig alipayConfig;
-
+    @Autowired
+    private OCRIdentityService ocrIdentityService;
 
     @Autowired
     private AlipayFuwuService alipayFuwuService;
@@ -41,13 +43,12 @@ public class AlipayFuwuController extends BaseController {
     public IResponse<Map> getConfig() {
         Map<String, Object> body = new HashMap<>();
         body.put("appId", alipayConfig.getAppId());
-        body.put("channelNo", CHANNEL_NO);
         return CommonResponse.success(body);
     }
 
     //联合登陆
-    @GetMapping("/api/payment/alipay/fuwu/login")
-    public IResponse<Map> login(@RequestParam Map<String, String> params) throws AlipayApiException {
+    @PostMapping("/api/payment/alipay/fuwu/login")
+    public IResponse<Map> login(@RequestBody Map<String, String> params) throws AlipayApiException {
         String appId = params.get("appId");
         if (!Objects.equals(appId, alipayConfig.getAppId()))
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "错误的 appId");
@@ -63,7 +64,7 @@ public class AlipayFuwuController extends BaseController {
 
     //额度入口
     @GetMapping("/api/payment/alipay/fuwu/creditEntry")
-    public IResponse<Map> creditEntry(@RequestParam Map<String, String> params) throws IOException, AlipayApiException {
+    public IResponse<Map> creditEntry(@RequestParam Map<String, String> params) throws AlipayApiException {
         String appId = params.get("appId");
         if (!Objects.equals(appId, alipayConfig.getAppId()))
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "错误的 appId");
@@ -73,4 +74,15 @@ public class AlipayFuwuController extends BaseController {
 
         return alipayFuwuService.creditEntry(authCode);
     }
+
+    @PostMapping("/api/payment/alipay/fuwu/realAuthentication")
+    public IResponse<Map> realAuthentication(Map<String, Object> map) throws Exception {
+        Map<String, Object> response = ocrIdentityService.realAuthenticationForXjd(map);
+        if (!HttpUtil.isSuccess(response))
+            return CommonResponse.fail(HttpUtil.getRetFlag(response), HttpUtil.getRetMsg(response));
+
+        return CommonResponse.success();
+    }
+
+
 }
