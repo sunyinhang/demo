@@ -29,7 +29,7 @@ import java.util.List;
 public class RabbitListenerAutoConfiguration implements RabbitListenerConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "rabbitListenerContainerFactory")
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(SimpleRabbitListenerContainerFactoryConfigurer configurer, ConnectionFactory connectionFactory) {
+    SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(SimpleRabbitListenerContainerFactoryConfigurer configurer, ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new RabbitSimpleListenerContainerFactory();
         configurer.configure(factory, connectionFactory);
         return factory;

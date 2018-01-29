@@ -21,7 +21,7 @@ public class FastJsonHttpMessageConvertersConfiguration {
     protected static class FastJsonHttpMessageConverterConfiguration {
         @Bean
         @ConditionalOnMissingBean
-        public FastJsonHttpMessageConverterEx fastJsonHttpMessageConverter() {
+        FastJsonHttpMessageConverterEx fastJsonHttpMessageConverter() {
             return new FastJsonHttpMessageConverterEx();
         }
     }

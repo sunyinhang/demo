@@ -13,14 +13,14 @@ import org.springframework.context.annotation.DependsOn;
 public class TraceAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    public ISequence sequence() {
+    ISequence sequence() {
         return new Sequence();
     }
 
     @Bean
     @DependsOn(ApplicationProvider.BEAN_NAME)
     @ConditionalOnMissingBean
-    public ITracer tracer(ISequence sequence) {
+    ITracer tracer(ISequence sequence) {
         return new Tracer(sequence);
     }
 }
