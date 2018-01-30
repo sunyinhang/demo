@@ -12,6 +12,7 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
+import com.haiercash.payplatform.utils.ImgUtils;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
@@ -161,6 +162,16 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         try (OutputStream outputStream = new FileOutputStream(filePath)) {
             outputStream.write(faceBytes);
         }
+
+        //乔融图片压缩
+        if("33".equals(channelNo)){
+            int IMAGE_MAXSIZE = 1 * 1024 * 1024;
+            if(faceBytes.length > IMAGE_MAXSIZE){
+                logger.info("人脸照片压缩");
+                ImgUtils.zipImageFile(new File(filePath), new File(filePath), 425, 638, 0.7f);
+            }
+        }
+
         //调用 appserver
         String md5ForUpload;
         try (FileInputStream inputStream = new FileInputStream(filePath)) {
