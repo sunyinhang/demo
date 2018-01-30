@@ -15,7 +15,7 @@ import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.spring.rest.client.JsonClientUtils;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import org.apache.commons.logging.Log;
@@ -384,7 +384,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         map.put("channelNo", channelNo);//
         map.put("verifyNo", verifyNo);//验证码
         map.put("newPayPasswd", EncryptUtil.simpleEncrypt(newPayPasswd));//新支付密码
-        String url = outreachConfig.getUrl() + "/Outreachplatform/api/chinaPay/identifyByFlag";
+        String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/chinaPay/identifyByFlag";
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("accountName", custName);
         jsonMap.put("accountNo", cardNo);
@@ -394,7 +394,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         jsonMap.put("flag", "1");
         jsonMap.put("channelNo", "payplat");
         logger.info("实名认证(外联)参数==>" + jsonMap.toString());
-        String resData = JsonClientUtils.postForString(url, jsonMap);
+        String resData = CommonRestUtils.postForString(url, jsonMap);
         logger.info("实名认证(外联)响应数据==>" + resData);
         if (resData == null || "".equals(resData)) {
             logger.info("修改密码的实名认证(外联)接口，返回数据为空");

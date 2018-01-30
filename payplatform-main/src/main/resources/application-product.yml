@@ -162,7 +162,6 @@ app:
   outreach:
     appid: 300001074
     channel-no: HCP
-    url: http://192.168.1.14:15006
   haier:
     account-url: http://account.haier.com
   moxie:

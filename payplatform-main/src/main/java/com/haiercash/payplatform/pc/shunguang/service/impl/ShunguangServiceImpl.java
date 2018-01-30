@@ -27,8 +27,10 @@ import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
@@ -147,10 +149,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         requestParams.put("cardnumber", null);
         requestParams.put("data", new JSONObject(body));
 
-        String url = outreachConfig.getUrl() + "/Outreachplatform/api/externalData/savaExternalData";
-        logger.info("推送外联风险信息，请求地址：" + url);
-        String resData = JsonClientUtils.postForString(url, requestParams);
-        logger.info("推送外联风险信息，返回数据：" + resData);
+        String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/externalData/savaExternalData";
+        logger.info("推送外联风险信息开始");
+        String resData = CommonRestUtils.postForString(url, requestParams);
+        logger.info("推送外联风险信息结束");
         JSONObject result = new JSONObject(resData);
         if (!"0000".equals(result.get("code"))) {
             return fail("02", ConstUtil.ERROR_MSG);

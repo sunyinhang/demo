@@ -13,9 +13,9 @@ import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.ImgUtils;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
-import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
@@ -119,7 +119,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String appno = UUID.randomUUID().toString().replace("-", "");
         String filestreamname = custNo + ".jpg";
         String filestream = URLSerializer.encode(Base64Utils.encode(faceBytes));
-        String url = outreachConfig.getUrl() + "/Outreachplatform/api/face/isface";
+        String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/face/isface";
         logger.info("调用外联人脸识别接口，请求地址：" + url);
         LinkedHashMap<String, Object> jsonMap = new LinkedHashMap<>();
         jsonMap.put("personalName", name);//客户姓名
@@ -132,7 +132,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             jsonMap.put("organization", "02");//机构号(国政通)
         }
         jsonMap.put("filestream", filestream);//识别图像文件流
-        String resData = JsonClientUtils.postForString(url, jsonMap);
+        String resData = CommonRestUtils.postForString(url, jsonMap);
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
         //人脸分值
         String score = "0";

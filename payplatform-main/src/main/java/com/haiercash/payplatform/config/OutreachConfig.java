@@ -15,5 +15,4 @@ import org.springframework.context.annotation.Configuration;
 public class OutreachConfig {
     private String appid;//阿里商户应用id
     private String channelNo;//调用渠道
-    private String url;
 }

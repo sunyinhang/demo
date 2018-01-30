@@ -38,8 +38,8 @@ import com.haiercash.spring.boot.ApplicationUtils;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
-import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
@@ -538,7 +538,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
                 || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(mobile)) {
             return fail(ConstUtil.ERROR_CODE, "必传项不能为空");
         }
-        String url = outreachConfig.getUrl() + "/Outreachplatform/api/chinaPay/identifyByFlag";
+        String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/chinaPay/identifyByFlag";
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("accountName", custName);
         jsonMap.put("accountNo", cardNo);
@@ -549,7 +549,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         jsonMap.put("channelNo", channelNo);
         jsonMap.put("days", "0");
         logger.info("实名认证(外联)参数==>" + jsonMap.toString());
-        String resData = JsonClientUtils.postForString(url, jsonMap);
+        String resData = CommonRestUtils.postForString(url, jsonMap);
         logger.info("实名认证(外联)响应数据==>" + resData);
         if (resData == null || "".equals(resData)) {
             logger.info("实名认证(外联)响应数据为空");
