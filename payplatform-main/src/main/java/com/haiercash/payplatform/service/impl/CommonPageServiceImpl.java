@@ -1378,12 +1378,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         String phoneNo;//统一认证绑定手机号
         logger.info("验证第三方 token:" + verifyUrl);
         //验证客户信息
-        ThirdTokenVerifyService thirdTokenVerifyService;
-        try {
-            thirdTokenVerifyService = ApplicationUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
-        } catch (Exception e) {
+        ThirdTokenVerifyService thirdTokenVerifyService = ApplicationUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
+        if (thirdTokenVerifyService == null)
             throw new BusinessException(ConstUtil.ERROR_CODE, "错误的 thirdTokenVerifyService 名称:'" + setting.getVerifyUrlService() + "'");
-        }
         ThirdTokenVerifyResult thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
         String userId__ = thirdInfo.getUserId();
         String phoneNo_ = thirdInfo.getPhoneNo();
