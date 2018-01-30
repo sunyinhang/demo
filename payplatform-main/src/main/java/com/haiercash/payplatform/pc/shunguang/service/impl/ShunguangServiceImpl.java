@@ -317,9 +317,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map returnmap = new HashMap<>();
         String backurl;
         if ("1".equals(f)) {//订单已提交成功
-            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/loanResult.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&applSeq=" + applSeq;
+            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/loanResult.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&applSeq=" + applSeq + "&setCs=" + userId;
         } else {
-            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/btInstalments.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token;
+            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/btInstalments.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + userId;
         }
         logger.info("支付跳转页面：" + backurl);
         returnmap.put("backurl", backurl);
@@ -441,7 +441,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                         //U0160:该用户已注册，无法注册
                         //跳转登录页面进行登录
                         RedisUtils.setExpire(token, cachemap);
-                        String backurl = commonConfig.getGateUrl() + "/sgbt/#!/login/login.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token;
+                        String backurl = commonConfig.getGateUrl() + "/sgbt/#!/login/login.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + custPhoneNo;
                         returnmap.put("backurl", backurl);
                         logger.info("页面跳转到：" + backurl);
                         return success(returnmap);
@@ -497,7 +497,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("token:" + token);
             logger.info("跳转额度激活，cachemap：" + cachemap.toString());
             RedisUtils.setExpire(token, cachemap);
-            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountNot.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountNot.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + uidLocal;
             returnmap.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(returnmap);
@@ -528,7 +528,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             cachemap.put("idCard", certNo);//身份证号
             cachemap.put("idType", certType);
             RedisUtils.setExpire(token, cachemap);
-            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/quotaMerge.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/quotaMerge.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + uidLocal;
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }

@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yuanli on 2017/8/1.
@@ -134,6 +135,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         logger.info("调用外联人脸识别接口，返回数据：" + resData);
         //人脸分值
         String score = "0";
+        String status = "";//face++是否为同一人的判断标志
         JSONObject jsonob = new JSONObject(resData);
         String code0 = jsonob.getString("code");
         if (!"0000".equals(code0)) {
@@ -147,6 +149,9 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             String entity = jsonmsg.get("entity").toString();
             JSONObject jsonn = new JSONObject(entity);
             score = jsonn.get("score").toString();
+            if("33".equals(channelNo) && "03".equals(providerNo)){//33渠道  face++厂商
+                status = jsonn.get("status").toString();//01:同一人   02：不同人
+            }
         }
 
         //人脸识别成功后落盘
@@ -206,14 +211,46 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         Map checkheadjson = (Map<String, Object>) checkresultmap.get("head");
         String checkretFlag = (String) checkheadjson.get("retFlag");
         String checkretMsg = (String) checkheadjson.get("retMsg");
+
         if ("00000".equals(checkretFlag)) {//
             //人脸识别成功
             //判断是否已经设置过支付密码
-            if ("33".equals(channelNo)) {//如果是乔融则不进行支付密码校验
+            if ("33".equals(channelNo) && !"03".equals(providerNo)) {//是乔融且不是face++厂商
                 Map<String, Object> m = new HashMap<>();
                 m.put("faceFlag", "1");
                 return success(m);
             }
+            if("33".equals(channelNo) && "03".equals(providerNo)){//是乔融且是face++厂商
+                if("01".equals(status)){//01同一人，返回成功   redis存储faceflag  Y
+                    cacheMap.put("faceflag", "Y");
+                    RedisUtils.setExpire(token, cacheMap);
+                    RedisUtils.expire(token, 24, TimeUnit.HOURS);
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("faceFlag", "1");
+                    return success(m);
+                } else {//02不同人，若redis存储次数等于5次终止，不足5次可继续
+                    Integer facecount = Convert.asInteger(cacheMap.get("facecount"));
+                    if(facecount == null){
+                        facecount = 0;
+                    }
+                    if(facecount == 5){
+                        return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
+                    }
+                    facecount = facecount + 1;
+                    cacheMap.put("faceflag", "N");
+                    cacheMap.put("facecount", facecount);
+                    RedisUtils.setExpire(token, cacheMap);
+                    RedisUtils.expire(token, 24, TimeUnit.HOURS);
+                    Map<String, Object> m = new HashMap<>();
+                    if(facecount == 5){//人脸次数达到上限录单终止
+                        m.put("faceFlag", "4");
+                    }else{//人脸次数未达到上限可继续做人脸
+                        m.put("faceFlag", "3");
+                    }
+                    return success(m);
+                }
+            }
+            //进行支付密码校验
             return validateUserFlag(userId, token, channel, channelNo, cacheMap);
         }
 
