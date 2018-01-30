@@ -169,7 +169,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             logger.info(name + "人脸照片大小："+faceBytes.length);
             if(faceBytes.length > IMAGE_MAXSIZE){
                 logger.info(name + "人脸照片压缩");
-                ImgUtils.zipImageFile(new File(filePath), new File(filePath), 225, 438, 0.7f);
+                ImgUtils.zipImageFile(new File(filePath), new File(filePath), 525, 738, 0.7f);
             }
         }
 
