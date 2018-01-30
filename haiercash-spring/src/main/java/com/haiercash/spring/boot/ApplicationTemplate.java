@@ -1,6 +1,7 @@
 package com.haiercash.spring.boot;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.Assert;
 
 /**
  * Created by 许崇雷 on 2017-11-22.
@@ -10,6 +11,8 @@ public final class ApplicationTemplate {
     private final ApplicationProperties properties;
 
     public ApplicationTemplate(ApplicationContext context, ApplicationProperties properties) {
+        Assert.notNull(context, "context can not be null");
+        Assert.notNull(properties, "properties can not be null");
         this.context = context;
         this.properties = properties;
     }

@@ -23,18 +23,30 @@ public final class ApplicationUtils {
     }
 
     public static Object getBean(String name) {
-        ApplicationTemplate applicationTemplate = getApplicationTemplate();
-        return applicationTemplate == null ? null : applicationTemplate.getBean(name);
+        try {
+            ApplicationTemplate applicationTemplate = getApplicationTemplate();
+            return applicationTemplate == null ? null : applicationTemplate.getBean(name);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static <T> T getBean(Class<T> clazz) {
-        ApplicationTemplate applicationTemplate = getApplicationTemplate();
-        return applicationTemplate == null ? null : applicationTemplate.getBean(clazz);
+        try {
+            ApplicationTemplate applicationTemplate = getApplicationTemplate();
+            return applicationTemplate == null ? null : applicationTemplate.getBean(clazz);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static <T> T getBean(String name, Class<T> clazz) {
-        ApplicationTemplate applicationTemplate = getApplicationTemplate();
-        return applicationTemplate == null ? null : applicationTemplate.getBean(name, clazz);
+        try {
+            ApplicationTemplate applicationTemplate = getApplicationTemplate();
+            return applicationTemplate == null ? null : applicationTemplate.getBean(name, clazz);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static ApplicationProperties getProperties() {
