@@ -16,7 +16,7 @@
 
     <appender name="LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${FILE_PATTERN}.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATTERN}.log.gz</FileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
@@ -33,7 +33,7 @@
 
     <appender name="REPORT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${FILE_PATTERN}.report.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATTERN}.report.log.gz</FileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
@@ -50,7 +50,7 @@
 
     <appender name="TASK_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${FILE_PATTERN}.task.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATTERN}.task.log.gz</FileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
@@ -67,7 +67,7 @@
 
     <appender name="TRACE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${FILE_PATTERN}.trace.log</FileNamePattern>
+            <FileNamePattern>${FILE_PATTERN}.trace.log.gz</FileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
