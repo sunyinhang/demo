@@ -165,7 +165,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
         //乔融图片压缩
         if("33".equals(channelNo)){
-            Double IMAGE_MAXSIZE = 0.048 * 1024 * 1024;
+            int IMAGE_MAXSIZE = 5 * 1024 * 1024;
             logger.info(name + "人脸照片大小："+faceBytes.length);
             if(faceBytes.length > IMAGE_MAXSIZE){
                 logger.info(name + "人脸照片压缩");
