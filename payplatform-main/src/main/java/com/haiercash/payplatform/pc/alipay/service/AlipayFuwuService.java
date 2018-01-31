@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.pc.alipay.fuwu.service;
+package com.haiercash.payplatform.pc.alipay.service;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
@@ -125,16 +125,21 @@ public class AlipayFuwuService extends BaseService {
         return CommonResponse.success(body);
     }
 
-    //额度入口,点击loading 页后 支付宝 重定向到该接口
-    public IResponse<Map> creditEntry(String authCode) throws AlipayApiException {
+    //授权后验证用户
+    public IResponse<Map> validUser(String authCode) throws AlipayApiException {
         AlipayToken token = AlipayUtils.getOauthTokenByAuthCode(authCode);
         AlipayUserInfoShareResponse alipayUserInfo = AlipayUtils.getUserInfo(token.getToken());
-        if (Objects.equals(alipayUserInfo.getUserType(), "2")
-                && Objects.equals(alipayUserInfo.getUserStatus(), "T")
-                && Objects.equals(alipayUserInfo.getIsCertified(), "T")
-                && Objects.equals(alipayUserInfo.getIsStudentCertified(), "T"))
+        if (Objects.equals(alipayUserInfo.getUserType(), "2")//个人账号
+                && Objects.equals(alipayUserInfo.getUserStatus(), "T")//已认证用户
+                && Objects.equals(alipayUserInfo.getIsCertified(), "T")//已通过实名认证
+                && Objects.equals(alipayUserInfo.getIsStudentCertified(), "T"))//只能为学生
             return CommonResponse.success();
         return CommonResponse.fail(ConstUtil.ERROR_CODE, "用户不符合准入规则");
+    }
+
+    //实名认证
+    public IResponse<Map> realAuthentication(Map<String, Object> params) {
+        return null;
     }
 
     //根据userId 查询用户的额度状态
@@ -189,5 +194,4 @@ public class AlipayFuwuService extends BaseService {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/crm/cust/queryPerCustInfo";
         return CommonRestUtils.getForMap(url, params);
     }
-
 }

@@ -15,7 +15,6 @@ import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
-import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +35,9 @@ public class AlipayUtils {
     private static final String SIGN_TYPE = "RSA2";
     private static final String CHARSET = CharsetNames.UTF_8;
     private static final String GATEWAY = "/gateway.do";
-    private static final String TOKEN_PREFIX = "ALIPAY:TOKEN:";//key:alipay_token,value
     private static AlipayConfig alipayConfig;
     @Autowired
     private AlipayConfig alipayConfigInstance;
-
-    private static String getRedisKey(String userId) {
-        return TOKEN_PREFIX + userId;
-    }
 
     private static AlipayClient getDefaultClient() {
         return new DefaultAlipayClient(alipayConfig.getUrl() + GATEWAY, alipayConfig.getAppId(), alipayConfig.getAppPrivateKey(), FORMAT, CHARSET, alipayConfig.getAlipayPublicKey(), SIGN_TYPE);
@@ -63,29 +57,13 @@ public class AlipayUtils {
         return execute(request, null);
     }
 
-    //根据 auth_code 获取 user_id token refresh_token
+    //根据 auth_code(一次性) 获取 user_id token refresh_token
     public static AlipayToken getOauthTokenByAuthCode(String authCode) throws AlipayApiException {
         AlipaySystemOauthTokenRequest request = new AlipaySystemOauthTokenRequest();
         request.setGrantType("authorization_code");
         request.setCode(authCode);
         AlipaySystemOauthTokenResponse response = execute(request);
-        AlipayToken token = new AlipayToken(response);
-        RedisUtils.set(getRedisKey(response.getUserId()), token);
-        return token;
-    }
-
-    //根据 user_id 获取 user_id token refresh_token
-    public static AlipayToken getOauthTokenByUserId(String userId) throws AlipayApiException {
-        AlipayToken token = RedisUtils.get(getRedisKey(userId), AlipayToken.class);
-        if (token == null)
-            throw new BusinessException(ConstUtil.ERROR_CODE, "授权已过期,请重新登录");
-        //有效直接返回
-        if (token.isValid())
-            return token;
-        //refresh token 有效,还能抢救
-        if (token.isRefreshValid())
-            return refreshOauthToken(token.getRefreshToken());
-        throw new BusinessException(ConstUtil.ERROR_CODE, "授权已过期,请重新登录");
+        return new AlipayToken(response);
     }
 
     //根据 token 获取用户信息
@@ -100,9 +78,7 @@ public class AlipayUtils {
         request.setGrantType("refresh_token");
         request.setCode(refreshToken);
         AlipaySystemOauthTokenResponse response = execute(request);
-        AlipayToken token = new AlipayToken(response);
-        RedisUtils.set(getRedisKey(response.getUserId()), token);
-        return token;
+        return new AlipayToken(response);
     }
 
     //判断芝麻信用分数是否达标
