@@ -50,7 +50,7 @@ public class AlipayFuwuService extends BaseService {
             RedisUtils.setExpire(sysToken, sessionMap);
             //返回
             Map<String, Object> body = new HashMap<>();
-            body.put("userState", "01");//失败 -> loading 页
+            body.put("flag", "01");//失败 -> loading 页
             body.put("token", sysToken);
             return CommonResponse.success(body);
         }//其他
@@ -67,7 +67,7 @@ public class AlipayFuwuService extends BaseService {
             RedisUtils.setExpire(sysToken, sessionMap);
             //返回
             Map<String, Object> body = new HashMap<>();
-            body.put("userState", "02");//实名认证
+            body.put("flag", "02");//实名认证
             body.put("token", sysToken);
             return CommonResponse.success(body);
         }
@@ -103,7 +103,7 @@ public class AlipayFuwuService extends BaseService {
         String faceCode = Convert.toString(ifNeedFaceResp.getBody().get("code"));
         if (!Objects.equals(faceCode, "00")) {//未做人脸
             Map<String, Object> body = new HashMap<>();
-            body.put("userState", "03");//人脸
+            body.put("flag", "03");//人脸
             body.put("token", sysToken);
             return CommonResponse.success(body);
         }
@@ -119,7 +119,7 @@ public class AlipayFuwuService extends BaseService {
         alidateUserResp.assertSuccessNeedBody();
         String payPasswdFlag = Convert.toString(alidateUserResp.getBody().get("payPasswdFlag"));//1:已设置支付密码
         Map<String, Object> body = new HashMap<>();
-        body.put("userState", Objects.equals(payPasswdFlag, "1") ? "04" : "05");//04:转到确认支付密码,05转到设置支付密码
+        body.put("flag", Objects.equals(payPasswdFlag, "1") ? "04" : "05");//04:转到确认支付密码,05转到设置支付密码
         body.put("edState", this.getEdState(userId));//额度状态
         body.put("token", sysToken);
         return CommonResponse.success(body);
