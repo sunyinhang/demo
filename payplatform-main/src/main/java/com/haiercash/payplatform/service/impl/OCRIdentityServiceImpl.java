@@ -817,7 +817,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             Map bodyMap = (Map) resultMap.get("body");
             JSONArray data = new JSONArray(bodyMap.get("data").toString());
             String tagId = cashloanConfig.getIserviceTagId();
-            if (data.length() == 1) {
+            if (data.length() != 0) {
                 //2.调用crm   getCustTag
                 Map<String, Object> gettigIDMap = new HashMap<String, Object>();
                 gettigIDMap.put("custName", name);
