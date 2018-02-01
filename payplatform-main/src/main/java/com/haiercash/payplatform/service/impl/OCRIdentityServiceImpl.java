@@ -858,10 +858,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                     }
                 }
 
+            } else {
+                return fail(ConstUtil.ERROR_CODE, "没有准入资格");
             }
 
-        } else {
-            return fail(ConstUtil.ERROR_CODE, "没有准入资格");
         }
 
 
