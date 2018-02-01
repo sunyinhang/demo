@@ -2,6 +2,7 @@ package com.haiercash.payplatform.pc.alipay.service;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
@@ -9,6 +10,7 @@ import com.haiercash.core.reflect.GenericType;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.config.EurekaServer;
@@ -22,6 +24,7 @@ import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,12 +37,14 @@ import java.util.UUID;
 public class AlipayFuwuService extends BaseService {
     @Autowired
     private AppServerService appServerService;
+    @Autowired
+    private OCRIdentityService ocrIdentityService;
 
     //联合登陆 auth_base 模式
     public IResponse<Map> login(String authCode) throws AlipayApiException {
-        AlipayToken token = AlipayUtils.getOauthTokenByAuthCode(authCode);
-        String thirdUserId = token.getUserId();//支付宝 userId
-        String sysToken = UUID.randomUUID().toString();//支付平台的 token
+        AlipayToken alipayToken = AlipayUtils.getOauthTokenByAuthCode(authCode);
+        String thirdUserId = alipayToken.getUserId();//支付宝 userId
+        String token = UUID.randomUUID().toString();//支付平台的 token
 
         //根据第三方 uid 查询用户信息
         IResponse<Map> externUidResp = this.queryUserByExternUid(thirdUserId);
@@ -47,11 +52,11 @@ public class AlipayFuwuService extends BaseService {
             //保存 session
             Map<String, Object> sessionMap = new HashMap<>();
             sessionMap.put("externalUserId", thirdUserId);
-            RedisUtils.setExpire(sysToken, sessionMap);
+            RedisUtils.setExpire(token, sessionMap);
             //返回
             Map<String, Object> body = new HashMap<>();
             body.put("flag", "01");//失败 -> loading 页
-            body.put("token", sysToken);
+            body.put("token", token);
             return CommonResponse.success(body);
         }//其他
         Map<String, String> externUidBody = externUidResp.getBody();
@@ -64,11 +69,11 @@ public class AlipayFuwuService extends BaseService {
             //保存 session
             Map<String, Object> sessionMap = new HashMap<>();
             sessionMap.put("externalUserId", thirdUserId);
-            RedisUtils.setExpire(sysToken, sessionMap);
+            RedisUtils.setExpire(token, sessionMap);
             //返回
             Map<String, Object> body = new HashMap<>();
             body.put("flag", "02");//实名认证
-            body.put("token", sysToken);
+            body.put("token", token);
             return CommonResponse.success(body);
         }
         Map<String, String> custInfoBody = custInfoResp.getBody();
@@ -86,7 +91,7 @@ public class AlipayFuwuService extends BaseService {
         sessionMap.put("idNo", custInfoBody.get("certNo"));//身份证号
         sessionMap.put("idCard", custInfoBody.get("certNo"));//身份证号
         sessionMap.put("idType", custInfoBody.get("certType"));
-        RedisUtils.setExpire(sysToken, sessionMap);
+        RedisUtils.setExpire(token, sessionMap);
 
         //查询是否做过人脸
         Map<String, Object> ifNeedFaceParams = new HashMap<>();
@@ -96,7 +101,7 @@ public class AlipayFuwuService extends BaseService {
         ifNeedFaceParams.put("name", custInfoBody.get("custName"));
         ifNeedFaceParams.put("idNumber", custInfoBody.get("certNo"));
         ifNeedFaceParams.put("isEdAppl", "Y");
-        Map<String, Object> ifNeedFaceResult = appServerService.ifNeedFaceChkByTypCde(sysToken, ifNeedFaceParams);
+        Map<String, Object> ifNeedFaceResult = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceParams);
         IResponse<Map> ifNeedFaceResp = BeanUtils.mapToBean(ifNeedFaceResult, new GenericType<CommonResponse<Map>>() {
         });
         ifNeedFaceResp.assertSuccessNeedBody();
@@ -104,7 +109,7 @@ public class AlipayFuwuService extends BaseService {
         if (!Objects.equals(faceCode, "00")) {//未做人脸
             Map<String, Object> body = new HashMap<>();
             body.put("flag", "03");//人脸
-            body.put("token", sysToken);
+            body.put("token", token);
             return CommonResponse.success(body);
         }
 
@@ -113,7 +118,7 @@ public class AlipayFuwuService extends BaseService {
         validateUserFlagMap.put("channelNo", this.getChannelNo());// 渠道
         validateUserFlagMap.put("channel", this.getChannel());
         validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userId));//客户编号18254561920
-        Map<String, Object> alidateUserMap = appServerService.validateUserFlag(sysToken, validateUserFlagMap);
+        Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
         IResponse<Map> alidateUserResp = BeanUtils.mapToBean(alidateUserMap, new GenericType<CommonResponse<Map>>() {
         });
         alidateUserResp.assertSuccessNeedBody();
@@ -121,7 +126,7 @@ public class AlipayFuwuService extends BaseService {
         Map<String, Object> body = new HashMap<>();
         body.put("flag", Objects.equals(payPasswdFlag, "1") ? "04" : "05");//04:转到确认支付密码,05转到设置支付密码
         body.put("edState", this.getEdState(userId));//额度状态
-        body.put("token", sysToken);
+        body.put("token", token);
         return CommonResponse.success(body);
     }
 
@@ -138,8 +143,55 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //实名认证
-    public IResponse<Map> realAuthentication(Map<String, Object> params) {
-        return null;
+    public IResponse<Map> realAuthentication(Map<String, Object> params) throws IOException {
+        String token = this.getToken();
+        String verifyNo = Convert.toString(params.get("verifyNo"));
+        String phone = Convert.toString("mobile");
+        //TODO 需要确认验证码的验证顺序
+        ////验证短信验证码 实名的时候会验证
+        //Map<String, Object> verifyNoMap = new HashMap<>();
+        //verifyNoMap.put("phone", phone);
+        //verifyNoMap.put("verifyNo", verifyNo);
+        //verifyNoMap.put("token", this.getToken());
+        //verifyNoMap.put("channel", this.getChannel());
+        //verifyNoMap.put("channelNo", this.getChannelNo());
+        //IResponse<Map> verifyResponse = BeanUtils.mapToBean(appServerService.smsVerify(this.getToken(), verifyNoMap), new GenericType<CommonResponse<Map>>() {
+        //});
+        //verifyResponse.assertSuccess();
+
+        //根据token 查找 三方 uid
+        Map<String, Object> sessionMap = RedisUtils.getExpireMap(this.getToken());
+        if (MapUtils.isEmpty(sessionMap))
+            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        String thirdUserId = (String) sessionMap.get("externalUserId");
+        if (StringUtils.isEmpty(thirdUserId))
+            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+
+        //根据第三方 uid 查询用户信息
+        IResponse<Map> externUidResp = this.queryUserByExternUid(thirdUserId);
+        if (!externUidResp.isSuccessNeedBody()) {//该用户不存在, 注册用户
+            IResponse<Map> saveResult = this.saveUserByExternUid(thirdUserId, phone);
+            saveResult.assertSuccess();
+            //在此查询
+            externUidResp = this.queryUserByExternUid(thirdUserId);
+            externUidResp.assertSuccessNeedBody();
+        }//存在,获取 userId
+        Map<String, String> custInfoBody = externUidResp.getBody();
+
+        //保存 session
+        sessionMap.put("userId", custInfoBody.get("userId"));
+        sessionMap.put("phoneNo", custInfoBody.get("mobile"));
+        sessionMap.put("custNo", custInfoBody.get("custNo"));//客户编号
+        sessionMap.put("name", custInfoBody.get("custName"));//客户姓名
+        sessionMap.put("cardNo", custInfoBody.get("cardNo"));//银行卡号
+        sessionMap.put("bankCode", custInfoBody.get("acctBankNo"));//银行代码
+        sessionMap.put("bankName", custInfoBody.get("acctBankName"));//银行名称
+        sessionMap.put("idNo", custInfoBody.get("certNo"));//身份证号
+        sessionMap.put("idCard", custInfoBody.get("certNo"));//身份证号
+        sessionMap.put("idType", custInfoBody.get("certType"));
+        RedisUtils.setExpire(token, sessionMap);
+
+        return this.ocrIdentityService.realAuthentication(params);
     }
 
     //根据userId 查询用户的额度状态
@@ -174,6 +226,20 @@ public class AlipayFuwuService extends BaseService {
         String url = EurekaServer.UAUTH + "/app/uauth/queryUserByExternUid";
         return CommonRestUtils.getForMap(url, map);
     }
+
+    //注册第三方用户
+    private IResponse<Map> saveUserByExternUid(String externUid, String linkMobile) {
+        Map<String, Object> map = new HashMap<>();
+        String externCompanyNo_ = EncryptUtil.simpleEncrypt(this.getChannelNo());
+        String externUid_ = EncryptUtil.simpleEncrypt(externUid);
+        String linkMobile_ = EncryptUtil.simpleEncrypt(linkMobile);
+        map.put("externCompanyNo", externCompanyNo_);
+        map.put("externUid", externUid_);
+        map.put("linkMobile", linkMobile_);
+        String url = EurekaServer.UAUTH + "/app/uauth/saveUserByExternUid";
+        return CommonRestUtils.postForMap(url, map);
+    }
+
 
     //6.1.102.	(GET)额度申请校验
     private IResponse<Map> checkEdAppl(String userId) {

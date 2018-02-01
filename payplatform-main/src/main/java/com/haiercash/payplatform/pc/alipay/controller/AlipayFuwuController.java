@@ -1,9 +1,11 @@
 package com.haiercash.payplatform.pc.alipay.controller;
 
 import com.alipay.api.AlipayApiException;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.pc.alipay.service.AlipayFuwuService;
+import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.util.BusinessException;
@@ -12,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,6 +29,8 @@ public class AlipayFuwuController extends BaseController {
     private AlipayConfig alipayConfig;
     @Autowired
     private AlipayFuwuService alipayFuwuService;
+    @Autowired
+    private OCRIdentityService ocrIdentityService;
 
     public AlipayFuwuController() {
         super("60");
@@ -74,10 +80,21 @@ public class AlipayFuwuController extends BaseController {
         return alipayFuwuService.validUser(authCode);
     }
 
+    @PostMapping("/api/payment/alipay/fuwu/ocrIdentity")
+    public IResponse<Map> ocrIdentity(@RequestBody MultipartFile identityCard) throws Exception {
+        return ocrIdentityService.ocrIdentity(OCRIdentityService.OcrPathType.ByIdNo, identityCard);
+    }
+
     @PostMapping("/api/payment/alipay/fuwu/realAuthentication")
-    public IResponse<Map> realAuthentication(Map<String, Object> map) {
+    public IResponse<Map> realAuthentication(@RequestBody Map<String, Object> map) throws IOException {
         this.assertChannelNo();
         this.assertToken();
+        String verifyNo = Convert.toString(map.get("verifyNo"));
+        if (StringUtils.isEmpty(verifyNo))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "请输入验证码");
+        String phone = Convert.toString("mobile");
+        if (StringUtils.isEmpty(phone))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "手机号不能为空");
         return alipayFuwuService.realAuthentication(map);
     }
 
