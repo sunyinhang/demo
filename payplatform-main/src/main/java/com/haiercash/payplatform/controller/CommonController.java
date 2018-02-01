@@ -72,14 +72,12 @@ public class CommonController extends BaseController {
      * OCR获取身份信息
      *
      * @param identityCard
-     * @param request
-     * @param response
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/ocrIdentity", method = RequestMethod.POST)
-    public Map<String, Object> ocrIdentity(@RequestBody MultipartFile identityCard, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return ocrIdentityService.ocrIdentity(identityCard, request, response);
+    public IResponse<Map> ocrIdentity(@RequestBody MultipartFile identityCard) throws Exception {
+        return ocrIdentityService.ocrIdentity(OCRIdentityService.OcrPathType.ByUserId, identityCard);
     }
 
     /**
@@ -145,7 +143,7 @@ public class CommonController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/realAuthentication", method = RequestMethod.POST)
-    public Map<String, Object> realAuthentication(@RequestBody Map<String, Object> map) throws Exception {
+    public IResponse<Map> realAuthentication(@RequestBody Map<String, Object> map) throws IOException {
         return ocrIdentityService.realAuthentication(map);
     }
 

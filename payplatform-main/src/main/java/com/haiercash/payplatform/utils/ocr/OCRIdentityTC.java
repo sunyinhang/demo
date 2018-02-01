@@ -1,134 +1,92 @@
 package com.haiercash.payplatform.utils.ocr;
 
-import com.haiercash.payplatform.common.entity.ReturnMessage;
+import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.common.CommonResponse;
 import com.idcard.Demo;
 import com.idcard.GlobalData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
-import org.springframework.util.StringUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
-import static java.lang.System.out;
 
 /**
  * Created by Yubing on 2017/3/3.
  * 天诚OCR身份证信息识别
  */
 public class OCRIdentityTC {
-
+    private static final String SPACE = " ";
     public static final Demo engineOCR = new Demo();
     public final Log logger = LogFactory.getLog(getClass());
 
-    public ReturnMessage OCRIDUpload(InputStream image_files) {
-
-        ReturnMessage returnMessage = new ReturnMessage();
-
+    public IResponse<Map> ocrIdCard(byte[] buffer) {
         try {
-            if (StringUtils.isEmpty(image_files)) {
-                returnMessage.setCode("0001");
-                returnMessage.setMessage("所上传的照片数据为空");
-            }
-            byte[] pImgBuff = getImgByte(image_files);
-            String result = getOCR(pImgBuff);
+            if (buffer == null)
+                return CommonResponse.fail("0001", "所上传的照片数据为空");
 
+            String result = execOrc(buffer);
             if (StringUtils.isEmpty(result)) {
-                returnMessage.setCode("9999");
-                returnMessage.setMessage("返回数据为空");
                 logger.info("集团大数据，OCR(TC)身份证信息识别请求返回结果为空！");
-            } else { //封装成想要格式
-                JSONObject resJson = new JSONObject(result);
-                String name = ((String) resJson.get("NAME")).replaceAll(" ","");
-                String gender = ((String) resJson.get("SEX")).replaceAll(" ","");
-                String id_card_number = ((String) resJson.get("NUM")).replaceAll(" ","");
-                String birthday = ((String) resJson.get("BIRTHDAY")).replaceAll(" ","");   //要特殊处理一下！！
-                //====日期格式化====
-                if(!StringUtils.isEmpty(birthday)){
-                    //Date orig = new SimpleDateFormat("yyyy年MM月dd日").parse(birthday);//定义起始日期
-                    //SimpleDateFormat current = new SimpleDateFormat("yyyy-MM-dd");//定义起始日期
-                    //birthday=current.format(orig);
-                    String birthD=birthday.replaceAll("[^\\d]","");
-                    StringBuilder birthStrB=new StringBuilder(birthD);
-                    if (birthStrB.length()>=8){
-                        birthday=birthStrB.insert(4,"-").insert(7,"-").toString();
-                    }
+                return CommonResponse.fail("9999", "返回数据为空");
+            } //封装成想要格式
+            Map<String, Object> resJson = JsonSerializer.deserializeMap(result);
+            String name = StringUtils.remove((String) resJson.get("NAME"), SPACE);
+            String gender = StringUtils.remove((String) resJson.get("SEX"), SPACE);
+            String id_card_number = StringUtils.remove((String) resJson.get("NUM"), SPACE);
+            String birthday = StringUtils.remove((String) resJson.get("BIRTHDAY"), SPACE);//    //要特殊处理一下！！
+            //====日期格式化====
+            if (!StringUtils.isEmpty(birthday)) {
+                String birthD = birthday.replaceAll("[^\\d]", "");
+                StringBuilder birthStrB = new StringBuilder(birthD);
+                if (birthStrB.length() >= 8) {
+                    birthday = birthStrB.insert(4, "-").insert(7, "-").toString();
                 }
-                //=====日期格式化结束===
-                String race = ((String) resJson.get("FOLK")).replaceAll(" ","");
-                String address = ((String) resJson.get("ADDRESS")).replaceAll(" ","");
-                String issued_by = ((String) resJson.get("ISSUE")).replaceAll(" ","");
-                String valid_data = ((String) resJson.get("PERIOD")).replaceAll(" ","");  //有可能会识别出错，现不检验格式
-
-                String side="";
-                if(!StringUtils.isEmpty(name))
-                    side="front";
-                else if(!StringUtils.isEmpty(issued_by))side="back";
-                //============
-                JSONObject cards = new JSONObject();
-
-                cards.put("name", name);
-                cards.put("gender", gender);
-                cards.put("id_card_number", id_card_number);
-                cards.put("birthday", birthday);  //要特殊处理一下
-                cards.put("race", race);
-                cards.put("address", address);
-                cards.put("issued_by", issued_by);
-                cards.put("valid_date", valid_data);
-                cards.put("side", side);
-                //============
-                JSONObject reponseJson = new JSONObject();
-                reponseJson.put("cards", cards);
-                returnMessage.setCode("0000");
-                returnMessage.setMessage("处理成功");
-                returnMessage.setRetObj(cards);
-
-                System.out.println("调用第三方(TC)OCR身份证识别，处理成功");
             }
+            //=====日期格式化结束===
+            String race = StringUtils.remove((String) resJson.get("FOLK"), SPACE);
+            String address = StringUtils.remove((String) resJson.get("ADDRESS"), SPACE);
+            String issued_by = StringUtils.remove((String) resJson.get("ISSUE"), SPACE);
+            String valid_data = StringUtils.remove((String) resJson.get("PERIOD"), SPACE);   //有可能会识别出错，现不检验格式
+            boolean isFront = StringUtils.isNotEmpty(name);//是否正面
+            //============
+            Map<String, Object> cards = new HashMap<>();
+            cards.put("name", name);
+            cards.put("gender", gender);
+            cards.put("id_card_number", id_card_number);
+            cards.put("birthday", birthday);  //要特殊处理一下
+            cards.put("race", race);
+            cards.put("address", address);
+            cards.put("issued_by", issued_by);
+            cards.put("valid_date", valid_data);
+            cards.put("side", isFront ? "front" : "back");
+            //============
+            logger.info("调用第三方(TC)OCR身份证识别，处理成功");
+            return CommonResponse.success(cards);
         }catch (Exception e){
-            returnMessage.setCode("9999");
-            returnMessage.setMessage("出现异常"+e.getMessage());
             logger.error("调用第三方(TC)OCR身份证识别，出现异常："+e.getMessage(),e);
-
+            return CommonResponse.fail("9999", "出现异常" + e.getMessage());
         }
-        logger.info("调用第三方(TC)OCR身份证识别，处理成功");
-        return returnMessage;
-
     }
 
-    public byte[] getImgByte(InputStream image_files) throws IOException {
-        byte[] data;
-        try (InputStream input = image_files; ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            byte[] buf = new byte[1024];
-            int numBytesRead;
-            while ((numBytesRead = input.read(buf)) != -1) {
-                output.write(buf, 0, numBytesRead);
-            }
-            data = output.toByteArray();
-        }
-        return data;
-    }
-
-    public String getOCR(byte[] pImgBuff){
+    private String execOrc(byte[] pImgBuff) {
         String strResult = null;
         int ret;
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        if (!com.alibaba.druid.util.StringUtils.isEmpty(osName) && osName.startsWith("win")) { //window
+        if (!StringUtils.isEmpty(osName) && osName.startsWith("win")) { //window
             String timeKey = "ed969133dd0eece08b478d9478ff3c06";
             ret = Demo.Start(timeKey);
         } else { //linux
             ret = Demo.Start(engineOCR.Byte2String(Demo.GetEngineTimeKey()));//初始化
         }
         if (ret == 100) {
-            out.println("天诚OCR身份证识别：该版本为试用版本，时间过期，请联系技术员\n");
             logger.info("天诚OCR身份证识别：该版本为试用版本，时间过期，请联系技术员\n");
         }
         else if (ret != 1) {
-            out.println("天诚OCR身份证识别：引擎初始化失败，请联系技术员\n");
             logger.info("天诚OCR身份证识别：引擎初始化失败，请联系技术员\n");
         }
 
@@ -151,7 +109,6 @@ public class OCRIdentityTC {
            // com.idcard.StringManager.SaveJPGFile("d:/ImageFile/001.jpg", stringManager.headimg.getBytes());// 人头像保存
         }else{
             logger.info("天诚OCR身份证识别：返回值为空！");
-            out.print("buf == null\n");
         }
         return strResult;
     }

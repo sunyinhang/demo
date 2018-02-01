@@ -1,18 +1,17 @@
 package com.haiercash.payplatform.service;
 
+import com.haiercash.spring.rest.IResponse;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
  * Created by yuanli on 2017/7/27.
  */
 public interface OCRIdentityService {
-
     //OCR身份信息获取
-    Map<String, Object> ocrIdentity(MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    IResponse<Map> ocrIdentity(OcrPathType ocrPathType, MultipartFile ocrImg) throws Exception;
 
     //保存OCR信息
     Map<String, Object> savaIdentityInfo(Map<String, Object> map);
@@ -30,21 +29,22 @@ public interface OCRIdentityService {
     Map<String, Object> sendMsg(Map<String, Object> map);
 
     //实名认证
-    Map<String, Object> realAuthentication(Map<String, Object> map) throws Exception;
+    IResponse<Map> realAuthentication(Map<String, Object> map) throws IOException;
 
     //实名认证(标准现金贷)
     Map<String, Object> realAuthenticationForXjd(Map<String, Object> map) throws Exception;
 
-
-    //支付密码设置
-    //public Map<String, Object> resetPayPasswd(String token, String payPasswd);
-
     //协议展示：(1)展示注册协议(2)个人征信(3)借款合同
     Map<String, Object> treatyShowServlet(String token, Map<String, Object> params) throws Exception;
 
-    //校验短信验证码  设置支付密码  提交订单
-    //public Map<String, Object> verifyMessage(String token, String verifyNo,String channelNo,String channel);
-
     //获取绑定手机号
     Map<String, Object> getPhoneNo(String token);
+
+
+    enum OcrPathType {
+        //按 userId 存储
+        ByUserId,
+        //按识别的 idNo 存储
+        ByIdNo
+    }
 }
