@@ -14,4 +14,5 @@ import java.util.List;
 @ConfigurationProperties(prefix = "app.cashloan")
 public class CashloanConfig {
     private List<String> whiteTagIds;
+    private String iserviceTagId;
 }

@@ -2,10 +2,13 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.ObjectUtils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
+import com.haiercash.payplatform.config.CashloanConfig;
+import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.service.AppServerService;
@@ -15,12 +18,15 @@ import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
 import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,14 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +56,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     private ShunguangConfig shunguangConfig;
     @Autowired
     private StorageConfig storageConfig;
+    @Autowired
+    private OutreachConfig outreachConfig;
+    @Autowired
+    private CashloanConfig cashloanConfig;
 
 
     public Map<String, Object> ocrIdentity(MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -797,10 +800,68 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         //iservice  根据身份证号码查询人员信息 查询到人员信息进行打标   查询不到则终止流程
         if("59".equals(channelNo)){
             //1.调用外联查询人员信息  getPersonnelInformation
+            String url = outreachConfig.getUrl() + "/Outreachplatform/api/iservice/getPersonnelInformation";
+            Map<String, Object> param = new HashedMap();
+            Map<String, Object> settigIDMap = new HashMap<>();
+            param.put("channelNo", "pay");
+            param.put("businessChannelNo", channelNo);
+            param.put("idCard", idCard);
+            Map<String, Object> resultMap = JsonClientUtils.postForMap(url, param);
 
-            //2.调用crm   getCustTag
+            Map headMap = (Map) resultMap.get("head");
+            String retMsg = Convert.toString(headMap.get("retMsg"));
+            String retFlag = Convert.toString(headMap.get("retFlag"));
+            if (!"00000".equals(retMsg)) {
+                return fail(retFlag, retMsg);
+            }
+            Map bodyMap = (Map) resultMap.get("body");
+            JSONArray data = new JSONArray(bodyMap.get("data").toString());
+            String tagId = cashloanConfig.getIserviceTagId();
+            if (data.length() == 1) {
+                //2.调用crm   getCustTag
+                Map<String, Object> gettigIDMap = new HashMap<String, Object>();
+                gettigIDMap.put("custName", name);
+                gettigIDMap.put("idTyp", "20");
+                gettigIDMap.put("idNo", idCard);
+                Map<String, Object> custTag = crmManageService.getCustTag(token, gettigIDMap);
+                if (custTag == null) {
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                }
+                Map custTagHeadMap = (Map<String, Object>) custTag.get("head");
+                String custTagHeadMapHeadFlag = (String) custTagHeadMap.get("retFlag");
+                if (!"00000".equals(custTagHeadMapHeadFlag)) {
+                    String retMsg2 = (String) custTagHeadMap.get("retMsg");
+                    return fail(ConstUtil.ERROR_CODE, retMsg2);
+                }
+                List<Map<String, Object>> tiglist = (List<Map<String, Object>>) custTag.get("body");
+                boolean flag = false;
+                for (Map<String, Object> aTiglist : tiglist) {
+                    String tagIdData = (String) aTiglist.get("tagId");
+                    if (tagId.equals(tagIdData)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                //3.调用crm  setCustTag
+                if (!flag) {
+                    settigIDMap.put("certNo", idCard);
+                    settigIDMap.put("tagId", tagId);
+                    Map<String, Object> setcustTag = crmManageService.setCustTag(token, settigIDMap);
+                    if (setcustTag == null) {
+                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+                    }
+                    Map setcustTagHeadMap = (Map<String, Object>) custTag.get("head");
+                    String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
+                    if (!"00000".equals(setcustTagHeadMapFlag)) {
+                        String retMsg3 = (String) custTagHeadMap.get("retMsg");
+                        return fail(ConstUtil.ERROR_CODE, retMsg3);
+                    }
+                }
 
-            //3.调用crm  setCustTag
+            }
+
+        } else {
+            return fail(ConstUtil.ERROR_CODE, "没有准入资格");
         }
 
 
@@ -951,5 +1012,79 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         Map<String, Object> resultparamMap = new HashMap<>();
         resultparamMap.put("flag", "1");//通过  个人扩展信息
         return success(resultparamMap);
+    }
+
+
+    public Map<String, Object> realAuthenticationForHF(Map<String, Object> map) {
+        logger.info("实名认证**********************开始");
+
+        //1.获取前台参数
+        String custName = (String) map.get("custName"); //用户名
+        String certNo = (String) map.get("certNo"); //身份证号
+        String cardnumber = (String) map.get("cardnumber");//卡号
+        String mobile = (String) map.get("mobile");//手机号
+        String verifyNo = (String) map.get("verifyNo"); //验证码
+        String token = (String) map.get("token");
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
+
+        if (StringUtils.isEmpty(custName) || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(cardnumber)
+                || StringUtils.isEmpty(mobile) || StringUtils.isEmpty(verifyNo) || StringUtils.isEmpty(token)
+                || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("token:" + token + "  verifyNo:" + verifyNo +
+                    "  cardnumber:" + cardnumber + "  mobile:" + mobile + "   channel:" + channel + "   channelNo:" + channelNo);
+            logger.info("前台获取请求参数有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+
+
+        //2.jedis缓存数据获取
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
+        if (MapUtils.isEmpty(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String name = (String) cacheMap.get("name");//扫描客户姓名
+        String birthDt = (String) cacheMap.get("birthday");//扫描出生年月日
+        String gender = (String) cacheMap.get("gender");//扫描性别
+        String regAddr = (String) cacheMap.get("address");//扫描详细地址
+        String validDate = (String) cacheMap.get("validDate");//有效期
+        String certOrga = (String) cacheMap.get("issued");//扫描身份证签发机关
+        String ethnic = (String) cacheMap.get("race");//扫描民族
+        String idCard = (String) cacheMap.get("idCard");//扫描身份证号
+        String userId = (String) cacheMap.get("userId");//userId
+        if (!StringUtils.isEmpty(idCard)) {
+            idCard = idCard.toUpperCase();
+            logger.info("扫描的身份证号码是" + idCard);
+        } else {
+            logger.info("扫描身份证号为空");
+            return fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
+        }
+        //3.缓存数据非空判断
+        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
+                || StringUtils.isEmpty(regAddr) || StringUtils.isEmpty(validDate) || StringUtils.isEmpty(certOrga)
+                || StringUtils.isEmpty(ethnic) || StringUtils.isEmpty(idCard) || StringUtils.isEmpty(userId)) {
+            logger.info("name:" + name + "  birthDt:" + birthDt + "  gender:" + gender + "  validDate:" + validDate + "  certOrga:" + certOrga
+                    + "   ethnic:" + ethnic + "    idCard:" + idCard + "   userId:" + userId);
+            logger.info("Jedis缓存获取信息失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.FAILED_INFO);
+        }
+
+
+        //4.校验短信验证码
+        Map<String, Object> verifyNoMap = new HashMap<>();
+        verifyNoMap.put("phone", mobile);
+        verifyNoMap.put("verifyNo", verifyNo);
+        verifyNoMap.put("token", token);
+        verifyNoMap.put("channel", channel);
+        verifyNoMap.put("channelNo", channelNo);
+        Map<String, Object> verifyresultmap = appServerService.smsVerify(token, verifyNoMap);
+        Map verifyheadjson = (Map<String, Object>) verifyresultmap.get("head");
+        String verifyretFlag = (String) verifyheadjson.get("retFlag");
+        if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
+            String retMsg = (String) verifyheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        return null;
     }
 }
