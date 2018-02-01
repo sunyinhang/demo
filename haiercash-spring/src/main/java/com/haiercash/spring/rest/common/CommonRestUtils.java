@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,6 +18,7 @@ import java.util.Map;
 public final class CommonRestUtils {
     private static final RestUtils REST_UTILS = new RestUtils();
     private static final Type MAP_TYPE = ParameterizedTypeImpl.make(Map.class, new Type[]{String.class, Object.class}, null);
+    private static final Type LIST_TYPE = ParameterizedTypeImpl.make(List.class, new Type[]{Object.class}, null);
     private static final Type STRING_TYPE = String.class;
 
     private CommonRestUtils() {
@@ -174,6 +176,56 @@ public final class CommonRestUtils {
     public static IResponse<Map> putForMap(String url, Object request, MultiValueMap<String, String> headers) {
         IResponse<Map> response = REST_UTILS.putForCore(url, request, getResponseType(MAP_TYPE), headers);
         return response.afterPropertiesSet(MAP_TYPE);
+    }
+
+    public static IResponse<List> getForList(String url) {
+        IResponse<List> response = REST_UTILS.getForCore(url, getResponseType(LIST_TYPE), null, null);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> getForList(String url, Map<String, ?> uriVariables) {
+        IResponse<List> response = REST_UTILS.getForCore(url, getResponseType(LIST_TYPE), uriVariables, null);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> getForList(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        IResponse<List> response = REST_UTILS.getForCore(url, getResponseType(LIST_TYPE), uriVariables, headers);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> deleteForList(String url) {
+        IResponse<List> response = REST_UTILS.deleteForCore(url, getResponseType(LIST_TYPE), null, null);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> deleteForList(String url, Map<String, ?> uriVariables) {
+        IResponse<List> response = REST_UTILS.deleteForCore(url, getResponseType(LIST_TYPE), uriVariables, null);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> deleteForList(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        IResponse<List> response = REST_UTILS.deleteForCore(url, getResponseType(LIST_TYPE), uriVariables, headers);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> postForList(String url, Object request) {
+        IResponse<List> response = REST_UTILS.postForCore(url, request, getResponseType(LIST_TYPE), null);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> postForList(String url, Object request, MultiValueMap<String, String> headers) {
+        IResponse<List> response = REST_UTILS.postForCore(url, request, getResponseType(LIST_TYPE), headers);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> putForList(String url, Object request) {
+        IResponse<List> response = REST_UTILS.putForCore(url, request, getResponseType(LIST_TYPE), null);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> putForList(String url, Object request, MultiValueMap<String, String> headers) {
+        IResponse<List> response = REST_UTILS.putForCore(url, request, getResponseType(LIST_TYPE), headers);
+        return response.afterPropertiesSet(LIST_TYPE);
     }
 
     public static String getForString(String url) {

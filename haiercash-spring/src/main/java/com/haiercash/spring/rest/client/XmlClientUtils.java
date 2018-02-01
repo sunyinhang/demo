@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,6 +17,7 @@ import java.util.Map;
 public final class XmlClientUtils {
     private static final RestUtils REST_UTILS = new RestUtils();
     private static final Type MAP_TYPE = ParameterizedTypeImpl.make(Map.class, new Type[]{String.class, Object.class}, null);
+    private static final Type LIST_TYPE = ParameterizedTypeImpl.make(List.class, new Type[]{Object.class}, null);
     private static final Type STRING_TYPE = String.class;
 
     private XmlClientUtils() {
@@ -139,6 +141,46 @@ public final class XmlClientUtils {
 
     public static Map<String, Object> putForMap(String url, Object request, MultiValueMap<String, String> headers) {
         return REST_UTILS.putForCore(url, request, MAP_TYPE, headers);
+    }
+
+    public static List<Object> getForList(String url) {
+        return REST_UTILS.getForCore(url, LIST_TYPE, null, null);
+    }
+
+    public static List<Object> getForList(String url, Map<String, ?> uriVariables) {
+        return REST_UTILS.getForCore(url, LIST_TYPE, uriVariables, null);
+    }
+
+    public static List<Object> getForList(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        return REST_UTILS.getForCore(url, LIST_TYPE, uriVariables, headers);
+    }
+
+    public static List<Object> deleteForList(String url) {
+        return REST_UTILS.deleteForCore(url, LIST_TYPE, null, null);
+    }
+
+    public static List<Object> deleteForList(String url, Map<String, ?> uriVariables) {
+        return REST_UTILS.deleteForCore(url, LIST_TYPE, uriVariables, null);
+    }
+
+    public static List<Object> deleteForList(String url, Map<String, ?> uriVariables, MultiValueMap<String, String> headers) {
+        return REST_UTILS.deleteForCore(url, LIST_TYPE, uriVariables, headers);
+    }
+
+    public static List<Object> postForList(String url, Object request) {
+        return REST_UTILS.postForCore(url, request, LIST_TYPE, null);
+    }
+
+    public static List<Object> postForList(String url, Object request, MultiValueMap<String, String> headers) {
+        return REST_UTILS.postForCore(url, request, LIST_TYPE, headers);
+    }
+
+    public static List<Object> putForList(String url, Object request) {
+        return REST_UTILS.putForCore(url, request, LIST_TYPE, null);
+    }
+
+    public static List<Object> putForList(String url, Object request, MultiValueMap<String, String> headers) {
+        return REST_UTILS.putForCore(url, request, LIST_TYPE, headers);
     }
 
     public static String getForString(String url) {

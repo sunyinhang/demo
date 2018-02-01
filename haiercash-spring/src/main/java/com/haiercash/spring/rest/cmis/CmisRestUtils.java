@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,6 +18,7 @@ import java.util.Map;
 public final class CmisRestUtils {
     private static final RestUtils REST_UTILS = new RestUtils();
     private static final Type MAP_TYPE = ParameterizedTypeImpl.make(Map.class, new Type[]{String.class, Object.class}, null);
+    private static final Type LIST_TYPE = ParameterizedTypeImpl.make(List.class, new Type[]{Object.class}, null);
     private static final Type STRING_TYPE = String.class;
 
     private CmisRestUtils() {
@@ -62,6 +64,20 @@ public final class CmisRestUtils {
         String url = version.getUrl(request);
         IResponse<Map> response = REST_UTILS.postForCore(url, request, version.getResponseType(MAP_TYPE), headers);
         return response.afterPropertiesSet(MAP_TYPE);
+    }
+
+    public static IResponse<List> postForList(ICmisRequest request) {
+        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
+        String url = version.getUrl(request);
+        IResponse<List> response = REST_UTILS.postForCore(url, request, version.getResponseType(LIST_TYPE), null);
+        return response.afterPropertiesSet(LIST_TYPE);
+    }
+
+    public static IResponse<List> postForList(ICmisRequest request, MultiValueMap<String, String> headers) {
+        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
+        String url = version.getUrl(request);
+        IResponse<List> response = REST_UTILS.postForCore(url, request, version.getResponseType(LIST_TYPE), headers);
+        return response.afterPropertiesSet(LIST_TYPE);
     }
 
     public static String postForString(ICmisRequest request) {

@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,6 +18,7 @@ import java.util.Map;
 public final class AcqRestUtils {
     private static final RestUtils REST_UTILS = new RestUtils();
     private static final Type MAP_TYPE = ParameterizedTypeImpl.make(Map.class, new Type[]{String.class, Object.class}, null);
+    private static final Type LIST_TYPE = ParameterizedTypeImpl.make(List.class, new Type[]{Object.class}, null);
     private static final Type STRING_TYPE = String.class;
 
     private AcqRestUtils() {
@@ -59,6 +61,18 @@ public final class AcqRestUtils {
     public static IResponse<Map> postForMap(String url, IAcqRequest request, MultiValueMap<String, String> headers) {
         IResponse<Map> response = REST_UTILS.postForCore(url, request, getResponseType(MAP_TYPE), headers);
         response.afterPropertiesSet(MAP_TYPE);
+        return response;
+    }
+
+    public static IResponse<List> postForList(String url, IAcqRequest request) {
+        IResponse<List> response = REST_UTILS.postForCore(url, request, getResponseType(LIST_TYPE), null);
+        response.afterPropertiesSet(LIST_TYPE);
+        return response;
+    }
+
+    public static IResponse<List> postForList(String url, IAcqRequest request, MultiValueMap<String, String> headers) {
+        IResponse<List> response = REST_UTILS.postForCore(url, request, getResponseType(LIST_TYPE), headers);
+        response.afterPropertiesSet(LIST_TYPE);
         return response;
     }
 
