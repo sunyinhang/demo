@@ -793,6 +793,17 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String retMsg = (String) verifyheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
+
+        //iservice  根据身份证号码查询人员信息 查询到人员信息进行打标   查询不到则终止流程
+        if("59".equals(channelNo)){
+            //1.调用外联查询人员信息  getPersonnelInformation
+
+            //2.调用crm   getCustTag
+
+            //3.调用crm  setCustTag
+        }
+
+
         //6.OCR信息保存
         String certStrDt = "";//扫描身份证有效期限开始日期
         String certEndDt = "";//扫描身份证有效期限结束日期
@@ -833,7 +844,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
 
         //绑定手机号修改为实名认证手机号
-        String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)
+        String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号
 
         cacheMap.put("phoneNo", mobile);
         RedisUtils.setExpire(token, cacheMap);
