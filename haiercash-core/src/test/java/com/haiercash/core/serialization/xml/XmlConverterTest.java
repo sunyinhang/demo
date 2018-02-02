@@ -1,6 +1,8 @@
 package com.haiercash.core.serialization.xml;
 
+import com.bestvike.linq.Linq;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.haiercash.core.serialization.JsonSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.junit.Assert;
@@ -20,6 +22,13 @@ public class XmlConverterTest {
         Assert.assertEquals("success", result.getErrorMsg());
         Assert.assertNotNull(result.getLmPmShdList());
         Assert.assertEquals(13, result.getLmPmShdList().size());
+
+        JsonSerializer.getGlobalConfig().getSerializeConfig().propertyNamingStrategy = null;
+        String json = JsonSerializer.serialize(result);
+        DemoResponsePm result2 = JsonSerializer.deserialize(json, DemoResponsePm.class);
+        Assert.assertEquals(result.getErrorCode(), result2.getErrorCode());
+        Assert.assertEquals(result.getErrorMsg(), result2.getErrorMsg());
+        Assert.assertTrue(Linq.asEnumerable(result.getLmPmShdList()).sequenceEqual(Linq.asEnumerable(result2.getLmPmShdList())));
     }
 
     @Data
