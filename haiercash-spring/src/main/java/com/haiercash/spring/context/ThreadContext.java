@@ -1,6 +1,7 @@
 package com.haiercash.spring.context;
 
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.threading.InheritThreadLocal;
 import com.haiercash.spring.controller.BaseController;
 import org.springframework.util.Assert;
 
@@ -12,7 +13,7 @@ import java.util.Stack;
  */
 public final class ThreadContext {
     //线程本地存储
-    private static final ThreadLocal<ThreadContextData> contexts = ThreadLocal.withInitial(ThreadContextData::new);
+    private static final ThreadLocal<ThreadContextData> contexts = InheritThreadLocal.withInitial(ThreadContextData::new);
 
     //region property
 

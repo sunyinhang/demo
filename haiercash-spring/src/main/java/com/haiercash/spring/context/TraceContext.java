@@ -1,5 +1,6 @@
 package com.haiercash.spring.context;
 
+import com.haiercash.core.threading.InheritThreadLocal;
 import com.haiercash.spring.trace.ISpan;
 import com.haiercash.spring.trace.TraceHeaders;
 import com.haiercash.spring.trace.TracerUtils;
@@ -12,7 +13,7 @@ import java.util.Stack;
  */
 public final class TraceContext {
     //线程本地存储
-    private static final ThreadLocal<Stack<ISpan>> contexts = ThreadLocal.withInitial(Stack::new);
+    private static final ThreadLocal<Stack<ISpan>> contexts = InheritThreadLocal.withInitial(Stack::new);
 
     //region property
 

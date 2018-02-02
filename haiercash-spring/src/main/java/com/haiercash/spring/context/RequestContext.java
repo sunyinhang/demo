@@ -1,6 +1,7 @@
 package com.haiercash.spring.context;
 
 import com.haiercash.core.collection.MapUtils;
+import com.haiercash.core.threading.InheritThreadLocal;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public final class RequestContext {
     //线程本地存储
-    private static final ThreadLocal<RequestContextData> contexts = ThreadLocal.withInitial(RequestContextData::new);
+    private static final ThreadLocal<RequestContextData> contexts = InheritThreadLocal.withInitial(RequestContextData::new);
 
     //region property
 
