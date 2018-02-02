@@ -15,4 +15,5 @@ import java.util.List;
 public class CashloanConfig {
     private List<String> whiteTagIds;
     private String iserviceTagId;
+    private String days;
 }
