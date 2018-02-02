@@ -163,7 +163,7 @@ app:
     channel-no: HCP
     url: http://10.164.194.120:9080
   haier:
-    account-url: http://taccount.haier.com
+    account-url: http://account.haier.com
   moxie:
     api-key: 51f5eed2f64f467a9a20f15d2ce26038
   shunguang:
