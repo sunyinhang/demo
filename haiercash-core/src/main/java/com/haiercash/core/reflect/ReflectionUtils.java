@@ -1,11 +1,14 @@
 package com.haiercash.core.reflect;
 
+import com.bestvike.linq.Linq;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by 许崇雷 on 2017-11-28.
@@ -60,6 +63,17 @@ public final class ReflectionUtils {
         }
     }
 
+    //获取所有字段,可获取父类私有字段
+    @SuppressWarnings("Convert2MethodRef")
+    public static Field[] getDeclaredFieldInfos(Class<?> clazz) {
+        List<Field[]> arrayList = new ArrayList<>();
+        while (!clazz.equals(Object.class)) {
+            arrayList.add(clazz.getDeclaredFields());
+            clazz = clazz.getSuperclass();
+        }
+        return Linq.asEnumerable(arrayList).selectMany(array -> Linq.asEnumerable(array)).toArray(Field.class);
+    }
+
     //获取字段,可获取父类私有字段
     public static Field getFieldInfo(Class<?> clazz, String filedName, boolean isStatic) {
         Assert.notNull(clazz, "clazz can not be null");
@@ -73,6 +87,17 @@ public final class ReflectionUtils {
             return field;
         }
         return null;
+    }
+
+    //获取所有方法,可获取父类私有方法
+    @SuppressWarnings("Convert2MethodRef")
+    public static Method[] getDeclaredMethodInfos(Class<?> clazz) {
+        List<Method[]> arrayList = new ArrayList<>();
+        while (!clazz.equals(Object.class)) {
+            arrayList.add(clazz.getDeclaredMethods());
+            clazz = clazz.getSuperclass();
+        }
+        return Linq.asEnumerable(arrayList).selectMany(array -> Linq.asEnumerable(array)).toArray(Method.class);
     }
 
     //获取方法,可获取父类私有方法
