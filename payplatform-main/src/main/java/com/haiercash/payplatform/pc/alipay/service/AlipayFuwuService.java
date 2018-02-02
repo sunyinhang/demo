@@ -7,13 +7,17 @@ import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.reflect.GenericType;
+import com.haiercash.payplatform.config.AlipayConfig;
+import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
@@ -39,6 +43,12 @@ public class AlipayFuwuService extends BaseService {
     private AppServerService appServerService;
     @Autowired
     private OCRIdentityService ocrIdentityService;
+    @Autowired
+    private OutreachConfig outreachConfig;
+    @Autowired
+    private AlipayConfig alipayConfig;
+    @Autowired
+    private OutreachService outreachService;
 
     //联合登陆 auth_base 模式
     public IResponse<Map> login(String authCode) throws AlipayApiException {
@@ -147,22 +157,55 @@ public class AlipayFuwuService extends BaseService {
         String token = this.getToken();
         String verifyNo = Convert.toString(params.get("verifyNo"));
         String phone = Convert.toString("mobile");
-        //TODO 需要确认验证码的验证顺序
-        ////验证短信验证码 实名的时候会验证
-        //Map<String, Object> verifyNoMap = new HashMap<>();
-        //verifyNoMap.put("phone", phone);
-        //verifyNoMap.put("verifyNo", verifyNo);
-        //verifyNoMap.put("token", this.getToken());
-        //verifyNoMap.put("channel", this.getChannel());
-        //verifyNoMap.put("channelNo", this.getChannelNo());
-        //IResponse<Map> verifyResponse = BeanUtils.mapToBean(appServerService.smsVerify(this.getToken(), verifyNoMap), new GenericType<CommonResponse<Map>>() {
-        //});
-        //verifyResponse.assertSuccess();
 
-        //根据token 查找 三方 uid
+        //验证短信验证码 实名的时候会验证
+        Map<String, Object> verifyNoMap = new HashMap<>();
+        verifyNoMap.put("phone", phone);
+        verifyNoMap.put("verifyNo", verifyNo);
+        verifyNoMap.put("token", this.getToken());
+        verifyNoMap.put("channel", this.getChannel());
+        verifyNoMap.put("channelNo", this.getChannelNo());
+        IResponse<Map> verifyResponse = BeanUtils.mapToBean(appServerService.smsVerify(this.getToken(), verifyNoMap), new GenericType<CommonResponse<Map>>() {
+        });
+        verifyResponse.assertSuccess();
+
+        //获取 session 信息
         Map<String, Object> sessionMap = RedisUtils.getExpireMap(this.getToken());
         if (MapUtils.isEmpty(sessionMap))
             throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+
+        //芝麻授权
+        String name = Convert.toString(sessionMap.get("name"));
+        String certNo = Convert.toString(sessionMap.get("idCard"));
+        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(certNo))
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        Map<String, Object> authParams = new HashMap<>();
+        authParams.put("channelNo", this.outreachConfig.getChannelNo());
+        authParams.put("businessChannelNo", this.getChannelNo());
+        authParams.put("appid", this.alipayConfig.getAppId());
+        authParams.put("name", name);
+        authParams.put("certNo", certNo);
+        authParams.put("mobileOne", phone);
+        authParams.put("mobileTwo", phone);
+        authParams.put("applseq", TraceContext.getTraceSpanId());
+        outreachService.protocolauth(authParams);
+
+        //芝麻分判断
+        Map<String, Object> scoreParams = new HashMap<>();
+        scoreParams.put("channelNo", this.outreachConfig.getChannelNo());
+        scoreParams.put("businessChannelNo", this.getChannelNo());
+        scoreParams.put("appid", this.alipayConfig.getAppId());
+        scoreParams.put("certNo", certNo);
+        scoreParams.put("applseq", TraceContext.getTraceSpanId());
+        scoreParams.put("interfaceCode", "00801");
+        scoreParams.put("status", "00");
+        IResponse<Map> scoreResponse = outreachService.score(scoreParams);
+        scoreResponse.assertSuccessNeedBody();
+        Integer score = Convert.nullInteger(scoreResponse.getBody().get("Zm_Score"));
+        if (score == null || score < alipayConfig.getFuwuMinScore())
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "芝麻分数不符合条件");
+
+        //根据token 查找 三方 uid
         String thirdUserId = (String) sessionMap.get("externalUserId");
         if (StringUtils.isEmpty(thirdUserId))
             throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -193,6 +236,7 @@ public class AlipayFuwuService extends BaseService {
 
         return this.ocrIdentityService.realAuthentication(params);
     }
+
 
     //根据userId 查询用户的额度状态
     private String getEdState(String userId) {

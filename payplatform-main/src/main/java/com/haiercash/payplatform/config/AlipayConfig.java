@@ -15,4 +15,5 @@ public class AlipayConfig {
     private String appId;
     private String appPrivateKey;//app 的私钥,公钥配置到支付宝官方的管理界面 https://openhome.alipay.com/platform/detailApp.htm?appId=${appId}&tab=appDetail
     private String alipayPublicKey;//支付宝的公钥,从支付宝官方的管理界面获取
+    private Integer fuwuMinScore;//生活号最小分数
 }
