@@ -7,26 +7,14 @@ import com.haiercash.mybatis.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
 import com.haiercash.payplatform.common.dao.SgReturngoodsLogDao;
-import com.haiercash.payplatform.common.data.AppOrder;
-import com.haiercash.payplatform.common.data.AppOrderGoods;
-import com.haiercash.payplatform.common.data.CooperativeBusiness;
-import com.haiercash.payplatform.common.data.SgRegions;
-import com.haiercash.payplatform.common.data.SgReturngoodsLog;
+import com.haiercash.payplatform.common.data.*;
 import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SgInnerService;
 import com.haiercash.payplatform.pc.shunguang.service.ShunguangService;
-import com.haiercash.payplatform.service.AcquirerService;
-import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.CrmService;
-import com.haiercash.payplatform.service.HaierDataService;
-import com.haiercash.payplatform.service.OrderManageService;
-import com.haiercash.payplatform.utils.AcqTradeCode;
-import com.haiercash.payplatform.utils.DesUtil;
-import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.payplatform.service.*;
+import com.haiercash.payplatform.utils.*;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
@@ -40,12 +28,7 @@ import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * shunguang service impl.
@@ -317,9 +300,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         Map returnmap = new HashMap<>();
         String backurl;
         if ("1".equals(f)) {//订单已提交成功
-            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/loanResult.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&applSeq=" + applSeq + "&setCs=" + userId;
+            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/loanResult.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&applSeq=" + applSeq + "&setCs=" + getSixLater(userId);
         } else {
-            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/btInstalments.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + userId;
+            backurl = commonConfig.getGateUrl() + "/sgbt/#!/payByBt/btInstalments.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + getSixLater(userId);
         }
         logger.info("支付跳转页面：" + backurl);
         returnmap.put("backurl", backurl);
@@ -441,7 +424,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                         //U0160:该用户已注册，无法注册
                         //跳转登录页面进行登录
                         RedisUtils.setExpire(token, cachemap);
-                        String backurl = commonConfig.getGateUrl() + "/sgbt/#!/login/login.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + custPhoneNo;
+                        String backurl = commonConfig.getGateUrl() + "/sgbt/#!/login/login.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + getSixLater(custPhoneNo);
                         returnmap.put("backurl", backurl);
                         logger.info("页面跳转到：" + backurl);
                         return success(returnmap);
@@ -497,7 +480,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.info("token:" + token);
             logger.info("跳转额度激活，cachemap：" + cachemap.toString());
             RedisUtils.setExpire(token, cachemap);
-            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountNot.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + uidLocal;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/amountNot.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + getSixLater(uidLocal);
             returnmap.put("backurl", backurl);
             logger.info("页面跳转到：" + backurl);
             return success(returnmap);
@@ -528,7 +511,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             cachemap.put("idCard", certNo);//身份证号
             cachemap.put("idType", certType);
             RedisUtils.setExpire(token, cachemap);
-            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/quotaMerge.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + uidLocal;
+            String backurl = commonConfig.getGateUrl() + "/sgbt/#!/applyQuota/quotaMerge.html?utm_source=sgbt&utm_medium=sgbt&utm_campaign=sgbt&utm_content=sgbt&utm_term=sgbt&token=" + token + "&setCs=" + getSixLater(uidLocal);
             returnmap.put("backurl", backurl);
             return success(returnmap);
         }
@@ -1388,5 +1371,12 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
             logger.error("加解密出现异常" + e.getMessage());
         }
         return map;
+    }
+
+    public String getSixLater(String userId) {
+        if (StringUtils.isEmpty(userId) && userId.length() == 11) {
+            return userId.substring(5);
+        } else
+            return "";
     }
 }
