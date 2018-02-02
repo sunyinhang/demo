@@ -812,10 +812,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             Map headMap = (Map) resultMap.get("head");
             String retMsg = Convert.toString(headMap.get("retMsg"));
             String retFlag = Convert.toString(headMap.get("retFlag"));
-            if ("00059".equals(retFlag)) {
-                return fail(retFlag, "没有准入资格");
-            }
-            if (!"00000".equals(retMsg)) {
+            if (!"00000".equals(retFlag)) {
+                if ("00096".equals(retFlag)) {
+                    retMsg = "没有准入资格";
+                }
                 return fail(retFlag, retMsg);
             }
             Map bodyMap = (Map) resultMap.get("body");
