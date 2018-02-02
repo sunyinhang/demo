@@ -1374,7 +1374,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     public String getSixLater(String userId) {
-        if (StringUtils.isEmpty(userId) && userId.length() == 11) {
+        if (!StringUtils.isEmpty(userId) && userId.length() == 11) {
             return userId.substring(5);
         } else
             return "";
