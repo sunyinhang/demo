@@ -6,6 +6,7 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.ValueFilter;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
+import com.alibaba.fastjson.util.TypeUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,6 +22,8 @@ public final class JsonSerializer {
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     static {
+        TypeUtils.compatibleWithJavaBean = true;
+        TypeUtils.compatibleWithFieldName = false;
         GLOBAL_CONFIG = new FastJsonConfig();
         GLOBAL_CONFIG.setDateFormat(DATE_FORMAT);
         GLOBAL_CONFIG.setFeatures(
