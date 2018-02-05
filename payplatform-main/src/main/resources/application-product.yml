@@ -179,3 +179,9 @@ app:
   weixin:
     appid: wx046cbd2b50704fbc
     secret: 3cff4ee0fd7594270200a8ad55cf1984
+  alipay:
+    url: https://openapi.alipay.com
+    app-id:
+    app-private-key:
+    alipay-public-key:
+    fuwu-min-score: 600
