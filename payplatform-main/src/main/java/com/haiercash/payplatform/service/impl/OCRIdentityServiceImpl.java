@@ -3,8 +3,10 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.ObjectUtils;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.lang.TimeSpan;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.common.entity.ReturnMessage;
 import com.haiercash.payplatform.config.CashloanConfig;
@@ -15,7 +17,6 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.OCRIdentityService;
-import com.haiercash.payplatform.utils.DateUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
 import com.haiercash.spring.redis.RedisUtils;
@@ -35,8 +36,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by yuanli on 2017/7/31.
@@ -895,8 +907,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             if (data.length() != 0) {
                 JSONObject object = new JSONObject(data.get(0));
                 String postDate = object.get("postDate").toString();
-                int days = DateUtils.getDays(DateUtils.parseDate(postDate), new Date());
-                if (days == -1 || days < 180) {
+                TimeSpan time = new TimeSpan(DateUtils.fromDateString(postDate), new Date());
+                if (time.getDays() < 180) {
                     return fail(ConstUtil.ERROR_CODE, "没有准入资格");
                 }
                 //2.调用crm   getCustTag
