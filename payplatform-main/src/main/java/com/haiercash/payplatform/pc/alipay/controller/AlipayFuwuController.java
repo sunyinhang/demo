@@ -12,6 +12,7 @@ import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,7 +71,7 @@ public class AlipayFuwuController extends BaseController {
     }
 
     //授权后验证用户
-    @PostMapping("/api/payment/alipay/fuwu/validUser")
+    @GetMapping("/api/payment/alipay/fuwu/validUser")
     public void validUser(@RequestBody Map<String, String> params) throws AlipayApiException, IOException {
         String appId = params.get("appId");
         String authCode = params.get("authCode");
@@ -90,11 +91,13 @@ public class AlipayFuwuController extends BaseController {
         alipayFuwuService.validUser(authCode, successUrl, failUrl);
     }
 
+    //ocr
     @PostMapping("/api/payment/alipay/fuwu/ocrIdentity")
     public IResponse<Map> ocrIdentity(@RequestBody MultipartFile identityCard) throws Exception {
         return ocrIdentityService.ocrIdentity(OCRIdentityService.OcrPathType.ByIdNo, identityCard);
     }
 
+    //实名认证
     @PostMapping("/api/payment/alipay/fuwu/realAuthentication")
     public IResponse<Map> realAuthentication(@RequestBody Map<String, Object> map) throws IOException {
         this.assertChannelNo();
@@ -107,6 +110,4 @@ public class AlipayFuwuController extends BaseController {
             throw new BusinessException(ConstUtil.ERROR_CODE, "手机号不能为空");
         return alipayFuwuService.realAuthentication(map);
     }
-
-
 }
