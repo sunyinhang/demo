@@ -914,7 +914,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getPaySs(String token, String channel, String channelNo, Map<String, Object> params) {
+    public Map<String, Object> getPaySs(String token, String channelNo, String channel, Map<String, Object> params) {
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
