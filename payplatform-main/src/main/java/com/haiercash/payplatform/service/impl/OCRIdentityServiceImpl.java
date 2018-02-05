@@ -15,6 +15,7 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.OCRIdentityService;
+import com.haiercash.payplatform.utils.DateUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
 import com.haiercash.spring.redis.RedisUtils;
@@ -35,10 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by yuanli on 2017/7/31.
@@ -895,6 +893,12 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             JSONArray data = new JSONArray(bodyMap.get("data").toString());
             String tagId = cashloanConfig.getIserviceTagId();
             if (data.length() != 0) {
+                JSONObject object = new JSONObject(data.get(0));
+                String postDate = object.get("postDate").toString();
+                int days = DateUtils.getDays(DateUtils.parseDate(postDate), new Date());
+                if (days == -1 || days < 180) {
+                    return fail(ConstUtil.ERROR_CODE, "没有准入资格");
+                }
                 //2.调用crm   getCustTag
                 Map<String, Object> gettigIDMap = new HashMap<String, Object>();
                 gettigIDMap.put("custName", name);
