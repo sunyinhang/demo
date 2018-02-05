@@ -17,6 +17,7 @@ import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
@@ -141,15 +142,17 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //授权后验证用户
-    public IResponse<Map> validUser(String authCode) throws AlipayApiException {
+    public void validUser(String authCode, String successUrl, String failUrl) throws AlipayApiException, IOException {
         AlipayToken token = AlipayUtils.getOauthTokenByAuthCode(authCode);
         AlipayUserInfoShareResponse alipayUserInfo = AlipayUtils.getUserInfo(token.getToken());
         if (Objects.equals(alipayUserInfo.getUserType(), "2")//个人账号
                 && Objects.equals(alipayUserInfo.getUserStatus(), "T")//已认证用户
                 && Objects.equals(alipayUserInfo.getIsCertified(), "T")//已通过实名认证
-                && Objects.equals(alipayUserInfo.getIsStudentCertified(), "T"))//只能为学生
-            return CommonResponse.success();
-        return CommonResponse.fail(ConstUtil.ERROR_CODE, "用户不符合准入规则");
+                && Objects.equals(alipayUserInfo.getIsStudentCertified(), "T")) {//只能为学生
+            RequestContext.getResponse().sendRedirect(successUrl);
+            return;
+        }
+        RequestContext.getResponse().sendRedirect(failUrl);
     }
 
     //实名认证
@@ -215,7 +218,7 @@ public class AlipayFuwuService extends BaseService {
         if (!externUidResp.isSuccessNeedBody()) {//该用户不存在, 注册用户
             IResponse<Map> saveResult = this.saveUserByExternUid(thirdUserId, phone);
             saveResult.assertSuccess();
-            //在此查询
+            //再次查询
             externUidResp = this.queryUserByExternUid(thirdUserId);
             externUidResp.assertSuccessNeedBody();
         }//存在,获取 userId
