@@ -179,14 +179,3 @@ app:
   weixin:
     appid: wx765f132310ed7371
     secret: c400d6495e25f2401b5a7209585fc56c
-  qidai:
-    attach-path: /testshare01
-    cmis-ftp-host: 10.164.194.106
-    cmis-ftp-port: 2021
-    cmis-ftp-username: admin
-    cmis-ftp-password: admin&YGNBDNM#321
-    pgw-ftp-host:
-    pgw-ftp-port:
-    pgw-ftp-username:
-    pgw-ftp-password:
-    cmis-yc-loan-url: http://10.164.194.105:8099

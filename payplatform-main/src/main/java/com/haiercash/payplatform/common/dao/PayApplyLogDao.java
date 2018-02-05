@@ -9,5 +9,4 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PayApplyLogDao extends BaseMapper<PayApplyLog> {
-    public void updateByApplCde(String applcde);
 }
