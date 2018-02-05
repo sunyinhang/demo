@@ -907,7 +907,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             if (data.length() != 0) {
                 JSONObject object = new JSONObject(data.get(0));
                 String postDate = object.get("postDate").toString();
-                TimeSpan time = new TimeSpan(DateUtils.fromDateString(postDate), new Date());
+                TimeSpan time = new TimeSpan(new Date(), DateUtils.fromDateString(postDate));
                 if (time.getDays() < 180) {
                     return fail(ConstUtil.ERROR_CODE, "没有准入资格");
                 }
