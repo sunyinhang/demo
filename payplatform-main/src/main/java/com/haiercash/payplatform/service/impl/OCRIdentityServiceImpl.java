@@ -885,7 +885,6 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             //1.调用外联查询人员信息  getPersonnelInformation
             String url = outreachConfig.getUrl() + "/Outreachplatform/api/iservice/getPersonnelInformation";
             Map<String, Object> param = new HashedMap();
-            Map<String, Object> settigIDMap = new HashMap<>();
             param.put("channelNo", "pay");
             param.put("businessChannelNo", channelNo);
             param.put("idCard", idCard);
@@ -903,54 +902,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             }
             Map bodyMap = (Map) resultMap.get("body");
             JSONArray data = new JSONArray(bodyMap.get("data").toString());
-            String tagId = cashloanConfig.getIserviceTagId();
             if (data.length() != 0) {
                 JSONObject object = new JSONObject(data.get(0));
                 String postDate = object.get("postDate").toString();
                 TimeSpan time = new TimeSpan(new Date(), DateUtils.fromDateString(postDate));
                 if (time.getDays() < 180) {
-                    return fail(ConstUtil.ERROR_CODE, "没有准入资格");
+                    return fail(ConstUtil.ERROR_CODE, "没有准入资格,不够半年");
                 }
-                //2.调用crm   getCustTag
-                Map<String, Object> gettigIDMap = new HashMap<String, Object>();
-                gettigIDMap.put("custName", name);
-                gettigIDMap.put("idTyp", "20");
-                gettigIDMap.put("idNo", idCard);
-                Map<String, Object> custTag = crmManageService.getCustTag(token, gettigIDMap);
-                if (custTag == null) {
-                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                }
-                Map custTagHeadMap = (Map<String, Object>) custTag.get("head");
-                String custTagHeadMapHeadFlag = (String) custTagHeadMap.get("retFlag");
-                if (!"00000".equals(custTagHeadMapHeadFlag)) {
-                    String retMsg2 = (String) custTagHeadMap.get("retMsg");
-                    return fail(ConstUtil.ERROR_CODE, retMsg2);
-                }
-                List<Map<String, Object>> tiglist = (List<Map<String, Object>>) custTag.get("body");
-                boolean flag = false;
-                for (Map<String, Object> aTiglist : tiglist) {
-                    String tagIdData = (String) aTiglist.get("tagId");
-                    if (tagId.equals(tagIdData)) {
-                        flag = true;
-                        break;
-                    }
-                }
-                //3.调用crm  setCustTag
-                if (!flag) {
-                    settigIDMap.put("certNo", idCard);
-                    settigIDMap.put("tagId", tagId);
-                    Map<String, Object> setcustTag = crmManageService.setCustTag(token, settigIDMap);
-                    if (setcustTag == null) {
-                        return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-                    }
-                    Map setcustTagHeadMap = (Map<String, Object>) custTag.get("head");
-                    String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
-                    if (!"00000".equals(setcustTagHeadMapFlag)) {
-                        String retMsg3 = (String) custTagHeadMap.get("retMsg");
-                        return fail(ConstUtil.ERROR_CODE, retMsg3);
-                    }
-                }
-
             } else {
                 return fail(ConstUtil.ERROR_CODE, "没有准入资格");
             }
