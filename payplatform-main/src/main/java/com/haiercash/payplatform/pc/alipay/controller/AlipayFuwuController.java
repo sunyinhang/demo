@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -72,7 +73,7 @@ public class AlipayFuwuController extends BaseController {
 
     //授权后验证用户
     @GetMapping("/api/payment/alipay/fuwu/validUser")
-    public void validUser(@RequestBody Map<String, String> params) throws AlipayApiException, IOException {
+    public void validUser(@RequestParam Map<String, String> params) throws AlipayApiException, IOException {
         String appId = params.get("appId");
         String authCode = params.get("authCode");
         this.assertAppId(appId);
