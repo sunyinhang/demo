@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <configuration scan="true" scanPeriod="30 seconds">
     <property name="APP_NAME" value="payplatform"/>
     <property name="FILE_PATTERN" value="./log/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}"/>
