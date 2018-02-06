@@ -936,7 +936,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String cityCode;
         String provinceCode;
 //        String areaType = "";
-        if (org.springframework.util.StringUtils.isEmpty(province) && org.springframework.util.StringUtils.isEmpty(city)) {
+        if (StringUtils.isEmpty(province) && StringUtils.isEmpty(city)) {
             provinceCode = "370000";
             cityCode = "370200";
         } else {
@@ -949,48 +949,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             Map<String, Object> areaCodeBody = (Map<String, Object>) areaCode.get("body");
             provinceCode = (String) areaCodeBody.get("province");
             cityCode = (String) areaCodeBody.get("city");
-//            logger.info("获取业务发生地省市区");
-//            Map<String, Object> citymap = new HashMap<String, Object>();
-//            citymap.put("areaCode", areaCode);
-//            citymap.put("flag", "parent");
-//            citymap.put("channel", channel);
-//            citymap.put("channelNo", channelNo);
-//            Map<String, Object> cityCodeMap = commonPageService.getCode(token, citymap);
-//            if (!HttpUtil.isSuccess(cityCodeMap)) {
-//                return cityCodeMap;
-//            }
-//            logger.info("cityCodeMap------" + cityCodeMap);
-//            Map<String, Object> map_one = (Map<String, Object>) cityCodeMap.get("body");
-//            cityCode = (String) map_one.get("cityCode");
-//            areaType = (String) map_one.get("areaType");
-//            logger.info("cityCode------" + cityCode + "---------" + areaType);
-//            if (org.springframework.util.StringUtils.isEmpty(cityCode)) {
-//                logger.info("获取市编码失败");
-//                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-//            }
-//            if ("province".equals(areaType)) {
-//                provinceCode = cityCode;
-//                cityCode = areaCode;
-//            } else {
-//                //获取省代码
-//                Map<String, Object> provincemap = new HashMap<String, Object>();
-//                provincemap.put("areaCode", cityCode);
-//                provincemap.put("flag", "parent");
-//                provincemap.put("channel", channel);
-//                provincemap.put("channelNo", channelNo);
-//                Map<String, Object> provinceCodeMap = commonPageService.getCode(token, provincemap);
-//                if (!HttpUtil.isSuccess(provinceCodeMap)) {
-//                    return provinceCodeMap;
-//                }
-//                Map<String, Object> map_two = (Map<String, Object>) provinceCodeMap.get("body");
-//                provinceCode = (String) map_two.get("cityCode");
-//                logger.info("provinceCode------" + provinceCode);
-////                provinceCode = (String) provinceCodeMap.get("cityCode");
-//                if (org.springframework.util.StringUtils.isEmpty(provinceCode)) {
-//                    logger.info("获取省编码失败");
-//                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-//                }
-//            }
         }
         //录单校验
 //        logger.info("进行录单校验");
@@ -1039,9 +997,46 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             logger.info("订单保存失败");
             Map resultHead = (Map<String, Object>) (ordermap.get("head"));
             String retmsg = resultHead.get("retMsg").toString();
-            //String retmsg = resultHead.getRetMsg();
-            //String retmsg = (String) ((Map<String, Object>)(ordermap.get("head"))).get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retmsg);
+        }
+
+        //支付宝渠道进行人脸判断
+        if("60".equals(channelNo)){
+            Map<String, Object> faceparamMap = new HashMap<>();
+            faceparamMap.put("typCde", typCde);
+            faceparamMap.put("source", channel);
+            faceparamMap.put("custNo", custNo);
+            faceparamMap.put("name", custName);
+            faceparamMap.put("idNumber", certNo);
+            faceparamMap.put("token", token);
+            faceparamMap.put("channel", channel);
+            faceparamMap.put("channelNo", channelNo);
+            Map<String, Object> resultmap = appServerService.ifNeedFaceChkByTypCde(token, faceparamMap);
+            if(!HttpUtil.isSuccess(resultmap)){
+                Map resultHead = (Map<String, Object>) (resultmap.get("head"));
+                String retmsg = resultHead.get("retMsg").toString();
+                return fail(ConstUtil.ERROR_CODE, retmsg);
+            }
+            Map body = (Map) resultmap.get("body");
+            String code = (String) body.get("code"); //结果标识码
+            //Map<String, Object> returnmap = new HashMap<>();
+            Map resultbody = (Map<String, Object>) (ordermap.get("body"));
+            switch (code) {
+                case "00": //人脸识别通过
+                    logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
+                    resultbody.put("flag", "01");//跳转支付密码页面
+                    ordermap.put("body", resultbody);
+                case "01": //01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
+                    logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
+                    return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
+                case "02": //02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
+                    logger.info("人脸识别，剩余次数为0，录单终止");
+                    return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
+                case "10": //10：未通过人脸识别，可以再做人脸识别
+                    logger.info("未通过人脸识别，可以再做人脸识别");
+                    resultbody.put("flag", "02");// 跳转人脸识别页面
+                    ordermap.put("body", resultbody);
+            }
         }
 
         return ordermap;

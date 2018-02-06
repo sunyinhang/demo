@@ -262,6 +262,12 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                     return success(m);
                 }
             }
+
+            //支付宝支用环节人脸成功后不进行支付密码是否设置判断
+            if("60".equals(channelNo) && !"1".equals(edflag)){
+                return success();
+            }
+
             //进行支付密码校验
             return validateUserFlag(userId, token, channel, channelNo, cacheMap);
         }
