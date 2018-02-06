@@ -74,8 +74,8 @@ public class AlipayFuwuController extends BaseController {
     //授权后验证用户
     @GetMapping("/api/payment/alipay/fuwu/validUser")
     public void validUser(@RequestParam Map<String, String> params) throws AlipayApiException, IOException {
-        String appId = params.get("appId");
-        String authCode = params.get("authCode");
+        String appId = params.get("app_id");
+        String authCode = params.get("auth_code");
         this.assertAppId(appId);
         this.assertAuthCode(authCode);
         this.assertChannelNo();
