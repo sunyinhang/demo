@@ -704,7 +704,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存个人扩展信息**************结束");
         logger.info("*********保存联系人一**************开始");
 //        Integer id_one = (Integer) params.get("id_one");
-        Integer id_one = Convert.toInteger(params.get("id_one"));
+        Integer id_one = Convert.nullInteger(params.get("id_one"));
         if (id_one != null) {
             custparamMap_one.put("id", id_one);// 联系人ID
         }
@@ -727,7 +727,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
 //        Integer id_two = (Integer) params.get("id_two");
-        Integer id_two = Convert.toInteger(params.get("id_two"));
+        Integer id_two = Convert.nullInteger(params.get("id_two"));
         if (id_two != null) {
             custparamMap_two.put("id", id_two);// 联系人ID
         }
@@ -935,8 +935,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String typCde = Convert.toString(params.get("typCde"));
-        BigDecimal apprvAmt = Convert.toDecimal(params.get("apprvAmt"));
         String applyTnrTyp = Convert.toString(params.get("applyTnrTyp"));
+        BigDecimal apprvAmt = Convert.toDecimal(params.get("apprvAmt"));
         String applyTnr = Convert.toString(params.get("applyTnr"));
         String mtdCde = Convert.toString(params.get("mtdCde"));
         if (StringUtils.isEmpty(typCde) || StringUtils.isEmpty(apprvAmt) || StringUtils.isEmpty(applyTnrTyp) ||
