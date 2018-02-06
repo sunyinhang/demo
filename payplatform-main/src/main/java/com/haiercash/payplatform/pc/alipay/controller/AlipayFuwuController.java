@@ -85,7 +85,7 @@ public class AlipayFuwuController extends BaseController {
             throw new BusinessException(ConstUtil.ERROR_CODE, "缺少成功时回调地址");
         String failUrl = params.get("failUrl");
         if (StringUtils.isEmpty(failUrl))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "缺少时回调地址");
+            throw new BusinessException(ConstUtil.ERROR_CODE, "缺少失败时回调地址");
         if (!RequestContext.exists())
             throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
 
