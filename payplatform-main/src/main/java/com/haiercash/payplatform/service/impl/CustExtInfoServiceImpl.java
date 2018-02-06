@@ -332,7 +332,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存个人扩展信息**************结束");
         logger.info("*********保存联系人一**************开始");
-        Integer id_one = (Integer) params.get("id_one");
+//        Integer id_one = (Integer) params.get("id_one");
+        Integer id_one = Convert.nullInteger(params.get("id_one"));
         if (id_one != null) {
             custparamMap_one.put("id", id_one);// 联系人ID
         }
@@ -354,7 +355,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
-        Integer id_two = (Integer) params.get("id_two");
+//        Integer id_two = (Integer) params.get("id_two");
+        Integer id_two = Convert.nullInteger(params.get("id_two"));
         if (id_two != null) {
             custparamMap_two.put("id", id_two);// 联系人ID
         }
@@ -703,7 +705,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存个人扩展信息**************结束");
         logger.info("*********保存联系人一**************开始");
-        Integer id_one = (Integer) params.get("id_one");
+//        Integer id_one = (Integer) params.get("id_one");
+        Integer id_one = Convert.nullInteger(params.get("id_one"));
         if (id_one != null) {
             custparamMap_one.put("id", id_one);// 联系人ID
         }
@@ -725,7 +728,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         logger.info("*********保存联系人一**************结束");
         logger.info("*********保存联系人二**************开始");
-        Integer id_two = (Integer) params.get("id_two");
+//        Integer id_two = (Integer) params.get("id_two");
+        Integer id_two = Convert.nullInteger(params.get("id_two"));
         if (id_two != null) {
             custparamMap_two.put("id", id_two);// 联系人ID
         }
