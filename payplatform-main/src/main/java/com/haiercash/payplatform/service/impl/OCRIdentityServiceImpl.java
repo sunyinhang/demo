@@ -907,7 +907,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 String postDate = object.get("postDate").toString();
                 TimeSpan time = new TimeSpan(new Date(), DateUtils.fromDateString(postDate));
                 if (time.getDays() < 180) {
-                    return fail(ConstUtil.ERROR_CODE, "没有准入资格,不够半年");
+                    return fail(ConstUtil.ERROR_CODE, "没有准入资格");
                 }
             } else {
                 return fail(ConstUtil.ERROR_CODE, "没有准入资格");
