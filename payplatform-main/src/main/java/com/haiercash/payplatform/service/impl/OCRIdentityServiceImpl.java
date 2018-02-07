@@ -184,8 +184,9 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
     public Map<String, Object> savaIdentityInfo(Map<String, Object> map) {
         logger.info("OCR信息保存（下一步）***********开始");
-        String token = (String) map.get("token");
-        String name = (String) map.get("name");
+        String token = Convert.toString(map.get("token"));
+        String name = Convert.toString(map.get("name"));
+        String authPhone = Convert.toString(map.get("authPhone"));//支付宝授权时用的手机号
 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(name)) {
             logger.info("token:" + token + "  name:" + name);
@@ -199,6 +200,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         cacheMap.put("name", name);
+        cacheMap.put("authPhone", authPhone);
         RedisUtils.setExpire(token, cacheMap);
         logger.info("OCR信息保存（下一步）***********结束");
         return success();
