@@ -1,12 +1,8 @@
 package com.haiercash.core.lang;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.util.TypeUtils;
+import com.alibaba.fastjson.TypeReference;
 import com.haiercash.core.serialization.JsonSerializer;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -23,9 +19,13 @@ public final class BeanUtils {
      * @param bean 对象
      * @return 字典
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> beanToMap(Object bean) {
-        return bean instanceof Map ? (Map<String, Object>) bean : (JSONObject) JSON.toJSON(bean, JsonSerializer.getGlobalConfig().getSerializeConfig());
+        if (bean == null)
+            return null;
+        if (bean instanceof Map)
+            //noinspection unchecked
+            return (Map<String, Object>) bean;
+        return JsonSerializer.deserializeMap(JsonSerializer.serialize(bean));
     }
 
     /**
@@ -37,19 +37,19 @@ public final class BeanUtils {
      * @return 对象
      */
     public static <T> T mapToBean(Map map, Class<T> clazz) {
-        return TypeUtils.castToJavaBean(map, clazz);
+        return mapToBean(map, (Type) clazz);
     }
 
     /**
      * map 转为 bean
      *
      * @param map  字典
-     * @param type 类型
+     * @param type 类型引用
      * @param <T>  类型
      * @return 对象
      */
-    public static <T> T mapToBean(Map map, ParameterizedType type) {
-        return TypeUtils.cast(map, type, ParserConfig.getGlobalInstance());
+    public static <T> T mapToBean(Map map, TypeReference<T> type) {
+        return mapToBean(map, type.getType());
     }
 
     /**
@@ -61,6 +61,6 @@ public final class BeanUtils {
      * @return 对象
      */
     public static <T> T mapToBean(Map map, Type type) {
-        return TypeUtils.cast(map, type, ParserConfig.getGlobalInstance());
+        return map == null ? null : JsonSerializer.deserialize(JsonSerializer.serialize(map), type);
     }
 }
