@@ -72,6 +72,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     private CashloanConfig cashloanConfig;
 
 
+    @Override
     public Map<String, Object> ocrIdentity(MultipartFile ocrImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("OCR身份信息获取*************开始");
         //图片非空判断
@@ -195,6 +196,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         return imgPath;
     }
 
+    @Override
     public Map<String, Object> savaIdentityInfo(Map<String, Object> map) {
         logger.info("OCR信息保存（下一步）***********开始");
         String token = (String) map.get("token");
@@ -263,6 +265,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //发送短信验证码
+    @Override
     public Map<String, Object> sendMessage(Map<String, Object> params) {
         logger.info("发送短信验证码***************开始");
         String token = (String) params.get("token");
@@ -294,6 +297,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //发送短信验证码
+    @Override
     public Map<String, Object> sendMsg(Map<String, Object> params) {
         String phone = (String) params.get("phone");
         String channel = (String) params.get("channel");
@@ -741,6 +745,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //实名认证(标准现金贷)
+    @Override
     public Map<String, Object> realAuthenticationForXjd(Map<String, Object> map) throws Exception {
         logger.info("实名认证*********************开始");
 
@@ -854,31 +859,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
         cacheMap.put("phoneNo", mobile);
         RedisUtils.setExpire(token, cacheMap);
-        //7.验证并新增实名认证信息
-//        String[] officeArea_split = cityCode.split(",");
-//        String acctProvince = (String) officeArea_split[0];//省代码
-//        String acctCity = (String) officeArea_split[1];//市代码
-        Map<String, Object> identityMap = new HashMap<>();
-        identityMap.put("token", token);
-        identityMap.put("channel", channel);
-        identityMap.put("channelNo", channelNo);
-        identityMap.put("custName", name); //客户姓名 √
-        identityMap.put("certNo", idCard); //身份证号 √
-        identityMap.put("cardNo", cardnumber); //银行卡号 √
-        identityMap.put("mobile", mobile); //手机号 √
-        identityMap.put("dataFrom", channelNo); //数据来源 √
-        identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
-        identityMap.put("userId", userId); //客户userId
-//        identityMap.put("acctProvince", acctProvince); //开户行省代码
-//        identityMap.put("acctCity", acctCity); //开户行市代码
-        identityMap.put("bindMobile", phone);
-        Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
-        Map identityheadjson = (Map<String, Object>) identityresultmap.get("head");
-        String identityretFlag = (String) identityheadjson.get("retFlag");
-        if (!"00000".equals(identityretFlag)) {
-            String retMsg = (String) identityheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
+
 
         //iservice  根据身份证号码查询人员信息 查询到人员信息进行打标   查询不到则终止流程
         if ("59".equals(channelNo)) {
@@ -915,7 +896,31 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
         }
 
-
+        //7.验证并新增实名认证信息
+//        String[] officeArea_split = cityCode.split(",");
+//        String acctProvince = (String) officeArea_split[0];//省代码
+//        String acctCity = (String) officeArea_split[1];//市代码
+        Map<String, Object> identityMap = new HashMap<>();
+        identityMap.put("token", token);
+        identityMap.put("channel", channel);
+        identityMap.put("channelNo", channelNo);
+        identityMap.put("custName", name); //客户姓名 √
+        identityMap.put("certNo", idCard); //身份证号 √
+        identityMap.put("cardNo", cardnumber); //银行卡号 √
+        identityMap.put("mobile", mobile); //手机号 √
+        identityMap.put("dataFrom", channelNo); //数据来源 √
+        identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
+        identityMap.put("userId", userId); //客户userId
+//        identityMap.put("acctProvince", acctProvince); //开户行省代码
+//        identityMap.put("acctCity", acctCity); //开户行市代码
+        identityMap.put("bindMobile", phone);
+        Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
+        Map identityheadjson = (Map<String, Object>) identityresultmap.get("head");
+        String identityretFlag = (String) identityheadjson.get("retFlag");
+        if (!"00000".equals(identityretFlag)) {
+            String retMsg = (String) identityheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
 
 
         Map identitybodyjson = (Map<String, Object>) identityresultmap.get("body");
