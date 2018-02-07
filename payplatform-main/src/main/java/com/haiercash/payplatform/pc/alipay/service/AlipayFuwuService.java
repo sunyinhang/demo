@@ -7,6 +7,7 @@ import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.reflect.GenericType;
+import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
@@ -144,7 +145,9 @@ public class AlipayFuwuService extends BaseService {
     //授权后验证用户
     public void validUser(String authCode, String successUrl, String failUrl) throws AlipayApiException, IOException {
         AlipayToken token = AlipayUtils.getOauthTokenByAuthCode(authCode);
+        this.logger.info("支付宝 token: " + token);
         AlipayUserInfoShareResponse alipayUserInfo = AlipayUtils.getUserInfo(token.getToken());
+        this.logger.info("支付宝用户信息: " + JsonSerializer.serialize(alipayUserInfo));
         if (Objects.equals(alipayUserInfo.getUserType(), "2")//个人账号
                 && Objects.equals(alipayUserInfo.getUserStatus(), "T")//已认证用户
                 && Objects.equals(alipayUserInfo.getIsCertified(), "T")//已通过实名认证
