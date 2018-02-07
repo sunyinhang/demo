@@ -148,7 +148,7 @@ public class AlipayFuwuService extends BaseService {
         if (Objects.equals(alipayUserInfo.getUserType(), "2")//个人账号
                 && Objects.equals(alipayUserInfo.getUserStatus(), "T")//已认证用户
                 && Objects.equals(alipayUserInfo.getIsCertified(), "T")//已通过实名认证
-                && Objects.equals(alipayUserInfo.getIsStudentCertified(), "T")) {//只能为学生
+                && Objects.equals(alipayUserInfo.getIsStudentCertified(), "F")) {//不能为学生
             RequestContext.getResponse().sendRedirect(successUrl);
             return;
         }
