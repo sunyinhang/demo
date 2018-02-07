@@ -89,13 +89,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (MapUtils.isEmpty(cacheMap)) {
+        Map<String, Object> sessionMap = RedisUtils.getExpireMap(token);
+        if (MapUtils.isEmpty(sessionMap)) {
             logger.info("Jedis数据获取失败");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         //按 userId 存储的时候 验证 userId
-        String userId = (String) cacheMap.get("userId");
+        String userId = (String) sessionMap.get("userId");
         if (ocrPathType == OcrPathType.ByUserId && StringUtils.isEmpty(userId)) {
             logger.info("jedis获取数据失效");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
@@ -104,46 +104,49 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         IResponse<Map> returnMessage = new OCRIdentityTC().ocrIdCard(buffer);
         returnMessage.assertSuccessNeedBody();
         //获取OCR返回信息进行redis存储
-        Map<String, Object> cardsResJson = returnMessage.getBody();
-        if (!ObjectUtils.isEmpty(cardsResJson.get("name"))) {
-            cacheMap.put("name", cardsResJson.get("name"));//姓名
+        Map<String, Object> cardInfo = returnMessage.getBody();
+        if (!ObjectUtils.isEmpty(cardInfo.get("name"))) {
+            sessionMap.put("name", cardInfo.get("name"));//姓名
         }
-        if (!ObjectUtils.isEmpty(cardsResJson.get("gender"))) {
-            cacheMap.put("gender", cardsResJson.get("gender"));//性别
+        if (!ObjectUtils.isEmpty(cardInfo.get("gender"))) {
+            sessionMap.put("gender", cardInfo.get("gender"));//性别
         }
-        if (!ObjectUtils.isEmpty(cardsResJson.get("birthday"))) {
-            cacheMap.put("birthday", cardsResJson.get("birthday"));//出生年月日
+        if (!ObjectUtils.isEmpty(cardInfo.get("birthday"))) {
+            sessionMap.put("birthday", cardInfo.get("birthday"));//出生年月日
         }
-        if (!ObjectUtils.isEmpty(cardsResJson.get("race"))) {
-            cacheMap.put("race", cardsResJson.get("race"));//民族
+        if (!ObjectUtils.isEmpty(cardInfo.get("race"))) {
+            sessionMap.put("race", cardInfo.get("race"));//民族
         }
-        if (!ObjectUtils.isEmpty(cardsResJson.get("address"))) {
-            cacheMap.put("address", cardsResJson.get("address"));//地址
+        if (!ObjectUtils.isEmpty(cardInfo.get("address"))) {
+            sessionMap.put("address", cardInfo.get("address"));//地址
         }
-        if (!ObjectUtils.isEmpty(cardsResJson.get("id_card_number"))) {
-            cacheMap.put("idCard", cardsResJson.get("id_card_number"));//身份证号
+        if (!ObjectUtils.isEmpty(cardInfo.get("id_card_number"))) {
+            sessionMap.put("idCard", cardInfo.get("id_card_number"));//身份证号
         }
-        if (!ObjectUtils.isEmpty(cardsResJson.get("issued_by"))) {
-            cacheMap.put("issued", cardsResJson.get("issued_by"));//签发机关
+        if (!ObjectUtils.isEmpty(cardInfo.get("issued_by"))) {
+            sessionMap.put("issued", cardInfo.get("issued_by"));//签发机关
         }
-        if (!ObjectUtils.isEmpty(cardsResJson.get("valid_date"))) {
-            cacheMap.put("validDate", cardsResJson.get("valid_date"));//有效期
+        if (!ObjectUtils.isEmpty(cardInfo.get("valid_date"))) {
+            sessionMap.put("validDate", cardInfo.get("valid_date"));//有效期
         }
 
         //OCR调用成功，进行图片本地上传
-        String cardSide = (String) cardsResJson.get("side");
-        String certImagePath = saveImage2Disk(ocrPathType, userId, Convert.toString(cardsResJson.get("id_card_number")), buffer);
+        String cardSide = (String) cardInfo.get("side");
+        String idCard = Convert.toString(sessionMap.get("idCard"));
+        if (StringUtils.isEmpty(idCard))
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "请先上传身份证正面");
+        String certImagePath = saveImage2Disk(ocrPathType, userId, idCard, buffer);
         if ("front".equals(cardSide)) {
             logger.info("身份证正面存储路径为------------------：" + certImagePath);
-            cacheMap.put(CERT_IMAGE_PATH_A, certImagePath);
+            sessionMap.put(CERT_IMAGE_PATH_A, certImagePath);
         } else {
             logger.info("身份证反面存储路径为------------------：" + certImagePath);
-            cacheMap.put(CERT_IMAGE_PATH_B, certImagePath);
+            sessionMap.put(CERT_IMAGE_PATH_B, certImagePath);
         }
 
-        RedisUtils.setExpire(token, cacheMap);
+        RedisUtils.setExpire(token, sessionMap);
         logger.info("OCR身份信息获取*************结束");
-        return CommonResponse.success(cardsResJson);
+        return CommonResponse.success(cardInfo);
     }
 
     private VFSUserAuthenticator ocrAuth() {
