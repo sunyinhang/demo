@@ -28,7 +28,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -882,9 +881,9 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 return fail(retFlag, retMsg);
             }
             Map bodyMap = (Map) resultMap.get("body");
-            JSONArray data = new JSONArray(bodyMap.get("data").toString());
-            if (data.length() != 0) {
-                JSONObject object = new JSONObject(data.get(0));
+            List data = (List) bodyMap.get("data");
+            if (data.size() != 0) {
+                Map object = (Map) data.get(0);
                 String postDate = object.get("postDate").toString();
                 TimeSpan time = new TimeSpan(new Date(), DateUtils.fromDateString(postDate));
                 if (time.getDays() < 180) {
