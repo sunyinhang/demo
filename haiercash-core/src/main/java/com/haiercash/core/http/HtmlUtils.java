@@ -23,7 +23,7 @@ public final class HtmlUtils extends org.springframework.web.util.HtmlUtils {
             case '　':
                 return "&nbsp;";
             default:
-                return null;
+                return String.valueOf(ch);
         }
     }
 
@@ -31,10 +31,8 @@ public final class HtmlUtils extends org.springframework.web.util.HtmlUtils {
         if (input == null)
             return null;
         StringBuilder builder = new StringBuilder(input.length() * 2);
-        for (char ch : new CharSequenceIterable(input)) {
-            String value = htmlEscapeChar(ch);
-            builder.append(value == null ? ch : value);
-        }
+        for (char ch : new CharSequenceIterable(input))
+            builder.append(htmlEscapeChar(ch));
         String html = builder.toString();
         return html.replace(Environment.NewLine, "<br/>");
     }
