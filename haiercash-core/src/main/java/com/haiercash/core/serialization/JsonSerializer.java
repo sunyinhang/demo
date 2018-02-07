@@ -8,6 +8,7 @@ import com.alibaba.fastjson.serializer.ValueFilter;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public final class JsonSerializer {
      * @return 对象
      */
     public static Object deserialize(String json) {
-        return JSON.parse(json);
+        return JSON.parse(json, Feature.of(getGlobalConfig().getFeatures()));
     }
 
     /**
@@ -82,7 +83,7 @@ public final class JsonSerializer {
      * @return 对象
      */
     public static <T> T deserialize(String json, Class<T> clazz) {
-        return JSON.parseObject(json, clazz);
+        return deserialize(json, (Type) clazz);
     }
 
     /**
@@ -90,11 +91,23 @@ public final class JsonSerializer {
      *
      * @param json 字符串
      * @param type 类型引用
-     * @param <T>
-     * @return
+     * @param <T>  类型
+     * @return 对象
      */
     public static <T> T deserialize(String json, TypeReference<T> type) {
-        return JSON.parseObject(json, type);
+        return deserialize(json, type.getType());
+    }
+
+    /**
+     * 反序列化
+     *
+     * @param json 字符串
+     * @param type 类型
+     * @param <T>  类型
+     * @return 对象
+     */
+    public static <T> T deserialize(String json, Type type) {
+        return JSON.parseObject(json, type, Feature.of(getGlobalConfig().getFeatures()), getGlobalConfig().getFeatures());
     }
 
     /**
@@ -115,7 +128,8 @@ public final class JsonSerializer {
      * @return Map 实例
      */
     public static Map<String, Object> deserializeMap(String json) {
-        return JSON.parseObject(json);
+        //noinspection unchecked
+        return (Map<String, Object>) deserialize(json);
     }
 
     //序列化过滤器
