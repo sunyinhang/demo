@@ -157,6 +157,10 @@ public final class RedisUtils {
         getRedisTemplate().opsForValue().set(key, SERIALIZER.serialize(value));
     }
 
+    public static void set(String key, Object value, long timeout, TimeUnit unit) {
+        getRedisTemplate().opsForValue().set(key, SERIALIZER.serialize(value), timeout, unit);
+    }
+
     public static <T> T get(String key, Class<T> clazz) {
         return SERIALIZER.deserialize(getRedisTemplate().opsForValue().get(key), clazz);
     }
