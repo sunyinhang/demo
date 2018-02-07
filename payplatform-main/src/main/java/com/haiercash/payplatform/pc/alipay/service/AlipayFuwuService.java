@@ -191,10 +191,16 @@ public class AlipayFuwuService extends BaseService {
         authParams.put("appid", this.alipayConfig.getAppId());
         authParams.put("name", name);
         authParams.put("certNo", certNo);
-        authParams.put("mobileOne", phone);
+        authParams.put("mobileOne", sessionMap.get("authPhone"));
         authParams.put("mobileTwo", phone);
         authParams.put("applseq", TraceContext.getTraceSpanId());
-        outreachService.protocolauth(authParams);
+        IResponse<Map> authResponse = outreachService.protocolauth(authParams);
+        if (Objects.equals(authResponse.getRetFlag(), "00091")) {
+            Map<String, Object> body = new HashMap<>(1);
+            body.put("legalPhone", "F");
+            return CommonResponse.success(body);
+        }
+        authResponse.assertSuccess();
 
         //芝麻分判断
         Map<String, Object> scoreParams = new HashMap<>();
@@ -240,7 +246,11 @@ public class AlipayFuwuService extends BaseService {
         sessionMap.put("idType", custInfoBody.get("certType"));
         RedisUtils.setExpire(token, sessionMap);
 
-        return this.ocrIdentityService.realAuthentication(params);
+        IResponse<Map> realAuthResponse = this.ocrIdentityService.realAuthentication(params);
+        realAuthResponse.assertSuccess();
+        Map<String, Object> body = new HashMap<>(1);
+        body.put("legalPhone", "T");
+        return CommonResponse.success(body);
     }
 
 
