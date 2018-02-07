@@ -386,7 +386,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         ifNeedFaceChkByTypCdeMap.put("custNo", custNo);
         ifNeedFaceChkByTypCdeMap.put("name", name);
         ifNeedFaceChkByTypCdeMap.put("idNumber", idNumber);
-        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "");
+        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
         ifNeedFaceChkByTypCdeMap.put("channel", channel);
         ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
@@ -758,7 +758,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         ifNeedFaceChkByTypCdeMap.put("custNo", custNo);
         ifNeedFaceChkByTypCdeMap.put("name", name);
         ifNeedFaceChkByTypCdeMap.put("idNumber", idNumber);
-        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "");
+        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
         ifNeedFaceChkByTypCdeMap.put("channel", channel);
         ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
