@@ -21,12 +21,14 @@ public class ThreadPoolTest {
     public void testInherit() throws InterruptedException {
         List<String> list = THREAD_LOCAL.get();
         Assert.assertNotNull(list);
+        list.clear();
         Assert.assertEquals(0, list.size());
         list.add("hello world");
 
         Thread thread = new Thread(() -> {
             List<String> list2 = THREAD_LOCAL.get();
             Assert.assertNotNull(list2);
+            list2.clear();
             Assert.assertEquals(0, list2.size());
             list2.add("hello moon");
             Future<?> future = ThreadPool.submit(() -> {
@@ -45,6 +47,7 @@ public class ThreadPoolTest {
     public void testInherit2() throws InterruptedException {
         List<String> list = INHERIT_THREAD_LOCAL.get();
         Assert.assertNotNull(list);
+        list.clear();
         Assert.assertEquals(0, list.size());
         list.add("hello world");
 
@@ -68,6 +71,7 @@ public class ThreadPoolTest {
     public void testParallelStream() {
         List<String> list = INHERIT_THREAD_LOCAL.get();
         Assert.assertNotNull(list);
+        list.clear();
         Assert.assertEquals(0, list.size());
         list.add("hello world");
 
