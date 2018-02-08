@@ -3,8 +3,6 @@ package com.haiercash.core.lang;
 import com.alibaba.fastjson.TypeReference;
 import com.haiercash.core.reflect.GenericType;
 import com.haiercash.core.serialization.JsonSerializer;
-import com.haiercash.spring.rest.IResponse;
-import com.haiercash.spring.rest.common.CommonResponse;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,7 +17,7 @@ public class BeanUtilsTest {
     @Test
     @SuppressWarnings("unchecked")
     public void beanToMap() {
-        IResponse<Map> response = JsonSerializer.deserialize(JSON, new TypeReference<CommonResponse<Map>>() {
+        DemoBean<Map> response = JsonSerializer.deserialize(JSON, new TypeReference<DemoBean<Map>>() {
         });
         Map<String, Object> map = BeanUtils.beanToMap(response);
         Assert.assertEquals(2, map.size());
@@ -36,7 +34,7 @@ public class BeanUtilsTest {
     public void mapToBean() {
         Map<String, Object> map = JsonSerializer.deserializeMap(JSON);
         Assert.assertEquals(2, map.size());
-        IResponse<?> response = BeanUtils.mapToBean(map, CommonResponse.class);
+        DemoBean<?> response = BeanUtils.mapToBean(map, DemoBean.class);
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
         Map<String, Object> body = ((Map<String, Object>) response.getBody());
@@ -49,7 +47,7 @@ public class BeanUtilsTest {
     public void mapToBeanTypeRef() {
         Map<String, Object> map = JsonSerializer.deserializeMap(JSON);
         Assert.assertEquals(2, map.size());
-        IResponse<Map> response = BeanUtils.mapToBean(map, new TypeReference<CommonResponse<Map>>() {
+        DemoBean<Map> response = BeanUtils.mapToBean(map, new TypeReference<DemoBean<Map>>() {
         });
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
@@ -63,7 +61,7 @@ public class BeanUtilsTest {
     public void mapToBeanType() {
         Map<String, Object> map = JsonSerializer.deserializeMap(JSON);
         Assert.assertEquals(2, map.size());
-        IResponse<Map> response = BeanUtils.mapToBean(map, new GenericType<CommonResponse<Map>>() {
+        DemoBean<Map> response = BeanUtils.mapToBean(map, new GenericType<DemoBean<Map>>() {
         });
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
