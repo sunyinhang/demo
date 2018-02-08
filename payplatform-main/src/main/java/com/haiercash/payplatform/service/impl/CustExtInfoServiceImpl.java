@@ -704,6 +704,27 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         logger.info("*********保存个人扩展信息**************结束");
+        //默认贷款品种类型
+        typCde = "17021a";
+        ifNeedFaceChkByTypCdeMap.put("typCde", typCde);
+        ifNeedFaceChkByTypCdeMap.put("source", channel);
+        ifNeedFaceChkByTypCdeMap.put("custNo", custNo);
+        ifNeedFaceChkByTypCdeMap.put("name", name);
+        ifNeedFaceChkByTypCdeMap.put("idNumber", idNumber);
+        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
+        ifNeedFaceChkByTypCdeMap.put("channel", channel);
+        ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
+        logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
+        Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
+        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
+        if (saveCustFCiCustContactMap == null) {
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
+        }
+        String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
+        if (!"00000".equals(saveCustFCiCustContactMapHeadFlag)) {
+            String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
         logger.info("*********保存联系人一**************开始");
 //        Integer id_one = (Integer) params.get("id_one");
         Integer id_one = Convert.nullInteger(params.get("id_one"));
@@ -750,27 +771,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         logger.info("*********保存联系人二**************结束");
-        logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
-        //默认贷款品种类型
-        typCde = "17021a";
-        ifNeedFaceChkByTypCdeMap.put("typCde", typCde);
-        ifNeedFaceChkByTypCdeMap.put("source", channel);
-        ifNeedFaceChkByTypCdeMap.put("custNo", custNo);
-        ifNeedFaceChkByTypCdeMap.put("name", name);
-        ifNeedFaceChkByTypCdeMap.put("idNumber", idNumber);
-        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
-        ifNeedFaceChkByTypCdeMap.put("channel", channel);
-        ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
-        Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
-        if (saveCustFCiCustContactMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_INFO);
-        }
-        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
-        String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
-        if (!"00000".equals(saveCustFCiCustContactMapHeadFlag)) {
-            String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
         Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
         if (code != null && !"".equals(code)) {
