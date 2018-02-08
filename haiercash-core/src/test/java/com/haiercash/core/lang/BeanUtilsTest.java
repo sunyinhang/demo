@@ -21,41 +21,57 @@ public class BeanUtilsTest {
         IResponse<Map> response = JsonSerializer.deserialize(JSON, new TypeReference<CommonResponse<Map>>() {
         });
         Map<String, Object> map = BeanUtils.beanToMap(response);
+        Assert.assertEquals(2, map.size());
         //noinspection unchecked
         Map<String, Object> head = (Map<String, Object>) map.get("head");
         Assert.assertEquals("00000", head.get("retFlag"));
         Assert.assertEquals("处理成功", head.get("retMsg"));
-        Assert.assertTrue(Map.class.isAssignableFrom(map.get("body").getClass()));
+        //noinspection unchecked
+        Map<String, Object> body = (Map<String, Object>) map.get("body");
+        Assert.assertEquals(1, body.size());
+        Assert.assertEquals("hello 中国", body.get("name"));
     }
 
     @Test
     public void mapToBean() {
         Map<String, Object> map = JsonSerializer.deserializeMap(JSON);
+        Assert.assertEquals(2, map.size());
         IResponse<?> response = BeanUtils.mapToBean(map, CommonResponse.class);
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
-        Assert.assertTrue(Map.class.isAssignableFrom(response.getBody().getClass()));
+        //noinspection unchecked
+        Map<String, Object> body = ((Map<String, Object>) response.getBody());
+        Assert.assertEquals(1, body.size());
+        Assert.assertEquals("hello 中国", body.get("name"));
     }
 
     @Test
     @SuppressWarnings("Duplicates")
     public void mapToBeanTypeRef() {
         Map<String, Object> map = JsonSerializer.deserializeMap(JSON);
+        Assert.assertEquals(2, map.size());
         IResponse<Map> response = BeanUtils.mapToBean(map, new TypeReference<CommonResponse<Map>>() {
         });
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
-        Assert.assertEquals("hello 中国", response.getBody().get("name"));
+        //noinspection unchecked
+        Map<String, Object> body = ((Map<String, Object>) response.getBody());
+        Assert.assertEquals(1, body.size());
+        Assert.assertEquals("hello 中国", body.get("name"));
     }
 
     @Test
     @SuppressWarnings("Duplicates")
     public void mapToBeanType() {
         Map<String, Object> map = JsonSerializer.deserializeMap(JSON);
+        Assert.assertEquals(2, map.size());
         IResponse<Map> response = BeanUtils.mapToBean(map, new GenericType<CommonResponse<Map>>() {
         });
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
-        Assert.assertEquals("hello 中国", response.getBody().get("name"));
+        //noinspection unchecked
+        Map<String, Object> body = ((Map<String, Object>) response.getBody());
+        Assert.assertEquals(1, body.size());
+        Assert.assertEquals("hello 中国", body.get("name"));
     }
 }
