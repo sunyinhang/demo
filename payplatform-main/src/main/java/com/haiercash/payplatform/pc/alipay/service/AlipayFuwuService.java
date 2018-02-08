@@ -188,7 +188,7 @@ public class AlipayFuwuService extends BaseService {
         Map<String, Object> authParams = new HashMap<>();
         authParams.put("channelNo", this.outreachConfig.getChannelNo());
         authParams.put("businessChannelNo", this.getChannelNo());
-        authParams.put("appid", this.alipayConfig.getAppId());
+        authParams.put("appid", this.outreachConfig.getAppid());
         authParams.put("name", name);
         authParams.put("certNo", certNo);
         authParams.put("mobileOne", sessionMap.get("authPhone"));
@@ -206,7 +206,7 @@ public class AlipayFuwuService extends BaseService {
         Map<String, Object> scoreParams = new HashMap<>();
         scoreParams.put("channelNo", this.outreachConfig.getChannelNo());
         scoreParams.put("businessChannelNo", this.getChannelNo());
-        scoreParams.put("appid", this.alipayConfig.getAppId());
+        scoreParams.put("appid", this.outreachConfig.getAppid());
         scoreParams.put("certNo", certNo);
         scoreParams.put("applseq", TraceContext.getTraceSpanId());
         scoreParams.put("interfaceCode", "00801");
