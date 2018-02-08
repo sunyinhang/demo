@@ -162,7 +162,7 @@ public class AlipayFuwuService extends BaseService {
     public IResponse<Map> realAuthentication(Map<String, Object> params) throws IOException {
         String token = this.getToken();
         String verifyNo = Convert.toString(params.get("verifyNo"));
-        String phone = Convert.toString("mobile");
+        String phone = Convert.toString(params.get("mobile"));
 
         //验证短信验证码 实名的时候会验证
         Map<String, Object> verifyNoMap = new HashMap<>();
