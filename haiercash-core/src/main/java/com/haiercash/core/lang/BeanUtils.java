@@ -1,6 +1,7 @@
 package com.haiercash.core.lang;
 
 import com.alibaba.fastjson.TypeReference;
+import com.haiercash.core.reflect.TypeUtils;
 import com.haiercash.core.serialization.JsonSerializer;
 
 import java.lang.reflect.Type;
@@ -19,11 +20,11 @@ public final class BeanUtils {
      * @param bean 对象
      * @return 字典
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Object> beanToMap(Object bean) {
         if (bean == null)
             return null;
         if (bean instanceof Map)
-            //noinspection unchecked
             return (Map<String, Object>) bean;
         return JsonSerializer.deserializeMap(JsonSerializer.serialize(bean));
     }
@@ -60,7 +61,13 @@ public final class BeanUtils {
      * @param <T>  类型
      * @return 对象
      */
+    @SuppressWarnings("unchecked")
     public static <T> T mapToBean(Map map, Type type) {
-        return map == null ? null : JsonSerializer.deserialize(JsonSerializer.serialize(map), type);
+        if (map == null)
+            return null;
+        Class<?> clazz = TypeUtils.getRawClass(type);
+        if (clazz.isAssignableFrom(map.getClass()))
+            return (T) map;
+        return JsonSerializer.deserialize(JsonSerializer.serialize(map), type);
     }
 }
