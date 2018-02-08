@@ -195,7 +195,7 @@ public class AlipayFuwuService extends BaseService {
         authParams.put("mobileTwo", phone);
         authParams.put("applseq", TraceContext.getTraceSpanId());
         IResponse<Map> authResponse = outreachService.protocolauth(authParams);
-        if (Objects.equals(authResponse.getRetFlag(), "00091")) {
+        if (Objects.equals(authResponse.getRetFlag(), "00005") || Objects.equals(authResponse.getRetFlag(), "00091")) {//空或不一致
             Map<String, Object> body = new HashMap<>(1);
             body.put("legalPhone", "F");
             return CommonResponse.success(body);
