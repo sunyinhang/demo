@@ -213,7 +213,7 @@ public class AlipayFuwuService extends BaseService {
         scoreParams.put("status", "00");
         IResponse<Map> scoreResponse = outreachService.score(scoreParams);
         scoreResponse.assertSuccessNeedBody();
-        Integer score = Convert.nullInteger(scoreResponse.getBody().get("Zm_Score"));
+        Integer score = Convert.nullInteger(scoreResponse.getBody().get("zm_score"));
         if (score == null || score < alipayConfig.getFuwuMinScore())
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "芝麻分数不符合条件");
 
