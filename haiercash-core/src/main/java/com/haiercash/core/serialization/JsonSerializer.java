@@ -127,8 +127,8 @@ public final class JsonSerializer {
      * @param json 字符串
      * @return Map 实例
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Object> deserializeMap(String json) {
-        //noinspection unchecked
         return (Map<String, Object>) deserialize(json);
     }
 
