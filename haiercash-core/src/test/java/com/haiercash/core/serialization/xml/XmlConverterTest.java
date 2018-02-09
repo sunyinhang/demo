@@ -46,7 +46,6 @@ public class XmlConverterTest {
 
     @Data
     public static class Mx {
-        private String pID;
         private String PS_PERD_NO;//0</PS_PERD_NO;//
         private String PS_DUE_DT;//2017-12-21</PS_DUE_DT;//
         private String PS_PRCP_AMT;//0.0</PS_PRCP_AMT;//

@@ -3,12 +3,14 @@ package com.haiercash.core.serialization;
 import com.alibaba.fastjson.JSONArray;
 import com.bestvike.linq.Linq;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.serialization.xml.XmlConverterTest;
+import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
+
+;
 
 /**
  * Created by 许崇雷 on 2017-09-22.
@@ -73,15 +75,21 @@ public class JsonSerializerTest {
 
     @Test
     public void testByFieldName() {
-        XmlConverterTest.Mx mx = new XmlConverterTest.Mx();
+        Mx mx = new Mx();
         mx.setPID("111");
         mx.setACCT_FEE_AMT("hello 中国");
         String json = JsonSerializer.serialize(mx);
         Map<String, Object> map = JsonSerializer.deserializeMap(json);
         Assert.assertEquals("111", map.get("pID"));
         Assert.assertEquals("hello 中国", map.get("ACCT_FEE_AMT"));
-        XmlConverterTest.Mx mx2 = JsonSerializer.deserialize(json, XmlConverterTest.Mx.class);
+        Mx mx2 = JsonSerializer.deserialize(json, Mx.class);
         Assert.assertEquals("111", mx2.getPID());
         Assert.assertEquals("hello 中国", mx2.getACCT_FEE_AMT());
+    }
+
+    @Data
+    static class Mx {
+        private String pID;
+        private String ACCT_FEE_AMT;
     }
 }
