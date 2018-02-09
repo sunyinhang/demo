@@ -375,6 +375,9 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         }
         //支用类型
         orderMap.put("creditType", "02");
+
+        orderMap.put("cooprCde", appOrder.getCooprCde());
+        orderMap.put("salerCde", appOrder.getCrtUsr());
     }
 
     public Map<String, Object> getSysFlagAndChannelNo(AppOrder appOrder) {
