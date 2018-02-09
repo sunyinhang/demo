@@ -876,7 +876,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String retFlag = Convert.toString(headMap.get("retFlag"));
             if (!"00000".equals(retFlag)) {
                 if ("00096".equals(retFlag)) {
-                    retMsg = "没有准入资格";
+                    retMsg = "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！";
                 }
                 return fail(retFlag, retMsg);
             }
@@ -887,10 +887,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 String postDate = object.get("postDate").toString();
                 TimeSpan time = new TimeSpan(new Date(), DateUtils.fromDateString(postDate));
                 if (time.getDays() < 180) {
-                    return fail(ConstUtil.ERROR_CODE, "没有准入资格");
+                    return fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
                 }
             } else {
-                return fail(ConstUtil.ERROR_CODE, "没有准入资格");
+                return fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
             }
 
         }
