@@ -341,12 +341,10 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         /** 如果贷款类型（typGre）为01（耐用消费品），传从数据库取的值， 如果为02（现金贷）传固定值 **/
         /** 部分特殊类型的现金贷，APP会上传门店等信息，不传固定值 **/
         if ("02".equals(appOrder.getTypGrp()) && StringUtils.isEmpty(appOrder.getCooprCde()) && channelType != ChannelType.OtherPayPlat) {
-            Map<String, Object> saleMsg = appManageService.getSaleMsg(appOrder.getTypCde());
-            if (saleMsg == null) {
-                saleMsg = appManageService.getSaleMsg("default");
-            }
-            orderMap.put("salerCde", saleMsg.get("saler_cde"));
-            orderMap.put("cooprCde", saleMsg.get("coopr_cde"));
+
+            orderMap.put("cooprCde", appOrder.getCooprCde());
+            orderMap.put("salerCde", appOrder.getCrtUsr());
+
         } else {
             // 星巢贷订单，saler_name为crm查询得到的门店名称
             if (channelType == ChannelType.Micron) {
