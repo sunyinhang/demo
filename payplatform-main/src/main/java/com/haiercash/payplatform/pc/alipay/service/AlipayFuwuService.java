@@ -57,89 +57,94 @@ public class AlipayFuwuService extends BaseService {
         AlipayToken alipayToken = AlipayUtils.getOauthTokenByAuthCode(authCode);
         String thirdUserId = alipayToken.getUserId();//支付宝 userId
         String token = UUID.randomUUID().toString();//支付平台的 token
-
-        //根据第三方 uid 查询用户信息
-        IResponse<Map> externUidResp = this.queryUserByExternUid(thirdUserId);
-        if (!externUidResp.isSuccessNeedBody()) {//该用户不存在
-            //保存 session
-            Map<String, Object> sessionMap = new HashMap<>();
-            sessionMap.put("externalUserId", thirdUserId);
-            RedisUtils.setExpire(token, sessionMap);
-            //返回
-            Map<String, Object> body = new HashMap<>();
-            body.put("flag", "01");//失败 -> loading 页
-            body.put("token", token);
-            return CommonResponse.success(body);
-        }//其他
-        Map<String, String> externUidBody = externUidResp.getBody();
-        String userId = externUidBody.get("userId");
-        String phone = externUidBody.get("mobile");
-
-        //查询实名信息
-        IResponse<Map> custInfoResp = this.queryPerCustInfo(userId);
-        if (!custInfoResp.isSuccessNeedBody()) {
-            //保存 session
-            Map<String, Object> sessionMap = new HashMap<>();
-            sessionMap.put("externalUserId", thirdUserId);
-            RedisUtils.setExpire(token, sessionMap);
-            //返回
-            Map<String, Object> body = new HashMap<>();
-            body.put("flag", "02");//实名认证
-            body.put("token", token);
-            return CommonResponse.success(body);
-        }
-        Map<String, String> custInfoBody = custInfoResp.getBody();
-
-        //保存 session
-        Map<String, Object> sessionMap = new HashMap<>();
-        sessionMap.put("externalUserId", thirdUserId);
-        sessionMap.put("userId", userId);
-        sessionMap.put("phoneNo", phone);
-        sessionMap.put("custNo", custInfoBody.get("custNo"));//客户编号
-        sessionMap.put("name", custInfoBody.get("custName"));//客户姓名
-        sessionMap.put("cardNo", custInfoBody.get("cardNo"));//银行卡号
-        sessionMap.put("bankCode", custInfoBody.get("acctBankNo"));//银行代码
-        sessionMap.put("bankName", custInfoBody.get("acctBankName"));//银行名称
-        sessionMap.put("idNo", custInfoBody.get("certNo"));//身份证号
-        sessionMap.put("idCard", custInfoBody.get("certNo"));//身份证号
-        sessionMap.put("idType", custInfoBody.get("certType"));
-        RedisUtils.setExpire(token, sessionMap);
-
-        //查询是否做过人脸
-        Map<String, Object> ifNeedFaceParams = new HashMap<>();
-        ifNeedFaceParams.put("typCde", StringUtils.EMPTY);
-        ifNeedFaceParams.put("source", getChannel());
-        ifNeedFaceParams.put("custNo", custInfoBody.get("custNo"));
-        ifNeedFaceParams.put("name", custInfoBody.get("custName"));
-        ifNeedFaceParams.put("idNumber", custInfoBody.get("certNo"));
-        ifNeedFaceParams.put("isEdAppl", "Y");
-        Map<String, Object> ifNeedFaceResult = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceParams);
-        IResponse<Map> ifNeedFaceResp = BeanUtils.mapToBean(ifNeedFaceResult, new GenericType<CommonResponse<Map>>() {
-        });
-        ifNeedFaceResp.assertSuccessNeedBody();
-        String faceCode = Convert.toString(ifNeedFaceResp.getBody().get("code"));
-        if (!Objects.equals(faceCode, "00")) {//未做人脸
-            Map<String, Object> body = new HashMap<>();
-            body.put("flag", "03");//人脸
-            body.put("token", token);
-            return CommonResponse.success(body);
-        }
-
-        //支付密码判断
-        Map<String, Object> validateUserFlagMap = new HashMap<>();
-        validateUserFlagMap.put("channelNo", this.getChannelNo());// 渠道
-        validateUserFlagMap.put("channel", this.getChannel());
-        validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userId));//客户编号18254561920
-        Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
-        IResponse<Map> alidateUserResp = BeanUtils.mapToBean(alidateUserMap, new GenericType<CommonResponse<Map>>() {
-        });
-        alidateUserResp.assertSuccessNeedBody();
-        String payPasswdFlag = Convert.toString(alidateUserResp.getBody().get("payPasswdFlag"));//1:已设置支付密码
+        //返回(临时代码)
         Map<String, Object> body = new HashMap<>();
-        body.put("flag", Objects.equals(payPasswdFlag, "1") ? "04" : "05");//04:转到确认支付密码,05转到设置支付密码
-        body.put("edState", this.getEdState(userId));//额度状态
+        body.put("flag", "13");//转额度
         body.put("token", token);
         return CommonResponse.success(body);
+//
+//        //根据第三方 uid 查询用户信息
+//        IResponse<Map> externUidResp = this.queryUserByExternUid(thirdUserId);
+//        if (!externUidResp.isSuccessNeedBody()) {//该用户不存在
+//            //保存 session
+//            Map<String, Object> sessionMap = new HashMap<>();
+//            sessionMap.put("externalUserId", thirdUserId);
+//            RedisUtils.setExpire(token, sessionMap);
+//            //返回
+//            Map<String, Object> body = new HashMap<>();
+//            body.put("flag", "01");//失败 -> loading 页
+//            body.put("token", token);
+//            return CommonResponse.success(body);
+//        }//其他
+//        Map<String, String> externUidBody = externUidResp.getBody();
+//        String userId = externUidBody.get("userId");
+//        String phone = externUidBody.get("mobile");
+//
+//        //查询实名信息
+//        IResponse<Map> custInfoResp = this.queryPerCustInfo(userId);
+//        if (!custInfoResp.isSuccessNeedBody()) {
+//            //保存 session
+//            Map<String, Object> sessionMap = new HashMap<>();
+//            sessionMap.put("externalUserId", thirdUserId);
+//            RedisUtils.setExpire(token, sessionMap);
+//            //返回
+//            Map<String, Object> body = new HashMap<>();
+//            body.put("flag", "02");//实名认证
+//            body.put("token", token);
+//            return CommonResponse.success(body);
+//        }
+//        Map<String, String> custInfoBody = custInfoResp.getBody();
+//
+//        //保存 session
+//        Map<String, Object> sessionMap = new HashMap<>();
+//        sessionMap.put("externalUserId", thirdUserId);
+//        sessionMap.put("userId", userId);
+//        sessionMap.put("phoneNo", phone);
+//        sessionMap.put("custNo", custInfoBody.get("custNo"));//客户编号
+//        sessionMap.put("name", custInfoBody.get("custName"));//客户姓名
+//        sessionMap.put("cardNo", custInfoBody.get("cardNo"));//银行卡号
+//        sessionMap.put("bankCode", custInfoBody.get("acctBankNo"));//银行代码
+//        sessionMap.put("bankName", custInfoBody.get("acctBankName"));//银行名称
+//        sessionMap.put("idNo", custInfoBody.get("certNo"));//身份证号
+//        sessionMap.put("idCard", custInfoBody.get("certNo"));//身份证号
+//        sessionMap.put("idType", custInfoBody.get("certType"));
+//        RedisUtils.setExpire(token, sessionMap);
+//
+//        //查询是否做过人脸
+//        Map<String, Object> ifNeedFaceParams = new HashMap<>();
+//        ifNeedFaceParams.put("typCde", StringUtils.EMPTY);
+//        ifNeedFaceParams.put("source", getChannel());
+//        ifNeedFaceParams.put("custNo", custInfoBody.get("custNo"));
+//        ifNeedFaceParams.put("name", custInfoBody.get("custName"));
+//        ifNeedFaceParams.put("idNumber", custInfoBody.get("certNo"));
+//        ifNeedFaceParams.put("isEdAppl", "Y");
+//        Map<String, Object> ifNeedFaceResult = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceParams);
+//        IResponse<Map> ifNeedFaceResp = BeanUtils.mapToBean(ifNeedFaceResult, new GenericType<CommonResponse<Map>>() {
+//        });
+//        ifNeedFaceResp.assertSuccessNeedBody();
+//        String faceCode = Convert.toString(ifNeedFaceResp.getBody().get("code"));
+//        if (!Objects.equals(faceCode, "00")) {//未做人脸
+//            Map<String, Object> body = new HashMap<>();
+//            body.put("flag", "03");//人脸
+//            body.put("token", token);
+//            return CommonResponse.success(body);
+//        }
+//
+//        //支付密码判断
+//        Map<String, Object> validateUserFlagMap = new HashMap<>();
+//        validateUserFlagMap.put("channelNo", this.getChannelNo());// 渠道
+//        validateUserFlagMap.put("channel", this.getChannel());
+//        validateUserFlagMap.put("userId", EncryptUtil.simpleEncrypt(userId));//客户编号18254561920
+//        Map<String, Object> alidateUserMap = appServerService.validateUserFlag(token, validateUserFlagMap);
+//        IResponse<Map> alidateUserResp = BeanUtils.mapToBean(alidateUserMap, new GenericType<CommonResponse<Map>>() {
+//        });
+//        alidateUserResp.assertSuccessNeedBody();
+//        String payPasswdFlag = Convert.toString(alidateUserResp.getBody().get("payPasswdFlag"));//1:已设置支付密码
+//        Map<String, Object> body = new HashMap<>();
+//        body.put("flag", Objects.equals(payPasswdFlag, "1") ? "04" : "05");//04:转到确认支付密码,05转到设置支付密码
+//        body.put("edState", this.getEdState(userId));//额度状态
+//        body.put("token", token);
+//        return CommonResponse.success(body);
     }
 
     //授权后验证用户
