@@ -13,7 +13,7 @@ import java.util.Map;
 public interface CashLoanService {
     String getActivityUrl();
 
-    Map<String, Object> joinActivity();
+    Map<String, Object> joinActivity() throws Exception;
 
     /**
      * 根据channelNo 获取贷款种类,不受配置影响

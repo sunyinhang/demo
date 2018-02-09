@@ -7,5 +7,5 @@ import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
  * Created by 许崇雷 on 2017-10-11.
  */
 public interface ThirdTokenVerifyService {
-    ThirdTokenVerifyResult verify(EntrySetting setting, String token);
+    ThirdTokenVerifyResult verify(EntrySetting setting, String thirdToken) throws Exception;
 }

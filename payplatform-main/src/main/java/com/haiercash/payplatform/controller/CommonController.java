@@ -765,7 +765,7 @@ public class CommonController extends BaseController {
      * @date 2017/11/20 10:56
      */
     @RequestMapping(value = "/api/payment/joinActivity", method = RequestMethod.POST)
-    public Map<String, Object> joinActivity() {
+    public Map<String, Object> joinActivity() throws Exception {
         return commonPageService.joinActivity();
     }
 

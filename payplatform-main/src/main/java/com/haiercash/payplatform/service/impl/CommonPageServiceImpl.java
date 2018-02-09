@@ -1376,7 +1376,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
      * @author yu jianwei
      * @date 2017/11/20 10:56
      */
-    private Map<String, Object> joinActivityRedirect(EntrySetting setting) {
+    private Map<String, Object> joinActivityRedirect(EntrySetting setting) throws Exception {
         logger.info("现金贷申请接口*******************开始");
         Map<String, Object> cachemap = new HashMap<>();
         Map<String, Object> returnmap = new HashMap<>();//返回的map
@@ -1562,7 +1562,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
      * @date 2017/11/20 10:56
      */
     @Override
-    public Map<String, Object> joinActivity() {
+    public Map<String, Object> joinActivity() throws Exception {
         String channelNo = this.getChannelNo();
         EntrySetting setting = entrySettingDao.selectBychanelNo(channelNo);
         if (setting == null) {

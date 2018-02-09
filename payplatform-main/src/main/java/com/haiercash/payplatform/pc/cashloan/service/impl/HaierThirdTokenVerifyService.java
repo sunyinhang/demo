@@ -21,10 +21,10 @@ import java.util.Map;
 @Service
 public class HaierThirdTokenVerifyService extends BaseService implements ThirdTokenVerifyService {
     @Override
-    public ThirdTokenVerifyResult verify(EntrySetting setting, String token) {
+    public ThirdTokenVerifyResult verify(EntrySetting setting, String thirdToken) {
         String verifyUrl = setting.getVerifyUrlThird();
         Map<String, Object> param = new HashMap<>();
-        param.put("access_token", token);
+        param.put("access_token", thirdToken);
         //验证客户信息
         String response = JsonClientUtils.getForString(verifyUrl, param);
         if (StringUtils.isEmpty(response))

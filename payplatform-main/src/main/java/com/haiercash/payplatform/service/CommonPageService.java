@@ -75,7 +75,7 @@ public interface CommonPageService {
      * @author yu jianwei
      * @date 2017/11/20 10:56
      */
-    Map<String, Object> joinActivity();
+    Map<String, Object> joinActivity() throws Exception;
 
     /**
      * @Title personalEd

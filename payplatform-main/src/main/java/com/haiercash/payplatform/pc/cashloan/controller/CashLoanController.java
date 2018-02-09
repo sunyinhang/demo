@@ -34,7 +34,7 @@ public class CashLoanController extends BaseController {
 
 
     @RequestMapping(value = "/api/payment/activityLogin", method = RequestMethod.POST)
-    public Map<String, Object> activityLogin() {
+    public Map<String, Object> activityLogin() throws Exception {
         String channelNo = this.getChannelNo();
         if (StringUtils.isEmpty(channelNo))
             return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "渠道号不能为空");

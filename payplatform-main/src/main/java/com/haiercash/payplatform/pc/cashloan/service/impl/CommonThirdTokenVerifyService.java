@@ -11,7 +11,6 @@ import com.haiercash.payplatform.common.data.CooperativeBusiness;
 import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
-import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
@@ -30,12 +29,10 @@ import java.util.Objects;
 @Service
 public class CommonThirdTokenVerifyService extends BaseService implements ThirdTokenVerifyService {
     @Autowired
-    private AppServerService appServerService;
-    @Autowired
     private CooperativeBusinessDao cooperativeBusinessDao;
 
     @Override
-    public ThirdTokenVerifyResult verify(EntrySetting setting, String token) {
+    public ThirdTokenVerifyResult verify(EntrySetting setting, String thirdToken) {
         //查询渠道配置
         CooperativeBusiness channelConfig = cooperativeBusinessDao.selectBycooperationcoed(this.getChannelNo());
         if (channelConfig == null)
@@ -43,7 +40,7 @@ public class CommonThirdTokenVerifyService extends BaseService implements ThirdT
         //token 加密
         String tokenEncripted;
         try {
-            byte[] encryptData = RSAUtils.encryptByPublicKey(token.getBytes(CharsetNames.UTF_8), channelConfig.getRsapublic());
+            byte[] encryptData = RSAUtils.encryptByPublicKey(thirdToken.getBytes(CharsetNames.UTF_8), channelConfig.getRsapublic());
             tokenEncripted = Base64Utils.encode(encryptData);
         } catch (Exception e) {
             logger.error(ThrowableUtils.getString(e));

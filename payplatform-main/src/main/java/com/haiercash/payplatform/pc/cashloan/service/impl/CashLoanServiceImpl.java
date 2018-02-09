@@ -83,7 +83,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     }
 
     @Override
-    public Map<String, Object> joinActivity() {
+    public Map<String, Object> joinActivity() throws Exception {
         String channelNo = this.getChannelNo();
         EntrySetting setting = this.entrySettingDao.selectBychanelNo(channelNo);
         if (setting == null) {
@@ -249,18 +249,16 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
     }
 
-    private Map<String, Object> joinActivityRedirect(EntrySetting setting) {
+    private Map<String, Object> joinActivityRedirect(EntrySetting setting) throws Exception {
         logger.info("申请接口*******************开始");
         Map<String, Object> cachemap = new HashMap<>();
         Map<String, Object> returnmap = new HashMap<>();//返回的map
         String channelNo = this.getChannelNo();
-        String thirdToken = this.getToken();
-        String verifyUrl = setting.getVerifyUrlThird() + thirdToken;
+        final String thirdToken = this.getToken();
         String uidLocal;//统一认证userid
         String phoneNo;//统一认证绑定手机号
         Map<String, Object> ifNeedFaceChkByTypCdeMap = new HashMap<>();
         Map<String, Object> validateUserFlagMap = new HashMap<>();
-        logger.info("验证第三方 token:" + verifyUrl);
         //验证客户信息
         ThirdTokenVerifyService thirdTokenVerifyService = ApplicationUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
         if (thirdTokenVerifyService == null)
@@ -286,22 +284,23 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                 break;
             case "U0178": //U0157：未查到该用户的信息
                 //向后台注册用户信息
+                if ("60".equals(channelNo)) {
+                    returnmap.put("flag", "2");//跳转登陆绑定页,ali -> ocr
+                    returnmap.put("phone", phoneNo_);//手机号
+                    return success(returnmap);
+                }
+
                 Map<String, Object> registerResult = this.saveUserByExternUid(this.getChannelNo(), userId__, phoneNo_);
                 String registerResultFlag = HttpUtil.getRetFlag(registerResult);
                 switch (registerResultFlag) {
                     case "00000":
                         uidLocal = registerResult.get("body").toString();//统一认证内userId
-
                         phoneNo = thirdInfo.getPhoneNo();//统一认绑定手机号
-
                         break;
                     case "U0160": //U0160:该用户已注册，无法注册
                         RedisUtils.setExpire(thirdToken, cachemap);
                         returnmap.put("flag", "2");//跳转登陆绑定页
-
                         returnmap.put("phone", phoneNo_);//手机号
-
-//                returnmap.put("token", thirdToken);
                         return success(returnmap);
                     default:
                         //注册失败
@@ -1001,7 +1000,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
 
         //支付宝渠道进行人脸判断
-        if("60".equals(channelNo)){
+        if ("60".equals(channelNo)) {
             Map<String, Object> faceparamMap = new HashMap<>();
             faceparamMap.put("typCde", typCde);
             faceparamMap.put("source", channel);
@@ -1012,7 +1011,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             faceparamMap.put("channel", channel);
             faceparamMap.put("channelNo", channelNo);
             Map<String, Object> resultmap = appServerService.ifNeedFaceChkByTypCde(token, faceparamMap);
-            if(!HttpUtil.isSuccess(resultmap)){
+            if (!HttpUtil.isSuccess(resultmap)) {
                 Map resultHead = (Map<String, Object>) (resultmap.get("head"));
                 String retmsg = resultHead.get("retMsg").toString();
                 return fail(ConstUtil.ERROR_CODE, retmsg);

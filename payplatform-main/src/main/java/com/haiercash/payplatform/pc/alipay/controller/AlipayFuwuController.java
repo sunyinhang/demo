@@ -60,17 +60,6 @@ public class AlipayFuwuController extends BaseController {
     }
 
 
-    //联合登陆
-    @PostMapping("/api/payment/alipay/fuwu/login")
-    public IResponse<Map> login(@RequestBody Map<String, String> params) throws AlipayApiException {
-        String appId = params.get("appId");
-        String authCode = params.get("authCode");
-        this.assertAppId(appId);
-        this.assertAuthCode(authCode);
-        this.assertChannelNo();
-        return alipayFuwuService.login(authCode);
-    }
-
     //授权后验证用户
     @GetMapping("/api/payment/alipay/fuwu/validUser")
     public void validUser(@RequestParam Map<String, String> params) throws AlipayApiException, IOException {
