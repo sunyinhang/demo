@@ -23,8 +23,8 @@ public final class JsonSerializer {
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     static {
-        TypeUtils.compatibleWithJavaBean = true;
-        TypeUtils.compatibleWithFieldName = false;
+        TypeUtils.compatibleWithJavaBean = false;
+        TypeUtils.compatibleWithFieldName = true;
         GLOBAL_CONFIG = new FastJsonConfig();
         GLOBAL_CONFIG.setDateFormat(DATE_FORMAT);
         GLOBAL_CONFIG.setFeatures(
