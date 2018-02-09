@@ -61,20 +61,19 @@ public class AlipayFuwuService extends BaseService {
         Map<String, Object> body = new HashMap<>();
         body.put("flag", "13");//转额度
         body.put("token", token);
-
         //保存 session
         Map<String, Object> sessionMap = new HashMap<>();
-        sessionMap.put("externalUserId", thirdUserId);
-        sessionMap.put("userId", "test_userId");
-        sessionMap.put("phoneNo", "test_phoneNo");
-        sessionMap.put("custNo", "test_custNo");//客户编号
-        sessionMap.put("name", "test_name");//客户姓名
-        sessionMap.put("cardNo", "test_cardNo");//银行卡号
-        sessionMap.put("bankCode", "test_bankCode");//银行代码
-        sessionMap.put("bankName", "test_bankName");//银行名称
-        sessionMap.put("idNo", "test_idNo");//身份证号
-        sessionMap.put("idCard", "test_idCard");//身份证号
-        sessionMap.put("idType", "test_idType");
+        sessionMap.put("externalUserId", "2088122166360986");
+        sessionMap.put("userId", "17685797923");
+        sessionMap.put("phoneNo", "17685797923");
+        sessionMap.put("custNo", "A201801030203522321930");//客户编号
+        sessionMap.put("name", "朱晓雪");//客户姓名
+        sessionMap.put("cardNo", "6217000010068654378");//银行卡号
+        sessionMap.put("bankCode", "105");//银行代码
+        sessionMap.put("bankName", "中国建设银行");//银行名称
+        sessionMap.put("idNo", "370782199302035223");//身份证号
+        sessionMap.put("idCard", "370782199302035223");//身份证号
+        sessionMap.put("idType", "20");
         RedisUtils.setExpire(token, sessionMap);
 
         return CommonResponse.success(body);
