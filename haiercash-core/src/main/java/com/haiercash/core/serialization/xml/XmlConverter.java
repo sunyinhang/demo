@@ -32,42 +32,10 @@ public final class XmlConverter {
     private static <T> T convert(final Element element, Class<T> clazz) {
         if (element == null)
             return null;
-
-        return read(clazz, new Reader() {
-            public boolean hasReturnField(Object name) {
-                Element childE = DomUtils.getChildElement(element, (String) name);
-                return childE != null;
-            }
-
-            public Object getPrimitiveObject(Object name) {
-                return DomUtils.getElementValue(element, (String) name);
-            }
-
-            public Object getObject(Object name, Class<?> type) {
-                Element childE = DomUtils.getChildElement(element, (String) name);
-                return childE == null ? null : convert(childE, type);
-            }
-
-            public List<?> getListObjects(Object listName, Object itemName, Class<?> subType) {
-                Element listE = DomUtils.getChildElement(element, (String) listName);
-                if (listE == null)
-                    return null;
-                List<Object> list = new ArrayList<>();
-                List<Element> itemEs = DomUtils.getChildElements(listE, (String) itemName);
-                for (Element itemE : itemEs) {
-                    String rawValue = DomUtils.getElementValue(itemE);
-                    Object value = Convert.nullType(rawValue, subType);
-                    if (value == null)
-                        value = convert(itemE, subType);
-                    if (value != null)
-                        list.add(value);
-                }
-                return list;
-            }
-        });
+        return convert(new DefaultReader(element), clazz);
     }
 
-    private static <T> T read(Class<T> clazz, Reader reader) {
+    private static <T> T convert(Reader reader, Class<T> clazz) {
         try {
             T result = clazz.newInstance();
             Field[] fields = ReflectionUtils.getDeclaredFieldInfos(clazz);
@@ -116,6 +84,45 @@ public final class XmlConverter {
             return result;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static final class DefaultReader implements Reader {
+        private final Element element;
+
+        DefaultReader(Element element) {
+            this.element = element;
+        }
+
+        public boolean hasReturnField(Object name) {
+            Element childE = DomUtils.getChildElement(this.element, (String) name);
+            return childE != null;
+        }
+
+        public Object getPrimitiveObject(Object name) {
+            return DomUtils.getElementValue(this.element, (String) name);
+        }
+
+        public Object getObject(Object name, Class<?> type) {
+            Element childE = DomUtils.getChildElement(this.element, (String) name);
+            return childE == null ? null : convert(childE, type);
+        }
+
+        public List<?> getListObjects(Object listName, Object itemName, Class<?> subType) {
+            Element listE = DomUtils.getChildElement(this.element, (String) listName);
+            if (listE == null)
+                return null;
+            List<Object> list = new ArrayList<>();
+            List<Element> itemEs = DomUtils.getChildElements(listE, (String) itemName);
+            for (Element itemE : itemEs) {
+                String rawValue = DomUtils.getElementValue(itemE);
+                Object value = Convert.nullType(rawValue, subType);
+                if (value == null)
+                    value = convert(itemE, subType);
+                if (value != null)
+                    list.add(value);
+            }
+            return list;
         }
     }
 }

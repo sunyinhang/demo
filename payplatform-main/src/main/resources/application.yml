@@ -149,7 +149,7 @@ app:
     HCPORTAL: http://HCPORTAL
     ORDER: http://ORDER
     OUTREACHPLATFORM: http://OUTREACHPLATFORM-TEST
-    UAUTH: http://UAUTH
+    UAUTH: http://UAUTH-BETA
   storage:
     ocr-path: /testshare01/00/Data/haierData
     face-path: /testshare01/crm/image
