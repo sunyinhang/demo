@@ -19,7 +19,6 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 public final class FeignRequest {
-    private final boolean loadBalanced;
     private final String url;
     private final HttpMethod method;
     private final Object body;
@@ -27,11 +26,11 @@ public final class FeignRequest {
     private final Map<String, String> uriVariables = new LinkedHashMap<>();
     private final HttpHeaders headers = new HttpHeaders();
 
-    public Object invoke() {
+    public Object invoke(boolean loadBalanced) {
         MediaType mediaType = this.headers.getContentType();
         RestTemplate restTemplate = (mediaType != null && mediaType.getSubtype().contains("xml"))
                 ? RestTemplateProvider.getRestTemplateXml()
-                : (this.isLoadBalanced() ? RestTemplateProvider.getRestTemplate() : RestTemplateProvider.getRestTemplateJson());
+                : (loadBalanced ? RestTemplateProvider.getRestTemplate() : RestTemplateProvider.getRestTemplateJson());
         return AbstractRestUtils.exchange(restTemplate, this.getUrl(), this.getMethod(), this.getBody(), this.getResponseType(), this.getUriVariables(), this.getHeaders());
     }
 

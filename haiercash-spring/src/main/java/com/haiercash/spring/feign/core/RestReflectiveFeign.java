@@ -2,7 +2,6 @@ package com.haiercash.spring.feign.core;
 
 import com.bestvike.linq.Linq;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.reflect.ReflectionUtils;
 import com.haiercash.core.serialization.URLSerializer;
 import feign.Contract;
@@ -156,7 +155,7 @@ public final class RestReflectiveFeign extends Feign {
                 template = this.addHeaderMapHeaders(argv, template);
 
             //构建请求
-            FeignRequest request = new FeignRequest(StringUtils.equals(this.target.url(), this.target.name()), this.target.url() + template.url(), HttpMethod.resolve(template.method()), bodyRef.get(), this.metadata.returnType());
+            FeignRequest request = new FeignRequest(this.target.url() + template.url(), HttpMethod.resolve(template.method()), bodyRef.get(), this.metadata.returnType());
             final Map<String, String> uriVariables = request.getUriVariables();
             for (Map.Entry<String, Collection<String>> entry : template.queries().entrySet()) {
                 Collection<String> value = entry.getValue();
