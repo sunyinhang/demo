@@ -36,7 +36,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 
     @Override
     public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) {
-        logger.info("*********判断用户是否注册**************开始");
+        logger.info("判断用户是否注册开始");
         Map<String, Object> resultparamMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
@@ -94,7 +94,7 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
 
     @Override
     public Map<String, Object> isRegisterNotoken(String channel, String channelNo, Map<String, Object> params) {
-        logger.info("*********判断用户是否注册**************开始");
+        logger.info("判断用户是否注册无token开始");
         Map<String, Object> resultparamMap = new HashMap<>();
         if (channel.isEmpty()) {
             logger.info("channel为空");
@@ -159,8 +159,8 @@ public class RegisterServiceImpl extends BaseService implements RegisterService 
         logger.info("明文 password：" + password);
         mobile = EncryptUtil.simpleEncrypt(mobile);
         password = EncryptUtil.simpleEncrypt(password);
-        logger.info("秘文 mobile:" + mobile);
-        logger.info("秘文 password：" + password);
+        logger.info("密文 mobile:" + mobile);
+        logger.info("密文 password：" + password);
         params.put("mobile", mobile);
         params.put("password", password);
         Map usermap = appServerService.saveUauthUsers(token, params);

@@ -175,7 +175,9 @@ app:
     consumer: dc04a273474a404bafdad48ddb63cce2
     ts-url: http://pay.ehaier.com
   cashloan:
-    white-tag-ids: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804
+    white-tag-ids: cf92ff4d567a4503b61a1eb6f205e602,0b56f7f13a1d4a8dbaf88de93a1defd5,8448c908e2ce43ee98ba35a4f07de325,d6b98a9329f04b27af52add933acd804,5af7f6657df64f648b45686fc26b7c40
+    iservice-tag-id: 5af7f6657df64f648b45686fc26b7c40
+    days: 0
   weixin:
     appid: wx046cbd2b50704fbc
     secret: 3cff4ee0fd7594270200a8ad55cf1984

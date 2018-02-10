@@ -99,7 +99,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
 
         String providerNo = "";//人脸机构
-        if("33".equals(channelNo)){//乔融查询人脸机构配置
+        if ("33".equals(channelNo)) {//乔融查询人脸机构配置
             logger.info("查询人脸机构配置");
             Map<String, Object> params = new HashMap<>();
             params.put("typCde", typCde);
@@ -108,8 +108,8 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             response2.assertSuccessNeedBody();
             Map map1 = response2.getBody();
             List list = (List) map1.get("faceConfigList");
-            if(list.size() == 0){
-                return fail(ConstUtil.ERROR_CODE, "贷款品种"+typCde+"没有配置人脸机构");
+            if (list.size() == 0) {
+                return fail(ConstUtil.ERROR_CODE, "贷款品种" + typCde + "没有配置人脸机构");
             }
             Map m = (Map) list.get(0);
             providerNo = Convert.toString(m.get("providerNo"));
@@ -126,9 +126,9 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         jsonMap.put("identityCardNo", idNumber);//身份证号
         jsonMap.put("appno", appno);//申请编号
         jsonMap.put("filestreamname", filestreamname);//文件名
-        if("33".equals(channelNo)){
+        if ("33".equals(channelNo)) {
             jsonMap.put("organization", providerNo);
-        }else{
+        } else {
             jsonMap.put("organization", "02");//机构号(国政通)
         }
         jsonMap.put("filestream", filestream);//识别图像文件流
@@ -150,7 +150,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             String entity = jsonmsg.get("entity").toString();
             JSONObject jsonn = new JSONObject(entity);
             score = jsonn.get("score").toString();
-            if("33".equals(channelNo) && "03".equals(providerNo)){//33渠道  face++厂商
+            if ("33".equals(channelNo) && "03".equals(providerNo)) {//33渠道  face++厂商
                 status = jsonn.get("status").toString();//01:同一人   02：不同人
             }
         }
@@ -164,10 +164,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
 
         //乔融图片压缩
-        if("33".equals(channelNo)){
+        if ("33".equals(channelNo)) {
             int IMAGE_MAXSIZE = 5 * 1024 * 1024;
-            logger.info(name + "人脸照片大小："+faceBytes.length);
-            if(faceBytes.length > IMAGE_MAXSIZE){
+            logger.info(name + "人脸照片大小：" + faceBytes.length);
+            if (faceBytes.length > IMAGE_MAXSIZE) {
                 logger.info(name + "人脸照片压缩");
                 ImgUtils.zipImageFile(new File(filePath), new File(filePath), 525, 738, 0.7f);
             }
@@ -216,7 +216,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         }
         checkMap.put("channel", channel);
         checkMap.put("channelNo", channelNo);
-        if("33".equals(channelNo)){//乔融增加厂商号
+        if ("33".equals(channelNo)) {//乔融增加厂商号
             checkMap.put("providerNo", providerNo);
         }
         Map<String, Object> checkresultmap = appServerService.faceCheckByFaceValue(token, checkMap);
@@ -232,8 +232,8 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 m.put("faceFlag", "1");
                 return success(m);
             }
-            if("33".equals(channelNo) && "03".equals(providerNo)){//是乔融且是face++厂商
-                if("01".equals(status)){//01同一人，返回成功   redis存储faceflag  Y
+            if ("33".equals(channelNo) && "03".equals(providerNo)) {//是乔融且是face++厂商
+                if ("01".equals(status)) {//01同一人，返回成功   redis存储faceflag  Y
                     cacheMap.put("faceflag", "Y");
                     RedisUtils.setExpire(token, cacheMap);
                     RedisUtils.expire(token, 24, TimeUnit.HOURS);
@@ -242,10 +242,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                     return success(m);
                 } else {//02不同人，若redis存储次数等于5次终止，不足5次可继续
                     Integer facecount = Convert.asInteger(cacheMap.get("facecount"));
-                    if(facecount == null){
+                    if (facecount == null) {
                         facecount = 0;
                     }
-                    if(facecount == 5){
+                    if (facecount == 5) {
                         return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
                     }
                     facecount = facecount + 1;
@@ -254,9 +254,9 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                     RedisUtils.setExpire(token, cacheMap);
                     RedisUtils.expire(token, 24, TimeUnit.HOURS);
                     Map<String, Object> m = new HashMap<>();
-                    if(facecount == 5){//人脸次数达到上限录单终止
+                    if (facecount == 5) {//人脸次数达到上限录单终止
                         m.put("faceFlag", "4");
-                    }else{//人脸次数未达到上限可继续做人脸
+                    } else {//人脸次数未达到上限可继续做人脸
                         m.put("faceFlag", "3");
                     }
                     return success(m);
@@ -264,7 +264,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             }
 
             //支付宝支用环节人脸成功后不进行支付密码是否设置判断
-            if("60".equals(channelNo) && !"1".equals(edflag)){
+            if ("60".equals(channelNo) && !"1".equals(edflag)) {
                 return success();
             }
 

@@ -3,11 +3,14 @@ package com.haiercash.payplatform.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.payplatform.config.CashloanConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.utils.AcqUtil;
@@ -46,6 +49,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private OutreachService outreachService;
     @Autowired
     private OutreachConfig outreachConfig;
+    @Autowired
+    private CrmManageService crmManageService;
+    @Autowired
+    private CashloanConfig cashloanConfig;
 
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
@@ -88,6 +95,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("Jedis获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+        String certNo = (String) cacheMap.get("idNo");//身份证号
+        String name = (String) cacheMap.get("name");//姓名
         String userId = (String) cacheMap.get("userId");
         logger.info("获取的userId为：" + userId);
         //String userId = "18325423979";
@@ -181,6 +190,50 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         } else {//新增
             mapEd.put("flag", "0");//额度申请
         }
+        if ("59".equals(channelNo)) {
+            //2.调用crm   getCustTag
+            Map<String, Object> gettigIDMap = new HashMap<String, Object>();
+            gettigIDMap.put("custName", name);
+            gettigIDMap.put("idTyp", "20");
+            gettigIDMap.put("idNo", certNo);
+            Map<String, Object> custTag = crmManageService.getCustTag(token, gettigIDMap);
+            if (custTag == null) {
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            }
+            Map custTagHeadMap = (Map<String, Object>) custTag.get("head");
+            String custTagHeadMapHeadFlag = (String) custTagHeadMap.get("retFlag");
+            if (!"00000".equals(custTagHeadMapHeadFlag)) {
+                String retMsg2 = (String) custTagHeadMap.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg2);
+            }
+            List<Map<String, Object>> tiglist = (List<Map<String, Object>>) custTag.get("body");
+            String tagId = cashloanConfig.getIserviceTagId();
+            boolean flag2 = false;
+            for (Map<String, Object> aTiglist : tiglist) {
+                String tagIdData = (String) aTiglist.get("tagId");
+                if (tagId.equals(tagIdData)) {
+                    flag2 = true;
+                    break;
+                }
+            }
+            //3.调用crm  setCustTag
+            if (!flag2) {
+                Map<String, Object> settigIDMap = new HashMap<>();
+                settigIDMap.put("certNo", certNo);
+                settigIDMap.put("tagId", tagId);
+                Map<String, Object> setcustTag = crmManageService.setCustTag(token, settigIDMap);
+                if (setcustTag == null) {
+                    return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+                }
+                Map setcustTagHeadMap = (Map<String, Object>) custTag.get("head");
+                String setcustTagHeadMapFlag = (String) setcustTagHeadMap.get("retFlag");
+                if (!"00000".equals(setcustTagHeadMapFlag)) {
+                    String retMsg3 = (String) custTagHeadMap.get("retMsg");
+                    return fail(ConstUtil.ERROR_CODE, retMsg3);
+                }
+            }
+
+        }
         Map<String, Object> edApplInfo = appServerService.getEdApplInfo(token, mapEd);
         if (StringUtils.isEmpty(edApplInfo)) {
             logger.info("额度申请,app后台返回为空result" + edApplInfo);
@@ -195,8 +248,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             logger.info("额度申请出现异常！" + retmsg);
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        String certNo = (String) cacheMap.get("idNo");//身份证号
-        String name = (String) cacheMap.get("name");//姓名
+
         JSONObject body = jb.getJSONObject("body");
         String applSeq = body.getString("applSeq");
         //上传风险数据 经纬度
@@ -1054,15 +1106,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                                     JSONObject jsonThree = jsonObjectresThree.getJSONObject("body");
 
                                     //Map<String, Object> resTwoMap = DataConverUtil.jsonToMap(jsonThree.toString());
-                                        /*
-                                         * String ze = jsonThree.getString("ze"); if(ze
-										 * == null || "".equals(ze)){ retflag =
-										 * "100002"; throw new
-										 * CommonException("网络异常,全部还款试算接口,总额为空！"); }
-										 * Map<String,Object> resTwoMap = new
-										 * HashMap<String,Object>(); resTwoMap.put("ze",
-										 * ze);
-										 */
+                                    /*
+                                     * String ze = jsonThree.getString("ze"); if(ze
+                                     * == null || "".equals(ze)){ retflag =
+                                     * "100002"; throw new
+                                     * CommonException("网络异常,全部还款试算接口,总额为空！"); }
+                                     * Map<String,Object> resTwoMap = new
+                                     * HashMap<String,Object>(); resTwoMap.put("ze",
+                                     * ze);
+                                     */
                                     logger.info("全部还款试算接口，响应数据：" + jsonThree.toString());
                                     String ze = jsonThree.getString("ze");
                                     Map<String, Object> resTwoMap = new HashMap<>();

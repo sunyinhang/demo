@@ -11,11 +11,14 @@ import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.ObjectUtils;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.lang.TimeSpan;
 import com.haiercash.core.reflect.GenericType;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.core.vfs.VFSType;
 import com.haiercash.core.vfs.VFSUserAuthenticator;
 import com.haiercash.core.vfs.VFSUtils;
+import com.haiercash.payplatform.config.CashloanConfig;
+import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.service.AppServerService;
@@ -24,12 +27,15 @@ import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
+import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.FileObject;
@@ -67,6 +73,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     private ShunguangConfig shunguangConfig;
     @Autowired
     private StorageConfig storageConfig;
+    @Autowired
+    private OutreachConfig outreachConfig;
+    @Autowired
+    private CashloanConfig cashloanConfig;
 
     //ocr 图片上传
     public IResponse<Map> ocrIdentity(OcrPathType ocrPathType, MultipartFile ocrImg) throws Exception {
@@ -182,6 +192,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         return path;
     }
 
+    @Override
     public Map<String, Object> savaIdentityInfo(Map<String, Object> map) {
         logger.info("OCR信息保存（下一步）***********开始");
         String token = Convert.toString(map.get("token"));
@@ -252,6 +263,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //发送短信验证码
+    @Override
     public Map<String, Object> sendMessage(Map<String, Object> params) {
         logger.info("发送短信验证码***************开始");
         String token = (String) params.get("token");
@@ -283,6 +295,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //发送短信验证码
+    @Override
     public Map<String, Object> sendMsg(Map<String, Object> params) {
         String phone = (String) params.get("phone");
         String channel = (String) params.get("channel");
@@ -684,6 +697,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //实名认证(标准现金贷)
+    @Override
     public Map<String, Object> realAuthenticationForXjd(Map<String, Object> map) throws Exception {
         logger.info("实名认证*********************开始");
 
@@ -749,6 +763,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String retMsg = (String) verifyheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
+
+
         //6.OCR信息保存
         String certStrDt = "";//扫描身份证有效期限开始日期
         String certEndDt = "";//扫描身份证有效期限结束日期
@@ -789,10 +805,42 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
 
         //绑定手机号修改为实名认证手机号
-        String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号(TODO!!!!)
+        String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号
 
         cacheMap.put("phoneNo", mobile);
         RedisUtils.setExpire(token, cacheMap);
+
+
+        //iservice  根据身份证号码查询人员信息 查询到人员信息进行打标   查询不到则终止流程
+        if ("59".equals(channelNo)) {
+            //1.调用外联查询人员信息  getPersonnelInformation
+            String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/iservice/getPersonnelInformation";
+            Map<String, Object> param = new HashedMap();
+            param.put("channelNo", "pay");
+            param.put("businessChannelNo", channelNo);
+            param.put("idCard", idCard);
+            param.put("days", cashloanConfig.getDays());
+            IResponse<Map> resultMap = CommonRestUtils.postForMap(url, param);
+            String retFlag = resultMap.getRetFlag();
+            if ("00096".equals(retFlag)) {
+                return fail(retFlag, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+            }
+            resultMap.assertSuccessNeedBody();
+            Map bodyMap = resultMap.getBody();
+            List data = (List) bodyMap.get("data");
+            if (data.size() != 0) {
+                Map object = (Map) data.get(0);
+                String postDate = object.get("postDate").toString();
+                TimeSpan time = new TimeSpan(DateUtils.now(), DateUtils.fromDateString(postDate));
+                if (time.getDays() < 180) {
+                    return fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+                }
+            } else {
+                return fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+            }
+
+        }
+
         //7.验证并新增实名认证信息
 //        String[] officeArea_split = cityCode.split(",");
 //        String acctProvince = (String) officeArea_split[0];//省代码
@@ -818,6 +866,8 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             String retMsg = (String) identityheadjson.get("retMsg");
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
+
+
         Map identitybodyjson = (Map<String, Object>) identityresultmap.get("body");
         //信息保存
         String custNo = (String) identitybodyjson.get("custNo");
@@ -896,5 +946,79 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         Map<String, Object> resultparamMap = new HashMap<>();
         resultparamMap.put("flag", "1");//通过  个人扩展信息
         return success(resultparamMap);
+    }
+
+
+    public Map<String, Object> realAuthenticationForHF(Map<String, Object> map) {
+        logger.info("实名认证**********************开始");
+
+        //1.获取前台参数
+        String custName = (String) map.get("custName"); //用户名
+        String certNo = (String) map.get("certNo"); //身份证号
+        String cardnumber = (String) map.get("cardnumber");//卡号
+        String mobile = (String) map.get("mobile");//手机号
+        String verifyNo = (String) map.get("verifyNo"); //验证码
+        String token = (String) map.get("token");
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
+
+        if (StringUtils.isEmpty(custName) || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(cardnumber)
+                || StringUtils.isEmpty(mobile) || StringUtils.isEmpty(verifyNo) || StringUtils.isEmpty(token)
+                || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+            logger.info("token:" + token + "  verifyNo:" + verifyNo +
+                    "  cardnumber:" + cardnumber + "  mobile:" + mobile + "   channel:" + channel + "   channelNo:" + channelNo);
+            logger.info("前台获取请求参数有误");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+
+
+        //2.jedis缓存数据获取
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
+        if (MapUtils.isEmpty(cacheMap)) {
+            logger.info("Jedis数据获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String name = (String) cacheMap.get("name");//扫描客户姓名
+        String birthDt = (String) cacheMap.get("birthday");//扫描出生年月日
+        String gender = (String) cacheMap.get("gender");//扫描性别
+        String regAddr = (String) cacheMap.get("address");//扫描详细地址
+        String validDate = (String) cacheMap.get("validDate");//有效期
+        String certOrga = (String) cacheMap.get("issued");//扫描身份证签发机关
+        String ethnic = (String) cacheMap.get("race");//扫描民族
+        String idCard = (String) cacheMap.get("idCard");//扫描身份证号
+        String userId = (String) cacheMap.get("userId");//userId
+        if (!StringUtils.isEmpty(idCard)) {
+            idCard = idCard.toUpperCase();
+            logger.info("扫描的身份证号码是" + idCard);
+        } else {
+            logger.info("扫描身份证号为空");
+            return fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
+        }
+        //3.缓存数据非空判断
+        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
+                || StringUtils.isEmpty(regAddr) || StringUtils.isEmpty(validDate) || StringUtils.isEmpty(certOrga)
+                || StringUtils.isEmpty(ethnic) || StringUtils.isEmpty(idCard) || StringUtils.isEmpty(userId)) {
+            logger.info("name:" + name + "  birthDt:" + birthDt + "  gender:" + gender + "  validDate:" + validDate + "  certOrga:" + certOrga
+                    + "   ethnic:" + ethnic + "    idCard:" + idCard + "   userId:" + userId);
+            logger.info("Jedis缓存获取信息失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+
+
+        //4.校验短信验证码
+        Map<String, Object> verifyNoMap = new HashMap<>();
+        verifyNoMap.put("phone", mobile);
+        verifyNoMap.put("verifyNo", verifyNo);
+        verifyNoMap.put("token", token);
+        verifyNoMap.put("channel", channel);
+        verifyNoMap.put("channelNo", channelNo);
+        Map<String, Object> verifyresultmap = appServerService.smsVerify(token, verifyNoMap);
+        Map verifyheadjson = (Map<String, Object>) verifyresultmap.get("head");
+        String verifyretFlag = (String) verifyheadjson.get("retFlag");
+        if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
+            String retMsg = (String) verifyheadjson.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        return null;
     }
 }

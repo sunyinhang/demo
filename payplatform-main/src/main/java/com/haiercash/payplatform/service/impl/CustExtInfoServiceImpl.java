@@ -386,7 +386,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         ifNeedFaceChkByTypCdeMap.put("custNo", custNo);
         ifNeedFaceChkByTypCdeMap.put("name", name);
         ifNeedFaceChkByTypCdeMap.put("idNumber", idNumber);
-        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "");
+        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
         ifNeedFaceChkByTypCdeMap.put("channel", channel);
         ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
@@ -704,6 +704,27 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         logger.info("*********保存个人扩展信息**************结束");
+        //默认贷款品种类型
+        typCde = "17021a";
+        ifNeedFaceChkByTypCdeMap.put("typCde", typCde);
+        ifNeedFaceChkByTypCdeMap.put("source", channel);
+        ifNeedFaceChkByTypCdeMap.put("custNo", custNo);
+        ifNeedFaceChkByTypCdeMap.put("name", name);
+        ifNeedFaceChkByTypCdeMap.put("idNumber", idNumber);
+        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "Y");
+        ifNeedFaceChkByTypCdeMap.put("channel", channel);
+        ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
+        logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
+        Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
+        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
+        if (saveCustFCiCustContactMap == null) {
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
+        if (!"00000".equals(saveCustFCiCustContactMapHeadFlag)) {
+            String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
         logger.info("*********保存联系人一**************开始");
 //        Integer id_one = (Integer) params.get("id_one");
         Integer id_one = Convert.nullInteger(params.get("id_one"));
@@ -750,27 +771,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         logger.info("*********保存联系人二**************结束");
-        logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
-        //默认贷款品种类型
-        typCde = "17021a";
-        ifNeedFaceChkByTypCdeMap.put("typCde", typCde);
-        ifNeedFaceChkByTypCdeMap.put("source", channel);
-        ifNeedFaceChkByTypCdeMap.put("custNo", custNo);
-        ifNeedFaceChkByTypCdeMap.put("name", name);
-        ifNeedFaceChkByTypCdeMap.put("idNumber", idNumber);
-        ifNeedFaceChkByTypCdeMap.put("isEdAppl", "");
-        ifNeedFaceChkByTypCdeMap.put("channel", channel);
-        ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
-        Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
-        if (saveCustFCiCustContactMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
-        String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
-        if (!"00000".equals(saveCustFCiCustContactMapHeadFlag)) {
-            String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
         Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
         if (code != null && !"".equals(code)) {
@@ -916,7 +916,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getPaySs(String token, String channel, String channelNo, Map<String, Object> params) {
+    public Map<String, Object> getPaySs(String token, String channelNo, String channel, Map<String, Object> params) {
         //参数非空判断
         if (token.isEmpty()) {
             logger.info("token为空");
@@ -937,8 +937,8 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String typCde = Convert.toString(params.get("typCde"));
-        BigDecimal apprvAmt = Convert.toDecimal(params.get("apprvAmt"));
         String applyTnrTyp = Convert.toString(params.get("applyTnrTyp"));
+        BigDecimal apprvAmt = Convert.toDecimal(params.get("apprvAmt"));
         String applyTnr = Convert.toString(params.get("applyTnr"));
         String mtdCde = Convert.toString(params.get("mtdCde"));
         if (StringUtils.isEmpty(typCde) || StringUtils.isEmpty(apprvAmt) || StringUtils.isEmpty(applyTnrTyp) ||
