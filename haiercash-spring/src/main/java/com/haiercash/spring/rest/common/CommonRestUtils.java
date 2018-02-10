@@ -58,23 +58,23 @@ public final class CommonRestUtils {
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> postForObject(String url, Object request, Class<TBody> bodyType) {
-        IResponse<TBody> response = REST_UTILS.postForCore(url, request, getResponseType(bodyType), null);
+    public static <TBody> IResponse<TBody> postForObject(String url, Object body, Class<TBody> bodyType) {
+        IResponse<TBody> response = REST_UTILS.postForCore(url, body, getResponseType(bodyType), null);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> postForObject(String url, Object request, Class<TBody> bodyType, MultiValueMap<String, String> headers) {
-        IResponse<TBody> response = REST_UTILS.postForCore(url, request, getResponseType(bodyType), headers);
+    public static <TBody> IResponse<TBody> postForObject(String url, Object body, Class<TBody> bodyType, MultiValueMap<String, String> headers) {
+        IResponse<TBody> response = REST_UTILS.postForCore(url, body, getResponseType(bodyType), headers);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> putForObject(String url, Object request, Class<TBody> bodyType) {
-        IResponse<TBody> response = REST_UTILS.putForCore(url, request, getResponseType(bodyType), null);
+    public static <TBody> IResponse<TBody> putForObject(String url, Object body, Class<TBody> bodyType) {
+        IResponse<TBody> response = REST_UTILS.putForCore(url, body, getResponseType(bodyType), null);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> putForObject(String url, Object request, Class<TBody> bodyType, MultiValueMap<String, String> headers) {
-        IResponse<TBody> response = REST_UTILS.putForCore(url, request, getResponseType(bodyType), headers);
+    public static <TBody> IResponse<TBody> putForObject(String url, Object body, Class<TBody> bodyType, MultiValueMap<String, String> headers) {
+        IResponse<TBody> response = REST_UTILS.putForCore(url, body, getResponseType(bodyType), headers);
         return response.afterPropertiesSet(bodyType);
     }
 
@@ -108,23 +108,23 @@ public final class CommonRestUtils {
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> postForObject(String url, Object request, GenericType<TBody> bodyType) {
-        IResponse<TBody> response = REST_UTILS.postForCore(url, request, getResponseType(bodyType), null);
+    public static <TBody> IResponse<TBody> postForObject(String url, Object body, GenericType<TBody> bodyType) {
+        IResponse<TBody> response = REST_UTILS.postForCore(url, body, getResponseType(bodyType), null);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> postForObject(String url, Object request, GenericType<TBody> bodyType, MultiValueMap<String, String> headers) {
-        IResponse<TBody> response = REST_UTILS.postForCore(url, request, getResponseType(bodyType), headers);
+    public static <TBody> IResponse<TBody> postForObject(String url, Object body, GenericType<TBody> bodyType, MultiValueMap<String, String> headers) {
+        IResponse<TBody> response = REST_UTILS.postForCore(url, body, getResponseType(bodyType), headers);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> putForObject(String url, Object request, GenericType<TBody> bodyType) {
-        IResponse<TBody> response = REST_UTILS.putForCore(url, request, getResponseType(bodyType), null);
+    public static <TBody> IResponse<TBody> putForObject(String url, Object body, GenericType<TBody> bodyType) {
+        IResponse<TBody> response = REST_UTILS.putForCore(url, body, getResponseType(bodyType), null);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> putForObject(String url, Object request, GenericType<TBody> bodyType, MultiValueMap<String, String> headers) {
-        IResponse<TBody> response = REST_UTILS.putForCore(url, request, getResponseType(bodyType), headers);
+    public static <TBody> IResponse<TBody> putForObject(String url, Object body, GenericType<TBody> bodyType, MultiValueMap<String, String> headers) {
+        IResponse<TBody> response = REST_UTILS.putForCore(url, body, getResponseType(bodyType), headers);
         return response.afterPropertiesSet(bodyType);
     }
 
@@ -158,23 +158,23 @@ public final class CommonRestUtils {
         return response.afterPropertiesSet(MAP_TYPE);
     }
 
-    public static IResponse<Map> postForMap(String url, Object request) {
-        IResponse<Map> response = REST_UTILS.postForCore(url, request, getResponseType(MAP_TYPE), null);
+    public static IResponse<Map> postForMap(String url, Object body) {
+        IResponse<Map> response = REST_UTILS.postForCore(url, body, getResponseType(MAP_TYPE), null);
         return response.afterPropertiesSet(MAP_TYPE);
     }
 
-    public static IResponse<Map> postForMap(String url, Object request, MultiValueMap<String, String> headers) {
-        IResponse<Map> response = REST_UTILS.postForCore(url, request, getResponseType(MAP_TYPE), headers);
+    public static IResponse<Map> postForMap(String url, Object body, MultiValueMap<String, String> headers) {
+        IResponse<Map> response = REST_UTILS.postForCore(url, body, getResponseType(MAP_TYPE), headers);
         return response.afterPropertiesSet(MAP_TYPE);
     }
 
-    public static IResponse<Map> putForMap(String url, Object request) {
-        IResponse<Map> response = REST_UTILS.putForCore(url, request, getResponseType(MAP_TYPE), null);
+    public static IResponse<Map> putForMap(String url, Object body) {
+        IResponse<Map> response = REST_UTILS.putForCore(url, body, getResponseType(MAP_TYPE), null);
         return response.afterPropertiesSet(MAP_TYPE);
     }
 
-    public static IResponse<Map> putForMap(String url, Object request, MultiValueMap<String, String> headers) {
-        IResponse<Map> response = REST_UTILS.putForCore(url, request, getResponseType(MAP_TYPE), headers);
+    public static IResponse<Map> putForMap(String url, Object body, MultiValueMap<String, String> headers) {
+        IResponse<Map> response = REST_UTILS.putForCore(url, body, getResponseType(MAP_TYPE), headers);
         return response.afterPropertiesSet(MAP_TYPE);
     }
 
@@ -208,23 +208,23 @@ public final class CommonRestUtils {
         return response.afterPropertiesSet(LIST_TYPE);
     }
 
-    public static IResponse<List> postForList(String url, Object request) {
-        IResponse<List> response = REST_UTILS.postForCore(url, request, getResponseType(LIST_TYPE), null);
+    public static IResponse<List> postForList(String url, Object body) {
+        IResponse<List> response = REST_UTILS.postForCore(url, body, getResponseType(LIST_TYPE), null);
         return response.afterPropertiesSet(LIST_TYPE);
     }
 
-    public static IResponse<List> postForList(String url, Object request, MultiValueMap<String, String> headers) {
-        IResponse<List> response = REST_UTILS.postForCore(url, request, getResponseType(LIST_TYPE), headers);
+    public static IResponse<List> postForList(String url, Object body, MultiValueMap<String, String> headers) {
+        IResponse<List> response = REST_UTILS.postForCore(url, body, getResponseType(LIST_TYPE), headers);
         return response.afterPropertiesSet(LIST_TYPE);
     }
 
-    public static IResponse<List> putForList(String url, Object request) {
-        IResponse<List> response = REST_UTILS.putForCore(url, request, getResponseType(LIST_TYPE), null);
+    public static IResponse<List> putForList(String url, Object body) {
+        IResponse<List> response = REST_UTILS.putForCore(url, body, getResponseType(LIST_TYPE), null);
         return response.afterPropertiesSet(LIST_TYPE);
     }
 
-    public static IResponse<List> putForList(String url, Object request, MultiValueMap<String, String> headers) {
-        IResponse<List> response = REST_UTILS.putForCore(url, request, getResponseType(LIST_TYPE), headers);
+    public static IResponse<List> putForList(String url, Object body, MultiValueMap<String, String> headers) {
+        IResponse<List> response = REST_UTILS.putForCore(url, body, getResponseType(LIST_TYPE), headers);
         return response.afterPropertiesSet(LIST_TYPE);
     }
 
@@ -252,20 +252,20 @@ public final class CommonRestUtils {
         return REST_UTILS.deleteForCore(url, STRING_TYPE, uriVariables, headers);
     }
 
-    public static String postForString(String url, Object request) {
-        return REST_UTILS.postForCore(url, request, STRING_TYPE, null);
+    public static String postForString(String url, Object body) {
+        return REST_UTILS.postForCore(url, body, STRING_TYPE, null);
     }
 
-    public static String postForString(String url, Object request, MultiValueMap<String, String> headers) {
-        return REST_UTILS.postForCore(url, request, STRING_TYPE, headers);
+    public static String postForString(String url, Object body, MultiValueMap<String, String> headers) {
+        return REST_UTILS.postForCore(url, body, STRING_TYPE, headers);
     }
 
-    public static String putForString(String url, Object request) {
-        return REST_UTILS.putForCore(url, request, STRING_TYPE, null);
+    public static String putForString(String url, Object body) {
+        return REST_UTILS.putForCore(url, body, STRING_TYPE, null);
     }
 
-    public static String putForString(String url, Object request, MultiValueMap<String, String> headers) {
-        return REST_UTILS.putForCore(url, request, STRING_TYPE, headers);
+    public static String putForString(String url, Object body, MultiValueMap<String, String> headers) {
+        return REST_UTILS.putForCore(url, body, STRING_TYPE, headers);
     }
 
 

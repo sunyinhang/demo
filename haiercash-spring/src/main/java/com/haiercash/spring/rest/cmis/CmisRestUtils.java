@@ -24,72 +24,72 @@ public final class CmisRestUtils {
     private CmisRestUtils() {
     }
 
-    public static <TBody> IResponse<TBody> postForObject(ICmisRequest request, Class<TBody> bodyType) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        IResponse<TBody> response = REST_UTILS.postForCore(url, request, version.getResponseType(bodyType), null);
+    public static <TBody> IResponse<TBody> postForObject(ICmisRequest body, Class<TBody> bodyType) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        IResponse<TBody> response = REST_UTILS.postForCore(url, body, version.getResponseType(bodyType), null);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> postForObject(ICmisRequest request, Class<TBody> bodyType, MultiValueMap<String, String> headers) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        IResponse<TBody> response = REST_UTILS.postForCore(url, request, version.getResponseType(bodyType), headers);
+    public static <TBody> IResponse<TBody> postForObject(ICmisRequest body, Class<TBody> bodyType, MultiValueMap<String, String> headers) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        IResponse<TBody> response = REST_UTILS.postForCore(url, body, version.getResponseType(bodyType), headers);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> postForObject(ICmisRequest request, GenericType<TBody> bodyType) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        IResponse<TBody> response = REST_UTILS.postForCore(url, request, version.getResponseType(bodyType), null);
+    public static <TBody> IResponse<TBody> postForObject(ICmisRequest body, GenericType<TBody> bodyType) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        IResponse<TBody> response = REST_UTILS.postForCore(url, body, version.getResponseType(bodyType), null);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static <TBody> IResponse<TBody> postForObject(ICmisRequest request, GenericType<TBody> bodyType, MultiValueMap<String, String> headers) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        IResponse<TBody> response = REST_UTILS.postForCore(url, request, version.getResponseType(bodyType), headers);
+    public static <TBody> IResponse<TBody> postForObject(ICmisRequest body, GenericType<TBody> bodyType, MultiValueMap<String, String> headers) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        IResponse<TBody> response = REST_UTILS.postForCore(url, body, version.getResponseType(bodyType), headers);
         return response.afterPropertiesSet(bodyType);
     }
 
-    public static IResponse<Map> postForMap(ICmisRequest request) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        IResponse<Map> response = REST_UTILS.postForCore(url, request, version.getResponseType(MAP_TYPE), null);
+    public static IResponse<Map> postForMap(ICmisRequest body) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        IResponse<Map> response = REST_UTILS.postForCore(url, body, version.getResponseType(MAP_TYPE), null);
         return response.afterPropertiesSet(MAP_TYPE);
     }
 
-    public static IResponse<Map> postForMap(ICmisRequest request, MultiValueMap<String, String> headers) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        IResponse<Map> response = REST_UTILS.postForCore(url, request, version.getResponseType(MAP_TYPE), headers);
+    public static IResponse<Map> postForMap(ICmisRequest body, MultiValueMap<String, String> headers) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        IResponse<Map> response = REST_UTILS.postForCore(url, body, version.getResponseType(MAP_TYPE), headers);
         return response.afterPropertiesSet(MAP_TYPE);
     }
 
-    public static IResponse<List> postForList(ICmisRequest request) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        IResponse<List> response = REST_UTILS.postForCore(url, request, version.getResponseType(LIST_TYPE), null);
+    public static IResponse<List> postForList(ICmisRequest body) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        IResponse<List> response = REST_UTILS.postForCore(url, body, version.getResponseType(LIST_TYPE), null);
         return response.afterPropertiesSet(LIST_TYPE);
     }
 
-    public static IResponse<List> postForList(ICmisRequest request, MultiValueMap<String, String> headers) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        IResponse<List> response = REST_UTILS.postForCore(url, request, version.getResponseType(LIST_TYPE), headers);
+    public static IResponse<List> postForList(ICmisRequest body, MultiValueMap<String, String> headers) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        IResponse<List> response = REST_UTILS.postForCore(url, body, version.getResponseType(LIST_TYPE), headers);
         return response.afterPropertiesSet(LIST_TYPE);
     }
 
-    public static String postForString(ICmisRequest request) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        return REST_UTILS.postForCore(url, request, STRING_TYPE, null);
+    public static String postForString(ICmisRequest body) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        return REST_UTILS.postForCore(url, body, STRING_TYPE, null);
     }
 
-    public static String postForString(ICmisRequest request, MultiValueMap<String, String> headers) {
-        CmisVersion version = CmisVersion.forTradeCode(request.getTradeCode());
-        String url = version.getUrl(request);
-        return REST_UTILS.postForCore(url, request, STRING_TYPE, headers);
+    public static String postForString(ICmisRequest body, MultiValueMap<String, String> headers) {
+        CmisVersion version = CmisVersion.forTradeCode(body.getTradeCode());
+        String url = version.getUrl(body);
+        return REST_UTILS.postForCore(url, body, STRING_TYPE, headers);
     }
 
 

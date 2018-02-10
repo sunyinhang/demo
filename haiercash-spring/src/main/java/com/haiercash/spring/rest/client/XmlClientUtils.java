@@ -47,20 +47,20 @@ public final class XmlClientUtils {
         return REST_UTILS.deleteForCore(url, responseType, uriVariables, headers);
     }
 
-    public static <TResponse> TResponse postForObject(String url, Object request, Class<TResponse> responseType) {
-        return REST_UTILS.postForCore(url, request, responseType, null);
+    public static <TResponse> TResponse postForObject(String url, Object body, Class<TResponse> responseType) {
+        return REST_UTILS.postForCore(url, body, responseType, null);
     }
 
-    public static <TResponse> TResponse postForObject(String url, Object request, Class<TResponse> responseType, MultiValueMap<String, String> headers) {
-        return REST_UTILS.postForCore(url, request, responseType, headers);
+    public static <TResponse> TResponse postForObject(String url, Object body, Class<TResponse> responseType, MultiValueMap<String, String> headers) {
+        return REST_UTILS.postForCore(url, body, responseType, headers);
     }
 
-    public static <TResponse> TResponse putForObject(String url, Object request, Class<TResponse> responseType) {
-        return REST_UTILS.putForCore(url, request, responseType, null);
+    public static <TResponse> TResponse putForObject(String url, Object body, Class<TResponse> responseType) {
+        return REST_UTILS.putForCore(url, body, responseType, null);
     }
 
-    public static <TResponse> TResponse putForObject(String url, Object request, Class<TResponse> responseType, MultiValueMap<String, String> headers) {
-        return REST_UTILS.putForCore(url, request, responseType, headers);
+    public static <TResponse> TResponse putForObject(String url, Object body, Class<TResponse> responseType, MultiValueMap<String, String> headers) {
+        return REST_UTILS.putForCore(url, body, responseType, headers);
     }
 
     public static <TResponse> TResponse getForObject(String url, GenericType<TResponse> responseType) {
@@ -87,20 +87,20 @@ public final class XmlClientUtils {
         return REST_UTILS.deleteForCore(url, responseType, uriVariables, headers);
     }
 
-    public static <TResponse> TResponse postForObject(String url, Object request, GenericType<TResponse> responseType) {
-        return REST_UTILS.postForCore(url, request, responseType, null);
+    public static <TResponse> TResponse postForObject(String url, Object body, GenericType<TResponse> responseType) {
+        return REST_UTILS.postForCore(url, body, responseType, null);
     }
 
-    public static <TResponse> TResponse postForObject(String url, Object request, GenericType<TResponse> responseType, MultiValueMap<String, String> headers) {
-        return REST_UTILS.postForCore(url, request, responseType, headers);
+    public static <TResponse> TResponse postForObject(String url, Object body, GenericType<TResponse> responseType, MultiValueMap<String, String> headers) {
+        return REST_UTILS.postForCore(url, body, responseType, headers);
     }
 
-    public static <TResponse> TResponse putForObject(String url, Object request, GenericType<TResponse> responseType) {
-        return REST_UTILS.putForCore(url, request, responseType, null);
+    public static <TResponse> TResponse putForObject(String url, Object body, GenericType<TResponse> responseType) {
+        return REST_UTILS.putForCore(url, body, responseType, null);
     }
 
-    public static <TResponse> TResponse putForObject(String url, Object request, GenericType<TResponse> responseType, MultiValueMap<String, String> headers) {
-        return REST_UTILS.putForCore(url, request, responseType, headers);
+    public static <TResponse> TResponse putForObject(String url, Object body, GenericType<TResponse> responseType, MultiValueMap<String, String> headers) {
+        return REST_UTILS.putForCore(url, body, responseType, headers);
     }
 
     public static Map<String, Object> getForMap(String url) {
@@ -127,20 +127,20 @@ public final class XmlClientUtils {
         return REST_UTILS.deleteForCore(url, MAP_TYPE, uriVariables, headers);
     }
 
-    public static Map<String, Object> postForMap(String url, Object request) {
-        return REST_UTILS.postForCore(url, request, MAP_TYPE, null);
+    public static Map<String, Object> postForMap(String url, Object body) {
+        return REST_UTILS.postForCore(url, body, MAP_TYPE, null);
     }
 
-    public static Map<String, Object> postForMap(String url, Object request, MultiValueMap<String, String> headers) {
-        return REST_UTILS.postForCore(url, request, MAP_TYPE, headers);
+    public static Map<String, Object> postForMap(String url, Object body, MultiValueMap<String, String> headers) {
+        return REST_UTILS.postForCore(url, body, MAP_TYPE, headers);
     }
 
-    public static Map<String, Object> putForMap(String url, Object request) {
-        return REST_UTILS.putForCore(url, request, MAP_TYPE, null);
+    public static Map<String, Object> putForMap(String url, Object body) {
+        return REST_UTILS.putForCore(url, body, MAP_TYPE, null);
     }
 
-    public static Map<String, Object> putForMap(String url, Object request, MultiValueMap<String, String> headers) {
-        return REST_UTILS.putForCore(url, request, MAP_TYPE, headers);
+    public static Map<String, Object> putForMap(String url, Object body, MultiValueMap<String, String> headers) {
+        return REST_UTILS.putForCore(url, body, MAP_TYPE, headers);
     }
 
     public static List<Object> getForList(String url) {
@@ -167,20 +167,20 @@ public final class XmlClientUtils {
         return REST_UTILS.deleteForCore(url, LIST_TYPE, uriVariables, headers);
     }
 
-    public static List<Object> postForList(String url, Object request) {
-        return REST_UTILS.postForCore(url, request, LIST_TYPE, null);
+    public static List<Object> postForList(String url, Object body) {
+        return REST_UTILS.postForCore(url, body, LIST_TYPE, null);
     }
 
-    public static List<Object> postForList(String url, Object request, MultiValueMap<String, String> headers) {
-        return REST_UTILS.postForCore(url, request, LIST_TYPE, headers);
+    public static List<Object> postForList(String url, Object body, MultiValueMap<String, String> headers) {
+        return REST_UTILS.postForCore(url, body, LIST_TYPE, headers);
     }
 
-    public static List<Object> putForList(String url, Object request) {
-        return REST_UTILS.putForCore(url, request, LIST_TYPE, null);
+    public static List<Object> putForList(String url, Object body) {
+        return REST_UTILS.putForCore(url, body, LIST_TYPE, null);
     }
 
-    public static List<Object> putForList(String url, Object request, MultiValueMap<String, String> headers) {
-        return REST_UTILS.putForCore(url, request, LIST_TYPE, headers);
+    public static List<Object> putForList(String url, Object body, MultiValueMap<String, String> headers) {
+        return REST_UTILS.putForCore(url, body, LIST_TYPE, headers);
     }
 
     public static String getForString(String url) {
@@ -207,20 +207,20 @@ public final class XmlClientUtils {
         return REST_UTILS.deleteForCore(url, STRING_TYPE, uriVariables, headers);
     }
 
-    public static String postForString(String url, Object request) {
-        return REST_UTILS.postForCore(url, request, STRING_TYPE, null);
+    public static String postForString(String url, Object body) {
+        return REST_UTILS.postForCore(url, body, STRING_TYPE, null);
     }
 
-    public static String postForString(String url, Object request, MultiValueMap<String, String> headers) {
-        return REST_UTILS.postForCore(url, request, STRING_TYPE, headers);
+    public static String postForString(String url, Object body, MultiValueMap<String, String> headers) {
+        return REST_UTILS.postForCore(url, body, STRING_TYPE, headers);
     }
 
-    public static String putForString(String url, Object request) {
-        return REST_UTILS.putForCore(url, request, STRING_TYPE, null);
+    public static String putForString(String url, Object body) {
+        return REST_UTILS.putForCore(url, body, STRING_TYPE, null);
     }
 
-    public static String putForString(String url, Object request, MultiValueMap<String, String> headers) {
-        return REST_UTILS.putForCore(url, request, STRING_TYPE, headers);
+    public static String putForString(String url, Object body, MultiValueMap<String, String> headers) {
+        return REST_UTILS.putForCore(url, body, STRING_TYPE, headers);
     }
 
 

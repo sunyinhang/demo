@@ -51,12 +51,12 @@ public abstract class AbstractRestUtils {
         return exchange(this.getRestTemplate(), url, HttpMethod.DELETE, null, responseType, uriVariables, headers);
     }
 
-    public <TResponse> TResponse postForCore(String url, Object request, Type responseType, MultiValueMap<String, String> headers) {
-        return exchange(this.getRestTemplate(), url, HttpMethod.POST, request, responseType, null, headers);
+    public <TResponse> TResponse postForCore(String url, Object body, Type responseType, MultiValueMap<String, String> headers) {
+        return exchange(this.getRestTemplate(), url, HttpMethod.POST, body, responseType, null, headers);
     }
 
-    public <TResponse> TResponse putForCore(String url, Object request, Type responseType, MultiValueMap<String, String> headers) {
-        return exchange(this.getRestTemplate(), url, HttpMethod.PUT, request, responseType, null, headers);
+    public <TResponse> TResponse putForCore(String url, Object body, Type responseType, MultiValueMap<String, String> headers) {
+        return exchange(this.getRestTemplate(), url, HttpMethod.PUT, body, responseType, null, headers);
     }
 
     protected abstract RestTemplate getRestTemplate();

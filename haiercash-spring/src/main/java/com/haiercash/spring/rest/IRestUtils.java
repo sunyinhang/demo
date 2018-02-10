@@ -13,7 +13,7 @@ public interface IRestUtils<TResponse extends IResponse> {
 
     IResponse deleteForCore(String url, Type bodyType, Map<String, ?> uriVariables, MultiValueMap<String, String> headers);
 
-    IResponse postForCore(String url, Object request, Type bodyType, MultiValueMap<String, String> headers);
+    IResponse postForCore(String url, Object body, Type bodyType, MultiValueMap<String, String> headers);
 
-    IResponse putForCore(String url, Object request, Type bodyType, MultiValueMap<String, String> headers);
+    IResponse putForCore(String url, Object body, Type bodyType, MultiValueMap<String, String> headers);
 }
