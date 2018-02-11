@@ -4,8 +4,6 @@ import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.feign.annotation.FeignApi;
 import com.haiercash.spring.trace.feign.OutgoingLog;
 import feign.InvocationHandlerFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
@@ -15,7 +13,6 @@ import java.util.Map;
  * Created by 许崇雷 on 2018-02-09.
  */
 public final class DelegateMethodHandler implements InvocationHandlerFactory.MethodHandler {
-    private static final Log logger = LogFactory.getLog(DelegateMethodHandler.class);
     private final String name;
     private final Class<?> type;
     private final Method method;
