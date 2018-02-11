@@ -87,7 +87,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String channelNo = this.getChannelNo();
         EntrySetting setting = this.entrySettingDao.selectBychanelNo(channelNo);
         if (setting == null) {
-            return fail(ConstUtil.ERROR_CODE, "没有配置相应渠道数据！");
+            return fail(ConstUtil.ERROR_CODE, "活动暂未开放，敬请期待！");
         }
         String loginType = setting.getLoginType();
         switch (loginType) {
@@ -314,7 +314,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
         cachemap.put("userId", uidLocal);//统一认证userId
         cachemap.put("phoneNo", phoneNo);//绑定手机号
-//        RedisUtils.setExpire(thirdToken, cachemap);
 
         logger.info("进行token绑定");
         //4.token绑定
@@ -347,9 +346,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             returnmap.put("flag", "3");//跳转OCR
             returnmap.put("token", thirdToken);
 //
-//            String backurl = haiercashpay_web_url + "sgbt/#!/applyQuota/amountNot.html?token=" + thirdToken;
-//            returnmap.put("backurl", backurl);
-//            logger.info("页面跳转到：" + backurl);
             return success(returnmap);
         }
         String certType = ((Map<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型

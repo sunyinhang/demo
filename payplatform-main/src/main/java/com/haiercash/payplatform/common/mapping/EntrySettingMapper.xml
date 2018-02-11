@@ -5,7 +5,7 @@
 <mapper namespace="com.haiercash.payplatform.common.dao.EntrySettingDao">
 
     <select id="selectBychanelNo" resultType="com.haiercash.payplatform.common.data.EntrySetting">
-        select * from ENTRY_SETTING where channel_no = #{channelNo}
+        select * from ENTRY_SETTING where channel_no = #{channelNo} AND ENABLED = 'Y'
     </select>
 
 
