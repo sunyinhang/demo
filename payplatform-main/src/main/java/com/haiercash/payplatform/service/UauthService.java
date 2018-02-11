@@ -4,7 +4,6 @@ import com.haiercash.spring.feign.annotation.FeignApi;
 import com.haiercash.spring.rest.common.CommonResponse;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
@@ -12,8 +11,7 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2018-02-08.
  */
-@FeignClient(serviceId = "${app.rest.UAUTH}")
-@RequestMapping("/app/uauth")
+@FeignClient(name = "${app.rest.UAUTH}", path = "/app/uauth")
 public interface UauthService {
     /**
      * @param mobile 手机号, 需加密
