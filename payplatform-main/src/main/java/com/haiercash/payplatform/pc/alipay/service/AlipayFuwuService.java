@@ -18,7 +18,6 @@ import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.config.EurekaServer;
-import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
@@ -163,19 +162,27 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //授权后验证用户
-    public void validUser(String authCode, String successUrl, String failUrl) throws AlipayApiException, IOException {
+    public IResponse<Map> validUser(String authCode) throws AlipayApiException, IOException {
         AlipayToken token = AlipayUtils.getOauthTokenByAuthCode(authCode);
         this.logger.info("支付宝 token: " + token);
         AlipayUserInfoShareResponse alipayUserInfo = AlipayUtils.getUserInfo(token.getToken());
         this.logger.info("支付宝用户信息: " + JsonSerializer.serialize(alipayUserInfo));
-        if (Objects.equals(alipayUserInfo.getUserType(), "2")//个人账号
-                && Objects.equals(alipayUserInfo.getUserStatus(), "T")//已认证用户
-                && Objects.equals(alipayUserInfo.getIsCertified(), "T")//已通过实名认证
-                && Objects.equals(alipayUserInfo.getIsStudentCertified(), "F")) {//不能为学生
-            RequestContext.getResponse().sendRedirect(successUrl);
-            return;
-        }
-        RequestContext.getResponse().sendRedirect(failUrl);
+        if (!"2".equals(alipayUserInfo.getUserType()))
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "非个人账号,不能准入");
+        if (!"T".equals(alipayUserInfo.getUserStatus()))
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "非认证用户,不能准入");
+        if (!"T".equals(alipayUserInfo.getIsCertified()))
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "非实名用户,不能准入");
+        if ("T".equals(alipayUserInfo.getIsStudentCertified()))
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "学生,不能准入");
+
+        Map<String, Object> sessionMap = RedisUtils.getExpireMap(this.getToken());
+        String flag = Convert.toString(sessionMap.get("redirect_flag"));
+        if (StringUtils.isEmpty(flag))
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        Map<String, Object> result = new HashMap<>(1);
+        result.put("flag", flag);
+        return CommonResponse.success(result);
     }
 
     //实名认证

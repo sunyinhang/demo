@@ -6,7 +6,6 @@ import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.pc.alipay.service.AlipayFuwuService;
 import com.haiercash.payplatform.service.OCRIdentityService;
-import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.util.BusinessException;
@@ -72,23 +71,12 @@ public class AlipayFuwuController extends BaseController {
 
     //授权后验证用户
     @GetMapping("/api/payment/alipay/fuwu/validUser")
-    public void validUser(@RequestParam Map<String, String> params) throws AlipayApiException, IOException {
-        String appId = params.get("app_id");
+    public IResponse<Map> validUser(@RequestParam Map<String, String> params) throws AlipayApiException, IOException {
         String authCode = params.get("auth_code");
-        this.assertAppId(appId);
         this.assertAuthCode(authCode);
         this.assertChannelNo();
         this.assertToken();
-        String successUrl = params.get("successUrl");
-        if (StringUtils.isEmpty(successUrl))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "缺少成功时回调地址");
-        String failUrl = params.get("failUrl");
-        if (StringUtils.isEmpty(failUrl))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "缺少失败时回调地址");
-        if (!RequestContext.exists())
-            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-
-        alipayFuwuService.validUser(authCode, successUrl, failUrl);
+        return alipayFuwuService.validUser(authCode);
     }
 
     //ocr
