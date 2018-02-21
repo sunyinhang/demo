@@ -3,11 +3,16 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.mybatis.util.DateUtil;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
 import com.haiercash.payplatform.common.dao.SgReturngoodsLogDao;
-import com.haiercash.payplatform.common.data.*;
+import com.haiercash.payplatform.common.data.AppOrder;
+import com.haiercash.payplatform.common.data.AppOrderGoods;
+import com.haiercash.payplatform.common.data.CooperativeBusiness;
+import com.haiercash.payplatform.common.data.SgRegions;
+import com.haiercash.payplatform.common.data.SgReturngoodsLog;
 import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.config.ShunguangConfig;
@@ -21,11 +26,8 @@ import com.haiercash.payplatform.service.OrderManageService;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.config.EurekaServer;
-import com.haiercash.payplatform.service.*;
-import com.haiercash.payplatform.utils.*;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonRestUtils;
@@ -40,7 +42,12 @@ import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * shunguang service impl.
@@ -1346,10 +1353,10 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 logger.info("数据库信息Id==>" + locId);
                 if ("00000".equals(retflag)) {
                     logger.info("数据推送成功");
-                    shunGuangthLogDao.updateFlagById(FormatUtil.formatDate(date), "Y", locId);
+                    shunGuangthLogDao.updateFlagById(DateUtils.toDateTimeString(date), "Y", locId);
                 } else {
                     logger.info("数据推送失败");
-                    shunGuangthLogDao.updateTimesById(FormatUtil.formatDate(date), locId);
+                    shunGuangthLogDao.updateTimesById(DateUtils.toDateTimeString(date), locId);
                 }
             });
             return success();

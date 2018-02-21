@@ -32,7 +32,6 @@ import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.CmisTradeCode;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.boot.ApplicationUtils;
 import com.haiercash.spring.config.EurekaServer;
@@ -1082,14 +1081,14 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             for (Map<String, Object> bank : bankList) {
                 // 银行卡号
                 if (bank.get("isDefaultCard").equals("Y")) {
-                    String bankName = FormatUtil.getStrDealNull(bank.get("bankName"));
-                    String bankCode = FormatUtil.getStrDealNull(bank.get("bankCode"));
-                    String accBchCde = FormatUtil.getStrDealNull(bank.get("accBchCde"));
-                    String accBchName = FormatUtil.getStrDealNull(bank.get("accBchName"));
-                    String cardNo = FormatUtil.getStrDealNull(bank.get("cardNo"));
-                    String acctProvince = FormatUtil.getStrDealNull(bank.get("acctProvince"));//开户省
-                    String acctCity = FormatUtil.getStrDealNull(bank.get("acctCity"));//开户市
-                    String repayAccMobile = FormatUtil.getStrDealNull(bank.get("mobile"));
+                    String bankName = Convert.toString(bank.get("bankName"));
+                    String bankCode = Convert.toString(bank.get("bankCode"));
+                    String accBchCde = Convert.toString(bank.get("accBchCde"));
+                    String accBchName = Convert.toString(bank.get("accBchName"));
+                    String cardNo = Convert.toString(bank.get("cardNo"));
+                    String acctProvince = Convert.toString(bank.get("acctProvince"));//开户省
+                    String acctCity = Convert.toString(bank.get("acctCity"));//开户市
+                    String repayAccMobile = Convert.toString(bank.get("mobile"));
                     order.setRepayApplCardNo(cardNo);
                     order.setRepayAccBankCde(bankCode);
                     order.setRepayAccBankName(bankName);

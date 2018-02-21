@@ -6,17 +6,19 @@ import java.util.Map;
 
 /**
  * crm service interface.
- * @author  Liu qingxiang
+ *
+ * @author Liu qingxiang
  * @since v1.0.1
  */
 public interface CrmService {
 
     /**
      * 根据用户id获取实名信息.
+     *
      * @param userId 用户id
      * @return Map
      */
-    Map<String, Object>  queryPerCustInfoByUserId(String userId);
+    Map<String, Object> queryPerCustInfoByUserId(String userId);
 
     /**
      * 查询用户准入资格
@@ -24,7 +26,7 @@ public interface CrmService {
      * @param params custName certNo
      * @return
      */
-    Map<String, Object> getCustIsPass(Map<String, Object> params);
+    IResponse<Map> getCustIsPass(Map<String, Object> params);
 
     /**
      * 获取销售代表
@@ -58,7 +60,7 @@ public interface CrmService {
      * @param custNo
      * @return
      */
-    Map<String, Object>  getBankCard(String custNo);
+    Map<String, Object> getBankCard(String custNo);
 
     /**
      * 查询白名单列表
@@ -67,6 +69,7 @@ public interface CrmService {
      * @return
      */
     Map<String, Object> getCustWhiteListCmis(Map<String, Object> params);
+
     /**
      * @Title queryApplReraidPlanByloanNo
      * @Description: 108、(GET)还款计划查询 (crm)

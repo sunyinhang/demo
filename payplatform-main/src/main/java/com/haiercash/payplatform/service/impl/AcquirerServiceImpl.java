@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.util.IdCard;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
@@ -577,7 +578,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         acquirer.put("crt_dt", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// 登记日期
         // 如果为随借随换，借款期限上传为最大值.
         if ("D".equalsIgnoreCase((String) acquirer.get("apply_tnr_typ"))) {
-            Map<String, Object> typCdeMap = cmisService.findPLoanTyp(FormatUtil.getStrDealNull(acquirer.get("typ_cde")));
+            Map<String, Object> typCdeMap = cmisService.findPLoanTyp(Convert.toString(acquirer.get("typ_cde")));
             if (HttpUtil.isSuccess(typCdeMap)) {
                 Map<String, Object> typResultMap = (Map<String, Object>) typCdeMap.get("body");
                 acquirer.put("apply_tnr", typResultMap.get("tnrMaxDays").toString());

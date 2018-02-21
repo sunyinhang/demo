@@ -14,6 +14,7 @@ import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ChannelType;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
@@ -34,6 +35,7 @@ import java.util.stream.Stream;
 
 /**
  * order service impl.
+ *
  * @author Liu qingxiang
  * @since v1.0.0
  */
@@ -91,7 +93,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         }
         oldMap.putAll(childMap);
 //        if ("46".equals(getChannelNo())) {
-            oldMap.put("creditType", "02");
+        oldMap.put("creditType", "02");
 //        }
         map.put("appl_inf", oldMap);
 
@@ -202,11 +204,11 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         orderMap.put("sysNo", "11");
         String url;
 //        if ("46".equals(getChannelNo())) {
-            if (isGoodsList) {//多商品
-                url = EurekaServer.ORDER + "/api/order/saveOrderEK";
-            } else {
-                url = EurekaServer.ORDER + "/api/order/saveEK";
-            }
+        if (isGoodsList) {//多商品
+            url = EurekaServer.ORDER + "/api/order/saveOrderEK";
+        } else {
+            url = EurekaServer.ORDER + "/api/order/saveEK";
+        }
 //        }
         /* else {
             if (isGoodsList) {//多商品
@@ -220,9 +222,9 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         logger.info("前appOrder：" + JsonSerializer.serialize(appOrder));
         this.checkOrderDefaultValue(appOrder, orderMap);
         logger.info("后orderMap：" + JsonSerializer.serialize(orderMap));
-        logger.info("==> ORDER save :" + FormatUtil.toJson(orderMap));
+        logger.info("==> ORDER save :" + JsonSerializer.serialize(orderMap));
         Map<String, Object> returnMap = HttpUtil.restPostMap(url, orderMap);
-        logger.info("<== ORDER save :" + FormatUtil.toJson(returnMap));
+        logger.info("<== ORDER save :" + JsonSerializer.serialize(returnMap));
         if (returnMap == null || returnMap.isEmpty()) {
             return fail(ConstUtil.ERROR_CODE, "订单系统通信失败");
         }
@@ -273,7 +275,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
             isConfirm = needAndConfirmBody.get("isConfirm").toString();
         }
         // 默认提交商户.
-        if ("46".equals(super.getChannelNo())){
+        if ("46".equals(super.getChannelNo())) {
             // 顺逛白条不需要商户确认
             params.put("type", "0");
         } else if (StringUtils.isEmpty(type)) {
@@ -324,7 +326,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         }
         ChannelType channelType = ChannelType.forName(null, appOrder.getChannelNo(), appOrder.getSource());
         // 个人版、美凯龙、大数据、美分期固定为：SALE、消费
-        if ( channelType == ChannelType.BigData
+        if (channelType == ChannelType.BigData
                 || channelType == ChannelType.LoveByStage
                 || channelType == ChannelType.Shunguang) {
             applInfMap.put("purpose", "SALE");
@@ -384,14 +386,9 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         Map<String, Object> crmParam = new HashMap<>();
         crmParam.put("custName", appOrder.getCustName());
         crmParam.put("idNo", appOrder.getIdNo());
-        Map<String, Object> custIsPass = crmService.getCustIsPass(crmParam);
-        if (custIsPass == null || custIsPass.isEmpty()) {
-            return fail(ConstUtil.ERROR_CODE, "CRM 通信失败");
-        }
-        if (!HttpUtil.isSuccess(custIsPass)) {
-            return custIsPass;
-        }
-        Map<String, Object> bodyMap = (Map<String, Object>) custIsPass.get("body");
+        IResponse<Map> custIsPass = crmService.getCustIsPass(crmParam);
+        custIsPass.assertSuccessNeedBody();
+        Map<String, Object> bodyMap = (Map<String, Object>) custIsPass.getBody();
         String whiteType;
         if (StringUtils.isEmpty(bodyMap.get("isPass")) || "shh".equalsIgnoreCase((String) bodyMap.get("isPass"))) {
             whiteType = "SHH";

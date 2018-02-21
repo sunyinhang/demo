@@ -7,7 +7,6 @@ import com.haiercash.payplatform.common.data.AppOrdernoTypgrpRelation;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.CmisTradeCode;
 import com.haiercash.payplatform.utils.CmisUtil;
-import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
@@ -87,7 +86,7 @@ public class CmisApplService extends BaseService {
         if (!map.containsKey("loanFreq")) {
             map.put("loanFreq", dataMap.get("typFreq"));
         }
-        String mtdCde = FormatUtil.getStrDealNull(map.get("mtdCde"));
+        String mtdCde = Convert.toString(map.get("mtdCde"));
         if (StringUtils.isEmpty(mtdCde)) {
             List<Map<String, Object>> hkfsMap;
             //
@@ -104,7 +103,7 @@ public class CmisApplService extends BaseService {
             if (hkfsMap.size() > 0) {
                 Map<String, Object> hkmap = hkfsMap.get(0);
                 // 还款方式
-                mtdCde = FormatUtil.getStrDealNull(hkmap.get("mtdCde"));
+                mtdCde = Convert.toString(hkmap.get("mtdCde"));
                 if (StringUtils.isEmpty(mtdCde)) {
                     return fail("08", "还款方式编码为空");
                 }

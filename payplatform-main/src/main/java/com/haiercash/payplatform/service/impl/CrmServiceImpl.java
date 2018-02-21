@@ -2,7 +2,6 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.AppServerUtils;
-import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
@@ -37,13 +36,9 @@ public class CrmServiceImpl extends BaseService implements CrmService {
 
 
     @Override
-    public Map<String, Object> getCustIsPass(Map<String, Object> params) {
+    public IResponse<Map> getCustIsPass(Map<String, Object> params) {
         String url = EurekaServer.CRM + "/app/crm/cust/getCustIsPass";
-        String paramUrl = FormatUtil.putParam2Url(url, params);
-        logger.debug("CRM28 getCustIsPass ==> " + paramUrl);
-        String resultJson = HttpUtil.restGet(paramUrl);
-        logger.debug("CRM28 getCustIsPass <== " + resultJson);
-        return HttpUtil.json2DeepMap(resultJson);
+        return CommonRestUtils.getForMap(url, params);
     }
 
     /**
@@ -99,10 +94,10 @@ public class CrmServiceImpl extends BaseService implements CrmService {
     }
 
     @Override
-    public  Map<String, Object>  getBankCard(String custNo) {
+    public Map<String, Object> getBankCard(String custNo) {
         if (StringUtils.isEmpty(custNo))
             return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "客户编号为空!");
-        String url = EurekaServer.CRM + "/app/crm/cust/getBankCard?custNo="+custNo;
+        String url = EurekaServer.CRM + "/app/crm/cust/getBankCard?custNo=" + custNo;
         Map<String, Object> resultmap = HttpUtil.restGetMap(url);
         logger.info("获取客户银行卡接口，返回数据" + resultmap);
         return resultmap;
@@ -111,17 +106,18 @@ public class CrmServiceImpl extends BaseService implements CrmService {
     @Override
     public Map<String, Object> getCustWhiteListCmis(Map<String, Object> params) {
         String url = EurekaServer.CRM + "/pub/crm/cust/getCustWhiteListFL";
-        Map<String, Object> map =  HttpUtil.restGetMap(url,getToken(),params);
+        Map<String, Object> map = HttpUtil.restGetMap(url, getToken(), params);
         if (StringUtils.isEmpty(map)) {
             logger.error("查询白名单列表！");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         return map;
     }
+
     @Override
     public Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) {
         String url = EurekaServer.CRM + "/app/crm/apporder/queryApplReraidPlanByloanNo";
-        Map<String, Object> map =  HttpUtil.restGetMap(url,getToken(),params);
+        Map<String, Object> map = HttpUtil.restGetMap(url, getToken(), params);
         if (StringUtils.isEmpty(map)) {
             logger.error("还款计划查询！");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
