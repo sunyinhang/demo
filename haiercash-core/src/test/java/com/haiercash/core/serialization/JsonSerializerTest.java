@@ -10,8 +10,6 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
-;
-
 /**
  * Created by 许崇雷 on 2017-09-22.
  */
