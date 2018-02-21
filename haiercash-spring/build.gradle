@@ -51,7 +51,7 @@ dependencies {
     //数据库
     compile('com.oracle:ojdbc6:11g')
     compile('com.alibaba:druid-spring-boot-starter:1.1.5')
-    compile('com.haiercash:haiercash-mybatis:1.0.4')
+    compile('com.haiercash:haiercash-mybatis:1.0.5')
     //支持
     compile('org.json:json')
     //==编译时==
