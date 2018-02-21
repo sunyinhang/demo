@@ -23,7 +23,7 @@ public final class Tracer implements ITracer {
     private static final String DATE_FORMAT = "yyyyMMdd" + TRACE_ID_SEPARATOR + "HHmmss";
     private static final int APPLICATION_NAME_LENGTH = 3;
     private static final int TRACE_ID_MIN_LENGTH = 10;
-    private static final int TRACE_ID_MAX_LENGTH_ = 50;
+    private static final int TRACE_ID_MAX_LENGTH = 50;
     private static final int SPAN_ID_MIN_LENGTH = 1;
     private static final int SPAN_ID_MAX_LENGTH = 50;
     private final String applicationName;
@@ -48,7 +48,7 @@ public final class Tracer implements ITracer {
 
     //无效 traceId 返回 true,防止 header 注入
     private static boolean isInvalidTraceId(String traceId) {
-        if (traceId == null || traceId.length() < TRACE_ID_MIN_LENGTH || traceId.length() > TRACE_ID_MAX_LENGTH_)
+        if (traceId == null || traceId.length() < TRACE_ID_MIN_LENGTH || traceId.length() > TRACE_ID_MAX_LENGTH)
             return true;
         for (Character ch : new CharSequenceIterable(traceId)) {
             if (CharUtils.isAsciiAlphanumeric(ch)
@@ -103,7 +103,7 @@ public final class Tracer implements ITracer {
             parentSpanId = request.getHeader(TraceHeaders.PARENT_SPAN_ID_NAME);
         }
         if (isInvalidTraceId(traceId))
-            traceId = createTraceId();
+            traceId = this.createTraceId();
         if (isInvalidSpanId(spanId))
             spanId = null;
         if (isInvalidSpanId(parentSpanId))

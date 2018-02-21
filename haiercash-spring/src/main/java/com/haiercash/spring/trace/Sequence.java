@@ -14,16 +14,16 @@ public final class Sequence implements ISequence {
 
     @Override
     public long getAndIncrement() {
-        lock.lock();
+        this.lock.lock();
         try {
             LocalDate now = LocalDate.now();
-            if (!now.equals(lastDate)) {
-                lastDate = now;
-                counter.set(1L);
+            if (!now.equals(this.lastDate)) {
+                this.lastDate = now;
+                this.counter.set(1L);
             }
-            return counter.getAndIncrement();
+            return this.counter.getAndIncrement();
         } finally {
-            lock.unlock();
+            this.lock.unlock();
         }
     }
 }
