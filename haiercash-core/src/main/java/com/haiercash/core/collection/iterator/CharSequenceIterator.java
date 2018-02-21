@@ -90,7 +90,7 @@ public final class CharSequenceIterator implements Iterator<Character> {
      * @since 4.0
      */
     public int getStartIndex() {
-        return startIndex;
+        return this.startIndex;
     }
 
     /**

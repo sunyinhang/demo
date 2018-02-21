@@ -20,7 +20,7 @@ public enum VFSType {
     }
 
     public String getPrefix() {
-        return prefix;
+        return this.prefix;
     }
 
     public boolean in(VFSType... types) {

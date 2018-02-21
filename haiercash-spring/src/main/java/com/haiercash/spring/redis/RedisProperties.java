@@ -18,7 +18,7 @@ public final class RedisProperties {
     public String addPrefix(String key) {
         return StringUtils.isEmpty(this.globalKeyPrefix)
                 ? (key == null ? StringUtils.EMPTY : key)
-                : (StringUtils.isEmpty(key) ? globalKeyPrefix : (globalKeyPrefix + ":" + key));
+                : (StringUtils.isEmpty(key) ? this.globalKeyPrefix : (this.globalKeyPrefix + ":" + key));
     }
 
     public String removePrefix(String key) {

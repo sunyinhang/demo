@@ -93,7 +93,7 @@ public class MyBatisAutoConfiguration {
             else if (StringUtils.equals(right, "AbstractMapper.xml"))
                 return 1;
             else
-                return comparer.compare(left, right);
+                return this.comparer.compare(left, right);
         }
     }
 }

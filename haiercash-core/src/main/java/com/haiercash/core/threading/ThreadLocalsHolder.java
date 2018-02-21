@@ -23,15 +23,15 @@ public final class ThreadLocalsHolder {
     }
 
     public Thread getThread() {
-        return thread;
+        return this.thread;
     }
 
     public Object getThreadLocals() {
-        return threadLocals;
+        return this.threadLocals;
     }
 
     public Object getInheritableThreadLocals() {
-        return inheritableThreadLocals;
+        return this.inheritableThreadLocals;
     }
 
     public void copyTo(Thread thread) {

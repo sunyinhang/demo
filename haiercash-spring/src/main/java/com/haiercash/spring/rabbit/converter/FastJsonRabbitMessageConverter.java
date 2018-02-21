@@ -25,7 +25,7 @@ public final class FastJsonRabbitMessageConverter extends WhiteListDeserializing
     private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
 
     public String getDefaultCharset() {
-        return defaultCharset;
+        return this.defaultCharset;
     }
 
     public void setDefaultCharset(String defaultCharset) {
@@ -33,7 +33,7 @@ public final class FastJsonRabbitMessageConverter extends WhiteListDeserializing
     }
 
     public ClassLoader getBeanClassLoader() {
-        return beanClassLoader;
+        return this.beanClassLoader;
     }
 
     @Override

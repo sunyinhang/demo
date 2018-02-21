@@ -160,19 +160,19 @@ public final class IdCard {
     }
 
     public String getIdNo() {
-        return idNo;
+        return this.idNo;
     }
 
     public boolean isValid() {
-        return valid;
+        return this.valid;
     }
 
     public String getInvalidReason() {
-        return invalidReason;
+        return this.invalidReason;
     }
 
     public CardType getCardType() {
-        return cardType;
+        return this.cardType;
     }
 
     //获取省份

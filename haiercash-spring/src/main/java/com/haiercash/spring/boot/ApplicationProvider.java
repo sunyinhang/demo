@@ -26,6 +26,6 @@ public final class ApplicationProvider {
     private void init() {
         applicationTemplate = this.applicationTemplateInstance;
         ApplicationProperties properties = applicationTemplate.getProperties();
-        log.info(String.format("Application name: %s, description: %s, version: %s", properties.getName(), properties.getDescription(), properties.getVersion()));
+        this.log.info(String.format("Application name: %s, description: %s, version: %s", properties.getName(), properties.getDescription(), properties.getVersion()));
     }
 }

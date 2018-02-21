@@ -65,6 +65,6 @@ public final class CharSequenceIterable implements Iterable<Character> {
      */
     @Override
     public Iterator<Character> iterator() {
-        return new CharSequenceIterator(this.charSequence, startIndex, endIndex);
+        return new CharSequenceIterator(this.charSequence, this.startIndex, this.endIndex);
     }
 }

@@ -24,7 +24,7 @@ public final class MappingFastJsonRabbitMessageConverter extends AbstractMessage
     }
 
     public String getDefaultCharset() {
-        return defaultCharset;
+        return this.defaultCharset;
     }
 
     public void setDefaultCharset(String defaultCharset) {

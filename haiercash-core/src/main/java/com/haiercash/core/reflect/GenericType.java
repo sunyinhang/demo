@@ -37,15 +37,15 @@ public abstract class GenericType<T> implements ParameterizedType {
     }
 
     public Type[] getActualTypeArguments() {
-        return actualTypeArguments;
+        return this.actualTypeArguments;
     }
 
     public Class<?> getRawType() {
-        return rawType;
+        return this.rawType;
     }
 
     public Type getOwnerType() {
-        return ownerType;
+        return this.ownerType;
     }
 
     @Override
@@ -55,7 +55,7 @@ public abstract class GenericType<T> implements ParameterizedType {
         if (!(obj instanceof GenericType))
             return false;
         GenericType that = (GenericType) obj;
-        return Arrays.equals(actualTypeArguments, that.actualTypeArguments)
+        return Arrays.equals(this.actualTypeArguments, that.actualTypeArguments)
                 && Objects.equals(this.rawType, that.rawType)
                 && Objects.equals(this.ownerType, that.ownerType);
     }

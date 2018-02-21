@@ -20,6 +20,6 @@ public final class MailTemplateProvider {
 
     @PostConstruct
     private void init() {
-        mailTemplate = mailTemplateInstance;
+        mailTemplate = this.mailTemplateInstance;
     }
 }

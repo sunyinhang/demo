@@ -34,6 +34,6 @@ public final class ApplicationTemplate {
 
     //属性
     public ApplicationProperties getProperties() {
-        return properties;
+        return this.properties;
     }
 }

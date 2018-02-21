@@ -25,7 +25,7 @@ public final class ContextRunnable implements Runnable {
         IncomingLog.writeBeginLog(action);
         long begin = System.currentTimeMillis();
         try {
-            runnable.run();
+            this.runnable.run();
             IncomingLog.writeEndLog(action, System.currentTimeMillis() - begin);
         } catch (Exception e) {
             IncomingLog.writeErrorLog(action, e, System.currentTimeMillis() - begin);
