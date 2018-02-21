@@ -117,7 +117,7 @@ public class RestTemplateEx extends RestTemplate {
         public void doWithRequest(ClientHttpRequest ribbonRequest) throws IOException {
             if (this.requestCallback != null)
                 this.requestCallback.doWithRequest(ribbonRequest);
-            putContextHeaders(ribbonRequest);
+            this.putContextHeaders(ribbonRequest);
         }
     }
 }
