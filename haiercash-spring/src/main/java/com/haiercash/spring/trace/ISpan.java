@@ -31,11 +31,6 @@ public interface ISpan {
         public String getTraceSpanId() {
             return StringUtils.EMPTY;
         }
-
-        @Override
-        public String toString() {
-            return StringUtils.EMPTY;
-        }
     };
 
     ISpan continueSpan();
@@ -47,7 +42,4 @@ public interface ISpan {
     String getParentSpanId();
 
     String getTraceSpanId();
-
-    @Deprecated
-    String toString();
 }

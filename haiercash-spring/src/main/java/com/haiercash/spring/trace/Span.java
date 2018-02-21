@@ -49,9 +49,4 @@ public final class Span implements ISpan {
     public String getTraceSpanId() {
         return StringUtils.isEmpty(this.spanId) ? this.traceId : (this.traceId + SEPARATOR_TRACE_ID_SPAN_ID + this.spanId);
     }
-
-    @Override
-    public String toString() {
-        return this.getTraceSpanId();
-    }
 }
