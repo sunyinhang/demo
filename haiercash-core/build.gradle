@@ -68,6 +68,10 @@ bootRepackage {
 
 apply plugin: 'maven-publish'
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -81,6 +85,10 @@ publishing {
                 asNode().appendNode('name', POM_NAME)
                 asNode().appendNode('description', POM_DESCRIPTION)
                 asNode().appendNode('url', POM_URL)
+            }
+            //
+            artifact sourceJar {
+                classifier "sources"
             }
         }
     }
