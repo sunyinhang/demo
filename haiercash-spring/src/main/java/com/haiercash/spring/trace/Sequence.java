@@ -9,8 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class Sequence implements ISequence {
     private final ReentrantLock lock = new ReentrantLock();
+    private final AtomicLong counter = new AtomicLong(1L);
     private volatile LocalDate lastDate;
-    private volatile AtomicLong counter = new AtomicLong(1L);
 
     @Override
     public long getAndIncrement() {

@@ -8,7 +8,7 @@ import com.haiercash.core.lang.StringUtils;
  * Created by 许崇雷 on 2016/7/15.
  */
 public final class Path {
-    private String path;//路径
+    private final String path;//路径
 
     public Path() {
         this.path = Environment.Slash;
