@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Scope;
  * Created by 许崇雷 on 2018-02-09.
  */
 @Configuration
-public class FeignClientsAutoConfiguration {
+public class FeignClientsConfiguration {
     @Bean
     @Scope("prototype")
     @ConditionalOnMissingBean
