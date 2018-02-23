@@ -96,6 +96,10 @@ public class AlipayFuwuController extends BaseController {
         String phone = Convert.toString("mobile");
         if (StringUtils.isEmpty(phone))
             throw new BusinessException(ConstUtil.ERROR_CODE, "手机号不能为空");
+        String bankNo = Convert.toString("bankNo");
+        if (StringUtils.isEmpty(bankNo))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "银行代码不能为空");
+
         return alipayFuwuService.realAuthentication(map);
     }
 }

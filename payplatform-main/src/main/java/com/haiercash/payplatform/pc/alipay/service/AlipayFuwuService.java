@@ -15,6 +15,9 @@ import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
+import com.haiercash.payplatform.service.RegisterService;
+import com.haiercash.payplatform.service.client.OutreachClient;
+import com.haiercash.payplatform.service.client.UauthClient;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.config.EurekaServer;
@@ -26,6 +29,7 @@ import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
+import com.haiercash.spring.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +54,12 @@ public class AlipayFuwuService extends BaseService {
     private AlipayConfig alipayConfig;
     @Autowired
     private OutreachService outreachService;
+    @Autowired
+    private RegisterService registerService;
+    @Autowired
+    private UauthClient uauthClient;
+    @Autowired
+    private OutreachClient outreachClient;
 
     //联合登陆 auth_base 模式
     public IResponse<Map> login(String authCode) throws AlipayApiException {
@@ -250,14 +260,60 @@ public class AlipayFuwuService extends BaseService {
             throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 
         //根据第三方 uid 查询用户信息
+        IResponse<Map> isRegisterResp = this.uauthClient.isRegister(EncryptUtil.simpleEncrypt(phone));
+        String isRegisterFlag = Convert.toString(isRegisterResp.getBody().get("isRegister"));//N：未注册,Y：已注册, C: 手机号已被占用
+        String userId;
+        switch (isRegisterFlag) {
+            case "N"://未注册
+                //调用外联实名认证
+                Map<String, Object> identityParams = new HashMap<>();
+                identityParams.put("accountName", name);//姓名
+                identityParams.put("accountNo", params.get("cardnumber"));//银行卡号
+                identityParams.put("bankCode", params.get("bankNo"));//银行号
+                identityParams.put("id", certNo);
+                identityParams.put("cardPhone", params.get("mobile"));
+                identityParams.put("flag", "1");//四要素
+                identityParams.put("channelNo", this.getChannelNo());
+                identityParams.put("days", "0");
+                Map<String, Object> identityResp = this.outreachClient.identifyByFlag(identityParams);
+                if (!"00000".equals(identityResp.get("RET_CODE")))
+                    throw new BusinessException(ConstUtil.ERROR_CODE, "实名认证失败");
+                //注册并绑定
+                IResponse<String> saveResult = this.saveUserByExternUid(thirdUserId, phone);
+                saveResult.assertSuccessNeedBody();
+                userId = saveResult.getBody();
+                logger.info("注册后返回 userId: " + userId);
+                break;
+            case "Y"://已注册
+                IResponse<Map> userInfo = this.uauthClient.getUserId(EncryptUtil.simpleEncrypt(phone));//根据手机获取 userId
+                userId = Convert.toString(userInfo.getBody().get("userId"));
+                //5.查询实名信息
+                Map<String, Object> custMap = new HashMap<>();
+                custMap.put("userId", userId);//内部userId
+                custMap.put("channel", ConstUtil.CHANNEL);
+                custMap.put("channelNo", this.getChannelNo());
+                Map<String, Object> custresult = appServerService.queryPerCustInfo(token, custMap);
+                if (!HttpUtil.isSuccess(custresult))
+                    throw new BusinessException(HttpUtil.getRetFlag(custresult), HttpUtil.getRetMsg(custresult));
+                Map<String, Object> custBody = HttpUtil.getBodyMap(custresult);
+                String custCertNo = Convert.toString(custBody.get("certNo"));
+                if (StringUtils.isEmpty(custCertNo))
+                    throw new BusinessException(ConstUtil.ERROR_CODE, "实名身份证为空");
+                if (!custCertNo.equals(sessionMap.get("certNo")))
+                    throw new BusinessException(ConstUtil.ERROR_CODE, "客户已被占用");
+                //绑定
+
+
+                break;
+            case "C"://被占用
+                throw new BusinessException(ConstUtil.ERROR_CODE, "手机号被占用");
+            default:
+                throw new BusinessException(ConstUtil.ERROR_CODE, "查询注册状态失败");
+        }
+
+        //再次查询
         IResponse<Map> externUidResp = this.queryUserByExternUid(thirdUserId);
-        if (!externUidResp.isSuccessNeedBody()) {//该用户不存在, 注册用户
-            IResponse<Map> saveResult = this.saveUserByExternUid(thirdUserId, phone);
-            saveResult.assertSuccess();
-            //再次查询
-            externUidResp = this.queryUserByExternUid(thirdUserId);
-            externUidResp.assertSuccessNeedBody();
-        }//存在,获取 userId
+        externUidResp.assertSuccessNeedBody();
         Map<String, String> custInfoBody = externUidResp.getBody();
 
         //保存 session
@@ -315,7 +371,7 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //注册第三方用户
-    private IResponse<Map> saveUserByExternUid(String externUid, String linkMobile) {
+    private IResponse<String> saveUserByExternUid(String externUid, String linkMobile) {
         Map<String, Object> map = new HashMap<>();
         String externCompanyNo_ = EncryptUtil.simpleEncrypt(this.getChannelNo());
         String externUid_ = EncryptUtil.simpleEncrypt(externUid);
@@ -324,7 +380,7 @@ public class AlipayFuwuService extends BaseService {
         map.put("externUid", externUid_);
         map.put("linkMobile", linkMobile_);
         String url = EurekaServer.UAUTH + "/app/uauth/saveUserByExternUid";
-        return CommonRestUtils.postForMap(url, map);
+        return CommonRestUtils.postForObject(url, map, String.class);
     }
 
 

@@ -1,4 +1,4 @@
-package com.haiercash.payplatform.service;
+package com.haiercash.payplatform.service.client;
 
 import com.haiercash.spring.feign.annotation.FeignApi;
 import com.haiercash.spring.rest.common.CommonResponse;
@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by 许崇雷 on 2018-02-08.
  */
 @FeignClient(name = "${app.rest.UAUTH}", path = "/app/uauth")
-public interface UauthService {
+public interface UauthClient {
     /**
      * @param mobile 手机号, 需加密
      */
