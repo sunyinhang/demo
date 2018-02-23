@@ -791,16 +791,5 @@ public class CommonController extends BaseController {
         return commonPageService.getAreaCode(map.get("provinceName").toString(), map.get("cityName").toString(), map.get("districtName").toString());
     }
 
-    /**
-     * 提交还款请求
-     *
-     * @param map
-     * @return
-     */
-    @RequestMapping(value = "api/payment/saveZdhkInfo", method = RequestMethod.POST)
-    public IResponse<Map> saveZdhkInfo(@RequestBody Map<String, Object> map) {
-        return commonPageService.saveZdhkInfo(map);
-    }
-
 
 }

@@ -1777,11 +1777,4 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         return success(map);
     }
 
-    @Override
-    public IResponse<Map> saveZdhkInfo(Map<String, Object> map) {
-        logger.info("============提交还款请求开始===========");
-        String url = EurekaServer.ACQUIRER + "/api/appl/saveZdhkInfo";
-        return CommonRestUtils.postForMap(url, map);
-    }
-
 }
