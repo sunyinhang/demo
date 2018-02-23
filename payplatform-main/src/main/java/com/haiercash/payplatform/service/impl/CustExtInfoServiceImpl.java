@@ -2,6 +2,7 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.config.StorageConfig;
@@ -22,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.stream.FileImageOutputStream;
@@ -606,23 +606,29 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         //判断联系人信息管控
         String contactMobile_one = (String) params.get("contactMobile_one");
-        String contactMobile_two = (String) params.get("contactMobile_two");
-        //预授信额度flag
-        String preAmountFlag = (String) params.get("preAmountFlag");
-        if (contactMobile_one != null && !"".equals(contactMobile_one) && contactMobile_two != null && !"".equals(contactMobile_two)) {
-            if (contactMobile_one.equals(contactMobile_two)) {
-                logger.info("两个联系人手机号不能重复");
-                return fail(ConstUtil.ERROR_CODE, "联系人手机号不能重复!");
+        String positionType;
+        String preAmountFlag = StringUtils.EMPTY;
+        if (!"60".equals(channelNo)) {
+            String contactMobile_two = (String) params.get("contactMobile_two");
+            //预授信额度flag
+            preAmountFlag = (String) params.get("preAmountFlag");
+            if (contactMobile_one != null && !"".equals(contactMobile_one) && contactMobile_two != null && !"".equals(contactMobile_two)) {
+                if (contactMobile_one.equals(contactMobile_two)) {
+                    logger.info("两个联系人手机号不能重复");
+                    return fail(ConstUtil.ERROR_CODE, "联系人手机号不能重复!");
+                }
+            } else {
+                logger.info("联系人手机号为空");
+                return fail(ConstUtil.ERROR_CODE, "联系人手机号为空!");
+            }
+            positionType = (String) params.get("positionType");//从业性质
+            logger.info("positionType=" + positionType);
+            if (positionType == null || "".equals(positionType)) {
+                logger.info("positionType为空");
+                return fail(ConstUtil.ERROR_CODE, "参数positionType为空!");
             }
         } else {
-            logger.info("联系人手机号为空");
-            return fail(ConstUtil.ERROR_CODE, "联系人手机号为空!");
-        }
-        String positionType = (String) params.get("positionType");//从业性质
-        logger.info("positionType=" + positionType);
-        if (positionType == null || "".equals(positionType)) {
-            logger.info("positionType为空");
-            return fail(ConstUtil.ERROR_CODE, "参数positionType为空!");
+            positionType = "10";
         }
 
         //总入口需查询客户信息数据
@@ -644,7 +650,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", channel);
         paramMap.put("custNo", custNo);
-        paramMap.put("maritalStatus", params.get("maritalStatus"));//婚姻状况
+        if (!"60".equals(channelNo)) {
+            paramMap.put("maritalStatus", params.get("maritalStatus"));//婚姻状况
+        }
+        paramMap.put("positionType", positionType);// 工作性质
         paramMap.put("liveProvince", liveAddress_code_split[0]);// 现住房地址（省）
         paramMap.put("liveCity", liveAddress_code_split[1]);// 现住房地址（市）
         paramMap.put("liveArea", liveAddress_code_split[2]);// 现住房地址（区）
@@ -658,7 +667,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("position", "03");//职务   基层
         //（标准化现金贷字段）
         paramMap.put("providerNum", 0);// 供养人数
-        paramMap.put("positionType", positionType);// 工作性质
+
         switch (positionType) {
             case "10": //受薪人士
                 paramMap.put("officeName", params.get("officeName"));// 工作单位
@@ -748,29 +757,32 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         logger.info("*********保存联系人一**************结束");
-        logger.info("*********保存联系人二**************开始");
+
+        if (!"60".equals(channelNo)) {
+            logger.info("*********保存联系人二**************开始");
 //        Integer id_two = (Integer) params.get("id_two");
-        Integer id_two = Convert.nullInteger(params.get("id_two"));
-        if (id_two != null) {
-            custparamMap_two.put("id", id_two);// 联系人ID
+            Integer id_two = Convert.nullInteger(params.get("id_two"));
+            if (id_two != null) {
+                custparamMap_two.put("id", id_two);// 联系人ID
+            }
+            custparamMap_two.put("channelNo", channelNo);// 渠道
+            custparamMap_two.put("channel", channel);
+            custparamMap_two.put("custNo", custNo);//客户编号
+            custparamMap_two.put("relationType", params.get("relationType_two"));//联系人关系
+            custparamMap_two.put("contactName", params.get("contactName_two"));//联系人名称
+            custparamMap_two.put("contactMobile", params.get("contactMobile_two"));//联系人手机
+            Map<String, Object> CustFCiCustContactTwoMap = appServerService.saveCustFCiCustContact(token, custparamMap_two);
+            if (CustFCiCustContactTwoMap == null) {
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            }
+            Map CustFCiCustContactTwoMapHeadMap = (Map<String, Object>) CustFCiCustContactTwoMap.get("head");
+            String CustFCiCustContactTwoMapHeadMapFlag = (String) CustFCiCustContactTwoMapHeadMap.get("retFlag");
+            if (!"00000".equals(CustFCiCustContactTwoMapHeadMapFlag)) {
+                String retMsg = (String) CustFCiCustContactTwoMapHeadMap.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+            logger.info("*********保存联系人二**************结束");
         }
-        custparamMap_two.put("channelNo", channelNo);// 渠道
-        custparamMap_two.put("channel", channel);
-        custparamMap_two.put("custNo", custNo);//客户编号
-        custparamMap_two.put("relationType", params.get("relationType_two"));//联系人关系
-        custparamMap_two.put("contactName", params.get("contactName_two"));//联系人名称
-        custparamMap_two.put("contactMobile", params.get("contactMobile_two"));//联系人手机
-        Map<String, Object> CustFCiCustContactTwoMap = appServerService.saveCustFCiCustContact(token, custparamMap_two);
-        if (CustFCiCustContactTwoMap == null) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-        Map CustFCiCustContactTwoMapHeadMap = (Map<String, Object>) CustFCiCustContactTwoMap.get("head");
-        String CustFCiCustContactTwoMapHeadMapFlag = (String) CustFCiCustContactTwoMapHeadMap.get("retFlag");
-        if (!"00000".equals(CustFCiCustContactTwoMapHeadMapFlag)) {
-            String retMsg = (String) CustFCiCustContactTwoMapHeadMap.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
-        logger.info("*********保存联系人二**************结束");
         Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
         if (code != null && !"".equals(code)) {
@@ -938,10 +950,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         String typCde = Convert.toString(params.get("typCde"));
         String applyTnrTyp = Convert.toString(params.get("applyTnrTyp"));
-        BigDecimal apprvAmt = Convert.toDecimal(params.get("apprvAmt"));
+        BigDecimal apprvAmt = Convert.nullDecimal(params.get("apprvAmt"));
         String applyTnr = Convert.toString(params.get("applyTnr"));
         String mtdCde = Convert.toString(params.get("mtdCde"));
-        if (StringUtils.isEmpty(typCde) || StringUtils.isEmpty(apprvAmt) || StringUtils.isEmpty(applyTnrTyp) ||
+        if (StringUtils.isEmpty(typCde) || apprvAmt == null || StringUtils.isEmpty(applyTnrTyp) ||
                 StringUtils.isEmpty(applyTnr) || StringUtils.isEmpty(mtdCde)) {
             logger.info("typCde=" + typCde + "  apprvAmt=" + apprvAmt + "  applyTnrTyp=" + applyTnrTyp + "  applyTnr=" + applyTnr + "mtdCde=" + mtdCde);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
