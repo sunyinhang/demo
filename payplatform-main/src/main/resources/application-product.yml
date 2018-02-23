@@ -182,7 +182,7 @@ app:
     appid: wx046cbd2b50704fbc
     secret: 3cff4ee0fd7594270200a8ad55cf1984
   alipay:
-    url: identityParamshttps://openapi.alipay.com/gateway.do
+    url: https://openapi.alipay.com/gateway.do
     app-id:
     app-private-key:
     alipay-public-key:
