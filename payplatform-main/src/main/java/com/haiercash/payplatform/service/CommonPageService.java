@@ -95,5 +95,12 @@ public interface CommonPageService {
      */
     Map<String, Object> getAreaCode(String provinceName, String cityName, String districtName);
 
-
+    /**
+     * 提交还款请求
+     *
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    IResponse<Map> saveZdhkInfo(Map<String, Object> map);
 }
