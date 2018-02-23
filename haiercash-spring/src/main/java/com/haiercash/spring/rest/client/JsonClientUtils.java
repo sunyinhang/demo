@@ -230,7 +230,7 @@ public final class JsonClientUtils {
 
         @Override
         protected RestTemplate getRestTemplate() {
-            return RestTemplateProvider.getRestTemplateJson();
+            return RestTemplateProvider.getJsonRestTemplate();
         }
     }
 }

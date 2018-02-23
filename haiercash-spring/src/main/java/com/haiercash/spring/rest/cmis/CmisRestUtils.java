@@ -99,7 +99,7 @@ public final class CmisRestUtils {
 
         @Override
         protected RestTemplate getRestTemplate() {
-            return RestTemplateProvider.getRestTemplate();
+            return RestTemplateProvider.getRibbonJsonRestTemplate();
         }
     }
 }

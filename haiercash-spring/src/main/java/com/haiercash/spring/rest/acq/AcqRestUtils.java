@@ -91,7 +91,7 @@ public final class AcqRestUtils {
 
         @Override
         protected RestTemplate getRestTemplate() {
-            return RestTemplateProvider.getRestTemplate();
+            return RestTemplateProvider.getRibbonJsonRestTemplate();
         }
     }
 }

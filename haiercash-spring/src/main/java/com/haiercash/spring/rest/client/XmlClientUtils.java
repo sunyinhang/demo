@@ -230,7 +230,7 @@ public final class XmlClientUtils {
 
         @Override
         protected RestTemplate getRestTemplate() {
-            return RestTemplateProvider.getRestTemplateXml();
+            return RestTemplateProvider.getXmlRestTemplate();
         }
     }
 }

@@ -38,8 +38,8 @@ public class RestAutoConfiguration {
     @Bean
     @Primary
     @LoadBalanced
-    @ConditionalOnMissingBean(name = "restTemplate")
-    RestTemplate restTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
+    @ConditionalOnMissingBean(name = "ribbonJsonRestTemplate")
+    RestTemplate ribbonJsonRestTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
         RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.JSON, clientHttpRequestFactory);
         this.httpConvertersProperties.config(restTemplate);
         this.restProperties.config(restTemplate);
@@ -47,8 +47,18 @@ public class RestAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "restTemplateJson")
-    RestTemplate restTemplateJson(ClientHttpRequestFactory clientHttpRequestFactory) {
+    @LoadBalanced
+    @ConditionalOnMissingBean(name = "ribbonXmlRestTemplate")
+    RestTemplate ribbonXmlRestTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
+        RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.XML, clientHttpRequestFactory);
+        this.httpConvertersProperties.config(restTemplate);
+        this.restProperties.config(restTemplate);
+        return restTemplate;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "jsonRestTemplate")
+    RestTemplate jsonRestTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
         RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.JSON, clientHttpRequestFactory);
         this.httpConvertersProperties.config(restTemplate);
         this.restProperties.config(restTemplate);
@@ -56,8 +66,8 @@ public class RestAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "restTemplateXml")
-    RestTemplate restTemplateXml(ClientHttpRequestFactory clientHttpRequestFactory) {
+    @ConditionalOnMissingBean(name = "xmlRestTemplate")
+    RestTemplate xmlRestTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
         RestTemplateEx restTemplate = new RestTemplateEx(RestTemplateSupportedType.XML, clientHttpRequestFactory);
         this.httpConvertersProperties.config(restTemplate);
         this.restProperties.config(restTemplate);

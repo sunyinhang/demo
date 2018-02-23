@@ -35,7 +35,7 @@ public final class HttpUtil {
     }
 
     private static RestTemplate getRestTemplate() {
-        return RestTemplateProvider.getRestTemplate();
+        return RestTemplateProvider.getRibbonJsonRestTemplate();
     }
 
     public static HttpHeaders getHeaders(String token) {

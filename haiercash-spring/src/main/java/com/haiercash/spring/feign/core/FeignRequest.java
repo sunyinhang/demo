@@ -28,9 +28,10 @@ public final class FeignRequest {
 
     public Object invoke(boolean loadBalanced) {
         MediaType mediaType = this.headers.getContentType();
-        RestTemplate restTemplate = (mediaType != null && mediaType.getSubtype().contains("xml"))
-                ? RestTemplateProvider.getRestTemplateXml()
-                : (loadBalanced ? RestTemplateProvider.getRestTemplate() : RestTemplateProvider.getRestTemplateJson());
+        boolean isXml = mediaType != null && mediaType.getSubtype().contains("xml");
+        RestTemplate restTemplate = loadBalanced
+                ? (isXml ? RestTemplateProvider.getRibbonXmlRestTemplate() : RestTemplateProvider.getRibbonJsonRestTemplate())
+                : (isXml ? RestTemplateProvider.getXmlRestTemplate() : RestTemplateProvider.getJsonRestTemplate());
         return AbstractRestUtils.exchange(restTemplate, this.getUrl(), this.getMethod(), this.getBody(), this.getResponseType(), this.getUriVariables(), this.getHeaders());
     }
 

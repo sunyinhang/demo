@@ -12,40 +12,50 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public final class RestTemplateProvider {
-    private static RestTemplate restTemplate;
-    private static RestTemplate restTemplateJson;
-    private static RestTemplate restTemplateXml;
+    private static RestTemplate ribbonJsonRestTemplate;
+    private static RestTemplate ribbonXmlRestTemplate;
+    private static RestTemplate jsonRestTemplate;
+    private static RestTemplate xmlRestTemplate;
     @Autowired
-    private RestTemplate restTemplateInstance;
+    private RestTemplate ribbonJsonRestTemplateInstance;
     @Autowired
-    @Qualifier("restTemplateJson")
-    private RestTemplate restTemplateJsonInstance;
+    @Qualifier("ribbonXmlRestTemplate")
+    private RestTemplate ribbonXmlRestTemplateInstance;
     @Autowired
-    @Qualifier("restTemplateXml")
-    private RestTemplate restTemplateXmlInstance;
+    @Qualifier("jsonRestTemplate")
+    private RestTemplate jsonRestTemplateInstance;
+    @Autowired
+    @Qualifier("xmlRestTemplate")
+    private RestTemplate xmlRestTemplateInstance;
 
     private RestTemplateProvider() {
     }
 
-    //负载均衡的
-    public static RestTemplate getRestTemplate() {
-        return restTemplate;
+    //负载均衡 Json
+    public static RestTemplate getRibbonJsonRestTemplate() {
+        return ribbonJsonRestTemplate;
+    }
+
+    //负载均衡 Xml
+    public static RestTemplate getRibbonXmlRestTemplate() {
+        return ribbonXmlRestTemplate;
     }
 
     //非负载均衡 Json
-    public static RestTemplate getRestTemplateJson() {
-        return restTemplateJson;
+    public static RestTemplate getJsonRestTemplate() {
+        return jsonRestTemplate;
     }
 
     //非负载均衡 Xml
-    public static RestTemplate getRestTemplateXml() {
-        return restTemplateXml;
+    public static RestTemplate getXmlRestTemplate() {
+        return xmlRestTemplate;
     }
 
     @PostConstruct
     private void init() {
-        restTemplate = this.restTemplateInstance;
-        restTemplateJson = this.restTemplateJsonInstance;
-        restTemplateXml = this.restTemplateXmlInstance;
+        ribbonJsonRestTemplate = this.ribbonJsonRestTemplateInstance;
+        ribbonXmlRestTemplate = this.ribbonXmlRestTemplateInstance;
+        jsonRestTemplate = this.jsonRestTemplateInstance;
+        xmlRestTemplate = this.xmlRestTemplateInstance;
     }
 }
