@@ -1,7 +1,7 @@
 package com.haiercash.spring.feign.core;
 
 import com.haiercash.spring.client.RestTemplateProvider;
-import com.haiercash.spring.rest.AbstractRestUtils;
+import com.haiercash.spring.client.RestTemplateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +32,7 @@ public final class FeignRequest {
         RestTemplate restTemplate = loadBalanced
                 ? (isXml ? RestTemplateProvider.getRibbonXmlRestTemplate() : RestTemplateProvider.getRibbonJsonRestTemplate())
                 : (isXml ? RestTemplateProvider.getXmlRestTemplate() : RestTemplateProvider.getJsonRestTemplate());
-        return AbstractRestUtils.exchange(restTemplate, this.getUrl(), this.getMethod(), this.getBody(), this.getResponseType(), this.getUriVariables(), this.getHeaders());
+        return RestTemplateUtils.exchange(restTemplate, this.getUrl(), this.getMethod(), this.getBody(), this.getResponseType(), this.getUriVariables(), this.getHeaders());
     }
 
     interface Factory {
