@@ -1,6 +1,8 @@
 package com.haiercash.payplatform.pc.alipay.controller;
 
 import com.alipay.api.AlipayApiException;
+import com.haiercash.core.io.CharsetNames;
+import com.haiercash.core.io.IOUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.config.AlipayConfig;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
@@ -58,16 +61,6 @@ public class AlipayFuwuController extends BaseController {
             throw new BusinessException(ConstUtil.ERROR_CODE, "令牌失效请重新登录");
     }
 
-    //联合登陆
-    @PostMapping("/api/payment/alipay/fuwu/login")
-    public IResponse<Map> login(@RequestBody Map<String, String> params) throws AlipayApiException {
-        String appId = params.get("appId");
-        String authCode = params.get("authCode");
-        this.assertAppId(appId);
-        this.assertAuthCode(authCode);
-        this.assertChannelNo();
-        return alipayFuwuService.login(authCode);
-    }
 
     //授权后验证用户
     @GetMapping("/api/payment/alipay/fuwu/validUser")
@@ -101,5 +94,13 @@ public class AlipayFuwuController extends BaseController {
             throw new BusinessException(ConstUtil.ERROR_CODE, "银行代码不能为空");
 
         return alipayFuwuService.realAuthentication(map);
+    }
+
+    //提交订单并转到支付
+    @PostMapping("/api/payment/alipay/fuwu/pay")
+    public void pay(@RequestBody Map<String, Object> params, HttpServletResponse response) throws AlipayApiException, IOException {
+        String html = this.alipayFuwuService.pay(params);
+        response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
+        IOUtils.write(html, response.getOutputStream(), CharsetNames.UTF_8);
     }
 }

@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -245,6 +246,15 @@ public class AlipayFuwuService extends BaseService {
         Map<String, Object> body = new HashMap<>(1);
         body.put("legalPhone", "T");
         return CommonResponse.success(body);
+    }
+
+    //支付
+    public String pay(Map<String, Object> params) throws AlipayApiException {
+        //调用收单 /api/appl/saveZdhkInfo
+        //获取到 serno
+        String serno = null;
+        BigDecimal repayAmt = BigDecimal.ZERO;
+        return AlipayUtils.wapPay(serno, repayAmt, this.alipayConfig.getSubject());
     }
 
     //查询第三方账号
