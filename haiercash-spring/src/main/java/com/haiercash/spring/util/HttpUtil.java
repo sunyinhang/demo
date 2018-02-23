@@ -1,5 +1,6 @@
 package com.haiercash.spring.util;
 
+import com.haiercash.core.collection.MapUtils;
 import com.haiercash.spring.client.RestTemplateProvider;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -302,10 +303,26 @@ public final class HttpUtil {
             if (resultMap.get("head") instanceof Map) {
                 return (Map) resultMap.get("head");
             } else {
-                return null;
+                return MapUtils.EMPTY_MAP;
             }
         } else {
-            return null;
+            return MapUtils.EMPTY_MAP;
+        }
+    }
+
+    public static Map<String, Object> getBodyMap(Map<String, Object> resultMap) {
+        if (resultMap != null && !resultMap.isEmpty()) {
+            if (resultMap.get("response") != null) {
+                resultMap = (Map) resultMap.get("response");
+            }
+
+            if (resultMap.get("body") instanceof Map) {
+                return (Map) resultMap.get("body");
+            } else {
+                return MapUtils.EMPTY_MAP;
+            }
+        } else {
+            return MapUtils.EMPTY_MAP;
         }
     }
 
