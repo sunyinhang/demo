@@ -4,10 +4,8 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
-import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.core.reflect.GenericType;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
@@ -17,6 +15,7 @@ import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.client.AcquirerClient;
+import com.haiercash.payplatform.service.client.AppServerClient;
 import com.haiercash.payplatform.service.client.CrmClient;
 import com.haiercash.payplatform.service.client.OutreachClient;
 import com.haiercash.payplatform.service.client.UauthClient;
@@ -65,6 +64,8 @@ public class AlipayFuwuService extends BaseService {
     private CrmClient crmClient;
     @Autowired
     private AcquirerClient acquirerClient;
+    @Autowired
+    private AppServerClient appServerClient;
 
     //授权后验证用户
     public IResponse<Map> validUser(String authCode) throws AlipayApiException {
@@ -106,8 +107,7 @@ public class AlipayFuwuService extends BaseService {
         verifyNoMap.put("token", this.getToken());
         verifyNoMap.put("channel", this.getChannel());
         verifyNoMap.put("channelNo", this.getChannelNo());
-        IResponse<Map> verifyResponse = BeanUtils.mapToBean(appServerService.smsVerify(this.getToken(), verifyNoMap), new GenericType<CommonResponse<Map>>() {
-        });
+        IResponse<Map> verifyResponse = this.appServerClient.smsVerify(verifyNoMap);
         verifyResponse.assertSuccess();
 
         //获取 session 信息
