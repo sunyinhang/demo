@@ -82,6 +82,9 @@ public class AlipayFuwuService extends BaseService {
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "学生,不能准入");
 
         Map<String, Object> sessionMap = RedisUtils.getExpireMap(this.getToken());
+        if (MapUtils.isEmpty(sessionMap))
+            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+
         String flag = Convert.toString(sessionMap.get("redirect_flag"));
         if (StringUtils.isEmpty(flag))
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
