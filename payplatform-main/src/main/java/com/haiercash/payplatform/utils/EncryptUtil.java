@@ -6,6 +6,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 /**
  * @author liuhongbin
@@ -161,4 +162,8 @@ public class EncryptUtil {
         String DeString = aesDecrypt(enString, cKey);
         System.out.println("解密后的字串是：" + DeString);
     }*/
+    public static String productKey() {
+        Random ran = new Random();
+        return 10000000 + ran.nextInt(90000000) + "";
+    }
 }

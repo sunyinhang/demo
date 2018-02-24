@@ -11,7 +11,6 @@ import com.haiercash.payplatform.config.VipabcConfig;
 import com.haiercash.payplatform.pc.vipabc.service.VipAbcService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CommonPageService;
-import com.haiercash.payplatform.utils.Base64UtilsVIP;
 import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.DesUtilvip;
 import com.haiercash.payplatform.utils.EncryptUtil;
@@ -1189,12 +1188,12 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         JSONObject jsonObject2 = new JSONObject();
         jsonObject2.put("url", url);
         String reqData = jsonObject2.toString();
-        String productKey = Base64UtilsVIP.productKey();
+        String productKey = EncryptUtil.productKey();
         String key = productKey;
         String iv = productKey;
         String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";//公钥
         String sKey = key;
-        String desData = Base64UtilsVIP.DesEncrypt(reqData, sKey, iv);
+        String desData = EncryptUtil.DesEncrypt(reqData, sKey, iv);
         //3.加密des的key
         password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey((productKey + productKey).getBytes(), publicKey));
         JSONObject reqjson = new JSONObject();
