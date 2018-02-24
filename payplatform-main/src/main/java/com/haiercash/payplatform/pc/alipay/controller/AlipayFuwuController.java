@@ -5,7 +5,6 @@ import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.io.IOUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.pc.alipay.service.AlipayFuwuService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.spring.controller.BaseController;
@@ -23,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by 许崇雷 on 2018-01-18.
@@ -31,19 +29,12 @@ import java.util.Objects;
 @RestController
 public class AlipayFuwuController extends BaseController {
     @Autowired
-    private AlipayConfig alipayConfig;
-    @Autowired
     private AlipayFuwuService alipayFuwuService;
     @Autowired
     private OCRIdentityService ocrIdentityService;
 
     public AlipayFuwuController() {
         super("60");
-    }
-
-    private void assertAppId(String appId) {
-        if (!Objects.equals(appId, alipayConfig.getAppId()))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "错误的 appId");
     }
 
     private void assertAuthCode(String authCode) {
@@ -97,9 +88,9 @@ public class AlipayFuwuController extends BaseController {
     }
 
     //提交订单并转到支付
-    @PostMapping("/api/payment/alipay/fuwu/pay")
-    public void pay(@RequestBody Map<String, Object> params, HttpServletResponse response) throws AlipayApiException, IOException {
-        String html = this.alipayFuwuService.pay(params);
+    @PostMapping("/api/payment/alipay/fuwu/wapPay")
+    public void wapPay(@RequestBody Map<String, Object> params, HttpServletResponse response) throws AlipayApiException, IOException {
+        String html = this.alipayFuwuService.wapPay(params);
         response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
         IOUtils.write(html, response.getOutputStream(), CharsetNames.UTF_8);
     }

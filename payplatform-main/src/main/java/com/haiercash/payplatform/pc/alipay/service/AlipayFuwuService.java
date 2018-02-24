@@ -2,6 +2,7 @@ package com.haiercash.payplatform.pc.alipay.service;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
+import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
@@ -15,6 +16,7 @@ import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
+import com.haiercash.payplatform.service.client.AcquirerClient;
 import com.haiercash.payplatform.service.client.CrmClient;
 import com.haiercash.payplatform.service.client.OutreachClient;
 import com.haiercash.payplatform.service.client.UauthClient;
@@ -22,6 +24,8 @@ import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.acq.AcqRequestBuilder;
+import com.haiercash.spring.rest.acq.IAcqRequest;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.BusinessException;
@@ -32,10 +36,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Created by 许崇雷 on 2018-01-18.
@@ -58,33 +63,8 @@ public class AlipayFuwuService extends BaseService {
     private OutreachClient outreachClient;
     @Autowired
     private CrmClient crmClient;
-
-    //联合登陆 auth_base 模式
-    public IResponse<Map> login(String authCode) throws AlipayApiException {
-        AlipayToken alipayToken = AlipayUtils.getOauthTokenByAuthCode(authCode);
-        String thirdUserId = alipayToken.getUserId();//支付宝 userId
-        String token = UUID.randomUUID().toString();//支付平台的 token
-        //返回(临时代码)
-        Map<String, Object> body = new HashMap<>();
-        body.put("flag", "13");//转额度
-        body.put("token", token);
-        //保存 session
-        Map<String, Object> sessionMap = new HashMap<>();
-        sessionMap.put("externalUserId", "2088122166360986");
-        sessionMap.put("userId", "17685797923");
-        sessionMap.put("phoneNo", "17685797923");
-        sessionMap.put("custNo", "A201801030203522321930");//客户编号
-        sessionMap.put("name", "朱晓雪");//客户姓名
-        sessionMap.put("cardNo", "6217000010068654378");//银行卡号
-        sessionMap.put("bankCode", "105");//银行代码
-        sessionMap.put("bankName", "中国建设银行");//银行名称
-        sessionMap.put("idNo", "370782199302035223");//身份证号
-        sessionMap.put("idCard", "370782199302035223");//身份证号
-        sessionMap.put("idType", "20");
-        RedisUtils.setExpire(token, sessionMap);
-
-        return CommonResponse.success(body);
-    }
+    @Autowired
+    private AcquirerClient acquirerClient;
 
     //授权后验证用户
     public IResponse<Map> validUser(String authCode) throws AlipayApiException {
@@ -242,12 +222,48 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //支付
-    public String pay(Map<String, Object> params) throws AlipayApiException {
-        //调用收单 /api/appl/saveZdhkInfo
-        //获取到 serno
-        String serno = null;
-        BigDecimal repayAmt = BigDecimal.ZERO;
-        return AlipayUtils.wapPay(serno, repayAmt, this.alipayConfig.getSubject());
+    public String wapPay(Map<String, Object> params) throws AlipayApiException {
+        String token = this.getToken();
+        Map<String, Object> sessionMap = RedisUtils.getExpireMap(token);
+        if (MapUtils.isEmpty(sessionMap))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "无效的操作, 请重新登陆");
+        String custNo = Convert.toString(sessionMap.get("custNo"));
+        if (StringUtils.isEmpty(custNo))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "custNo 不能为空");
+        BigDecimal repayAmt = Convert.nullDecimal(params.get("repayAmt"));
+        if (repayAmt == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "repayAmt 不能为空");
+
+        //调用收单 还款申请
+        Map<String, Object> acqParams = new HashMap<>();
+        acqParams.put("applSeq", params.get("applSeq"));
+        acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
+        acqParams.put("setlMode", "");//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
+        acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
+        acqParams.put("psPerdNo", "");//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
+        acqParams.put("acCardNo", "00000000");//还款卡号  acCardNo  VARCHAR2(30)  是
+        acqParams.put("useCoup", "N");//是否使用优惠券  useCoup  VARCHAR2(10)  是  Y：使用 N：不使用
+        acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
+        acqParams.put("actvPrcp", "");//提前还款本金  actvPrcp  Number  O:选填  提前还款本金模式时必输
+        IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
+                .body(Arrays.asList(acqParams))
+                .build();
+        IResponse<List<Map>> response = this.acquirerClient.saveZdhkInfo(request);
+        response.assertSuccessNeedBody();
+        List<Map> bodyList = response.getBody();
+        if (CollectionUtils.isEmpty(bodyList)) {
+            this.logger.info("收单提交还款请求返回的 body 的 list 为空");
+            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        Map<String, Object> body = bodyList.get(0);
+        String applSeq = Convert.toString(body.get("applSeq"));
+        if (StringUtils.isEmpty(applSeq)) {
+            this.logger.info("收单未返回 applSeq");
+            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+
+        //发起网页支付
+        return AlipayUtils.wapPay(applSeq, repayAmt, this.alipayConfig.getSubject());
     }
 
     //查询第三方账号
