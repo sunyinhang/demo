@@ -2,14 +2,17 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.utils.AppServerUtils;
+import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.service.BaseService;
+import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -942,6 +945,84 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("根据商户门店查询贷款品种,请求地址：" + url);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
         logger.info("根据商户门店查询贷款品种,返回信息：" + map);
+        return map;
+    }
+
+    //
+    public Map<String, Object> getHaierCaptcha(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/uauth/haierCaptcha";
+        logger.info("刷新海尔会员验证码,请求地址：" + url);
+        logger.info("刷新海尔会员验证码,请求参数：" + paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("刷新海尔会员验证码,返回结果：" + map);
+        return map;
+    }
+
+    public Map<String, Object> customerLoginCaptcha(String userId, String password, String channel, String channelNo, String captchaAnswer, String captchaToken) {
+        if (StringUtils.isEmpty(userId))
+            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户账号不能为空");
+        if (StringUtils.isEmpty(password))
+            return fail(ConstUtil.ERROR_PARAM_INVALID_CODE, "用户密码不能为空");
+//        String url = EurekaServer.UAUTH + "/app/uauth/validateUsers?userId=" + userId + "&password=" + password;
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/customerLogin";
+        logger.info("个人用户登录,请求地址：" + url);
+        logger.info("个人用户登录,请求参数：" + url);
+        Map paramMap = new HashMap<String, Object>();
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        paramMap.put("userId", userId);
+        paramMap.put("password", password);
+        paramMap.put("externUid", EncryptUtil.simpleEncrypt(channelNo));
+        paramMap.put("deviceType", "H5");
+        paramMap.put("type", "login");
+        if (!StringUtils.isEmpty(captchaAnswer) && !StringUtils.isEmpty(captchaToken)) {
+            paramMap.put("captchaAnswer", EncryptUtil.simpleEncrypt(captchaAnswer));
+            paramMap.put("captchaToken", EncryptUtil.simpleEncrypt(captchaToken));
+        }
+//      IResponse<Map> response = CommonRestUtils.putForMap(url, paramMap);
+        Map map = HttpUtil.restPutMap(url, paramMap);
+        logger.info("个人用户登录,返回结果：" + map);
+        if (StringUtils.isEmpty(map)) {
+            logger.error("登录验证信息失败！");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> getMobile(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/getMobile";
+        logger.info("获取绑定手机号,请求地址：" + url);
+        logger.info("获取绑定手机号,请求参数：" + paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("获取绑定手机号,返回结果：" + map);
+        return map;
+    }
+
+    //根据门店查询销售代表ID
+    public Map<String, Object> findUserIdByStoreNo(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/pub/crm/findUserIdByStoreNo";
+        logger.info("根据门店查询销售代表ID,请求地址：" + url);
+        logger.info("根据门店查询销售代表ID,请求参数：" + paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        logger.info("根据门店查询销售代表ID，返回结果:" + map);
+        return map;
+    }
+
+    //个人版订单修改
+    public Map<String, Object> updateAppOrder(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/updateAppOrder";
+        logger.info("个人版订单修改请求地址：" + url);
+        logger.info("个人版订单修改请求数据:" + paramMap);
+        Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
+        return map;
+    }
+
+    public Map<String, Object> saveAppOrderInfo(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/saveAppOrderInfo";
+        logger.info("人版订单保存接口,请求地址：" + url);
+        logger.info("个人版订单保存接口,请求数据:" + paramMap);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         return map;
     }
 }

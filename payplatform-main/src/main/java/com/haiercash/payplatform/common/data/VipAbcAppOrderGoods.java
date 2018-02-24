@@ -35,5 +35,7 @@ public class VipAbcAppOrderGoods implements Serializable {
     private String vipuuid;
     private String remark;
     private String idCard;
+    private String inputtime;
+    private String saveordertime;
 
 }

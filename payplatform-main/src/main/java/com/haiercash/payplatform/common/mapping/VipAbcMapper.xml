@@ -19,4 +19,81 @@
 
     </select>
 
+    <select id="queryvipordersnandorderno" resultType="java.lang.String">
+        select count(1) from vipabc_order_info where ordersn=#{orderSn,jdbcType=VARCHAR} and orderno is null
+    </select>
+
+    <update id="updatevipapplseq" parameterType="com.haiercash.payplatform.common.data.VipAbcAppOrderGoods">
+        update vipabc_order_info set applseq = #{applseq,jdbcType=VARCHAR},orderNo =#{orderNo,jdbcType=VARCHAR} ,idcard =#{idcard,jdbcType=VARCHAR} where ordersn=#{ordersn,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateordersn" parameterType="com.haiercash.payplatform.common.data.Vipmessage">
+      update vipabc_info set ordersn=#{ordersn,jdbcType=VARCHAR},flag='y' where uuid =#{uuid,jdbcType=VARCHAR}
+    </update>
+
+    <select id="queryvipordersn" resultType="java.lang.String">
+      select count(1) from vipabc_order_info where ordersn=#{ordersn,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="saveDataInterfaceLog" parameterType="com.haiercash.payplatform.common.data.VipAbcAppOrderGoods">
+      insert into vipabc_order_info (orderid,ordersn,loantype,"
+        		+ "payamt,province,city,country,detailaddress,orderdate,applytnr,"
+        		+ "cordersn,topLevel,model,sku,price,num,corderamt,"
+        		+ "corderpayamt,applseq,orderno,vipuuid,"
+        		+ "remark,inputtime) values (
+        		    #{orderid,jdbcType=VARCHAR},
+        		    #{loantype,jdbcType=VARCHAR},
+        		    #{payamt,jdbcType=VARCHAR},
+        		    #{province,jdbcType=VARCHAR},
+        		    #{city,jdbcType=VARCHAR},
+        		    #{country,jdbcType=VARCHAR},
+        		    #{detailaddress,jdbcType=VARCHAR},
+        		    #{orderdate,jdbcType=VARCHAR},
+        		    #{applytnr,jdbcType=VARCHAR},
+        		    #{cordersn,jdbcType=VARCHAR},
+        		    #{topLevel,jdbcType=VARCHAR},
+        		    #{model,jdbcType=VARCHAR},
+        		    #{sku,jdbcType=VARCHAR},
+        		    #{price,jdbcType=VARCHAR},
+        		    #{num,jdbcType=VARCHAR},
+        		    #{corderamt,jdbcType=VARCHAR},
+        		    #{corderpayamt,jdbcType=VARCHAR},
+        		    #{applseq,jdbcType=VARCHAR},
+        		    #{orderno,jdbcType=VARCHAR},
+        		    #{vipuuid,jdbcType=VARCHAR},
+        		    #{remark,jdbcType=VARCHAR},
+        		    #{inputtime,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="selectuuid" resultType="java.lang.Integer">
+        select count(1) from VIPABC_INFO where uuid=#{uuid,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="savedate" parameterType="com.haiercash.payplatform.common.data.Vipmessage">
+    insert into vipabc_info (uuid,starts,end,nowtime,flag,ordersn,remark) values (
+    #{uuid,jdbcType=VARCHAR},
+    #{starts,jdbcType=VARCHAR},
+    #{end,jdbcType=VARCHAR},
+    #{nowtime,jdbcType=VARCHAR},
+    #{flag,jdbcType=VARCHAR},
+    #{ordersn,jdbcType=VARCHAR},
+    #{remark,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="selectarray" resultType="com.haiercash.payplatform.common.data.Vipmessage">
+		select * from vipabc_info where ordersn is null and flag ='n' and to_date(end,'yyyy-mm-dd hh24:mi:ss') >= to_date(nowtime,'yyyy-mm-dd hh24:mi:ss')
+    </select>
+
+    <update id="updatetime" parameterType="com.haiercash.payplatform.common.data.Vipmessage">
+         update vipabc_info set nowtime=#{nowtime,jdbcType=VARCHAR} where uuid=#{uuid,jdbcType=VARCHAR}
+    </update>
+
+    <select id="queryvip" resultType="com.haiercash.payplatform.common.data.Vipmessage">
+    select * from VIPABC_INFO where ordersn is null and flag ='n' and to_date(nowtime, 'yyyy-mm-dd hh24:mi:ss') >=to_date(end, 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+
+    <update id="updateflag" parameterType="java.lang.String">
+            update vipabc_info set flag='y' where uuid=#{uuid2,jdbcType=VARCHAR}
+    </update>
+
 </mapper>

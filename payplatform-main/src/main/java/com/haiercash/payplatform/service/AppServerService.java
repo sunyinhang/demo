@@ -162,4 +162,22 @@ public interface AppServerService {
 
     //根据商户门店查询贷款品种
     Map<String, Object> getLoanDic(String token, Map<String, Object> paramMap);
+
+    //刷新海尔会员验证码
+    Map<String, Object> getHaierCaptcha(String token, Map<String, Object> paramMap);
+
+    //( PUT)app个人用户登录(免token)支持海尔会员登录
+    Map<String, Object> customerLoginCaptcha(String userId, String pwd, String channel, String channelNo, String captchaAnswer, String captchaToken);
+
+    //得到绑定手机号
+    Map<String, Object> getMobile(String token, Map<String, Object> paramMap);
+
+    //根据门店查询销售代表ID
+    Map<String, Object> findUserIdByStoreNo(String token, Map<String, Object> paramMap);
+
+    //个人版订单修改
+    Map<String, Object> updateAppOrder(String token, Map<String, Object> paramMap);
+
+    //人版订单保存
+    Map<String, Object> saveAppOrderInfo(String token, Map<String, Object> paramMap);
 }

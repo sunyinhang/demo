@@ -3,6 +3,7 @@ package com.haiercash.payplatform.utils;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
@@ -123,6 +124,17 @@ public class EncryptUtil {
         return new String(bas, StandardCharsets.UTF_8);
     }
 
+    // 加密
+    public static String DesEncrypt(String sSrc, String sKey, String ivs) throws Exception {
+        byte[] raw = sKey.getBytes("utf-8");
+        SecretKeySpec skeySpec = new SecretKeySpec(raw, "DES");
+        Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");//"算法/模式/补码方式"
+        IvParameterSpec iv = new IvParameterSpec(ivs.getBytes());//CBC模式使用
+        cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+        byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
+        return new Base64().encodeToString(encrypted);//此处使用BASE64做转码功能，同时能起到2次加密的作用。
+
+    }
     /*public static void main(String[] args) throws Exception {
         System.out.println(simpleDecrypt("ttKsu83Kz7vNu8bK0s7JzszOy8fMx9LLzcjMsMzSysvJus7JycfMytLIzNLHycfHyb3JvA=="));
         System.out.println(simpleDecrypt("zsfOy8fHzMnHycg="));

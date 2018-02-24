@@ -14,4 +14,81 @@ public interface VipAbcService {
      */
 
     Map<String, Object> getIdCardInfo(Map<String, Object> map);
+
+    /**
+     * 判断用户是否注册
+     *
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     */
+    Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params);
+
+    /**
+     * 刷新海尔会员验证码
+     *
+     * @param channel
+     * @param channelNo
+     * @return
+     */
+    Map<String, Object> haierCaptcha(String channel, String channelNo);
+
+    /**
+     * 登录
+     *
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     */
+    Map<String, Object> vipAbcLogin(String channel, String channelNo, Map<String, Object> params);
+
+    /**
+     * 分期申请，订单保存
+     *
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> vipAbcsaveOrderServlet(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
+
+    /**
+     * 分期详情
+     *
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     */
+    Map<String, Object> vipAbcpayApplyInfo(String token, String channel, String channelNo, Map<String, Object> params);
+
+    /**
+     * 第三方数据入口
+     *
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     */
+    Map<String, Object> vipAbcThirdPartyData(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
+
+
+    /**
+     * 二维码生成
+     *
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     */
+    Map<String, Object> vipAbcPcStore(String token, String channel, String channelNo, Map<String, Object> params);
+
 }
