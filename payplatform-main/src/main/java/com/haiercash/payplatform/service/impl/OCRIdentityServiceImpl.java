@@ -440,16 +440,9 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         //绑定手机号修改为实名认证手机号
         String phone = cacheMap.get("phoneNo").toString();//得到绑定手机号
         //7.验证并新增实名认证信息
-        String acctProvince;//省代码
-        String acctCity;//市代码
-        if ("60".equals(this.getChannelNo())) {
-            acctProvince = StringUtils.EMPTY;
-            acctCity = StringUtils.EMPTY;
-        } else {
-            String[] officeArea_split = cityCode.split(",");
-            acctProvince = officeArea_split[0];
-            acctCity = officeArea_split[1];
-        }
+        String[] officeArea_split = cityCode.split(",");
+        String acctProvince = officeArea_split[0];//省代码
+        String acctCity = officeArea_split[1];//市代码
         Map<String, Object> identityMap = new HashMap<>();
         identityMap.put("token", token);
         identityMap.put("channel", channel);
