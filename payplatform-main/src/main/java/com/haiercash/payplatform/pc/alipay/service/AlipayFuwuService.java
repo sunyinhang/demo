@@ -209,7 +209,7 @@ public class AlipayFuwuService extends BaseService {
                 throw new BusinessException(ConstUtil.ERROR_CODE, "查询注册状态失败");
         }
         //实名
-        IResponse<Map> realAuthResponse = this.ocrIdentityService.realAuthentication(params);
+        IResponse<Map> realAuthResponse = this.ocrIdentityService.realAuthenticationForXjd(params);
         realAuthResponse.assertSuccess();
         //绑定
         Map<String, Object> editParams = new HashMap<>();

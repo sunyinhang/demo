@@ -155,7 +155,7 @@ public class CommonController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/realAuthenticationForXjd", method = RequestMethod.POST)
-    public Map<String, Object> realAuthenticationForXjd(@RequestBody Map<String, Object> map) throws Exception {
+    public IResponse<Map> realAuthenticationForXjd(@RequestBody Map<String, Object> map) throws Exception {
         return ocrIdentityService.realAuthenticationForXjd(map);
     }
 

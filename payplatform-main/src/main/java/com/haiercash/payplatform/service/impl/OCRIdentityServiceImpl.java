@@ -709,7 +709,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
     //实名认证(标准现金贷)
     @Override
-    public Map<String, Object> realAuthenticationForXjd(Map<String, Object> map) throws Exception {
+    public IResponse<Map> realAuthenticationForXjd(Map<String, Object> map) throws IOException {
         logger.info("实名认证*********************开始");
 
         //1.前台参数获取
@@ -727,13 +727,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("token:" + token + "  verifyNo:" + verifyNo +
                     "  cardnumber:" + cardnumber + "  mobile:" + mobile + "   channel:" + channel + "   channelNo:" + channelNo);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //3.jedis缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String name = (String) cacheMap.get("name");//扫描客户姓名
         String birthDt = (String) cacheMap.get("birthday");//扫描出生年月日
@@ -749,7 +749,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("扫描的身份证号码是" + idCard);
         } else {
             logger.info("扫描身份证号为空");
-            return fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
         }
         //4.缓存数据非空判断
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
@@ -758,7 +758,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("name:" + name + "  birthDt:" + birthDt + "  gender:" + gender + "  validDate:" + validDate + "  certOrga:" + certOrga
                     + "   ethnic:" + ethnic + "    idCard:" + idCard + "   userId:" + userId);
             logger.info("Jedis缓存获取信息失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //5.校验短信验证码
         Map<String, Object> verifyNoMap = new HashMap<>();
@@ -772,7 +772,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String verifyretFlag = (String) verifyheadjson.get("retFlag");
         if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
             String retMsg = (String) verifyheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
 
@@ -812,7 +812,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String ocrretFlag = (String) ocrheadjson.get("retFlag");
         if (!"00000".equals(ocrretFlag)) {//身份证信息保存失败
             String retMsg = (String) ocrheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
         //绑定手机号修改为实名认证手机号
@@ -834,7 +834,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             IResponse<Map> resultMap = CommonRestUtils.postForMap(url, param);
             String retFlag = resultMap.getRetFlag();
             if ("00096".equals(retFlag)) {
-                return fail(retFlag, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+                return CommonResponse.fail(retFlag, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
             }
             resultMap.assertSuccessNeedBody();
             Map bodyMap = resultMap.getBody();
@@ -844,10 +844,10 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 String postDate = object.get("postDate").toString();
                 TimeSpan time = new TimeSpan(DateUtils.now(), DateUtils.fromDateString(postDate));
                 if (time.getDays() < 180) {
-                    return fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+                    return CommonResponse.fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
                 }
             } else {
-                return fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+                return CommonResponse.fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
             }
 
         }
@@ -870,7 +870,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String identityretFlag = (String) identityheadjson.get("retFlag");
         if (!"00000".equals(identityretFlag)) {
             String retMsg = (String) identityheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
 
@@ -946,12 +946,12 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String updmobileretflag = (String) updmobileheadjson.get("retFlag");
         if (!"00000".equals(updmobileretflag)) {
             String retMsg = (String) updmobileheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
         Map<String, Object> resultparamMap = new HashMap<>();
         resultparamMap.put("flag", "1");//通过  个人扩展信息
-        return success(resultparamMap);
+        return CommonResponse.success(resultparamMap);
     }
 
 
