@@ -12,10 +12,8 @@ import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,8 +52,8 @@ public class AlipayFuwuController extends BaseController {
 
 
     //授权后验证用户
-    @GetMapping("/api/payment/alipay/fuwu/validUser")
-    public IResponse<Map> validUser(@RequestParam Map<String, String> params) throws AlipayApiException, IOException {
+    @PostMapping("/api/payment/alipay/fuwu/validUser")
+    public IResponse<Map> validUser(@RequestBody Map<String, String> params) throws AlipayApiException {
         String authCode = params.get("auth_code");
         this.assertAuthCode(authCode);
         this.assertChannelNo();
