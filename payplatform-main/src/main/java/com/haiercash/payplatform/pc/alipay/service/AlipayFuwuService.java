@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -249,7 +249,7 @@ public class AlipayFuwuService extends BaseService {
         acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
         acqParams.put("actvPrcp", "");//提前还款本金  actvPrcp  Number  O:选填  提前还款本金模式时必输
         IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
-                .body(Arrays.asList(acqParams))
+                .body(Collections.singletonList(acqParams))
                 .build();
         IResponse<List<Map>> response = this.acquirerClient.saveZdhkInfo(request);
         response.assertSuccessNeedBody();
