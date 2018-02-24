@@ -2,7 +2,7 @@
 <configuration scan="true" scanPeriod="30 seconds">
     <property name="APP_NAME" value="payplatform"/>
     <property name="FILE_PATTERN" value="./log/%d{yyyy-MM-dd}/${APP_NAME}.%d{yyyy-MM-dd}"/>
-    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] [%X{Trace-Span-Id}] %-5level %logger{36} %L - %msg%n"/>
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] [%X{Trace-Span-Id}] [%X{X-B3-TraceId},%X{X-B3-SpanId}] %-5level %logger{36} %L - %msg%n"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

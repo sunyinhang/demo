@@ -47,6 +47,7 @@ dependencies {
     compile('org.springframework.cloud:spring-cloud-starter-eureka')
     compile('org.springframework.cloud:spring-cloud-starter-feign')
     compile('org.springframework.cloud:spring-cloud-starter-zuul')
+    compile("org.springframework.cloud:spring-cloud-starter-sleuth")
     compile('org.springframework.session:spring-session')
     //数据库
     compile('com.oracle:ojdbc6:11g')
