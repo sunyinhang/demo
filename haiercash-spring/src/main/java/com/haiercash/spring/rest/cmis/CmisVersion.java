@@ -42,7 +42,7 @@ public enum CmisVersion {
             case V1:
                 return EurekaServer.CMISFRONTSERVER + "/pub/cmisfront";
             case V2:
-                return EurekaServer.CMISINTERFACESERVER + "/api/cmis/interfaces/interface/" + request.getTradeCode();
+                return EurekaServer.CMISINTERFACESERVER + "/api/cmis/interfaces/interface/" + request.getTradeCode() + "/";
             default:
                 throw new InvalidOperationException("not supported cmis version");
         }
