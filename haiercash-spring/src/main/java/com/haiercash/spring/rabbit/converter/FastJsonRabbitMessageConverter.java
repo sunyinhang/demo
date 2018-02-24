@@ -68,7 +68,7 @@ public final class FastJsonRabbitMessageConverter extends WhiteListDeserializing
             messageProperties.setMessageId(RabbitLogUtils.getMsgId(retryMessage.getMessage()));
             messageProperties.setContentType(Convert.toString(retryMessage.getHeader(AmqpHeaders.CONTENT_TYPE)));
             messageProperties.setContentEncoding(Convert.toString(retryMessage.getHeader(AmqpHeaders.CONTENT_ENCODING)));
-            messageProperties.setHeader(RabbitRetryMessage.RETRY_NAME, retryMessage.getRetry());
+            messageProperties.setHeader(RabbitRetryMessage.CONSUME_RETRY_NAME, retryMessage.getRetry());
         } else {
             try {
                 String json = JsonSerializer.serialize(object);

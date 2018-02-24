@@ -10,8 +10,8 @@ import org.springframework.util.Assert;
  */
 @Data
 public final class RabbitRetryMessage {
-    public static final String RETRY_NAME = "retry";
-    public static final int RETRY_COUNT = 5;
+    public static final String CONSUME_RETRY_NAME = "consumeRetry";
+    public static final int CONSUME_RETRY_COUNT = 5;
 
     private final Message<?> message;
     private final int retry;

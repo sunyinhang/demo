@@ -28,7 +28,7 @@ public final class RabbitLogUtils {
     }
 
     public static String getRetry(Message message) {
-        int retry = Convert.defaultInteger(message.getHeaders().get(RabbitRetryMessage.RETRY_NAME));
+        int retry = Convert.defaultInteger(message.getHeaders().get(RabbitRetryMessage.CONSUME_RETRY_NAME));
         return retry == 0 ? "初次消费" : String.format("第 %d 次重试消费", retry);
     }
 

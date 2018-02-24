@@ -43,8 +43,8 @@ public final class RabbitHandlerAdapter extends HandlerAdapter {
         } catch (Exception e) {
             //重试
             MessageHeaders headers = message.getHeaders();
-            int retry = Convert.defaultInteger(headers.get(RabbitRetryMessage.RETRY_NAME));
-            if (retry < RabbitRetryMessage.RETRY_COUNT) {
+            int retry = Convert.defaultInteger(headers.get(RabbitRetryMessage.CONSUME_RETRY_NAME));
+            if (retry < RabbitRetryMessage.CONSUME_RETRY_COUNT) {
                 retry++;
                 IncomingLog.writeWarnLog(action, message, retry, e, System.currentTimeMillis() - begin);
                 String queue = (String) headers.get(AmqpHeaders.CONSUMER_QUEUE);
