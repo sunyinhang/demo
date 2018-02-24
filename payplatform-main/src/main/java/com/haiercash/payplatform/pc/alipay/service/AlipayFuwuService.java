@@ -153,7 +153,7 @@ public class AlipayFuwuService extends BaseService {
             return CommonResponse.fail(ConstUtil.ERROR_CODE, "芝麻分数不符合条件");
 
         //根据token 查找 三方 uid
-        String thirdUserId = (String) sessionMap.get("externalUserId");
+        String thirdUserId = (String) sessionMap.get("uidHaier");
         if (StringUtils.isEmpty(thirdUserId))
             throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
 
