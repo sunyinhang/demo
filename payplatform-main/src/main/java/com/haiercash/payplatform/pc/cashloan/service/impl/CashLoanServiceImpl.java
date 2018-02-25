@@ -1023,6 +1023,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                     logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
                     resultbody.put("flag", "01");//跳转支付密码页面
                     ordermap.put("body", resultbody);
+                    break;
                 case "01": //01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
                     logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
                     return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
@@ -1033,6 +1034,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                     logger.info("未通过人脸识别，可以再做人脸识别");
                     resultbody.put("flag", "02");// 跳转人脸识别页面
                     ordermap.put("body", resultbody);
+                    break;
+                default:
+                    break;
             }
         }
 
