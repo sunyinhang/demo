@@ -725,10 +725,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
         logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
-        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
         if (saveCustFCiCustContactMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
+        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
         String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
         if (!"00000".equals(saveCustFCiCustContactMapHeadFlag)) {
             String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
