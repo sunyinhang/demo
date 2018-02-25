@@ -16,6 +16,6 @@ import java.util.Map;
 @FeignClient(name = "${app.rest.ACQUIRER}", path = "/api/appl")
 public interface AcquirerClient {
     @FeignApi("ACQ-2101提交还款请求")
-    @PostMapping("saveZdhkInfo")
+    @PostMapping("/saveZdhkInfo")
     AcqResponse<List<Map>> saveZdhkInfo(@RequestBody IAcqRequest body);
 }
