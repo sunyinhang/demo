@@ -1270,7 +1270,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 returnflag = 0;
             } else {
                 ts.setFlag("N");//推送失败
-                if (n == 3) {
+                if (n >= 3) {
                     returnflag = 0;
                 } else {
                     returnflag = 1;
