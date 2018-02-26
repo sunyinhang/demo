@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by 许崇雷 on 2018-02-23.
  */
-@FeignClient(name = "${app.rest.APPSERVER}", path = "/app/appserver")
+@FeignClient(name = "${app.rest.APPSERVERNOAUTHNEW}", path = "/app/appserver")
 public interface AppServerClient {
     @FeignApi("校验短信验证码")
     @PostMapping("/smsVerify")
