@@ -107,7 +107,7 @@ public final class JsonSerializer {
      * @return 对象
      */
     public static <T> T deserialize(String json, Type type) {
-        return JSON.parseObject(json, type, Feature.of(getGlobalConfig().getFeatures()), getGlobalConfig().getFeatures());
+        return JSON.parseObject(json, type, getGlobalConfig().getParserConfig(), null, Feature.of(getGlobalConfig().getFeatures()), getGlobalConfig().getFeatures());
     }
 
     /**
