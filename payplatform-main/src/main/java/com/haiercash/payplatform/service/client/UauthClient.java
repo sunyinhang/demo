@@ -30,6 +30,13 @@ public interface UauthClient {
     CommonResponse<Map> getUserId(@RequestParam("userId") String userId);
 
     /**
+     * @param userId 需加密
+     */
+    @FeignApi("根据 userId 查询绑定手机号")
+    @GetMapping(value = "/getMobile")
+    CommonResponse<Map> getMobile(@RequestParam("userId") String userId);
+
+    /**
      * @param externCompanyNo channelNo 加密
      * @param externUid       加密
      * @return
