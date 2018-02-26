@@ -208,9 +208,14 @@ public class AlipayFuwuService extends BaseService {
             default:
                 throw new BusinessException(ConstUtil.ERROR_CODE, "查询注册状态失败");
         }
-        //实名
+        //实名准备 session 数据
         sessionMap.put("userId", userId);
+        //查询绑定手机号
+        IResponse<Map> mobileMap = this.uauthClient.getMobile(userId);
+        mobileMap.assertSuccessNeedBody();
+        sessionMap.put("phoneNo", mobileMap.getBody().get("mobile"));
         RedisUtils.setExpire(token, sessionMap);//实名的时候会用到 userId
+        //实名
         IResponse<Map> realAuthResponse = this.ocrIdentityService.realAuthenticationForXjd(params);
         realAuthResponse.assertSuccess();
         //绑定
