@@ -2,6 +2,8 @@ package com.haiercash.spring.rest.cmis.v2;
 
 import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.core.serialization.fastjson.StringObjectMapDeserializer;
 import com.haiercash.spring.rest.cmis.ICmisResponse;
 import com.haiercash.spring.trace.rest.ErrorHandler;
 
@@ -12,6 +14,10 @@ import java.util.HashMap;
  * Created by 许崇雷 on 2018-01-09.
  */
 public final class CmisResponse2<TBody> extends HashMap<String, Object> implements ICmisResponse<TBody> {
+    static {
+        JsonSerializer.getGlobalConfig().getParserConfig().putDeserializer(CmisResponse2.class, StringObjectMapDeserializer.instance);
+    }
+
     private TBody body;
 
     @Override
