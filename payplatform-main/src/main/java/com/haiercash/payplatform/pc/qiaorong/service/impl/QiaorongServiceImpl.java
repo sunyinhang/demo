@@ -584,6 +584,22 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             return fail(ConstUtil.ERROR_CODE, "请先进行四要素验证");
         }
 
+        // 去收单查询订单信息
+        Map<String, Object> paramMap1 = new HashMap<>();
+        paramMap1.put("applSeq", applseq);
+        paramMap1.put("channelNo", channelNo);
+        Map<String, Object> acquierOrder = AcqUtil.getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/selectApplInfoApp",
+                AcqTradeCode.SELECT_APP_APPL_INFO, ConstUtil.CHANNEL, channelNo, null, null, paramMap1);
+
+        Map mapLoanDetail = (Map<String, Object>) acquierOrder.get("response");
+        if (!HttpUtil.isSuccess(mapLoanDetail)) {
+            return mapLoanDetail;
+        }
+        Map bodyLoanDetail = (Map<String, Object>) mapLoanDetail.get("body");
+        String outSts = Convert.toString(bodyLoanDetail.get("outSts"));
+        if(!"00".equals(outSts) && !"22".equals(outSts)){//00:待提交   22：被退回
+            return fail(ConstUtil.ERROR_CODE, "订单已提交");
+        }
 
         //短信验证码校验
         Map<String, Object> paramMap = new HashMap<>();
