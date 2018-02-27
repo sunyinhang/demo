@@ -1025,4 +1025,13 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
         return map;
     }
+
+    public Map<String, Object> commitAppOrderByPost(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/commitAppOrderByPost";
+        logger.info("订单提交接口,请求地址：" + url);
+        logger.info("订单提交接口,请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("订单提交接口,响应数据：" + map);
+        return map;
+    }
 }

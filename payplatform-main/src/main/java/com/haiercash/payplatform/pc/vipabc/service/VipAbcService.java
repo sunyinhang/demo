@@ -91,4 +91,27 @@ public interface VipAbcService {
      */
     Map<String, Object> vipAbcPcStore(String token, String channel, String channelNo, Map<String, Object> params);
 
+    /**
+     * 完善单位信息、个人信息、紧急联系人
+     *
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     */
+    Map<String, Object> saveCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params);
+
+    /**
+     * 订单保存
+     *
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     */
+    Map<String, Object> treatyShowServlet(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
+
+
 }

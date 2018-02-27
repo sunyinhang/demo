@@ -108,4 +108,26 @@ public class VipAbcController extends BaseController {
     public Map<String, Object> vipAbcPcStore(@RequestBody Map<String, Object> map) {
         return vipAbcService.vipAbcPcStore(super.getToken(), super.getChannel(), super.getChannelNo(), map);
     }
+
+    /**
+     * 完善单位信息、个人信息、紧急联系人
+     *
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/vipabc/saveCustExtInfo", method = RequestMethod.POST)
+    public Map<String, Object> saveCustExtInfo(@RequestBody Map<String, Object> map) {
+        return vipAbcService.saveCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo(), map);
+    }
+
+    /**
+     * 订单保存
+     *
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/vipabc/treatyShow", method = RequestMethod.POST)
+    public Map<String, Object> treatyShow(@RequestBody Map<String, Object> map) throws Exception {
+        return vipAbcService.treatyShowServlet(super.getToken(), super.getChannel(), super.getChannelNo(), map);
+    }
 }

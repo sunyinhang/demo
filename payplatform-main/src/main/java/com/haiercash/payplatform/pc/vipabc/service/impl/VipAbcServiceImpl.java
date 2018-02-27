@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -50,6 +51,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
     private VipabcConfig vipabcConfig;
     @Autowired
     private PublishDao publishDao;
+
     /**
      * 根据第三方订单号查询身份证号
      *
@@ -1298,6 +1300,332 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    public Map<String, Object> saveCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params) {
+        logger.info("获取的表单内容是：" + params);
+        Map<String, Object> attachMap = new HashMap<String, Object>(); // 文件上传map(收款确认单)
+        Map<String, Object> attachMap2 = new HashMap<String, Object>(); // 文件上传map(现场照)
+        String custNo = null;
+        if (StringUtils.isEmpty(token)) {
+            logger.info("VIPABC,客户信息保存出现错误,token为空！");
+            fail(ConstUtil.ERROR_CODE, "参数token为空");
+        }
+        if (StringUtils.isEmpty(channel)) {
+            logger.info("channel为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
+        }
+        if (StringUtils.isEmpty(channelNo)) {
+            logger.info("channelNo为空");
+            return fail(ConstUtil.ERROR_CODE, "参数channelNo为空!");
+        }
+        Map<String, Object> redisMap = RedisUtils.getExpireMap(token);
+        if (StringUtils.isEmpty(redisMap)) {
+            logger.info("VIPABC,客户信息保存,获取redisMap为空！");
+            return fail(ConstUtil.ERROR_CODE, "通过token获取的信息为空");
+        }
+        custNo = (String) redisMap.get("custNo");
+        if (StringUtils.isEmpty(custNo)) {
+            logger.info("VIPABC,客户信息保存,客户编号为空！");
+            return fail(ConstUtil.ERROR_CODE, "客户信息保存,获取的客户编号为空");
+        }
+        String contactMobile = (String) params.get("contactMobile");
+        logger.info("VIPABC,客户信息保存,联系人手机号：" + contactMobile);
+        String cardPhone = (String) redisMap.get("cardPhone");
+        String phone = (String) redisMap.get("phoneNo");
+        if (contactMobile.equals(cardPhone) || contactMobile.equals(phone)) {
+            logger.info("VIPABC,客户信息保存,联系人手机号与申请人手机号不能相同！");
+            return fail(ConstUtil.ERROR_CODE, "联系人手机号与申请人手机号不能相同");
+        }
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("custNo", custNo);
+        paramMap.put("token", token);
+        paramMap.put("officeName", params.get("officeName"));//工作单位
+        paramMap.put("officeDept", params.get("officeDept"));//所在部门
+        paramMap.put("officeTel", params.get("officeTel"));//单位电话
+        String officeArea = (String) params.get("officeAddressCode");//单位地址
+        String[] officeArea_split = officeArea.split(",");
+        paramMap.put("officeProvince", officeArea_split[0]);
+        paramMap.put("officeCity", officeArea_split[1]);
+        paramMap.put("officeArea", officeArea_split[2]);
+        paramMap.put("officeAddr", params.get("officeAddr")); //单位详细地址
+        // 个人信息 /app/appserver/crm/cust/saveAllCustExtInfo
+        paramMap.put("education", params.get("education")); //教育
+        paramMap.put("maritalStatus", params.get("maritalStatus"));//婚姻状态
+        String liveArea = (String) params.get("liveAddressCode"); //居住地址
+        String[] liveArea_split = liveArea.split(",");
+        paramMap.put("liveProvince", liveArea_split[0]);
+        paramMap.put("liveCity", liveArea_split[1]);
+        paramMap.put("liveArea", liveArea_split[2]);
+        //paramMap.put("liveAddr", reqMap.get("liveAddress"));//居住详细地址
+        paramMap.put("liveAddr", params.get("liveAddr"));//居住详细地址
+        paramMap.put("dataFrom", channelNo);
+        paramMap.put("mthInc", 10000);
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        // 初始化service
+        String applSeq = (String) redisMap.get("applSeq");
+        attachMap.put("applSeq", applSeq);
+        attachMap2.put("applSeq", applSeq);
+        Map<String, Object> stringObjectMap = appServerService.saveAllCustExtInfo(token, paramMap);
+        if (stringObjectMap == null) {
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        Map resultmapjsonMap = (Map<String, Object>) stringObjectMap.get("head");
+        String retFlag = (String) resultmapjsonMap.get("retFlag");
+        if (!"00000".equals(retFlag)) {
+            String retMsg = (String) resultmapjsonMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        logger.info("美分期,保存客户信息,retFlag" + retFlag);
+        // 保存客户信息成功后,保存联系人信息
+        // 紧急联系人 3.1.3 /app/appserver/crm/saveCustFCiCustContact
+        Map<String, Object> relationMap = new HashMap<String, Object>();
+        if (!StringUtils.isEmpty(params.get("contactId").toString())) {
+            relationMap.put("id", params.get("contactId"));
+        }
+        relationMap.put("custNo", custNo);
+        relationMap.put("token", token);
+        relationMap.put("relationType", params.get("relationType"));// 关系
+        relationMap.put("contactName", params.get("contactName"));// 联系人姓名
+        relationMap.put("contactMobile", params.get("contactMobile"));// 电话
+        relationMap.put("channel", channel);
+        relationMap.put("channelNo", channelNo);
+        // 调用增加修改联系人接口
+        Map<String, Object> CustFCiCustContactMap = appServerService.saveCustFCiCustContact(token, relationMap);
+        if (CustFCiCustContactMap == null) {
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        Map CustFCiCustContactHeadMap = (Map<String, Object>) CustFCiCustContactMap.get("head");
+        String CustFCiCustContactHeadMapFlag = (String) CustFCiCustContactHeadMap.get("retFlag");
+        if (!"00000".equals(CustFCiCustContactHeadMapFlag)) {
+            String retMsg = (String) CustFCiCustContactHeadMap.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        return success();
+    }
+
+    public Map<String, Object> treatyShowServlet(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+        logger.info("VIPABC订单提交接口开始");
+        String url = "";
+        String retflag = "";
+        String retmsg = "";
+        String verifyNo = (String) params.get("verifyNo");
+        String orderNo = "";
+        String longitude = (String) params.get("longitude");//经度
+//			longitude="山东";
+        logger.info("经度是：" + longitude);
+        //String latitude=(String)resultMap.get("latitude");//维度
+        String latitude = (String) params.get("latitude");//维度
+//	        latitude="青岛";
+        logger.info("维度是：" + latitude);
+        String ip = (String) params.get("ip");//ip
+//	        ip="青岛";
+        logger.info("IP是：" + ip);
+        String uuid = (String) params.get("uuid");
+        if (StringUtils.isEmpty(uuid)) {
+            logger.info("从前端获取的uuid为空" + uuid);
+            return fail(ConstUtil.ERROR_CODE, "从前端获取的uuid为空");
+        }
+        if (StringUtils.isEmpty(token)) {
+            logger.info("token不能为空");
+            return fail(ConstUtil.ERROR_CODE, "token为空");
+        }
+        Object object = RedisUtils.getExpireMap(uuid);
+        if (StringUtils.isEmpty(object)) {
+            logger.info("从redis中获取的数据为空" + object);
+            return fail(ConstUtil.ERROR_CODE, "从redis中获取的数据为空");
+        }
+        Map fromObjectone = (Map) object;
+        Map fromObject = (Map) (fromObjectone.get("appOrderGoods"));
+        Map jsonObject = (Map) fromObjectone.get("externalmessage");//扩展信息
+        Map<String, Object> redisMap = (Map<String, Object>) RedisUtils.getExpireMap(token);
+        if (StringUtils.isEmpty(redisMap)) {
+            logger.info("VIPABC,校验短信验证码接口及订单提交接口,redisMap为空!");
+            return fail(ConstUtil.ERROR_CODE, "从redis中获取的数据为空");
+        }
+        String name = (String) redisMap.get("name");//客户姓名
+//			name="赵先鲁";
+        logger.info("客户姓名：" + name);
+        String idNo = (String) redisMap.get("idCard");//身份证号
+//	           idNo="372926198911178630";
+        logger.info("身份证号：" + idNo);
+        String mobile = (String) redisMap.get("phoneNo");//电话
+//	           mobile="13699148897";
+        String applSeq = (String) redisMap.get("applSeq");
+        if (StringUtils.isEmpty(applSeq)) {
+            logger.info("流水号为空");
+            return fail(ConstUtil.ERROR_CODE, "流水号为空");
+        }
+        logger.info("电话：" + mobile);
+        if (StringUtils.isEmpty(verifyNo)) {
+            logger.info("VIPABC,校验短信验证码接口及订单提交接口,手机验证码为空");
+            return fail(ConstUtil.ERROR_CODE, "手机验证码为空");
+        }
+        String phone = (String) redisMap.get("phoneNo");// 手机号
+        if (StringUtils.isEmpty(phone)) {
+            logger.info("VIPABC,校验短信验证码接口及订单提交接口,手机号码为空");
+            return fail(ConstUtil.ERROR_CODE, "手机号码为空");
+        }
+        String custNo = (String) redisMap.get("custNo");// 客户号
+        if (StringUtils.isEmpty(custNo)) {
+            logger.info("VIPABC,校验短信验证码接口及订单提交接口,客户编号为空");
+            return fail(ConstUtil.ERROR_CODE, "客户编号为空");
+        }
+        String userId = (String) redisMap.get("userId");
+        orderNo = (String) redisMap.get("orderNo");
+        String flag = (String) redisMap.get("payPasswdFlag");// 0：未设置支付密码
+        // 1：已经设置支付密码
+        String n = "3";
+        logger.info("支付密码是否已设置标识：" + flag);
+        if ("0".equals(flag)) {// 进行支付密码设置
+            logger.info("支付密码未设置");
+            String payPasswd = (String) params.get("password");// 用户密码
+            if (StringUtils.isEmpty(payPasswd)) {
+                logger.info("VIPABC,校验短信验证码接口及订单提交接口,支付密码为空");
+                return fail(ConstUtil.ERROR_CODE, "支付密码为空");
+            }
+            Map<String, Object> paramsMap = new HashMap<String, Object>();
+            paramsMap.put("userId", EncryptUtil.simpleEncrypt(userId));
+            paramsMap.put("payPasswd", EncryptUtil.simpleEncrypt(payPasswd));
+            paramsMap.put("channel", channel);
+            paramsMap.put("channelNo", channelNo);
+            //设置支付密码
+            Map<String, Object> jb = appServerService.resetPayPasswd(token, paramsMap);
+            if (StringUtils.isEmpty(jb)) {
+                logger.info("VIPABC,设置支付密码失败,app后台返回为空");
+                return fail(ConstUtil.ERROR_CODE, "设置支付密码失败,app后台返回为空");
+            }
+            Map map = (Map) jb.get("head");
+            retflag = (String) map.get("retFlag");
+            retmsg = (String) map.get("retMsg");
+            if (!"00000".equals(retflag)) {
+                logger.info("VIPABC,设置支付密码失败！" + retmsg);
+                return fail(ConstUtil.ERROR_CODE, "VIPABC,设置支付密码失败");
+            }
+        }
+        // 3、签订注册 + 征信
+        JSONObject reqSign = new JSONObject();
+        reqSign.put("orderNo", orderNo);
+        reqSign.put("msgCode", verifyNo);
+        reqSign.put("type", n);// 1：征信协议 2：注册协议 3：征信和注册协议
+        reqSign.put("channel", channel);
+        reqSign.put("channelNo", channelNo);
+        reqSign.put("token", token);
+        Map<String, Object> resData = appServerService.updateOrderAgreement(token, reqSign);// 订单协议确认  验证验证
+        logger.info("VIPABC,订单协议确认接口,响应数据：" + resData);
+        if (StringUtils.isEmpty(resData)) {
+            logger.info("网络异常，app后台,订单协议确认接口,响应数据为空！");
+            return fail(ConstUtil.ERROR_CODE, "订单协议确认接口,响应数据为空");
+        }
+        Map jsonDataHead = (Map) resData.get("head");
+        retflag = (String) jsonDataHead.get("retFlag");
+        if (!retflag.equals("00000")) {// 订单协议确认接口 失败，返回给前台
+            retmsg = (String) jsonDataHead.get("retMsg");
+            logger.info("VIPABC,校验短信验证码接口及订单提交接口,校验短信验证码失败" + retmsg);
+            return fail(ConstUtil.ERROR_CODE, "retmsg");
+        }
+        // 签订合同
+        JSONObject reqCon = new JSONObject();
+        reqCon.put("orderNo", orderNo);
+        reqCon.put("channel", channel);
+        reqCon.put("channelNo", channelNo);
+        Map<String, Object> retCon = appServerService.updateOrderContract(token, reqCon);// 订单合同确认
+        logger.info("订单合同确认接口，响应数据：" + retCon);
+        if (StringUtils.isEmpty(retCon)) {
+            logger.info("VIPABC,订单合同确认接口,订单合同确认接口,响应数据为空");
+            return fail(ConstUtil.ERROR_CODE, "VIPABC,订单合同确认接口,订单合同确认接口,响应数据为空");
+        }
+        Map jsonConHead = (Map) retCon.get("head");
+        retflag = (String) jsonConHead.get("retFlag");
+        retmsg = (String) jsonConHead.get("retMsg");
+        logger.info("订单提交开始传送风险数据订单风险数据");
+        ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
+        ArrayList<String> listOne = new ArrayList<>();
+        ArrayList<String> listTwo = new ArrayList<>();
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        HashMap<String, Object> hashMapOne = new HashMap<String, Object>();
+        HashMap<String, Object> hashMapTwo = new HashMap<String, Object>();
+        HashMap<String, Object> headerMapOne = new HashMap<String, Object>();
+        logger.info("开始解析经维度");
+        String longLatitude = "经度" + longitude + "维度" + latitude;
+        logger.info("经维度解析前" + longLatitude);
+        String longLatitudeEncrypt = EncryptUtil.simpleEncrypt(longLatitude);
+        logger.info("经维度解析后" + longLatitude);
+        listOne.add(longLatitudeEncrypt);
+        hashMapOne.put("idNo", idNo);
+        hashMapOne.put("name", name);
+        hashMapOne.put("mobile", mobile);
+        hashMapOne.put("dataTyp", "04");
+        hashMapOne.put("source", "2");
+        hashMapOne.put("applSeq", applSeq);
+        hashMapOne.put("reserved6", applSeq);
+        ifParamsIsNull(hashMapOne);
+        hashMapOne.put("content", listOne);
+        hashMapOne.put("idNo", EncryptUtil.simpleEncrypt(idNo));
+        hashMapOne.put("name", EncryptUtil.simpleEncrypt(name));
+        hashMapOne.put("mobile", EncryptUtil.simpleEncrypt(mobile));
+        listTwo.add(EncryptUtil.simpleEncrypt("设备IP" + ip));
+        hashMapTwo.put("idNo", idNo);
+        hashMapTwo.put("name", name);
+        hashMapTwo.put("mobile", mobile);
+        hashMapTwo.put("dataTyp", "A506");
+        hashMapTwo.put("source", "2");
+        hashMapTwo.put("applSeq", applSeq);
+        hashMapTwo.put("reserved6", applSeq);
+        ifParamsIsNull(hashMapTwo);
+        hashMapTwo.put("content", listTwo);
+        hashMapTwo.put("idNo", EncryptUtil.simpleEncrypt(idNo));
+        hashMapTwo.put("name", EncryptUtil.simpleEncrypt(name));
+        hashMapTwo.put("mobile", EncryptUtil.simpleEncrypt(mobile));
+        arrayList.add(hashMapOne);
+        arrayList.add(hashMapTwo);
+        hashMap.put("riskMap", arrayList);
+        logger.info("最终数据" + hashMap);
+        if (retflag.equals("00000")) {
+            String opType = "1"; // 个人版订单提交给商户确认时传2，其余传1
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("orderNo", orderNo);
+            map.put("source", channel);
+            map.put("channel", channel);
+            map.put("channelNo", channelNo);
+            map.put("opType", opType);
+            logger.info("订单提交接口,判断是否为空的数据：" + map.toString());
+            ifParamsIsNull(map);// 判断参数是否有空值
+            map.put("msgCode", verifyNo);
+            map.put("expectCredit", "");
+            map.put("riskMap", arrayList);
+            Map<String, Object> conData = appServerService.commitAppOrderByPost(token, map);
+            logger.info("VIPABC,订单提交，响应数据：" + conData);
+            if (StringUtils.isEmpty(conData)) {
+                logger.info("VIPABC,订单提交接口,响应数据为空");
+                return fail(ConstUtil.ERROR_CODE, "VIPABC,订单提交接口,响应数据为空");
+            }
+            Map map1 = (Map) conData.get("head");
+            retflag = (String) map1.get("retFlag");
+            retmsg = (String) jsonConHead.get("retMsg");
+            if (("00000").equals(retflag)) {// 订单提交 成功：00000
+                return success();
+            } else {
+                logger.info("VIPABC,订单提交失败,跳转个人资料页面为：" + url);
+                return success(retflag);
+            }
+        } else {
+            logger.info("VIPABC,提交订单失败!");
+            return fail(ConstUtil.ERROR_CODE, "订单合同确认失败");
+        }
+    }
+
+    /*
+     * 判断参数是否有空值
+     */
+    private void ifParamsIsNull(Map<String, Object> map) throws Exception {
+        Set<String> keys = map.keySet();
+        for (String key : keys) {
+            if (map.get(key) == null || "".equals(map.get(key)) || "null".equals(map.get(key))) {
+                throw new Exception("参数" + key + "不能为空！");
             }
         }
     }

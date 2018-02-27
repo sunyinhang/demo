@@ -180,4 +180,7 @@ public interface AppServerService {
 
     //人版订单保存
     Map<String, Object> saveAppOrderInfo(String token, Map<String, Object> paramMap);
+
+    //个人版订单提交给商户确认时传2，其余传1
+    Map<String, Object> commitAppOrderByPost(String token, Map<String, Object> paramMap);
 }
