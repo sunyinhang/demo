@@ -3,6 +3,7 @@ package com.haiercash.core.serialization;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.ValueFilter;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
@@ -26,6 +27,7 @@ public final class JsonSerializer {
         TypeUtils.compatibleWithJavaBean = false;
         TypeUtils.compatibleWithFieldName = true;
         GLOBAL_CONFIG = new FastJsonConfig();
+        GLOBAL_CONFIG.setParserConfig(ParserConfig.getGlobalInstance());
         GLOBAL_CONFIG.setDateFormat(DATE_FORMAT);
         GLOBAL_CONFIG.setFeatures(
                 Feature.AutoCloseSource,
