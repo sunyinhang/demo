@@ -111,6 +111,12 @@ public class AlipayFuwuService extends BaseService {
         Map<String, Object> sessionMap = RedisUtils.getExpireMap(this.getToken());
         if (MapUtils.isEmpty(sessionMap))
             throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        //覆盖支付宝预留手机号
+        String authPhone = Convert.toString(params.get("authPhone"));
+        if (StringUtils.isNotEmpty(authPhone)) {
+            sessionMap.put("authPhone", authPhone);
+            RedisUtils.setExpire(token, sessionMap);
+        }
 
         //芝麻授权
         String name = Convert.toString(sessionMap.get("name"));
