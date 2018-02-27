@@ -239,7 +239,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     public Map<String, Object> saveAllCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********保存个人扩展信息**************开始");
         String typCde = "";//贷款品种
-        Map<String, Object> redisMap = null;
         Map<String, Object> paramMap = new HashMap<>();
         Map<String, Object> custparamMap_one = new HashMap<>();
         Map<String, Object> custparamMap_two = new HashMap<>();
@@ -285,10 +284,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String userid = (String) cacheMap.get("userId");
         String name = (String) cacheMap.get("name");//姓名
         String idNumber = (String) cacheMap.get("idCard"); //身份证
-//        String userid = "1231231";
-//        String custNo = "B201706011214031809670";
-//        String name = "张三丰";
-//        String idNumber = "232302198201012540";
         if (custNo == null || "".equals(custNo)) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -578,7 +573,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     public Map<String, Object> saveAllCustExtInfoForXjd(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********保存个人扩展信息**************开始");
         String typCde;//贷款品种
-        Map<String, Object> redisMap = null;
         Map<String, Object> paramMap = new HashMap<>();
         Map<String, Object> custparamMap_one = new HashMap<>();
         Map<String, Object> custparamMap_two = new HashMap<>();
@@ -636,22 +630,19 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String userid = (String) cacheMap.get("userId");
         String name = (String) cacheMap.get("name");//姓名
         String idNumber = (String) cacheMap.get("idCard"); //身份证
-//        String userid = "1231231";
-//        String custNo = "B201706011214031809670";
-//        String name = "张三丰";
-//        String idNumber = "232302198201012540";
+
         if (custNo == null || "".equals(custNo)) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String liveAddress_code = (String) params.get("liveAddress_code");//现居住省市区编码
         String[] liveAddress_code_split = liveAddress_code.split(",");
-//        String officeAddress_code = (String) params.get("officeAddress_code");//单位省市区编码
-//        String[] officeAddress_split = officeAddress_code.split(",");
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", channel);
         paramMap.put("custNo", custNo);
-        if (!"60".equals(channelNo)) {
-            paramMap.put("maritalStatus", params.get("maritalStatus"));//婚姻状况
+        if ("60".equals(channelNo)) {//支付宝
+            paramMap.put("maritalStatus", "10");// 10未婚 20已婚 40离异 50丧偶 90其他
+        } else {
+            paramMap.put("maritalStatus", params.get("maritalStatus"));// 10未婚 20已婚 40离异 50丧偶 90其他
         }
         paramMap.put("positionType", positionType);// 工作性质
         paramMap.put("liveProvince", liveAddress_code_split[0]);// 现住房地址（省）
