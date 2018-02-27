@@ -194,7 +194,7 @@ public class AlipayFuwuService extends BaseService {
                     String custCertNo = Convert.toString(custBody.get("certNo"));
                     if (StringUtils.isEmpty(custCertNo))
                         throw new BusinessException(ConstUtil.ERROR_CODE, "实名身份证为空");
-                    if (!custCertNo.equals(sessionMap.get("certNo")))
+                    if (!custCertNo.equals(sessionMap.get("idNo")))
                         throw new BusinessException(ConstUtil.ERROR_CODE, "客户已被占用");
                 } else if (!"C1220".equals(custRetFlag)) {
                     throw new BusinessException(HttpUtil.getRetFlag(custresult), HttpUtil.getRetMsg(custresult));
