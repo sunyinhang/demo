@@ -210,10 +210,7 @@ public class AlipayFuwuService extends BaseService {
         }
         //实名准备 session 数据
         sessionMap.put("userId", userId);
-        //查询绑定手机号
-        IResponse<Map> mobileMap = this.uauthClient.getMobile(userId);
-        mobileMap.assertSuccessNeedBody();
-        sessionMap.put("phoneNo", mobileMap.getBody().get("mobile"));
+        sessionMap.put("phoneNo", phone);
         RedisUtils.setExpire(token, sessionMap);//实名的时候会用到 userId
         //实名
         IResponse<Map> realAuthResponse = this.ocrIdentityService.realAuthenticationForXjd(params);
