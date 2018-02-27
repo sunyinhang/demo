@@ -49,4 +49,8 @@ public interface UauthClient {
     @FeignApi("注册第三方用户")
     @PostMapping("/saveUserByExternUid")
     CommonResponse<String> saveUserByExternUid(@RequestBody Map<String, Object> params);
+
+    @FeignApi("不验证并绑定第三方用户")
+    @PostMapping("/unvalidateAndBindUserByExternUid")
+    CommonResponse<Map> unvalidateAndBindUserByExternUid(@RequestBody Map<String, Object> params);
 }

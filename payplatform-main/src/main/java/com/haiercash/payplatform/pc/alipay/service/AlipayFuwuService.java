@@ -16,7 +16,6 @@ import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.client.AcquirerClient;
 import com.haiercash.payplatform.service.client.AppServerClient;
-import com.haiercash.payplatform.service.client.CrmClient;
 import com.haiercash.payplatform.service.client.OutreachClient;
 import com.haiercash.payplatform.service.client.UauthClient;
 import com.haiercash.payplatform.utils.EncryptUtil;
@@ -60,8 +59,6 @@ public class AlipayFuwuService extends BaseService {
     private UauthClient uauthClient;
     @Autowired
     private OutreachClient outreachClient;
-    @Autowired
-    private CrmClient crmClient;
     @Autowired
     private AcquirerClient acquirerClient;
     @Autowired
@@ -217,10 +214,10 @@ public class AlipayFuwuService extends BaseService {
         realAuthResponse.assertSuccess();
         //绑定
         Map<String, Object> editParams = new HashMap<>();
-        editParams.put("certNo", sessionMap.get("idNo"));
-        editParams.put("externCompanyNo", "zhifubao");
-        editParams.put("externUid", thirdUserId);
-        IResponse<Map> editResp = this.crmClient.editExternCompanyNo(editParams);
+        editParams.put("mobile", EncryptUtil.simpleEncrypt(phone));
+        editParams.put("externUid", EncryptUtil.simpleEncrypt(thirdUserId));
+        editParams.put("externCompanyNo", EncryptUtil.simpleEncrypt(this.getChannelNo()));
+        IResponse<Map> editResp = this.uauthClient.unvalidateAndBindUserByExternUid(editParams);
         editResp.assertSuccess();
         //返回
         Map<String, Object> body = new HashMap<>(1);
