@@ -211,6 +211,11 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         cacheMap.put("name", name);
         if ("60".equals(this.getChannelNo())) {
+            //背面信息验证
+            if (ObjectUtils.isEmpty(cacheMap.get("issued")) || ObjectUtils.isEmpty(cacheMap.get("validDate"))) {
+                return fail(ConstUtil.ERROR_CODE, "身份证反面信息有误，请重新拍摄");
+            }
+            //支付宝手机号
             String authPhone = Convert.toString(map.get("authPhone"));//支付宝授权时用的手机号
             if (StringUtils.isEmpty(authPhone))
                 return fail(ConstUtil.ERROR_CODE, "授权手机号不能为空");
