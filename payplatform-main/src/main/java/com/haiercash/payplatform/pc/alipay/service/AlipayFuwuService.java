@@ -223,17 +223,7 @@ public class AlipayFuwuService extends BaseService {
         editParams.put("mobile", EncryptUtil.simpleEncrypt(phone));
         editParams.put("externUid", EncryptUtil.simpleEncrypt(thirdUserId));
         editParams.put("externCompanyNo", EncryptUtil.simpleEncrypt(this.getChannelNo()));
-        IResponse<Map> editResp = this.uauthClient.unvalidateAndBindUserByExternUid(editParams);
-        if (!editResp.isSuccess() && !Objects.equals(editResp.getRetFlag(), "U0181")) {//成功或已绑定
-            editResp.assertSuccessNeedBody();
-        }
-        Map<String, Object> editBody = editResp.getBody();
-        if (editBody == null) {
-            this.logger.info("Uauth 返回 body 为 null");
-            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-        if (!Objects.equals(userId, editBody.get("uauthUserId")))//验证绑定是否同一用户
-            throw new BusinessException(ConstUtil.ERROR_CODE, "用户已被其他账号绑定");
+        this.uauthClient.unvalidateAndBindUserByExternUid(editParams);//不判断绑定结果
         //返回
         Map<String, Object> body = new HashMap<>(1);
         body.put("legalPhone", "T");
