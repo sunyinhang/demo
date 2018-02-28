@@ -66,7 +66,13 @@ public class AlipayFuwuService extends BaseService {
 
     //授权后验证用户
     public IResponse<Map> validUser(String authCode) throws AlipayApiException {
-        AlipayToken token = AlipayUtils.getOauthTokenByAuthCode(authCode);
+        AlipayToken token;
+        try {
+            token = AlipayUtils.getOauthTokenByAuthCode(authCode);
+        } catch (AlipayApiException e) {
+            this.logger.info("获取支付宝 token 失败:" + e.getMessage());
+            return CommonResponse.fail("6098", "支付宝 auth_code 换取 token 失败");
+        }
         this.logger.info("支付宝 token: " + token);
         AlipayUserInfoShareResponse alipayUserInfo = AlipayUtils.getUserInfo(token.getToken());
         this.logger.info("支付宝用户信息: " + JsonSerializer.serialize(alipayUserInfo));

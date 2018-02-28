@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.cashloan.service.impl;
 
+import com.alipay.api.AlipayApiException;
 import com.bestvike.linq.IEnumerable;
 import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.CollectionUtils;
@@ -263,7 +264,13 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         ThirdTokenVerifyService thirdTokenVerifyService = ApplicationUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
         if (thirdTokenVerifyService == null)
             throw new BusinessException(ConstUtil.ERROR_CODE, "错误的 thirdTokenVerifyService 名称:'" + setting.getVerifyUrlService() + "'");
-        ThirdTokenVerifyResult thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
+        ThirdTokenVerifyResult thirdInfo;
+        try {
+            thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
+        } catch (AlipayApiException e) {
+            this.logger.info("获取支付宝 token 失败:" + e.getMessage());
+            return this.fail("6098", "支付宝 auth_code 换取 token 失败");
+        }
         String userId__ = thirdInfo.getUserId();
         String phoneNo_ = thirdInfo.getPhoneNo();
         try {
