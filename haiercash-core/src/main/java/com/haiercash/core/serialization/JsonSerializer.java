@@ -8,6 +8,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.ValueFilter;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.util.TypeUtils;
+import com.haiercash.core.serialization.fastjson.StringObjectMap;
+import com.haiercash.core.serialization.fastjson.StringObjectMapDeserializer;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -46,6 +48,7 @@ public final class JsonSerializer {
                 SerializerFeature.WriteDateUseDateFormat,
                 SerializerFeature.IgnoreNonFieldGetter);
         GLOBAL_CONFIG.setSerializeFilters(new CommonValueFilter());
+        ParserConfig.getGlobalInstance().putDeserializer(StringObjectMap.class, StringObjectMapDeserializer.instance);
     }
 
     public static FastJsonConfig getGlobalConfig() {
