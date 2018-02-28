@@ -228,7 +228,11 @@ public class AlipayFuwuService extends BaseService {
             editResp.assertSuccessNeedBody();
         }
         Map<String, Object> editBody = editResp.getBody();
-        if (!Objects.equals(userId, editBody.get("userId")))//验证绑定是否同一用户
+        if (editBody == null) {
+            this.logger.info("Uauth 返回 body 为 null");
+            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        if (!Objects.equals(userId, editBody.get("uauthUserId")))//验证绑定是否同一用户
             throw new BusinessException(ConstUtil.ERROR_CODE, "用户已被其他账号绑定");
         //返回
         Map<String, Object> body = new HashMap<>(1);
