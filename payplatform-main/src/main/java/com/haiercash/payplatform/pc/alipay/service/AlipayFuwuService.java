@@ -184,7 +184,7 @@ public class AlipayFuwuService extends BaseService {
                 identityParams.put("days", "0");
                 Map<String, Object> identityResp = this.outreachClient.identifyByFlag(identityParams);
                 if (!"00000".equals(identityResp.get("RET_CODE")))
-                    throw new BusinessException(ConstUtil.ERROR_CODE, "实名认证失败");
+                    throw new BusinessException(ConstUtil.ERROR_CODE, Convert.defaultString(identityResp.get("RET_MSG"), "实名认证失败"));
                 //注册并绑定
                 IResponse<String> saveResult = this.saveUserByExternUid(thirdUserId, phone);
                 saveResult.assertSuccessNeedBody();
