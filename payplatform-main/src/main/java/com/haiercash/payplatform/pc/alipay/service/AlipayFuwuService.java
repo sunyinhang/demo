@@ -192,18 +192,7 @@ public class AlipayFuwuService extends BaseService {
                 logger.info("注册后返回 userId: " + userId);
                 break;
             case "Y"://已注册
-                String externUid = Convert.toString(sessionMap.get("uidHaier"));
-                if (StringUtils.isEmpty(externUid))
-                    throw new BusinessException(ConstUtil.ERROR_CODE, "三方 uid 为空");
-                IResponse<Map> userInfo = this.uauthClient.findUserByUserid(phone);//根据手机获取 userId
-                userInfo.assertSuccessNeedBody();
-                Map<String, Object> userInfoBody = userInfo.getBody();
-                String bindedExternUid = Convert.toString(userInfoBody.get("externUid"));
-                //手机号已绑定其他账号,卡住
-                if (StringUtils.isNotEmpty(bindedExternUid) && !externUid.equals(bindedExternUid)) {
-                    this.logger.info(String.format("手机号:%s 已绑定支付宝账号:%s 但此时又要求绑定新的支付宝账号:%s", phone, bindedExternUid, externUid));
-                    throw new BusinessException(ConstUtil.ERROR_CODE, "该手机号已绑定其他支付宝账户");
-                }
+                IResponse<Map> userInfo = this.uauthClient.getUserId(EncryptUtil.simpleEncrypt(phone));//根据手机获取 userId
                 userId = Convert.toString(userInfo.getBody().get("userId"));
                 //查询实名信息,判断四要素是否一致
                 Map<String, Object> custMap = new HashMap<>();

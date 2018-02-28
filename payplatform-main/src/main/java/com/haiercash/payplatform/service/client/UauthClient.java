@@ -53,11 +53,4 @@ public interface UauthClient {
     @FeignApi("不验证并绑定第三方用户")
     @PostMapping("/unvalidateAndBindUserByExternUid")
     CommonResponse<Map> unvalidateAndBindUserByExternUid(@RequestBody Map<String, Object> params);
-
-    /**
-     * @param userId 不加密
-     */
-    @FeignApi("查询用户信息")
-    @GetMapping("/findUserByUserid")
-    CommonResponse<Map> findUserByUserid(@RequestParam("userId") String userId);
 }
