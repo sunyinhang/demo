@@ -41,6 +41,7 @@ import java.util.UUID;
 
 @Service
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService {
+    private static final String ALIPAY_MARITAL_STATUS = "alipay_maritalStatus";
     public final Log logger = LogFactory.getLog(getClass());
     @Autowired
     private AppServerService appServerService;
@@ -74,7 +75,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 
         String typCde = "";//贷款品种
 
-        Map<String, Object> allCustExtInfo = getAllCustExtInfo(token, channel, channelNo);
+        Map<String, Object> allCustExtInfo = getAllCustExtInfo();
 //        Map<String, Object> allCustExtInfoHeadMap = (Map<String, Object>) allCustExtInfo.get("head");
 //        String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
 //        String allCustExtreflagMsg =  (String) allCustExtInfoHeadMap.get("retFlag");
@@ -179,9 +180,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getAllCustExtInfo(String token, String channel, String channelNo) {
+    public Map<String, Object> getAllCustExtInfo() {
         logger.info("*********查询个人扩展信息**************开始");
-        Map<String, Object> redisMap = null;
+        String token = this.getToken();
+        String channel = this.getChannel();
+        String channelNo = this.getChannelNo();
         Map<String, Object> paramMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
@@ -230,6 +233,14 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         if (!ifError(allCustExtInfoHeadMap)) {
             return fail(ConstUtil.ERROR_CODE, allCustExtInfotMsg);
+        }
+
+        //支付宝婚姻状况取出放到redis,保存个人信息的时候默认值判断
+        if ("60".equals(channelNo)) {
+            Map<String, Object> allCustExtInfoBodyMap = (Map<String, Object>) resultmap.get("body");
+            String maritalStatus = Convert.toString(allCustExtInfoBodyMap.get("maritalStatus"));
+            cacheMap.put(ALIPAY_MARITAL_STATUS, maritalStatus);
+            RedisUtils.setExpire(token, cacheMap);
         }
 
         return resultmap;
@@ -640,7 +651,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("channel", channel);
         paramMap.put("custNo", custNo);
         if ("60".equals(channelNo)) {//支付宝
-            paramMap.put("maritalStatus", "06".equals(params.get("relationType_one")) ? "20" : "10");//06代表联系人类型为夫妻,夫妻的时候已婚,其他未婚  // 10未婚 20已婚 40离异 50丧偶 90其他
+            //如果原来的婚姻状况为已婚20,或者本次选择联系人为夫妻06.则当次婚姻状况为已婚 20
+            String maritalStatus = Convert.toString(cacheMap.get(ALIPAY_MARITAL_STATUS)); //redis 存储的婚姻状况
+            paramMap.put("maritalStatus", "20".equals(maritalStatus) || "06".equals(params.get("relationType_one")) ? "20" : "10");//06代表联系人类型为夫妻,夫妻的时候已婚,其他未婚  // 10未婚 20已婚 40离异 50丧偶 90其他
         } else {
             paramMap.put("maritalStatus", params.get("maritalStatus"));// 10未婚 20已婚 40离异 50丧偶 90其他
         }

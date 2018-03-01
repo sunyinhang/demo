@@ -266,7 +266,7 @@ public class CommonController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/getAllCustExtInfoNoXx", method = RequestMethod.POST)
     public Map<String, Object> getAllCustExtInfoNoXx() {
-        return custExtInfoService.getAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo());
+        return custExtInfoService.getAllCustExtInfo();
     }
 
     /**

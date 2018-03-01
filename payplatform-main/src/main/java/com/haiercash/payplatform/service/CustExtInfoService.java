@@ -16,7 +16,7 @@ public interface CustExtInfoService {
     //获取客户个人扩展信息及影像
     Map<String, Object> getAllCustExtInfoAndDocCde(String token, String channel, String channelNo);
     //获取客户个人扩展信息
-    Map<String, Object> getAllCustExtInfo(String token, String channel, String channelNo);
+    Map<String, Object> getAllCustExtInfo();
     //保存客户个人扩展信息
     Map<String, Object> saveAllCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params);
     //保存客户个人扩展信息(现金贷)
