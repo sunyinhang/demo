@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haiercash.payplatform.common.dao.VipAbcOrderDao">
+
+    <select id="queryvipabcapplSeq" resultType="java.lang.String">
+        select applseq from vipabc_order_info  where ordersn = #{orderSn,jdbcType=VARCHAR}
+    </select>
+
+    <select id="queryviporderno" resultType="java.lang.String">
+        select orderno from vipabc_order_info where ordersn = #{orderSn,jdbcType=VARCHAR}
+    </select>
+</mapper>
