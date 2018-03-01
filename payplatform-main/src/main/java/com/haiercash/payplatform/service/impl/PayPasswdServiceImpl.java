@@ -3,7 +3,6 @@ package com.haiercash.payplatform.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.payplatform.config.CashloanConfig;
@@ -21,6 +20,7 @@ import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
+import com.haiercash.spring.util.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1534,7 +1534,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         paramMap.put("userId", userId);
-        return appServerService.getPersonalCenterInfo(token, paramMap);
+        Map<String, Object> resultMap = appServerService.getPersonalCenterInfo(token, paramMap);
+        if(HttpUtil.isSuccess(resultMap)){//自主支付可用额度进行缓存
+            Map bodymap = (Map) resultMap.get("body");
+            String crdNorAvailAmt = Convert.toString(bodymap.get("crdNorAvailAmt"));
+            cacheMap.put("crdNorAvailAmt",crdNorAvailAmt);
+            RedisUtils.setExpire(token, cacheMap);
+        }
+
+        return resultMap;
     }
 
     //返回实名认证需要的数据

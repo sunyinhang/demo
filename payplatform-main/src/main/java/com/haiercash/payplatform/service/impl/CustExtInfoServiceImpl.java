@@ -908,9 +908,35 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         IResponse<List<LoanType>> loanTypeData = cashLoanService.getLoanType(null, custName, idType, idNo);
-
         loanTypeData.assertSuccessNeedBody();
+
         Map<String, Object> map = new HashMap<>();
+        if("60".equals(channelNo)){
+            List<LoanType> loanTypeInfo = loanTypeData.getBody();
+            LoanType loanType = loanTypeInfo.get(0);
+            String minAmtstr = loanType.getMinAmt();//单笔最小贷款金额
+            String maxAmtstr = loanType.getMaxAmt();//单笔最大贷款金额
+            String crdNorAvailAmtstr = Convert.toString(cacheMap.get("crdNorAvailAmt"));
+
+            double minAmt = Convert.asDouble(minAmtstr);
+            double maxAmt = Convert.asDouble(maxAmtstr);
+            double crdNorAvailAmt = Convert.asDouble(crdNorAvailAmtstr);
+
+            if(crdNorAvailAmt > maxAmt){
+                map.put("minAmt", minAmt);
+                map.put("maxAmt", maxAmt);
+            }
+
+            if(crdNorAvailAmt >= minAmt && crdNorAvailAmt <= maxAmt){
+                map.put("minAmt", minAmt);
+                map.put("maxAmt", crdNorAvailAmt);
+            }
+
+            if(crdNorAvailAmt < minAmt){
+                map.put("minAmt", "0");
+                map.put("maxAmt", "0");
+            }
+        }
         map.put("cardNo", cardNo);
         map.put("bankCode", bankCode);
         map.put("bankName", bankName);
