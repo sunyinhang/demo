@@ -370,8 +370,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
         // 计算首付比例
         this.calcFstPct(appOrder);
-        // 把门店信息写入订单
-        this.updateStoreInfo(appOrder, super.getToken());
+
         // 把销售代表信息写入订单
         this.updateSalesInfo(appOrder, super.getToken());
         // 把客户实名信息写入订单。注意：订单可能修改放款支行信息
@@ -426,6 +425,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         // 个人版：扫码分期提交给商户(S)，现金贷提交给信贷系统(N)
         //String autoFlag = appOrder.getTypGrp().equals("02") ? "N" : "S";
 
+        // 把门店信息写入订单
+        this.updateStoreInfo(appOrder, super.getToken());
+
         String orderNo;
         String applSeq;
         if ("02".equals(appOrder.getTypGrp())) {//现金贷
@@ -442,7 +444,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             }
             // 收单系统获取订单详情
             //AppOrder appOrder0 = acquirerService.getAppOrderFromAcquirer(relation.getApplSeq(), super.getChannelNo());
-
+            String storeName = appOrder.getCooprName();
+            String storeCode = appOrder.getCooprCde();
+            logger.info("门店编码：" + storeCode + "门店名称：" + storeName);
             Map<String, Object> resultResponseMap = acquirerService.cashLoan(appOrder, relation);
             if (CmisUtil.isSuccess(resultResponseMap)) {
                 Map<String, Object> bodyMap = (Map<String, Object>) ((Map<String, Object>) resultResponseMap
