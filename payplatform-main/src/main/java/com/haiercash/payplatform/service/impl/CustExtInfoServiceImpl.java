@@ -640,7 +640,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("channel", channel);
         paramMap.put("custNo", custNo);
         if ("60".equals(channelNo)) {//支付宝
-            paramMap.put("maritalStatus", "10");// 10未婚 20已婚 40离异 50丧偶 90其他
+            paramMap.put("maritalStatus", "06".equals(params.get("relationType_one")) ? "20" : "10");//06代表联系人类型为夫妻,夫妻的时候已婚,其他未婚  // 10未婚 20已婚 40离异 50丧偶 90其他
         } else {
             paramMap.put("maritalStatus", params.get("maritalStatus"));// 10未婚 20已婚 40离异 50丧偶 90其他
         }
@@ -1054,5 +1054,4 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         return success(returnParamMap);
     }
-
 }
