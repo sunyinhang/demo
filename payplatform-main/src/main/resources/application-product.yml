@@ -187,3 +187,6 @@ app:
     app-private-key:
     alipay-public-key:
     fuwu-min-score: 600
+    wap-pay-return-url: https://xxx
+    wap-pay-notify-url: https://xxx2
+    subjecct: 现金贷还款
