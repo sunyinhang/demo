@@ -196,7 +196,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     public Map<String, Object> savaIdentityInfo(Map<String, Object> map) {
         logger.info("OCR信息保存（下一步）***********开始");
         String token = Convert.toString(map.get("token"));
-        String name = Convert.toString(map.get("name"));
+        String name = Convert.toString(map.get("name"));//修改后的姓名
 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(name)) {
             logger.info("token:" + token + "  name:" + name);
@@ -211,6 +211,14 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         }
         cacheMap.put("name", name);
         if ("60".equals(this.getChannelNo())) {
+            //身份证号
+            String idCard = Convert.toString(cacheMap.get("idCard"));
+            if (StringUtils.isEmpty(idCard)) {
+                return fail(ConstUtil.ERROR_CODE, "身份证正面信息有误，请重新拍摄");
+            }
+
+            //TODO 支付宝userId 身份证号验证
+
             //背面信息验证
             if (ObjectUtils.isEmpty(cacheMap.get("issued")) || ObjectUtils.isEmpty(cacheMap.get("validDate"))) {
                 return fail(ConstUtil.ERROR_CODE, "身份证反面信息有误，请重新拍摄");
