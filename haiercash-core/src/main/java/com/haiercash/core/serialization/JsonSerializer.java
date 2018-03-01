@@ -29,7 +29,6 @@ public final class JsonSerializer {
         TypeUtils.compatibleWithJavaBean = false;
         TypeUtils.compatibleWithFieldName = true;
         GLOBAL_CONFIG = new FastJsonConfig();
-        GLOBAL_CONFIG.setParserConfig(ParserConfig.getGlobalInstance());
         GLOBAL_CONFIG.setDateFormat(DATE_FORMAT);
         GLOBAL_CONFIG.setFeatures(
                 Feature.AutoCloseSource,
@@ -48,7 +47,8 @@ public final class JsonSerializer {
                 SerializerFeature.WriteDateUseDateFormat,
                 SerializerFeature.IgnoreNonFieldGetter);
         GLOBAL_CONFIG.setSerializeFilters(new CommonValueFilter());
-        ParserConfig.getGlobalInstance().putDeserializer(StringObjectMap.class, StringObjectMapDeserializer.instance);
+        ParserConfig.global = GLOBAL_CONFIG.getParserConfig();
+        ParserConfig.global.putDeserializer(StringObjectMap.class, StringObjectMapDeserializer.instance);
     }
 
     public static FastJsonConfig getGlobalConfig() {
