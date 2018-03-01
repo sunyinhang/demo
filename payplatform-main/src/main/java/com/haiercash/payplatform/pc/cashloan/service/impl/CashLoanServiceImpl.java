@@ -20,6 +20,7 @@ import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.common.entity.LoanTypeProperty;
 import com.haiercash.payplatform.common.entity.LoanTypes;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
+import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.CashloanConfig;
 import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
@@ -71,6 +72,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     private CashloanConfig cashloanConfig;
     @Autowired
     private CommonConfig commonConfig;
+    @Autowired
+    private static AlipayConfig alipayConfig;
 
     @Override
     public String getActivityUrl() {
@@ -793,6 +796,11 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String province = (String) map.get("province");//省名称
         String city = (String) map.get("city");//市名称
         String district = (String) map.get("district");//区名称
+        String alipayCardFlag = (String)map.get("alipayCardFlag");//支付宝标志（放款 还款）
+        if("1".equals(alipayCardFlag)){//1:用支付宝进行付款和还款
+            applCardNo = alipayConfig.getApplCardNo() ;
+            repayApplCardNo = alipayConfig.getRepayApplCardNo();
+        }
 
         //非空判断
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
@@ -835,6 +843,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //获取订单金额  总利息 金额
         logger.info("订单保存，获取订单金额，总利息金额");
         //IResponse<List<LoanType>> IResponse= this.getLoanType(null, channelNo, custName, "20", certNo);
+        applyAmt = applyAmt.trim();//金额去空格
         Map<String, Object> payMap = new HashMap<>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", applyAmt);
