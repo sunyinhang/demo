@@ -44,7 +44,7 @@ import java.util.Objects;
  */
 @Service
 public class AlipayFuwuService extends BaseService {
-    private String alipay_card_no = "0000000000000000000";
+    private static final String ALIPAY_CARD_NO = "0000000000000000000";
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -284,7 +284,7 @@ public class AlipayFuwuService extends BaseService {
         acqParams.put("setlMode", setlMode);//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
         acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
         acqParams.put("psPerdNo", strPsPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
-        acqParams.put("acCardNo", alipay_card_no);//还款卡号  acCardNo  VARCHAR2(30)  是
+        acqParams.put("acCardNo", ALIPAY_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
         acqParams.put("useCoup", "N");//是否使用优惠券  useCoup  VARCHAR2(10)  是  Y：使用 N：不使用
         acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
 //        acqParams.put("actvPrcp", "");//提前还款本金  actvPrcp  Number  O:选填  提前还款本金模式时必输
