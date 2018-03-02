@@ -12,8 +12,10 @@ import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -86,8 +88,8 @@ public class AlipayFuwuController extends BaseController {
     }
 
     //提交订单并转到支付
-    @PostMapping("/api/payment/alipay/fuwu/wapPay")
-    public void wapPay(@RequestBody Map<String, Object> params, HttpServletResponse response) throws AlipayApiException, IOException {
+    @GetMapping("/api/payment/alipay/fuwu/wapPay")
+    public void wapPay(@RequestParam Map<String, Object> params, HttpServletResponse response) throws AlipayApiException, IOException {
         String html = this.alipayFuwuService.wapPay(params);
         response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
         IOUtils.write(html, response.getOutputStream(), CharsetNames.UTF_8);
