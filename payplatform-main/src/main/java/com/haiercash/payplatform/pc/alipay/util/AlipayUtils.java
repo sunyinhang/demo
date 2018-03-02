@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -107,7 +106,7 @@ public class AlipayUtils {
     }
 
     //调用支付宝还款接口,返回 html
-    public static String wapPay(String outTradeNo, BigDecimal totalAmount, String subject) throws AlipayApiException {
+    public static String wapPay(String outTradeNo, String totalAmount, String subject) throws AlipayApiException {
         Map<String, Object> bizContent = new HashMap<>();
         bizContent.put("out_trade_no", outTradeNo);
         bizContent.put("total_amount", totalAmount);
