@@ -931,9 +931,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
             String maxAmtstr = loanType.getMaxAmt();//单笔最大贷款金额
             String crdNorAvailAmtstr = Convert.toString(cacheMap.get("crdNorAvailAmt"));
 
-            double minAmt = Convert.asDouble(minAmtstr);
-            double maxAmt = Convert.asDouble(maxAmtstr);
-            double crdNorAvailAmt = Convert.asDouble(crdNorAvailAmtstr);
+            double minAmt = Convert.defaultDouble(minAmtstr);
+            double maxAmt = Convert.defaultDouble(maxAmtstr);
+            double crdNorAvailAmt = Convert.defaultDouble(crdNorAvailAmtstr);
 
             if(crdNorAvailAmt > maxAmt){
                 map.put("minAmt", minAmt);
