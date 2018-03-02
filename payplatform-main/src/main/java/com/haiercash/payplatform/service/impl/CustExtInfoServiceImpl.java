@@ -41,7 +41,6 @@ import java.util.UUID;
 
 @Service
 public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoService {
-    private static final String ALIPAY_MARITAL_STATUS = "alipay_maritalStatus";
     public final Log logger = LogFactory.getLog(getClass());
     @Autowired
     private AppServerService appServerService;
@@ -233,14 +232,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         if (!ifError(allCustExtInfoHeadMap)) {
             return fail(ConstUtil.ERROR_CODE, allCustExtInfotMsg);
-        }
-
-        //支付宝婚姻状况取出放到redis,保存个人信息的时候默认值判断
-        if ("60".equals(channelNo)) {
-            Map<String, Object> allCustExtInfoBodyMap = (Map<String, Object>) resultmap.get("body");
-            String maritalStatus = Convert.toString(allCustExtInfoBodyMap.get("maritalStatus"));
-            cacheMap.put(ALIPAY_MARITAL_STATUS, maritalStatus);
-            RedisUtils.setExpire(token, cacheMap);
         }
 
         return resultmap;
@@ -651,11 +642,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         paramMap.put("channel", channel);
         paramMap.put("custNo", custNo);
         if ("60".equals(channelNo)) {//支付宝
-            //如果原来的婚姻状况为已婚20,或者本次选择联系人为夫妻06.则当次婚姻状况为已婚 20
-            String maritalStatus = Convert.toString(cacheMap.get(ALIPAY_MARITAL_STATUS)); //redis 存储的婚姻状况
-            paramMap.put("maritalStatus", "20".equals(maritalStatus) || "06".equals(params.get("relationType_one")) ? "20" : "10");//06代表联系人类型为夫妻,夫妻的时候已婚,其他未婚  // 10未婚 20已婚 40离异 50丧偶 90其他
+            //选择联系人为夫妻 06.则婚姻状况为已婚 20 否则为未婚 10
+            paramMap.put("maritalStatus", "06".equals(params.get("relationType_one")) ? "20" : "10");//10未婚 20已婚 40离异 50丧偶 90其他
         } else {
-            paramMap.put("maritalStatus", params.get("maritalStatus"));// 10未婚 20已婚 40离异 50丧偶 90其他
+            paramMap.put("maritalStatus", params.get("maritalStatus"));//10未婚 20已婚 40离异 50丧偶 90其他
         }
         paramMap.put("positionType", positionType);// 工作性质
         paramMap.put("liveProvince", liveAddress_code_split[0]);// 现住房地址（省）
