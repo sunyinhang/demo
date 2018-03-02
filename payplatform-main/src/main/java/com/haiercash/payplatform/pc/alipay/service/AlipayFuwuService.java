@@ -265,10 +265,9 @@ public class AlipayFuwuService extends BaseService {
         String repayAmt = Convert.toString(params.get("repayAmt"));
         if (StringUtils.isEmpty(repayAmt))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
-        List<String> psPerdNo = (List<String>) params.get("psPerdNo");
-        if (CollectionUtils.isEmpty(psPerdNo))
+        String psPerdNo = Convert.toString(params.get("psPerdNo"));
+        if (StringUtils.isEmpty(psPerdNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
-        String strPsPerdNo = StringUtils.join(psPerdNo, '|');
         //会话验证
         Map<String, Object> sessionMap = RedisUtils.getExpireMap(token);
         if (MapUtils.isEmpty(sessionMap))
@@ -283,7 +282,7 @@ public class AlipayFuwuService extends BaseService {
         acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
         acqParams.put("setlMode", setlMode);//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
         acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
-        acqParams.put("psPerdNo", strPsPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
+        acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
         acqParams.put("acCardNo", ALIPAY_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
         acqParams.put("useCoup", "N");//是否使用优惠券  useCoup  VARCHAR2(10)  是  Y：使用 N：不使用
         acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
