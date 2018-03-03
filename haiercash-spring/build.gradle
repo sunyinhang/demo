@@ -43,6 +43,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-redis')
     compile('org.springframework.boot:spring-boot-starter-amqp')
     compile('org.springframework.boot:spring-boot-starter-mail')
+    compile("org.springframework.cloud:spring-cloud-config-client")
     compile('org.springframework.cloud:spring-cloud-starter-oauth2')
     compile('org.springframework.cloud:spring-cloud-starter-eureka')
     compile('org.springframework.cloud:spring-cloud-starter-feign')
