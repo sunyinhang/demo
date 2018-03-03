@@ -19,6 +19,7 @@ import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.data.SArea;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
+import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
@@ -93,6 +94,8 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private OutreachConfig outreachConfig;
     @Autowired
     private SAreaDao sAreaDao;
+    @Autowired
+    private static AlipayConfig alipayConfig;
 
     /**
      * 合同展示
@@ -415,7 +418,12 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         boolean ifAccessEd;
         try {
             logger.info("个人版保存订单校验银行卡限额策略, custNo:" + appOrder.getCustNo());
-            ifAccessEd = this.ifAccessEd(appOrder);
+            String repayApplCardNo = appOrder.getRepayApplCardNo();
+            if(repayApplCardNo.equals(alipayConfig.getRepayApplCardNo())){
+                ifAccessEd = true;//支付宝账号不进行金额及额度判断
+            }else{
+                ifAccessEd = this.ifAccessEd(appOrder);
+            }
         } catch (Exception e) {
             return fail("47", "用户卡信息中不存在该银行卡");
         }
