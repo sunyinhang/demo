@@ -189,6 +189,6 @@ app:
     fuwu-min-score: 600
     wap-pay-return-url: https://xxx
     wap-pay-notify-url: https://xxx2
-    subjecct: 现金贷还款
+    wap-pay-subject: 现金贷还款
     appl-card-no: 0000000000000000000
     repay-appl-card-no: 0000000000000000000

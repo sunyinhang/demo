@@ -310,7 +310,7 @@ public class AlipayFuwuService extends BaseService {
         }
 
         //发起网页支付
-        return AlipayUtils.wapPay(payNo, repayAmt, this.alipayConfig.getSubject());
+        return AlipayUtils.wapPay(payNo, repayAmt, this.alipayConfig.getWapPaySubject());
     }
 
     //查询第三方账号

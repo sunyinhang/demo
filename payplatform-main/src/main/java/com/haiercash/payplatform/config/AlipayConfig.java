@@ -18,7 +18,7 @@ public class AlipayConfig {
     private Integer fuwuMinScore;//生活号最小分数
     private String wapPayReturnUrl;//支付结果回调页面,H5 提供
     private String wapPayNotifyUrl;//订单状态通知接口,支付网关提供
-    private String subject;//支付宝 wapPay 时的 subject,商品名称
+    private String wapPaySubject;//支付宝 wapPay 时的 wapPaySubject,商品名称
     private String applCardNo;//支付宝默认放款卡号
     private String repayApplCardNo;//支付宝默认还款卡号
 }
