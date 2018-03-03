@@ -1,4 +1,4 @@
-package com.haiercash.spring.config;
+package com.haiercash.spring.eureka;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

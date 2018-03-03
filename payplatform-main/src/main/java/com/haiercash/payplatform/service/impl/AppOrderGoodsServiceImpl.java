@@ -3,7 +3,7 @@ package com.haiercash.payplatform.service.impl;
 import com.haiercash.payplatform.common.data.AppOrderGoods;
 import com.haiercash.payplatform.service.AppOrderGoodsService;
 import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;

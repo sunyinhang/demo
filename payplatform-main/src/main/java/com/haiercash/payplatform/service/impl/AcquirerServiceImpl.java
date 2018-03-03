@@ -23,7 +23,7 @@ import com.haiercash.payplatform.utils.ChannelType;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.ReflactUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;

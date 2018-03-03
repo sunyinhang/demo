@@ -2,7 +2,7 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.AppServerUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;

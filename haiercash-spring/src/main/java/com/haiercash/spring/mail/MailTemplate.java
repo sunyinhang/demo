@@ -2,7 +2,7 @@ package com.haiercash.spring.mail;
 
 import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.CollectionUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.mail.core.Mail;
 import com.haiercash.spring.mail.core.MailAttachment;
 import com.haiercash.spring.mail.core.MailInline;
