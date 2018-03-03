@@ -73,7 +73,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     @Autowired
     private CommonConfig commonConfig;
     @Autowired
-    private static AlipayConfig alipayConfig;
+    private AlipayConfig alipayConfig;
 
     @Override
     public String getActivityUrl() {
