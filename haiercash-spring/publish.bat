@@ -1,2 +1,2 @@
 @ECHO OFF
-gradle clean build publish -Prelease %*
+gradle clean build publish --refresh-dependencies -Prelease %*
