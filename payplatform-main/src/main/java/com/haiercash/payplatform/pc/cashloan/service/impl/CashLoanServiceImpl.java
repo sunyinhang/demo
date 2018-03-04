@@ -780,23 +780,23 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     public Map<String, Object> saveOrder(Map<String, Object> map) {
         logger.info("现金贷订单保存****************开始");
         //前端传入参数获取(放开)
-        String token = (String) map.get("token");
-        String channel = (String) map.get("channel");
-        String channelNo = (String) map.get("channelNo");
-        String applyTnr = (String) map.get("applyTnr");//借款期限
-        String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
-        String updflag = (String) map.get("flag");//1.待提交返显
-        String orderNo = (String) map.get("orderNo");//待提交时必传
-//        String areaCode = (String) map.get("areaCode");//区编码
+        String token = Convert.toString(map.get("token"));
+        String channel = Convert.toString(map.get("channel"));
+        String channelNo = Convert.toString(map.get("channelNo"));
+        String applyTnr = Convert.toString(map.get("applyTnr"));//借款期限
+        String applyTnrTyp = Convert.toString(map.get("applyTnrTyp"));//期限类型（若天则传D）
+        String updflag = Convert.toString(map.get("flag"));//1.待提交返显
+        String orderNo = Convert.toString(map.get("orderNo"));//待提交时必传
+//        String areaCode = Convert.toString( map.get("areaCode"));//区编码
         String applyAmt = Convert.toString(map.get("applyAmt"));//申请金额
-        String typCde = (String) map.get("typCde");//贷款品种
-        String purpose = (String) map.get("purpose");//贷款用途
-        String applCardNo = (String) map.get("applCardNo");//放款卡号
-        String repayApplCardNo = (String) map.get("repayApplCardNo");//还款卡号
-        String province = (String) map.get("province");//省名称
-        String city = (String) map.get("city");//市名称
-        String district = (String) map.get("district");//区名称
-        String alipayCardFlag = (String)map.get("alipayCardFlag");//支付宝标志（放款 还款）
+        String typCde = Convert.toString(map.get("typCde"));//贷款品种
+        String purpose = Convert.toString(map.get("purpose"));//贷款用途
+        String applCardNo = Convert.toString(map.get("applCardNo"));//放款卡号
+        String repayApplCardNo = Convert.toString(map.get("repayApplCardNo"));//还款卡号
+        String province = Convert.toString(map.get("province"));//省名称
+        String city = Convert.toString(map.get("city"));//市名称
+        String district = Convert.toString(map.get("district"));//区名称
+        String alipayCardFlag = Convert.toString(map.get("alipayCardFlag"));//支付宝标志（放款 还款）
         if("1".equals(alipayCardFlag)){//1:用支付宝进行付款和还款
             applCardNo = alipayConfig.getApplCardNo() ;
             repayApplCardNo = alipayConfig.getRepayApplCardNo();
@@ -821,7 +821,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String userId = (String) cacheMap.get("userId");
+        String userId = Convert.toString(cacheMap.get("userId"));
         //获取客户信息
         logger.info("订单保存，根据userId获取客户信息");
         Map<String, Object> custMap = new HashMap<>();
@@ -834,11 +834,11 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
         String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
         com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
-        String custName = (String) custresult.get("custName");
-        String custNo = (String) custresult.get("custNo");
+        String custName = Convert.toString(custresult.get("custName"));
+        String custNo = Convert.toString(custresult.get("custNo"));
         logger.info("客户编号：" + custNo + "   客户姓名：" + custName);
-        String certNo = (String) custresult.get("certNo");
-        String mobile = (String) custresult.get("mobile");
+        String certNo = Convert.toString(custresult.get("certNo"));
+        String mobile = Convert.toString(custresult.get("mobile"));
 
         //获取订单金额  总利息 金额
         logger.info("订单保存，获取订单金额，总利息金额");
@@ -1094,5 +1094,4 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             throw new BusinessException(ConstUtil.ERROR_CODE, "验证并绑定第三方（非海尔集团）用户失败");
         return stringObjectMap;
     }
-
 }
