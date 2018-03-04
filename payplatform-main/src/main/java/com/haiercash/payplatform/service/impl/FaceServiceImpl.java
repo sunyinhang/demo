@@ -1,13 +1,15 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.common.annotation.FlowNode;
-import com.haiercash.payplatform.config.OutreachConfig;
+import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.config.StorageConfig;
+import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.AppServerUtils;
@@ -54,7 +56,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
     @Autowired
     private StorageConfig storageConfig;
     @Autowired
-    private OutreachConfig outreachConfig;
+    private CashLoanService cashLoanService;
 
     private static void createDir(String destDirName) {
         if (!destDirName.endsWith(File.separator))
@@ -96,6 +98,22 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
             logger.info("redis获取数据为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+
+        //支付宝从数据库查询贷款品种
+        if ("60".equals(channelNo)) {
+            IResponse<List<LoanType>> loanTypeListResp = this.cashLoanService.getLoanType(null, null, null, null);
+            loanTypeListResp.assertSuccessNeedBody();
+            List<LoanType> loanTypes = loanTypeListResp.getBody();
+            if (CollectionUtils.isEmpty(loanTypes)) {
+                logger.info("贷款品种列表为空!");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            }
+            typCde = loanTypes.get(0).getTypCde();
+            if (StringUtils.isEmpty(typCde)) {
+                logger.info("贷款品种列表的第一个元素为空!");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            }
         }
 
         String providerNo = "";//人脸机构
