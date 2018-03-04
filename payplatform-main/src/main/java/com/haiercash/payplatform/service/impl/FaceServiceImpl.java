@@ -294,6 +294,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if ("N".equals(checkbodyjson.get("isRetry")) &&
                 "N".equals(checkbodyjson.get("isOK")) &&
                 "N".equals(checkbodyjson.get("isResend"))) {
+            //支付宝录单终止
+            if ("60".equals(channelNo)) {
+                return fail(ConstUtil.ERROR_CODE, "人脸次数达到上限录单终止");
+            }
             //跳转到手持身份证
             Map<String, Object> m = new HashMap<>();
             m.put("faceFlag", "2");
