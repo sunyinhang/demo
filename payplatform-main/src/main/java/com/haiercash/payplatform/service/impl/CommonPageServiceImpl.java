@@ -95,7 +95,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     @Autowired
     private SAreaDao sAreaDao;
     @Autowired
-    private static AlipayConfig alipayConfig;
+    private AlipayConfig alipayConfig;
 
     /**
      * 合同展示
