@@ -4,6 +4,7 @@ spring:
     config:
       enabled: true
       name: payplatform
+      profile: product
       discovery:
         enabled: true
         service-id: eureka-config-server
