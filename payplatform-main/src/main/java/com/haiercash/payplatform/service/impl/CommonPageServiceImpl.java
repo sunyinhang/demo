@@ -21,7 +21,6 @@ import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.CommonConfig;
-import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
@@ -90,8 +89,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private AppointmentRecordDao appointmentRecordDao;
     @Autowired
     private EntrySettingDao entrySettingDao;
-    @Autowired
-    private OutreachConfig outreachConfig;
     @Autowired
     private SAreaDao sAreaDao;
     @Autowired
