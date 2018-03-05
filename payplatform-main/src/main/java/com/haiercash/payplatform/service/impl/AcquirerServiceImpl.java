@@ -11,6 +11,7 @@ import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.common.enums.AcquirerApptEnum;
 import com.haiercash.payplatform.common.enums.AcquirerEnum;
 import com.haiercash.payplatform.common.enums.AcquirerGoodsEnum;
+import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppManageService;
 import com.haiercash.payplatform.service.CmisService;
@@ -68,6 +69,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     private CommonRepaymentPersonService commonRepaymentPersonService;
     @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
+    @Autowired
+    private AlipayConfig alipayConfig;
 
     @Override
     public Map<String, Object> getOrderFromAcquirer(String applSeq, String channel, String channelNo, String cooprCde,
@@ -596,8 +599,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
                 || channelType == ChannelType.Shunguang) {
             acquirer.put("purpose", "SALE");
         }
-        // 用户选择其他用途时，自动修改为：SALE、消费
         if ("OTH".equals(acquirer.get("purpose"))) {
+            // 用户选择其他用途时，自动修改为：SALE、消费
             acquirer.put("purpose", "SALE");
         }
 
@@ -621,6 +624,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         if ("1".equals(alipayCardFlag)) {
             acquirer.put("acc_bank_cde", "002");
             acquirer.put("repay_acc_bank_cde", "002");
+            acquirer.put("appl_card_no", alipayConfig.getApplCardNo());
+            acquirer.put("repay_appl_card_no", alipayConfig.getRepayApplCardNo());
         }
 
         // 嗨付个人版简版/够花 设置放款账户开户机构名称   大数据走0000  海尔集团财务有限责任公司
