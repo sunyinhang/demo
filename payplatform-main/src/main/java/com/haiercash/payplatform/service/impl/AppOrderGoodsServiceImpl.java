@@ -7,7 +7,6 @@ import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
-import com.haiercash.spring.util.RestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -170,7 +169,7 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
             Map<String, Object> jsonMap = HttpUtil.restPostMap(url, super.getToken(), parmMap);
             if (StringUtils.isEmpty(jsonMap)) {
                 logger.info("商品管理==》新增商品返回为空，添加失败！");
-                return RestUtil.fail("01", "新增商品失败！返回为空！");
+                return fail("01", "新增商品失败！返回为空！");
             } else {
                 logger.info("商品管理==》新增商品接收到的返回结果为：" + jsonMap);
                 //处理成功，获取头部信息
@@ -178,7 +177,7 @@ public class AppOrderGoodsServiceImpl extends BaseService implements AppOrderGoo
                 String flag = String.valueOf(headMap.get("retFlag"));
                 String msg = String.valueOf(headMap.get("retMsg"));
                 if (!"00000".equals(flag)) {
-                    return RestUtil.fail(flag, msg);
+                    return fail(flag, msg);
                 }
                 Map<String, Object> bodyMap = (Map<String, Object>) jsonMap.get("body");
                 String goodsCode = String.valueOf(bodyMap.get("goodsCode"));
