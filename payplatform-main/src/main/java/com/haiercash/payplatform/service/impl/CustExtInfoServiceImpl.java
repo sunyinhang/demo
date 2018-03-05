@@ -898,15 +898,15 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String cardNo = (String) cacheMap.get("cardNo");//默认实名银行卡号
         String bankCode = (String) cacheMap.get("bankCode");//银行卡代码
         String bankName = (String) cacheMap.get("bankName");//银行卡名称
-        if (custName.isEmpty()) {
+        if (StringUtils.isEmpty(custName)) {
             logger.info("custName为空");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        if (idType.isEmpty()) {
+        if (StringUtils.isEmpty(idType)) {
             logger.info("idType为空");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        if (idNo.isEmpty()) {
+        if (StringUtils.isEmpty(idNo)) {
             logger.info("idNo为空");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
