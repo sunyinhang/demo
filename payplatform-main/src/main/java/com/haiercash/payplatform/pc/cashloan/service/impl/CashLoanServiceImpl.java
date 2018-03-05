@@ -823,6 +823,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             applCardNo = alipayConfig.getApplCardNo();
             repayApplCardNo = alipayConfig.getRepayApplCardNo();
             cacheMap.put("alipayCardFlag", alipayCardFlag);
+            RedisUtils.setExpire(token, cacheMap);
         }
         String userId = Convert.toString(cacheMap.get("userId"));
         //获取客户信息

@@ -617,7 +617,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         //获取是否是支付宝支付标志
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(super.getToken());
         String alipayCardFlag = Convert.toString(cacheMap.get("alipayCardFlag"));
-        logger.info("支付类型标识为=" + alipayCardFlag);
+        logger.info("支付类型标识为=" + alipayCardFlag + "token=" + super.getToken() + "  ;cacheMap=" + cacheMap);
         if ("1".equals(alipayCardFlag)) {
             acquirer.put("acc_bank_cde", "002");
         }
