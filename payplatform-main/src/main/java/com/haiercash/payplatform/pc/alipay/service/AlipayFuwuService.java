@@ -81,7 +81,7 @@ public class AlipayFuwuService extends BaseService {
                 || !"T".equals(alipayUserInfo.getUserStatus())//非认证用户,不能准入
                 || !"T".equals(alipayUserInfo.getIsCertified())//非实名用户,不能准入
                 || "T".equals(alipayUserInfo.getIsStudentCertified())) {//学生,不能准入
-            this.logger.info("支付宝信息不符合准入条件:");
+            this.logger.info("支付宝信息不符合准入条件");
             Map<String, Object> body = new HashMap<>();
             body.put("flag", "52");//支付宝个人信息不准入,h5 进入错误页
             return CommonResponse.success(body);
