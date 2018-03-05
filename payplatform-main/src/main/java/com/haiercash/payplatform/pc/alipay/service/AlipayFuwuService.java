@@ -228,7 +228,7 @@ public class AlipayFuwuService extends BaseService {
         editParams.put("mobile", EncryptUtil.simpleEncrypt(phone));
         editParams.put("externUid", EncryptUtil.simpleEncrypt(thirdUserId));
         editParams.put("externCompanyNo", EncryptUtil.simpleEncrypt(this.getChannelNo()));
-        IResponse<Map> bindResp = this.uauthClient.unvalidateAndBindUserByExternUid(editParams);//不判断绑定结果
+        IResponse<Map> bindResp = this.uauthClient.unvalidateAndBindUserByExternUid(editParams);
         if (!bindResp.isSuccess() && !"U0181".equals(bindResp.getRetFlag()))
             bindResp.assertSuccess();
         Map<String, Object> bindBody = bindResp.getBody();
