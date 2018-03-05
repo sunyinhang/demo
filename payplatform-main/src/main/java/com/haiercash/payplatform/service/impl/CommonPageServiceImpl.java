@@ -450,9 +450,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             }
             // 收单系统获取订单详情
             //AppOrder appOrder0 = acquirerService.getAppOrderFromAcquirer(relation.getApplSeq(), super.getChannelNo());
-            String storeName = appOrder.getCooprName();
-            String storeCode = appOrder.getCooprCde();
-            logger.info("门店编码：" + storeCode + "门店名称：" + storeName);
             Map<String, Object> resultResponseMap = acquirerService.cashLoan(appOrder, relation);
             if (CmisUtil.isSuccess(resultResponseMap)) {
                 Map<String, Object> bodyMap = (Map<String, Object>) ((Map<String, Object>) resultResponseMap

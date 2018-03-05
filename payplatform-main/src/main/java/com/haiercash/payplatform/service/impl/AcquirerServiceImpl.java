@@ -561,7 +561,12 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         if (relation != null && !StringUtils.isEmpty(relation.getApplSeq())) {
             headMap.put("applSeq", relation.getApplSeq());
         }
-        acquirer.put("coopr_cde",headMap.get("cooprCode"));
+
+        String storeName = order.getCooprName();
+        String storeCode = order.getCooprCde();
+        logger.info("门店编码：" + storeCode + "门店名称：" + storeName);
+        acquirer.put("coopr_cde", storeCode);
+        acquirer.put("coopr_name", storeName);
         logger.info("向收单系统发起贷款申请, 参数:" + acquirer);
         Map<String, Object> result;
         result = AcqUtil
