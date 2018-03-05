@@ -819,6 +819,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
+        logger.info("支付生活号支付宝标志：" + alipayCardFlag + "token=" + token);
         if ("1".equals(alipayCardFlag)) {//1:用支付宝进行付款和还款
             applCardNo = alipayConfig.getApplCardNo();
             repayApplCardNo = alipayConfig.getRepayApplCardNo();
