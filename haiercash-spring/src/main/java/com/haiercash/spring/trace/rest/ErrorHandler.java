@@ -33,8 +33,9 @@ public final class ErrorHandler {
     }
 
     public static String getRetFlag(String retFlag) {
-        String moduleNo = Convert.defaultString(ThreadContext.getExecutingModuleNo(), "00");
-        return (retFlag == null || retFlag.length() <= 2) ? (APP_CODE + moduleNo + retFlag) : retFlag;
+        return (retFlag == null || retFlag.length() <= 2)
+                ? APP_CODE + Convert.defaultString(ThreadContext.getExecutingModuleNo(), "00") + retFlag
+                : retFlag;
     }
 
     public static ResponseEntity<CommonResponse> handleBusinessException(BusinessException e) {
