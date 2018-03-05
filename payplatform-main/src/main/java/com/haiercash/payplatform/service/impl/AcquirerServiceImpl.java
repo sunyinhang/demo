@@ -620,6 +620,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         logger.info("支付类型标识为=" + alipayCardFlag + "token=" + super.getToken() + "  ;cacheMap=" + cacheMap);
         if ("1".equals(alipayCardFlag)) {
             acquirer.put("acc_bank_cde", "002");
+            acquirer.put("repay_acc_bank_cde", "002");
         }
 
         // 嗨付个人版简版/够花 设置放款账户开户机构名称   大数据走0000  海尔集团财务有限责任公司
