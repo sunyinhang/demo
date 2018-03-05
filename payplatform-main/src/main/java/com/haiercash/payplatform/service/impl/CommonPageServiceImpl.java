@@ -376,6 +376,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         // 把客户实名信息写入订单。注意：订单可能修改放款支行信息
         String accBchCde = appOrder.getAccAcBchCde();
         String accBchName = appOrder.getAccAcBchName();
+        logger.info("订单信息输出："+ appOrder.toString());
         this.updateCustRealInfo(appOrder, super.getToken());
 
         if (!StringUtils.isEmpty(accBchCde) && !StringUtils.isEmpty(accBchName)) {
@@ -710,6 +711,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             }
             // 放款账号信息
             order.setApplAcTyp("01");// 01、个人账户
+            logger.info("订单信息输出："+ order.toString());
             this.setFkNo(order, token);
             order.setApplAcNam(mapBody.get("custName").toString());
             order.setAccAcProvince(mapBody.get("acctProvince").toString());
@@ -978,6 +980,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private void setFkNo(AppOrder order, String token) {
         // 获取放款卡号
         String fkNo = order.getApplCardNo();
+        logger.info("放款卡号："+ fkNo);
         if (StringUtils.isEmpty(fkNo)) {
             String custNo = order.getCustNo();
             String url = EurekaServer.CRM + "/app/crm/cust/getBankCard?custNo=" + custNo;
