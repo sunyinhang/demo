@@ -24,6 +24,7 @@ import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.ReflactUtils;
 import com.haiercash.spring.eureka.EurekaServer;
+import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
@@ -613,6 +614,14 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
             if (StringUtils.isEmpty(acquirer.get("appl_ac_nam")))
                 acquirer.put("appl_ac_nam", "海尔集团财务有限责任公司");
         }
+        //获取是否是支付宝支付标志
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(super.getToken());
+        String alipayCardFlag = Convert.toString(cacheMap.get("alipayCardFlag"));
+        logger.info("支付类型标识为=" + alipayCardFlag);
+        if ("1".equals(alipayCardFlag)) {
+            acquirer.put("acc_bank_cde", "002");
+        }
+
         // 嗨付个人版简版/够花 设置放款账户开户机构名称   大数据走0000  海尔集团财务有限责任公司
         if (channelType == ChannelType.Personal
                 || channelType == ChannelType.BigData

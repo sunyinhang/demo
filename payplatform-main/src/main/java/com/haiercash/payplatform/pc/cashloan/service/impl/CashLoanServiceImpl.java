@@ -799,10 +799,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         String city = Convert.toString(map.get("city"));//市名称
         String district = Convert.toString(map.get("district"));//区名称
         String alipayCardFlag = Convert.toString(map.get("alipayCardFlag"));//支付宝标志（放款 还款）
-        if("1".equals(alipayCardFlag)){//1:用支付宝进行付款和还款
-            applCardNo = alipayConfig.getApplCardNo() ;
-            repayApplCardNo = alipayConfig.getRepayApplCardNo();
-        }
 
         //非空判断
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
@@ -822,6 +818,11 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        if ("1".equals(alipayCardFlag)) {//1:用支付宝进行付款和还款
+            applCardNo = alipayConfig.getApplCardNo();
+            repayApplCardNo = alipayConfig.getRepayApplCardNo();
+            cacheMap.put("alipayCardFlag", alipayCardFlag);
         }
         String userId = Convert.toString(cacheMap.get("userId"));
         //获取客户信息
