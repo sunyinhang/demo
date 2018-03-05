@@ -1,13 +1,11 @@
 package com.haiercash.spring.util;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 /**
- * Created by use on 2017/8/15.
+ * Created by 许崇雷 on 2018-03-05.
  */
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Getter
 public final class BusinessException extends RuntimeException {
     private String retFlag;
     private String retMsg;
