@@ -272,7 +272,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
         } catch (AlipayApiException e) {
             this.logger.info("获取支付宝 token 失败:" + e.getMessage());
-            return this.fail("6098", "支付宝 auth_code 换取 token 失败");
+            Map<String, Object> body = new HashMap<>();
+            body.put("flag", "51");//h5 往后退一步
+            return this.success(body);
         }
         String userId__ = thirdInfo.getUserId();
         String phoneNo_ = thirdInfo.getPhoneNo();

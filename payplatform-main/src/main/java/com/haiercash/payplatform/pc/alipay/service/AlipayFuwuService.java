@@ -70,19 +70,22 @@ public class AlipayFuwuService extends BaseService {
             token = AlipayUtils.getOauthTokenByAuthCode(authCode);
         } catch (AlipayApiException e) {
             this.logger.info("获取支付宝 token 失败:" + e.getMessage());
-            return CommonResponse.fail("6098", "支付宝 auth_code 换取 token 失败");
+            Map<String, Object> body = new HashMap<>();
+            body.put("flag", "51");//h5 往后退一步
+            return CommonResponse.success(body);
         }
         this.logger.info("支付宝 token: " + token);
         AlipayUserInfoShareResponse alipayUserInfo = AlipayUtils.getUserInfo(token.getToken());
         this.logger.info("支付宝用户信息: " + JsonSerializer.serialize(alipayUserInfo));
-        if (!"2".equals(alipayUserInfo.getUserType()))
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, "非个人账号,不能准入");
-        if (!"T".equals(alipayUserInfo.getUserStatus()))
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, "非认证用户,不能准入");
-        if (!"T".equals(alipayUserInfo.getIsCertified()))
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, "非实名用户,不能准入");
-        if ("T".equals(alipayUserInfo.getIsStudentCertified()))
-            return CommonResponse.fail(ConstUtil.ERROR_CODE, "学生,不能准入");
+        if (!"2".equals(alipayUserInfo.getUserType())//非个人账号,不能准入
+                || !"T".equals(alipayUserInfo.getUserStatus())//非认证用户,不能准入
+                || !"T".equals(alipayUserInfo.getIsCertified())//非实名用户,不能准入
+                || "T".equals(alipayUserInfo.getIsStudentCertified())) {//学生,不能准入
+            this.logger.info("支付宝信息不符合准入条件:");
+            Map<String, Object> body = new HashMap<>();
+            body.put("flag", "52");//支付宝个人信息不准入,h5 进入错误页
+            return CommonResponse.success(body);
+        }
 
         Map<String, Object> sessionMap = RedisUtils.getExpireMap(this.getToken());
         if (MapUtils.isEmpty(sessionMap))
