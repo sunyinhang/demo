@@ -629,6 +629,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         if ("1".equals(alipayCardFlag)) {
             acquirer.put("acc_bank_cde", "002");
             acquirer.put("repay_acc_bank_cde", "002");
+            acquirer.put("acc_bank_name", "支付宝");
+            acquirer.put("repay_acc_bank_name", "支付宝");
             acquirer.put("appl_card_no", alipayConfig.getApplCardNo());
             acquirer.put("repay_appl_card_no", alipayConfig.getRepayApplCardNo());
         }
