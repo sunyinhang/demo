@@ -283,7 +283,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
             //支付宝支用环节人脸成功后不进行支付密码是否设置判断
             if ("60".equals(channelNo) && !"1".equals(edflag)) {
-                return success();
+                //人脸成功，跳转验证支付密码
+                Map<String, Object> m = new HashMap<>();
+                m.put("faceFlag", "1");//人脸成功，跳转验证支付密码
+                return success(m);
             }
 
             //进行支付密码校验
@@ -296,7 +299,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 "N".equals(checkbodyjson.get("isResend"))) {
             //支付宝录单终止
             if ("60".equals(channelNo)) {
-                return fail(ConstUtil.ERROR_CODE, "人脸次数达到上限录单终止");
+                return fail(ConstUtil.ERROR_CODE, checkretMsg);
             }
             //跳转到手持身份证
             Map<String, Object> m = new HashMap<>();
@@ -305,7 +308,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         } else {
             //可以继续做人脸，跳转到人脸页面
             Map<String, Object> m = new HashMap<>();
-            m.put("faceFlag", "3");
+            m.put("faceFlag", "3");//可以继续做人脸，跳转到人脸页面
             return success(m);
         }
     }
@@ -491,7 +494,6 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if (!"00000".equals(retFlag)) {
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        logger.info("上传手持身份证**********************成功");
         Map<String, Object> bodyjson = (Map<String, Object>) resultmap.get("body");
         String payPasswdFlag = (String) bodyjson.get("payPasswdFlag");
         if (payPasswdFlag.equals("1")) {// 1：已设置
