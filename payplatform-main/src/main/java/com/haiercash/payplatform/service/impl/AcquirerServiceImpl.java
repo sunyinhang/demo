@@ -626,13 +626,16 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(super.getToken());
         String alipayCardFlag = Convert.toString(cacheMap.get("alipayCardFlag"));
         logger.info("支付类型标识为=" + alipayCardFlag + "token=" + super.getToken() + "  ;cacheMap=" + cacheMap);
-        if ("1".equals(alipayCardFlag)) {
+        if ("1".equals(alipayCardFlag)) {//如果是支付宝进行支付放款
             acquirer.put("acc_bank_cde", "002");
             acquirer.put("repay_acc_bank_cde", "002");
             acquirer.put("acc_bank_name", "支付宝");
             acquirer.put("repay_acc_bank_name", "支付宝");
             acquirer.put("appl_card_no", alipayConfig.getApplCardNo());
             acquirer.put("repay_appl_card_no", alipayConfig.getRepayApplCardNo());
+            logger.info("支付宝放款卡号appl_card_no：" + alipayConfig.getApplCardNo() + "；repay_appl_card_no=" + alipayConfig.getRepayApplCardNo());
+            logger.info("支付宝acquirer=" + acquirer);
+
         }
 
         // 嗨付个人版简版/够花 设置放款账户开户机构名称   大数据走0000  海尔集团财务有限责任公司
