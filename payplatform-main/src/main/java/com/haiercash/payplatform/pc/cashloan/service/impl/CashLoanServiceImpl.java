@@ -821,8 +821,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
         logger.info("支付生活号支付宝标志：" + alipayCardFlag + "token=" + token);
         if ("1".equals(alipayCardFlag)) {//1:用支付宝进行付款和还款
-            applCardNo = alipayConfig.getApplCardNo();
-            repayApplCardNo = alipayConfig.getRepayApplCardNo();
+            applCardNo = AlipayConfig.APPL_CARD_NO;
+            repayApplCardNo = AlipayConfig.REPAY_APPL_CARD_NO;
             cacheMap.put("alipayCardFlag", alipayCardFlag);
             RedisUtils.setExpire(token, cacheMap);
         }

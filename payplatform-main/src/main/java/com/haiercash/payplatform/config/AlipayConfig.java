@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "app.alipay")
 public class AlipayConfig {
+    public static final String APPL_CARD_NO = "0000000000000000000";//支付宝默认放款卡号
+    public static final String REPAY_APPL_CARD_NO = "0000000000000000000";//支付宝默认还款卡号
+
     private String url;
     private String appId;
     private String appPrivateKey;//app 的私钥,公钥配置到支付宝官方的管理界面 https://openhome.alipay.com/platform/detailApp.htm?appId=${appId}&tab=appDetail
@@ -19,6 +22,4 @@ public class AlipayConfig {
     private String wapPayReturnUrl;//支付结果回调页面,H5 提供
     private String wapPayNotifyUrl;//订单状态通知接口,支付网关提供
     private String wapPaySubject;//支付宝 wapPay 时的 wapPaySubject,商品名称
-    private String applCardNo;//支付宝默认放款卡号
-    private String repayApplCardNo;//支付宝默认还款卡号
 }

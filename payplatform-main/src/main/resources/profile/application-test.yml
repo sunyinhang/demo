@@ -190,5 +190,3 @@ app:
     wap-pay-return-url: https://xxx
     wap-pay-notify-url: https://xxx2
     wap-pay-subject: 现金贷还款
-    appl-card-no: 0000000000000000000
-    repay-appl-card-no: 0000000000000000000

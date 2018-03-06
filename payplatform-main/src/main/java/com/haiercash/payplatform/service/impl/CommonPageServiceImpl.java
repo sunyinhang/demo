@@ -417,7 +417,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         try {
             logger.info("个人版保存订单校验银行卡限额策略, custNo:" + appOrder.getCustNo());
             String repayApplCardNo = appOrder.getRepayApplCardNo();
-            if(repayApplCardNo.equals(alipayConfig.getRepayApplCardNo())){
+            if (repayApplCardNo.equals(AlipayConfig.REPAY_APPL_CARD_NO)) {
                 ifAccessEd = true;//支付宝账号不进行金额及额度判断
             }else{
                 ifAccessEd = this.ifAccessEd(appOrder);

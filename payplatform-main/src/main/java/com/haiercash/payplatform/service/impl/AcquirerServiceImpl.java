@@ -631,11 +631,10 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
             acquirer.put("repay_acc_bank_cde", "002");
             acquirer.put("acc_bank_name", "支付宝");
             acquirer.put("repay_acc_bank_name", "支付宝");
-            acquirer.put("appl_card_no", alipayConfig.getApplCardNo());
-            acquirer.put("repay_appl_card_no", alipayConfig.getRepayApplCardNo());
-            logger.info("支付宝放款卡号appl_card_no：" + alipayConfig.getApplCardNo() + "；repay_appl_card_no=" + alipayConfig.getRepayApplCardNo());
+            acquirer.put("appl_card_no", AlipayConfig.APPL_CARD_NO);
+            acquirer.put("repay_appl_card_no", AlipayConfig.REPAY_APPL_CARD_NO);
+            logger.info("支付宝放款卡号appl_card_no：" + AlipayConfig.APPL_CARD_NO + "；repay_appl_card_no=" + AlipayConfig.REPAY_APPL_CARD_NO);
             logger.info("支付宝acquirer=" + acquirer);
-
         }
 
         // 嗨付个人版简版/够花 设置放款账户开户机构名称   大数据走0000  海尔集团财务有限责任公司
