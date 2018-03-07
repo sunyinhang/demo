@@ -548,15 +548,15 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         this.cashLoanCheckDefaultValue(order, acquirer);
 
         // 获取系统标识和渠道号
-        Map<String, Object> sysFlagAndChannelNo = orderService.getSysFlagAndChannelNo(order);
+//        Map<String, Object> sysFlagAndChannelNo = orderService.getSysFlagAndChannelNo(order);
         // 收单系统保存贷款详情
         String tradeType = "1";
         if (relation != null) {
             tradeType = "2";
         }
         Map<String, Object> headMap = AcqUtil
-                .getAcqHead(AcqTradeCode.SAVE_APPL, sysFlagAndChannelNo.get("sysFlag").toString(),
-                        sysFlagAndChannelNo.get("channelNo").toString(), order.getCooprCde(), tradeType);
+                .getAcqHead(AcqTradeCode.SAVE_APPL, super.getChannel(),
+                        super.getChannelNo(), order.getCooprCde(), tradeType);
         headMap.put("autoFlag", "N");
         if (relation != null && !StringUtils.isEmpty(relation.getApplSeq())) {
             headMap.put("applSeq", relation.getApplSeq());
