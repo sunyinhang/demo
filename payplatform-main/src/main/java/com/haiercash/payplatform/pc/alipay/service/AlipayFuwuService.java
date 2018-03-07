@@ -192,16 +192,6 @@ public class AlipayFuwuService extends BaseService {
                 saveResult.assertSuccessNeedBody();
                 userId = saveResult.getBody();
                 logger.info("注册后返回 userId: " + userId);
-                //4.token绑定
-                Map<String, Object> bindMap = new HashMap<>();
-                bindMap.put("userId", userId);//内部userId
-                bindMap.put("token", token);
-                bindMap.put("channel", ConstUtil.CHANNEL);
-                bindMap.put("channelNo", this.getChannelNo());
-                Map<String, Object> bindresult = appServerService.saveThirdPartToken(bindMap);
-                if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
-                    throw new BusinessException(ConstUtil.ERROR_CODE, "绑定Token失败");
-                }
                 break;
             case "Y"://已注册
                 IResponse<Map> userInfo = this.uauthClient.getUserId(EncryptUtil.simpleEncrypt(phone));//根据手机获取 userId
@@ -233,6 +223,18 @@ public class AlipayFuwuService extends BaseService {
         sessionMap.put("userId", userId);
         sessionMap.put("phoneNo", phone);
         RedisUtils.setExpire(token, sessionMap);//实名的时候会用到 userId
+
+        //4.token绑定
+        Map<String, Object> bindMap = new HashMap<>();
+        bindMap.put("userId", userId);//内部userId
+        bindMap.put("token", token);
+        bindMap.put("channel", ConstUtil.CHANNEL);
+        bindMap.put("channelNo", this.getChannelNo());
+        Map<String, Object> bindresult = appServerService.saveThirdPartToken(bindMap);
+        if (!HttpUtil.isSuccess(bindresult)) {//绑定失败
+            throw new BusinessException(ConstUtil.ERROR_CODE, "绑定Token失败");
+        }
+
         //实名
         IResponse<Map> realAuthResponse = this.ocrIdentityService.realAuthenticationForXjd(params);
         realAuthResponse.assertSuccess();
