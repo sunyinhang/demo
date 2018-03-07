@@ -16,7 +16,6 @@ import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
-import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,9 +46,9 @@ public class AlipayUtils {
         AlipayClient client = getDefaultClient();
         T response = client.execute(request, authToken);
         if (response == null)
-            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            throw new AlipayApiException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         if (!response.isSuccess())
-            throw new BusinessException(response.getCode(), response.getMsg());
+            throw new AlipayApiException(response.getCode(), response.getMsg());
         return response;
     }
 
@@ -61,9 +60,9 @@ public class AlipayUtils {
         AlipayClient client = getDefaultClient();
         T response = client.pageExecute(request);
         if (response == null)
-            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            throw new AlipayApiException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         if (!response.isSuccess())
-            throw new BusinessException(response.getCode(), response.getMsg());
+            throw new AlipayApiException(response.getCode(), response.getMsg());
         return response;
     }
 
