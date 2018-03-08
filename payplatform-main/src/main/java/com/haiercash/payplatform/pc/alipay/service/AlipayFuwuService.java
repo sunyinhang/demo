@@ -337,6 +337,7 @@ public class AlipayFuwuService extends BaseService {
 //        acqParams.put("actvPrcp", "");//提前还款本金  actvPrcp  Number  O:选填  提前还款本金模式时必输
             acqParams.put("isNeedPayNo", "Y");//  是否需要支付流水号 isNeedPayNo	Varchar2 选填	Y--- N---否  默认为否仅支持信贷还款
             IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
+                    .sysFlag(ConstUtil.CHANNEL)
                     .body(Collections.singletonMap("list", Collections.singletonList(acqParams)))
                     .build();
             IResponse<Map> response = this.acquirerClient.saveZdhkInfo(request);
