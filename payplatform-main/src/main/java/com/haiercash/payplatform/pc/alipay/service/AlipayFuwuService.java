@@ -9,6 +9,7 @@ import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
+import com.haiercash.payplatform.pc.alipay.bean.AlipayOrder;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.service.AppServerService;
@@ -262,34 +263,28 @@ public class AlipayFuwuService extends BaseService {
         return CommonResponse.success(body);
     }
 
-    //转换 key
+    //获取 redis key
     private String getRedisKey(String applSeq) {
         return ALIPAY_ORDER + applSeq;
     }
 
-    //保存流水号
-    private void savePayNo(String applSeq, String payNo) {
-        String redisKey = this.getRedisKey(applSeq);
-        Map<String, Object> orderMap = RedisUtils.getMap(redisKey);
-        if (orderMap == null)
-            orderMap = new HashMap<>();
-        orderMap.put("payNo", payNo);
-        RedisUtils.setExpire(redisKey, orderMap);
-        this.logger.info("支付宝还款从 redis 保存 payNo. applSeq:" + applSeq + " payNo:" + payNo);
+    //保存订单
+    private void saveAlipayOrder(AlipayOrder order) {
+        order.valid();
+        RedisUtils.setExpire(this.getRedisKey(order.getApplSeq()), order);
+        this.logger.info(String.format("支付宝还款从 redis 保存订单信息. applSeq:%s payNo:%s repayAmt:%s", order.getApplSeq(), order.getPayNo(), order.getRepayAmt()));
     }
 
-    //获取流水号
-    private String getPayNo(String applSeq) {
-        Map<String, Object> orderMap = RedisUtils.getMap(this.getRedisKey(applSeq));
-        if (MapUtils.isEmpty(orderMap))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "操作失败，请刷新账单列表后重试");
-        String payNo = Convert.toString(orderMap.get("payNo"));
-        this.logger.info("支付宝还款从 redis 读取 payNo. applSeq:" + applSeq + " payNo:" + payNo);
-        if (StringUtils.isEmpty(payNo)) {
-            this.logger.info("redis 取到的 payNo 为空");
+    //获取订单
+    private AlipayOrder getAlipayOrder(String applSeq) {
+        AlipayOrder order = RedisUtils.get(this.getRedisKey(applSeq), AlipayOrder.class);
+        if (order == null) {
+            this.logger.info("支付宝还款从 redis 读取订单信息 返回 null. applSeq:" + applSeq);
             throw new BusinessException(ConstUtil.ERROR_CODE, "操作失败，请刷新账单列表后重试");
         }
-        return payNo;
+        this.logger.info(String.format("支付宝还款从 redis 读取 payNo. applSeq:%s payNo:%s repayAmt:%s", applSeq, order.getPayNo(), order.getRepayAmt()));
+        order.valid();
+        return order;
     }
 
     //支付
@@ -301,24 +296,6 @@ public class AlipayFuwuService extends BaseService {
         String channelNo = this.getChannelNo();
         if (!"60".equals(channelNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
-
-        //参数验证
-        String applSeq = Convert.toString(params.get("applSeq"));
-        if (StringUtils.isEmpty(applSeq))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "[贷款申请流水号]不能为空");
-        String setlMode = Convert.toString(params.get("setlMode"));
-        if (StringUtils.isEmpty(setlMode))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "[还款类型]不能为空");
-        String repayAmt = Convert.toString(params.get("repayAmt"));
-        if (StringUtils.isEmpty(repayAmt))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
-        String psPerdNo = Convert.toString(params.get("psPerdNo"));
-        if (StringUtils.isEmpty(psPerdNo))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
-        String isRetry = Convert.toString(params.get("isRetry"));
-        if (StringUtils.isEmpty(isRetry))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "[是否重试]不能为空");
-
         //会话验证
         Map<String, Object> sessionMap = RedisUtils.getExpireMap(token);
         if (MapUtils.isEmpty(sessionMap))
@@ -326,11 +303,27 @@ public class AlipayFuwuService extends BaseService {
         String custNo = Convert.toString(sessionMap.get("custNo"));
         if (StringUtils.isEmpty(custNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "会话中[客户编号]不能为空");
+        //参数验证
+        String applSeq = Convert.toString(params.get("applSeq"));
+        if (StringUtils.isEmpty(applSeq))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "[贷款申请流水号]不能为空");
+        String isRetry = Convert.toString(params.get("isRetry"));
 
-        String payNo;
+        //构建阿里订单
+        AlipayOrder order;
         if ("Y".equals(isRetry)) {//已经调用过收单,前台需要穿 isRetry = Y
-            payNo = this.getPayNo(applSeq);
+            order = this.getAlipayOrder(applSeq);//获取订单
         } else {
+            //参数验证,第一次
+            String setlMode = Convert.toString(params.get("setlMode"));
+            if (StringUtils.isEmpty(setlMode))
+                throw new BusinessException(ConstUtil.ERROR_CODE, "[还款类型]不能为空");
+            String repayAmt = Convert.toString(params.get("repayAmt"));
+            if (StringUtils.isEmpty(repayAmt))
+                throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
+            String psPerdNo = Convert.toString(params.get("psPerdNo"));
+            if (StringUtils.isEmpty(psPerdNo))
+                throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
             //调用收单 还款申请
             Map<String, Object> acqParams = new HashMap<>();
             acqParams.put("applSeq", applSeq);
@@ -363,18 +356,22 @@ public class AlipayFuwuService extends BaseService {
                 this.logger.info("收单提交还款请求返回的 body 的 list 的第一个元素内容为空");
                 throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
             }
-            payNo = Convert.toString(one.get("payNo"));
+            String payNo = Convert.toString(one.get("payNo"));
             this.logger.info("收单返回支付流水号:" + payNo);
             if (StringUtils.isEmpty(payNo)) {
                 this.logger.info("收单未返回 payNo");
                 throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
             }
-            //保存流水号
-            this.savePayNo(applSeq, payNo);
+            //保存订单
+            order = new AlipayOrder();
+            order.setApplSeq(applSeq);
+            order.setPayNo(payNo);
+            order.setRepayAmt(repayAmt);
+            this.saveAlipayOrder(order);
         }
 
         //发起网页支付
-        return AlipayUtils.wapPay(token, channelNo, payNo, repayAmt, this.alipayConfig.getWapPaySubject());
+        return AlipayUtils.wapPay(token, channelNo, order, this.alipayConfig.getWapPaySubject());
     }
 
     //查询第三方账号

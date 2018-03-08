@@ -17,6 +17,7 @@ import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.CommonConfig;
+import com.haiercash.payplatform.pc.alipay.bean.AlipayOrder;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,17 +111,18 @@ public class AlipayUtils {
     }
 
     //调用支付宝还款接口,返回 html
-    public static String wapPay(String token, String channelNo, String outTradeNo, String totalAmount, String subject) throws AlipayApiException {
+    public static String wapPay(String token, String channelNo, AlipayOrder order, String subject) throws AlipayApiException {
         Map<String, Object> bizContent = new HashMap<>();
-        bizContent.put("out_trade_no", outTradeNo);
-        bizContent.put("total_amount", totalAmount);
+        bizContent.put("out_trade_no", order.getPayNo());
+        bizContent.put("total_amount", order.getRepayAmt());
         bizContent.put("subject", subject);
         bizContent.put("product_code", "QUICK_WAP_WAY");
 
         Map<String, String> param = new HashMap<>();
         param.put("token", token);
         param.put("channelNo", channelNo);
-        param.put("payNo", outTradeNo);
+        param.put("applSeq", order.getApplSeq());
+        param.put("payNo", order.getPayNo());
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
         request.setReturnUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayReturnUrl() + "?" + URLSerializer.serialize(param));
         request.setNotifyUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayNotifyUrl());
