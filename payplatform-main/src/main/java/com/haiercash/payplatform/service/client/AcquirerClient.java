@@ -7,7 +7,6 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,5 +16,5 @@ import java.util.Map;
 public interface AcquirerClient {
     @FeignApi("ACQ-2101提交还款请求")
     @PostMapping("/saveZdhkInfo")
-    AcqResponse<List<Map>> saveZdhkInfo(@RequestBody IAcqRequest body);
+    AcqResponse<Map> saveZdhkInfo(@RequestBody IAcqRequest body);
 }

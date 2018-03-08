@@ -305,19 +305,24 @@ public class AlipayFuwuService extends BaseService {
         IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
                 .body(Collections.singletonMap("list", Collections.singletonList(acqParams)))
                 .build();
-        IResponse<List<Map>> response = this.acquirerClient.saveZdhkInfo(request);
+        IResponse<Map> response = this.acquirerClient.saveZdhkInfo(request);
         response.assertSuccessNeedBody();
-        List<Map> bodyList = response.getBody();
-        if (CollectionUtils.isEmpty(bodyList)) {
-            this.logger.info("收单提交还款请求返回的 body 的 list 为空");
+        Map<String, Object> acqRespBody = response.getBody();
+        if (MapUtils.isEmpty(acqRespBody)) {
+            this.logger.info("收单提交还款请求返回的 body 为空");
             throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        Map<String, Object> body = bodyList.get(0);
-        if (body == null) {
-            this.logger.info("收单提交还款请求返回的 body 的 list.get(0) 为 null");
+        List<Map> list = (List<Map>) acqRespBody.get("list");
+        if (CollectionUtils.isEmpty(list)) {
+            this.logger.info("收单提交还款请求返回的 body 的 list 为空");
             throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
         }
-        String payNo = Convert.toString(body.get("payNo"));
+        Map<String, Object> one = list.get(0);
+        if (MapUtils.isEmpty(one)) {
+            this.logger.info("收单提交还款请求返回的 body 的 list 的第一个元素内容为空");
+            throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
+        }
+        String payNo = Convert.toString(one.get("payNo"));
         logger.info("收单返回支付流水号:" + payNo);
         if (StringUtils.isEmpty(payNo)) {
             this.logger.info("收单未返回 payNo");
