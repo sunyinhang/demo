@@ -14,7 +14,9 @@ import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.alipay.api.response.ZhimaCreditScoreBriefGetResponse;
 import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
+import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,11 @@ public class AlipayUtils {
     private static final String SIGN_TYPE = "RSA2";
     private static final String CHARSET = CharsetNames.UTF_8;
     private static AlipayConfig alipayConfig;
+    private static CommonConfig commonConfig;
     @Autowired
     private AlipayConfig alipayConfigInstance;
+    @Autowired
+    private CommonConfig commonConfigInstance;
 
     private static AlipayClient getDefaultClient() {
         return new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getAppId(), alipayConfig.getAppPrivateKey(), FORMAT, CHARSET, alipayConfig.getAlipayPublicKey(), SIGN_TYPE);
@@ -105,14 +110,19 @@ public class AlipayUtils {
     }
 
     //调用支付宝还款接口,返回 html
-    public static String wapPay(String outTradeNo, String totalAmount, String subject) throws AlipayApiException {
+    public static String wapPay(String token, String channelNo, String outTradeNo, String totalAmount, String subject) throws AlipayApiException {
         Map<String, Object> bizContent = new HashMap<>();
         bizContent.put("out_trade_no", outTradeNo);
         bizContent.put("total_amount", totalAmount);
         bizContent.put("subject", subject);
         bizContent.put("product_code", "QUICK_WAP_WAY");
+
+        Map<String, String> param = new HashMap<>();
+        param.put("token", token);
+        param.put("channelNo", channelNo);
+        param.put("payNo", outTradeNo);
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
-        request.setReturnUrl(alipayConfig.getWapPayReturnUrl());
+        request.setReturnUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayReturnUrl() + "?" + URLSerializer.serialize(param));
         request.setNotifyUrl(alipayConfig.getWapPayNotifyUrl());
         request.setBizContent(JsonSerializer.serialize(bizContent));
         return pageExecute(request).getBody();
@@ -121,5 +131,6 @@ public class AlipayUtils {
     @PostConstruct
     private void init() {
         alipayConfig = this.alipayConfigInstance;
+        commonConfig = this.commonConfigInstance;
     }
 }
