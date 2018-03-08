@@ -358,15 +358,23 @@ public class AlipayFuwuService extends BaseService {
                 throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
             }
             String payNo = Convert.toString(one.get("payNo"));
-            this.logger.info("收单返回支付流水号:" + payNo);
+            this.logger.info("收单返回 payNo:" + payNo);
             if (StringUtils.isEmpty(payNo)) {
                 this.logger.info("收单未返回 payNo");
                 throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
             }
+            String repaySeq = Convert.toString(one.get("repaySeq"));
+            this.logger.info("收单返回 repaySeq:" + repaySeq);
+            if (StringUtils.isEmpty(repaySeq)) {
+                this.logger.info("收单未返回 repaySeq");
+                throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
+            }
+
             //保存订单
             order = new AlipayOrder();
             order.setApplSeq(applSeq);
             order.setPayNo(payNo);
+            order.setRepaySeq(repaySeq);
             order.setRepayAmt(repayAmt);
             this.saveAlipayOrder(order);
         }

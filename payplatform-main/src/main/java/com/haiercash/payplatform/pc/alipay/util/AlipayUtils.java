@@ -123,6 +123,8 @@ public class AlipayUtils {
         param.put("channelNo", channelNo);
         param.put("applSeq", order.getApplSeq());
         param.put("payNo", order.getPayNo());
+        param.put("repaySeq", order.getRepaySeq());
+        param.put("repayAmt", order.getRepayAmt());
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
         request.setReturnUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayReturnUrl() + "?" + URLSerializer.serialize(param));
         request.setNotifyUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayNotifyUrl());
