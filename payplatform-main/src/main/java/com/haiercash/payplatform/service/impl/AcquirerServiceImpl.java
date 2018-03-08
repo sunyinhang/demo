@@ -816,4 +816,11 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         Map headMap = AcqUtil.getAcqHead(tradeCode, sysFlag, channelNo, cooprCode, tradeType);
         return (Map<String, Object>) AcqUtil.getAcqResponse(url, headMap, map);
     }
+
+    @Override
+    public Map<String, Object> selectRepayRequestSetlSts(Map map, String channelNo) {
+        String url = EurekaServer.ACQUIRER + "/api/appl/selectRepayRequestSetlSts";
+        Map headMap = AcqUtil.getAcqHead("ACQ-2202", "11", channelNo, "", "");
+        return (Map<String, Object>) AcqUtil.getAcqResponse(url, headMap, map);
+    }
 }
