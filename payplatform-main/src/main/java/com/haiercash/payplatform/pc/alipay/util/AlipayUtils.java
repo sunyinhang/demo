@@ -123,7 +123,7 @@ public class AlipayUtils {
         param.put("payNo", outTradeNo);
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
         request.setReturnUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayReturnUrl() + "?" + URLSerializer.serialize(param));
-        request.setNotifyUrl(alipayConfig.getWapPayNotifyUrl());
+        request.setNotifyUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayNotifyUrl());
         request.setBizContent(JsonSerializer.serialize(bizContent));
         return pageExecute(request).getBody();
     }

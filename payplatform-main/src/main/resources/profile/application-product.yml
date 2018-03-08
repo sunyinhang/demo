@@ -188,5 +188,5 @@ app:
     alipay-public-key:
     fuwu-min-score: 600
     wap-pay-return-url: /alipay/#!/loan/orderSucc.html
-    wap-pay-notify-url: https://xxx2
+    wap-pay-notify-url: :9998/api/foreign/bankfront/callBack/aliDeductCallBack
     wap-pay-subject: 现金贷还款
