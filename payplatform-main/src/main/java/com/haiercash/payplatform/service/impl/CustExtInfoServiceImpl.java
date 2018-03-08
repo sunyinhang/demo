@@ -779,6 +779,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
+        if ("60".equals(channelNo)) {
+            code = "03";//支付宝每次都走人脸
+        }
         if (code != null && !"".equals(code)) {
             logger.info("*********人脸识别标识码：" + code);
             switch (code) {
