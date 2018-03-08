@@ -91,6 +91,7 @@ public class AlipayFuwuController extends BaseController {
     @GetMapping("/api/payment/alipay/fuwu/wapPay")
     public void wapPay(@RequestParam Map<String, Object> params, HttpServletResponse response) throws AlipayApiException, IOException {
         String html = this.alipayFuwuService.wapPay(params);
+        this.logger.info("支付宝返回支付页面内容: " + html);
         response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
         IOUtils.write(html, response.getOutputStream(), CharsetNames.UTF_8);
     }
