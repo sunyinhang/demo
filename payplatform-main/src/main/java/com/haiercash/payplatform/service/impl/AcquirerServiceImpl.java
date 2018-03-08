@@ -818,7 +818,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     }
 
     @Override
-    public Map<String, Object> selectRepayRequestSetlSts(Map map, String channelNo) {
+    public Map<String, Object> selectRepayRequestSetlSts(Map<String, Object> map) {
+        String channelNo = super.getChannelNo();
         String url = EurekaServer.ACQUIRER + "/api/appl/selectRepayRequestSetlSts";
         Map headMap = AcqUtil.getAcqHead("ACQ-2202", "11", channelNo, "", "");
         return (Map<String, Object>) AcqUtil.getAcqResponse(url, headMap, map);

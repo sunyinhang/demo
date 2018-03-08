@@ -127,5 +127,5 @@ public interface AcquirerService {
      * @param map
      * @return
      */
-    Map<String, Object> selectRepayRequestSetlSts(Map map, String channelNo);
+    Map<String, Object> selectRepayRequestSetlSts(Map<String, Object> map);
 }
