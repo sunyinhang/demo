@@ -188,5 +188,5 @@ app:
     alipay-public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj0O5+7wAtqv4OImWHlDX7+rRc8H4peIcykwip2+zNatRNYe0qHj/Jl4CKshSwwmu5tvFTxrF6NJF8Yicz1AFnbsy7js90r5YUrwQlplOMY2YCZbCx18dp/0vGeRl9Mn0QrI7iCUxvcdqOq16J3ZbFh0TTnY9zS7YvpcBqz9RTFgvAXyd236J83MSaFo7+WmPlbqjwDWu2IiEPnbAe9uy6pTCFVjsSP8J7ZeQese2dwKy9RKah9Ll7dpHHbO78qLgYcJvalkisDA55PNHTMV206mcYAQbYpY9kgsH+lQ7DmuXp3AwhaM1A/yuU+ImOYMO88XPTVNJubUgdWZYvHDsMwIDAQAB
     fuwu-min-score: 600
     wap-pay-return-url: /alipay/#!/loan/orderSucc.html
-    wap-pay-notify-url: :9998/api/foreign/bankfront/callBack/aliDeductCallBack
+    wap-pay-notify-url: :9910/api/foreign/bankfront/callBack/aliDeductCallBack
     wap-pay-subject: 现金贷还款
