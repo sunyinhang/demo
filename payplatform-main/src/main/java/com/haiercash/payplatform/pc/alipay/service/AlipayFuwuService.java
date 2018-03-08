@@ -44,6 +44,8 @@ import java.util.Objects;
  */
 @Service
 public class AlipayFuwuService extends BaseService {
+    private static final String ALIPAY_ORDER = "ALIPAY_ORDER:";
+
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -260,6 +262,36 @@ public class AlipayFuwuService extends BaseService {
         return CommonResponse.success(body);
     }
 
+    //转换 key
+    private String getRedisKey(String applSeq) {
+        return ALIPAY_ORDER + applSeq;
+    }
+
+    //保存流水号
+    private void savePayNo(String applSeq, String payNo) {
+        String redisKey = this.getRedisKey(applSeq);
+        Map<String, Object> orderMap = RedisUtils.getMap(redisKey);
+        if (orderMap == null)
+            orderMap = new HashMap<>();
+        orderMap.put("payNo", payNo);
+        RedisUtils.setExpire(redisKey, orderMap);
+        this.logger.info("支付宝还款从 redis 保存 payNo. applSeq:" + applSeq + " payNo:" + payNo);
+    }
+
+    //获取流水号
+    private String getPayNo(String applSeq) {
+        Map<String, Object> orderMap = RedisUtils.getMap(this.getRedisKey(applSeq));
+        if (MapUtils.isEmpty(orderMap))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "操作失败，请刷新账单列表后重试");
+        String payNo = Convert.toString(orderMap.get("payNo"));
+        this.logger.info("支付宝还款从 redis 读取 payNo. applSeq:" + applSeq + " payNo:" + payNo);
+        if (StringUtils.isEmpty(payNo)) {
+            this.logger.info("redis 取到的 payNo 为空");
+            throw new BusinessException(ConstUtil.ERROR_CODE, "操作失败，请刷新账单列表后重试");
+        }
+        return payNo;
+    }
+
     //支付
     public String wapPay(Map<String, Object> params) throws AlipayApiException {
         //渠道验证
@@ -269,6 +301,7 @@ public class AlipayFuwuService extends BaseService {
         String channelNo = this.getChannelNo();
         if (!"60".equals(channelNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
+
         //参数验证
         String applSeq = Convert.toString(params.get("applSeq"));
         if (StringUtils.isEmpty(applSeq))
@@ -282,6 +315,10 @@ public class AlipayFuwuService extends BaseService {
         String psPerdNo = Convert.toString(params.get("psPerdNo"));
         if (StringUtils.isEmpty(psPerdNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
+        String isRetry = Convert.toString(params.get("isRetry"));
+        if (StringUtils.isEmpty(isRetry))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "[是否重试]不能为空");
+
         //会话验证
         Map<String, Object> sessionMap = RedisUtils.getExpireMap(token);
         if (MapUtils.isEmpty(sessionMap))
@@ -290,43 +327,50 @@ public class AlipayFuwuService extends BaseService {
         if (StringUtils.isEmpty(custNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "会话中[客户编号]不能为空");
 
-        //调用收单 还款申请
-        Map<String, Object> acqParams = new HashMap<>();
-        acqParams.put("applSeq", applSeq);
-        acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
-        acqParams.put("setlMode", setlMode);//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
-        acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
-        acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
-        acqParams.put("acCardNo", AlipayConfig.REPAY_APPL_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
-        acqParams.put("useCoup", "N");//是否使用优惠券  useCoup  VARCHAR2(10)  是  Y：使用 N：不使用
-        acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
+        String payNo;
+        if ("Y".equals(isRetry)) {//已经调用过收单,前台需要穿 isRetry = Y
+            payNo = this.getPayNo(applSeq);
+        } else {
+            //调用收单 还款申请
+            Map<String, Object> acqParams = new HashMap<>();
+            acqParams.put("applSeq", applSeq);
+            acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
+            acqParams.put("setlMode", setlMode);//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
+            acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
+            acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
+            acqParams.put("acCardNo", AlipayConfig.REPAY_APPL_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
+            acqParams.put("useCoup", "N");//是否使用优惠券  useCoup  VARCHAR2(10)  是  Y：使用 N：不使用
+            acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
 //        acqParams.put("actvPrcp", "");//提前还款本金  actvPrcp  Number  O:选填  提前还款本金模式时必输
-        acqParams.put("isNeedPayNo", "Y");//  是否需要支付流水号 isNeedPayNo	Varchar2 选填	Y--- N---否  默认为否仅支持信贷还款
-        IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
-                .body(Collections.singletonMap("list", Collections.singletonList(acqParams)))
-                .build();
-        IResponse<Map> response = this.acquirerClient.saveZdhkInfo(request);
-        response.assertSuccessNeedBody();
-        Map<String, Object> acqRespBody = response.getBody();
-        if (MapUtils.isEmpty(acqRespBody)) {
-            this.logger.info("收单提交还款请求返回的 body 为空");
-            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        List<Map> list = (List<Map>) acqRespBody.get("list");
-        if (CollectionUtils.isEmpty(list)) {
-            this.logger.info("收单提交还款请求返回的 body 的 list 为空");
-            throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
-        }
-        Map<String, Object> one = list.get(0);
-        if (MapUtils.isEmpty(one)) {
-            this.logger.info("收单提交还款请求返回的 body 的 list 的第一个元素内容为空");
-            throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
-        }
-        String payNo = Convert.toString(one.get("payNo"));
-        logger.info("收单返回支付流水号:" + payNo);
-        if (StringUtils.isEmpty(payNo)) {
-            this.logger.info("收单未返回 payNo");
-            throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
+            acqParams.put("isNeedPayNo", "Y");//  是否需要支付流水号 isNeedPayNo	Varchar2 选填	Y--- N---否  默认为否仅支持信贷还款
+            IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
+                    .body(Collections.singletonMap("list", Collections.singletonList(acqParams)))
+                    .build();
+            IResponse<Map> response = this.acquirerClient.saveZdhkInfo(request);
+            response.assertSuccessNeedBody();
+            Map<String, Object> acqRespBody = response.getBody();
+            if (MapUtils.isEmpty(acqRespBody)) {
+                this.logger.info("收单提交还款请求返回的 body 为空");
+                throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+            List<Map> list = (List<Map>) acqRespBody.get("list");
+            if (CollectionUtils.isEmpty(list)) {
+                this.logger.info("收单提交还款请求返回的 body 的 list 为空");
+                throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
+            }
+            Map<String, Object> one = list.get(0);
+            if (MapUtils.isEmpty(one)) {
+                this.logger.info("收单提交还款请求返回的 body 的 list 的第一个元素内容为空");
+                throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
+            }
+            payNo = Convert.toString(one.get("payNo"));
+            this.logger.info("收单返回支付流水号:" + payNo);
+            if (StringUtils.isEmpty(payNo)) {
+                this.logger.info("收单未返回 payNo");
+                throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
+            }
+            //保存流水号
+            this.savePayNo(applSeq, payNo);
         }
 
         //发起网页支付
