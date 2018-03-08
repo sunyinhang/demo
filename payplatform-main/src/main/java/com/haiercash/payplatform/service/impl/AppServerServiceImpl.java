@@ -1034,4 +1034,21 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         logger.info("订单提交接口,响应数据：" + map);
         return map;
     }
+    public Map<String, Object> customerLogin(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/customerLogin";
+        logger.info("用户登录接口,请求地址：" + url);
+        logger.info("用户登录接口,请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("订单提交接口,响应数据：" + map);
+        return map;
+    }
+
+    public Map<String, Object> token(String token, Map<String, Object> paramMap) {
+        String url = AppServerUtils.getAppServerUrl() + "/app/appserver/token";
+        logger.info("获取token,请求地址：" + url);
+        logger.info("获取token,请求数据：" + paramMap);
+        Map<String, Object> map = HttpUtil.restPostMap(url, token, paramMap);
+        logger.info("获取token,响应数据：" + map);
+        return map;
+    }
 }

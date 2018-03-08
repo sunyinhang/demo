@@ -183,4 +183,8 @@ public interface AppServerService {
 
     //个人版订单提交给商户确认时传2，其余传1
     Map<String, Object> commitAppOrderByPost(String token, Map<String, Object> paramMap);
+
+    Map<String, Object> customerLogin(String token, Map<String, Object> paramMap);
+
+    Map<String, Object> token(String token, Map<String, Object> paramMap);
 }

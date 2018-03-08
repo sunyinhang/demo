@@ -15,6 +15,7 @@ import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.DesUtilvip;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
+import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
@@ -88,11 +89,6 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
     public Map<String, Object> isRegister(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("判断用户是否注册开始");
         Map<String, Object> resultparamMap = new HashMap<>();
-        //参数非空判断
-        if (token.isEmpty()) {
-            logger.info("token为空");
-            return fail(ConstUtil.ERROR_CODE, "参数token为空!");
-        }
         if (channel.isEmpty()) {
             logger.info("channel为空");
             return fail(ConstUtil.ERROR_CODE, "参数channel为空!");
@@ -193,7 +189,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             logger.info("uuid为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
-        Map<String, Object> expireUuid = RedisUtils.getExpireMap(uuid);
+        Map<String, Object> expireUuid = RedisUtils.getMap(uuid);
         if (StringUtils.isEmpty(expireUuid)) {
             logger.info("从redis中获取的数据为空" + expireUuid);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
@@ -221,6 +217,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map head = (Map<String, Object>) result.get("head");
+        String retMsg3 = (String) head.get("retMsg");
         if (StringUtils.isEmpty(head)) {
             logger.info("登录获取的head信息为空：" + head);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
@@ -239,7 +236,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         }
         //登录失败
         if (!"00000".equals(retFlag)) {
-            return success(haierCaptcha);
+            return fail(ConstUtil.ERROR_CODE, retMsg3);
         }
         Map body2 = (Map<String, Object>) result.get("body");
         if (StringUtils.isEmpty(body2)) {
@@ -258,31 +255,27 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         map.put("userId", EncryptUtil.simpleEncrypt(userId));
         map.put("channel", channel);
         map.put("channelNo", channelNo);
-        Map<String, Object> result0 = appServerService.getMobile(token, map);
-        if (StringUtils.isEmpty(result0)) {
-            logger.info("获取绑定手机号返回信息为空");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        //加密后的str传入接口
+        String str = EncryptUtil.simpleEncrypt(userId);
+        String url = EurekaServer.UAUTH + "/app/uauth/getMobile" + "?userId=" + str;
+        logger.info("统一认证1.21==》请求url==" + url);
+        String jsonone = HttpUtil.restGet(url, token);
+        jsonone = jsonone.replaceAll("null", "\"\"");
+        Map<String, Object> mapone = HttpUtil.json2Map(jsonone);
+        String phone = null;
+        if (HttpUtil.isSuccess(mapone)) {
+            Map<String, Object> mapBody = HttpUtil.json2Map(mapone.get("body").toString());
+            if (!StringUtils.isEmpty(mapBody.get("mobile"))) {
+                logger.info("用户绑定手机号为：" + mapBody.get("mobile").toString());
+                phone = mapBody.get("mobile").toString();
+            }
+        } else {
+            logger.info("获取数据错误");
+            return fail(ConstUtil.ERROR_CODE, "获取数据错误");
         }
-        Map head1 = (Map<String, Object>) result0.get("head");
-        if (StringUtils.isEmpty(head1)) {
-            logger.info("获取绑定手机号获取head信息为空：" + head);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-        String retflag0 = (String) head1.get("retFlag");
-        String retMsg = (String) head1.get("retMsg");
-        if (!"00000".equals(retflag0)) {
-            return fail(retflag0, retMsg);
-        }
-        Map body3 = (Map<String, Object>) result0.get("body");
-        if (StringUtils.isEmpty(body3)) {
-            logger.info("获取绑定手机号获取body信息为空：" + body3);
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-        String phone = (String) body3.get("mobile");
         redisMap.put("phoneNo", phone);//绑定手机号
         //未做过实名认证，跳实名认证页面
-//            if(!"Y".equals(isRealInfo)){
-        if (true) {
+        if (!"Y".equals(isRealInfo)) {
             map.put("flag", "2");//实名认证
             RedisUtils.setExpire(token, redisMap);
             return success();
@@ -1060,6 +1053,9 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         String jsonStr = (String) param.get("data");
         password_ = (String) param.get("key");
         tradeCode = (String) param.get("tradeCode");
+        password_ = "Vk6Wgl15XcQGUPB2AX66ue1sVE2GEazqliPwHM8R9iVzxSrH4kllqu6xR8Gg47BsoykmDmZk3cB7eLr2YCakUg==";
+        jsonStr = "NkQjEKm8aBns1sEWtris0QFc4rXn4bP9CkRfsJKMK7UE+FkHx13qTSIpsYUDIMbnYsUiQpcY0rHB0DJsOcB1VUwsS4+D6TUwtljR0g9yV2riIkRX5deZd7A6l85D11FBJdFPE5Ji2IrTpzf8z+AARt/3Lc4gHBkRIz79Q4cgm/ltzE2J9n8Mbw==";
+
         logger.info(
                 "applyNo:" + applyNo + "||tradeCode:" + tradeCode + "||channleNo:" + channleNo + "||json:" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
@@ -1094,8 +1090,8 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             logger.info("获取的合同扩展信息内容为空" + object2 + "商城订单号为：" + orderSn);
             return fail(ConstUtil.ERROR_CODE, "从vipabc获取的合同扩展信息内容为空" + object2);
         }
-        List fromObject4 = (List) object2;//扩展信息
-        List fromObject2 = (List) (object);
+        Map object1 = (Map) object;
+        Map object21 = (Map) object2;
         ArrayList<String> arrayList = new ArrayList<>();
         String cOrderSn = null;
         String topLevel = null;
@@ -1105,17 +1101,14 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         String num = null;
         String cOrderAmt = null;
         String cOrderPayAmt = null;
-        for (int i = 0; i < fromObject2.size(); i++) {
-            Map jsonm = (Map) (fromObject2.get(i));
-            cOrderSn = (String) jsonm.get("cOrderSn");//网单编号
-            topLevel = (String) jsonm.get("topLevel");//一级类目
-            model = (String) jsonm.get("model");//商品类型
-            sku = (String) jsonm.get("sku");//商品品类编码
-            price = (String) jsonm.get("price");//价格
-            num = (String) jsonm.get("num");//数量
-            cOrderAmt = (String) jsonm.get("cOrderAmt");//网单金额
-            cOrderPayAmt = (String) jsonm.get("cOrderPayAmt");//网单实付金额
-        }
+        cOrderSn = (String) object1.get("cOrderSn");//网单编号
+        topLevel = (String) object1.get("topLevel");//一级类目
+        model = (String) object1.get("model");//商品类型
+        sku = (String) object1.get("sku");//商品品类编码
+        price = (String) object1.get("price");//价格
+        num = (String) object1.get("num");//数量
+        cOrderAmt = (String) object1.get("cOrderAmt");//网单金额
+        cOrderPayAmt = (String) object1.get("cOrderPayAmt");//网单实付金额
         String serviceContent = null;//服务内容
         String amt = null;//服务费用
         String startYear = null;//起始年
@@ -1125,17 +1118,14 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         String endMonth = null;//终止月
         String endDay = null;//终止日
         String vipSign = null;//会员名
-        for (int i = 0; i < fromObject4.size(); i++) {
-            Map fromObject5 = (Map) (fromObject4.get(i));
-            serviceContent = (String) fromObject5.get("serviceContent");
-            amt = (String) fromObject5.get("amt") + "";
-            startYear = (String) fromObject5.get("startYear");
-            startDay = (String) fromObject5.get("startDay");
-            endYear = (String) fromObject5.get("endYear");
-            endMonth = (String) fromObject5.get("endMonth");
-            endDay = (String) fromObject5.get("endDay");
-            vipSign = (String) fromObject5.get("vipSign");
-        }
+        serviceContent = (String) object21.get("serviceContent");
+        amt = (String) object21.get("amt");
+        startYear = (String) object21.get("startYear");
+        startDay = (String) object21.get("startDay");
+        endYear = (String) object21.get("endYear");
+        endMonth = (String) object21.get("endMonth");
+        endDay = (String) object21.get("endDay");
+        vipSign = (String) object21.get("vipSign");
         HashMap<String, Object> hashMap2 = new HashMap<>();
         HashMap<String, Object> hashMap3 = new HashMap<>();
         hashMap3.put("serviceContent", serviceContent);
@@ -1628,5 +1618,356 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
                 throw new Exception("参数" + key + "不能为空！");
             }
         }
+    }
+
+    public Map<String, Object> treatyShow(String token, String channel, String channelNo, Map<String, Object> params) throws Exception {
+        logger.info("VIPABC分期申请，页面加载开始");
+        Map<String, Object> redisMap = new HashMap<String, Object>();
+        String goodsName = "";
+        String goodsKind = "";
+        String goodsBrand = "";
+        String applyAmt = "";
+        String applyTnr = "";
+        String topLevel = null;
+        List jsonArray = null;
+        Map map = new HashMap();
+        String uuid = (String) params.get("uuid");// 从前端获取uuid得到uuid中的数据
+        if (StringUtils.isEmpty(uuid)) {
+            logger.info("从前端获取的uuid为空：" + uuid);
+            return fail(ConstUtil.ERROR_CODE, "从前端获取的uuid为空");
+        }
+
+        if (StringUtils.isEmpty(token)) {
+            logger.info("token为空");
+            return fail(ConstUtil.ERROR_CODE, "token为");
+        }
+        redisMap = (Map<String, Object>) RedisUtils.getExpireMap(token);
+        if (StringUtils.isEmpty(redisMap)) {
+            logger.info("分期申请加载，从token中获取的缓存数据获取失败！");
+            return fail(ConstUtil.ERROR_CODE, "分期申请加载，从token中获取数据获取失败");
+        }
+        Object object2 = RedisUtils.getExpireMap(uuid);
+        if (StringUtils.isEmpty(object2)) {
+            logger.info("redis中获取的数据为空" + object2.toString());
+            return fail(ConstUtil.ERROR_CODE, "分期申请加载，从uuid中获取数据获取失败");
+        }
+        Map fromObject2 = (Map) object2;
+        Map jsonObject2 = (Map) fromObject2.get("appOrderGoods");
+        String model = (String) jsonObject2.get("model");// 商品名称
+        applyAmt = (String) jsonObject2.get("payAmt");// 订单实付金额
+        applyTnr = (String) jsonObject2.get("applyTnr");// 借款期限
+        topLevel = (String) jsonObject2.get("topLevel");// 课程分类
+        String cardNo = redisMap.get("cardNo").toString();
+        String bankName = redisMap.get("bankName").toString();
+        String orderFlag = (String) params.get("orderFlag");// 修改时上送(传1)
+        if ("1".equals(orderFlag)) {//
+            redisMap.put("orderFlag", "1");
+            String order = (String) params.get("orderNo");// 修改时上送
+            // 代表订单修改
+            redisMap.put("orderNo", order);// 代表订单修改
+            if (StringUtils.isEmpty(order)) {
+                return fail(ConstUtil.ERROR_CODE, "订单编号为空");
+            }
+            Map<String, Object> mapone = new HashMap<String, Object>();
+            map.put("orderNo", order);
+            map.put("channel", channel);
+            map.put("channelNo", channelNo);
+            Map map1 = appServerService.queryOrderInfo(token, map);
+            if (StringUtils.isEmpty(map1)) {
+                logger.info("查询订单详情接口返回信息为空");
+                return fail(ConstUtil.ERROR_CODE, "查询订单详情接口返回信息为空");
+            }
+            Map map2 = (Map) map1.get("head");
+            String retFlag2 = (String) map2.get("retFlag");
+            String retMsg = (String) map2.get("retMsg");
+            if (!"00000".equals(retFlag2)) {
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+            Map body = (Map) map1.get("body");
+            String merchNo = (String) body.get("merchNo");// 商户编码
+            String cooprCde = (String) body.get("cooprCde");// 门店编码
+            String cooprName = (String) body.get("cooprName");// 门店名称
+            applyAmt = (String) body.get("applyAmt");// 申请金额
+            String payMtdDesc = (String) body.get("payMtdDesc");// 分期方式
+            String typCde = (String) body.get("typCde");// 贷款品种
+            applyTnr = (String) body.get("applyTnr");// 借款期限
+            List array = (List) body.get("goods");
+            for (int i = 0; i < array.size(); i++) {
+                Object object = array.get(i);
+                Map jsonObject = (Map) object;
+                // goodsCode = jsonObject.get("goodsCode").toString();
+                goodsName = jsonObject.get("goodsName").toString();
+                goodsKind = (String) jsonObject.get("goodsKind");
+                goodsBrand = (String) jsonObject.get("goodsBrand");
+            }
+            String[] split = goodsName.split(",");
+            String topLevelone = split[0];
+            String goodsNameone = split[1];
+            map.put("merchNo", merchNo);
+            map.put("cooprCde", cooprCde);
+            map.put("cooprName", cooprName);
+            map.put("applyAmt", applyAmt);
+            map.put("payMtdDesc", payMtdDesc);
+            map.put("typCde", typCde);
+            map.put("applyTnr", applyTnr);
+            // map.put("goodsCode", goodsCode);
+            map.put("goodsName", goodsNameone);
+            map.put("goodsKind", goodsKind);
+            map.put("goodsBrand", goodsBrand);
+            map.put("topLevel", topLevelone);
+
+            Map<String, Object> maploan = new HashMap<String, Object>();
+            maploan.put("typCde", typCde);
+            maploan.put("token", token);
+            maploan.put("channel", channel);
+            maploan.put("channelNo", channelNo);
+            Map<String, Object> mapresult = appServerService.pLoanTyp(token, maploan);
+            if (StringUtils.isEmpty(mapresult)) {
+                logger.info("查询贷款品种详情接口返回信息为空");
+                return fail(ConstUtil.ERROR_CODE, "查询贷款品种详情接口返回信息为空");
+            }
+            Map map3 = (Map) mapresult.get("head");
+            String retFlag = (String) map3.get("retFlag");
+            if (!"00000".equals(retFlag)) {
+                String msg = (String) mapresult.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, msg);
+            }
+            Map map4 = (Map) mapresult.get("body");
+            String typLvlCde = (String) map4.get("levelTwo");
+            map.put("typLvlCde", typLvlCde);// 贷款品种小类
+            // 根据商户查询贷款品种
+            //1、查询全部可用贷款品种
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("merchantCode", "322017002544");//这里需要配置
+            Map<String, Object> result0 = appServerService.getLoanDic(token, paramMap);
+            if (StringUtils.isEmpty(result0)) {
+                logger.info("查询贷款品种接口，返回信息为空");
+                return fail(ConstUtil.ERROR_CODE, "查询贷款品种接口，返回信息为空");
+            }
+            Map map5 = (Map) result0.get("head");
+            String retflag = (String) map5.get("retFlag");
+            String retMsg1 = (String) map5.get("retMsg");
+            if (!"00000".equals(retflag)) {
+                return fail(ConstUtil.ERROR_CODE, retMsg1);
+            }
+            List jsonArray1 = (List) result0.get("body");
+            Map map0 = new HashMap();
+            for (int i = 0; i < jsonArray1.size(); i++) {
+                Object object = jsonArray1.get(i);
+                Map jsonObject = (Map) object;
+                String loanCode = (String) jsonObject.get("loanCode");// 贷款品种代码
+                String loanName = (String) jsonObject.get("loanName");// 贷款品种名称
+                map0.put(loanCode, loanName);
+            }
+            if (map0.containsKey(typCde)) {
+                map.put("loanName", map0.get(typCde));// 贷款品种名称
+            }
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("goodsBrand", goodsBrand);
+            jsonArray = maptolist(hashMap);
+        }
+        map.put("cardNo", cardNo);
+        map.put("bankName", bankName);
+        String idTyp = "20";//证件类型  身份证：20
+        String idNo = (String) redisMap.get("idCard");
+        HashMap<String, Object> edCheckmap = new HashMap<>();
+        edCheckmap.put("idNo", idNo);
+        edCheckmap.put("channel", channel);
+        edCheckmap.put("channelNo", channelNo);
+        edCheckmap.put("idTyp", idTyp);
+        Map<String, Object> edCheck = appServerService.getEdCheck(token, edCheckmap);
+        if (StringUtils.isEmpty(edCheck)) {
+            logger.info("查询额度接口，返回信息为空");
+            return fail(ConstUtil.ERROR_CODE, "查询额度接口，返回信息为空");
+        }
+        // {"head":{"retFlag":"A1199","retMsg":"没有查询到证件号为370305199201031528的额度信息!"}}
+        String amount = "200000";// 需要配置   最大额度
+        Map map1 = (Map) edCheck.get("head");
+        String retFlag = (String) map1.get("retFlag");
+        Map map2 = (Map) edCheck.get("body");
+        if ("00000".equals(retFlag)) {
+            amount = (String) map2.get("crdNorAvailAmt");// 自主可支付额度
+        }
+        if (!"1".equals(orderFlag)) {
+            map.put("goodsName", model);// 商品名称
+            map.put("applyAmt", applyAmt);// 借款金额
+            map.put("applyTnr", applyTnr);// 借款期限
+            map.put("topLevel", topLevel);//课程分类
+        }
+        map.put("amount", amount);
+        map.put("storeNo", "202017003005");//  需配置门店编号
+        map.put("storeName", "tutorabc");// 需配置 门店名称
+        map.put("merchantCode", "322017002544");// 需配置 商户编号
+        // 查询贷款品种
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("merchantCode", "322017002544");//这里需要配置
+        Map<String, Object> result0 = appServerService.getLoanDic(token, paramMap);
+        if (StringUtils.isEmpty(result0)) {
+            logger.info("查询贷款品种接口，返回信息为空");
+            return fail(ConstUtil.ERROR_CODE, "查询贷款品种接口，返回信息为空");
+        }
+        Map map5 = (Map) result0.get("head");
+        String retflag = (String) map5.get("retFlag");
+        String retMsg1 = (String) map5.get("retMsg");
+        if (!"00000".equals(retflag)) {
+            return fail(ConstUtil.ERROR_CODE, retMsg1);
+        }
+        String loanCode = null;// 贷款品种代码
+        String loanName = null;// 贷款品种名称
+        List jsonArray1 = (List) result0.get("body");
+        String typLvlCde = null;
+        for (int i = 0; i < jsonArray1.size(); i++) {
+            Object object = jsonArray1.get(i);
+            Map jsonObject = (Map) object;
+            loanCode = (String) jsonObject.get("loanCode");// 贷款品种代码
+            loanName = (String) jsonObject.get("loanName");// 贷款品种名称
+            // 查询贷款品种详情
+            HashMap<String, Object> objectObjectHashMap = new HashMap<>();
+            objectObjectHashMap.put("loanCode", loanCode);
+            Map<String, Object> resultinfo = appServerService.pLoanTyp(token, objectObjectHashMap);
+            if (StringUtils.isEmpty(resultinfo)) {
+                logger.info("查询贷款品种详情，返回信息为空");
+                return fail(ConstUtil.ERROR_CODE, "查询贷款品种详情，返回信息为空");
+            }
+            Map map3 = (Map) resultinfo.get("head");
+            String retFlaginfo = (String) map3.get("retFlag");
+            String retMsg = (String) map3.get("retMsg");
+            if (!"00000".equals(retFlaginfo)) {
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+            Map map4 = (Map) resultinfo.get("body");
+            String loanMtdDesc = (String) map4.get("payMtdDesc");
+            String tnrOpt = (String) map4.get("tnrOpt");
+            typLvlCde = (String) map4.get("levelTwo");
+            double minAmt = Double.parseDouble((String) map4.get("minAmt"));// token
+            double maxAmt = Double.parseDouble((String) map4.get("maxAmt"));
+            double apprvAmt = Double.parseDouble(applyAmt);
+            if (apprvAmt < minAmt) {
+                return fail(ConstUtil.ERROR_CODE, "借款金额不可少于" + minAmt + "元");
+            } else if (apprvAmt > maxAmt) {
+                return fail(ConstUtil.ERROR_CODE, "借款金额最多不可超过" + maxAmt + "元");
+            }
+        }
+        HashMap<String, Object> paramJb = new HashMap<>();
+        paramJb.put("typCde", loanCode);
+        paramJb.put("apprvAmt", applyAmt);
+        paramJb.put("applyTnrTyp", applyTnr);
+        paramJb.put("applyTnr", applyTnr);
+        paramJb.put("token", token);
+        paramJb.put("channel", channel);
+        paramJb.put("channelNo", channelNo);
+        Map<String, Object> resultone = appServerService.getPaySs(token, paramJb);
+        if (StringUtils.isEmpty(resultone)) {
+            logger.info("还款失算接口,返 回信息为空");
+            return fail(ConstUtil.ERROR_CODE, "还款失算接口,返回信息为空");
+        }
+        Map map3 = (Map) resultone.get("head");
+        String retFlagone = (String) map3.get("retFlag");
+        String retMsg = (String) map3.get("retMsg");
+        if (!"00000".equals(retFlagone)) {
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map body = (Map) resultone.get("body");
+        String repaymentTotalAmt = (String) body.get("repaymentTotalAmt");// 还款总额（UI
+        // 展示）
+        String totalFees = (String) body.get("totalFees");// 总利息金额(UI 展示)
+        String totalNormInt = (String) body.get("totalNormInt");// 订单保存（totalNormInt）
+        String totalFeeAmt = (String) body.get("totalFeeAmt");// 订单保存总利息金额（totalAmt）
+        List array = (List) body.get("mx");
+        map.put("payPlan", array);
+        map.put("repaymentTotalAmt", repaymentTotalAmt);// 总额(UI展示)
+        map.put("totalFees", totalFees);// 息费(UI展示)
+        map.put("totalNormInt", totalNormInt);// 订单保存（totalNormInt）
+        map.put("totalFeeAmt", totalFeeAmt);// 订单保存总利息金额（totalFeeAmt）
+        map.put("loanCode", loanCode);// 贷款品种
+        map.put("loanName", loanName);// 贷款品种名称
+        map.put("typLvlCde", typLvlCde);// 贷款品种小类
+        HashMap<String, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("jsonArray", jsonArray);
+        objectObjectHashMap.put("info", map);
+        success(objectObjectHashMap);
+        RedisUtils.set(token, redisMap, 30, TimeUnit.DAYS);
+        return success();
+    }
+
+    private List maptolist(Map<String, Object> map) {
+        ArrayList<Object> list = new ArrayList<Object>();
+        for (String key : map.keySet()) {
+            list.add(map.get(key));
+        }
+        return list;
+    }
+
+    public Map<String, Object> getToken(String channel, String channelNo, Map<String, Object> params) {
+        Map<String, Object> redisMap = new HashMap<String, Object>();
+        String accesstoken = null;
+        String custNo = null;
+        String userId = (String) params.get("mobile");//账号
+        if (StringUtils.isEmpty(userId)) {
+            logger.info("用户账号为空");
+            return fail(ConstUtil.ERROR_CODE, "用户账号为空");
+        }
+        String pwd = (String) params.get("password");//密码
+        if (pwd == null || "".equals(pwd)) {
+            logger.info("用户密码为空");
+            return fail(ConstUtil.ERROR_CODE, "用户密码为空");
+        }
+        Map<String, Object> stringObjectMap = appServerService.customerLoginCaptcha(userId, pwd, channel, channelNo, "", "");
+        //生成token
+        Map map1 = (Map) stringObjectMap.get("head");
+        String retFlag = (String) map1.get("retFlag");
+        if (!"00000".equals(retFlag)) {
+            logger.info("登录失败");
+            String retMsg = (String) map1.get("retMsg");
+            return fail(ConstUtil.ERROR_CODE, retMsg);
+        }
+        Map map2 = (Map) stringObjectMap.get("body");
+        String clientSecret = (String) map2.get("clientSecret");
+        String client_id = userId;
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("client_id", client_id);
+        map.put("client_secret", clientSecret);
+        map.put("grant_type", "client_credentials");
+        map.put("channel", channel);
+        map.put("channelNo", channelNo);
+        Map<String, Object> str = appServerService.token("", map);
+        if (StringUtils.isEmpty(str)) {
+            logger.info("获取token返回信息为空");
+            return fail(ConstUtil.ERROR_CODE, "获取token返回信息为空");
+        }
+        String token = (String) str.get("access_token");
+        //获取绑定手机号
+        //获取绑定手机号
+        Map<String, Object> mapone = new HashMap<String, Object>();
+        mapone.put("userId", EncryptUtil.simpleEncrypt(userId));
+        mapone.put("channel", channel);
+        mapone.put("channelNo", channelNo);
+        Map<String, Object> result0 = appServerService.getMobile(token, mapone);
+        if (StringUtils.isEmpty(result0)) {
+            logger.info("获取绑定手机号返回信息为空");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        Map head1 = (Map<String, Object>) result0.get("head");
+        if (StringUtils.isEmpty(head1)) {
+            logger.info("获取绑定手机号获取head信息为空：" + head1);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        String retflag0 = (String) head1.get("retFlag");
+        String retMsg = (String) head1.get("retMsg");
+        if (!"00000".equals(retflag0)) {
+            return fail(retflag0, retMsg);
+        }
+        Map body3 = (Map<String, Object>) result0.get("body");
+        if (StringUtils.isEmpty(body3)) {
+            logger.info("获取绑定手机号获取body信息为空：" + body3);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        String phone = (String) body3.get("mobile");
+        redisMap.put("phoneNo", phone);//绑定手机号
+        redisMap.put("userId", userId);
+        RedisUtils.set(token, redisMap);
+        Map mapo = new HashMap();
+        mapo.put("token", token);
+        return success(mapo);
     }
 }

@@ -16,6 +16,8 @@ public class AppServerUtils {
                 return EurekaServer.APPSERVERNOAUTHNEW;
             case "46": //顺逛白条
                 return EurekaServer.APPSERVERNOAUTHNEW;
+            case "53"://vipabc
+                return EurekaServer.APPSERVER;
             default:
                 return EurekaServer.APPSERVERNOAUTHNEW;
         }

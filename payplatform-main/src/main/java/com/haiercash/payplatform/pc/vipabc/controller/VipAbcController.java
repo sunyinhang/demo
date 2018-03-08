@@ -130,4 +130,25 @@ public class VipAbcController extends BaseController {
     public Map<String, Object> treatyShow(@RequestBody Map<String, Object> map) throws Exception {
         return vipAbcService.treatyShowServlet(super.getToken(), super.getChannel(), super.getChannelNo(), map);
     }
+    /**
+     * 分期申请，页面加载
+     *
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/vipabc/payApply", method = RequestMethod.POST)
+    public Map<String, Object> payApply(@RequestBody Map<String, Object> map) throws Exception {
+        return vipAbcService.treatyShow(super.getToken(), super.getChannel(), super.getChannelNo(), map);
+    }
+
+    /**
+     * @param map
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/api/payment/vipabc/getToken", method = RequestMethod.POST)
+    public Map<String, Object> getToken(@RequestBody Map<String, Object> map) throws Exception {
+        return vipAbcService.getToken(super.getChannel(), super.getChannelNo(), map);
+    }
+
 }

@@ -36,30 +36,29 @@
     </select>
 
     <insert id="saveDataInterfaceLog" parameterType="com.haiercash.payplatform.common.data.VipAbcAppOrderGoods">
-      insert into vipabc_order_info (orderid,ordersn,loantype,"
-        		+ "payamt,province,city,country,detailaddress,orderdate,applytnr,"
-        		+ "cordersn,topLevel,model,sku,price,num,corderamt,"
-        		+ "corderpayamt,applseq,orderno,vipuuid,"
-        		+ "remark,inputtime) values (
+        insert into vipabc_order_info (orderid,ordersn,loantype,payamt,province,
+        city,country,detailaddress,orderdate,applytnr,cordersn,topLevel,model,sku,
+        price,num,corderamt,corderpayamt,applseq,orderno,vipuuid,remark,inputtime) values (
         		    #{orderid,jdbcType=VARCHAR},
-        		    #{loantype,jdbcType=VARCHAR},
-        		    #{payamt,jdbcType=VARCHAR},
+        #{orderSn,jdbcType=VARCHAR},
+        #{loanType,jdbcType=VARCHAR},
+        #{payAmt,jdbcType=VARCHAR},
         		    #{province,jdbcType=VARCHAR},
         		    #{city,jdbcType=VARCHAR},
         		    #{country,jdbcType=VARCHAR},
-        		    #{detailaddress,jdbcType=VARCHAR},
-        		    #{orderdate,jdbcType=VARCHAR},
-        		    #{applytnr,jdbcType=VARCHAR},
-        		    #{cordersn,jdbcType=VARCHAR},
+        #{detailAddress,jdbcType=VARCHAR},
+        #{orderDate,jdbcType=VARCHAR},
+        #{applyTnr,jdbcType=VARCHAR},
+        #{cOrderSn,jdbcType=VARCHAR},
         		    #{topLevel,jdbcType=VARCHAR},
         		    #{model,jdbcType=VARCHAR},
         		    #{sku,jdbcType=VARCHAR},
         		    #{price,jdbcType=VARCHAR},
         		    #{num,jdbcType=VARCHAR},
-        		    #{corderamt,jdbcType=VARCHAR},
-        		    #{corderpayamt,jdbcType=VARCHAR},
+        #{cOrderAmt,jdbcType=VARCHAR},
+        #{cOrderPayAmt,jdbcType=VARCHAR},
         		    #{applseq,jdbcType=VARCHAR},
-        		    #{orderno,jdbcType=VARCHAR},
+        #{orderNo,jdbcType=VARCHAR},
         		    #{vipuuid,jdbcType=VARCHAR},
         		    #{remark,jdbcType=VARCHAR},
         		    #{inputtime,jdbcType=VARCHAR})

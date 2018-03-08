@@ -103,7 +103,7 @@ public interface VipAbcService {
     Map<String, Object> saveCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params);
 
     /**
-     * 订单保存
+     * 订单提交
      *
      * @param token
      * @param channel
@@ -113,5 +113,18 @@ public interface VipAbcService {
      */
     Map<String, Object> treatyShowServlet(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
 
+    /**
+     * 分期申请，页面加载
+     *
+     * @param token
+     * @param channel
+     * @param channelNo
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    Map<String, Object> treatyShow(String token, String channel, String channelNo, Map<String, Object> params) throws Exception;
+
+    Map<String, Object> getToken(String channel, String channelNo, Map<String, Object> params);
 
 }
