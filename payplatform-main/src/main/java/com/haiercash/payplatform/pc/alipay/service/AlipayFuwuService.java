@@ -287,8 +287,8 @@ public class AlipayFuwuService extends BaseService {
         return order;
     }
 
-    //支付
-    public String wapPay(Map<String, Object> params) throws AlipayApiException {
+    //支付申请
+    public IResponse<AlipayOrder> wapPayAppl(Map<String, Object> params) {
         //渠道验证
         String token = this.getToken();
         if (StringUtils.isEmpty(token))
@@ -334,7 +334,6 @@ public class AlipayFuwuService extends BaseService {
             acqParams.put("acCardNo", AlipayConfig.REPAY_APPL_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
             acqParams.put("useCoup", "N");//是否使用优惠券  useCoup  VARCHAR2(10)  是  Y：使用 N：不使用
             acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
-//        acqParams.put("actvPrcp", "");//提前还款本金  actvPrcp  Number  O:选填  提前还款本金模式时必输
             acqParams.put("isNeedPayNo", "Y");//  是否需要支付流水号 isNeedPayNo	Varchar2 选填	Y--- N---否  默认为否仅支持信贷还款
             IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
                     .sysFlag(ConstUtil.CHANNEL)
@@ -378,8 +377,17 @@ public class AlipayFuwuService extends BaseService {
             order.setRepayAmt(repayAmt);
             this.saveAlipayOrder(order);
         }
+        return CommonResponse.success(order);
+    }
 
-        //发起网页支付
+    //支付
+    public String wapPay(AlipayOrder order) throws AlipayApiException {
+        String token = this.getToken();
+        if (StringUtils.isEmpty(token))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "无效的令牌");
+        String channelNo = this.getChannelNo();
+        if (!"60".equals(channelNo))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
         return AlipayUtils.wapPay(token, channelNo, order, this.alipayConfig.getWapPaySubject());
     }
 

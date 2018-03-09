@@ -5,6 +5,7 @@ import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.io.IOUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.payplatform.pc.alipay.bean.AlipayOrder;
 import com.haiercash.payplatform.pc.alipay.service.AlipayFuwuService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.spring.controller.BaseController;
@@ -87,10 +88,16 @@ public class AlipayFuwuController extends BaseController {
         return alipayFuwuService.realAuthentication(map);
     }
 
-    //提交订单并转到支付
+    //支付申请,提交订单
+    @PostMapping("/api/payment/alipay/fuwu/wapPayApply")
+    public IResponse<AlipayOrder> wapPayApply(@RequestBody Map<String, Object> params) {
+        return this.alipayFuwuService.wapPayAppl(params);
+    }
+
+    //支付
     @GetMapping("/api/payment/alipay/fuwu/wapPay")
-    public void wapPay(@RequestParam Map<String, Object> params, HttpServletResponse response) throws AlipayApiException, IOException {
-        String html = this.alipayFuwuService.wapPay(params);
+    public void wapPay(@RequestParam AlipayOrder alipayOrder, HttpServletResponse response) throws AlipayApiException, IOException {
+        String html = this.alipayFuwuService.wapPay(alipayOrder);
         this.logger.info("支付宝返回支付页面内容: " + html);
         response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
         IOUtils.write(html, response.getOutputStream(), CharsetNames.UTF_8);
