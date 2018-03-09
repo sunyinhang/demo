@@ -124,4 +124,16 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         }
         return map;
     }
+
+
+    @Override
+    public Map<String, Object> queryApplAmtAndRepayByloanNo(Map<String, Object> params) {
+        String url = EurekaServer.CRM + "/app/crm/apporder/queryApplAmtAndRepayByloanNo";
+        Map<String, Object> map = HttpUtil.restPostMap(url, getToken(), params);
+        if (StringUtils.isEmpty(map)) {
+            logger.error("待还金额还款明细查询！");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        return map;
+    }
 }

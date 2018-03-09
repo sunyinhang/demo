@@ -78,5 +78,12 @@ public interface CrmService {
      */
     Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params);
 
+    /**
+     * @Title queryApplAmtAndRepayByloanNo
+     * @Description: 129、(POST)待还金额&还款明细查询
+     * @author lijianyu
+     * @date 2018/3/9 15:41
+     */
+    Map<String, Object> queryApplAmtAndRepayByloanNo(Map<String, Object> params);
 
 }
