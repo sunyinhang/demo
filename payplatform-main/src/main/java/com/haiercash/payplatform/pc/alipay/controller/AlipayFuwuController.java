@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.alipay.controller;
 import com.alipay.api.AlipayApiException;
 import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.io.IOUtils;
+import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayOrder;
@@ -96,8 +97,9 @@ public class AlipayFuwuController extends BaseController {
 
     //支付
     @GetMapping("/api/payment/alipay/fuwu/wapPay")
-    public void wapPay(@RequestParam AlipayOrder alipayOrder, HttpServletResponse response) throws AlipayApiException, IOException {
-        String html = this.alipayFuwuService.wapPay(alipayOrder);
+    public void wapPay(@RequestParam Map<String, Object> param, HttpServletResponse response) throws AlipayApiException, IOException {
+        AlipayOrder order = BeanUtils.mapToBean(param, AlipayOrder.class);
+        String html = this.alipayFuwuService.wapPay(order);
         this.logger.info("支付宝返回支付页面内容: " + html);
         response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
         IOUtils.write(html, response.getOutputStream(), CharsetNames.UTF_8);

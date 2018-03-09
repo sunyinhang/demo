@@ -388,6 +388,7 @@ public class AlipayFuwuService extends BaseService {
         String channelNo = this.getChannelNo();
         if (!"60".equals(channelNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
+        order.valid();
         return AlipayUtils.wapPay(token, channelNo, order, this.alipayConfig.getWapPaySubject());
     }
 
