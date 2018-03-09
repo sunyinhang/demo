@@ -129,7 +129,7 @@ public class AlipayUtils {
         param.put("repayAmt", order.getRepayAmt());
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
         request.setReturnUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayReturnUrl() + "?" + URLSerializer.serialize(param));
-        request.setNotifyUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayNotifyUrl());
+        request.setNotifyUrl(alipayConfig.getWapPayNotifyUrl());
         request.setBizContent(JsonSerializer.serialize(bizContent));
         return pageExecute(request).getBody();
     }
