@@ -15,6 +15,7 @@ public final class TraceConfig {
     public static final String BODY_PARSE_FAIL = "内容转换为字符串失败";
     public static final String BODY_OVER_FLOW = "(...内容过大，无法显示)";
     public static final String BODY_RESOURCE = "(...资源文件，无法显示)";
+    public static final String ERROR_CLIENT_ABORT = "无法从传输连接中写入数据：远程主机强迫关闭了一个现有的连接。";
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public static final String DEFAULT_CHARSET_NAME = CharsetNames.UTF_8;
     public static final ThreadLocal<byte[]> BUFFER = ThreadLocal.withInitial(() -> new byte[BUFFER_SIZE]);
