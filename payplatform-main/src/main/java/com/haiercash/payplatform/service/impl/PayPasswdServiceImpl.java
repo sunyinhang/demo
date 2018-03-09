@@ -761,35 +761,39 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 logger.info("第一次查询待还金额&还款明细查询返回数据：" + resultOneMap);
                 Map resultOneMaphead = (Map<String, Object>) resultOneMap.get("head");
                 String resultOneMapheadflag = (String) resultOneMaphead.get("retFlag");
-                if (!"00000".equals(resultOneMapheadflag)) {
-                    String retMsg = (String) resultOneMaphead.get("retMsg");
-                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                }
-                Map resultOneMapbody = (Map<String, Object>) resultOneMap.get("body");
-                BigDecimal preShouldAmount_one = Convert.toDecimal(resultOneMapbody.get("preShouldAmount"));//提前还款应还金额
-                HashMap<String, Object> queryApplAmtAndRepayByloanNoTwoMap = new HashMap<>();
-                queryApplAmtAndRepayByloanNoTwoMap.put("custNo", custNo);
-                queryApplAmtAndRepayByloanNoTwoMap.put("loanNo", loanNo);
-                queryApplAmtAndRepayByloanNoTwoMap.put("applSeq", applSeq);
-                queryApplAmtAndRepayByloanNoTwoMap.put("isSelectCoupon", "0");
-                queryApplAmtAndRepayByloanNoTwoMap.put("paymInd", "N");
-                queryApplAmtAndRepayByloanNoTwoMap.put("setlTyp", "NM");
-                queryApplAmtAndRepayByloanNoTwoMap.put("relPerdCnt", "0");
-                queryApplAmtAndRepayByloanNoTwoMap.put("setlMode", "FS");
-                queryApplAmtAndRepayByloanNoTwoMap.put("actvPayAmt", preShouldAmount_one);
-                queryApplAmtAndRepayByloanNoTwoMap.put("inputAmount", preShouldAmount_one);
-                logger.info("第二次查询待还金额&还款明细查询请求数据：" + queryApplAmtAndRepayByloanNoTwoMap);
-                Map<String, Object> resultTwoMap = crmService.queryApplAmtAndRepayByloanNo(queryApplAmtAndRepayByloanNoTwoMap);
-                logger.info("第二次查询待还金额&还款明细查询返回数据：" + resultTwoMap);
-                Map resultTwoMaphead = (Map<String, Object>) resultTwoMap.get("head");
-                String resultTwoMapheadflag = (String) resultTwoMaphead.get("retFlag");
-                if (!"00000".equals(resultTwoMapheadflag)) {
-                    String retMsg = (String) resultTwoMaphead.get("retMsg");
-                    return fail(ConstUtil.ERROR_CODE, retMsg);
-                }
-                Map resultTwoMapbody = (Map<String, Object>) resultTwoMap.get("body");
+                if (!"EI00860022".equals(resultOneMapheadflag)) {
+                    if (!"00000".equals(resultOneMapheadflag)) {
+                        String retMsg = (String) resultOneMaphead.get("retMsg");
+                        return fail(ConstUtil.ERROR_CODE, retMsg);
+                    }
+                    Map resultOneMapbody = (Map<String, Object>) resultOneMap.get("body");
+                    BigDecimal preShouldAmount_one = Convert.toDecimal(resultOneMapbody.get("preShouldAmount"));//提前还款应还金额
+                    HashMap<String, Object> queryApplAmtAndRepayByloanNoTwoMap = new HashMap<>();
+                    queryApplAmtAndRepayByloanNoTwoMap.put("custNo", custNo);
+                    queryApplAmtAndRepayByloanNoTwoMap.put("loanNo", loanNo);
+                    queryApplAmtAndRepayByloanNoTwoMap.put("applSeq", applSeq);
+                    queryApplAmtAndRepayByloanNoTwoMap.put("isSelectCoupon", "0");
+                    queryApplAmtAndRepayByloanNoTwoMap.put("paymInd", "N");
+                    queryApplAmtAndRepayByloanNoTwoMap.put("setlTyp", "NM");
+                    queryApplAmtAndRepayByloanNoTwoMap.put("relPerdCnt", "0");
+                    queryApplAmtAndRepayByloanNoTwoMap.put("setlMode", "FS");
+                    queryApplAmtAndRepayByloanNoTwoMap.put("actvPayAmt", preShouldAmount_one);
+                    queryApplAmtAndRepayByloanNoTwoMap.put("inputAmount", preShouldAmount_one);
+                    logger.info("第二次查询待还金额&还款明细查询请求数据：" + queryApplAmtAndRepayByloanNoTwoMap);
+                    Map<String, Object> resultTwoMap = crmService.queryApplAmtAndRepayByloanNo(queryApplAmtAndRepayByloanNoTwoMap);
+                    logger.info("第二次查询待还金额&还款明细查询返回数据：" + resultTwoMap);
+                    Map resultTwoMaphead = (Map<String, Object>) resultTwoMap.get("head");
+                    String resultTwoMapheadflag = (String) resultTwoMaphead.get("retFlag");
+                    if (!"EI00860022".equals(resultTwoMapheadflag)) {
+                        if (!"00000".equals(resultTwoMapheadflag)) {
+                            String retMsg = (String) resultTwoMaphead.get("retMsg");
+                            return fail(ConstUtil.ERROR_CODE, retMsg);
+                        }
+                        Map resultTwoMapbody = (Map<String, Object>) resultTwoMap.get("body");
 //                BigDecimal preShouldAmount = Convert.toDecimal(resultTwoMapbody.get("preShouldAmount"));//提前还款应还金额
-                preShouldAmount = Convert.toString(resultTwoMapbody.get("preShouldAmount"));//提前还款应还金额
+                        preShouldAmount = Convert.toString(resultTwoMapbody.get("preShouldAmount"));//提前还款应还金额
+                    }
+                }
             }
             json.put("preShouldAmount", preShouldAmount);
 //            String applyTnrTyp = json.getString("apply_tnr_typ");
