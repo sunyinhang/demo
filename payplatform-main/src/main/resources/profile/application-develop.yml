@@ -188,5 +188,5 @@ app:
     alipay-public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1MgOD+bQiUWKNYz1bIoJMjtmx4YbFDF8HEVZmKo4pJM6Di9lok0tbC/khxNFZklw8EvjR4DoryYwCm1golTL7K8eYnKd9uPhKsSEvHIpYwEwJ0IdDSkJ/gtBbQ83qYvlV69BJTdPiUygaQ1kP9Y89hXO+5GHGrLhtbIs8BAPT2dHBnnaARZsLZRyQYIGps15hlGGUP2HWwSC6bBRt9S5R8m+iR5YXtJ9NdL6us0W7JuI+4H7SWPVbikogz7PD95rVdY5aiOXIxv+GpYDrQ+Dm9c6Amb6Y67HvR/f1P42K2Y83Zd36+onqFekjSQTFNMSzV0FXvqu9ebcn/NVwZleoQIDAQAB
     fuwu-min-score: 600
     wap-pay-return-url: /alipay/#!/loan/orderSucc.html
-    wap-pay-notify-url: http://testpm.haiercash.com:9910/api/foreign/bankfront/callBack/aliDeductCallBack
+    wap-pay-notify-url: http://testpm.haiercash.com/api/foreign/bankfront/callBack/aliDeductCallBack
     wap-pay-subject: 现金贷还款
