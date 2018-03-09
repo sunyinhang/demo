@@ -90,7 +90,7 @@ public class AlipayFuwuController extends BaseController {
     }
 
     //支付申请,提交订单
-    @PostMapping("/api/payment/alipay/fuwu/wapPayApply")
+    @PostMapping("/api/payment/alipay/fuwu/wapPayAppl")
     public IResponse<AlipayOrder> wapPayApply(@RequestBody Map<String, Object> params) {
         return this.alipayFuwuService.wapPayAppl(params);
     }
