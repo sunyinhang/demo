@@ -61,7 +61,6 @@ public final class DispatcherFilter implements Filter {
             IncomingLog.writeEndLog(request, response, System.currentTimeMillis() - begin);
         } catch (Exception e) {
             IncomingLog.writeErrorLog(request, e, System.currentTimeMillis() - begin);
-            throw e;
         } finally {
             TraceContext.reset();
             ThreadContext.reset();
