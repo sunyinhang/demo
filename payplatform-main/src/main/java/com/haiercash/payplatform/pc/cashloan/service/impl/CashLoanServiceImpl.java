@@ -291,15 +291,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                     //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
                     JSONObject bodyMap = new JSONObject(body);
                     uidLocal = bodyMap.get("userId").toString();//统一认证内userId
-
                     phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
-
                     break;
                 case "U0178": //U0157：未查到该用户的信息
                     //向后台注册用户信息
                     if ("60".equals(channelNo)) {
                         returnmap.put("flag", "2");//跳转登陆绑定页,ali -> ocr
                         returnmap.put("phone", phoneNo_);//手机号
+                        returnmap.put("token", thirdToken);
                         return success(returnmap);
                     }
 
@@ -314,6 +313,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                             RedisUtils.setExpire(thirdToken, cachemap);
                             returnmap.put("flag", "2");//跳转登陆绑定页
                             returnmap.put("phone", phoneNo_);//手机号
+                            returnmap.put("token", thirdToken);
                             return success(returnmap);
                         default:
                             //注册失败
@@ -358,7 +358,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
                 returnmap.put("flag", "3");//跳转OCR
                 returnmap.put("token", thirdToken);
-//
                 return success(returnmap);
             }
             String certType = ((Map<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
