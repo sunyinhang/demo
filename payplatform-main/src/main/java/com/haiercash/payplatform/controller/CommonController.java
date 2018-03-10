@@ -802,4 +802,14 @@ public class CommonController extends BaseController {
     public Map<String, Object> selectRepayRequestSetlSts(@RequestBody Map<String, Object> map) {
          return acquirerService.selectRepayRequestSetlSts(map);
     }
+
+    /**
+     * 129、(POST)待还金额&还款明细查询
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryApplAmtAndRepayByloanNo", method = RequestMethod.GET)
+    public Map<String, Object> queryApplAmtAndRepayByloanNo(@RequestBody Map<String, Object> map) {
+        return payPasswdService.queryApplAmtAndRepayByloanNo(super.getToken(), map);
+    }
 }

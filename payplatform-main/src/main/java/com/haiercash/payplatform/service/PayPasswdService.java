@@ -58,5 +58,9 @@ public interface PayPasswdService {
 
     //海尔员工设置支付密码
     Map<String, Object> resetPayPasswdForHaier(String token, String channelNo, String channel, Map<String, Object> map);
+
+    //待还金额&还款明细查询
+    Map<String, Object> queryApplAmtAndRepayByloanNo(String token, Map<String, Object> params);
+
 }
 
