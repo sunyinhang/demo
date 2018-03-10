@@ -604,7 +604,12 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String contactMobile_one = (String) params.get("contactMobile_one");
         String positionType;
         String preAmountFlag = StringUtils.EMPTY;
-        if (!"60".equals(channelNo)) {
+        if ("60".equals(channelNo)) {//支付宝
+            positionType = "10";
+            String mobile = Convert.toString(cacheMap.get("phoneNo"));//实名手机号
+            if (StringUtils.isNotEmpty(mobile) && mobile.equals(contactMobile_one))
+                return fail(ConstUtil.ERROR_CODE, "联系人的联系电话不能与申请人的移动电话相同，请重新填写！");
+        } else {
             String contactMobile_two = (String) params.get("contactMobile_two");
             //预授信额度flag
             preAmountFlag = (String) params.get("preAmountFlag");
@@ -623,8 +628,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 logger.info("positionType为空");
                 return fail(ConstUtil.ERROR_CODE, "参数positionType为空!");
             }
-        } else {
-            positionType = "10";
         }
 
         //总入口需查询客户信息数据
