@@ -808,7 +808,7 @@ public class CommonController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/api/payment/queryApplAmtAndRepayByloanNo", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/payment/queryApplAmtAndRepayByloanNo", method = RequestMethod.POST)
     public Map<String, Object> queryApplAmtAndRepayByloanNo(@RequestBody Map<String, Object> map) {
         return payPasswdService.queryApplAmtAndRepayByloanNo(super.getToken(), map);
     }
