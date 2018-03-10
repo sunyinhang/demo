@@ -327,8 +327,7 @@ public class AlipayFuwuService extends BaseService {
             //调用收单 还款申请
             Map<String, Object> acqParams = new HashMap<>();
             acqParams.put("applSeq", applSeq);
-            acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
-            acqParams.put("setlMode", setlMode);//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
+            acqParams.put("setlTyp", "02");//01：信贷还款 02：充值还款
             acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
             acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
             acqParams.put("acCardNo", AlipayConfig.REPAY_APPL_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
