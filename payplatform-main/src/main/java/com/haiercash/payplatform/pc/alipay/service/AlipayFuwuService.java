@@ -307,7 +307,8 @@ public class AlipayFuwuService extends BaseService {
         String applSeq = Convert.toString(params.get("applSeq"));
         if (StringUtils.isEmpty(applSeq))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[贷款申请流水号]不能为空");
-        String isRetry = Convert.toString(params.get("isRetry"));
+        String isRetry = Convert.toString(params.get("isRetry"));//是否重试(处理中)
+        String isAll = Convert.toString(params.get("isAll"));//是否全部还款
 
         //构建阿里订单
         AlipayOrder order;
@@ -327,7 +328,12 @@ public class AlipayFuwuService extends BaseService {
             //调用收单 还款申请
             Map<String, Object> acqParams = new HashMap<>();
             acqParams.put("applSeq", applSeq);
-            acqParams.put("setlTyp", "02");//01：信贷还款 02：充值还款
+            if ("Y".equals(isAll)) {//全部还款
+                acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
+                acqParams.put("setlMode", "FS");//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
+            } else {
+                acqParams.put("setlTyp", "02");//01：信贷还款 02：充值还款
+            }
             acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
             acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
             acqParams.put("acCardNo", AlipayConfig.REPAY_APPL_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
