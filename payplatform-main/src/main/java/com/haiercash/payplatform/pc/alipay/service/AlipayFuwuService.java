@@ -394,6 +394,7 @@ public class AlipayFuwuService extends BaseService {
 
     //支付
     public String wapPay(AlipayOrder order) throws AlipayApiException {
+        order.setPayNo("6aff7bd3-25e4-401b-9b31-f9da875d216b");//TODO 测试用,上线前删除
         String token = this.getToken();
         if (StringUtils.isEmpty(token))
             throw new BusinessException(ConstUtil.ERROR_CODE, "无效的令牌");
