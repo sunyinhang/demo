@@ -356,6 +356,11 @@ public class AlipayFuwuService extends BaseService {
                 this.logger.info("收单提交还款请求返回的 body 的 list 的第一个元素内容为空");
                 throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
             }
+            String setlSts = Convert.toString(one.get("setlSts"));//01 处理中
+            if (!"01".equals(setlSts)) {
+                this.logger.info("收单返回 setlSts:" + setlSts);
+                throw new BusinessException(ConstUtil.ERROR_CODE, "申请还款失败");
+            }
             String payNo = Convert.toString(one.get("payNo"));
             this.logger.info("收单返回 payNo:" + payNo);
             if (StringUtils.isEmpty(payNo)) {
