@@ -1437,7 +1437,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String retmsg = "请求的数据为空：applSeq";
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        List procList;
+        List<Map<String, Object>> procList;
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("applSeq", applSeq);
         paramMap.put("channel", channel);
@@ -1474,7 +1474,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     procList.clear();
                     HashMap<String, Object> param = new HashMap<>();
                     param.put("operateTime", "");//办理时间
-                    param.put("appOutAdvice", "【退回】");//外部意见
+//                    param.put("appOutAdvice", "【退回】");//外部意见
+                    param.put("appOutAdvice", app_out_advice);//外部意见
                     param.put("appConclusion", "");//审批结论标识
                     param.put("wfiNodeName", "退回");//审批状态
                     param.put("appConclusionDesc", app_out_advice);//审批结论
@@ -1486,6 +1487,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
             }
         } else {
+//            for (int i = 0; i <procList.size() ; i++) {
+//                procList.get(i).put("appConclusionDesc","");
+//            }
             return success(procList);
         }
 

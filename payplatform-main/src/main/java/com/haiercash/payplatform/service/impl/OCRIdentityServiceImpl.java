@@ -681,6 +681,9 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                     break;
                 case "sesame": {
                     String custName = (String) cacheMap.get("name");
+                    if (StringUtils.isEmpty(custName)) {
+                        custName = StringUtils.EMPTY;
+                    }
                     String custNameB = URLSerializer.encode(Base64Utils.encodeString(custName));
                     realmName = "/app/appserver/seSameCredit?custName=" + custNameB;
                     logger.info("------------芝麻信用授权书展示地址---------" + realmName);
