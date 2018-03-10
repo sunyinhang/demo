@@ -14,6 +14,7 @@ import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.lang.TimeSpan;
 import com.haiercash.core.reflect.GenericType;
 import com.haiercash.core.serialization.URLSerializer;
+import com.haiercash.core.util.IdCard;
 import com.haiercash.core.vfs.VFSType;
 import com.haiercash.core.vfs.VFSUserAuthenticator;
 import com.haiercash.core.vfs.VFSUtils;
@@ -212,10 +213,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         cacheMap.put("name", name);
         if ("60".equals(this.getChannelNo())) {
             //身份证号
-            String idCard = Convert.toString(cacheMap.get("idCard"));
-            if (StringUtils.isEmpty(idCard)) {
+            String idCardNo = Convert.toString(cacheMap.get("idCard"));
+            if (StringUtils.isEmpty(idCardNo)) {
                 return fail(ConstUtil.ERROR_CODE, "身份证正面信息有误，请重新拍摄");
             }
+            IdCard idCard = new IdCard(idCardNo);
+            if (!idCard.isValid())
+                return fail(ConstUtil.ERROR_CODE, idCard.getInvalidReason());
 
             //TODO 支付宝userId 身份证号验证
 
