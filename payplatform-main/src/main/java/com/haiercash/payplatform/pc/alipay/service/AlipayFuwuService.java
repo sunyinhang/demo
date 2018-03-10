@@ -318,9 +318,6 @@ public class AlipayFuwuService extends BaseService {
         }
 
         //未处理中,参数验证
-        String setlMode = Convert.toString(params.get("setlMode"));
-        if (StringUtils.isEmpty(setlMode))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "[还款类型]不能为空");
         String repayAmt = Convert.toString(params.get("repayAmt"));
         if (StringUtils.isEmpty(repayAmt))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
