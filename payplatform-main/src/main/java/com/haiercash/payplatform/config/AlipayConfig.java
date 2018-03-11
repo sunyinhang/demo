@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "app.alipay")
 public class AlipayConfig {
     public static final String APPL_CARD_NO = "0000000000000000000";//支付宝默认放款卡号
-    public static final String REPAY_APPL_CARD_NO = "0000000000000000000";//支付宝默认还款卡号
+    public static final String REPAY_APPL_CARD_NO = "6225880121940000000";//支付宝默认还款卡号 TODO 测试用,需要改为 19 个 0
 
     private String url;
     private String appId;
