@@ -99,8 +99,12 @@ public class AlipayFuwuController extends BaseController {
     //支付
     @GetMapping("/api/payment/alipay/fuwu/wapPay")
     public void wapPay(@RequestParam Map<String, Object> param, HttpServletResponse response) throws AlipayApiException, IOException {
+        String quitUrl = Convert.toString(param.get("quitUrl"));
+        if (StringUtils.isEmpty(quitUrl))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "[quitUrl] 不能为空");
+
         AlipayOrder order = BeanUtils.mapToBean(param, AlipayOrder.class);
-        String html = this.alipayFuwuService.wapPay(order);
+        String html = this.alipayFuwuService.wapPay(quitUrl, order);
         this.logger.info("支付宝返回支付页面内容: " + html);
         response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
         try (OutputStream outputStream = response.getOutputStream()) {

@@ -391,7 +391,7 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //支付
-    public String wapPay(AlipayOrder order) throws AlipayApiException {
+    public String wapPay(String quitUrl, AlipayOrder order) throws AlipayApiException {
         String token = this.getToken();
         if (StringUtils.isEmpty(token))
             throw new BusinessException(ConstUtil.ERROR_CODE, "无效的令牌");
@@ -399,7 +399,7 @@ public class AlipayFuwuService extends BaseService {
         if (!"60".equals(channelNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
         order.valid();
-        return AlipayUtils.wapPay(token, channelNo, order, this.alipayConfig.getWapPaySubject());
+        return AlipayUtils.wapPay(token, channelNo, quitUrl, order, this.alipayConfig.getWapPaySubject());
     }
 
     //查询第三方账号
