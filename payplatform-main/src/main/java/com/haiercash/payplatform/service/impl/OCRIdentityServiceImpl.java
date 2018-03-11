@@ -219,7 +219,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             }
             IdCard idCard = new IdCard(idCardNo);
             if (!idCard.isValid())
-                return fail(ConstUtil.ERROR_CODE, idCard.getInvalidReason());
+                return fail(ConstUtil.ERROR_CODE, "身份证号有误，请重新拍摄");
 
             //TODO 支付宝userId 身份证号验证
 
