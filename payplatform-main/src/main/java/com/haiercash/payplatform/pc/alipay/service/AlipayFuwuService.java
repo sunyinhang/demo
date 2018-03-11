@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by 许崇雷 on 2018-01-18.
@@ -271,7 +272,7 @@ public class AlipayFuwuService extends BaseService {
     //保存订单
     private void saveAlipayOrder(AlipayOrder order) {
         order.valid();
-        RedisUtils.setExpire(this.getRedisKey(order.getApplSeq()), order);
+        RedisUtils.set(this.getRedisKey(order.getApplSeq()), order, 1, TimeUnit.DAYS);
         this.logger.info(String.format("支付宝还款从 redis 保存订单信息. applSeq:%s payNo:%s repayAmt:%s", order.getApplSeq(), order.getPayNo(), order.getRepayAmt()));
     }
 
