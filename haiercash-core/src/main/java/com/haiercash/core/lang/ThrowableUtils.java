@@ -41,6 +41,6 @@ public final class ThrowableUtils {
         if (throwable == null)
             return StringUtils.EMPTY;
         String message = throwable.getLocalizedMessage();
-        return StringUtils.isEmpty(message) ? ("引发类型为“" + throwable.getClass().getName() + "”的异常。") : message;
+        return StringUtils.isEmpty(message) ? "引发类型为“" + throwable.getClass().getName() + "”的异常。" : message;
     }
 }

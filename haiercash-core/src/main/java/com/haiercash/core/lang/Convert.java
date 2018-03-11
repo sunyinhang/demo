@@ -264,7 +264,7 @@ public final class Convert {
             throw new ClassCastException(String.format("can not cast '%s' to Date", value));
         Long num = nullLong(value);
         try {
-            return num == null ? (str.length() < 11 ? FORMAT_DATE.get().parse(str) : (str.length() < 20 ? FORMAT_DATE_TIME.get().parse(str) : FORMAT_DATE_TIME_MS.get().parse(str))) : new Date(num);
+            return num == null ? str.length() < 11 ? FORMAT_DATE.get().parse(str) : str.length() < 20 ? FORMAT_DATE_TIME.get().parse(str) : FORMAT_DATE_TIME_MS.get().parse(str) : new Date(num);
         } catch (Exception e) {
             throw new ClassCastException(String.format("can not convert '%s' to Date", value));
         }
@@ -278,7 +278,7 @@ public final class Convert {
             throw new ClassCastException(String.format("can not cast '%s' to Timestamp", value));
         Long num = nullLong(str);
         try {
-            return new Timestamp(num == null ? (str.length() < 11 ? FORMAT_DATE.get().parse(str) : (str.length() < 20 ? FORMAT_DATE_TIME.get().parse(str) : FORMAT_DATE_TIME_MS.get().parse(str))).getTime() : num);
+            return new Timestamp(num == null ? (str.length() < 11 ? FORMAT_DATE.get().parse(str) : str.length() < 20 ? FORMAT_DATE_TIME.get().parse(str) : FORMAT_DATE_TIME_MS.get().parse(str)).getTime() : num);
         } catch (Exception e) {
             throw new ClassCastException(String.format("can not convert '%s' to Timestamp", value));
         }

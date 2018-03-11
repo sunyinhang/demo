@@ -37,7 +37,7 @@ public class BeanUtilsTest {
         DemoBean<?> response = BeanUtils.mapToBean(map, DemoBean.class);
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
-        Map<String, Object> body = ((Map<String, Object>) response.getBody());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
         Assert.assertEquals(1, body.size());
         Assert.assertEquals("hello 中国", body.get("name"));
     }
@@ -51,7 +51,7 @@ public class BeanUtilsTest {
         });
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
-        Map<String, Object> body = ((Map<String, Object>) response.getBody());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
         Assert.assertEquals(1, body.size());
         Assert.assertEquals("hello 中国", body.get("name"));
     }
@@ -65,7 +65,7 @@ public class BeanUtilsTest {
         });
         Assert.assertEquals("00000", response.getRetFlag());
         Assert.assertEquals("处理成功", response.getRetMsg());
-        Map<String, Object> body = ((Map<String, Object>) response.getBody());
+        Map<String, Object> body = (Map<String, Object>) response.getBody();
         Assert.assertEquals(1, body.size());
         Assert.assertEquals("hello 中国", body.get("name"));
     }

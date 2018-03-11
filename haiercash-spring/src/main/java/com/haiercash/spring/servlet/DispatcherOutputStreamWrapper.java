@@ -51,7 +51,7 @@ public final class DispatcherOutputStreamWrapper extends ServletOutputStream {
         }
         try {
             this.content = this.overFlow
-                    ? (new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET) + TraceConfig.BODY_OVER_FLOW)
+                    ? new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET) + TraceConfig.BODY_OVER_FLOW
                     : new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET);
         } catch (Exception e) {
             this.content = TraceConfig.BODY_PARSE_FAIL;

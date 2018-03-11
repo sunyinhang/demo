@@ -92,7 +92,7 @@ public final class CmisRequestBuilder {
         }
 
         //如果为三层 Map > request > head body 去掉外层
-        Map<String, Object> requestMap = map.get("request") instanceof Map ? ((Map) map.get("request")) : map;//如果为三层
+        Map<String, Object> requestMap = map.get("request") instanceof Map ? (Map) map.get("request") : map;//如果为三层
         if (requestMap.get("head") instanceof Map) {
             Map<String, Object> headMap = (Map<String, Object>) requestMap.get("head");
             Map<String, Object> bodyMap = (Map<String, Object>) requestMap.get("body");

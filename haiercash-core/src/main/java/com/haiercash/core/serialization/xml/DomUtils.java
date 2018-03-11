@@ -27,7 +27,7 @@ final class DomUtils {
      * 过滤不可见字符
      */
     private static String stripNonValidXMLCharacters(String input) {
-        if (input == null || ("".equals(input)))
+        if (input == null || "".equals(input))
             return "";
         StringBuilder out = new StringBuilder();
         char current;

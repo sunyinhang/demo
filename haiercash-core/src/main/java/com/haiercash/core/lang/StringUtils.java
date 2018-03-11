@@ -103,7 +103,7 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 结果
      */
     public static String trim(String value, char... trimChars) {
-        return (trimChars == null || trimChars.length <= 0) ? trimCore(value, TrimBoth) : trimCore(value, trimChars, TrimBoth);
+        return trimChars == null || trimChars.length <= 0 ? trimCore(value, TrimBoth) : trimCore(value, trimChars, TrimBoth);
     }
 
     /**
@@ -114,7 +114,7 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 结果
      */
     public static String trimStart(String value, char... trimChars) {
-        return (trimChars == null || trimChars.length <= 0) ? trimCore(value, TrimHead) : trimCore(value, trimChars, TrimHead);
+        return trimChars == null || trimChars.length <= 0 ? trimCore(value, TrimHead) : trimCore(value, trimChars, TrimHead);
     }
 
     /**
@@ -125,7 +125,7 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 结果
      */
     public static String trimEnd(String value, char... trimChars) {
-        return (trimChars == null || trimChars.length <= 0) ? trimCore(value, TrimTail) : trimCore(value, trimChars, TrimTail);
+        return trimChars == null || trimChars.length <= 0 ? trimCore(value, TrimTail) : trimCore(value, trimChars, TrimTail);
     }
 
     /**
@@ -231,7 +231,7 @@ public final class StringUtils extends org.apache.commons.lang3.StringUtils {
         // Note that we may not catch all overflows with this check (since we could have wrapped around the 4gb range any number of times
         // and landed back in the positive range.) The input array might be modifed from other threads,
         // so we have to do an overflow check before each append below anyway. Those overflows will get caught down there.
-        if ((jointLength < 0) || ((jointLength + 1) < 0))
+        if (jointLength < 0 || jointLength + 1 < 0)
             throw new OutOfMemoryError();
 
         //If this is an empty string, just return.
