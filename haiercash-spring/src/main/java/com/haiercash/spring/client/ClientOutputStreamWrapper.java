@@ -1,6 +1,5 @@
 package com.haiercash.spring.client;
 
-import com.haiercash.core.lang.StringUtils;
 import com.haiercash.spring.trace.TraceConfig;
 import org.springframework.util.Assert;
 
@@ -22,8 +21,20 @@ public final class ClientOutputStreamWrapper extends OutputStream {
         this.outputStream = outputStream;
     }
 
+    private String parseBody() {
+        if (this.cachedBuffer == null)
+            return null;
+        try {
+            return this.overFlow
+                    ? new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET) + TraceConfig.BODY_OVER_FLOW
+                    : new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET);
+        } catch (Exception e) {
+            return TraceConfig.BODY_PARSE_FAIL;
+        }
+    }
+
     public String getContent() {
-        return this.content;
+        return this.content == null ? this.parseBody() : this.content;
     }
 
     @Override
@@ -41,20 +52,8 @@ public final class ClientOutputStreamWrapper extends OutputStream {
     @Override
     public void flush() throws IOException {
         this.outputStream.flush();
-        //已经 flush
-        if (this.content != null)
-            return;
-        if (this.cachedBuffer == null) {
-            this.content = StringUtils.EMPTY;
-            return;
-        }
-        try {
-            this.content = this.overFlow
-                    ? new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET) + TraceConfig.BODY_OVER_FLOW
-                    : new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET);
-        } catch (Exception e) {
-            this.content = TraceConfig.BODY_PARSE_FAIL;
-        }
+        if (this.content == null)
+            this.content = this.parseBody();
     }
 
     @Override
