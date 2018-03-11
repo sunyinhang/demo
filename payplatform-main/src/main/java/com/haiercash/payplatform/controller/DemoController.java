@@ -1,12 +1,18 @@
 package com.haiercash.payplatform.controller;
 
+import com.haiercash.core.io.CharsetNames;
+import com.haiercash.core.io.StreamWriter;
 import com.haiercash.core.reflect.GenericType;
+import com.haiercash.core.threading.ThreadUtils;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +26,14 @@ import java.util.Map;
 public class DemoController extends BaseController {
     public DemoController() {
         super("01");
+    }
+
+    @GetMapping("/api/payment/timeout/test")
+    public void testTimeout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ThreadUtils.sleep(30000);
+        try (StreamWriter writer = new StreamWriter(response.getOutputStream(), CharsetNames.UTF_8)) {
+            writer.write("hello world!");
+        }
     }
 
     @GetMapping("/api/test/get")
