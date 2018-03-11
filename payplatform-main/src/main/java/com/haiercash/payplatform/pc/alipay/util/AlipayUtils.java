@@ -50,7 +50,12 @@ public class AlipayUtils {
 
     private static <T extends AlipayResponse> T execute(AlipayRequest<T> request, String authToken) throws AlipayApiException {
         AlipayClient client = getDefaultClient();
-        T response = client.execute(request, authToken);
+        T response;
+        try {
+            response = client.execute(request, authToken);
+        } catch (AlipayApiException e) {
+            response = client.execute(request, authToken);//重试
+        }
         if (response == null)
             throw new AlipayApiException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         if (!response.isSuccess())
@@ -64,7 +69,12 @@ public class AlipayUtils {
 
     private static <T extends AlipayResponse> T pageExecute(AlipayRequest<T> request) throws AlipayApiException {
         AlipayClient client = getDefaultClient();
-        T response = client.pageExecute(request);
+        T response;
+        try {
+            response = client.pageExecute(request);
+        } catch (AlipayApiException e) {
+            response = client.pageExecute(request);//重试
+        }
         if (response == null)
             throw new AlipayApiException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         if (!response.isSuccess())
