@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -102,6 +103,8 @@ public class AlipayFuwuController extends BaseController {
         String html = this.alipayFuwuService.wapPay(order);
         this.logger.info("支付宝返回支付页面内容: " + html);
         response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
-        IOUtils.write(html, response.getOutputStream(), CharsetNames.UTF_8);
+        try (OutputStream outputStream = response.getOutputStream()) {
+            IOUtils.write(html, outputStream, CharsetNames.UTF_8);
+        }
     }
 }
