@@ -121,14 +121,13 @@ public class AlipayUtils {
     }
 
     //调用支付宝还款接口,返回 html
-    public static String wapPay(String token, String channelNo, String quitUrl, AlipayOrder order, String subject) throws AlipayApiException {
+    public static String wapPay(String token, String channelNo, AlipayOrder order, String subject) throws AlipayApiException {
         order.setRepayAmt("0.01");//TODO 支付宝测试用 1 分,上线的时候记得删除
         //文档 https://docs.open.alipay.com/203/107090/
         Map<String, Object> bizContent = new HashMap<>();
         bizContent.put("out_trade_no", order.getPayNo());
         bizContent.put("total_amount", order.getRepayAmt());
         bizContent.put("subject", subject);
-        bizContent.put("quit_url", quitUrl);
         bizContent.put("timeout_express", alipayConfig.getWapPayTimeout());//支付超时时间 1 小时
         bizContent.put("product_code", "QUICK_WAP_WAY");
 
