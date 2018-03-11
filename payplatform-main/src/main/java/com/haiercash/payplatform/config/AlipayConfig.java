@@ -22,4 +22,5 @@ public class AlipayConfig {
     private String wapPayReturnUrl;//支付结果回调页面,H5 提供
     private String wapPayNotifyUrl;//订单状态通知接口,支付网关提供
     private String wapPaySubject;//支付宝 wapPay 时的 wapPaySubject,商品名称
+    private String wapPayTimeout;//支付超时时间
 }
