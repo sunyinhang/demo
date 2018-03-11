@@ -120,6 +120,6 @@ public final class Tracer implements ITracer {
 
     @Override
     public ISpan createContinueSpan(ISpan span) {
-        return (span == null || span == ISpan.EMPTY) ? this.createSpan() : span.continueSpan();
+        return span == null || span == ISpan.EMPTY ? this.createSpan() : span.continueSpan();
     }
 }

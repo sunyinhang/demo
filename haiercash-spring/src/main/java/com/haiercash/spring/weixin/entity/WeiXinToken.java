@@ -18,6 +18,6 @@ public final class WeiXinToken extends WeiXinResponse {
 
     @JSONField(serialize = false, deserialize = false)
     public boolean isValid() {
-        return this.genTime != null && this.expires_in != null && System.currentTimeMillis() <= (this.genTime.getTime() + this.expires_in * 1000);
+        return this.genTime != null && this.expires_in != null && System.currentTimeMillis() <= this.genTime.getTime() + this.expires_in * 1000;
     }
 }

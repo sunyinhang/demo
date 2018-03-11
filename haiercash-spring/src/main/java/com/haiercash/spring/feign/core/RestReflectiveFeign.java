@@ -188,7 +188,7 @@ public final class RestReflectiveFeign extends Feign {
         }
 
         private Object expandElements(Param.Expander expander, Object value) {
-            return (value instanceof Iterable)
+            return value instanceof Iterable
                     ? this.expandIterable(expander, (Iterable) value)
                     : expander.expand(value);
         }
@@ -211,7 +211,7 @@ public final class RestReflectiveFeign extends Feign {
                 boolean encoded = this.metadata.queryMapEncoded();
                 Object value = entry.getValue();
                 if (value instanceof Iterable<?>) {
-                    for (Object valueElement : ((Iterable<?>) value))
+                    for (Object valueElement : (Iterable<?>) value)
                         values.add(valueElement == null ? null : encoded ? valueElement.toString() : URLSerializer.encode(valueElement.toString()));
                 } else {
                     values.add(value == null ? null : encoded ? value.toString() : URLSerializer.encode(value.toString()));
@@ -229,7 +229,7 @@ public final class RestReflectiveFeign extends Feign {
                 Collection<String> values = new ArrayList<>();
                 Object value = entry.getValue();
                 if (value instanceof Iterable<?>) {
-                    for (Object valueElement : ((Iterable<?>) value))
+                    for (Object valueElement : (Iterable<?>) value)
                         values.add(valueElement == null ? null : valueElement.toString());
                 } else {
                     values.add(value == null ? null : value.toString());

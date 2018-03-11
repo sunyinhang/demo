@@ -34,7 +34,7 @@ public final class ErrorHandler {
     }
 
     public static String getRetFlag(String retFlag) {
-        return (retFlag == null || retFlag.length() <= 2)
+        return retFlag == null || retFlag.length() <= 2
                 ? APP_CODE + Convert.defaultString(ThreadContext.getExecutingModuleNo(), "00") + retFlag
                 : retFlag;
     }

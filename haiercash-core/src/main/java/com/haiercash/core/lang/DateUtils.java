@@ -261,7 +261,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         } catch (Exception ignored) {
         }
         try {
-            return num == null ? (str.length() < 11 ? dateFormat().parse(str) : (str.length() < 20 ? dateTimeFormat().parse(str) : dateTimeMsFormat().parse(str))) : new Date(num);
+            return num == null ? str.length() < 11 ? dateFormat().parse(str) : str.length() < 20 ? dateTimeFormat().parse(str) : dateTimeMsFormat().parse(str) : new Date(num);
         } catch (Exception e) {
             throw new ClassCastException("can not convert \"" + str + "\" to Date");
         }

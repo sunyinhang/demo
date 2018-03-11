@@ -27,7 +27,7 @@ public final class Span implements ISpan {
     @Override
     public ISpan continueSpan() {
         this.index++;
-        return new Span(this.traceId, StringUtils.isEmpty(this.spanId) ? String.valueOf(this.index) : (this.spanId + SEPARATOR_SPAN_ID_INDEX + this.index), this.spanId);
+        return new Span(this.traceId, StringUtils.isEmpty(this.spanId) ? String.valueOf(this.index) : this.spanId + SEPARATOR_SPAN_ID_INDEX + this.index, this.spanId);
     }
 
     @Override
@@ -47,6 +47,6 @@ public final class Span implements ISpan {
 
     @Override
     public String getTraceSpanId() {
-        return StringUtils.isEmpty(this.spanId) ? this.traceId : (this.traceId + SEPARATOR_TRACE_ID_SPAN_ID + this.spanId);
+        return StringUtils.isEmpty(this.spanId) ? this.traceId : this.traceId + SEPARATOR_TRACE_ID_SPAN_ID + this.spanId;
     }
 }

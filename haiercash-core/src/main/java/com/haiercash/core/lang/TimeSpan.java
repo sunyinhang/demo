@@ -43,7 +43,7 @@ public final class TimeSpan {
      * @return
      */
     public int getHours() {
-        return (int) ((this.milliseconds / MillisecondsPerHour) % 24);
+        return (int) (this.milliseconds / MillisecondsPerHour % 24);
     }
 
     /**
@@ -52,7 +52,7 @@ public final class TimeSpan {
      * @return
      */
     public int getMinutes() {
-        return (int) ((this.milliseconds / MillisecondsPerMinute) % 60);
+        return (int) (this.milliseconds / MillisecondsPerMinute % 60);
     }
 
     /**
@@ -61,7 +61,7 @@ public final class TimeSpan {
      * @return
      */
     public int getSeconds() {
-        return (int) ((this.milliseconds / MillisecondsPerSecond) % 60);
+        return (int) (this.milliseconds / MillisecondsPerSecond % 60);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class TimeSpan {
      * @return
      */
     public double getTotalDays() {
-        return ((double) this.milliseconds) * DaysPerMillisecond;
+        return (double) this.milliseconds * DaysPerMillisecond;
     }
 
     /**
