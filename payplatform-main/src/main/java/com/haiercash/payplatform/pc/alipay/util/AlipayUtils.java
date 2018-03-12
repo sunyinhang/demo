@@ -13,6 +13,7 @@ import com.alipay.api.response.AlipaySystemOauthTokenResponse;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.alipay.api.response.ZhimaCreditScoreBriefGetResponse;
 import com.haiercash.core.io.CharsetNames;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -128,7 +130,8 @@ public class AlipayUtils {
         bizContent.put("out_trade_no", order.getPayNo());
         bizContent.put("total_amount", order.getRepayAmt());
         bizContent.put("subject", subject);
-        bizContent.put("timeout_express", alipayConfig.getWapPayTimeout());//支付超时时间 1 小时
+        Date timeExpire = DateUtils.addMinutes(DateUtils.now(), alipayConfig.getWapPayTimeout() + 1);//因为支付宝精确到分钟.所以要多加 1 分钟防止 当前秒为 59的情况来不及支付
+        bizContent.put("time_expire", DateUtils.toString(timeExpire, "yyyy-MM-dd HH:mm"));//从打开网页到支付成功前的绝对超时时间
         bizContent.put("product_code", "QUICK_WAP_WAY");
 
         Map<String, String> param = new HashMap<>();

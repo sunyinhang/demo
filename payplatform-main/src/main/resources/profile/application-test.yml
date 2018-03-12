@@ -190,4 +190,4 @@ app:
     wap-pay-return-url: /alipay/#!/loan/orderSucc.html
     wap-pay-notify-url: http://testpm.haiercash.com/api/foreign/bankfront/callBack/aliDeductCallBack
     wap-pay-subject: 现金贷还款
-    wap-pay-timeout: 1m
+    wap-pay-timeout: 1
