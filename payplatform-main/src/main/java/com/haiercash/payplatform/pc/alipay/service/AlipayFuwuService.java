@@ -39,15 +39,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by 许崇雷 on 2018-01-18.
  */
 @Service
 public class AlipayFuwuService extends BaseService {
-    private static final String ALIPAY_ORDER = "ALIPAY_ORDER:";
-
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -264,30 +261,6 @@ public class AlipayFuwuService extends BaseService {
         return CommonResponse.success(body);
     }
 
-    //获取 redis key
-    private String getRedisKey(String applSeq) {
-        return ALIPAY_ORDER + applSeq;
-    }
-
-    //保存订单
-    private void saveAlipayOrder(AlipayOrder order) {
-        order.valid();
-        RedisUtils.set(this.getRedisKey(order.getApplSeq()), order, 1, TimeUnit.DAYS);
-        this.logger.info(String.format("支付宝还款从 redis 保存订单信息. applSeq:%s payNo:%s repayAmt:%s", order.getApplSeq(), order.getPayNo(), order.getRepayAmt()));
-    }
-
-    //获取订单
-    private AlipayOrder getAlipayOrder(String applSeq) {
-        AlipayOrder order = RedisUtils.get(this.getRedisKey(applSeq), AlipayOrder.class);
-        if (order == null) {
-            this.logger.info("支付宝还款从 redis 读取订单信息 返回 null. applSeq:" + applSeq);
-            throw new BusinessException(ConstUtil.ERROR_CODE, "操作失败，请刷新账单列表后重试");
-        }
-        this.logger.info(String.format("支付宝还款从 redis 读取 payNo. applSeq:%s payNo:%s repayAmt:%s", applSeq, order.getPayNo(), order.getRepayAmt()));
-        order.valid();
-        return order;
-    }
-
     //支付申请
     public IResponse<AlipayOrder> wapPayAppl(Map<String, Object> params) {
         //渠道验证
@@ -311,42 +284,51 @@ public class AlipayFuwuService extends BaseService {
         String isRetry = Convert.toString(params.get("isRetry"));//是否重试(处理中)
         String isAll = Convert.toString(params.get("isAll"));//是否全部还款
 
-        //构建阿里订单
-        AlipayOrder order;
-        if ("Y".equals(isRetry)) {//处理中 isRetry = Y
-            order = this.getAlipayOrder(applSeq);//获取订单
-            return CommonResponse.success(order);
+        //调用收单接口
+        String repayAmt = null;//总还款额
+        IResponse<Map> acqResponse;
+        if ("Y".equals(isRetry)) {//处理中 isRetry = Y 查询收单处理中的订单
+            Map<String, Object> acqParams = new HashMap<>();
+            acqParams.put("sortNo", "1");//使用 applSeq 参数
+            acqParams.put("applSeq", applSeq);
+            acqParams.put("setlSts", "01");//01：还款处理中 02：还款成功 03：还款失败
+            acqParams.put("isNeedPayNo", "Y"); //需要 payNo
+            IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2202")
+                    .sysFlag(ConstUtil.CHANNEL)
+                    .body(Collections.singletonMap("list", Collections.singletonList(acqParams)))
+                    .build();
+            acqResponse = this.acquirerClient.selectRepayRequestSetlSts(request);
+        } else {//未处理中,参数验证
+            repayAmt = Convert.toString(params.get("repayAmt"));
+            if (StringUtils.isEmpty(repayAmt))
+                throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
+            String psPerdNo = Convert.toString(params.get("psPerdNo"));
+            if (StringUtils.isEmpty(psPerdNo))
+                throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
+            //调用收单 还款申请
+            Map<String, Object> acqParams = new HashMap<>();
+            acqParams.put("applSeq", applSeq);
+            if ("Y".equals(isAll)) {//全部还款
+                acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
+                acqParams.put("setlMode", "FS");//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
+            } else {//按期还款
+                acqParams.put("setlTyp", "02");//01：信贷还款 02：充值还款
+            }
+            acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
+            acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
+            acqParams.put("acCardNo", AlipayConfig.REPAY_APPL_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
+            acqParams.put("useCoup", "N");//是否使用优惠券  useCoup  VARCHAR2(10)  是  Y：使用 N：不使用
+            acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
+            acqParams.put("isNeedPayNo", "Y");//  是否需要支付流水号 isNeedPayNo	Varchar2 选填	Y--- N---否  默认为否仅支持信贷还款
+            IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
+                    .sysFlag(ConstUtil.CHANNEL)
+                    .body(Collections.singletonMap("list", Collections.singletonList(acqParams)))
+                    .build();
+            acqResponse = this.acquirerClient.saveZdhkInfo(request);
         }
 
-        //未处理中,参数验证
-        String repayAmt = Convert.toString(params.get("repayAmt"));
-        if (StringUtils.isEmpty(repayAmt))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
-        String psPerdNo = Convert.toString(params.get("psPerdNo"));
-        if (StringUtils.isEmpty(psPerdNo))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
-        //调用收单 还款申请
-        Map<String, Object> acqParams = new HashMap<>();
-        acqParams.put("applSeq", applSeq);
-        if ("Y".equals(isAll)) {//全部还款
-            acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
-            acqParams.put("setlMode", "FS");//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
-        } else {
-            acqParams.put("setlTyp", "02");//01：信贷还款 02：充值还款
-        }
-        acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
-        acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
-        acqParams.put("acCardNo", AlipayConfig.REPAY_APPL_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
-        acqParams.put("useCoup", "N");//是否使用优惠券  useCoup  VARCHAR2(10)  是  Y：使用 N：不使用
-        acqParams.put("custNo", custNo);//客户编号  custNo  VARCHAR2(30)  是
-        acqParams.put("isNeedPayNo", "Y");//  是否需要支付流水号 isNeedPayNo	Varchar2 选填	Y--- N---否  默认为否仅支持信贷还款
-        IAcqRequest request = AcqRequestBuilder.newBuilder("ACQ-2101")
-                .sysFlag(ConstUtil.CHANNEL)
-                .body(Collections.singletonMap("list", Collections.singletonList(acqParams)))
-                .build();
-        IResponse<Map> response = this.acquirerClient.saveZdhkInfo(request);
-        response.assertSuccessNeedBody();
-        Map<String, Object> acqRespBody = response.getBody();
+        acqResponse.assertSuccessNeedBody();
+        Map<String, Object> acqRespBody = acqResponse.getBody();
         if (MapUtils.isEmpty(acqRespBody)) {
             this.logger.info("收单提交还款请求返回的 body 为空");
             throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
@@ -379,14 +361,21 @@ public class AlipayFuwuService extends BaseService {
             this.logger.info("收单未返回 repaySeq");
             throw new BusinessException(ConstUtil.ERROR_CODE, failReason);
         }
+        //repayAmt 为空说明 有处理中的
+        if (StringUtils.isEmpty(repayAmt)) {
+            repayAmt = Convert.toString(one.get("repayAmt"));
+            if (StringUtils.isEmpty(repayAmt)) {
+                this.logger.info("收单 ACQ-2202 未返回 repayAmt");
+                throw new BusinessException(ConstUtil.ERROR_CODE, failReason);
+            }
+        }
 
-        //保存订单
-        order = new AlipayOrder();
+        //返回
+        AlipayOrder order = new AlipayOrder();
         order.setApplSeq(applSeq);
         order.setPayNo(payNo);
         order.setRepaySeq(repaySeq);
         order.setRepayAmt(repayAmt);
-        this.saveAlipayOrder(order);
         return CommonResponse.success(order);
     }
 
@@ -400,11 +389,6 @@ public class AlipayFuwuService extends BaseService {
             throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
         order.valid();
         return AlipayUtils.wapPay(token, channelNo, order, this.alipayConfig.getWapPaySubject());
-    }
-
-    //查询第三方账号
-    private IResponse<Map> queryUserByExternUid(String thirdUserId) {
-        return this.uauthClient.queryUserByExternUid(EncryptUtil.simpleEncrypt(this.getChannelNo()), EncryptUtil.simpleEncrypt(thirdUserId));
     }
 
     //注册第三方用户
