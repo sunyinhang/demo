@@ -17,4 +17,8 @@ public interface AcquirerClient {
     @FeignApi("ACQ-2101提交还款请求")
     @PostMapping("/saveZdhkInfo")
     AcqResponse<Map> saveZdhkInfo(@RequestBody IAcqRequest body);
+
+    @FeignApi("ACQ-2202 批量查询还款请求状态")
+    @PostMapping("/selectRepayRequestSetlSts")
+    AcqResponse<Map> selectRepayRequestSetlSts(@RequestBody IAcqRequest body);
 }
