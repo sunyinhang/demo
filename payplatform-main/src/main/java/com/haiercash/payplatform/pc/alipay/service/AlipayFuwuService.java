@@ -265,6 +265,10 @@ public class AlipayFuwuService extends BaseService {
 
     //支付申请
     public IResponse<AlipayOrder> wapPayAppl(Map<String, Object> params) {
+        //未在营业时间
+        Date now = DateUtils.now();
+        if (!AlipayConfig.ALLOW_PAY_SPAN.contains(now))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "抱歉，目前非营业时间，请稍后再试！");
         //渠道验证
         String token = this.getToken();
         if (StringUtils.isEmpty(token))
