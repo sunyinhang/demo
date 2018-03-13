@@ -266,4 +266,15 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
             throw new ClassCastException("can not convert \"" + str + "\" to Date");
         }
     }
+
+    /**
+     * 时间增加指定的时间跨度
+     *
+     * @param value    时间
+     * @param timeSpan 时间跨度
+     * @return 新的时间对象
+     */
+    public static Date add(Date value, TimeSpan timeSpan) {
+        return addMilliseconds(value, (int) timeSpan.getTotalMilliseconds());
+    }
 }
