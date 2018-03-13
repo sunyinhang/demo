@@ -11,6 +11,7 @@ import com.haiercash.payplatform.pc.alipay.service.AlipayFuwuService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
+import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -106,5 +108,18 @@ public class AlipayFuwuController extends BaseController {
         try (OutputStream outputStream = response.getOutputStream()) {
             IOUtils.write(html, outputStream, CharsetNames.UTF_8);
         }
+    }
+
+
+    //支付申请,提交订单
+    @PostMapping("/api/payment/alipay/fuwu/wapPayTest")
+    public IResponse<Map> wapPayApplyTest(@RequestBody Map<String, Object> params) throws AlipayApiException {
+        IResponse<AlipayOrder> orderResponse = this.wapPayApply(params);
+        orderResponse.assertSuccessNeedBody();
+        String html = this.alipayFuwuService.wapPay(orderResponse.getBody());
+        this.logger.info("支付宝返回支付页面内容: " + html);
+        Map<String, Object> body = new HashMap<>();
+        body.put("html", html);
+        return CommonResponse.success(body);
     }
 }

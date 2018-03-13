@@ -29,9 +29,52 @@ public final class TimeSpan {
     }
 
     /**
-     * 获取差别的天数
+     * 构造函数
      *
-     * @return
+     * @param milliseconds 毫秒
+     */
+    public TimeSpan(long milliseconds) {
+        this.milliseconds = milliseconds;
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param hours   时
+     * @param minutes 分
+     * @param seconds 秒
+     */
+    public TimeSpan(int hours, int minutes, int seconds) {
+        this(0, hours, minutes, seconds, 0);
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param days    天
+     * @param hours   时
+     * @param minutes 分
+     * @param seconds 秒
+     */
+    public TimeSpan(int days, int hours, int minutes, int seconds) {
+        this(days, hours, minutes, seconds, 0);
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param days         天
+     * @param hours        时
+     * @param minutes      分
+     * @param seconds      秒
+     * @param milliseconds 毫秒
+     */
+    public TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) {
+        this.milliseconds = days * MillisecondsPerDay + hours * MillisecondsPerHour + minutes * MillisecondsPerMinute + seconds * MillisecondsPerSecond + milliseconds;
+    }
+
+    /**
+     * 获取差别的天数
      */
     public int getDays() {
         return (int) (this.milliseconds / MillisecondsPerDay);
@@ -39,8 +82,6 @@ public final class TimeSpan {
 
     /**
      * 获取差别的小时数
-     *
-     * @return
      */
     public int getHours() {
         return (int) (this.milliseconds / MillisecondsPerHour % 24);
@@ -48,8 +89,6 @@ public final class TimeSpan {
 
     /**
      * 获取差别的分钟数
-     *
-     * @return
      */
     public int getMinutes() {
         return (int) (this.milliseconds / MillisecondsPerMinute % 60);
@@ -57,8 +96,6 @@ public final class TimeSpan {
 
     /**
      * 获取差别的秒数
-     *
-     * @return
      */
     public int getSeconds() {
         return (int) (this.milliseconds / MillisecondsPerSecond % 60);
@@ -66,8 +103,6 @@ public final class TimeSpan {
 
     /**
      * 获取差别的毫秒数
-     *
-     * @return
      */
     public int getMilliseconds() {
         return (int) (this.milliseconds % 1000);
@@ -75,8 +110,6 @@ public final class TimeSpan {
 
     /**
      * 获取总计差别多少天
-     *
-     * @return
      */
     public double getTotalDays() {
         return (double) this.milliseconds * DaysPerMillisecond;
@@ -84,8 +117,6 @@ public final class TimeSpan {
 
     /**
      * 获取总计差别的小时数
-     *
-     * @return
      */
     public double getTotalHours() {
         return (double) this.milliseconds * HoursPerMillisecond;
@@ -93,8 +124,6 @@ public final class TimeSpan {
 
     /**
      * 获取总计差别的分钟数
-     *
-     * @return
      */
     public double getTotalMinutes() {
         return (double) this.milliseconds * MinutesPerMillisecond;
@@ -102,8 +131,6 @@ public final class TimeSpan {
 
     /**
      * 获取总计差别的秒数
-     *
-     * @return
      */
     public double getTotalSeconds() {
         return (double) this.milliseconds * SecondsPerMillisecond;
@@ -111,8 +138,6 @@ public final class TimeSpan {
 
     /**
      * 获取总计差别的毫秒数
-     *
-     * @return
      */
     public double getTotalMilliseconds() {
         return this.milliseconds;

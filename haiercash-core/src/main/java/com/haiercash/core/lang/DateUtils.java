@@ -1,11 +1,14 @@
 package com.haiercash.core.lang;
 
 import com.haiercash.core.collection.ThreadLocalHashPool;
+import com.haiercash.core.time.DayTime;
 import org.apache.commons.lang.NullArgumentException;
+import org.springframework.util.Assert;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -265,5 +268,127 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         } catch (Exception e) {
             throw new ClassCastException("can not convert \"" + str + "\" to Date");
         }
+    }
+
+    /**
+     * 修改指定时间的时分秒毫秒,如果指定为第二天则天加一天
+     *
+     * @param value   时间
+     * @param dayTime 新的时分秒
+     * @return 新的时间对象
+     */
+    public static Date set(Date value, DayTime dayTime) {
+        Assert.notNull(value, "value can not be null");
+        Assert.notNull(dayTime, "dayTime can not be null");
+        // getInstance() returns a new object, so this method is thread safe.
+        Calendar c = Calendar.getInstance();
+        c.setLenient(false);
+        c.setTime(value);
+        if (dayTime.isTomorrow())
+            c.add(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.HOUR_OF_DAY, dayTime.getHour());
+        c.set(Calendar.MINUTE, dayTime.getMinute());
+        c.set(Calendar.SECOND, dayTime.getSecond());
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
+    }
+
+    /**
+     * 修改指定时间的时分秒毫秒
+     *
+     * @param value       时间
+     * @param hour        新的时
+     * @param minute      新的分
+     * @param second      新的秒
+     * @param millisecond 新的毫秒
+     * @return 新的时间对象
+     */
+    public static Date set(Date value, int hour, int minute, int second, int millisecond) {
+        Assert.notNull(value, "value can not be null");
+        // getInstance() returns a new object, so this method is thread safe.
+        Calendar c = Calendar.getInstance();
+        c.setLenient(false);
+        c.setTime(value);
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, second);
+        c.set(Calendar.MILLISECOND, millisecond);
+        return c.getTime();
+    }
+
+    /**
+     * 修改指定时间的时分秒毫秒
+     *
+     * @param value  时间
+     * @param hour   新的时
+     * @param minute 新的分
+     * @param second 新的秒
+     * @return 新的时间对象
+     */
+    public static Date set(Date value, int hour, int minute, int second) {
+        return set(value, hour, minute, second, 0);
+    }
+
+    /**
+     * 时间增加指定的时间跨度
+     *
+     * @param value    时间
+     * @param timeSpan 时间跨度
+     * @return 新的时间对象
+     */
+    public static Date add(Date value, TimeSpan timeSpan) {
+        return addMilliseconds(value, (int) timeSpan.getTotalMilliseconds());
+    }
+
+    /**
+     * 指定的时间追加时分秒毫秒
+     *
+     * @param value       时间
+     * @param day         追加的天
+     * @param hour        追加的时
+     * @param minute      追加的分
+     * @param second      追加的秒
+     * @param millisecond 追加的毫秒
+     * @return 新的时间对象
+     */
+    public static Date add(Date value, int day, int hour, int minute, int second, int millisecond) {
+        Assert.notNull(value, "value can not be null");
+        // getInstance() returns a new object, so this method is thread safe.
+        Calendar c = Calendar.getInstance();
+        c.setLenient(false);
+        c.setTime(value);
+        c.add(Calendar.DAY_OF_MONTH, day);
+        c.add(Calendar.HOUR_OF_DAY, hour);
+        c.add(Calendar.MINUTE, minute);
+        c.add(Calendar.SECOND, second);
+        c.add(Calendar.MILLISECOND, millisecond);
+        return c.getTime();
+    }
+
+    /**
+     * 指定的时间追加时分秒毫秒
+     *
+     * @param value       时间
+     * @param hour        追加的时
+     * @param minute      追加的分
+     * @param second      追加的秒
+     * @param millisecond 追加的毫秒
+     * @return 新的时间对象
+     */
+    public static Date add(Date value, int hour, int minute, int second, int millisecond) {
+        return add(value, 0, hour, minute, second, millisecond);
+    }
+
+    /**
+     * 指定的时间追加时分秒毫秒
+     *
+     * @param value  时间
+     * @param hour   追加的时
+     * @param minute 追加的分
+     * @param second 追加的秒
+     * @return 新的时间对象
+     */
+    public static Date add(Date value, int hour, int minute, int second) {
+        return add(value, 0, hour, minute, second, 0);
     }
 }
