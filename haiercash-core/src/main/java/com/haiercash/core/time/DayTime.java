@@ -3,6 +3,8 @@ package com.haiercash.core.time;
 import lombok.Data;
 import org.springframework.util.Assert;
 
+import java.util.Date;
+
 /**
  * 每天中的某个时刻
  * Created by 许崇雷 on 2018-03-13.
@@ -44,6 +46,16 @@ public final class DayTime implements Comparable<DayTime> {
      */
     public DayTime(int hour, int minute, int second) {
         this(false, hour, minute, second);
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param date 时间
+     */
+    @SuppressWarnings("deprecation")
+    public DayTime(Date date) {
+        this(false, date.getHours(), date.getMinutes(), date.getSeconds());
     }
 
     /**
