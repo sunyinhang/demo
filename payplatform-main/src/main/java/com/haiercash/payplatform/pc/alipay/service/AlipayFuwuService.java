@@ -5,6 +5,7 @@ import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.JsonSerializer;
 import com.haiercash.payplatform.config.AlipayConfig;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,6 +297,7 @@ public class AlipayFuwuService extends BaseService {
 
     //申请还款
     private IResponse<AlipayOrder> applyRepay(String isAll, String applSeq, String custNo, Map<String, Object> params) {
+        Date crtTime = DateUtils.now();//payNo 创建时间
         String repayAmt = Convert.toString(params.get("repayAmt"));
         if (StringUtils.isEmpty(repayAmt))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
@@ -370,6 +373,8 @@ public class AlipayFuwuService extends BaseService {
         order.setPayNo(payNo);
         order.setRepaySeq(repaySeq);
         order.setRepayAmt(repayAmt);
+        order.setSubject(this.alipayConfig.getWapPaySubject());
+        order.setTimeoutExpire(AlipayConfig.getLastPayTime(crtTime));
         return CommonResponse.success(order);
     }
 
@@ -436,12 +441,22 @@ public class AlipayFuwuService extends BaseService {
             throw new BusinessException(ConstUtil.ERROR_CODE, failReason);
         }
 
+        String crtDt = Convert.toString(one.get("crtDt"));
+        this.logger.info("收单 ACQ-2202 返回 crtDt:" + crtDt);
+        Date crtTime = Convert.nullDate(crtDt);
+        if (crtTime == null) {
+            this.logger.info("收单 ACQ-2202 返回 crtDt 格式错误");
+            throw new BusinessException(ConstUtil.ERROR_CODE, "操作失败,原订单创建时间有误");
+        }
+
         //返回
         AlipayOrder order = new AlipayOrder();
         order.setApplSeq(applSeq);
         order.setPayNo(payNo);
         order.setRepaySeq(repaySeq);
         order.setRepayAmt(repayAmt);
+        order.setSubject(this.alipayConfig.getWapPaySubject());
+        order.setTimeoutExpire(AlipayConfig.getLastPayTime(crtTime));
         return CommonResponse.success(order);
     }
 
@@ -454,7 +469,7 @@ public class AlipayFuwuService extends BaseService {
         if (!"60".equals(channelNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
         order.valid();
-        return AlipayUtils.wapPay(token, channelNo, order, this.alipayConfig.getWapPaySubject());
+        return AlipayUtils.wapPay(token, channelNo, order);
     }
 
     //注册第三方用户

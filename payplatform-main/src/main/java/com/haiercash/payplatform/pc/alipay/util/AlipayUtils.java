@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -123,15 +122,14 @@ public class AlipayUtils {
     }
 
     //调用支付宝还款接口,返回 html
-    public static String wapPay(String token, String channelNo, AlipayOrder order, String subject) throws AlipayApiException {
+    public static String wapPay(String token, String channelNo, AlipayOrder order) throws AlipayApiException {
         order.setRepayAmt("0.01");//TODO 支付宝测试用 1 分,上线的时候记得删除
         //文档 https://docs.open.alipay.com/203/107090/
         Map<String, Object> bizContent = new HashMap<>();
         bizContent.put("out_trade_no", order.getPayNo());
         bizContent.put("total_amount", order.getRepayAmt());
-        bizContent.put("subject", subject);
-        Date timeExpire = DateUtils.addMinutes(DateUtils.now(), alipayConfig.getWapPayTimeout() + 1);//因为支付宝精确到分钟.所以要多加 1 分钟防止 当前秒为 59的情况来不及支付
-        bizContent.put("time_expire", DateUtils.toString(timeExpire, "yyyy-MM-dd HH:mm"));//从打开网页到支付成功前的绝对超时时间
+        bizContent.put("subject", order.getSubject());
+        bizContent.put("time_expire", DateUtils.toString(order.getTimeoutExpire(), "yyyy-MM-dd HH:mm"));//从打开网页到支付成功前的绝对超时时间
         bizContent.put("product_code", "QUICK_WAP_WAY");
 
         Map<String, String> param = new HashMap<>();
