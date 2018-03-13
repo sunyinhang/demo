@@ -29,6 +29,51 @@ public final class TimeSpan {
     }
 
     /**
+     * 构造函数
+     *
+     * @param milliseconds 毫秒
+     */
+    public TimeSpan(long milliseconds) {
+        this.milliseconds = milliseconds;
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param hours   时
+     * @param minutes 分
+     * @param seconds 秒
+     */
+    public TimeSpan(int hours, int minutes, int seconds) {
+        this(0, hours, minutes, seconds, 0);
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param days    天
+     * @param hours   时
+     * @param minutes 分
+     * @param seconds 秒
+     */
+    public TimeSpan(int days, int hours, int minutes, int seconds) {
+        this(days, hours, minutes, seconds, 0);
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param days         天
+     * @param hours        时
+     * @param minutes      分
+     * @param seconds      秒
+     * @param milliseconds 毫秒
+     */
+    public TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) {
+        this.milliseconds = days * MillisecondsPerDay + hours * MillisecondsPerHour + minutes * MillisecondsPerMinute + seconds * MillisecondsPerSecond + milliseconds;
+    }
+
+    /**
      * 获取差别的天数
      *
      * @return
