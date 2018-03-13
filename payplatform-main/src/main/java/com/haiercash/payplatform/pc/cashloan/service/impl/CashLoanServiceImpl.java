@@ -548,6 +548,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                             break;
                     }
                 } else if (StringUtils.isEmpty(flag)) {
+                    String crdNorAvailAmt = (String) headinfo.get("crdNorAvailAmt");// 自主支付可用额度金额(现金)
+                    cachemap.put("crdNorAvailAmt", crdNorAvailAmt);//存储redis
+                    RedisUtils.setExpire(thirdToken, cachemap);
                     returnmap.put("flag", "12");//通过  我的额度
                 }
             }
