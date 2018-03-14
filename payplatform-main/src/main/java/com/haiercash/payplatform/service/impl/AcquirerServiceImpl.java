@@ -41,9 +41,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -584,7 +582,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     }
 
     public Map<String, Object> cashLoanCheckDefaultValue(AppOrder appOrder, Map<String, Object> acquirer) {
-        acquirer.put("crt_dt", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// 登记日期
+        acquirer.put("crt_dt", DateUtils.nowDateString());// 登记日期
         // 如果为随借随换，借款期限上传为最大值.
         if ("D".equalsIgnoreCase((String) acquirer.get("apply_tnr_typ"))) {
             Map<String, Object> typCdeMap = cmisService.findPLoanTyp(Convert.toString(acquirer.get("typ_cde")));

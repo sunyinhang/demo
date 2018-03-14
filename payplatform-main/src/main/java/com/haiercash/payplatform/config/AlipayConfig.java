@@ -2,8 +2,8 @@ package com.haiercash.payplatform.config;
 
 import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.TimeSpan;
-import com.haiercash.core.time.DayTime;
-import com.haiercash.core.time.DayTimeSpan;
+import com.haiercash.core.time.Time;
+import com.haiercash.core.time.TimeRange;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +19,9 @@ import java.util.Date;
 public class AlipayConfig {
     public static final String APPL_CARD_NO = "0000000000000000000";//支付宝默认放款卡号
     public static final String REPAY_APPL_CARD_NO = "6225880121940000000";//支付宝默认还款卡号 TODO 测试用,需要改为 19 个 0
-    public static final DayTime ALLOW_PAY_SPAN_BEGIN = new DayTime(6, 0, 0);//允许支付开始
-    public static final DayTime ALLOW_PAY_SPAN_END = new DayTime(21, 0, 0);//允许支付结束
-    public static final DayTimeSpan ALLOW_PAY_SPAN = new DayTimeSpan(ALLOW_PAY_SPAN_BEGIN, ALLOW_PAY_SPAN_END);//允许支付时间段
+    public static final Time ALLOW_PAY_SPAN_BEGIN = new Time(6, 0, 0);//允许支付开始
+    public static final Time ALLOW_PAY_SPAN_END = new Time(21, 0, 0);//允许支付结束
+    public static final TimeRange ALLOW_PAY_SPAN = new TimeRange(ALLOW_PAY_SPAN_BEGIN, ALLOW_PAY_SPAN_END);//允许支付时间段
     public static final TimeSpan PAY_TIMEOUT = new TimeSpan(0, 10, 0);//支付超时时间 10 分钟
 
     private String url;

@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.moxie.service.impl;
 
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.payplatform.common.dao.MoxieInfoDao;
 import com.haiercash.payplatform.common.data.MoxieInfo;
 import com.haiercash.payplatform.pc.moxie.service.MoxieService;
@@ -10,10 +11,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -123,10 +121,7 @@ public class MoxieServiceImpl extends BaseService implements MoxieService {
         moxie.setApplseq(applseq);
         moxie.setIdno(idNo);
         moxie.setFlag(flag);//01：公积金   02：网银
-        Date date=new Date();
-        DateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String time=format.format(date);
-        moxie.setCreateDate(time);
+        moxie.setCreateDate(DateUtils.nowDateTimeString());
         moxieInfoDao.saveMoxieInfoDao(moxie);
     }
 

@@ -1,14 +1,11 @@
 package com.haiercash.payplatform.utils;
 
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.RandomUtils;
 import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
-import org.springframework.util.StringUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,36 +14,22 @@ public final class CmisUtil {
     }
 
     public static HashMap<String, Object> makeHeadMap(String tradeCode, String tradeType, Map<String, Object> params) {
-        HashMap headMap = new HashMap();
+        HashMap<String, Object> headMap = new HashMap<>();
         headMap.put("tradeCode", tradeCode);
-        headMap.put("serno", (new Date()).getTime() + "" + RandomUtils.nextInt(100));
-        if (StringUtils.isEmpty(params.get("sysFlag"))) {
-            headMap.put("sysFlag", "04");
-        } else {
-            headMap.put("sysFlag", params.get("sysFlag"));
-        }
-
+        headMap.put("serno", String.valueOf(System.currentTimeMillis()) + RandomUtils.nextInt(100));
+        headMap.put("sysFlag", params.get("sysFlag"));
         headMap.put("tradeType", tradeType);
-        Calendar tradeDate = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        headMap.put("tradeDate", sdf.format(tradeDate.getTime()));
-        sdf.applyPattern("HH:mm:ss");
-        headMap.put("tradeTime", sdf.format(tradeDate.getTime()));
-        if (StringUtils.isEmpty(params.get("channelNo"))) {
-            headMap.put("channelNo", "05");
-        } else {
-            headMap.put("channelNo", params.get("channelNo"));
-        }
-
+        headMap.put("tradeDate", DateUtils.nowDateString());
+        headMap.put("tradeTime", DateUtils.nowTimeString());
+        headMap.put("channelNo", params.get("channelNo"));
         headMap.put("cooprCode", "");
         return headMap;
     }
 
     public static Map<String, Object> makeBodyMap(Map<String, Object> map) {
-        Calendar tradeDate = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        map.put("signTime", sdf.format(tradeDate.getTime()));
-        map.put("registTime", sdf.format(tradeDate.getTime()));
+        String date = DateUtils.nowDateString();
+        map.put("signTime", date);
+        map.put("registTime", date);
         return map;
     }
 

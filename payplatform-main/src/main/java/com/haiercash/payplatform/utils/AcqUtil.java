@@ -1,13 +1,12 @@
 package com.haiercash.payplatform.utils;
 
+import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.RandomUtils;
-import com.haiercash.mybatis.util.DateUtil;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
 import org.json.JSONObject;
-import org.springframework.util.StringUtils;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,15 +20,14 @@ public class AcqUtil {
 
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
         HashMap headMap = new HashMap();
-        Date now = new Date();
-        headMap.put("serno", now.getTime() + "" + RandomUtils.nextInt(100));
-        headMap.put("tradeDate", DateUtil.formatDate(now, "yyyy-MM-dd"));
-        headMap.put("tradeTime", DateUtil.formatDate(now, "HH:mm:ss"));
+        headMap.put("serno", String.valueOf(System.currentTimeMillis()) + RandomUtils.nextInt(100));
+        headMap.put("tradeDate", DateUtils.nowDateString());
+        headMap.put("tradeTime", DateUtils.nowTimeString());
         headMap.put("tradeCode", tradeCode);
         headMap.put("sysFlag", sysFlag);
         headMap.put("channelNo", channelNo);
-        headMap.put("cooprCode", StringUtils.isEmpty(cooprCode) ? "" : cooprCode);
-        headMap.put("tradeType", StringUtils.isEmpty(tradeType) ? "" : tradeType);
+        headMap.put("cooprCode", Convert.toString(cooprCode));
+        headMap.put("tradeType", Convert.toString(tradeType));
         return headMap;
     }
 

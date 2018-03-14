@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.qiaorong.service.impl;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.payplatform.common.annotation.FlowNode;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -33,9 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,9 +97,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map cachemap = new HashMap();
         cachemap.put("callbackUrl", callbackUrl);
         RedisUtils.setExpire(uuid, cachemap);
-
-        String date = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-
+        String date = DateUtils.nowString("yyyyMMddHHmmssSSS");
         String backurl = commonConfig.getGateUrl() + "/qr/#!/installment.html?token=" + uuid + "&applseq=" + applSeq + "&date=" + date;
         logger.info("签章跳转页面地址：" + backurl);
         Map ResultMap = new HashMap();

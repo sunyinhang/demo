@@ -6,6 +6,7 @@ import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.reflect.GenericType;
 import com.haiercash.core.serialization.JsonSerializer;
@@ -45,10 +46,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -986,11 +985,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //2.是否允许申请贷款
         logger.info("查看是否允许申请贷款");
 //        String typCde = appOrder.getTypCde();
-        SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
-        String date = dateFormater.format(new Date());
         Map<String, Object> queryordermap = new HashMap<>();
         queryordermap.put("typCde", typCde);
-        queryordermap.put("date", date);
+        queryordermap.put("date", DateUtils.nowDateString());
         queryordermap.put("channel", channel);
         queryordermap.put("channelNo", channelNo);
         Map<String, Object> queryorderresult = appServerService.queryBeyondContral(token, queryordermap);
