@@ -9,9 +9,9 @@ import java.util.Date;
 /**
  * Created by 许崇雷 on 2018-03-13.
  */
-public class DayTimeSpanTest {
-    private static final DayTimeSpan PROHIBIT = new DayTimeSpan(new DayTime(21, 0, 0), new DayTime(true, 6, 0, 0));
-    private static final DayTimeSpan ALLOW = new DayTimeSpan(new DayTime(6, 0, 0), new DayTime(21, 0, 0));
+public class TimeRangeTest {
+    private static final TimeRange PROHIBIT = new TimeRange(new Time(21, 0, 0), new Time(true, 6, 0, 0));
+    private static final TimeRange ALLOW = new TimeRange(new Time(6, 0, 0), new Time(21, 0, 0));
     private static final Date TIME_0 = DateUtils.fromDateTimeString("2018-01-01 00:00:00");
     private static final Date TIME_5 = DateUtils.fromDateTimeString("2018-01-01 05:00:00");
     private static final Date TIME_5_59 = DateUtils.fromDateTimeString("2018-01-01 05:59:59");
