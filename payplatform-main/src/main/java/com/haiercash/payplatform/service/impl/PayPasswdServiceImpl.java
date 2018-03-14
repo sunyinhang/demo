@@ -13,11 +13,13 @@ import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.PayPasswdService;
+import com.haiercash.payplatform.service.client.OutreachClient;
 import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
@@ -56,6 +58,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private CashloanConfig cashloanConfig;
     @Autowired
     private CrmService crmService;
+    @Autowired
+    private OutreachClient outreachClient;
 
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
@@ -254,6 +258,18 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
         JSONObject body = jb.getJSONObject("body");
         String applSeq = body.getString("applSeq");
+        //支付宝渠道进行阿里芝麻签章
+        if ("60".equals(channelNo)) {
+            Map<String, Object> signmap = new HashMap<>();
+            signmap.put("businessChannelNo", this.getChannelNo());
+            signmap.put("name", name);
+            signmap.put("certNo", certNo);
+            signmap.put("applseq", applSeq);
+            signmap.put("mobile", phoneNo);
+            IResponse<String> scoreResponse = this.outreachClient.signature(signmap);
+            scoreResponse.assertSuccessNeedBody();
+        }
+
         //上传风险数据 经纬度
         ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
         ArrayList<String> listOne = new ArrayList<>();
