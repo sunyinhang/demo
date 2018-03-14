@@ -1,4 +1,4 @@
-package com.haiercash.core.lang;
+package com.haiercash.core.time;
 
 import java.util.Date;
 

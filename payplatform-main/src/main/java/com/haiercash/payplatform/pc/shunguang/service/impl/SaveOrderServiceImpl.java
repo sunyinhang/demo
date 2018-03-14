@@ -2,7 +2,7 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.BeanUtils;
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;

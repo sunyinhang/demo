@@ -1,9 +1,9 @@
 package com.haiercash.payplatform.config;
 
-import com.haiercash.core.lang.DateUtils;
-import com.haiercash.core.lang.TimeSpan;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.core.time.Time;
 import com.haiercash.core.time.TimeRange;
+import com.haiercash.core.time.TimeSpan;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

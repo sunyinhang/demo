@@ -2,7 +2,7 @@ package com.haiercash.payplatform.pc.alipay.bean;
 
 import com.alipay.api.response.AlipaySystemOauthTokenResponse;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import lombok.Data;
 import org.springframework.util.Assert;
 

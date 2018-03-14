@@ -1,6 +1,5 @@
 package com.haiercash.core.time;
 
-import com.haiercash.core.lang.DateUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
