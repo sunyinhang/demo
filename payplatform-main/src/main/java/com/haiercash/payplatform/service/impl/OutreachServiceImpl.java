@@ -35,4 +35,16 @@ public class OutreachServiceImpl implements OutreachService {
         String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/alibaba/score";
         return CommonRestUtils.postForMap(url, params);
     }
+
+    /**
+     * 芝麻签章
+     *
+     * @param params
+     * @return
+     */
+    @Override
+    public IResponse<Map> signature(Map<String, Object> params) {
+        String url = EurekaServer.OUTREACHPLATFORM + "/Outreachplatform/api/alibaba/signature";
+        return CommonRestUtils.postForMap(url, params);
+    }
 }
