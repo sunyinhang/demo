@@ -18,7 +18,6 @@ import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
@@ -255,19 +254,6 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
         JSONObject body = jb.getJSONObject("body");
         String applSeq = body.getString("applSeq");
-
-        //支付宝渠道进行阿里芝麻签章
-        if("60".equals(channelNo)){
-            Map<String, Object> signmap = new HashMap<>();
-            signmap.put("businessChannelNo", this.getChannelNo());
-            signmap.put("name", name);
-            signmap.put("certNo", certNo);
-            signmap.put("applseq", applSeq);
-            signmap.put("mobile", phoneNo);
-            IResponse<Map> scoreResponse = outreachService.signature(signmap);
-            scoreResponse.assertSuccessNeedBody();
-        }
-
         //上传风险数据 经纬度
         ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
         ArrayList<String> listOne = new ArrayList<>();

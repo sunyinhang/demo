@@ -25,11 +25,4 @@ public interface OutreachService {
      * @return
      */
     IResponse<Map> score(Map<String, Object> params);
-
-    /**
-     * 芝麻签章
-     * @param params
-     * @return
-     */
-    IResponse<Map> signature(Map<String, Object> params);
 }
