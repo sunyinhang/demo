@@ -14,7 +14,6 @@ import com.haiercash.spring.rest.cmis.v1.CmisRequestRoot;
 import com.haiercash.spring.rest.cmis.v2.CmisRequest2;
 import org.springframework.util.Assert;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,12 +36,11 @@ public final class CmisRequestBuilder {
     private Object body;
 
     private CmisRequestBuilder(CmisVersion version, String tradeCode) {
-        Date now = DateUtils.now();
         this.version = version;
-        this.serno = String.valueOf(new Date().getTime()) + RandomUtils.nextInt(100);
+        this.serno = String.valueOf(System.currentTimeMillis()) + RandomUtils.nextInt(100);
         this.tradeCode = tradeCode;
-        this.tradeDate = DateUtils.toDateString(now);
-        this.tradeTime = DateUtils.toTimeString(now);
+        this.tradeDate = DateUtils.nowDateString();
+        this.tradeTime = DateUtils.nowTimeString();
         this.sysFlag = ThreadContext.getChannel();
         this.channelNo = ThreadContext.getChannelNo();
     }
