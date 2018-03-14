@@ -263,8 +263,8 @@ public class AlipayFuwuService extends BaseService {
         return CommonResponse.success(body);
     }
 
-    //支付申请
-    public IResponse<AlipayOrder> wapPayAppl(Map<String, Object> params) {
+    //支付
+    public IResponse<Map> wapPay(Map<String, Object> params) throws AlipayApiException {
         //未在营业时间
         Date now = DateUtils.now();
         if (!AlipayConfig.ALLOW_PAY_SPAN.contains(now))
@@ -290,17 +290,30 @@ public class AlipayFuwuService extends BaseService {
         String isRetry = Convert.toString(params.get("isRetry"));//是否重试(处理中)
         String isAll = Convert.toString(params.get("isAll"));//是否全部还款
 
-        //调用收单接口
-        if ("Y".equals(isRetry)) {//处理中 isRetry = Y 查询收单处理中的订单
-            return this.getProcessingPay(applSeq);
-        }
+        //获取支付宝订单信息
+        AlipayOrder order = "Y".equals(isRetry) ? this.getProcessingPay(applSeq) : this.applyRepay(isAll, applSeq, custNo, params);
+        //支付
+        String html = this.wapPayCore(order);
+        this.logger.info("支付宝返回支付页面内容: " + html);
+        Map<String, Object> body = new HashMap<>();
+        body.put("html", html);
+        return CommonResponse.success(body);
+    }
 
-        //未处理中,参数验证
-        return this.applyRepay(isAll, applSeq, custNo, params);
+    //请求支付宝发起支付
+    private String wapPayCore(AlipayOrder order) throws AlipayApiException {
+        String token = this.getToken();
+        if (StringUtils.isEmpty(token))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "无效的令牌");
+        String channelNo = this.getChannelNo();
+        if (!"60".equals(channelNo))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
+        order.valid();
+        return AlipayUtils.wapPay(token, channelNo, order);
     }
 
     //申请还款
-    private IResponse<AlipayOrder> applyRepay(String isAll, String applSeq, String custNo, Map<String, Object> params) {
+    private AlipayOrder applyRepay(String isAll, String applSeq, String custNo, Map<String, Object> params) {
         Date crtTime = DateUtils.now();//payNo 创建时间
         String repayAmt = Convert.toString(params.get("repayAmt"));
         if (StringUtils.isEmpty(repayAmt))
@@ -379,11 +392,11 @@ public class AlipayFuwuService extends BaseService {
         order.setRepayAmt(repayAmt);
         order.setSubject(this.alipayConfig.getWapPaySubject());
         order.setTimeoutExpire(AlipayConfig.getLastPayTime(crtTime));
-        return CommonResponse.success(order);
+        return order;
     }
 
     //获取处理中还款
-    private IResponse<AlipayOrder> getProcessingPay(String applSeq) {
+    private AlipayOrder getProcessingPay(String applSeq) {
         Map<String, Object> acqParams = new HashMap<>();
         acqParams.put("sortNo", "1");//使用 applSeq 参数
         acqParams.put("applSeq", applSeq);
@@ -461,19 +474,7 @@ public class AlipayFuwuService extends BaseService {
         order.setRepayAmt(repayAmt);
         order.setSubject(this.alipayConfig.getWapPaySubject());
         order.setTimeoutExpire(AlipayConfig.getLastPayTime(crtTime));
-        return CommonResponse.success(order);
-    }
-
-    //支付
-    public String wapPay(AlipayOrder order) throws AlipayApiException {
-        String token = this.getToken();
-        if (StringUtils.isEmpty(token))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "无效的令牌");
-        String channelNo = this.getChannelNo();
-        if (!"60".equals(channelNo))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
-        order.valid();
-        return AlipayUtils.wapPay(token, channelNo, order);
+        return order;
     }
 
     //注册第三方用户
