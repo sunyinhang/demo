@@ -1,6 +1,6 @@
 package com.haiercash.spring.weixin;
 
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.spring.redis.RedisLock;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;

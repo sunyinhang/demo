@@ -4,7 +4,7 @@ import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
@@ -52,8 +52,6 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -361,8 +359,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
     @Override
     public Map<String, Object> saveAppOrderInfo(AppOrder appOrder) {
-
-        appOrder.setApplyDt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        appOrder.setApplyDt(DateUtils.nowDateString());
         appOrder.setIsConfirmAgreement("0");// 0-未确认
         appOrder.setIsConfirmContract("0");// 0-未确认
         appOrder.setProPurAmt("0");// 商品总额，默认为0
@@ -885,7 +882,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             relation.setIsConfirmAgreement("0"); // 未确认
             relation.setIsConfirmContract("0");  // 未确认
             relation.setIsCustInfoComplete("N"); // 未确认
-            relation.setInsertTime(new Date());
+            relation.setInsertTime(DateUtils.now());
             relation.setChannel(super.getChannel());
             relation.setChannelNo(super.getChannelNo());
             appOrdernoTypgrpRelationDao.insert(relation);

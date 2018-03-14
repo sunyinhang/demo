@@ -1,6 +1,5 @@
-package com.haiercash.core.lang;
+package com.haiercash.core.time;
 
-import com.haiercash.core.time.DayTime;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,7 +13,7 @@ public class DateUtilsTest {
 
     @Test
     public void set() {
-        Date date = DateUtils.set(DATE, new DayTime(true, 5, 6, 7));
+        Date date = DateUtils.set(DATE, new Time(true, 5, 6, 7));
         Assert.assertEquals("2018-01-03 05:06:07.000", DateUtils.toDateTimeMsString(date));
     }
 
@@ -26,13 +25,13 @@ public class DateUtilsTest {
 
     @Test
     public void add() {
-        Date date = DateUtils.add(DATE, new TimeSpan(1, 2, 3, 4, 123));
-        Assert.assertEquals("2018-01-03 05:07:09.123", DateUtils.toDateTimeMsString(date));
+        Date date = DateUtils.add(DATE, new TimeSpan(1, 2, 3, 4, 1001));
+        Assert.assertEquals("2018-01-03 05:07:10.001", DateUtils.toDateTimeMsString(date));
     }
 
     @Test
     public void add1() {
-        Date date = DateUtils.add(DATE, 1, 2, 3, 4, 123);
-        Assert.assertEquals("2018-01-03 05:07:09.123", DateUtils.toDateTimeMsString(date));
+        Date date = DateUtils.add(DATE, 1, 2, 3, 4, 1001);
+        Assert.assertEquals("2018-01-03 05:07:10.001", DateUtils.toDateTimeMsString(date));
     }
 }

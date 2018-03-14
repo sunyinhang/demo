@@ -2,14 +2,13 @@ package com.haiercash.spring.rest.acq;
 
 import com.bestvike.linq.exception.InvalidOperationException;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.RandomUtils;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.spring.context.ThreadContext;
 import org.springframework.util.Assert;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,11 +30,10 @@ public final class AcqRequestBuilder {
     private Object body;
 
     private AcqRequestBuilder(String tradeCode) {
-        Date now = DateUtils.now();
-        this.serno = String.valueOf(new Date().getTime()) + RandomUtils.nextInt(100);
+        this.serno = String.valueOf(System.currentTimeMillis()) + RandomUtils.nextInt(100);
         this.tradeCode = tradeCode;
-        this.tradeDate = DateUtils.toDateString(now);
-        this.tradeTime = DateUtils.toTimeString(now);
+        this.tradeDate = DateUtils.nowDateString();
+        this.tradeTime = DateUtils.nowTimeString();
         this.sysFlag = ThreadContext.getChannel();
         this.channelNo = ThreadContext.getChannelNo();
     }

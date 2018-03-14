@@ -5,6 +5,7 @@ import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgtsLogDao;
 import com.haiercash.payplatform.common.data.CooperativeBusiness;
@@ -28,8 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -311,9 +310,7 @@ public class CmisMessageHandler {
                         sgtsLog.setApplSeq(applSeq);
                         sgtsLog.setChannelNo(channelNo);
                         sgtsLog.setIdNo(idNo);//身份证号
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-                        String format = simpleDateFormat.format(new Date());
-                        sgtsLog.setTime(format);//当前系统时间
+                        sgtsLog.setTime(DateUtils.nowString("yyyy-MM-dd HH-mm-ss"));//当前系统时间
                         sgtsLog.setOutSts(outSts);
                         sgtsLog.setMsgTyp(msgTyp);
                         sgtsLog.setRemark(retflag);
@@ -345,8 +342,7 @@ public class CmisMessageHandler {
                 sgtsLog.setRemark("顺逛返回信息的记录");//返回的结果
                 sgtsLog.setChannelNo(channelNo);
                 sgtsLog.setIdNo(idNo);//身份证号
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-                String format = simpleDateFormat.format(new Date());
+                String format = DateUtils.nowString("yyyy-MM-dd HH-mm-ss");
                 sgtsLog.setTime(format);//当前系统时间
                 sgtsLog.setOutSts(outSts);
                 sgtsLog.setMsgTyp(msgTyp);
@@ -378,9 +374,7 @@ public class CmisMessageHandler {
                 sgtsLog.setRemark("顺逛返回信息的记录");//返回的结果
                 sgtsLog.setChannelNo(channelNo);
                 sgtsLog.setIdNo(idNo);//身份证号
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-                String format = simpleDateFormat.format(new Date());
-                sgtsLog.setTime(format);//当前系统时间
+                sgtsLog.setTime(DateUtils.nowString("yyyy-MM-dd HH-mm-ss"));//当前系统时间
                 sgtsLog.setMsgTyp(msgTyp);
                 sgtsLog.setEdFlag("Y");//额度标识
                 sgtsLog.setDkFlag("N");//贷款标识
