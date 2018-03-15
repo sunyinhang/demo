@@ -3,18 +3,24 @@ package com.haiercash.payplatform.pc.alipay.controller;
 import com.alipay.api.AlipayApiException;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
+import com.haiercash.core.serialization.URLSerializer;
+import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.payplatform.pc.alipay.service.AlipayFuwuService;
+import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
@@ -47,6 +53,29 @@ public class AlipayFuwuController extends BaseController {
             throw new BusinessException(ConstUtil.ERROR_CODE, "令牌失效请重新登录");
     }
 
+
+    @GetMapping("/api/payment/alipay/fuwu/jump")
+    public void jump(@RequestParam Map<String, Object> params, HttpServletResponse response) throws IOException {
+        String target = Convert.toString(params.get("target"));
+        if (StringUtils.isEmpty(target))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "跳转目标不能为空");
+        String authCode = Convert.toString(params.get("auth_code"));
+        if (StringUtils.isEmpty(authCode))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "仅支持从支付宝授权重定向到此页面");
+
+        try {
+            AlipayToken alipayToken = AlipayUtils.getOauthTokenByAuthCode(authCode);
+            params.put("user_id", alipayToken.getUserId());
+        } catch (Exception e) {
+            params.put("user_id", StringUtils.EMPTY);
+        }
+
+        //重定向
+        String targetWithParams = target.contains("?")
+                ? (target + "&" + URLSerializer.serialize(params))
+                : (target + "?" + URLSerializer.serialize(params));
+        response.sendRedirect(targetWithParams);
+    }
 
     //授权后验证用户
     @PostMapping("/api/payment/alipay/fuwu/validUser")
