@@ -3,8 +3,10 @@ package com.haiercash.payplatform.service.client;
 import com.haiercash.spring.feign.annotation.FeignApi;
 import com.haiercash.spring.rest.common.CommonResponse;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -20,4 +22,8 @@ public interface CrmClient {
     @FeignApi("待还金额还款明细查询")
     @PostMapping("/apporder/queryApplAmtAndRepayByloanNo")
     CommonResponse<Map> queryApplAmtAndRepayByloanNo(@RequestBody Map<String, Object> params);
+
+    @FeignApi("还款计划查询")
+    @GetMapping("/apporder/queryApplReraidPlanByloanNo")
+    CommonResponse<Map> queryApplReraidPlanByloanNo(@RequestParam("applSeq") String applSeq, @RequestParam("loanNo") String loanNo);
 }

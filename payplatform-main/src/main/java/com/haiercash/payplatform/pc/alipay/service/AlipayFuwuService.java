@@ -2,6 +2,8 @@ package com.haiercash.payplatform.pc.alipay.service;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
+import com.bestvike.linq.Linq;
+import com.haiercash.core.collection.ArrayUtils;
 import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
@@ -15,7 +17,6 @@ import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.pc.alipay.util.RepayMode;
 import com.haiercash.payplatform.service.AppServerService;
-import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.client.AcquirerClient;
@@ -51,6 +52,7 @@ import java.util.Objects;
  */
 @Service
 public class AlipayFuwuService extends BaseService {
+    private static final char[] PS_PERD_NO_SEPARATOR = new char[]{'|'};
     @Autowired
     private AppServerService appServerService;
     @Autowired
@@ -71,8 +73,6 @@ public class AlipayFuwuService extends BaseService {
     private AppServerClient appServerClient;
     @Autowired
     private CrmClient crmClient;
-    @Autowired
-    private CrmService crmService;
 
     //授权后验证用户
     public IResponse<Map> validUser(String authCode) throws AlipayApiException {
@@ -302,10 +302,9 @@ public class AlipayFuwuService extends BaseService {
         if (repayMode == null)
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款模式]无效");
         //营业时间断言
-        this.assertBusinessHours(custNo, loanNo, applSeq);
-
+        this.verifyBusinessHours(custNo, loanNo, applSeq);
         //获取支付宝订单信息
-        AlipayOrder order = repayMode == RepayMode.PROCESSING ? this.getProcessingPay(applSeq) : this.applyRepay(repayMode, applSeq, custNo, params);
+        AlipayOrder order = repayMode == RepayMode.PROCESSING ? this.getProcessingPay(applSeq) : this.applyRepay(repayMode, applSeq, loanNo, custNo, params);
         //支付
         String html = AlipayUtils.wapPay(token, channelNo, order);
         //返回
@@ -315,39 +314,20 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //申请还款
-    private AlipayOrder applyRepay(RepayMode repayMode, String applSeq, String custNo, Map<String, Object> params) {
+    private AlipayOrder applyRepay(RepayMode repayMode, String applSeq, String loanNo, String custNo, Map<String, Object> params) {
         Date crtTime = DateUtils.now();//payNo 创建时间
         String repayAmt = Convert.toString(params.get("repayAmt"));
         if (StringUtils.isEmpty(repayAmt))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
+        BigDecimal repayAmtDecimal = Convert.nullDecimal(repayAmt);
+        if (repayAmtDecimal == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]必须为数字");
         String psPerdNo = Convert.toString(params.get("psPerdNo"));
         if (StringUtils.isEmpty(psPerdNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
-        //校验金额
-        Map<String, Object> map = new HashMap<String, Object>();
-        BigDecimal repayAmtBig = Convert.nullDecimal(repayAmt);
-        String[] psPerdNos = psPerdNo.split("|");
-        String loanNo = Convert.toString(params.get("loanNo"));//借据号
-        map.put("loanNo", loanNo);
-        map.put("applSeq", applSeq);
-        Map<String, Object> resultMap = crmService.queryApplReraidPlanByloanNo(map);
-        BigDecimal repsInstmAmt = new BigDecimal(0);
-        if (HttpUtil.isSuccess(resultMap)) {
-            Map bodymap = (Map) resultMap.get("body");
-            Map lmpmshdlist = (Map) bodymap.get("lmpmshdlist");
-            List<Map> list = (List<Map>) lmpmshdlist.get("lmpmshd");
-            for (int i = 0; i < list.size(); i++) {
-                for (int j = 0; j < psPerdNos.length; j++) {
-                    if (psPerdNos[j] == list.get(i).get("psPerdNo")) {
-                        BigDecimal psInstmAmt = Convert.nullDecimal(list.get(i).get("psInstmAmt"));//期供金额
-                        repsInstmAmt = repsInstmAmt.add(psInstmAmt);
-                    }
-                }
-            }
-            if (repsInstmAmt.compareTo(repayAmtBig) != 0) {
-                throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
-            }
-        }
+
+        //金额校验
+        this.verifyRepayAmt(applSeq, loanNo, psPerdNo, repayAmtDecimal);
 
         //调用收单 还款申请
         Map<String, Object> acqParams = new HashMap<>();
@@ -434,6 +414,41 @@ public class AlipayFuwuService extends BaseService {
         order.setSubject(this.alipayConfig.getWapPaySubject());
         order.setTimeoutExpire(AlipayConfig.getLastPayTime(crtTime));
         return order;
+    }
+
+    //校验金额
+    private void verifyRepayAmt(String applSeq, String loanNo, String psPerdNo, BigDecimal repayAmt) {
+        //校验金额
+        String[] psPerdNos = StringUtils.split(psPerdNo, PS_PERD_NO_SEPARATOR, true);
+        IResponse<Map> resultMap = this.crmClient.queryApplReraidPlanByloanNo(applSeq, loanNo);
+        if (!resultMap.isSuccessNeedBody())
+            throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
+
+        Map<String, Object> planBody = resultMap.getBody();
+        Map lmpmshdlist = (Map) planBody.get("lmpmshdlist");
+        List<Map> lmpmshd = (List<Map>) lmpmshdlist.get("lmpmshd");
+        BigDecimal sumAmt = Linq.asEnumerable(lmpmshd)
+                .where(entry -> ArrayUtils.contains(psPerdNos, entry.get("psPerdNo")))
+                .select(entry -> Convert.toDecimal(entry.get("psInstmAmt")))
+                .sumDecimal();
+
+        if (repayAmt.compareTo(sumAmt) == 0)
+            return;
+        throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
+    }
+
+    //校验营业时间
+    private void verifyBusinessHours(String custNo, String loanNo, String applSeq) {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("custNo", custNo);
+        params.put("loanNo", loanNo);
+        params.put("applSeq", applSeq);
+        params.put("isSelectCoupon", "0");
+        params.put("paymInd", "N");
+        params.put("setlTyp", "NM");
+        params.put("relPerdCnt", "0");
+        CommonResponse<Map> resultOneMap = this.crmClient.queryApplAmtAndRepayByloanNo(params);
+        resultOneMap.assertSuccess();
     }
 
     //获取处理中还款
@@ -528,19 +543,5 @@ public class AlipayFuwuService extends BaseService {
         map.put("externUid", externUid_);
         map.put("linkMobile", linkMobile_);
         return this.uauthClient.saveUserByExternUid(map);
-    }
-
-    //断言在营业时间
-    private void assertBusinessHours(String custNo, String loanNo, String applSeq) {
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("custNo", custNo);
-        params.put("loanNo", loanNo);
-        params.put("applSeq", applSeq);
-        params.put("isSelectCoupon", "0");
-        params.put("paymInd", "N");
-        params.put("setlTyp", "NM");
-        params.put("relPerdCnt", "0");
-        CommonResponse<Map> resultOneMap = this.crmClient.queryApplAmtAndRepayByloanNo(params);
-        resultOneMap.assertSuccess();
     }
 }
