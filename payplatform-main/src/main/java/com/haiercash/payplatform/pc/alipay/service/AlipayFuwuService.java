@@ -13,6 +13,7 @@ import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayOrder;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
+import com.haiercash.payplatform.pc.alipay.util.RepayMode;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
@@ -293,35 +294,24 @@ public class AlipayFuwuService extends BaseService {
         String loanNo = Convert.toString(params.get("loanNo"));
         if (StringUtils.isEmpty(loanNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[借据号]不能为空");
-        String isRetry = Convert.toString(params.get("isRetry"));//是否重试(处理中)
-        String isAll = Convert.toString(params.get("isAll"));//是否全部还款
+        RepayMode repayMode = RepayMode.forName(Convert.toString(params.get("repayMode")));
+        if (repayMode == null)
+            throw new BusinessException(ConstUtil.ERROR_CODE, "[还款模式]无效");
         //营业时间断言
         this.assertBusinessHours(custNo, loanNo, applSeq);
 
         //获取支付宝订单信息
-        AlipayOrder order = "Y".equals(isRetry) ? this.getProcessingPay(applSeq) : this.applyRepay(isAll, applSeq, custNo, params);
+        AlipayOrder order = repayMode == RepayMode.PROCESSING ? this.getProcessingPay(applSeq) : this.applyRepay(repayMode, applSeq, custNo, params);
         //支付
-        String html = this.wapPayCore(order);
-        this.logger.info("支付宝返回支付页面内容: " + html);
+        String html = AlipayUtils.wapPay(token, channelNo, order);
+        //返回
         Map<String, Object> body = new HashMap<>();
         body.put("html", html);
         return CommonResponse.success(body);
     }
 
-    //请求支付宝发起支付
-    private String wapPayCore(AlipayOrder order) throws AlipayApiException {
-        String token = this.getToken();
-        if (StringUtils.isEmpty(token))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "无效的令牌");
-        String channelNo = this.getChannelNo();
-        if (!"60".equals(channelNo))
-            throw new BusinessException(ConstUtil.ERROR_CODE, "只支持支付宝生活号");
-        order.valid();
-        return AlipayUtils.wapPay(token, channelNo, order);
-    }
-
     //申请还款
-    private AlipayOrder applyRepay(String isAll, String applSeq, String custNo, Map<String, Object> params) {
+    private AlipayOrder applyRepay(RepayMode repayMode, String applSeq, String custNo, Map<String, Object> params) {
         Date crtTime = DateUtils.now();//payNo 创建时间
         String repayAmt = Convert.toString(params.get("repayAmt"));
         if (StringUtils.isEmpty(repayAmt))
@@ -332,11 +322,24 @@ public class AlipayFuwuService extends BaseService {
         //调用收单 还款申请
         Map<String, Object> acqParams = new HashMap<>();
         acqParams.put("applSeq", applSeq);
-        if ("Y".equals(isAll)) {//全部还款
-            acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
-            acqParams.put("setlMode", "FS");//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
-        } else {//按期还款
-            acqParams.put("setlTyp", "02");//01：信贷还款 02：充值还款
+        switch (repayMode) {
+            //逾期
+            case OVERDUE:
+                acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
+                acqParams.put("setlMode", "NM");//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
+                break;
+            //全部
+            case ALL:
+                acqParams.put("setlTyp", "01");//01：信贷还款 02：充值还款
+                acqParams.put("setlMode", "FS");//FS（全部还款）NM（归还欠款）ER（提前还款）信贷还款时必传
+                break;
+            //当前期
+            case CURRENT:
+                acqParams.put("setlTyp", "02");//01：信贷还款 02：充值还款
+                break;
+            default:
+                this.logger.error("不应该出现的情况");
+                throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
         acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
