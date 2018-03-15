@@ -1674,6 +1674,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String resultOneMapheadflag = (String) resultOneMaphead.get("retFlag");
             if ("00000".equals(resultOneMapheadflag)) {
                 Map resultOneMapbody = (Map<String, Object>) resultOneMap.get("body");
+                if (StringUtils.isEmpty(resultOneMapbody.get("preShouldAmount"))) {
+                    logger.info("CRM待还金额&还款明细查询接口未返回字段提前还款应还金额preShouldAmount");
+                    return fail(ConstUtil.ERROR_CODE, "CRM未返回提前还款应还金额！");
+                }
                 BigDecimal preShouldAmount_one = Convert.toDecimal(resultOneMapbody.get("preShouldAmount"));//提前还款应还金额
                 HashMap<String, Object> queryApplAmtAndRepayByloanNoTwoMap = new HashMap<>();
                 queryApplAmtAndRepayByloanNoTwoMap.put("custNo", custNo);
@@ -1693,6 +1697,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 String resultTwoMapheadflag = (String) resultTwoMaphead.get("retFlag");
                 if ("00000".equals(resultTwoMapheadflag)) {
                     Map resultTwoMapbody = (Map<String, Object>) resultTwoMap.get("body");
+                    if (StringUtils.isEmpty(resultTwoMapbody.get("preShouldAmount"))) {
+                        logger.info("CRM待还金额&还款明细查询接口未返回字段提前还款应还金额preShouldAmount");
+                        return fail(ConstUtil.ERROR_CODE, "CRM未返回提前还款应还金额！");
+                    }
                     preShouldAmount = Convert.toString(resultTwoMapbody.get("preShouldAmount"));//提前还款应还金额
                     map.put("preShouldAmount", preShouldAmount);
                 } else {
