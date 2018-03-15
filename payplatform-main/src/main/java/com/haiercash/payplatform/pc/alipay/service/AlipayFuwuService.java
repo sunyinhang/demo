@@ -15,6 +15,7 @@ import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.pc.alipay.util.RepayMode;
 import com.haiercash.payplatform.service.AppServerService;
+import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.client.AcquirerClient;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,6 +71,8 @@ public class AlipayFuwuService extends BaseService {
     private AppServerClient appServerClient;
     @Autowired
     private CrmClient crmClient;
+    @Autowired
+    private CrmService crmService;
 
     //授权后验证用户
     public IResponse<Map> validUser(String authCode) throws AlipayApiException {
@@ -316,11 +320,35 @@ public class AlipayFuwuService extends BaseService {
         String repayAmt = Convert.toString(params.get("repayAmt"));
         if (StringUtils.isEmpty(repayAmt))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
-        //TODO 校验金额
-
         String psPerdNo = Convert.toString(params.get("psPerdNo"));
         if (StringUtils.isEmpty(psPerdNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
+        //校验金额
+        Map<String, Object> map = new HashMap<String, Object>();
+        BigDecimal repayAmtBig = Convert.nullDecimal(repayAmt);
+        String[] psPerdNos = psPerdNo.split("|");
+        String loanNo = Convert.toString(params.get("loanNo"));//借据号
+        map.put("loanNo", loanNo);
+        map.put("applSeq", applSeq);
+        Map<String, Object> resultMap = crmService.queryApplReraidPlanByloanNo(map);
+        BigDecimal repsInstmAmt = new BigDecimal(0);
+        if (HttpUtil.isSuccess(resultMap)) {
+            Map bodymap = (Map) resultMap.get("body");
+            Map lmpmshdlist = (Map) bodymap.get("lmpmshdlist");
+            List<Map> list = (List<Map>) lmpmshdlist.get("lmpmshd");
+            for (int i = 0; i < list.size(); i++) {
+                for (int j = 0; j < psPerdNos.length; j++) {
+                    if (psPerdNos[j] == list.get(i).get("psPerdNo")) {
+                        BigDecimal psInstmAmt = Convert.nullDecimal(list.get(i).get("psInstmAmt"));//期供金额
+                        repsInstmAmt = repsInstmAmt.add(psInstmAmt);
+                    }
+                }
+            }
+            if (repsInstmAmt.compareTo(repayAmtBig) != 0) {
+                throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
+            }
+        }
+
         //调用收单 还款申请
         Map<String, Object> acqParams = new HashMap<>();
         acqParams.put("applSeq", applSeq);
