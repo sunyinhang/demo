@@ -1650,7 +1650,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         String preShouldAmount = "";
-        if ("06".equals(outSts_code)) {//放款状态，查询借据号
+        if ("06".equals(outSts_code) || "OD".equals(outSts_code)) {//放款状态，查询借据号
             String loanNo = (String) params.get("loanNo");//借据号
             if (StringUtils.isEmpty(loanNo)) {
                 logger.info("放款状态借据号为空！");

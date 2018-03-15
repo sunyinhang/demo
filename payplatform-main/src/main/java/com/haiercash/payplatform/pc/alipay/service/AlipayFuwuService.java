@@ -316,6 +316,8 @@ public class AlipayFuwuService extends BaseService {
         String repayAmt = Convert.toString(params.get("repayAmt"));
         if (StringUtils.isEmpty(repayAmt))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款总金额]不能为空");
+        //TODO 校验金额
+
         String psPerdNo = Convert.toString(params.get("psPerdNo"));
         if (StringUtils.isEmpty(psPerdNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
