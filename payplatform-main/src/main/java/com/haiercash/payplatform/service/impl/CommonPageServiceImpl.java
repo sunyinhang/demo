@@ -1353,11 +1353,25 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     public Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) {
         logger.info("============查询还款计划开始===========");
         Map<String, Object> resultMap = crmService.queryApplReraidPlanByloanNo(params);
-//        ResultHead resultHead = (ResultHead) resultMap.get("head");
-//        String retFlag = resultHead.getRetFlag();
-//        if (!"00000".equals(retFlag)) {
-//            return resultMap;
-//        }
+        if(HttpUtil.isSuccess(resultMap)){
+            Map bodymap = (Map) resultMap.get("body");
+            Map lmpmshdlist = (Map) bodymap.get("lmpmshdlist");
+            List<Map> list = (List<Map>) lmpmshdlist.get("lmpmshd");
+            for (Map map:list) {
+                Double psPrcpAmt = Convert.defaultDouble(map.get("psPrcpAmt"));//本金
+                Double psNormInt = Convert.defaultDouble(map.get("psNormInt"));//利息
+                Double psOdIntAmt = Convert.defaultDouble(map.get("psOdIntAmt"));//罚息
+                Double penalFeeAmt = Convert.defaultDouble(map.get("penalFeeAmt"));//违约金
+                Double psCommOdInt = Convert.defaultDouble(map.get("psCommOdInt"));//复利
+                Double lateFeeAmt = Convert.defaultDouble(map.get("lateFeeAmt"));//应还滞纳金
+                Double acctFeeAmt = Convert.defaultDouble(map.get("acctFeeAmt"));//应还账户管理费
+                Double psFeeAmt = Convert.defaultDouble(map.get("psFeeAmt"));//应还手续费
+                Double advanceFeeAmt = Convert.defaultDouble(map.get("advanceFeeAmt"));//应还提前还款手续费
+                //还款成功金额
+                Double repaySuccAmt = psPrcpAmt + psNormInt + psOdIntAmt + penalFeeAmt + psCommOdInt + lateFeeAmt + acctFeeAmt + psFeeAmt + advanceFeeAmt;
+                map.put("repaySuccAmt",repaySuccAmt);
+            }
+        }
         logger.info("============查询还款计划结束===========");
         return resultMap;
     }
