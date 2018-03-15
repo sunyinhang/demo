@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -53,7 +54,6 @@ public class AlipayFuwuController extends BaseController {
             throw new BusinessException(ConstUtil.ERROR_CODE, "令牌失效请重新登录");
     }
 
-
     @GetMapping("/api/payment/alipay/fuwu/jump")
     public void jump(@RequestParam Map<String, Object> params, HttpServletResponse response) throws IOException {
         String target = Convert.toString(params.get("target"));
@@ -63,17 +63,24 @@ public class AlipayFuwuController extends BaseController {
         if (StringUtils.isEmpty(authCode))
             throw new BusinessException(ConstUtil.ERROR_CODE, "仅支持从支付宝授权重定向到此页面");
 
+        //参数
+        Map<String, Object> targetPrams = new HashMap<>();
         try {
             AlipayToken alipayToken = AlipayUtils.getOauthTokenByAuthCode(authCode);
-            params.put("user_id", alipayToken.getUserId());
+            targetPrams.put("app_id", params.get("app_id"));
+            targetPrams.put("source", params.get("source"));
+            targetPrams.put("scope", params.get("scope"));
+            targetPrams.put("auth_code", params.get("auth_code"));
+            targetPrams.put("user_id", alipayToken.getUserId());
         } catch (Exception e) {
-            params.put("user_id", StringUtils.EMPTY);
+            targetPrams.put("user_id", StringUtils.EMPTY);
         }
 
         //重定向
         String targetWithParams = target.contains("?")
-                ? (target + "&" + URLSerializer.serialize(params))
-                : (target + "?" + URLSerializer.serialize(params));
+                ? (target + "&" + URLSerializer.serialize(targetPrams))
+                : (target + "?" + URLSerializer.serialize(targetPrams));
+        logger.info("开始重定向到:" + targetWithParams);
         response.sendRedirect(targetWithParams);
     }
 
