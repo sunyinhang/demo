@@ -16,4 +16,8 @@ public interface CrmClient {
     @FeignApi("编辑外部认证系统客户标识号")
     @PostMapping("/cust/editExternCompanyNo")
     CommonResponse<Map> editExternCompanyNo(@RequestBody Map<String, Object> params);
+
+    @FeignApi("待还金额还款明细查询")
+    @PostMapping("/apporder/queryApplAmtAndRepayByloanNo")
+    CommonResponse<Map> queryApplAmtAndRepayByloanNo(@RequestBody Map<String, Object> params);
 }

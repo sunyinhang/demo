@@ -18,6 +18,7 @@ import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.client.AcquirerClient;
 import com.haiercash.payplatform.service.client.AppServerClient;
+import com.haiercash.payplatform.service.client.CrmClient;
 import com.haiercash.payplatform.service.client.OutreachClient;
 import com.haiercash.payplatform.service.client.UauthClient;
 import com.haiercash.payplatform.utils.EncryptUtil;
@@ -65,6 +66,8 @@ public class AlipayFuwuService extends BaseService {
     private AcquirerClient acquirerClient;
     @Autowired
     private AppServerClient appServerClient;
+    @Autowired
+    private CrmClient crmClient;
 
     //授权后验证用户
     public IResponse<Map> validUser(String authCode) throws AlipayApiException {
@@ -287,8 +290,13 @@ public class AlipayFuwuService extends BaseService {
         String applSeq = Convert.toString(params.get("applSeq"));
         if (StringUtils.isEmpty(applSeq))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[贷款申请流水号]不能为空");
+        String loanNo = Convert.toString(params.get("loanNo"));
+        if (StringUtils.isEmpty(loanNo))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "[借据号]不能为空");
         String isRetry = Convert.toString(params.get("isRetry"));//是否重试(处理中)
         String isAll = Convert.toString(params.get("isAll"));//是否全部还款
+        //营业时间断言
+        this.assertBusinessHours(custNo, loanNo, applSeq);
 
         //获取支付宝订单信息
         AlipayOrder order = "Y".equals(isRetry) ? this.getProcessingPay(applSeq) : this.applyRepay(isAll, applSeq, custNo, params);
@@ -487,5 +495,19 @@ public class AlipayFuwuService extends BaseService {
         map.put("externUid", externUid_);
         map.put("linkMobile", linkMobile_);
         return this.uauthClient.saveUserByExternUid(map);
+    }
+
+    //断言在营业时间
+    private void assertBusinessHours(String custNo, String loanNo, String applSeq) {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("custNo", custNo);
+        params.put("loanNo", loanNo);
+        params.put("applSeq", applSeq);
+        params.put("isSelectCoupon", "0");
+        params.put("paymInd", "N");
+        params.put("setlTyp", "NM");
+        params.put("relPerdCnt", "0");
+        CommonResponse<Map> resultOneMap = this.crmClient.queryApplAmtAndRepayByloanNo(params);
+        resultOneMap.assertSuccess();
     }
 }
