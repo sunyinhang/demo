@@ -28,6 +28,7 @@ import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.client.CrmClient;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.boot.ApplicationUtils;
@@ -71,6 +72,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     private CashloanConfig cashloanConfig;
     @Autowired
     private CommonConfig commonConfig;
+    @Autowired
+    private CrmClient crmClient;
 
     @Override
     public String getActivityUrl() {
@@ -636,9 +639,28 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
 
-        String userId = cacheMap.get("userId").toString();
+        if ("60".equals(channelNo)) {
+            String thirdUserId = Convert.toString(cacheMap.get("uidHaier"));//第三方ID
+            if (StringUtils.isEmpty(thirdUserId)) {
+                this.logger.info("缓存中uidHaier为空！");
+                return this.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+            String certNo = Convert.toString(cacheMap.get("idNo"));//身份证号
+            if (StringUtils.isEmpty(certNo)) {
+                this.logger.info("缓存中certNo为空！");
+                return this.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+            //编辑第三方标识
+            Map<String, Object> editParams = new HashMap<>();
+            editParams.put("certNo", certNo);
+            editParams.put("externCompanyNo", "zhifubao");
+            editParams.put("externUid", thirdUserId);
+            IResponse editResp = this.crmClient.editExternCompanyNo(Collections.singletonList(editParams));
+            editResp.assertSuccess();
+        }
 
         //根据userId获取客户编号
+        String userId = cacheMap.get("userId").toString();
         logger.info("获取客户实名信息");
         Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", userId);
