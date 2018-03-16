@@ -46,7 +46,7 @@ public interface UauthClient {
     CommonResponse<Map> queryUserByExternUid(@RequestParam("externCompanyNo") String externCompanyNo,
                                              @RequestParam("externUid") String externUid);
 
-    @FeignApi("注册第三方用户")
+    @FeignApi("注册第三方用户并绑定")
     @PostMapping("/saveUserByExternUid")
     CommonResponse<String> saveUserByExternUid(@RequestBody Map<String, Object> params);
 
