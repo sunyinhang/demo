@@ -294,13 +294,6 @@ public class AlipayFuwuService extends BaseService {
         //实名
         IResponse<Map> realAuthResponse = this.ocrIdentityService.realAuthenticationForXjd(params);
         realAuthResponse.assertSuccess();
-        //编辑第三方标识
-        Map<String, Object> editParams = new HashMap<>();
-        editParams.put("certNo", certNo);
-        editParams.put("externCompanyNo", "zhifubao");
-        editParams.put("externUid", thirdUserId);
-        IResponse editResp = this.crmClient.editExternCompanyNo(Collections.singletonList(editParams));
-        editResp.assertSuccess();
         //绑定
         Map<String, Object> bindParams = new HashMap<>();
         bindParams.put("mobile", EncryptUtil.simpleEncrypt(phone));

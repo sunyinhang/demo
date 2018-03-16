@@ -13,6 +13,7 @@ import com.haiercash.payplatform.service.CrmManageService;
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.PayPasswdService;
+import com.haiercash.payplatform.service.client.CrmClient;
 import com.haiercash.payplatform.service.client.OutreachClient;
 import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.CmisUtil;
@@ -33,6 +34,7 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private CrmService crmService;
     @Autowired
     private OutreachClient outreachClient;
+    @Autowired
+    private CrmClient crmClient;
 
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
@@ -184,6 +188,25 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 logger.info("是否设置过支付密码标志无效");
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_PARAM_INVALID_MSG);
         }
+        if ("60".equals(channelNo)) {
+            String thirdUserId = (String) cacheMap.get("uidHaier");//第三方ID
+            if (StringUtils.isEmpty(thirdUserId)) {
+                logger.info("缓存中uidHaier为空！");
+                return fail(ConstUtil.ERROR_CODE, "登陆超时！");
+            }
+            if (StringUtils.isEmpty(certNo)) {
+                logger.info("缓存中certNo为空！");
+                return fail(ConstUtil.ERROR_CODE, "登陆超时！");
+            }
+            //编辑第三方标识
+            Map<String, Object> editParams = new HashMap<>();
+            editParams.put("certNo", certNo);
+            editParams.put("externCompanyNo", "zhifubao");
+            editParams.put("externUid", thirdUserId);
+            IResponse editResp = this.crmClient.editExternCompanyNo(Collections.singletonList(editParams));
+            editResp.assertSuccess();
+        }
+
         Map<String, Object> mapEd = new HashMap();
         mapEd.put("token", token);
         mapEd.put("channel", channel);
