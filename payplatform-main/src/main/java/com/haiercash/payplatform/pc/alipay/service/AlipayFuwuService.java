@@ -294,12 +294,19 @@ public class AlipayFuwuService extends BaseService {
         //实名
         IResponse<Map> realAuthResponse = this.ocrIdentityService.realAuthenticationForXjd(params);
         realAuthResponse.assertSuccess();
-        //绑定
+        //编辑第三方标识
         Map<String, Object> editParams = new HashMap<>();
-        editParams.put("mobile", EncryptUtil.simpleEncrypt(phone));
-        editParams.put("externUid", EncryptUtil.simpleEncrypt(thirdUserId));
-        editParams.put("externCompanyNo", EncryptUtil.simpleEncrypt(this.getChannelNo()));
-        IResponse<Map> bindResp = this.uauthClient.unvalidateAndBindUserByExternUid(editParams);
+        editParams.put("certNo", certNo);
+        editParams.put("externCompanyNo", "zhifubao");
+        editParams.put("externUid", thirdUserId);
+        IResponse editResp = this.crmClient.editExternCompanyNo(editParams);
+        editResp.assertSuccess();
+        //绑定
+        Map<String, Object> bindParams = new HashMap<>();
+        bindParams.put("mobile", EncryptUtil.simpleEncrypt(phone));
+        bindParams.put("externUid", EncryptUtil.simpleEncrypt(thirdUserId));
+        bindParams.put("externCompanyNo", EncryptUtil.simpleEncrypt(this.getChannelNo()));
+        IResponse<Map> bindResp = this.uauthClient.unvalidateAndBindUserByExternUid(bindParams);
         if (!bindResp.isSuccess() && !"U0181".equals(bindResp.getRetFlag()))
             bindResp.assertSuccess();
         Map<String, Object> bindBody = bindResp.getBody();
