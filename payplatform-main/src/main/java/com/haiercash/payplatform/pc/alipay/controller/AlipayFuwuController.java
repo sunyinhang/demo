@@ -3,10 +3,7 @@ package com.haiercash.payplatform.pc.alipay.controller;
 import com.alipay.api.AlipayApiException;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.core.serialization.URLSerializer;
-import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
 import com.haiercash.payplatform.pc.alipay.service.AlipayFuwuService;
-import com.haiercash.payplatform.pc.alipay.util.AlipayUtils;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.spring.controller.BaseController;
 import com.haiercash.spring.rest.IResponse;
@@ -22,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -59,29 +55,13 @@ public class AlipayFuwuController extends BaseController {
         String target = Convert.toString(params.get("target"));
         if (StringUtils.isEmpty(target))
             throw new BusinessException(ConstUtil.ERROR_CODE, "跳转目标不能为空");
+        String scope = Convert.toString(params.get("scope"));
+        if (StringUtils.isEmpty(scope))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "仅支持从支付宝授权重定向到此页面");
         String authCode = Convert.toString(params.get("auth_code"));
         if (StringUtils.isEmpty(authCode))
             throw new BusinessException(ConstUtil.ERROR_CODE, "仅支持从支付宝授权重定向到此页面");
-
-        //参数
-        Map<String, Object> targetPrams = new HashMap<>();
-        try {
-            AlipayToken alipayToken = AlipayUtils.getOauthTokenByAuthCode(authCode);
-            targetPrams.put("app_id", params.get("app_id"));
-            targetPrams.put("source", params.get("source"));
-            targetPrams.put("scope", params.get("scope"));
-            targetPrams.put("auth_code", params.get("auth_code"));
-            targetPrams.put("user_id", alipayToken.getUserId());
-        } catch (Exception e) {
-            targetPrams.put("user_id", StringUtils.EMPTY);
-        }
-
-        //重定向
-        String targetWithParams = target.contains("?")
-                ? (target + "&" + URLSerializer.serialize(targetPrams))
-                : (target + "?" + URLSerializer.serialize(targetPrams));
-        logger.info("开始重定向到:" + targetWithParams);
-        response.sendRedirect(targetWithParams);
+        this.alipayFuwuService.jump(response, target, scope, authCode);
     }
 
     //授权后验证用户

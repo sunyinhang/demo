@@ -9,6 +9,7 @@ import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.OutreachConfig;
@@ -38,6 +39,7 @@ import com.haiercash.spring.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -73,6 +75,45 @@ public class AlipayFuwuService extends BaseService {
     private AppServerClient appServerClient;
     @Autowired
     private CrmClient crmClient;
+
+    //跳转,自动跳到 target 并返回用户信息
+    public void jump(HttpServletResponse response, String target, String scope, String authCode) throws IOException {
+        //target 的参数
+        Map<String, Object> redirectParams = new HashMap<>();
+        //auth_code 换取 accessToken
+        AlipayToken token;
+        try {
+            token = AlipayUtils.getOauthTokenByAuthCode(authCode);
+            this.logger.info("获取到支付宝 token: " + token);
+            redirectParams.put("user_id", token.getUserId());
+        } catch (Exception e) {
+            this.logger.info("获取支付宝 token 失败:" + e.getMessage());
+            this.sendRedirectWithParams(response, target, redirectParams);
+            return;
+        }
+
+        if (StringUtils.equalsIgnoreCase(scope, "auth_user")) {
+            try {
+                AlipayUserInfoShareResponse alipayUserInfo = AlipayUtils.getUserInfo(token.getToken());
+                redirectParams.put("avatar", alipayUserInfo.getAvatar());
+                redirectParams.put("nick_name", alipayUserInfo.getNickName());
+                redirectParams.put("province", alipayUserInfo.getProvince());
+                redirectParams.put("city", alipayUserInfo.getCity());
+                redirectParams.put("gender", alipayUserInfo.getGender());
+                redirectParams.put("user_id", alipayUserInfo.getUserId());
+                redirectParams.put("user_type", alipayUserInfo.getUserType());
+                redirectParams.put("user_status", alipayUserInfo.getUserStatus());
+                redirectParams.put("is_certified", alipayUserInfo.getIsCertified());
+                redirectParams.put("is_student_certified", alipayUserInfo.getIsStudentCertified());
+                this.logger.info("获取到支付宝用户信息: " + JsonSerializer.serialize(alipayUserInfo));
+            } catch (Exception e) {
+                this.logger.info("获取支付宝用户信息失败:" + e.getMessage());
+                this.sendRedirectWithParams(response, target, redirectParams);
+                return;
+            }
+        }
+        this.sendRedirectWithParams(response, target, redirectParams);
+    }
 
     //授权后验证用户
     public IResponse<Map> validUser(String authCode) throws AlipayApiException {
@@ -543,5 +584,14 @@ public class AlipayFuwuService extends BaseService {
         map.put("externUid", externUid_);
         map.put("linkMobile", linkMobile_);
         return this.uauthClient.saveUserByExternUid(map);
+    }
+
+    //重定向
+    private void sendRedirectWithParams(HttpServletResponse response, String target, Map<String, Object> params) throws IOException {
+        String targetWithParams = target.contains("?")
+                ? (target + "&" + URLSerializer.serialize(params))
+                : (target + "?" + URLSerializer.serialize(params));
+        this.logger.info("开始重定向到:" + targetWithParams);
+        response.sendRedirect(targetWithParams);
     }
 }
