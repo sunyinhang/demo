@@ -395,7 +395,7 @@ public class AlipayFuwuService extends BaseService {
         }
 
         //金额校验
-        this.verifyRepayAmt(applSeq, loanNo, psPerdNo, repayAmtDecimal, repayMode);
+        this.verifyRepayAmt(repayMode, applSeq, loanNo, psPerdNo, repayAmtDecimal);
 
         acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
         acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
@@ -463,30 +463,36 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //校验金额
-    private void verifyRepayAmt(String applSeq, String loanNo, String psPerdNo, BigDecimal repayAmt, RepayMode repayMode) {
-        if ("ALL".equals(repayMode)) {
-            //校验全部金额
-            HashMap<String, Object> queryApplAmtAndRepayByloanNoMap = new HashMap<>();
-            queryApplAmtAndRepayByloanNoMap.put("outSts_code", "06");
-            queryApplAmtAndRepayByloanNoMap.put("applSeq", applSeq);
-            queryApplAmtAndRepayByloanNoMap.put("loanNo", loanNo);
-            Map<String, Object> stringObjectMap = payPasswdService.queryApplAmtAndRepayByloanNo(this.getToken(), queryApplAmtAndRepayByloanNoMap);
-            Map headMap = (Map<String, Object>) stringObjectMap.get("head");
-            String retFlag = (String) headMap.get("retFlag");
-            String retMsg = (String) headMap.get("retMsg");
-            if ("00000".equals(retFlag)) {
-                Map bodyMap = (Map<String, Object>) stringObjectMap.get("body");
-                BigDecimal preShouldAmount = new BigDecimal((String) bodyMap.get("preShouldAmount"));
-                if (repayAmt.compareTo(preShouldAmount) == 0)
-                    return;
+    private void verifyRepayAmt(RepayMode repayMode, String applSeq, String loanNo, String psPerdNo, BigDecimal repayAmt) {
+        //全部还款重新试算
+        if (repayMode == RepayMode.ALL) {
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("outSts_code", "06");
+            params.put("applSeq", applSeq);
+            params.put("loanNo", loanNo);
+            Map<String, Object> stringObjectMap = this.payPasswdService.queryApplAmtAndRepayByloanNo(this.getToken(), params);
+            if (!HttpUtil.isSuccess(stringObjectMap)) {
+                this.logger.info("试算失败");
                 throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
             }
-            throw new BusinessException(ConstUtil.ERROR_CODE, retMsg);
+            Map bodyMap = (Map<String, Object>) stringObjectMap.get("body");
+            BigDecimal preShouldAmount = Convert.nullDecimal(bodyMap.get("preShouldAmount"));
+            if (preShouldAmount == null) {
+                this.logger.info("返回的 preShouldAmount 格式错误");
+                throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
+            }
+            if (repayAmt.compareTo(preShouldAmount) == 0)
+                return;
+            throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
         }
+
+        //按期还款查询还款计划校验
         String[] psPerdNos = StringUtils.split(psPerdNo, PS_PERD_NO_SEPARATOR, true);
         IResponse<Map> resultMap = this.crmClient.queryApplReraidPlanByloanNo(applSeq, loanNo);
-        if (!resultMap.isSuccessNeedBody())
+        if (!resultMap.isSuccessNeedBody()) {
+            this.logger.info("查询还款计划失败");
             throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
+        }
 
         Map<String, Object> planBody = resultMap.getBody();
         Map lmpmshdlist = (Map) planBody.get("lmpmshdlist");
