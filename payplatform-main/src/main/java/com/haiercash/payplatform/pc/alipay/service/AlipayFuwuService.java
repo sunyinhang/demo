@@ -20,6 +20,7 @@ import com.haiercash.payplatform.pc.alipay.util.RepayMode;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.service.OutreachService;
+import com.haiercash.payplatform.service.PayPasswdService;
 import com.haiercash.payplatform.service.client.AcquirerClient;
 import com.haiercash.payplatform.service.client.AppServerClient;
 import com.haiercash.payplatform.service.client.CrmClient;
@@ -75,6 +76,9 @@ public class AlipayFuwuService extends BaseService {
     private AppServerClient appServerClient;
     @Autowired
     private CrmClient crmClient;
+    @Autowired
+    private PayPasswdService payPasswdService;
+
 
     //跳转,自动跳到 target 并返回用户信息
     public void jump(HttpServletResponse response, String target, String scope, String authCode) throws IOException {
@@ -367,9 +371,6 @@ public class AlipayFuwuService extends BaseService {
         if (StringUtils.isEmpty(psPerdNo))
             throw new BusinessException(ConstUtil.ERROR_CODE, "[还款期]不能为空");
 
-        //金额校验
-        this.verifyRepayAmt(applSeq, loanNo, psPerdNo, repayAmtDecimal);
-
         //调用收单 还款申请
         Map<String, Object> acqParams = new HashMap<>();
         acqParams.put("applSeq", applSeq);
@@ -392,6 +393,10 @@ public class AlipayFuwuService extends BaseService {
                 this.logger.error("不应该出现的情况");
                 throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
+
+        //金额校验
+        this.verifyRepayAmt(applSeq, loanNo, psPerdNo, repayAmtDecimal, repayMode);
+
         acqParams.put("repayAmt", repayAmt);//还款总金额  repayAmt  NUMBER(16,2)  是
         acqParams.put("psPerdNo", psPerdNo);//还款期  psPerdNo  VARCHAR2(200)  是  多个期号以“|”分隔。随借随还传“1”
         acqParams.put("acCardNo", AlipayConfig.REPAY_APPL_CARD_NO);//还款卡号  acCardNo  VARCHAR2(30)  是
@@ -458,8 +463,26 @@ public class AlipayFuwuService extends BaseService {
     }
 
     //校验金额
-    private void verifyRepayAmt(String applSeq, String loanNo, String psPerdNo, BigDecimal repayAmt) {
-        //校验金额
+    private void verifyRepayAmt(String applSeq, String loanNo, String psPerdNo, BigDecimal repayAmt, RepayMode repayMode) {
+        if ("ALL".equals(repayMode)) {
+            //校验全部金额
+            HashMap<String, Object> queryApplAmtAndRepayByloanNoMap = new HashMap<>();
+            queryApplAmtAndRepayByloanNoMap.put("outSts_code", "06");
+            queryApplAmtAndRepayByloanNoMap.put("applSeq", applSeq);
+            queryApplAmtAndRepayByloanNoMap.put("loanNo", loanNo);
+            Map<String, Object> stringObjectMap = payPasswdService.queryApplAmtAndRepayByloanNo(this.getToken(), queryApplAmtAndRepayByloanNoMap);
+            Map headMap = (Map<String, Object>) stringObjectMap.get("head");
+            String retFlag = (String) headMap.get("retFlag");
+            String retMsg = (String) headMap.get("retMsg");
+            if ("00000".equals(retFlag)) {
+                Map bodyMap = (Map<String, Object>) stringObjectMap.get("body");
+                BigDecimal preShouldAmount = new BigDecimal((String) bodyMap.get("preShouldAmount"));
+                if (repayAmt.compareTo(preShouldAmount) == 0)
+                    return;
+                throw new BusinessException(ConstUtil.ERROR_CODE, "金额有误，请重新选择！");
+            }
+            throw new BusinessException(ConstUtil.ERROR_CODE, retMsg);
+        }
         String[] psPerdNos = StringUtils.split(psPerdNo, PS_PERD_NO_SEPARATOR, true);
         IResponse<Map> resultMap = this.crmClient.queryApplReraidPlanByloanNo(applSeq, loanNo);
         if (!resultMap.isSuccessNeedBody())
