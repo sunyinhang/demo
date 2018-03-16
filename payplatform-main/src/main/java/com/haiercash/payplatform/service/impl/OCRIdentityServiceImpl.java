@@ -221,7 +221,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             if (!idCard.isValid())
                 return fail(ConstUtil.ERROR_CODE, "身份证号有误，请重新拍摄");
 
-            //TODO 支付宝userId 身份证号验证
+            //TODO 验证 orc 身份证号是否为该支付宝的身份证
 
             //背面信息验证
             if (ObjectUtils.isEmpty(cacheMap.get("issued")) || ObjectUtils.isEmpty(cacheMap.get("validDate"))) {

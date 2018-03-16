@@ -18,7 +18,7 @@ import java.util.Date;
 @ConfigurationProperties(prefix = "app.alipay")
 public class AlipayConfig {
     public static final String APPL_CARD_NO = "0000000000000000000";//支付宝默认放款卡号
-    public static final String REPAY_APPL_CARD_NO = "6225880121940000000";//支付宝默认还款卡号 TODO 测试用,需要改为 19 个 0
+    public static final String REPAY_APPL_CARD_NO = "6225880121940000000";//支付宝默认还款卡号
     public static final Time ALLOW_PAY_SPAN_BEGIN = new Time(6, 0, 0);//允许支付开始
     public static final Time ALLOW_PAY_SPAN_END = new Time(21, 0, 0);//允许支付结束
     public static final TimeRange ALLOW_PAY_SPAN = new TimeRange(ALLOW_PAY_SPAN_BEGIN, ALLOW_PAY_SPAN_END);//允许支付时间段

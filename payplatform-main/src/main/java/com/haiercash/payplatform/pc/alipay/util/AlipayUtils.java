@@ -126,7 +126,6 @@ public class AlipayUtils {
 
     //调用支付宝还款接口,返回 html
     public static String wapPay(String token, String channelNo, AlipayOrder order) throws AlipayApiException {
-        order.setRepayAmt("0.01");//TODO 支付宝测试用 1 分,上线的时候记得删除
         //验证
         order.valid();
         //文档 https://docs.open.alipay.com/203/107090/
