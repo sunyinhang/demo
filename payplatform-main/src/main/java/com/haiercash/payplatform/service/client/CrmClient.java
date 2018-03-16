@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Map;
 public interface CrmClient {
     @FeignApi("编辑外部认证系统客户标识号")
     @PostMapping("/cust/editExternCompanyNo")
-    CommonResponse<Map> editExternCompanyNo(@RequestBody Map<String, Object> params);
+    CommonResponse<Map> editExternCompanyNo(@RequestBody List<Map> params);
 
     @FeignApi("待还金额还款明细查询")
     @PostMapping("/apporder/queryApplAmtAndRepayByloanNo")

@@ -299,7 +299,7 @@ public class AlipayFuwuService extends BaseService {
         editParams.put("certNo", certNo);
         editParams.put("externCompanyNo", "zhifubao");
         editParams.put("externUid", thirdUserId);
-        IResponse editResp = this.crmClient.editExternCompanyNo(editParams);
+        IResponse editResp = this.crmClient.editExternCompanyNo(Collections.singletonList(editParams));
         editResp.assertSuccess();
         //绑定
         Map<String, Object> bindParams = new HashMap<>();
