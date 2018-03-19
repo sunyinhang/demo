@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.vipabc.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.haiercash.core.lang.Base64Utils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.dao.PublishDao;
 import com.haiercash.payplatform.common.dao.VipAbcDao;
 import com.haiercash.payplatform.common.data.VipAbcAppOrderGoods;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -458,11 +460,9 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         // 是否允许申请贷款
-        SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
-        String date = dateFormater.format(new Date());
         Map<String, Object> queryordermap = new HashMap<>();
         queryordermap.put("typCde", typCde);
-        queryordermap.put("date", date);
+        queryordermap.put("date", DateUtils.nowDateString());
         queryordermap.put("channel", channel);
         queryordermap.put("channelNo", channelNo);
         Map<String, Object> result2 = appServerService.queryBeyondContral(token, queryordermap);
@@ -698,16 +698,13 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             String iv = productKey;
             HashMap<String, Object> mapone = new HashMap<>();
             HashMap<String, Object> map2 = new HashMap<>();
-            SimpleDateFormat my = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date dateone = new Date();
-            String loantime = my.format(dateone);
             mapone.put("orderSn", orderSn);
             map2.put("applSeq", applSeq);
             map2.put("idNo", "");
             map2.put("outSts", "05");
             map2.put("orderNo", orderNo);
             map2.put("appOutAdvice", "");
-            map2.put("loantime", loantime);
+            map2.put("loantime", DateUtils.nowDateTimeString());
             mapone.put("body", map2);
             logger.info("加密前的推送数据是" + mapone);
             reqData = com.alibaba.fastjson.JSONObject.toJSONString(mapone);
@@ -1128,8 +1125,6 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         hashMap3.put("vipSign", vipSign);
         hashMap2.put("externalmessage", hashMap3);
         VipAbcAppOrderGoods appOrderGoods = new VipAbcAppOrderGoods();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String format = simpleDateFormat.format(new Date());
         appOrderGoods.setOrderid(UUID.randomUUID().toString().replace("-", ""));
         appOrderGoods.setOrderSn(orderSn);
         appOrderGoods.setLoanType(loanType);
@@ -1149,7 +1144,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         appOrderGoods.setCOrderAmt(cOrderAmt);
         appOrderGoods.setCOrderPayAmt(cOrderPayAmt);
         appOrderGoods.setVipuuid(uuid);
-        appOrderGoods.setInputtime(format);
+        appOrderGoods.setInputtime(DateUtils.nowDateTimeString());
         logger.info("保存的数据为：" + appOrderGoods);
         String queryvipordersn = vipAbcDao.queryvipordersn(orderSn);//查询第三方订单号
         logger.info("查询第三方订单号:" + queryvipordersn);
@@ -1198,14 +1193,9 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
     public Map<String, Object> vipAbcPcStore(String token, String channel, String channelNo, Map<String, Object> params) {
         String uuid = null;
         uuid = (String) params.get("uuid");
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
-        Date date = new Date();
-        String start = df.format(date);
-        Calendar instance = Calendar.getInstance();
-        instance.setTime(date);
-        instance.add(Calendar.DAY_OF_MONTH, 1);
-        Date time = instance.getTime();
-        String end = df.format(time);
+        Date now = DateUtils.now();
+        String start = DateUtils.toString(now, "yyyy-MM-dd HH:mm");
+        String end = DateUtils.toString(DateUtils.addMonths(now, 1), "yyyy-MM-dd HH:mm");
         Timer timer = new Timer();
         Integer selectuuid = vipAbcDao.selectuuid(uuid);//库里有信息就跳过，没信息就保存
         int parseInt2 = Integer.valueOf(selectuuid);
@@ -1260,9 +1250,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         public void run() {
             logger.info("程序执行");
             try {
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
-                Date date = new Date();
-                String start = df.format(date);//最新事件
+                String start = DateUtils.nowString("yyyy-MM-dd HH:mm");//最新事件
                 List<Vipmessage> selectarray = vipAbcDao.selectarray();  //没有订单号  flag  n   end time > notime
                 for (Vipmessage vipmessage : selectarray) {
                     String uuid2 = vipmessage.getUuid();
