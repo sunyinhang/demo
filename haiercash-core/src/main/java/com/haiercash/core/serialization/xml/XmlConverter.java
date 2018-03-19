@@ -82,7 +82,7 @@ public final class XmlConverter {
                 }
             }
             return result;
-        } catch (Exception e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

@@ -32,7 +32,7 @@ public interface OCRIdentityService {
     IResponse<Map> realAuthentication(Map<String, Object> map) throws IOException;
 
     //实名认证(标准现金贷)
-    Map<String, Object> realAuthenticationForXjd(Map<String, Object> map) throws Exception;
+    IResponse<Map> realAuthenticationForXjd(Map<String, Object> map) throws IOException;
 
     //协议展示：(1)展示注册协议(2)个人征信(3)借款合同
     Map<String, Object> treatyShowServlet(String token, Map<String, Object> params) throws Exception;

@@ -3,10 +3,10 @@ package com.haiercash.spring.trace;
 import com.haiercash.core.collection.ArrayUtils;
 import com.haiercash.core.collection.iterator.CharSequenceIterable;
 import com.haiercash.core.lang.CharUtils;
-import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.net.HostInfo;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.spring.boot.ApplicationUtils;
 import com.haiercash.spring.context.RequestContext;
 import org.springframework.util.Assert;
@@ -120,6 +120,6 @@ public final class Tracer implements ITracer {
 
     @Override
     public ISpan createContinueSpan(ISpan span) {
-        return (span == null || span == ISpan.EMPTY) ? this.createSpan() : span.continueSpan();
+        return span == null || span == ISpan.EMPTY ? this.createSpan() : span.continueSpan();
     }
 }

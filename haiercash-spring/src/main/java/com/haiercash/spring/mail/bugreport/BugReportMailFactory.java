@@ -1,7 +1,7 @@
 package com.haiercash.spring.mail.bugreport;
 
 import com.haiercash.core.http.HtmlUtils;
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.spring.boot.ApplicationProperties;
 import com.haiercash.spring.boot.ApplicationUtils;
 import com.haiercash.spring.context.RequestContext;

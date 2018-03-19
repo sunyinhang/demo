@@ -1,8 +1,6 @@
 package com.haiercash.payplatform.pc.alipay.controller;
 
 import com.alipay.api.AlipayApiException;
-import com.haiercash.core.io.CharsetNames;
-import com.haiercash.core.io.IOUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.pc.alipay.service.AlipayFuwuService;
@@ -12,8 +10,10 @@ import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,6 +50,19 @@ public class AlipayFuwuController extends BaseController {
             throw new BusinessException(ConstUtil.ERROR_CODE, "令牌失效请重新登录");
     }
 
+    @GetMapping("/api/payment/alipay/fuwu/jump")
+    public void jump(@RequestParam Map<String, Object> params, HttpServletResponse response) throws IOException {
+        String target = Convert.toString(params.get("target"));
+        if (StringUtils.isEmpty(target))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "跳转目标不能为空");
+        String scope = Convert.toString(params.get("scope"));
+        if (StringUtils.isEmpty(scope))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "仅支持从支付宝授权重定向到此页面");
+        String authCode = Convert.toString(params.get("auth_code"));
+        if (StringUtils.isEmpty(authCode))
+            throw new BusinessException(ConstUtil.ERROR_CODE, "仅支持从支付宝授权重定向到此页面");
+        this.alipayFuwuService.jump(response, target, scope, authCode);
+    }
 
     //授权后验证用户
     @PostMapping("/api/payment/alipay/fuwu/validUser")
@@ -85,11 +98,9 @@ public class AlipayFuwuController extends BaseController {
         return alipayFuwuService.realAuthentication(map);
     }
 
-    //提交订单并转到支付
+    //网站支付
     @PostMapping("/api/payment/alipay/fuwu/wapPay")
-    public void wapPay(@RequestBody Map<String, Object> params, HttpServletResponse response) throws AlipayApiException, IOException {
-        String html = this.alipayFuwuService.wapPay(params);
-        response.setContentType("text/html;charset=" + CharsetNames.UTF_8);
-        IOUtils.write(html, response.getOutputStream(), CharsetNames.UTF_8);
+    public IResponse<Map> wapPayApplyTest(@RequestBody Map<String, Object> params) throws AlipayApiException {
+        return this.alipayFuwuService.wapPay(params);
     }
 }

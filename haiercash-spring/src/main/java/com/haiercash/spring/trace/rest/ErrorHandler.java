@@ -9,6 +9,7 @@ import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
@@ -33,8 +34,9 @@ public final class ErrorHandler {
     }
 
     public static String getRetFlag(String retFlag) {
-        String moduleNo = Convert.defaultString(ThreadContext.getExecutingModuleNo(), "00");
-        return (retFlag == null || retFlag.length() <= 2) ? (APP_CODE + moduleNo + retFlag) : retFlag;
+        return retFlag == null || retFlag.length() <= 2
+                ? APP_CODE + Convert.defaultString(ThreadContext.getExecutingModuleNo(), "00") + retFlag
+                : retFlag;
     }
 
     public static ResponseEntity<CommonResponse> handleBusinessException(BusinessException e) {
@@ -45,6 +47,10 @@ public final class ErrorHandler {
     public static ResponseEntity<CommonResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         CommonResponse response = CommonResponse.fail(ConstUtil.ERROR_CODE, MSG_MISSING_SERVLET_REQUEST_PARAMETER + e.getParameterName());
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public static ResponseEntity<CommonResponse> handleClientAbortException(ClientAbortException e) throws ClientAbortException {
+        throw e;
     }
 
     public static ResponseEntity<CommonResponse> handleException(Exception e) {

@@ -1,4 +1,4 @@
-package com.haiercash.spring.config;
+package com.haiercash.spring.eureka;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -3,6 +3,7 @@ package com.haiercash.payplatform.pc.qiaorong.service.impl;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.annotation.FlowNode;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SignContractInfoDao;
@@ -19,7 +20,7 @@ import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
@@ -33,9 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,9 +97,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         Map cachemap = new HashMap();
         cachemap.put("callbackUrl", callbackUrl);
         RedisUtils.setExpire(uuid, cachemap);
-
-        String date = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-
+        String date = DateUtils.nowString("yyyyMMddHHmmssSSS");
         String backurl = commonConfig.getGateUrl() + "/qr/#!/installment.html?token=" + uuid + "&applseq=" + applSeq + "&date=" + date;
         logger.info("签章跳转页面地址：" + backurl);
         Map ResultMap = new HashMap();
@@ -584,6 +581,22 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
             return fail(ConstUtil.ERROR_CODE, "请先进行四要素验证");
         }
 
+        // 去收单查询订单信息
+        Map<String, Object> paramMap1 = new HashMap<>();
+        paramMap1.put("applSeq", applseq);
+        paramMap1.put("channelNo", channelNo);
+        Map<String, Object> acquierOrder = AcqUtil.getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/selectApplInfoApp",
+                AcqTradeCode.SELECT_APP_APPL_INFO, ConstUtil.CHANNEL, channelNo, null, null, paramMap1);
+
+        Map mapLoanDetail = (Map<String, Object>) acquierOrder.get("response");
+        if (!HttpUtil.isSuccess(mapLoanDetail)) {
+            return mapLoanDetail;
+        }
+        Map bodyLoanDetail = (Map<String, Object>) mapLoanDetail.get("body");
+        String outSts = Convert.toString(bodyLoanDetail.get("outSts"));
+        if(!"00".equals(outSts) && !"22".equals(outSts)){//00:待提交   22：被退回
+            return fail(ConstUtil.ERROR_CODE, "订单已提交");
+        }
 
         //短信验证码校验
         Map<String, Object> paramMap = new HashMap<>();

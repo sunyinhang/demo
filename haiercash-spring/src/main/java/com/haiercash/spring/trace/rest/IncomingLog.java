@@ -5,6 +5,7 @@ import com.haiercash.spring.mail.bugreport.BugReportLevel;
 import com.haiercash.spring.mail.bugreport.BugReportUtils;
 import com.haiercash.spring.servlet.DispatcherRequestWrapper;
 import com.haiercash.spring.servlet.DispatcherResponseWrapper;
+import com.haiercash.spring.trace.TraceConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,6 +42,16 @@ public final class IncomingLog {
         log.put("responseBody", RestLogUtils.getBody(response));
         log.put("took", tookMs);
         logger.info("==>Servlet End: " + log);
+    }
+
+    public static void writeClientAbortErrorLog(DispatcherRequestWrapper request, long tookMs) {
+        String method = request.getMethod().toUpperCase();
+        Map<String, Object> log = new LinkedHashMap<>();
+        log.put("method", method);
+        log.put("servletPath", request.getServletPath());
+        log.put("error", TraceConfig.ERROR_CLIENT_ABORT);
+        log.put("took", tookMs);
+        logger.warn("==>Servlet Warn: " + log);
     }
 
     public static void writeErrorLog(DispatcherRequestWrapper request, Exception e, long tookMs) {

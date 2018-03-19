@@ -23,7 +23,6 @@ public class XmlConverterTest {
         Assert.assertNotNull(result.getLmPmShdList());
         Assert.assertEquals(13, result.getLmPmShdList().size());
 
-        JsonSerializer.getGlobalConfig().getSerializeConfig().propertyNamingStrategy = null;
         String json = JsonSerializer.serialize(result);
         DemoResponsePm result2 = JsonSerializer.deserialize(json, DemoResponsePm.class);
         Assert.assertEquals(result.getErrorCode(), result2.getErrorCode());

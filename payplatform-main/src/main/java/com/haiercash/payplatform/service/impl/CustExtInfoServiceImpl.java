@@ -74,7 +74,7 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
 
         String typCde = "";//贷款品种
 
-        Map<String, Object> allCustExtInfo = getAllCustExtInfo(token, channel, channelNo);
+        Map<String, Object> allCustExtInfo = getAllCustExtInfo();
 //        Map<String, Object> allCustExtInfoHeadMap = (Map<String, Object>) allCustExtInfo.get("head");
 //        String allCustExtInfotMsg =  (String) allCustExtInfoHeadMap.get("retMsg");
 //        String allCustExtreflagMsg =  (String) allCustExtInfoHeadMap.get("retFlag");
@@ -179,9 +179,11 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     }
 
     @Override
-    public Map<String, Object> getAllCustExtInfo(String token, String channel, String channelNo) {
+    public Map<String, Object> getAllCustExtInfo() {
         logger.info("*********查询个人扩展信息**************开始");
-        Map<String, Object> redisMap = null;
+        String token = this.getToken();
+        String channel = this.getChannel();
+        String channelNo = this.getChannelNo();
         Map<String, Object> paramMap = new HashMap<>();
         //参数非空判断
         if (token.isEmpty()) {
@@ -239,7 +241,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     public Map<String, Object> saveAllCustExtInfo(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********保存个人扩展信息**************开始");
         String typCde = "";//贷款品种
-        Map<String, Object> redisMap = null;
         Map<String, Object> paramMap = new HashMap<>();
         Map<String, Object> custparamMap_one = new HashMap<>();
         Map<String, Object> custparamMap_two = new HashMap<>();
@@ -285,10 +286,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String userid = (String) cacheMap.get("userId");
         String name = (String) cacheMap.get("name");//姓名
         String idNumber = (String) cacheMap.get("idCard"); //身份证
-//        String userid = "1231231";
-//        String custNo = "B201706011214031809670";
-//        String name = "张三丰";
-//        String idNumber = "232302198201012540";
         if (custNo == null || "".equals(custNo)) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
@@ -578,7 +575,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
     public Map<String, Object> saveAllCustExtInfoForXjd(String token, String channel, String channelNo, Map<String, Object> params) {
         logger.info("*********保存个人扩展信息**************开始");
         String typCde;//贷款品种
-        Map<String, Object> redisMap = null;
         Map<String, Object> paramMap = new HashMap<>();
         Map<String, Object> custparamMap_one = new HashMap<>();
         Map<String, Object> custparamMap_two = new HashMap<>();
@@ -608,7 +604,12 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String contactMobile_one = (String) params.get("contactMobile_one");
         String positionType;
         String preAmountFlag = StringUtils.EMPTY;
-        if (!"60".equals(channelNo)) {
+        if ("60".equals(channelNo)) {//支付宝
+            positionType = "10";
+            String mobile = Convert.toString(cacheMap.get("phoneNo"));//实名手机号
+            if (StringUtils.isNotEmpty(mobile) && mobile.equals(contactMobile_one))
+                return fail(ConstUtil.ERROR_CODE, "联系人的联系电话不能与申请人的移动电话相同，请重新填写！");
+        } else {
             String contactMobile_two = (String) params.get("contactMobile_two");
             //预授信额度flag
             preAmountFlag = (String) params.get("preAmountFlag");
@@ -627,8 +628,6 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
                 logger.info("positionType为空");
                 return fail(ConstUtil.ERROR_CODE, "参数positionType为空!");
             }
-        } else {
-            positionType = "10";
         }
 
         //总入口需查询客户信息数据
@@ -636,22 +635,20 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String userid = (String) cacheMap.get("userId");
         String name = (String) cacheMap.get("name");//姓名
         String idNumber = (String) cacheMap.get("idCard"); //身份证
-//        String userid = "1231231";
-//        String custNo = "B201706011214031809670";
-//        String name = "张三丰";
-//        String idNumber = "232302198201012540";
+
         if (custNo == null || "".equals(custNo)) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String liveAddress_code = (String) params.get("liveAddress_code");//现居住省市区编码
         String[] liveAddress_code_split = liveAddress_code.split(",");
-//        String officeAddress_code = (String) params.get("officeAddress_code");//单位省市区编码
-//        String[] officeAddress_split = officeAddress_code.split(",");
         paramMap.put("channelNo", channelNo);
         paramMap.put("channel", channel);
         paramMap.put("custNo", custNo);
-        if (!"60".equals(channelNo)) {
-            paramMap.put("maritalStatus", params.get("maritalStatus"));//婚姻状况
+        if ("60".equals(channelNo)) {//支付宝
+            //选择联系人为夫妻 06.则婚姻状况为已婚 20 否则为未婚 10
+            paramMap.put("maritalStatus", "06".equals(params.get("relationType_one")) ? "20" : "10");//10未婚 20已婚 40离异 50丧偶 90其他
+        } else {
+            paramMap.put("maritalStatus", params.get("maritalStatus"));//10未婚 20已婚 40离异 50丧偶 90其他
         }
         paramMap.put("positionType", positionType);// 工作性质
         paramMap.put("liveProvince", liveAddress_code_split[0]);// 现住房地址（省）
@@ -725,10 +722,10 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         ifNeedFaceChkByTypCdeMap.put("channelNo", channelNo);
         logger.info("*********通过贷款品种判断是否需要进行人脸识别**************开始");
         Map<String, Object> saveCustFCiCustContactMap = appServerService.ifNeedFaceChkByTypCde(token, ifNeedFaceChkByTypCdeMap);
-        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
         if (saveCustFCiCustContactMap == null) {
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
+        Map saveCustFCiCustContactMapHeadMap = (Map<String, Object>) saveCustFCiCustContactMap.get("head");
         String saveCustFCiCustContactMapHeadFlag = (String) saveCustFCiCustContactMapHeadMap.get("retFlag");
         if (!"00000".equals(saveCustFCiCustContactMapHeadFlag)) {
             String retMsg = (String) saveCustFCiCustContactMapHeadMap.get("retMsg");
@@ -785,6 +782,9 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         Map saveCustFCiCustContactMapBodyMap = (Map<String, Object>) saveCustFCiCustContactMap.get("body");
         String code = (String) saveCustFCiCustContactMapBodyMap.get("code");
+        if ("60".equals(channelNo)) {
+            code = "03";//支付宝每次都走人脸
+        }
         if (code != null && !"".equals(code)) {
             logger.info("*********人脸识别标识码：" + code);
             switch (code) {
@@ -904,22 +904,48 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         String cardNo = (String) cacheMap.get("cardNo");//默认实名银行卡号
         String bankCode = (String) cacheMap.get("bankCode");//银行卡代码
         String bankName = (String) cacheMap.get("bankName");//银行卡名称
-        if (custName.isEmpty()) {
+        if (StringUtils.isEmpty(custName)) {
             logger.info("custName为空");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        if (idType.isEmpty()) {
+        if (StringUtils.isEmpty(idType)) {
             logger.info("idType为空");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        if (idNo.isEmpty()) {
+        if (StringUtils.isEmpty(idNo)) {
             logger.info("idNo为空");
             return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         IResponse<List<LoanType>> loanTypeData = cashLoanService.getLoanType(null, custName, idType, idNo);
-
         loanTypeData.assertSuccessNeedBody();
+
         Map<String, Object> map = new HashMap<>();
+        if("60".equals(channelNo)){
+            List<LoanType> loanTypeInfo = loanTypeData.getBody();
+            LoanType loanType = loanTypeInfo.get(0);
+            String minAmtstr = loanType.getMinAmt();//单笔最小贷款金额
+            String maxAmtstr = loanType.getMaxAmt();//单笔最大贷款金额
+            String crdNorAvailAmtstr = Convert.toString(cacheMap.get("crdNorAvailAmt"));
+
+            double minAmt = Convert.defaultDouble(minAmtstr);
+            double maxAmt = Convert.defaultDouble(maxAmtstr);
+            double crdNorAvailAmt = Convert.defaultDouble(crdNorAvailAmtstr);
+
+            if(crdNorAvailAmt > maxAmt){
+                map.put("minAmt", minAmt);
+                map.put("maxAmt", maxAmt);
+            }
+
+            if(crdNorAvailAmt >= minAmt && crdNorAvailAmt <= maxAmt){
+                map.put("minAmt", minAmt);
+                map.put("maxAmt", crdNorAvailAmt);
+            }
+
+            if(crdNorAvailAmt < minAmt){
+                map.put("minAmt", "0");
+                map.put("maxAmt", "0");
+            }
+        }
         map.put("cardNo", cardNo);
         map.put("bankCode", bankCode);
         map.put("bankName", bankName);
@@ -1063,5 +1089,4 @@ public class CustExtInfoServiceImpl extends BaseService implements CustExtInfoSe
         }
         return success(returnParamMap);
     }
-
 }

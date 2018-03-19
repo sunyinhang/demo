@@ -1,19 +1,21 @@
 package com.haiercash.payplatform.service.impl;
 
+import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.serialization.URLSerializer;
 import com.haiercash.payplatform.common.annotation.FlowNode;
-import com.haiercash.payplatform.config.OutreachConfig;
+import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.config.StorageConfig;
+import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.ImgUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
@@ -54,7 +56,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
     @Autowired
     private StorageConfig storageConfig;
     @Autowired
-    private OutreachConfig outreachConfig;
+    private CashLoanService cashLoanService;
 
     private static void createDir(String destDirName) {
         if (!destDirName.endsWith(File.separator))
@@ -96,6 +98,22 @@ public class FaceServiceImpl extends BaseService implements FaceService {
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
             logger.info("redis获取数据为空");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+
+        //支付宝从数据库查询贷款品种
+        if ("60".equals(channelNo)) {
+            IResponse<List<LoanType>> loanTypeListResp = this.cashLoanService.getLoanType(null, null, null, null);
+            loanTypeListResp.assertSuccessNeedBody();
+            List<LoanType> loanTypes = loanTypeListResp.getBody();
+            if (CollectionUtils.isEmpty(loanTypes)) {
+                logger.info("贷款品种列表为空!");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            }
+            typCde = loanTypes.get(0).getTypCde();
+            if (StringUtils.isEmpty(typCde)) {
+                logger.info("贷款品种列表的第一个元素为空!");
+                return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            }
         }
 
         String providerNo = "";//人脸机构
@@ -265,7 +283,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
 
             //支付宝支用环节人脸成功后不进行支付密码是否设置判断
             if ("60".equals(channelNo) && !"1".equals(edflag)) {
-                return success();
+                //人脸成功，跳转验证支付密码
+                Map<String, Object> m = new HashMap<>();
+                m.put("faceFlag", "1");//人脸成功，跳转验证支付密码
+                return success(m);
             }
 
             //进行支付密码校验
@@ -276,6 +297,10 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if ("N".equals(checkbodyjson.get("isRetry")) &&
                 "N".equals(checkbodyjson.get("isOK")) &&
                 "N".equals(checkbodyjson.get("isResend"))) {
+            //支付宝录单终止
+            if ("60".equals(channelNo)) {
+                return fail(ConstUtil.ERROR_CODE, checkretMsg);
+            }
             //跳转到手持身份证
             Map<String, Object> m = new HashMap<>();
             m.put("faceFlag", "2");
@@ -283,7 +308,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         } else {
             //可以继续做人脸，跳转到人脸页面
             Map<String, Object> m = new HashMap<>();
-            m.put("faceFlag", "3");
+            m.put("faceFlag", "3");//可以继续做人脸，跳转到人脸页面
             return success(m);
         }
     }
@@ -469,7 +494,6 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         if (!"00000".equals(retFlag)) {
             return fail(ConstUtil.ERROR_CODE, retMsg);
         }
-        logger.info("上传手持身份证**********************成功");
         Map<String, Object> bodyjson = (Map<String, Object>) resultmap.get("body");
         String payPasswdFlag = (String) bodyjson.get("payPasswdFlag");
         if (payPasswdFlag.equals("1")) {// 1：已设置

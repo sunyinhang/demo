@@ -4,7 +4,7 @@ import com.haiercash.core.collection.CollectionUtils;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.AppointmentRecordDao;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
@@ -19,8 +19,8 @@ import com.haiercash.payplatform.common.data.EntrySetting;
 import com.haiercash.payplatform.common.data.SArea;
 import com.haiercash.payplatform.common.data.SignContractInfo;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
+import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.CommonConfig;
-import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
@@ -34,7 +34,7 @@ import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.boot.ApplicationUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
@@ -52,8 +52,6 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,9 +88,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     @Autowired
     private EntrySettingDao entrySettingDao;
     @Autowired
-    private OutreachConfig outreachConfig;
-    @Autowired
     private SAreaDao sAreaDao;
+    @Autowired
+    private AlipayConfig alipayConfig;
 
     /**
      * 合同展示
@@ -361,8 +359,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
     @Override
     public Map<String, Object> saveAppOrderInfo(AppOrder appOrder) {
-
-        appOrder.setApplyDt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        appOrder.setApplyDt(DateUtils.nowDateString());
         appOrder.setIsConfirmAgreement("0");// 0-未确认
         appOrder.setIsConfirmContract("0");// 0-未确认
         appOrder.setProPurAmt("0");// 商品总额，默认为0
@@ -370,13 +367,13 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
 
         // 计算首付比例
         this.calcFstPct(appOrder);
-        // 把门店信息写入订单
-        this.updateStoreInfo(appOrder, super.getToken());
+
         // 把销售代表信息写入订单
         this.updateSalesInfo(appOrder, super.getToken());
         // 把客户实名信息写入订单。注意：订单可能修改放款支行信息
         String accBchCde = appOrder.getAccAcBchCde();
         String accBchName = appOrder.getAccAcBchName();
+        logger.info("订单信息输出："+ appOrder.toString());
         this.updateCustRealInfo(appOrder, super.getToken());
 
         if (!StringUtils.isEmpty(accBchCde) && !StringUtils.isEmpty(accBchName)) {
@@ -416,7 +413,12 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         boolean ifAccessEd;
         try {
             logger.info("个人版保存订单校验银行卡限额策略, custNo:" + appOrder.getCustNo());
-            ifAccessEd = this.ifAccessEd(appOrder);
+            String repayApplCardNo = appOrder.getRepayApplCardNo();
+            if (repayApplCardNo.equals(AlipayConfig.REPAY_APPL_CARD_NO)) {
+                ifAccessEd = true;//支付宝账号不进行金额及额度判断
+            }else{
+                ifAccessEd = this.ifAccessEd(appOrder);
+            }
         } catch (Exception e) {
             return fail("47", "用户卡信息中不存在该银行卡");
         }
@@ -425,6 +427,9 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
         }
         // 个人版：扫码分期提交给商户(S)，现金贷提交给信贷系统(N)
         //String autoFlag = appOrder.getTypGrp().equals("02") ? "N" : "S";
+
+        // 把门店信息写入订单
+        this.updateStoreInfo(appOrder, super.getToken());
 
         String orderNo;
         String applSeq;
@@ -442,7 +447,6 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             }
             // 收单系统获取订单详情
             //AppOrder appOrder0 = acquirerService.getAppOrderFromAcquirer(relation.getApplSeq(), super.getChannelNo());
-
             Map<String, Object> resultResponseMap = acquirerService.cashLoan(appOrder, relation);
             if (CmisUtil.isSuccess(resultResponseMap)) {
                 Map<String, Object> bodyMap = (Map<String, Object>) ((Map<String, Object>) resultResponseMap
@@ -701,6 +705,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             }
             // 放款账号信息
             order.setApplAcTyp("01");// 01、个人账户
+            logger.info("订单信息输出："+ order.toString());
             this.setFkNo(order, token);
             order.setApplAcNam(mapBody.get("custName").toString());
             order.setAccAcProvince(mapBody.get("acctProvince").toString());
@@ -877,7 +882,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
             relation.setIsConfirmAgreement("0"); // 未确认
             relation.setIsConfirmContract("0");  // 未确认
             relation.setIsCustInfoComplete("N"); // 未确认
-            relation.setInsertTime(new Date());
+            relation.setInsertTime(DateUtils.now());
             relation.setChannel(super.getChannel());
             relation.setChannelNo(super.getChannelNo());
             appOrdernoTypgrpRelationDao.insert(relation);
@@ -969,6 +974,7 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     private void setFkNo(AppOrder order, String token) {
         // 获取放款卡号
         String fkNo = order.getApplCardNo();
+        logger.info("放款卡号："+ fkNo);
         if (StringUtils.isEmpty(fkNo)) {
             String custNo = order.getCustNo();
             String url = EurekaServer.CRM + "/app/crm/cust/getBankCard?custNo=" + custNo;
@@ -1347,11 +1353,25 @@ public class CommonPageServiceImpl extends BaseService implements CommonPageServ
     public Map<String, Object> queryApplReraidPlanByloanNo(Map<String, Object> params) {
         logger.info("============查询还款计划开始===========");
         Map<String, Object> resultMap = crmService.queryApplReraidPlanByloanNo(params);
-//        ResultHead resultHead = (ResultHead) resultMap.get("head");
-//        String retFlag = resultHead.getRetFlag();
-//        if (!"00000".equals(retFlag)) {
-//            return resultMap;
-//        }
+        if(HttpUtil.isSuccess(resultMap)){
+            Map bodymap = (Map) resultMap.get("body");
+            Map lmpmshdlist = (Map) bodymap.get("lmpmshdlist");
+            List<Map> list = (List<Map>) lmpmshdlist.get("lmpmshd");
+            for (Map map:list) {
+                Double psPrcpAmt = Convert.defaultDouble(map.get("psPrcpAmt"));//本金
+                Double psNormInt = Convert.defaultDouble(map.get("psNormInt"));//利息
+                Double psOdIntAmt = Convert.defaultDouble(map.get("psOdIntAmt"));//罚息
+                Double penalFeeAmt = Convert.defaultDouble(map.get("penalFeeAmt"));//违约金
+                Double psCommOdInt = Convert.defaultDouble(map.get("psCommOdInt"));//复利
+                Double lateFeeAmt = Convert.defaultDouble(map.get("lateFeeAmt"));//应还滞纳金
+                Double acctFeeAmt = Convert.defaultDouble(map.get("acctFeeAmt"));//应还账户管理费
+                Double psFeeAmt = Convert.defaultDouble(map.get("psFeeAmt"));//应还手续费
+                Double advanceFeeAmt = Convert.defaultDouble(map.get("advanceFeeAmt"));//应还提前还款手续费
+                //还款成功金额
+                Double repaySuccAmt = psPrcpAmt + psNormInt + psOdIntAmt + penalFeeAmt + psCommOdInt + lateFeeAmt + acctFeeAmt + psFeeAmt + advanceFeeAmt;
+                map.put("repaySuccAmt",repaySuccAmt);
+            }
+        }
         logger.info("============查询还款计划结束===========");
         return resultMap;
     }

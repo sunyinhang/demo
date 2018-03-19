@@ -2,7 +2,7 @@ package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.utils.AppServerUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
@@ -120,6 +120,18 @@ public class CrmServiceImpl extends BaseService implements CrmService {
         Map<String, Object> map = HttpUtil.restGetMap(url, getToken(), params);
         if (StringUtils.isEmpty(map)) {
             logger.error("还款计划查询！");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        return map;
+    }
+
+
+    @Override
+    public Map<String, Object> queryApplAmtAndRepayByloanNo(Map<String, Object> params) {
+        String url = EurekaServer.CRM + "/app/crm/apporder/queryApplAmtAndRepayByloanNo";
+        Map<String, Object> map = HttpUtil.restPostMap(url, getToken(), params);
+        if (StringUtils.isEmpty(map)) {
+            logger.error("待还金额还款明细查询！");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         return map;

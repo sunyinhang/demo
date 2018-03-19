@@ -24,7 +24,7 @@ public final class DelegateMethodHandler implements InvocationHandlerFactory.Met
         Assert.notNull(method, "method can not be null");
         Assert.notNull(handler, "handler can not be null");
         FeignApi feignApi = method.getAnnotation(FeignApi.class);
-        this.name = (feignApi == null || StringUtils.isEmpty(feignApi.value())) ? name : feignApi.value();
+        this.name = feignApi == null || StringUtils.isEmpty(feignApi.value()) ? name : feignApi.value();
         this.type = type;
         this.method = method;
         this.handler = handler;

@@ -15,7 +15,7 @@ import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.DesUtilvip;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
@@ -24,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,17 +59,9 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
     @Override
     public Map<String, Object> getIdCardInfo(Map<String, Object> map) {
         logger.info("获取的参数为：" + map);
-        HashMap<String, Object> mapIdCard = new HashMap<>();
         String ordersn = (String) map.get("ordersn");//vipabc方订单号
         String idcard = (String) map.get("idcard");
         List<VipAbcAppOrderGoods> idCards = vipAbcDao.selectIdCard(ordersn, idcard);
-//        if (CollectionUtils.isEmpty(idCards))
-//            mapIdCard.put("VipAbcAppOrderGoods", StringUtils.EMPTY);
-//        else if (idCards.size() > 1)
-//            return fail(ConstUtil.ERROR_CODE, "结果不唯一");
-//        else
-//            mapIdCard.put("VipAbcAppOrderGoods", idCards.get(0));
-
         return success(idCards);
     }
 

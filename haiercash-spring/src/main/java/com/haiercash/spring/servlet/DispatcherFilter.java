@@ -6,6 +6,7 @@ import com.haiercash.spring.context.RequestContext;
 import com.haiercash.spring.context.ThreadContext;
 import com.haiercash.spring.context.TraceContext;
 import com.haiercash.spring.trace.rest.IncomingLog;
+import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -59,9 +60,10 @@ public final class DispatcherFilter implements Filter {
         try {
             filterChain.doFilter(request, response);
             IncomingLog.writeEndLog(request, response, System.currentTimeMillis() - begin);
+        } catch (ClientAbortException e) {
+            IncomingLog.writeClientAbortErrorLog(request, System.currentTimeMillis() - begin);
         } catch (Exception e) {
             IncomingLog.writeErrorLog(request, e, System.currentTimeMillis() - begin);
-            throw e;
         } finally {
             TraceContext.reset();
             ThreadContext.reset();

@@ -1,5 +1,7 @@
 package com.haiercash.spring.util;
 
+import com.haiercash.spring.trace.rest.ErrorHandler;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +14,7 @@ public final class RestUtil {
 
     public static Map<String, Object> fail(String retFlag, String retMsg) {
         Map<String, Object> head = new HashMap<>();
-        head.put("retFlag", retFlag);
+        head.put("retFlag", ErrorHandler.getRetFlag(retFlag));
         head.put("retMsg", retMsg);
         HashMap<String, Object> result = new HashMap<>();
         result.put("head", head);
@@ -27,9 +29,5 @@ public final class RestUtil {
         Map<String, Object> result = fail(ConstUtil.SUCCESS_CODE, ConstUtil.SUCCESS_MSG);
         result.put("body", body);
         return result;
-    }
-
-    public static boolean isSuccess(Map<String, Object> result) {
-        return HttpUtil.isSuccess(result);
     }
 }

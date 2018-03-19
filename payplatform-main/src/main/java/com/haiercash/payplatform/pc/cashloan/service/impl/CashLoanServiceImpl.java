@@ -1,5 +1,6 @@
 package com.haiercash.payplatform.pc.cashloan.service.impl;
 
+import com.alipay.api.AlipayApiException;
 import com.bestvike.linq.IEnumerable;
 import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.CollectionUtils;
@@ -8,6 +9,7 @@ import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.core.reflect.GenericType;
 import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.dao.ChannelStoreRelationDao;
 import com.haiercash.payplatform.common.dao.EntrySettingDao;
@@ -19,16 +21,18 @@ import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.common.entity.LoanTypeProperty;
 import com.haiercash.payplatform.common.entity.LoanTypes;
 import com.haiercash.payplatform.common.entity.ThirdTokenVerifyResult;
+import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.config.CashloanConfig;
 import com.haiercash.payplatform.config.CommonConfig;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
 import com.haiercash.payplatform.pc.cashloan.service.ThirdTokenVerifyService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CommonPageService;
+import com.haiercash.payplatform.service.client.CrmClient;
 import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.spring.boot.ApplicationUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
@@ -43,10 +47,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +72,8 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     private CashloanConfig cashloanConfig;
     @Autowired
     private CommonConfig commonConfig;
+    @Autowired
+    private CrmClient crmClient;
 
     @Override
     public String getActivityUrl() {
@@ -263,7 +267,15 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         ThirdTokenVerifyService thirdTokenVerifyService = ApplicationUtils.getBean(setting.getVerifyUrlService(), ThirdTokenVerifyService.class);
         if (thirdTokenVerifyService == null)
             throw new BusinessException(ConstUtil.ERROR_CODE, "错误的 thirdTokenVerifyService 名称:'" + setting.getVerifyUrlService() + "'");
-        ThirdTokenVerifyResult thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
+        ThirdTokenVerifyResult thirdInfo;
+        try {
+            thirdInfo = thirdTokenVerifyService.verify(setting, thirdToken);
+        } catch (AlipayApiException e) {
+            this.logger.info("获取支付宝 token 失败:" + e.getMessage());
+            Map<String, Object> body = new HashMap<>();
+            body.put("flag", "51");//h5 往后退一步
+            return this.success(body);
+        }
         String userId__ = thirdInfo.getUserId();
         String phoneNo_ = thirdInfo.getPhoneNo();
         try {
@@ -279,15 +291,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                     //Map<String, Object> bodyMap = HttpUtil.json2Map(body);
                     JSONObject bodyMap = new JSONObject(body);
                     uidLocal = bodyMap.get("userId").toString();//统一认证内userId
-
                     phoneNo = bodyMap.get("mobile").toString();//统一认绑定手机号
-
                     break;
                 case "U0178": //U0157：未查到该用户的信息
                     //向后台注册用户信息
                     if ("60".equals(channelNo)) {
                         returnmap.put("flag", "2");//跳转登陆绑定页,ali -> ocr
                         returnmap.put("phone", phoneNo_);//手机号
+                        returnmap.put("token", thirdToken);
                         return success(returnmap);
                     }
 
@@ -302,6 +313,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                             RedisUtils.setExpire(thirdToken, cachemap);
                             returnmap.put("flag", "2");//跳转登陆绑定页
                             returnmap.put("phone", phoneNo_);//手机号
+                            returnmap.put("token", thirdToken);
                             return success(returnmap);
                         default:
                             //注册失败
@@ -346,7 +358,6 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
 
                 returnmap.put("flag", "3");//跳转OCR
                 returnmap.put("token", thirdToken);
-//
                 return success(returnmap);
             }
             String certType = ((Map<String, Object>) (custresult.get("body"))).get("certType").toString();//证件类型
@@ -539,6 +550,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                             break;
                     }
                 } else if (StringUtils.isEmpty(flag)) {
+                    String crdNorAvailAmt = (String) headinfo.get("crdNorAvailAmt");// 自主支付可用额度金额(现金)
+                    cachemap.put("crdNorAvailAmt", crdNorAvailAmt);//存储redis
+                    RedisUtils.setExpire(thirdToken, cachemap);
                     returnmap.put("flag", "12");//通过  我的额度
                 }
             }
@@ -625,9 +639,28 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
 
-        String userId = cacheMap.get("userId").toString();
+        if ("60".equals(channelNo)) {
+            String thirdUserId = Convert.toString(cacheMap.get("uidHaier"));//第三方ID
+            if (StringUtils.isEmpty(thirdUserId)) {
+                this.logger.info("缓存中uidHaier为空！");
+                return this.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+            String certNo = Convert.toString(cacheMap.get("idNo"));//身份证号
+            if (StringUtils.isEmpty(certNo)) {
+                this.logger.info("缓存中certNo为空！");
+                return this.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            }
+            //编辑第三方标识
+            Map<String, Object> editParams = new HashMap<>();
+            editParams.put("certNo", certNo);
+            editParams.put("externCompanyNo", "zhifubao");
+            editParams.put("externUid", thirdUserId);
+            IResponse editResp = this.crmClient.editExternCompanyNo(Collections.singletonList(editParams));
+            editResp.assertSuccess();
+        }
 
         //根据userId获取客户编号
+        String userId = cacheMap.get("userId").toString();
         logger.info("获取客户实名信息");
         Map<String, Object> custMap = new HashMap<>();
         custMap.put("userId", userId);
@@ -770,22 +803,23 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
     public Map<String, Object> saveOrder(Map<String, Object> map) {
         logger.info("现金贷订单保存****************开始");
         //前端传入参数获取(放开)
-        String token = (String) map.get("token");
-        String channel = (String) map.get("channel");
-        String channelNo = (String) map.get("channelNo");
-        String applyTnr = (String) map.get("applyTnr");//借款期限
-        String applyTnrTyp = (String) map.get("applyTnrTyp");//期限类型（若天则传D）
-        String updflag = (String) map.get("flag");//1.待提交返显
-        String orderNo = (String) map.get("orderNo");//待提交时必传
-//        String areaCode = (String) map.get("areaCode");//区编码
+        String token = Convert.toString(map.get("token"));
+        String channel = Convert.toString(map.get("channel"));
+        String channelNo = Convert.toString(map.get("channelNo"));
+        String applyTnr = Convert.toString(map.get("applyTnr"));//借款期限
+        String applyTnrTyp = Convert.toString(map.get("applyTnrTyp"));//期限类型（若天则传D）
+        String updflag = Convert.toString(map.get("flag"));//1.待提交返显
+        String orderNo = Convert.toString(map.get("orderNo"));//待提交时必传
+//        String areaCode = Convert.toString( map.get("areaCode"));//区编码
         String applyAmt = Convert.toString(map.get("applyAmt"));//申请金额
-        String typCde = (String) map.get("typCde");//贷款品种
-        String purpose = (String) map.get("purpose");//贷款用途
-        String applCardNo = (String) map.get("applCardNo");//放款卡号
-        String repayApplCardNo = (String) map.get("repayApplCardNo");//还款卡号
-        String province = (String) map.get("province");//省名称
-        String city = (String) map.get("city");//市名称
-        String district = (String) map.get("district");//区名称
+        String typCde = Convert.toString(map.get("typCde"));//贷款品种
+        String purpose = Convert.toString(map.get("purpose"));//贷款用途
+        String applCardNo = Convert.toString(map.get("applCardNo"));//放款卡号
+        String repayApplCardNo = Convert.toString(map.get("repayApplCardNo"));//还款卡号
+        String province = Convert.toString(map.get("province"));//省名称
+        String city = Convert.toString(map.get("city"));//市名称
+        String district = Convert.toString(map.get("district"));//区名称
+        String alipayCardFlag = Convert.toString(map.get("alipayCardFlag"));//支付宝标志（放款 还款）
 
         //非空判断
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)
@@ -806,7 +840,14 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             logger.info("Jedis数据获取失败");
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
-        String userId = (String) cacheMap.get("userId");
+        logger.info("支付生活号支付宝标志：" + alipayCardFlag + "token=" + token);
+        if ("1".equals(alipayCardFlag)) {//1:用支付宝进行付款和还款
+            applCardNo = AlipayConfig.APPL_CARD_NO;
+            repayApplCardNo = AlipayConfig.REPAY_APPL_CARD_NO;
+            cacheMap.put("alipayCardFlag", alipayCardFlag);
+            RedisUtils.setExpire(token, cacheMap);
+        }
+        String userId = Convert.toString(cacheMap.get("userId"));
         //获取客户信息
         logger.info("订单保存，根据userId获取客户信息");
         Map<String, Object> custMap = new HashMap<>();
@@ -819,15 +860,16 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         }
         String payresultstr = com.alibaba.fastjson.JSONObject.toJSONString(custInforesult);
         com.alibaba.fastjson.JSONObject custresult = com.alibaba.fastjson.JSONObject.parseObject(payresultstr).getJSONObject("body");
-        String custName = (String) custresult.get("custName");
-        String custNo = (String) custresult.get("custNo");
+        String custName = Convert.toString(custresult.get("custName"));
+        String custNo = Convert.toString(custresult.get("custNo"));
         logger.info("客户编号：" + custNo + "   客户姓名：" + custName);
-        String certNo = (String) custresult.get("certNo");
-        String mobile = (String) custresult.get("mobile");
+        String certNo = Convert.toString(custresult.get("certNo"));
+        String mobile = Convert.toString(custresult.get("mobile"));
 
         //获取订单金额  总利息 金额
         logger.info("订单保存，获取订单金额，总利息金额");
         //IResponse<List<LoanType>> IResponse= this.getLoanType(null, channelNo, custName, "20", certNo);
+        applyAmt = applyAmt.trim();//金额去空格
         Map<String, Object> payMap = new HashMap<>();
         payMap.put("typCde", typCde);
         payMap.put("apprvAmt", applyAmt);
@@ -965,11 +1007,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
         //2.是否允许申请贷款
         logger.info("查看是否允许申请贷款");
 //        String typCde = appOrder.getTypCde();
-        SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
-        String date = dateFormater.format(new Date());
         Map<String, Object> queryordermap = new HashMap<>();
         queryordermap.put("typCde", typCde);
-        queryordermap.put("date", date);
+        queryordermap.put("date", DateUtils.nowDateString());
         queryordermap.put("channel", channel);
         queryordermap.put("channelNo", channelNo);
         Map<String, Object> queryorderresult = appServerService.queryBeyondContral(token, queryordermap);
@@ -1023,6 +1063,7 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                     logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
                     resultbody.put("flag", "01");//跳转支付密码页面
                     ordermap.put("body", resultbody);
+                    break;
                 case "01": //01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
                     logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
                     return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
@@ -1033,6 +1074,9 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
                     logger.info("未通过人脸识别，可以再做人脸识别");
                     resultbody.put("flag", "02");// 跳转人脸识别页面
                     ordermap.put("body", resultbody);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -1074,5 +1118,4 @@ public class CashLoanServiceImpl extends BaseService implements CashLoanService 
             throw new BusinessException(ConstUtil.ERROR_CODE, "验证并绑定第三方（非海尔集团）用户失败");
         return stringObjectMap;
     }
-
 }

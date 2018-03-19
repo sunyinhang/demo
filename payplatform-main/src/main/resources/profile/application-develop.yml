@@ -1,4 +1,4 @@
-# 测试环境
+# 开发环境
 server:
   port: 8030
   connection-timeout: 6000
@@ -8,8 +8,8 @@ logging:
 security:
   sessions: never
 info:
-  name: payplatform-test
-  description: 支付平台-测试环境
+  name: payplatform-develop
+  description: 支付平台-开发环境
 spring:
   application:
     name: ${info.name}
@@ -78,16 +78,16 @@ spring:
         login-password: admin
   mybatis:
     dialect: org.apache.ibatis.dialect.OracleDialect
-    base-package: com.haiercash.mybatis.dao,com.haiercash.payplatform.**.dao
-    aliases-package: com.haiercash.mybatis.data,com.haiercash.payplatform.**.data
-    mapper-locations: classpath*:com/haiercash/mybatis/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
+    base-package: com.haiercash.**.dao
+    aliases-package: com.haiercash.**.data
+    mapper-locations: classpath:/com/haiercash/**/mapping/*.xml
     underscore-to-camel-case: true
   mail:
     forward: false
-    host: smtp.ym.163.com
-    port: 25
-    username: email@bestvike.com
-    password: 123456
+#    host:
+    port:
+    username:
+    password:
     properties:
       mail.smtp.ssl.enable: false
       mail.smtp.starttls.enable: true
@@ -97,13 +97,13 @@ spring:
       routing-key:
       queue:
     bug-report:
-      enabled: true
+      enabled: false
       level: error
       queue-size: 10
       send-interval-seconds: 120
       subject: 【海尔消费金融】错误报告
-      to: lijianyu@bestvike.com,xuchonglei@bestvike.com,yuanli@bestvike.com,chenghuimei@bestvike.com,liubinghui@bestvike.com,sunyinhang@bestvike.com
-      cc: zhuxiaoxue@bestvike.com
+      to:
+      cc:
       bcc:
 eureka:
   client:
@@ -133,7 +133,7 @@ zuul:
       sensitive-headers:
 app:
   common:
-    gate-url: http://testpm.haiercash.com # 程序前缀
+    gate-url: https://testpm.haiercash.com # 程序前缀
   rest:
     ACQUIRER: http://ACQUIRER
     APPCA: http://APPCA
@@ -145,20 +145,20 @@ app:
     CMISINTERFACESERVER: http://CMIS-INTERFACE-SERVER
     CMISPROXY: http://CMISPROXY
     CRM: http://CRM-BETA
-    GM: http://GM-BETA
-    HCPORTAL: http://HCPORTAL-BETA
+    GM: http://GM
+    HCPORTAL: http://HCPORTAL
     ORDER: http://ORDER
     OUTREACHPLATFORM: http://OUTREACHPLATFORM-TEST
     UAUTH: http://UAUTH-BETA
   storage:
-    ocr-path: /testshare01/00/Data/haierData/
-    face-path: /testshare01/crm/image/
+    ocr-path: /testshare01/00/Data/haierData
+    face-path: /testshare01/crm/image
   cmis:
-    url:  # cmis 服务地址
+    url: http://10.164.194.105:8098/cmis/HTTP_DEMO_SERVICE # cmis 服务地址
     rabbit:
-      exchange: APPMSG_TOPIC_EXCHANGE_DEV
+      exchange: APPMSG_TOPIC_EXCHANGE
       routing-key:
-      queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46_DEV
+      queue: APPMSG_OUTPLAT_CMISMSG_QUEUE_46
   outreach:
     appid: 300000762
     channel-no: HCP
@@ -167,9 +167,9 @@ app:
   moxie:
     api-key: 51f5eed2f64f467a9a20f15d2ce26038
   shunguang:
-    merch-no: 302017001073
-    store-no: 302017040270
-    user-id: 303197
+    merch-no: EHAIER
+    store-no: SHUNGUANG
+    user-id: SAQDGM01
     typ-cde: 17033a
     shop-keeper: 882f7f5c91fc4ed09a754e28841bc7ad
     consumer: dc04a273474a404bafdad48ddb63cce2
@@ -183,7 +183,10 @@ app:
     secret: c400d6495e25f2401b5a7209585fc56c
   alipay:
     url: https://openapi.alipay.com/gateway.do
-    app-id: 2017123001383623
-    app-private-key: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCHD7HBwLHNcM+EQhXmHWvf6j9CzfKqueCkUEzaeMpPV5s76B8gIoqVW/ciTXhPYA+Op98yBRpwkRqqdgfA5PQkdoyozISYWG3/D0RGa+ly3Rg7ZLP5xiLm1tHNARKd9JoTuwqqKcM+clYSiIhpBE96pWBxwxNcsgzqNvtDf6v8DW2IsyVvw0jCLTQcLVPOqa8Uc3gcgY7mxLV1Z3mg4QmbfpauewEbCbB617sfNq/l4iv/ZdIUskDQDnwbc3Y7lod7m0sApzlDZK9j2l61jHZRRySN4HIWUdMwz2NpENFtNuIuZfajpxiQdileUmDHZkTOuT4vbW8ytFIxxHs5DC1LAgMBAAECggEAbeHH5fFm9tSsEFdPx7ryE+dZdnllz56QdD5ceHZDak/FHPUZtaREiYWbx82tby6hGZfcT661NxXm0v5aCoZ7VtsYTxCtY+C2BQgfrQeIk4nreA7TGggoRxRI9nfD9LyXSiwnXg/CKCEPg96O1JnMK+U2VPe33feB6F+5Bs5tVw9Eh7gatodCUym2NfsX0rPdrXTIdkKUNZ5msroN3d96qR38NHXq0vlBWZR5ABQ6eYIq3Sj0XUliZFuUIo4iObxb3rncguYF39O9drZU4OTUSq6wXsDO9NK0gp90HoRPZ3wnp3UIY3KbQgR63p0VZnCOl9pAQjWIQtEGZkK9RWlUSQKBgQDk7jmHMfPmhvnFCAYFx3GmcX5AYPe/FjrDRogXS01zNhq9Agf/FuBdn8vVKMO5iwZkVz+8LSna7n6itxlvC0qgsDT5hea6foXDf/3AmvR0w5kT75stLlERbFAaS9erFHA2KeVZIIA3VHCVVbqJ92sAVDrvEDHf/tZWXMYp1QAWpQKBgQCXCAciU6MLZKGN89biVhOnDHzvqQKMLYlzMXKAncqC/b3R83Wx+rFhjZ3uej+JsEZyyaN+JOKIvV14wEB7QXQYVDuiOBpHyQ33x9yUxh3RMAVxfx5zvp9MeHCtMAXlej97OVPkWmEcfS5tnPorYngWI6c4Z6bKBYObpXlxyM3hLwKBgQDG0rcX2aRwNA28t2kzn7Hu0mbJ1u2UAeRrMFiFkprjUrwKJzd2rhGSfnPy3wKNpFaa0sPB1J+jSrqk6symCnJ3+FEp3Mc0dSoLTp+9pVZmCnJqRBDLPoydyyoOjIv0Qz3pbJ2JuJZid22H5PqrVDyT/pNoiPIoDhVs0AoyzpDTGQKBgCqzUVkKLoHNHMQGmc16KqpDJJuZvCenxEG2TDpC4nuwg9d1LuR4DWiYYnuHQqmKFhDkI35JrWadq2y1ZkWy1sD+J7IQjJWZKYLRlfLWJJ39JrzVBOYSkfVL5AeDGVes/X+4UJiyWNx2JAdHp49Wkr8nq2KOI6DgeDosSa666EJvAoGBAMML+8my76xBOCrs1MBsd1Ziji+uCY01VMBqjmDaOyriZWlZtfyWkynlilFtVyW8MFggVw9Q3ipRwjzPPeK1d/yDNbsLotx8h0176x6bruNXAMLOGBT5ysodivXja7XFz7It+U+NObCqfR4cB0ZKJ93m26wA/8C2nVrhlKViN0NB
-    alipay-public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj0O5+7wAtqv4OImWHlDX7+rRc8H4peIcykwip2+zNatRNYe0qHj/Jl4CKshSwwmu5tvFTxrF6NJF8Yicz1AFnbsy7js90r5YUrwQlplOMY2YCZbCx18dp/0vGeRl9Mn0QrI7iCUxvcdqOq16J3ZbFh0TTnY9zS7YvpcBqz9RTFgvAXyd236J83MSaFo7+WmPlbqjwDWu2IiEPnbAe9uy6pTCFVjsSP8J7ZeQese2dwKy9RKah9Ll7dpHHbO78qLgYcJvalkisDA55PNHTMV206mcYAQbYpY9kgsH+lQ7DmuXp3AwhaM1A/yuU+ImOYMO88XPTVNJubUgdWZYvHDsMwIDAQAB
+    app-id: 2018010801691941
+    app-private-key: MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCIX/3VyIC0JobZZCCp88Ej9mm9jaCZDMuXalbsx9yJ3FfyVlwWazgrEp4cWyl5G2GFRkf18DbnxiuUq7/gPKOBBS2EroisNkpduealWDcTMd0wFrqMM4M4DOV/6trG3vi2UWEbh7C10fq2E+Una8Mze3ZJWzRp9HQ9xmlTr1lEKy0Wyy9rBNvX14YKEgv8wtrtADjfldMx2OszXpWGZqQfLB2IhmAOdI6gpfS+cY7eht2bIXlUC7cYkN1j0xKMPic+lKr7nkZ429q9U4DRYJtDQDn6/HP8UfRw8aih1G0qpBiOLAZfq5wYIHrz9PiROCmSfIPyYTpQccp3JQzNZX6hAgMBAAECggEACmiZLRnyiM1v+WOlApOyKBaEl40ZttS9LT9WhxfyAyuoIrzopmVkkhUHsE5c6ftnBA8LKwA8kJAVf3FkYa7/I7fLc5cGo245WtH3gqMrAPILWcJCVrUPzNVfJtY8AHXAMdogOUOv/xCZvA/kq4+UBHfl3U9yvquDu7tLCrIVdBhi5f9qmQqv4UyUoExh2fxWbequlbFYnuvuTeL8eiNQQ21cAIs2/pHWTt1MyI9G+CkHr3YH6FcDG2fasU69m42TyK04ro1Himd1ER2FAfjtHSAvmxCwgf+bHzjB4Ulh9Xd1wMB+n8Xg6ILDNYKq0RvfQ/2pecyZTD3ThiKdP6JX4QKBgQDLnBr5Vqz+o4XC9GbjvpIISYziq2qfNpJISBJH3rug2FR82r0FQWugUGpKmYSsI4+3XkXrCIXNeyxiRjaxIKqEd8wAJbyrJjYhYAu3WwRO29DAqoHW1YLQ5AczItyUpMGDUyPol98JCVHZ7/UThYgS8MT5q3T7HMzySy5KSHXOXQKBgQCrdxbzAsYo82ZxQTjQgJywIWXMt2WIG2NwXPPy6ERtsTZw/AdobPrCrCvrWqkl6BsV1cvtXhr5xCMruloBSj/WdG+LoKgTgjF4pObYvWau+SDTHyB1GBBIxExcNgYcwMVzVsIieaxmGi+TzB4tHi34i49XIAXHzt12AukteMbFFQKBgBheosvdF++SWtwurHHtyUS8qOQoaCaOPYvxNF7txb9GpTYcaCtM3Tje5xnurfZ8eyMTYYL0Di+94l4Q0VL5+e7I9928poxFko0EFeLoPefCX4Xv4oJ4I6Qk5se0EHqqDY9OUCnyo3tNZkKTed3QSa0arDjF0MaNd+o4HV4+tfrxAoGAJ5BZGUWgl75h+uwDwgiLHxD1vmDq6pb3QOwR1hDGCVGEsFlXFD9hNR4pHCtVMEv4Q/eLEIBQVSVuwB5Fulp5lHBVdLBjV+0IoT/bjFNXqDQP4OcjxCEDUOcKf5RvoJ7ScKSqMu5EW2Lba40DwYFfNiRttLrM2qfe7eYKC9X8d2kCgYA7dLd2Ib3yo480ZaupQztF84mSBiV6IXeh7PxThgUnnqCw8kAcwhxrPQiPXXzYdP8jyJzGsvDSIeW6SLHQ0F8TOUFUCjf+rocR8GCGzZFSh2Pe9RFSbk0CnBEeskID4DzFsmgBPYW8l9CXlM4JQAS+1Rzo96ekzi5JhtcFInHxLQ==
+    alipay-public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1MgOD+bQiUWKNYz1bIoJMjtmx4YbFDF8HEVZmKo4pJM6Di9lok0tbC/khxNFZklw8EvjR4DoryYwCm1golTL7K8eYnKd9uPhKsSEvHIpYwEwJ0IdDSkJ/gtBbQ83qYvlV69BJTdPiUygaQ1kP9Y89hXO+5GHGrLhtbIs8BAPT2dHBnnaARZsLZRyQYIGps15hlGGUP2HWwSC6bBRt9S5R8m+iR5YXtJ9NdL6us0W7JuI+4H7SWPVbikogz7PD95rVdY5aiOXIxv+GpYDrQ+Dm9c6Amb6Y67HvR/f1P42K2Y83Zd36+onqFekjSQTFNMSzV0FXvqu9ebcn/NVwZleoQIDAQAB
     fuwu-min-score: 600
+    wap-pay-return-url: /alipay/#!/loan/orderSucc.html
+    wap-pay-notify-url: http://testpm.haiercash.com/api/foreign/bankfront/callBack/aliDeductCallBack
+    wap-pay-subject: 现金贷还款

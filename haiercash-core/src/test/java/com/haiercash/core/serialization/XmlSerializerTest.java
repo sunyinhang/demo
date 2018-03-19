@@ -2,7 +2,7 @@ package com.haiercash.core.serialization;
 
 import com.bestvike.linq.Linq;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

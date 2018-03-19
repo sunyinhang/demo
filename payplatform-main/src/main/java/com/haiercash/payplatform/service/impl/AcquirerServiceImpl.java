@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.core.util.IdCard;
 import com.haiercash.payplatform.common.dao.AppOrdernoTypgrpRelationDao;
 import com.haiercash.payplatform.common.data.AppOrder;
@@ -11,6 +11,7 @@ import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.common.enums.AcquirerApptEnum;
 import com.haiercash.payplatform.common.enums.AcquirerEnum;
 import com.haiercash.payplatform.common.enums.AcquirerGoodsEnum;
+import com.haiercash.payplatform.config.AlipayConfig;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppManageService;
 import com.haiercash.payplatform.service.CmisService;
@@ -23,7 +24,8 @@ import com.haiercash.payplatform.utils.ChannelType;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.FormatUtil;
 import com.haiercash.payplatform.utils.ReflactUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
+import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
@@ -39,9 +41,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +67,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     private CommonRepaymentPersonService commonRepaymentPersonService;
     @Autowired
     private AppOrdernoTypgrpRelationDao appOrdernoTypgrpRelationDao;
+    @Autowired
+    private AlipayConfig alipayConfig;
 
     @Override
     public Map<String, Object> getOrderFromAcquirer(String applSeq, String channel, String channelNo, String cooprCde,
@@ -544,20 +546,25 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         this.cashLoanCheckDefaultValue(order, acquirer);
 
         // 获取系统标识和渠道号
-        Map<String, Object> sysFlagAndChannelNo = orderService.getSysFlagAndChannelNo(order);
+//        Map<String, Object> sysFlagAndChannelNo = orderService.getSysFlagAndChannelNo(order);
         // 收单系统保存贷款详情
         String tradeType = "1";
         if (relation != null) {
             tradeType = "2";
         }
         Map<String, Object> headMap = AcqUtil
-                .getAcqHead(AcqTradeCode.SAVE_APPL, sysFlagAndChannelNo.get("sysFlag").toString(),
-                        sysFlagAndChannelNo.get("channelNo").toString(), order.getCooprCde(), tradeType);
+                .getAcqHead(AcqTradeCode.SAVE_APPL, super.getChannel(),
+                        super.getChannelNo(), order.getCooprCde(), tradeType);
         headMap.put("autoFlag", "N");
         if (relation != null && !StringUtils.isEmpty(relation.getApplSeq())) {
             headMap.put("applSeq", relation.getApplSeq());
         }
-        acquirer.put("coopr_cde",headMap.get("cooprCode"));
+
+        String storeName = order.getCooprName();
+        String storeCode = order.getCooprCde();
+        logger.info("门店编码：" + storeCode + "门店名称：" + storeName);
+        acquirer.put("coopr_cde", storeCode);
+        acquirer.put("coopr_name", storeName);
         logger.info("向收单系统发起贷款申请, 参数:" + acquirer);
         Map<String, Object> result;
         result = AcqUtil
@@ -575,7 +582,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     }
 
     public Map<String, Object> cashLoanCheckDefaultValue(AppOrder appOrder, Map<String, Object> acquirer) {
-        acquirer.put("crt_dt", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));// 登记日期
+        acquirer.put("crt_dt", DateUtils.nowDateString());// 登记日期
         // 如果为随借随换，借款期限上传为最大值.
         if ("D".equalsIgnoreCase((String) acquirer.get("apply_tnr_typ"))) {
             Map<String, Object> typCdeMap = cmisService.findPLoanTyp(Convert.toString(acquirer.get("typ_cde")));
@@ -595,8 +602,8 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
                 || channelType == ChannelType.Shunguang) {
             acquirer.put("purpose", "SALE");
         }
-        // 用户选择其他用途时，自动修改为：SALE、消费
         if ("OTH".equals(acquirer.get("purpose"))) {
+            // 用户选择其他用途时，自动修改为：SALE、消费
             acquirer.put("purpose", "SALE");
         }
 
@@ -613,6 +620,21 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
             if (StringUtils.isEmpty(acquirer.get("appl_ac_nam")))
                 acquirer.put("appl_ac_nam", "海尔集团财务有限责任公司");
         }
+        //获取是否是支付宝支付标志
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(super.getToken());
+        String alipayCardFlag = Convert.toString(cacheMap.get("alipayCardFlag"));
+        logger.info("支付类型标识为=" + alipayCardFlag + "token=" + super.getToken() + "  ;cacheMap=" + cacheMap);
+        if ("1".equals(alipayCardFlag)) {//如果是支付宝进行支付放款
+            acquirer.put("acc_bank_cde", "002");
+            acquirer.put("repay_acc_bank_cde", "002");
+            acquirer.put("acc_bank_name", "支付宝");
+            acquirer.put("repay_acc_bank_name", "支付宝");
+            acquirer.put("appl_card_no", AlipayConfig.APPL_CARD_NO);
+            acquirer.put("repay_appl_card_no", AlipayConfig.REPAY_APPL_CARD_NO);
+            logger.info("支付宝放款卡号appl_card_no：" + AlipayConfig.APPL_CARD_NO + "；repay_appl_card_no=" + AlipayConfig.REPAY_APPL_CARD_NO);
+            logger.info("支付宝acquirer=" + acquirer);
+        }
+
         // 嗨付个人版简版/够花 设置放款账户开户机构名称   大数据走0000  海尔集团财务有限责任公司
         if (channelType == ChannelType.Personal
                 || channelType == ChannelType.BigData
@@ -790,6 +812,14 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
     public Map<String, Object> getReturnGoodsInfo(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map) {
         String url = EurekaServer.ACQUIRER + "/api/appl/getReturnGoodsInfo";
         Map headMap = AcqUtil.getAcqHead(tradeCode, sysFlag, channelNo, cooprCode, tradeType);
+        return (Map<String, Object>) AcqUtil.getAcqResponse(url, headMap, map);
+    }
+
+    @Override
+    public Map<String, Object> selectRepayRequestSetlSts(Map<String, Object> map) {
+        String channelNo = super.getChannelNo();
+        String url = EurekaServer.ACQUIRER + "/api/appl/selectRepayRequestSetlSts";
+        Map headMap = AcqUtil.getAcqHead("ACQ-2202", "11", channelNo, "", "");
         return (Map<String, Object>) AcqUtil.getAcqResponse(url, headMap, map);
     }
 }

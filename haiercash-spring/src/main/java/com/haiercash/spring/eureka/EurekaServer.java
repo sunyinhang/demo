@@ -1,4 +1,4 @@
-package com.haiercash.spring.config;
+package com.haiercash.spring.eureka;
 
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;

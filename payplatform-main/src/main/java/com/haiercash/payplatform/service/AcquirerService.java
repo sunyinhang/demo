@@ -121,4 +121,11 @@ public interface AcquirerService {
      * @date 2017/12/15 11:22
      */
     Map<String, Object> getReturnGoodsInfo(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType, Map<String, Object> map);
+
+    /**
+     * selectRepayRequestSetlSts
+     * @param map
+     * @return
+     */
+    Map<String, Object> selectRepayRequestSetlSts(Map<String, Object> map);
 }

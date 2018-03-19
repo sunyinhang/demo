@@ -3,6 +3,7 @@ package com.haiercash.payplatform.controller;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.mybatis.util.FileUtil;
+import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.CommonPageService;
 import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.FaceService;
@@ -63,6 +64,8 @@ public class CommonController extends BaseController {
     private InstallmentAccountService installmentAccountService;
     @Autowired
     private CommonPageService commonPageService;
+    @Autowired
+    private AcquirerService acquirerService;
 
     public CommonController() {
         super(MODULE_NO);
@@ -155,7 +158,7 @@ public class CommonController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value = "/api/payment/realAuthenticationForXjd", method = RequestMethod.POST)
-    public Map<String, Object> realAuthenticationForXjd(@RequestBody Map<String, Object> map) throws Exception {
+    public IResponse<Map> realAuthenticationForXjd(@RequestBody Map<String, Object> map) throws Exception {
         return ocrIdentityService.realAuthenticationForXjd(map);
     }
 
@@ -266,7 +269,7 @@ public class CommonController extends BaseController {
      */
     @RequestMapping(value = "/api/payment/getAllCustExtInfoNoXx", method = RequestMethod.POST)
     public Map<String, Object> getAllCustExtInfoNoXx() {
-        return custExtInfoService.getAllCustExtInfo(super.getToken(), super.getChannel(), super.getChannelNo());
+        return custExtInfoService.getAllCustExtInfo();
     }
 
     /**
@@ -791,5 +794,22 @@ public class CommonController extends BaseController {
         return commonPageService.getAreaCode(map.get("provinceName").toString(), map.get("cityName").toString(), map.get("districtName").toString());
     }
 
+    /**
+     *2.1.35	(POST)ACQ-2202批量查询还款请求状态
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/selectRepayRequestSetlSts", method = RequestMethod.POST)
+    public Map<String, Object> selectRepayRequestSetlSts(@RequestBody Map<String, Object> map) {
+         return acquirerService.selectRepayRequestSetlSts(map);
+    }
 
+    /**
+     * 129、(POST)待还金额&还款明细查询
+     *
+     * @return
+     */
+    @RequestMapping(value = "/api/payment/queryApplAmtAndRepayByloanNo", method = RequestMethod.POST)
+    public Map<String, Object> queryApplAmtAndRepayByloanNo(@RequestBody Map<String, Object> map) {
+        return payPasswdService.queryApplAmtAndRepayByloanNo(super.getToken(), map);
+    }
 }

@@ -6,6 +6,7 @@ import com.haiercash.spring.rest.common.CommonResponse;
 import com.haiercash.spring.trace.rest.ErrorHandler;
 import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.RestUtil;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +62,12 @@ public class BaseController {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public final ResponseEntity<CommonResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         return ErrorHandler.handleMissingServletRequestParameterException(e);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(ClientAbortException.class)
+    public final ResponseEntity<CommonResponse> handleClientAbortException(ClientAbortException e) throws ClientAbortException {
+        return ErrorHandler.handleClientAbortException(e);
     }
 
     @ResponseBody

@@ -33,6 +33,6 @@ public final class RabbitRetryMessage {
     }
 
     public byte[] getPayload() {
-        return ((byte[]) this.message.getPayload());
+        return (byte[]) this.message.getPayload();
     }
 }

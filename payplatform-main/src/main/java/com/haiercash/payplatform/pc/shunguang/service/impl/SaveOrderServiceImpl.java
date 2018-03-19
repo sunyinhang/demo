@@ -2,6 +2,7 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.BeanUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.config.ShunguangConfig;
 import com.haiercash.payplatform.pc.shunguang.service.SaveOrderService;
@@ -17,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -262,12 +261,9 @@ public class SaveOrderServiceImpl extends BaseService implements SaveOrderServic
 
         //2.是否允许申请贷款
         logger.info("查看是否允许申请贷款");
-        //String typCde = appOrder.getTypCde();
-        SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
-        String date = dateFormater.format(new Date());
         Map<String, Object> queryordermap = new HashMap<>();
         queryordermap.put("typCde", typCde);
-        queryordermap.put("date", date);
+        queryordermap.put("date", DateUtils.nowDateString());
         queryordermap.put("channel", channel);
         queryordermap.put("channelNo", channelNo);
         Map<String, Object> queryorderresult = appServerService.queryBeyondContral(token, queryordermap);

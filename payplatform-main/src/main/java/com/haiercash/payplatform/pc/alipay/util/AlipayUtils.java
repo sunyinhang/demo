@@ -14,15 +14,19 @@ import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.alipay.api.response.ZhimaCreditScoreBriefGetResponse;
 import com.haiercash.core.io.CharsetNames;
 import com.haiercash.core.serialization.JsonSerializer;
+import com.haiercash.core.serialization.URLSerializer;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.config.AlipayConfig;
+import com.haiercash.payplatform.config.CommonConfig;
+import com.haiercash.payplatform.pc.alipay.bean.AlipayOrder;
 import com.haiercash.payplatform.pc.alipay.bean.AlipayToken;
-import com.haiercash.spring.util.BusinessException;
 import com.haiercash.spring.util.ConstUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,12 +37,16 @@ import java.util.UUID;
  */
 @Component
 public class AlipayUtils {
+    private static final Log LOG = LogFactory.getLog(AlipayUtils.class);
     private static final String FORMAT = "json";
     private static final String SIGN_TYPE = "RSA2";
     private static final String CHARSET = CharsetNames.UTF_8;
     private static AlipayConfig alipayConfig;
+    private static CommonConfig commonConfig;
     @Autowired
     private AlipayConfig alipayConfigInstance;
+    @Autowired
+    private CommonConfig commonConfigInstance;
 
     private static AlipayClient getDefaultClient() {
         return new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getAppId(), alipayConfig.getAppPrivateKey(), FORMAT, CHARSET, alipayConfig.getAlipayPublicKey(), SIGN_TYPE);
@@ -46,11 +54,16 @@ public class AlipayUtils {
 
     private static <T extends AlipayResponse> T execute(AlipayRequest<T> request, String authToken) throws AlipayApiException {
         AlipayClient client = getDefaultClient();
-        T response = client.execute(request, authToken);
+        T response;
+        try {
+            response = client.execute(request, authToken);
+        } catch (AlipayApiException e) {
+            response = client.execute(request, authToken);//重试
+        }
         if (response == null)
-            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            throw new AlipayApiException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         if (!response.isSuccess())
-            throw new BusinessException(response.getCode(), response.getMsg());
+            throw new AlipayApiException(response.getCode(), response.getMsg());
         return response;
     }
 
@@ -60,11 +73,16 @@ public class AlipayUtils {
 
     private static <T extends AlipayResponse> T pageExecute(AlipayRequest<T> request) throws AlipayApiException {
         AlipayClient client = getDefaultClient();
-        T response = client.pageExecute(request);
+        T response;
+        try {
+            response = client.pageExecute(request);
+        } catch (AlipayApiException e) {
+            response = client.pageExecute(request);//重试
+        }
         if (response == null)
-            throw new BusinessException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            throw new AlipayApiException(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         if (!response.isSuccess())
-            throw new BusinessException(response.getCode(), response.getMsg());
+            throw new AlipayApiException(response.getCode(), response.getMsg());
         return response;
     }
 
@@ -107,21 +125,36 @@ public class AlipayUtils {
     }
 
     //调用支付宝还款接口,返回 html
-    public static String wapPay(String outTradeNo, BigDecimal totalAmount, String subject) throws AlipayApiException {
+    public static String wapPay(String token, String channelNo, AlipayOrder order) throws AlipayApiException {
+        //验证
+        order.valid();
+        //文档 https://docs.open.alipay.com/203/107090/
         Map<String, Object> bizContent = new HashMap<>();
-        bizContent.put("out_trade_no", outTradeNo);
-        bizContent.put("total_amount", totalAmount);
-        bizContent.put("subject", subject);
+        bizContent.put("out_trade_no", order.getPayNo());
+        bizContent.put("total_amount", order.getRepayAmt());
+        bizContent.put("subject", order.getSubject());
+        bizContent.put("time_expire", DateUtils.toString(order.getTimeoutExpire(), "yyyy-MM-dd HH:mm"));//从打开网页到支付成功前的绝对超时时间
         bizContent.put("product_code", "QUICK_WAP_WAY");
+        //回调参数
+        Map<String, String> param = new HashMap<>();
+        param.put("token", token);
+        param.put("channelNo", channelNo);
+        param.put("applSeq", order.getApplSeq());
+        param.put("payNo", order.getPayNo());
+        param.put("repaySeq", order.getRepaySeq());
+        param.put("repayAmt", order.getRepayAmt());
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
-        request.setReturnUrl(alipayConfig.getWapPayReturnUrl());
+        request.setReturnUrl(commonConfig.getGateUrl() + alipayConfig.getWapPayReturnUrl() + "?" + URLSerializer.serialize(param));
         request.setNotifyUrl(alipayConfig.getWapPayNotifyUrl());
         request.setBizContent(JsonSerializer.serialize(bizContent));
-        return pageExecute(request).getBody();
+        String html = pageExecute(request).getBody();
+        LOG.info("支付宝返回支付页面内容: " + html);
+        return html;
     }
 
     @PostConstruct
     private void init() {
         alipayConfig = this.alipayConfigInstance;
+        commonConfig = this.commonConfigInstance;
     }
 }

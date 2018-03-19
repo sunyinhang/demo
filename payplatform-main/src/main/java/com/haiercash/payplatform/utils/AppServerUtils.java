@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.utils;
 
-import com.haiercash.spring.config.EurekaServer;
 import com.haiercash.spring.context.ThreadContext;
+import com.haiercash.spring.eureka.EurekaServer;
 import lombok.experimental.UtilityClass;
 
 /**

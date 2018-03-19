@@ -30,6 +30,13 @@ public interface UauthClient {
     CommonResponse<Map> getUserId(@RequestParam("userId") String userId);
 
     /**
+     * @param userId 需加密
+     */
+    @FeignApi("根据 userId 查询绑定手机号")
+    @GetMapping(value = "/getMobile")
+    CommonResponse<Map> getMobile(@RequestParam("userId") String userId);
+
+    /**
      * @param externCompanyNo channelNo 加密
      * @param externUid       加密
      * @return
@@ -39,7 +46,18 @@ public interface UauthClient {
     CommonResponse<Map> queryUserByExternUid(@RequestParam("externCompanyNo") String externCompanyNo,
                                              @RequestParam("externUid") String externUid);
 
-    @FeignApi("注册第三方用户")
+    @FeignApi("注册第三方用户并绑定")
     @PostMapping("/saveUserByExternUid")
     CommonResponse<String> saveUserByExternUid(@RequestBody Map<String, Object> params);
+
+    @FeignApi("不验证并绑定第三方用户")
+    @PostMapping("/unvalidateAndBindUserByExternUid")
+    CommonResponse<Map> unvalidateAndBindUserByExternUid(@RequestBody Map<String, Object> params);
+
+    /**
+     * @param userId 不加密
+     */
+    @FeignApi("查询用户信息")
+    @GetMapping("/findUserByUserid")
+    CommonResponse<Map> findUserByUserid(@RequestParam("userId") String userId);
 }

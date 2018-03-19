@@ -57,7 +57,6 @@ public class Demo {
 			try {
 				str = new String(info,"GBK");
 			} catch (UnsupportedEncodingException e) {
-				// TODO 自动生成的 catch 块
 				e.printStackTrace();
 			}
 		}

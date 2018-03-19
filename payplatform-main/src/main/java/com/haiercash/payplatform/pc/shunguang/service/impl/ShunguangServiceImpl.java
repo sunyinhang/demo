@@ -3,8 +3,7 @@ package com.haiercash.payplatform.pc.shunguang.service.impl;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.DateUtils;
-import com.haiercash.mybatis.util.DateUtil;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.payplatform.common.dao.CooperativeBusinessDao;
 import com.haiercash.payplatform.common.dao.SgRegionsDao;
 import com.haiercash.payplatform.common.dao.SgReturngoodsLogDao;
@@ -27,7 +26,7 @@ import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.DesUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.rest.common.CommonRestUtils;
@@ -41,9 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,10 +81,9 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
 
     public static Map<String, Object> getAcqHead(String tradeCode, String sysFlag, String channelNo, String cooprCode, String tradeType) {
         Map<String, Object> headMap = new HashMap<>();
-        Date now = new Date();
         headMap.put("serno", UUID.randomUUID().toString().replaceAll("-", ""));
-        headMap.put("tradeDate", DateUtil.formatDate(now, "yyyy-MM-dd"));
-        headMap.put("tradeTime", DateUtil.formatDate(now, "HH:mm:ss"));
+        headMap.put("tradeDate", DateUtils.nowDateString());
+        headMap.put("tradeTime", DateUtils.nowTimeString());
         headMap.put("tradeCode", tradeCode);
         headMap.put("sysFlag", sysFlag);
         headMap.put("channelNo", channelNo);
@@ -1233,9 +1229,6 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         SgReturngoodsLog sgReturngoodsLog = shunGuangthLogDao.getByMallOrderNo(mallOrderNo);
 
         SgReturngoodsLog ts = new SgReturngoodsLog();
-        SimpleDateFormat tm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date();
-        String time = tm.format(date);
         ts.setLogId(UUID.randomUUID().toString().replace("-", ""));
         ts.setMsgTyp(msgType);
         ts.setApplSeq(applSeq);
@@ -1248,7 +1241,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
         ts.setStatus(status);
         ts.setChannelNo(channelNo);
         ts.setContent(content);
-        ts.setTime(time);
+        ts.setTime(DateUtils.nowDateTimeString());
 
         int returnflag = 0;//0:推送成功   1：推送失败
         try {
@@ -1270,7 +1263,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 returnflag = 0;
             } else {
                 ts.setFlag("N");//推送失败
-                if (n == 3) {
+                if (n >= 3) {
                     returnflag = 0;
                 } else {
                     returnflag = 1;
@@ -1348,15 +1341,14 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
                 com.alibaba.fastjson.JSONObject jsonsObj = com.alibaba.fastjson.JSONObject.parseObject(resultjson);
                 com.alibaba.fastjson.JSONObject headone = jsonsObj.getJSONObject("head");
                 String retflag = headone.getString("retFlag");
-                Date date = new Date();
                 String locId = data.getLogId();
                 logger.info("数据库信息Id==>" + locId);
                 if ("00000".equals(retflag)) {
                     logger.info("数据推送成功");
-                    shunGuangthLogDao.updateFlagById(DateUtils.toDateTimeString(date), "Y", locId);
+                    shunGuangthLogDao.updateFlagById(DateUtils.nowDateTimeString(), "Y", locId);
                 } else {
                     logger.info("数据推送失败");
-                    shunGuangthLogDao.updateTimesById(DateUtils.toDateTimeString(date), locId);
+                    shunGuangthLogDao.updateTimesById(DateUtils.nowDateTimeString(), locId);
                 }
             });
             return success();

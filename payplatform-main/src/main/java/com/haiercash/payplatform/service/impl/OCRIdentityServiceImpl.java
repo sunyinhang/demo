@@ -7,13 +7,14 @@ import com.haiercash.core.io.Path;
 import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.BeanUtils;
 import com.haiercash.core.lang.Convert;
-import com.haiercash.core.lang.DateUtils;
 import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.ObjectUtils;
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.core.lang.TimeSpan;
 import com.haiercash.core.reflect.GenericType;
 import com.haiercash.core.serialization.URLSerializer;
+import com.haiercash.core.time.DateUtils;
+import com.haiercash.core.time.TimeSpan;
+import com.haiercash.core.util.IdCard;
 import com.haiercash.core.vfs.VFSType;
 import com.haiercash.core.vfs.VFSUserAuthenticator;
 import com.haiercash.core.vfs.VFSUtils;
@@ -27,7 +28,7 @@ import com.haiercash.payplatform.service.CustExtInfoService;
 import com.haiercash.payplatform.service.OCRIdentityService;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.ocr.OCRIdentityTC;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonResponse;
@@ -196,8 +197,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     public Map<String, Object> savaIdentityInfo(Map<String, Object> map) {
         logger.info("OCR信息保存（下一步）***********开始");
         String token = Convert.toString(map.get("token"));
-        String name = Convert.toString(map.get("name"));
-        String authPhone = Convert.toString(map.get("authPhone"));//支付宝授权时用的手机号
+        String name = Convert.toString(map.get("name"));//修改后的姓名
 
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(name)) {
             logger.info("token:" + token + "  name:" + name);
@@ -211,7 +211,28 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         cacheMap.put("name", name);
-        cacheMap.put("authPhone", authPhone);
+        if ("60".equals(this.getChannelNo())) {
+            //身份证号
+            String idCardNo = Convert.toString(cacheMap.get("idCard"));
+            if (StringUtils.isEmpty(idCardNo)) {
+                return fail(ConstUtil.ERROR_CODE, "身份证正面信息有误，请重新拍摄");
+            }
+            IdCard idCard = new IdCard(idCardNo);
+            if (!idCard.isValid())
+                return fail(ConstUtil.ERROR_CODE, "身份证号有误，请重新拍摄");
+
+            //TODO 验证 orc 身份证号是否为该支付宝的身份证
+
+            //背面信息验证
+            if (ObjectUtils.isEmpty(cacheMap.get("issued")) || ObjectUtils.isEmpty(cacheMap.get("validDate"))) {
+                return fail(ConstUtil.ERROR_CODE, "身份证反面信息有误，请重新拍摄");
+            }
+            //支付宝手机号
+            String authPhone = Convert.toString(map.get("authPhone"));//支付宝授权时用的手机号
+            if (StringUtils.isEmpty(authPhone))
+                return fail(ConstUtil.ERROR_CODE, "授权手机号不能为空");
+            cacheMap.put("authPhone", authPhone);
+        }
         RedisUtils.setExpire(token, cacheMap);
         logger.info("OCR信息保存（下一步）***********结束");
         return success();
@@ -664,6 +685,9 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                     break;
                 case "sesame": {
                     String custName = (String) cacheMap.get("name");
+                    if (StringUtils.isEmpty(custName)) {
+                        custName = StringUtils.EMPTY;
+                    }
                     String custNameB = URLSerializer.encode(Base64Utils.encodeString(custName));
                     realmName = "/app/appserver/seSameCredit?custName=" + custNameB;
                     logger.info("------------芝麻信用授权书展示地址---------" + realmName);
@@ -698,7 +722,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
 
     //实名认证(标准现金贷)
     @Override
-    public Map<String, Object> realAuthenticationForXjd(Map<String, Object> map) throws Exception {
+    public IResponse<Map> realAuthenticationForXjd(Map<String, Object> map) throws IOException {
         logger.info("实名认证*********************开始");
 
         //1.前台参数获取
@@ -716,13 +740,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("token:" + token + "  verifyNo:" + verifyNo +
                     "  cardnumber:" + cardnumber + "  mobile:" + mobile + "   channel:" + channel + "   channelNo:" + channelNo);
             logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //3.jedis缓存数据获取
         Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
         if (MapUtils.isEmpty(cacheMap)) {
             logger.info("Jedis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
         }
         String name = (String) cacheMap.get("name");//扫描客户姓名
         String birthDt = (String) cacheMap.get("birthday");//扫描出生年月日
@@ -738,7 +762,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("扫描的身份证号码是" + idCard);
         } else {
             logger.info("扫描身份证号为空");
-            return fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
         }
         //4.缓存数据非空判断
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
@@ -747,7 +771,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             logger.info("name:" + name + "  birthDt:" + birthDt + "  gender:" + gender + "  validDate:" + validDate + "  certOrga:" + certOrga
                     + "   ethnic:" + ethnic + "    idCard:" + idCard + "   userId:" + userId);
             logger.info("Jedis缓存获取信息失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         //5.校验短信验证码
         Map<String, Object> verifyNoMap = new HashMap<>();
@@ -761,7 +785,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String verifyretFlag = (String) verifyheadjson.get("retFlag");
         if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
             String retMsg = (String) verifyheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
 
@@ -801,7 +825,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String ocrretFlag = (String) ocrheadjson.get("retFlag");
         if (!"00000".equals(ocrretFlag)) {//身份证信息保存失败
             String retMsg = (String) ocrheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
         //绑定手机号修改为实名认证手机号
@@ -823,7 +847,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
             IResponse<Map> resultMap = CommonRestUtils.postForMap(url, param);
             String retFlag = resultMap.getRetFlag();
             if ("00096".equals(retFlag)) {
-                return fail(retFlag, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+                return CommonResponse.fail(retFlag, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
             }
             resultMap.assertSuccessNeedBody();
             Map bodyMap = resultMap.getBody();
@@ -833,18 +857,15 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
                 String postDate = object.get("postDate").toString();
                 TimeSpan time = new TimeSpan(DateUtils.now(), DateUtils.fromDateString(postDate));
                 if (time.getDays() < 180) {
-                    return fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+                    return CommonResponse.fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
                 }
             } else {
-                return fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
+                return CommonResponse.fail(ConstUtil.ERROR_CODE, "您暂不符合准入要求，请下载嗨付APP，享受更多金融服务！");
             }
 
         }
 
         //7.验证并新增实名认证信息
-//        String[] officeArea_split = cityCode.split(",");
-//        String acctProvince = (String) officeArea_split[0];//省代码
-//        String acctCity = (String) officeArea_split[1];//市代码
         Map<String, Object> identityMap = new HashMap<>();
         identityMap.put("token", token);
         identityMap.put("channel", channel);
@@ -856,15 +877,13 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         identityMap.put("dataFrom", channelNo); //数据来源 √
         identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
         identityMap.put("userId", userId); //客户userId
-//        identityMap.put("acctProvince", acctProvince); //开户行省代码
-//        identityMap.put("acctCity", acctCity); //开户行市代码
         identityMap.put("bindMobile", phone);
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
         Map identityheadjson = (Map<String, Object>) identityresultmap.get("head");
         String identityretFlag = (String) identityheadjson.get("retFlag");
         if (!"00000".equals(identityretFlag)) {
             String retMsg = (String) identityheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
 
@@ -940,85 +959,11 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
         String updmobileretflag = (String) updmobileheadjson.get("retFlag");
         if (!"00000".equals(updmobileretflag)) {
             String retMsg = (String) updmobileheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
+            return CommonResponse.fail(ConstUtil.ERROR_CODE, retMsg);
         }
 
         Map<String, Object> resultparamMap = new HashMap<>();
         resultparamMap.put("flag", "1");//通过  个人扩展信息
-        return success(resultparamMap);
-    }
-
-
-    public Map<String, Object> realAuthenticationForHF(Map<String, Object> map) {
-        logger.info("实名认证**********************开始");
-
-        //1.获取前台参数
-        String custName = (String) map.get("custName"); //用户名
-        String certNo = (String) map.get("certNo"); //身份证号
-        String cardnumber = (String) map.get("cardnumber");//卡号
-        String mobile = (String) map.get("mobile");//手机号
-        String verifyNo = (String) map.get("verifyNo"); //验证码
-        String token = (String) map.get("token");
-        String channel = (String) map.get("channel");
-        String channelNo = (String) map.get("channelNo");
-
-        if (StringUtils.isEmpty(custName) || StringUtils.isEmpty(certNo) || StringUtils.isEmpty(cardnumber)
-                || StringUtils.isEmpty(mobile) || StringUtils.isEmpty(verifyNo) || StringUtils.isEmpty(token)
-                || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
-            logger.info("token:" + token + "  verifyNo:" + verifyNo +
-                    "  cardnumber:" + cardnumber + "  mobile:" + mobile + "   channel:" + channel + "   channelNo:" + channelNo);
-            logger.info("前台获取请求参数有误");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-
-
-        //2.jedis缓存数据获取
-        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
-        if (MapUtils.isEmpty(cacheMap)) {
-            logger.info("Jedis数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
-        }
-        String name = (String) cacheMap.get("name");//扫描客户姓名
-        String birthDt = (String) cacheMap.get("birthday");//扫描出生年月日
-        String gender = (String) cacheMap.get("gender");//扫描性别
-        String regAddr = (String) cacheMap.get("address");//扫描详细地址
-        String validDate = (String) cacheMap.get("validDate");//有效期
-        String certOrga = (String) cacheMap.get("issued");//扫描身份证签发机关
-        String ethnic = (String) cacheMap.get("race");//扫描民族
-        String idCard = (String) cacheMap.get("idCard");//扫描身份证号
-        String userId = (String) cacheMap.get("userId");//userId
-        if (!StringUtils.isEmpty(idCard)) {
-            idCard = idCard.toUpperCase();
-            logger.info("扫描的身份证号码是" + idCard);
-        } else {
-            logger.info("扫描身份证号为空");
-            return fail(ConstUtil.ERROR_CODE, "扫描身份证号为空");
-        }
-        //3.缓存数据非空判断
-        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(birthDt) || StringUtils.isEmpty(gender)
-                || StringUtils.isEmpty(regAddr) || StringUtils.isEmpty(validDate) || StringUtils.isEmpty(certOrga)
-                || StringUtils.isEmpty(ethnic) || StringUtils.isEmpty(idCard) || StringUtils.isEmpty(userId)) {
-            logger.info("name:" + name + "  birthDt:" + birthDt + "  gender:" + gender + "  validDate:" + validDate + "  certOrga:" + certOrga
-                    + "   ethnic:" + ethnic + "    idCard:" + idCard + "   userId:" + userId);
-            logger.info("Jedis缓存获取信息失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-
-
-        //4.校验短信验证码
-        Map<String, Object> verifyNoMap = new HashMap<>();
-        verifyNoMap.put("phone", mobile);
-        verifyNoMap.put("verifyNo", verifyNo);
-        verifyNoMap.put("token", token);
-        verifyNoMap.put("channel", channel);
-        verifyNoMap.put("channelNo", channelNo);
-        Map<String, Object> verifyresultmap = appServerService.smsVerify(token, verifyNoMap);
-        Map verifyheadjson = (Map<String, Object>) verifyresultmap.get("head");
-        String verifyretFlag = (String) verifyheadjson.get("retFlag");
-        if (!"00000".equals(verifyretFlag)) {//校验短信验证码失败
-            String retMsg = (String) verifyheadjson.get("retMsg");
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
-        return null;
+        return CommonResponse.success(resultparamMap);
     }
 }

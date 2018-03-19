@@ -1,7 +1,7 @@
 package com.haiercash.payplatform.service.impl;
 
 import com.haiercash.payplatform.service.CrmManageService;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.HttpUtil;
 import org.apache.commons.logging.Log;

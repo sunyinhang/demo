@@ -8,7 +8,7 @@ logging:
 security:
   sessions: never
 info:
-  name: payplatform
+  name: paypaltform
   description: 支付平台
 spring:
   application:
@@ -78,9 +78,9 @@ spring:
         login-password: admin
   mybatis:
     dialect: org.apache.ibatis.dialect.OracleDialect
-    base-package: com.haiercash.mybatis.dao,com.haiercash.payplatform.**.dao
-    aliases-package: com.haiercash.mybatis.data,com.haiercash.payplatform.**.data
-    mapper-locations: classpath*:com/haiercash/mybatis/mapping/*.xml,classpath*:com/haiercash/payplatform/**/mapping/*.xml
+    base-package: com.haiercash.**.dao
+    aliases-package: com.haiercash.**.data
+    mapper-locations: classpath:/com/haiercash/**/mapping/*.xml
     underscore-to-camel-case: true
   mail:
     forward: false
@@ -183,7 +183,10 @@ app:
     secret: 3cff4ee0fd7594270200a8ad55cf1984
   alipay:
     url: https://openapi.alipay.com/gateway.do
-    app-id:
-    app-private-key:
-    alipay-public-key:
+    app-id: 2018010801691941
+    app-private-key: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCLIX7pyZ85PuyMoTD/T9R9Jlme4+iCnKkyRNRV8YaVl5QO0fWzplh6tCssZ9LWW5wZrAjmmzqyhVC2ylGuRAWzcNBPFfnZvRxgQ/TrT5b8NstjFDR++1L00ynl7MB8SpszvrBy/Kv5/oc8IwnrVQaD4cMyyEG/WkheIdYd5LzRfCRidEYdFfARRW3h80wpzlcpvV+hbguTjPRpTrkAnaYsr6w7Q+1Zsy/Ql7h833BFerjk6CdNS5U1RwtxL8AqnY+e32SmwOjrBolYr350syU27r5tLGMsQmCYKcpghgB0zHLDAOnPmB/l+95pscgTqKpoktTgju/SpDFtz6qZmD+ZAgMBAAECggEAXgXP36xKtwQIFe1k0FUhk0XUcOUyHvpB+V+8YywquHNMMku/kJ2M07doKcUsHYKhVlQFW9pxa21eo3jMhEkh1ScbDycZxwTe5Utne5I4xc892YIxC9NKN3twqBo75oMAqZJnaf3JNtPEjmZbcLbwBTYPlQTyMZ+QolSZf3AyDhqoXEOqBLZkzsaNTY9VH+EEm0L1/eoUTczq8CRHciATtCWWt2HOKiYpoc1uyWXAL61J82RmImE/DzrDXdC7r+vn85pWeErgXq9eblejgGjhN2/bkpec8ok55Wn3KCyFv64uR+7JBuhOlJ1EqxPKMxqLsKUMoYVmYnF78gsEnAb2NQKBgQDJQxvK25QCUv07oOwMPo4yco7cmXfiwgfZnC8hvr79TeEhpG7EvdWKJeP6xNrxV24q+kbwa4+V3/puR/D5gh9qkd3IeHG4Di9ZkJOpNX9nc/uvwCTjXKpgUqUf7fKK2XNEz0ZKnITAt9+v15p+fz5TWb+3vPwkAQrO/NOvpMMuxwKBgQCw+H2p+aa6ctwTsAWq8DzxtBpz+W96qUVhGw6KpffxfGQiV9kwp7mUcSRwujGPkBg7iG7zzbuMvlIwOUvajkC/fU17FGl2wnMZ/e8GkbZmQMRY65B7QtJE2CbMLhr9E5stoLIgDE/FsVVbsd+sosxMcETg4ffBBDSpeiblBqY+nwKBgA0QXBd41UypUmKyeV/6F4TSxs8u7wc7DQNlDfIkzYTnrztdzwraP6gt+XRnnsaXpEEJ6dzlPna+CSVragroFV33hevjVY5a7Vvk9JDBNjni321zDXHsq+qAstM1wM6eesr2oVtqeXuA8/YYCqE3ZTZH1xf4Hm2/25G/+4WlLj41AoGBAIGkaBp+4t8viX16s4w4Fc1TDRXsovgOzN6IPazgTLTBVXG7PUZheJgAEpvqKqhq/PWPywgbrMs8GWVuc90V3OTq3DnQCDqR1FQ0LEh5sk9SHwSs/NjvaK46UqG9HNRM6p8QW60Sl9XRRSC5O4xybouIq0y6/Q6PEC0faSLaListAoGAQT3iLY/9pCQBH0mmOzkknIfnNdjkc216OrzbvODsxWTFlxhhuYg/SvwCovs9c8VxaNg5oFuhPCaobsGWnpBkdPGa9dw3seFt2s5ET0JveRvOqv8akXAL0Mq5A3rpVQjY1br6T/xupumrkWwNWXZFzRkRUzZWlQxjb1bojwtx3Bw=
+    alipay-public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1MgOD+bQiUWKNYz1bIoJMjtmx4YbFDF8HEVZmKo4pJM6Di9lok0tbC/khxNFZklw8EvjR4DoryYwCm1golTL7K8eYnKd9uPhKsSEvHIpYwEwJ0IdDSkJ/gtBbQ83qYvlV69BJTdPiUygaQ1kP9Y89hXO+5GHGrLhtbIs8BAPT2dHBnnaARZsLZRyQYIGps15hlGGUP2HWwSC6bBRt9S5R8m+iR5YXtJ9NdL6us0W7JuI+4H7SWPVbikogz7PD95rVdY5aiOXIxv+GpYDrQ+Dm9c6Amb6Y67HvR/f1P42K2Y83Zd36+onqFekjSQTFNMSzV0FXvqu9ebcn/NVwZleoQIDAQAB
     fuwu-min-score: 600
+    wap-pay-return-url: /alipay/#!/loan/orderSucc.html
+    wap-pay-notify-url: https://www.haiercash.com:15006/api/foreign/bankfront/callBack/aliDeductCallBack
+    wap-pay-subject: 现金贷还款

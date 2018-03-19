@@ -1,11 +1,11 @@
 package com.haiercash.payplatform.service.impl;
 
-import com.haiercash.core.lang.DateUtils;
+import com.haiercash.core.time.DateUtils;
 import com.haiercash.core.util.IdCard;
 import com.haiercash.payplatform.common.data.AppOrder;
 import com.haiercash.payplatform.common.data.CommonRepaymentPerson;
 import com.haiercash.payplatform.service.CmisService;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;

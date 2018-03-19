@@ -3,7 +3,7 @@ package com.haiercash.spring.rest.cmis;
 import com.bestvike.linq.exception.InvalidOperationException;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.core.lang.StringUtils;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.rest.cmis.v1.CmisResponse;
 import com.haiercash.spring.rest.cmis.v2.CmisResponse2;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
@@ -42,7 +42,7 @@ public enum CmisVersion {
             case V1:
                 return EurekaServer.CMISFRONTSERVER + "/pub/cmisfront";
             case V2:
-                return EurekaServer.CMISINTERFACESERVER + "/api/cmis/interfaces/interface/" + request.getTradeCode();
+                return EurekaServer.CMISINTERFACESERVER + "/api/cmis/interfaces/interface/" + request.getTradeCode() + "/";
             default:
                 throw new InvalidOperationException("not supported cmis version");
         }

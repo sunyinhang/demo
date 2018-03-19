@@ -13,7 +13,7 @@ import com.haiercash.payplatform.service.GmService;
 import com.haiercash.payplatform.service.OrderService;
 import com.haiercash.payplatform.utils.ChannelType;
 import com.haiercash.payplatform.utils.FormatUtil;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;

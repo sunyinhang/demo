@@ -1,6 +1,7 @@
 package com.haiercash.payplatform.service.client;
 
 import com.haiercash.spring.feign.annotation.FeignApi;
+import com.haiercash.spring.rest.common.CommonResponse;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,4 +16,8 @@ public interface OutreachClient {
     @FeignApi("外联四要素或三要素认证")
     @PostMapping(value = "/api/chinaPay/identifyByFlag")
     Map<String, Object> identifyByFlag(@RequestBody Map<String, Object> params);
+
+    @FeignApi("芝麻协议签章")
+    @PostMapping(value = "/api/alibaba/signature")
+    CommonResponse<String> signature(@RequestBody Map<String, Object> params);
 }

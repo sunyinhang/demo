@@ -19,6 +19,6 @@ public final class WeiXinTicket extends WeiXinResponse {
 
     @JSONField(serialize = false, deserialize = false)
     public boolean isValid() {
-        return this.genTime != null && System.currentTimeMillis() <= (this.genTime.getTime() + EXPIRE * 60 * 1000);
+        return this.genTime != null && System.currentTimeMillis() <= this.genTime.getTime() + EXPIRE * 60 * 1000;
     }
 }

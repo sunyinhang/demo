@@ -36,7 +36,7 @@ public final class ClientInputStreamWrapper extends InputStream {
     private void parseBody() {
         try {
             this.content = this.cachedLength > TraceConfig.DISPLAY_SIZE
-                    ? (new String(this.cachedBuffer, 0, TraceConfig.DISPLAY_SIZE, TraceConfig.DEFAULT_CHARSET) + TraceConfig.BODY_OVER_FLOW)
+                    ? new String(this.cachedBuffer, 0, TraceConfig.DISPLAY_SIZE, TraceConfig.DEFAULT_CHARSET) + TraceConfig.BODY_OVER_FLOW
                     : new String(this.cachedBuffer, 0, this.cachedLength, TraceConfig.DEFAULT_CHARSET);
         } catch (Exception e) {
             this.content = TraceConfig.BODY_PARSE_FAIL;
@@ -51,7 +51,7 @@ public final class ClientInputStreamWrapper extends InputStream {
     public int read() throws IOException {
         return this.cachedIndex == this.cachedLength
                 ? this.inputStream.read()
-                : (this.cachedBuffer[this.cachedIndex++] & 255);
+                : this.cachedBuffer[this.cachedIndex++] & 255;
     }
 
     @Override

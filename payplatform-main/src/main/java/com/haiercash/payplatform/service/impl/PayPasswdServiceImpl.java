@@ -3,7 +3,6 @@ package com.haiercash.payplatform.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.bestvike.linq.Linq;
 import com.haiercash.core.collection.MapUtils;
 import com.haiercash.core.lang.Convert;
 import com.haiercash.payplatform.config.CashloanConfig;
@@ -11,16 +10,20 @@ import com.haiercash.payplatform.config.OutreachConfig;
 import com.haiercash.payplatform.service.AcquirerService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.CrmManageService;
+import com.haiercash.payplatform.service.CrmService;
 import com.haiercash.payplatform.service.OutreachService;
 import com.haiercash.payplatform.service.PayPasswdService;
+import com.haiercash.payplatform.service.client.OutreachClient;
 import com.haiercash.payplatform.utils.AcqUtil;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
-import com.haiercash.spring.config.EurekaServer;
+import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
+import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
+import com.haiercash.spring.util.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +56,10 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     private CrmManageService crmManageService;
     @Autowired
     private CashloanConfig cashloanConfig;
+    @Autowired
+    private CrmService crmService;
+    @Autowired
+    private OutreachClient outreachClient;
 
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
@@ -251,6 +258,18 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
         JSONObject body = jb.getJSONObject("body");
         String applSeq = body.getString("applSeq");
+        //支付宝渠道进行阿里芝麻签章
+        if ("60".equals(channelNo)) {
+            Map<String, Object> signmap = new HashMap<>();
+            signmap.put("businessChannelNo", this.getChannelNo());
+            signmap.put("name", name);
+            signmap.put("certNo", certNo);
+            signmap.put("applseq", applSeq);
+            signmap.put("mobile", phoneNo);
+            IResponse<String> scoreResponse = this.outreachClient.signature(signmap);
+            scoreResponse.assertSuccessNeedBody();
+        }
+
         //上传风险数据 经纬度
         ArrayList<Map<String, Object>> arrayList = new ArrayList<>();
         ArrayList<String> listOne = new ArrayList<>();
@@ -734,6 +753,17 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         if ("00000".equals(code)) {//查询贷款详情成功
             logger.info("查询贷款详情接口，响应数据：" + jsonObject.getJSONObject("body").toString());
             JSONObject json = jsonObject.getJSONObject("body");
+            String outSts = String.valueOf(json.get("outSts"));//贷款状态
+            json.put("outSts_code", outSts);//状态码
+            String preShouldAmount = "";
+            if ("06".equals(outSts)) {//放款状态，查询借据号
+                String loanNo = String.valueOf(json.get("loanNo"));//loanNo
+                if (StringUtils.isEmpty(loanNo)) {
+                    logger.info("放款状态借据号为空！");
+                    return fail(ConstUtil.ERROR_CODE, "放款状态借据号为空！");
+                }
+                json.put("loanNo", loanNo);//借据号
+            }
 //            String applyTnrTyp = json.getString("apply_tnr_typ");
             String totfee;
             String apprvTotal;
@@ -1375,7 +1405,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             String retmsg = "请求的数据为空：applSeq";
             return fail(ConstUtil.ERROR_CODE, retmsg);
         }
-        List procList;
+        List<Map<String, Object>> procList;
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("applSeq", applSeq);
         paramMap.put("channel", channel);
@@ -1412,7 +1442,8 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                     procList.clear();
                     HashMap<String, Object> param = new HashMap<>();
                     param.put("operateTime", "");//办理时间
-                    param.put("appOutAdvice", "【退回】");//外部意见
+//                    param.put("appOutAdvice", "【退回】");//外部意见
+                    param.put("appOutAdvice", app_out_advice);//外部意见
                     param.put("appConclusion", "");//审批结论标识
                     param.put("wfiNodeName", "退回");//审批状态
                     param.put("appConclusionDesc", app_out_advice);//审批结论
@@ -1424,6 +1455,9 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
                 return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
             }
         } else {
+//            for (int i = 0; i <procList.size() ; i++) {
+//                procList.get(i).put("appConclusionDesc","");
+//            }
             return success(procList);
         }
 
@@ -1534,7 +1568,15 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
         paramMap.put("channel", channel);
         paramMap.put("channelNo", channelNo);
         paramMap.put("userId", userId);
-        return appServerService.getPersonalCenterInfo(token, paramMap);
+        Map<String, Object> resultMap = appServerService.getPersonalCenterInfo(token, paramMap);
+        if(HttpUtil.isSuccess(resultMap)){//自主支付可用额度进行缓存
+            Map bodymap = (Map) resultMap.get("body");
+            String crdNorAvailAmt = Convert.toString(bodymap.get("crdNorAvailAmt"));
+            cacheMap.put("crdNorAvailAmt",crdNorAvailAmt);
+            RedisUtils.setExpire(token, cacheMap);
+        }
+
+        return resultMap;
     }
 
     //返回实名认证需要的数据
@@ -1590,5 +1632,86 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
             return fail(retFlag, retMsg);
         }
         return success();
+    }
+
+    @Override
+    public Map<String, Object> queryApplAmtAndRepayByloanNo(String token, Map<String, Object> params) {
+        logger.info("待还金额&还款明细查询");
+        HashMap<Object, Object> map = new HashMap<>();
+        Map<String, Object> cacheMap = RedisUtils.getExpireMap(token);
+        if (MapUtils.isEmpty(cacheMap)) {
+            logger.info("Jedis获取失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.TIME_OUT);
+        }
+        String outSts_code = (String) params.get("outSts_code");//状态码
+        String applSeq = (String) params.get("applSeq");//状态码
+        if (StringUtils.isEmpty(outSts_code) || StringUtils.isEmpty(applSeq)) {
+            logger.info("获取的参数为空outSts_code:" + outSts_code + "  ,applSeq:" + applSeq);
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        String preShouldAmount = "";
+        if ("06".equals(outSts_code) || "OD".equals(outSts_code)) {//放款状态，查询借据号
+            String loanNo = (String) params.get("loanNo");//借据号
+            if (StringUtils.isEmpty(loanNo)) {
+                logger.info("放款状态借据号为空！");
+                return fail(ConstUtil.ERROR_CODE, "放款状态借据号为空！");
+            }
+            //查询待还金额&还款明细查询
+            HashMap<String, Object> queryApplAmtAndRepayByloanNoOneMap = new HashMap<>();
+            String custNo = (String) cacheMap.get("custNo");// 客户号
+            logger.info("获取的客户号：" + custNo);
+            queryApplAmtAndRepayByloanNoOneMap.put("custNo", custNo);
+            queryApplAmtAndRepayByloanNoOneMap.put("loanNo", loanNo);
+            queryApplAmtAndRepayByloanNoOneMap.put("applSeq", applSeq);
+            queryApplAmtAndRepayByloanNoOneMap.put("isSelectCoupon", "0");
+            queryApplAmtAndRepayByloanNoOneMap.put("paymInd", "N");
+            queryApplAmtAndRepayByloanNoOneMap.put("setlTyp", "NM");
+            queryApplAmtAndRepayByloanNoOneMap.put("relPerdCnt", "0");
+            logger.info("第一次查询待还金额&还款明细查询请求数据：" + queryApplAmtAndRepayByloanNoOneMap);
+            Map<String, Object> resultOneMap = crmService.queryApplAmtAndRepayByloanNo(queryApplAmtAndRepayByloanNoOneMap);
+            logger.info("第一次查询待还金额&还款明细查询返回数据：" + resultOneMap);
+            Map resultOneMaphead = (Map<String, Object>) resultOneMap.get("head");
+            String resultOneMapheadflag = (String) resultOneMaphead.get("retFlag");
+            if ("00000".equals(resultOneMapheadflag)) {
+                Map resultOneMapbody = (Map<String, Object>) resultOneMap.get("body");
+                if (StringUtils.isEmpty(resultOneMapbody.get("preShouldAmount"))) {
+                    logger.info("CRM待还金额&还款明细查询接口未返回字段提前还款应还金额preShouldAmount");
+                    return fail(ConstUtil.ERROR_CODE, "CRM未返回提前还款应还金额！");
+                }
+                BigDecimal preShouldAmount_one = Convert.toDecimal(resultOneMapbody.get("preShouldAmount"));//提前还款应还金额
+                HashMap<String, Object> queryApplAmtAndRepayByloanNoTwoMap = new HashMap<>();
+                queryApplAmtAndRepayByloanNoTwoMap.put("custNo", custNo);
+                queryApplAmtAndRepayByloanNoTwoMap.put("loanNo", loanNo);
+                queryApplAmtAndRepayByloanNoTwoMap.put("applSeq", applSeq);
+                queryApplAmtAndRepayByloanNoTwoMap.put("isSelectCoupon", "0");
+                queryApplAmtAndRepayByloanNoTwoMap.put("paymInd", "N");
+                queryApplAmtAndRepayByloanNoTwoMap.put("setlTyp", "NM");
+                queryApplAmtAndRepayByloanNoTwoMap.put("relPerdCnt", "0");
+                queryApplAmtAndRepayByloanNoTwoMap.put("setlMode", "FS");
+                queryApplAmtAndRepayByloanNoTwoMap.put("actvPayAmt", preShouldAmount_one);
+                queryApplAmtAndRepayByloanNoTwoMap.put("inputAmount", preShouldAmount_one);
+                logger.info("第二次查询待还金额&还款明细查询请求数据：" + queryApplAmtAndRepayByloanNoTwoMap);
+                Map<String, Object> resultTwoMap = crmService.queryApplAmtAndRepayByloanNo(queryApplAmtAndRepayByloanNoTwoMap);
+                logger.info("第二次查询待还金额&还款明细查询返回数据：" + resultTwoMap);
+                Map resultTwoMaphead = (Map<String, Object>) resultTwoMap.get("head");
+                String resultTwoMapheadflag = (String) resultTwoMaphead.get("retFlag");
+                if ("00000".equals(resultTwoMapheadflag)) {
+                    Map resultTwoMapbody = (Map<String, Object>) resultTwoMap.get("body");
+                    if (StringUtils.isEmpty(resultTwoMapbody.get("preShouldAmount"))) {
+                        logger.info("CRM待还金额&还款明细查询接口未返回字段提前还款应还金额preShouldAmount");
+                        return fail(ConstUtil.ERROR_CODE, "CRM未返回提前还款应还金额！");
+                    }
+                    preShouldAmount = Convert.toString(resultTwoMapbody.get("preShouldAmount"));//提前还款应还金额
+                    map.put("preShouldAmount", preShouldAmount);
+                } else {
+                    String retMsg = (String) resultTwoMaphead.get("retMsg");
+                    return fail(ConstUtil.ERROR_CODE, retMsg);
+                }
+            } else {
+                String retMsg = (String) resultOneMaphead.get("retMsg");
+                return fail(ConstUtil.ERROR_CODE, retMsg);
+            }
+        }
+        return success(map);
     }
 }
