@@ -518,6 +518,8 @@ public class AlipayFuwuService extends BaseService {
         params.put("setlTyp", "NM");
         params.put("relPerdCnt", "0");
         CommonResponse<Map> resultOneMap = this.crmClient.queryApplAmtAndRepayByloanNo(params);
+        if ("EI00860017".equals(resultOneMap.getRetFlag()))
+            throw new BusinessException(resultOneMap.getRetFlag(), "您好，16:00-18:00为系统批量扣款时间，暂不支持主动还款，请稍后再试. 如有疑问请联系400-018-7777.");
         resultOneMap.assertSuccess();
     }
 
