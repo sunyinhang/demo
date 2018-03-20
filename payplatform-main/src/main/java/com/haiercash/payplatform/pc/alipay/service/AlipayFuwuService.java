@@ -250,7 +250,9 @@ public class AlipayFuwuService extends BaseService {
                 logger.info("注册后返回 userId: " + userId);
                 break;
             case "Y"://已注册
+            case "C"://被占用
                 IResponse<Map> userInfo = this.uauthClient.getUserId(EncryptUtil.simpleEncrypt(phone));//根据手机获取 userId
+                userInfo.assertSuccessNeedBody();
                 userId = Convert.toString(userInfo.getBody().get("userId"));
                 //查询实名信息,判断四要素是否一致
                 Map<String, Object> custMap = new HashMap<>();
@@ -270,8 +272,6 @@ public class AlipayFuwuService extends BaseService {
                     throw new BusinessException(HttpUtil.getRetFlag(custresult), HttpUtil.getRetMsg(custresult));
                 }
                 break;
-            case "C"://被占用
-                throw new BusinessException(ConstUtil.ERROR_CODE, "手机号被占用");
             default:
                 throw new BusinessException(ConstUtil.ERROR_CODE, "查询注册状态失败");
         }
