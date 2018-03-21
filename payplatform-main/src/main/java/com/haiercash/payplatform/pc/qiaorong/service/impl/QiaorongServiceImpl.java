@@ -16,15 +16,12 @@ import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.utils.AcqTradeCode;
 import com.haiercash.payplatform.utils.AcqUtil;
-import com.haiercash.payplatform.utils.AppServerUtils;
 import com.haiercash.payplatform.utils.CmisUtil;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
 import com.haiercash.spring.eureka.EurekaServer;
 import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.spring.rest.IResponse;
 import com.haiercash.spring.rest.client.JsonClientUtils;
-import com.haiercash.spring.rest.common.CommonRestUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
 import com.haiercash.spring.util.HttpUtil;
@@ -218,9 +215,15 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String token = (String) map.get("token");
         String channel = (String) map.get("channel");
         String channelNo = (String) map.get("channelNo");
-        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
+        String verifyNo = (String) map.get("verifyNo");//验证码
+        String loginNum = (String) map.get("loginNum");//登录事件号
+        String loginEvent = (String) map.get("loginEvent");//登录事件
+        String lendNum = (String) map.get("lendNum");//借款事件号
+        String lendEvent = (String) map.get("lendEvent");//借款事件
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel)
+                || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(verifyNo)) {
             logger.info("前台传入参数有误");
-            logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo);
+            logger.info("token:" + token + "  channel:" + channel + "  channelNo:" + channelNo + "  verifyNo:" + verifyNo);
             return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
         }
         Map<String, Object> returnmap = new HashMap<>();
@@ -236,7 +239,37 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String idNo = (String) cacheMap.get("idCard");//身份证
         String cardnumber = (String) cacheMap.get("cardnumber");//银行卡
         String typCde = (String) cacheMap.get("typCde");
-        //1.新增并验证实名信息
+        String applseq = (String) cacheMap.get("applSeq");
+
+        //1.查看订单是否已提交
+        Map<String, Object> paramMap1 = new HashMap<>();
+        paramMap1.put("applSeq", applseq);
+        paramMap1.put("channelNo", channelNo);
+        Map<String, Object> acquierOrder = AcqUtil.getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/selectApplInfoApp",
+                AcqTradeCode.SELECT_APP_APPL_INFO, ConstUtil.CHANNEL, channelNo, null, null, paramMap1);
+
+        Map mapLoanDetail = (Map<String, Object>) acquierOrder.get("response");
+        if (!HttpUtil.isSuccess(mapLoanDetail)) {
+            return mapLoanDetail;
+        }
+        Map bodyLoanDetail = (Map<String, Object>) mapLoanDetail.get("body");
+        String outSts = Convert.toString(bodyLoanDetail.get("outSts"));
+        if(!"00".equals(outSts) && !"22".equals(outSts)){//00:待提交   22：被退回
+            return fail(ConstUtil.ERROR_CODE, "订单已提交");
+        }
+
+        //2.校验短信验证码
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("phone", phone);
+        paramMap.put("verifyNo", verifyNo);
+        paramMap.put("channel", channel);
+        paramMap.put("channelNo", channelNo);
+        Map<String, Object> stringObjectMap = appServerService.smsVerify(token, paramMap);
+        if (!HttpUtil.isSuccess(stringObjectMap)) {
+            return stringObjectMap;
+        }
+
+        //3.新增并验证实名信息
         Map<String, Object> identityMap = new HashMap<>();
         identityMap.put("token", token);
         identityMap.put("channel", channel);
@@ -247,9 +280,6 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         identityMap.put("mobile", phone); //手机号 √
         identityMap.put("dataFrom", channelNo); //数据来源 √
         identityMap.put("threeParamVal", ConstUtil.THREE_PARAM_VAL_N); //是否需要三要素验证
-//        identityMap.put("userId", phone); //客户userId
-//        identityMap.put("acctProvince", acctProvince); //开户行省代码
-//        identityMap.put("acctCity", acctCity); //开户行市代码
         Map<String, Object> identityresultmap = appServerService.fCiCustRealThreeInfo(token, identityMap);
         Map identityheadjson = (Map<String, Object>) identityresultmap.get("head");
         String identityretFlag = (String) identityheadjson.get("retFlag");
@@ -262,94 +292,131 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         String custNo = (String) identitybodyjson.get("custNo");
         String custName = (String) identitybodyjson.get("custName");
         String certNo = (String) identitybodyjson.get("certNo");
-
         cacheMap.put("custNo", custNo);
         cacheMap.put("custName", custName);
         cacheMap.put("certNo", certNo);
-        cacheMap.put("userflag", "1");
-        logger.info("userflag:1");
         RedisUtils.setExpire(token, cacheMap);
 
-        String providerNo = "";//人脸机构
-        if("33".equals(channelNo)){//乔融查询人脸机构配置
-            logger.info("查询人脸机构配置");
-            Map<String, Object> params = new HashMap<>();
-            params.put("typCde", typCde);
-            String urlface = AppServerUtils.getAppServerUrl() + "/app/appserver/getCmisFacedOrg";
-            IResponse<Map> response2 = CommonRestUtils.getForMap(urlface, params);
-            response2.assertSuccessNeedBody();
-            Map map1 = response2.getBody();
-            List list = (List) map1.get("faceConfigList");
-            if(list.size() == 0){
-                return fail(ConstUtil.ERROR_CODE, "贷款品种"+typCde+"没有配置人脸机构");
-            }
-            Map m = (Map) list.get(0);
-            providerNo = Convert.toString(m.get("providerNo"));
+        //4.签订合同
+        //（1）个人借款合同   获取贷款品种小类
+        Map<String, Object> loanparamMap = new HashMap<>();
+        loanparamMap.put("typCdeList", typCde);
+        Map<String, Object> loanmap = appServerService.pLoanTypList(token, loanparamMap);
+        if (!HttpUtil.isSuccess(loanmap)) {
+            return loanmap;
+        }
+        List<Map<String, Object>> loanbody = (List<Map<String, Object>>) loanmap.get("body");
+        String typLevelTwo = "";
+        for (Map<String, Object> m : loanbody) {
+            typLevelTwo = m.get("levelTwo").toString();
         }
 
-        if("03".equals(providerNo)){//人脸机构为face++则不进行是否需要人脸的检查
-            //1.查看redis取值  如果redis存储已经人脸成功则直接跳转提交页面
-            //2.如果人脸未成功  查看人脸次数  若人脸不够次数  继续走人脸    若人脸次数达到上限则  终止
-            String faceflag = (String) cacheMap.get("faceflag");
-            String facecount = Convert.toString(cacheMap.get("facecount"));
-            if("Y".equals(faceflag)){
-                returnmap.put("flag", "05");//跳转合同
-                return success(returnmap);//跳转合同展示页面
-            }
-            if("5".equals(facecount)){
-                logger.info("人脸识别，剩余次数为0，录单终止");
-                return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
-            }else{
-                logger.info("未通过人脸识别，可以再做人脸识别");
-                returnmap.put("flag", "02");// 人脸识别
-                return success(returnmap);
-            }
+        JSONObject order = new JSONObject();
+        order.put("custName", name);// 客户姓名
+        order.put("idNo", idNo);// 客户身份证号
+        order.put("indivMobile", phone);// 客户手机号码
+        order.put("applseq", applseq);// 请求流水号
+        order.put("typLevelTwo", typLevelTwo);// typLevelTwo 贷款品种小类
+        order.put("typCde", typCde);// 贷款品种代码
 
+        JSONObject orderJson = new JSONObject();// 订单信息json串
+        orderJson.put("order", order.toString());
+
+        SignContractInfo signContractInfo = signContractInfoDao.getSignContractInfo(typCde);
+        if (signContractInfo == null) {
+            return fail(ConstUtil.ERROR_CODE, "贷款品种" + typCde + "没有配置签章类型");
+        }
+        String signType = signContractInfo.getSigntype();//签章类型
+        Map<String, Object> contractmap = new HashMap<>();//
+        contractmap.put("custName", name);// 客户姓名
+        contractmap.put("custIdCode", idNo);// 客户身份证号
+        contractmap.put("applseq", applseq);// 请求流水号
+        contractmap.put("signType", signType);// 签章类型
+        contractmap.put("flag", "0");//1 代表合同  0 代表 协议
+        contractmap.put("orderJson", orderJson.toString());
+        contractmap.put("sysFlag", "11");// 系统标识：支付平台
+        contractmap.put("channelNo", channelNo);
+        appServerService.caRequest(null, contractmap);
+
+        //（2）征信借款合同
+        JSONObject orderZX = new JSONObject();
+        orderZX.put("custName", name);// 客户姓名
+        orderZX.put("idNo", idNo);// 客户身份证号
+        orderZX.put("indivMobile", phone);// 客户手机号码
+        orderZX.put("applseq", applseq);// 请求流水号
+
+        JSONObject orderZXJson = new JSONObject();// 订单信息json串
+        orderZXJson.put("order", orderZX.toString());
+
+        Map<String, Object> reqZXJson = new HashMap<>();// 征信
+        reqZXJson.put("custName", name);// 客户姓名
+        reqZXJson.put("custIdCode", idNo);// 客户身份证号
+        reqZXJson.put("applseq", applseq);// 请求流水号
+        reqZXJson.put("signType", "credit");// 签章类型
+        reqZXJson.put("flag", "0");//1 代表合同  0 代表 协议
+        reqZXJson.put("orderJson", orderZXJson.toString());
+        reqZXJson.put("sysFlag", "11");// 系统标识：支付平台
+        reqZXJson.put("channelNo", channelNo);
+        appServerService.caRequest(token, reqZXJson);
+
+
+        //（3）注册合同
+        JSONObject orderRegister = new JSONObject();
+        orderRegister.put("custName", name);// 客户姓名
+        orderRegister.put("idNo", idNo);// 客户身份证号
+        orderRegister.put("indivMobile", phone);// 客户手机号码
+        orderRegister.put("applseq", applseq);// 请求流水号
+
+        JSONObject orderZCJson = new JSONObject();// 订单信息json串
+        orderZCJson.put("order", orderRegister.toString());
+
+        Map<String, Object> reqZCJson = new HashMap<>();// 征信
+        reqZCJson.put("custName", name);// 客户姓名
+        reqZCJson.put("custIdCode", idNo);// 客户身份证号
+        reqZCJson.put("applseq", applseq);// 请求流水号
+        reqZCJson.put("signType", "register");// 签章类型
+        reqZCJson.put("flag", "0");//1 代表合同  0 代表 协议
+        reqZCJson.put("orderJson", orderZCJson.toString());
+        reqZCJson.put("sysFlag", "11");// 系统标识：支付平台
+        reqZCJson.put("channelNo", channelNo);
+        appServerService.caRequest(token, reqZCJson);
+
+        //5.百融风险信息推送
+        logger.info("百融登录事件：loginEvent：" + loginEvent + "********loginEventNum:" + loginNum + "  lendEvent" + lendEvent + "  lendNum:" + lendNum);
+        if (!StringUtils.isEmpty(loginNum) && !StringUtils.isEmpty(lendNum)) {
+            Map<String, Object> riskmap = new HashMap<>();
+            List<List<Map<String, String>>> content = new ArrayList<>();
+            List<Map<String, String>> contentList = new ArrayList<>();
+
+            //登录事件
+            Map<String, String> mapLoginEvent = new HashMap();
+            mapLoginEvent.put("content", EncryptUtil.simpleEncrypt(loginNum));
+            mapLoginEvent.put("reserved6", applseq);
+            mapLoginEvent.put("reserved7", "antifraud_login");
+            contentList.add(mapLoginEvent);
+            //借款事件
+            Map<String, String> mapLendEvent = new HashMap();
+            mapLendEvent.put("content", EncryptUtil.simpleEncrypt(lendNum));
+            mapLendEvent.put("reserved6", applseq);
+            mapLendEvent.put("reserved7", "antifraud_lend");
+            contentList.add(mapLendEvent);
+
+            content.add(contentList);
+            riskmap.put("content", content);
+            riskmap.put("reserved7", "antifraud_lend");
+            riskmap.put("applSeq", applseq);
+            riskmap.put("idNo", EncryptUtil.simpleEncrypt(idNo));
+            riskmap.put("name", EncryptUtil.simpleEncrypt(name));
+            riskmap.put("mobile", EncryptUtil.simpleEncrypt(phone));
+            riskmap.put("dataTyp", "A501");
+            riskmap.put("source", "2");
+            riskmap.put("token", token);
+            riskmap.put("channel", channel);
+            riskmap.put("channelNo", channelNo);
+            appServerService.updateRiskInfo("", riskmap);
         }
 
-        //3.手机号已注册，判断是否需要人脸识别
-        Map<String, Object> faceparamMap = new HashMap<>();
-        faceparamMap.put("typCde", typCde);
-        faceparamMap.put("source", channel);
-        faceparamMap.put("custNo", custNo);
-        faceparamMap.put("name", name);
-        faceparamMap.put("idNumber", idNo);
-        faceparamMap.put("token", token);
-        faceparamMap.put("channel", channel);
-        faceparamMap.put("channelNo", channelNo);
-        Map<String, Object> resultmap = appServerService.ifNeedFaceChkByTypCde(token, faceparamMap);
-        Map headjson = (Map) resultmap.get("head");
-        String retFlag = (String) headjson.get("retFlag");
-        String retMsg = (String) headjson.get("retMsg");
-        if (!"00000".equals(retFlag)) {
-            return fail(ConstUtil.ERROR_CODE, retMsg);
-        }
-        Map body = (Map) resultmap.get("body");
-        String code = (String) body.get("code"); //结果标识码
-        switch (code) {
-            case "00": //人脸识别通过
-                logger.info("已经通过了人脸识别（得分合格），不需要再做人脸识别");
-                logger.info("已经通过了人脸识别（得分合格），跳转合同展示");
-                returnmap.put("flag", "05");//跳转合同
-                return success(returnmap);//跳转合同展示页面
-            case "01": //01：未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止
-                //终止
-                logger.info("未通过人脸识别，剩余次数为0，不能再做人脸识别，录单终止");
-                return fail(ConstUtil.ERROR_CODE, "不能再做人脸识别，录单终止!");
-            case "02": //02：未通过人脸识别，剩余次数为0，不能再做人脸识别，但可以上传替代影像
-                //跳转替代影像
-                //终止
-                logger.info("人脸识别，剩余次数为0，录单终止");
-                return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
-            case "10": //10：未通过人脸识别，可以再做人脸识别
-                //可以做人脸识别
-                logger.info("未通过人脸识别，可以再做人脸识别");
-                returnmap.put("flag", "02");// 人脸识别
-
-                return success(returnmap);
-        }
-
-        return returnmap;
+        return success();
     }
 
     /*
@@ -788,6 +855,55 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
 //        }
 //        Map<String, Object> response = (Map<String, Object>) responseMap.get("response");
 
+    }
+
+
+    /**
+     * 订单提交
+     * @param map
+     * @return
+     */
+    @Override
+    public Map<String, Object> ordersubmit(Map<String, Object> map) {
+        String custNo = (String) map.get("custNo");
+        String applseq = (String) map.get("applseq");
+        String channel = (String) map.get("channel");
+        String channelNo = (String) map.get("channelNo");
+        String token = (String) map.get("token");
+        String callbackUrl = (String) map.get("callbackUrl");
+        //图片上传
+        Map<String, Object> uploadimgmap = new HashMap<>();
+        uploadimgmap.put("custNo", custNo);//客户编号
+        uploadimgmap.put("applSeq", applseq);//订单号
+        uploadimgmap.put("channel", channel);
+        uploadimgmap.put("channelNo", channelNo);
+        Map<String, Object> uploadimgresultmap = appServerService.uploadImg2CreditDep(token, uploadimgmap);
+        if (!HttpUtil.isSuccess(uploadimgresultmap)) {
+            logger.info("订单提交，影像上传失败");
+            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+        }
+        logger.info("订单提交，影像上传成功");
+
+
+        //订单提交
+        Map<String, Object> param = new HashMap<>();
+        param.put("applSeq", applseq);
+        param.put("flag", "1");//贷款提交
+        Map<String, Object> result = AcqUtil
+                .getAcqResponse(EurekaServer.ACQUIRER + "/api/appl/commitAppl", AcqTradeCode.COMMIT_APPL,
+                        ConstUtil.CHANNEL, channelNo, null, null, param);
+        if (!CmisUtil.isSuccess(result)) {
+            logger.info("收单系统提交贷款申请失败, applSeq:" + applseq);
+        } else {
+            logger.info("收单系统提交贷款申请成功, applSeq:" + applseq);
+            //接口回调
+            String backurl = callbackUrl + "?applseq=" + applseq;
+            logger.info("乔融豆子*******签章回调地址：" + backurl);
+            String resData = JsonClientUtils.getForString(backurl);
+            logger.info("乔融豆子*******签章回调接口返回数据：" + resData);
+        }
+
+        return (Map) result.get("response");
     }
 
 
