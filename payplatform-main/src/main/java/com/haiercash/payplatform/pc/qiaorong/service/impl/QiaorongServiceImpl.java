@@ -63,6 +63,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         //logger.info("输出：" + map);
         String channelNo = (String) map.get("channelNo");
         String data = (String) map.get("data");
+        String flag = (String) map.get("flag");
         if (StringUtils.isEmpty(channelNo)) {
             logger.info("渠道编码不能为空");
             return fail(ConstUtil.ERROR_CODE, "渠道编码不能为空");
@@ -95,7 +96,7 @@ public class QiaorongServiceImpl extends BaseService implements QiaorongService 
         cachemap.put("callbackUrl", callbackUrl);
         RedisUtils.setExpire(uuid, cachemap);
         String date = DateUtils.nowString("yyyyMMddHHmmssSSS");
-        String backurl = commonConfig.getGateUrl() + "/qr/#!/installment.html?token=" + uuid + "&applseq=" + applSeq + "&date=" + date;
+        String backurl = commonConfig.getGateUrl() + "/qr/#!/installment.html?token=" + uuid + "&applseq=" + applSeq + "&date=" + date + "&flag=" + flag;
         logger.info("签章跳转页面地址：" + backurl);
         Map ResultMap = new HashMap();
         ResultMap.put("backurl", backurl);
