@@ -22,10 +22,12 @@ public final class PrefixStringRedisSerializer implements RedisSerializer<String
         this.properties = properties;
     }
 
+    @Override
     public String deserialize(byte[] bytes) {
         return bytes == null ? StringUtils.EMPTY : this.properties.removePrefix(new String(bytes, this.charset));
     }
 
+    @Override
     public byte[] serialize(String key) {
         return this.properties.addPrefix(key).getBytes(StandardCharsets.UTF_8);
     }
