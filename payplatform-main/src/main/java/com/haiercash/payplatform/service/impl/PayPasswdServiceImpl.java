@@ -61,6 +61,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     @Autowired
     private OutreachClient outreachClient;
 
+    @Override
     public Map<String, Object> resetPayPasswd(String token, String channelNo, String channel, Map<String, Object> param) {
         logger.info("查询******额度提交接口******开始");
         String retflag;
@@ -323,6 +324,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //页面缓存
+    @Override
     public Map<String, Object> cache(Map<String, Object> params, HttpServletRequest request) {
         String token = request.getHeader("token");
         if (token == null || "".equals(token)) {
@@ -369,6 +371,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //修改支付密码（记得支付密码）
+    @Override
     public Map<String, Object> updatePayPasswd(String token, Map<String, Object> params, String channel, String channelNo) {
         String oldpassword = (String) params.get("oldpassword");//旧密码
         String newpassword = (String) params.get("newpassword");//新密码
@@ -414,6 +417,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //实名认证找回密码
+    @Override
     public Map<String, Object> updPwdByIdentity(Map<String, Object> params) {
         String token = super.getToken();
         if (token == null || "".equals(token)) {
@@ -496,6 +500,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //确认支付密码（额度申请）
+    @Override
     public Map<String, Object> paymentPwdConfirm(String token, String channel, String channelNo, Map<String, Object> params) {
         String payPasswd = (String) params.get("payPasswd");
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo) || StringUtils.isEmpty(payPasswd)) {
@@ -543,6 +548,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
 
     //贷款详情查询
+    @Override
     public Map<String, Object> queryLoanDetailInfo(String token, String applSeq) {
         BigDecimal psNormIntAmt;
         BigDecimal feeAmt;
@@ -707,6 +713,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
 
 
     //贷款详情查询
+    @Override
     public Map<String, Object> queryLoanDetailInfoForApp(String token, String applSeq) {
         BigDecimal psNormIntAmt;
         BigDecimal feeAmt;
@@ -888,6 +895,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情页面:按贷款申请查询分期账单
+    @Override
     public Map<String, Object> queryApplListBySeq(String token, String channel, String channelNo, String applSeq) {
         String loanNo = "";
         String retflag;
@@ -981,6 +989,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //贷款详情页面:还款总额
+    @Override
     public Map<String, Object> queryApplAmtBySeqAndOrederNo(String token, String channel, String channelNo, String applSeq) {
         logger.info("待还款-贷款详情页面:还款总额接口，开始");
         String retflag = "";
@@ -1230,6 +1239,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //查询额度
+    @Override
     public Map<String, Object> edCheck(String token) {
         if (StringUtils.isEmpty(token)) {
             logger.info("获取token失败token:" + token);
@@ -1293,6 +1303,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
      * @author yu jianwei
      * @date 2017/9/14 12:29
      */
+    @Override
     public Map<String, Object> billCheck(String token) {
         if (StringUtils.isEmpty(token)) {
             logger.info("获取token失败token:" + token);
@@ -1344,6 +1355,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //根据流水号查询额度审批进度
+    @Override
     public Map<String, Object> approvalProcessInfo(String token, String channel, String channelNo, Map<String, Object> params) {
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("获取的参数为空token=" + token + "  ,channel=" + channel + "  ,channelNo=" + channelNo);
@@ -1388,6 +1400,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //根据流水号查询贷款审批进度
+    @Override
     public Map<String, Object> queryDkProcessInfo(String token, String channel, String channelNo, Map<String, Object> params) {
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(channel) || StringUtils.isEmpty(channelNo)) {
             logger.info("获取的参数为空token:" + token + "  ,channel" + channel + "  ,channelNO" + channelNo);
@@ -1580,6 +1593,7 @@ public class PayPasswdServiceImpl extends BaseService implements PayPasswdServic
     }
 
     //返回实名认证需要的数据
+    @Override
     public Map<String, Object> queryCustNameByUId(String token) {
         if (token == null || "".equals(token)) {
             logger.info("获取的token为空" + token);

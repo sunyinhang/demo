@@ -45,6 +45,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
     }
 
 
+    @Override
     public void dealAddress(Map<String, Object> crmBodyMap) {//1 渠道进件  2共同还款人 3额度申请 用
         //户籍地址
         // crm: regLiveInd(Y  N) --户籍地址是否同现住房
@@ -110,6 +111,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
 
     }
 
+    @Override
     public void dealDeliverAddress(AppOrder order, Map<String, Object> crmBodyMap) {
         //获取送货地址选项
         String deliverAddrTyp = order.getDeliverAddrTyp();
@@ -147,6 +149,7 @@ public class CmisServiceImpl extends BaseService implements CmisService{
 
     }
 
+    @Override
     public Map<String, String> getPhoneNoAndZone(String phoneNo) {
         HashMap resultMap = new HashMap<String, String>();
         // 1、将号码中的-替换掉
@@ -180,8 +183,9 @@ public class CmisServiceImpl extends BaseService implements CmisService{
         return resultMap;
     }
 
+    @Override
     public Map<String, Object> getCommonPayPersonMap(String custNo, String source, String typGrp,
-            CommonRepaymentPerson person, String version) {
+                                                     CommonRepaymentPerson person, String version) {
         HashMap<String, Object> apptmap = new HashMap<>();
         // attpmap封装从crm中调取的个人信息的数据
         String url = EurekaServer.CRM + "/app/crm/cust/getCustExtInfo?pageName=1&custNo=" + custNo;

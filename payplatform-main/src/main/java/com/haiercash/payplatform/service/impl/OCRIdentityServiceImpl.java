@@ -80,6 +80,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     private CashloanConfig cashloanConfig;
 
     //ocr 图片上传
+    @Override
     public IResponse<Map> ocrIdentity(OcrPathType ocrPathType, MultipartFile ocrImg) throws Exception {
         Assert.notNull(ocrPathType, "ocrPathType can not be null");
 
@@ -239,6 +240,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //获取省市区
+    @Override
     public Map<String, Object> getArea(Map<String, Object> map) {
         logger.info("获取省市区*****************开始");
         String token = (String) map.get("token");
@@ -270,6 +272,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //获取卡信息
+    @Override
     public Map<String, Object> getCardInfo(String cardNo) {
         logger.info("获取卡信息*****************开始");
         if (StringUtils.isEmpty(cardNo)) {
@@ -340,6 +343,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
     }
 
     //实名认证
+    @Override
     public IResponse<Map> realAuthentication(Map<String, Object> map) throws IOException {
         logger.info("实名认证*********************开始");
 
@@ -610,6 +614,7 @@ public class OCRIdentityServiceImpl extends BaseService implements OCRIdentitySe
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> treatyShowServlet(String token, Map<String, Object> params) throws Exception {
         String realmName;
         String flag = (String) params.get("flag");

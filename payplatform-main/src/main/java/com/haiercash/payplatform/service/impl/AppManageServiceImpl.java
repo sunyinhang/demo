@@ -88,6 +88,7 @@ public class AppManageServiceImpl implements AppManageService{
         return (String) body.get(dictCode);
     }
 
+    @Override
     public void putCooprSettingToMap(Map<String, Object> map, String channel) {
         String cooprJson = this.getDictDetailByDictCde("cooprSetting");
         JSONArray cooprList = new JSONArray(cooprJson);
@@ -124,6 +125,7 @@ public class AppManageServiceImpl implements AppManageService{
 
     }
 
+    @Override
     public void putDefaultCooprSettingToMap(Map<String, Object> map) {
         map.put("operatorCde", "01400429");// 经办人
         map.put("operatorTel", "18766395858");// 经办人手机号

@@ -26,6 +26,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> getAreaInfo(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/pub/crm/findDmAreaInfo";
         logger.info("获取省市区接口，请求地址：" + url);
@@ -41,6 +42,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param cardNo
      * @return
      */
+    @Override
     public Map<String, Object> getBankInfo(String cardNo) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/crm/cust/getBankInfo?cardNo=" + cardNo;
         logger.info("获取卡信息接口，请求地址：" + url);
@@ -56,6 +58,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> sendMessage(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/smsSendVerify";
         logger.info("发送短信验证码接口，请求地址：" + url);
@@ -72,6 +75,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> saveCardMsg(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/saveCardMsg";
         logger.info("保存身份证信息接口，请求地址：" + url);
@@ -88,6 +92,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> smsVerify(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/smsVerify";
         logger.info("校验短信验证码接口，请求地址：" + url);
@@ -104,6 +109,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> fCiCustRealThreeInfo(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/crm/cust/fCiCustRealThreeInfo";
         logger.info("验证并新增实名认证信息接口，请求地址：" + url);
@@ -120,6 +126,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> updateMobile(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/updateMobile";
         logger.info("修改绑定手机号接口，请求地址：" + url);
@@ -136,6 +143,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> attachUploadPersonByFilePath(String token, Map<String, Object> params) {
         String custNo = (String) params.get("custNo");// 客户编号
         String attachType = (String) params.get("attachType");// 影像类型
@@ -174,6 +182,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> faceCheckByFaceValue(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/faceCheckByFaceValue";
         logger.info("通过人脸分数判断人脸是否通过接口，请求地址：" + url);
@@ -190,6 +199,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> validateUserFlag(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/validateUserFlag";
         logger.info("用户支付密码手势密码验证是否设置接口，请求地址：" + url);
@@ -206,6 +216,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> ifNeedFaceChkByTypCde(String token, Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/ifNeedFaceChkByTypCde";
         logger.info("通过贷款品种判断是否需要进行人脸识别接口，请求地址：" + url);
@@ -240,6 +251,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param paramMap
      * @return
      */
+    @Override
     public Map<String, Object> resetPayPasswd(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/payPasswd";
         logger.info("支付密码设置接口的请求地址：" + url);
@@ -256,6 +268,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param paramMap
      * @return
      */
+    @Override
     public Map<String, Object> ifEdAppl(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/cmis/ifEdAppl";
         logger.info("查询是否可以提交额度申请接口请求地址：" + url);
@@ -273,6 +286,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param paramMap
      * @return
      */
+    @Override
     public Map<String, Object> getCustIsPass(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/crm/cust/getCustIsPass";
         logger.info("查询客户准入资格url:" + url);
@@ -290,6 +304,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param edapplInfoMap
      * @return
      */
+    @Override
     public Map<String, Object> getEdApplInfo(String token, Map<String, Object> edapplInfoMap) {
         String verifyMobile = (String) edapplInfoMap.get("verifyMobile");
         String verifyNo = (String) edapplInfoMap.get("verifyNo");
@@ -319,6 +334,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param reqSignMap
      * @return
      */
+    @Override
     public Map<String, Object> updateOrderAgreement(String token, Map<String, Object> reqSignMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/updateOrderAgreement";
         logger.info("订单协议确认接口请求地址：" + url);
@@ -336,6 +352,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
      * @param reqConMap
      * @return
      */
+    @Override
     public Map<String, Object> updateOrderContract(String token, Map<String, Object> reqConMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/updateOrderContract";
         logger.info("订单合同确认接口请求地址：" + url);
@@ -363,6 +380,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //3.4.15.	(PUT)支付密码修改(知道原密码)
+    @Override
     public Map<String, Object> updatePayPasswd(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/updatePayPasswd";
         logger.info("支付密码修改接口请求地址：" + url);
@@ -373,6 +391,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(PUT)实名认证修改密码
+    @Override
     public Map<String, Object> updPwdByIdentity(String token, Map paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/custVerifyUpdatePayPwd";
         logger.info("实名认证修改密码接口请求地址：" + url);
@@ -383,6 +402,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)确认支付密码验证
+    @Override
     public Map<String, Object> validatePayPasswd(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/validatePayPasswd";
         logger.info("确认支付密码验证接口请求地址：" + url);
@@ -393,6 +413,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(post)查询贷款详情（根据申请流水号）  收单
+    @Override
     public Map<String, Object> queryApplLoanDetail(Map<String, Object> paramMap) {
         String url = EurekaServer.ACQUIRER + "/api/appl/getApplInfo";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
@@ -402,7 +423,8 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return queryApplLoanDetailMap;
     }
     //(GET)查询贷款详情（根据申请流水号）  APP后台
-    public Map<String, Object> queryApplLoanDetail(String token,Map<String, Object> paramMap) {
+    @Override
+    public Map<String, Object> queryApplLoanDetail(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/queryAppLoanAndGoods";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
         logger.info("查询贷款详情（根据申请流水号）接口请求参数：" + paramMap);
@@ -411,6 +433,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return queryApplLoanDetailMap;
     }
     //(GET)按贷款申请查询分期账单
+    @Override
     public Map<String, Object> queryApplListBySeq(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/queryApplListBySeq";
         logger.info("查询贷款详情（根据申请流水号）接口请求地址：" + url);
@@ -421,6 +444,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //7.1.(POST) 欠款查询(参照核算接口5.1)
+    @Override
     public Map<String, Object> getQFCheck(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/customer/getQFCheck";
         logger.info("欠款查询接口请求地址：" + url);
@@ -431,6 +455,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)全部还款试算（含息费、手续费、本金）
+    @Override
     public Map<String, Object> refundTrialAll(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/newZdhkMoney";
         logger.info("全部还款试算接口请求地址：" + url);
@@ -441,6 +466,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //7.4.(POST)主动还款金额查询
+    @Override
     public Map<String, Object> checkZdhkMoney(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/customer/checkZdhkMoney";
         logger.info("主动还款金额查询接口请求地址：" + url);
@@ -451,6 +477,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     // 3.1.16.(GET)额度查询
+    @Override
     public Map<String, Object> getEdCheck(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/getEdCheck";
         logger.info("额度查询接口请求地址：" + url);
@@ -460,6 +487,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return edCheckmap;
     }
     //6.1.133.	(GET)获取个人中心信息
+    @Override
     public Map<String, Object> getBillCheck(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/getPersonalCenterInfo";
         logger.info("个人中心信息接口请求地址：" + url);
@@ -470,6 +498,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)根据流水号查询额度审批进度
+    @Override
     public Map<String, Object> approvalProcessInfo(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/cmis/approvalProcessBySeq";
         logger.info("根据流水号查询额度审批进度接口请求地址：" + url);
@@ -480,6 +509,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //根据集团用户ID查询用户信息
+    @Override
     public String queryHaierUserInfo(String params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/queryHaierUserInfo?externUid=" + params;
         logger.info("根据集团用户ID查询用户信息接口，请求地址：" + url);
@@ -490,6 +520,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //3.4.21.	(POST)集团用户注册统一认证账户
+    @Override
     public Map<String, Object> saveUauthUsersByHaier(Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/saveUauthUsersByHaier";
         logger.info("集团用户注册统一认证账户接口, 请求地址：" + url);
@@ -500,6 +531,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //6.1.124.	(POST)保存第三方系统token
+    @Override
     public Map<String, Object> saveThirdPartToken(Map<String, Object> params) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/saveThirdPartToken";
         logger.info("保存第三方系统token接口, 请求地址：" + url);
@@ -510,6 +542,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //3.1.29.	(GET)查询客户实名认证信息（根据USERID）(APP_PERSON)(CRM17)
+    @Override
     public Map<String, Object> queryPerCustInfo(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/crm/cust/queryPerCustInfo";
         logger.info("查询客户实名认证信息（根据USERID）接口，请求地址：" + url);
@@ -520,6 +553,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //6.1.102.	(GET)额度申请校验
+    @Override
     public Map<String, Object> checkEdAppl(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/validate/checkEdAppl";
         logger.info("额度申请校验接口，请求地址：" + url);
@@ -530,6 +564,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //3.4.22.	(POST) 验证并绑定集团用户（已绑定的不可用）
+    @Override
     public Map<String, Object> validateAndBindHaierUser(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/validateAndBindHaierUser";
         logger.info(" 验证并绑定集团用户接口, 请求地址：" + url);
@@ -540,6 +575,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)查询贷款品种所需的影像列表(不包含共同还款人影像)
+    @Override
     public Map<String, Object> pLoanTypImages(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/cmis/pLoanTypImages";
         logger.info("查询贷款品种所需的影像列表接口，请求地址：" + url);
@@ -550,6 +586,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)影像列表按类型查询-个人版
+    @Override
     public Map<String, Object> attachTypeSearchPerson(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/attachTypeSearchPerson";
         logger.info("影像列表按类型查询接口，请求地址：" + url);
@@ -560,6 +597,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(GET)根据影像文件ID查询影像文件的路径
+    @Override
     public Map<String, Object> getFilePathByFileId(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/getFilePathByFileId";
         logger.info("根据影像文件ID查询影像文件的路径接口，请求地址：" + url);
@@ -570,6 +608,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(POST)修改保存客户所有扩展信息(CRM85)
+    @Override
     public Map<String, Object> saveAllCustExtInfo(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/crm/cust/saveAllCustExtInfo";
         logger.info("修改保存客户所有扩展信息接口，请求地址：" + url);
@@ -580,6 +619,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(POST)新增/修改 联系人(CRM6)
+    @Override
     public Map<String, Object> saveCustFCiCustContact(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/crm/saveCustFCiCustContact";
         logger.info("新增/修改 联系人接口，请求地址：" + url);
@@ -606,6 +646,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //1.27(GET) 根据集团用户id查询用户信息
+    @Override
     public Map<String, Object> getUserId(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.UAUTH + "/app/uauth/queryHaierUserInfo";
         logger.info("根据集团用户id查询用户信息，请求地址：" + url);
@@ -757,6 +798,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //3.1.79.(POST)额度申请进度查询（最新的进度 根据idNo查询）
+    @Override
     public Map<String, Object> getEdApplProgress(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/apporder/getEdApplProgress";
         logger.info("额度申请进度查询（最新的进度 根据idNo查询）,请求地址：" + url);
@@ -766,6 +808,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //1.32(GET) 根据统一认证userid查询用户信息(查集团userId)
+    @Override
     public Map<String, Object> findUserByUserid(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.UAUTH + "/app/uauth/findUserByUserid";
         logger.info("根据统一认证userid查询用户信息,请求地址：" + url);
@@ -775,6 +818,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //48、(GET)根据身份证号查询客户基本信息和实名认证信息(userId)
+    @Override
     public Map<String, Object> getCustInfoByCertNo(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.CRM + "/app/crm/cust/getCustInfoByCertNo";
         logger.info("根据身份证号查询客户基本信息和实名认证信息(userId),请求地址："+url);
@@ -783,7 +827,8 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
     //OM-1108 根据applSeq查询商城订单号
-    public Map<String,Object> getorderNo(String token,Map<String, Object> paramMap){
+    @Override
+    public Map<String, Object> getorderNo(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.ORDER + "/api/order/getMallOrderNoByApplSeq";
         logger.info("根据applSeq查询商城订单号："+paramMap);
         Map<String, Object> map = HttpUtil.restGetMap(url, token, paramMap);
@@ -804,7 +849,8 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //6.1.133.	(GET)获取个人\信息
-    public Map<String, Object> getPersonalCenterInfo(String token,Map<String, Object> paramMap){
+    @Override
+    public Map<String, Object> getPersonalCenterInfo(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/getPersonalCenterInfo";
         logger.info("获取个人信息接口,请求地址："+url);
         logger.info("获取个人信息接口,请求参数"+paramMap);
@@ -828,6 +874,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //6.1.104.	(POST)提交签章请求
+    @Override
     public Map<String, Object> caRequest(String token, Map<String, Object> map){
         String url = EurekaServer.APPCA + "/app/appserver/caRequest";
         logger.info("提交签章请求接口, 请求地址：" + url);
@@ -838,6 +885,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //6.1.130.	(GET) 查询贷款品种信息列表
+    @Override
     public Map<String, Object> pLoanTypList(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/cmis/pLoanTypList";
         logger.info("查询贷款品种信息列表，请求地址：" + url);
@@ -857,6 +905,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
         return map;
     }
     //3.4.11(GET) 实名认证
+    @Override
     public Map<String, Object> identify(String token, Map<String, Object> paramMap) {
         String url = AppServerUtils.getAppServerUrl() + "/app/appserver/uauth/identify";
         logger.info("修改密码实名认证，请求地址：" + url);
@@ -888,6 +937,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //6.1.46(POST) 外部风险信息采集
+    @Override
     public Map<String, Object> updateRiskInfo(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.APPSERVERNOAUTHNEW + "/app/appserver/updateRiskInfo";
         logger.info("外部风险信息采集接口，请求地址：" + url);
@@ -909,6 +959,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //1.36(GET) 根据统一认证userid查询用户信息(查集团userId)
+    @Override
     public Map<String, Object> queryUserByExternUid(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.UAUTH + "/app/uauth/queryUserByExternUid";
         logger.info("根据第三方（非海尔集团）id查询用户信息,请求地址：" + url);
@@ -918,6 +969,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(POST)第三方（非海尔集团）注册统一认证账户
+    @Override
     public Map<String, Object> saveUserByExternUid(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.UAUTH + "/app/uauth/saveUserByExternUid";
         logger.info("第三方（非海尔集团）注册统一认证账户,请求地址：" + url);
@@ -927,6 +979,7 @@ public class AppServerServiceImpl extends BaseService implements AppServerServic
     }
 
     //(POST) 验证并绑定第三方（非海尔集团）用户
+    @Override
     public Map<String, Object> validateAndBindUserByExternUid(String token, Map<String, Object> paramMap) {
         String url = EurekaServer.UAUTH + "/app/uauth/validateAndBindUserByExternUid";
         logger.info("验证并绑定第三方（非海尔集团）用户,请求地址：" + url);

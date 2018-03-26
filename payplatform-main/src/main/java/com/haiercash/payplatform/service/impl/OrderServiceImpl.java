@@ -382,6 +382,7 @@ public class OrderServiceImpl extends BaseService implements OrderService {
         orderMap.put("salerCde", appOrder.getCrtUsr());
     }
 
+    @Override
     public Map<String, Object> getSysFlagAndChannelNo(AppOrder appOrder) {
         Map<String, Object> crmParam = new HashMap<>();
         crmParam.put("custName", appOrder.getCustName());

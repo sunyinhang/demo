@@ -318,6 +318,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
     }
 
     //上传手持身份证
+    @Override
     public Map<String, Object> uploadPersonPic(MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("上传手持身份证**********************开始");
         if (faceImg.isEmpty()) {
@@ -402,6 +403,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> ifNeedDoFace(Map<String, Object> params) {
         logger.info("是否需要人脸识别*******************开始");
         //前端页面数据获取及非空判断
