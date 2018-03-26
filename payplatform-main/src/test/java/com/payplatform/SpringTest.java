@@ -13,7 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * @date 2017/6/15
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = Application.class, properties = {"spring.config.location=classpath:/profile/", "spring.profiles.active=develop"})
 @WebAppConfiguration
 public class SpringTest {
 }

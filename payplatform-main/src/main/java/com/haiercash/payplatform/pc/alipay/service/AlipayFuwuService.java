@@ -165,7 +165,7 @@ public class AlipayFuwuService extends BaseService {
         Map<String, Object> verifyNoMap = new HashMap<>();
         verifyNoMap.put("phone", phone);
         verifyNoMap.put("verifyNo", verifyNo);
-        verifyNoMap.put("token", this.getToken());
+        verifyNoMap.put("token", token);
         verifyNoMap.put("channel", this.getChannel());
         verifyNoMap.put("channelNo", this.getChannelNo());
         IResponse<Map> verifyResponse = this.appServerClient.smsVerify(verifyNoMap);
@@ -228,6 +228,7 @@ public class AlipayFuwuService extends BaseService {
         IResponse<Map> isRegisterResp = this.uauthClient.isRegister(EncryptUtil.simpleEncrypt(phone));
         String isRegisterFlag = Convert.toString(isRegisterResp.getBody().get("isRegister"));//N：未注册,Y：已注册, C: 手机号已被占用
         String userId;
+        String flag = StringUtils.EMPTY;//是否有额度
         switch (isRegisterFlag) {
             case "N"://未注册
                 //调用外联实名认证
@@ -248,9 +249,12 @@ public class AlipayFuwuService extends BaseService {
                 saveResult.assertSuccessNeedBody();
                 userId = saveResult.getBody();
                 logger.info("注册后返回 userId: " + userId);
+                flag = "9";//个人扩展信息
                 break;
             case "Y"://已注册
+            case "C"://被占用
                 IResponse<Map> userInfo = this.uauthClient.getUserId(EncryptUtil.simpleEncrypt(phone));//根据手机获取 userId
+                userInfo.assertSuccessNeedBody();
                 userId = Convert.toString(userInfo.getBody().get("userId"));
                 //查询实名信息,判断四要素是否一致
                 Map<String, Object> custMap = new HashMap<>();
@@ -269,9 +273,62 @@ public class AlipayFuwuService extends BaseService {
                 } else if (!"C1220".equals(custRetFlag)) {
                     throw new BusinessException(HttpUtil.getRetFlag(custresult), HttpUtil.getRetMsg(custresult));
                 }
+                IResponse<Map> checkEdResp = this.appServerClient.checkEdAppl(ConstUtil.CHANNEL, this.getChannelNo(), userId);
+                checkEdResp.assertSuccessNeedBody();
+                Map<String, Object> headinfo = checkEdResp.getBody();
+                String applType = Convert.toString(headinfo.get("applType"));
+                String checkFlag = Convert.toString(headinfo.get("flag"));
+                String _outSts = Convert.toString(headinfo.get("outSts"));
+                if ("25".equals(_outSts)) {
+                    flag = "10";// 拒绝
+                } else if ("22".equals(_outSts)) {
+                    String crdSeq = (String) headinfo.get("crdSeq");
+                    sessionMap.put("crdSeq", crdSeq);
+                    RedisUtils.setExpire(token, sessionMap);
+                    flag = "11";// 退回
+                }
+                if ("1".equals(applType) || (StringUtils.isEmpty(applType) && "Y".equals(checkFlag))) {
+                    flag = "9"; //个人扩展信息
+                } else if ("2".equals(applType)) {
+                    HashMap<String, Object> edCheckmap = new HashMap<>();
+                    edCheckmap.put("idNo", certNo);
+                    edCheckmap.put("channel", ConstUtil.CHANNEL);
+                    edCheckmap.put("channelNo", getChannelNo());
+                    edCheckmap.put("idTyp", "20");
+                    Map<String, Object> edApplProgress = appServerService.getEdApplProgress(null, edCheckmap);//(POST)额度申请进度查询（最新的进度 根据idNo查询）
+                    Map<String, Object> head = (Map<String, Object>) edApplProgress.get("head");
+                    if (!"00000".equals(head.get("retFlag"))) {
+                        logger.info("额度申请进度查询（最新的进度 根据idNo查询）,错误信息：" + head.get("retMsg"));
+                        throw new BusinessException(ConstUtil.ERROR_CODE, (String) head.get("retMsg"));
+                    }
+                    Map<String, Object> body = (Map<String, Object>) edApplProgress.get("body");
+                    Integer crdSeqInt = (Integer) body.get("applSeq");
+                    String crdSeq = Integer.toString(crdSeqInt);
+                    sessionMap.put("crdSeq", crdSeq);
+                    RedisUtils.setExpire(token, sessionMap);
+                    String outSts = body.get("outSts").toString();
+                    switch (outSts) {
+                        case "27":
+                            flag = "12";//通过  我的额度
+                            break;
+                        case "25":
+                            flag = "10";//拒绝
+                            break;
+                        case "22":
+                            flag = "11";//退回
+                            break;
+                        default: //审批中
+                            flag = "13";//审批中
+                            break;
+                    }
+                } else if (StringUtils.isEmpty(checkFlag)) {
+                    String crdNorAvailAmt = (String) headinfo.get("crdNorAvailAmt");// 自主支付可用额度金额(现金)
+                    sessionMap.put("crdNorAvailAmt", crdNorAvailAmt);//存储redis
+                    RedisUtils.setExpire(token, sessionMap);
+                    flag = "12";//通过  我的额度
+                }
+
                 break;
-            case "C"://被占用
-                throw new BusinessException(ConstUtil.ERROR_CODE, "手机号被占用");
             default:
                 throw new BusinessException(ConstUtil.ERROR_CODE, "查询注册状态失败");
         }
@@ -313,6 +370,7 @@ public class AlipayFuwuService extends BaseService {
         //返回
         Map<String, Object> body = new HashMap<>(1);
         body.put("legalPhone", "T");
+        body.put("flag", flag);
         return CommonResponse.success(body);
     }
 
@@ -518,6 +576,8 @@ public class AlipayFuwuService extends BaseService {
         params.put("setlTyp", "NM");
         params.put("relPerdCnt", "0");
         CommonResponse<Map> resultOneMap = this.crmClient.queryApplAmtAndRepayByloanNo(params);
+        if ("EI00860017".equals(resultOneMap.getRetFlag()))
+            throw new BusinessException(resultOneMap.getRetFlag(), "您好，16:00-18:00为系统批量扣款时间，暂不支持主动还款，请稍后再试. 如有疑问请联系400-018-7777.");
         resultOneMap.assertSuccess();
     }
 
