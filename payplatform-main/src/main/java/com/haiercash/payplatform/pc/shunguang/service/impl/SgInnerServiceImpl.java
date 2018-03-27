@@ -574,6 +574,7 @@ public class SgInnerServiceImpl extends BaseService implements SgInnerService {
      * @author yu jianwei
      * @date 2017/9/14 16:07
      */
+    @Override
     public Map<String, Object> approveStatus(String token) {
         if (StringUtils.isEmpty(token)) {
             logger.info("获取token失败token:" + token);

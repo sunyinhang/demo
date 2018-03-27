@@ -10,6 +10,7 @@ import com.haiercash.payplatform.common.annotation.FlowNode;
 import com.haiercash.payplatform.common.entity.LoanType;
 import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.pc.cashloan.service.CashLoanService;
+import com.haiercash.payplatform.pc.qiaorong.service.QiaorongService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.service.FaceService;
 import com.haiercash.payplatform.utils.AppServerUtils;
@@ -57,6 +58,8 @@ public class FaceServiceImpl extends BaseService implements FaceService {
     private StorageConfig storageConfig;
     @Autowired
     private CashLoanService cashLoanService;
+    @Autowired
+    private QiaorongService qiaorongService;
 
     private static void createDir(String destDirName) {
         if (!destDirName.endsWith(File.separator))
@@ -93,6 +96,8 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String mobile = (String) cacheMap.get("phoneNo");// 手机号
         String custNo = (String) cacheMap.get("custNo");
         String userId = (String) cacheMap.get("userId");
+        String callbackUrl = (String) cacheMap.get("callbackUrl");//回调地址（乔融专用）
+        String applseq = (String) cacheMap.get("applSeq");//流水号（乔融专用）
         if (StringUtils.isEmpty(idNumber) || StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
                 || StringUtils.isEmpty(custNo) || StringUtils.isEmpty(userId)) {
             logger.info("idNumber:" + idNumber + "  name:" + name + "  mobile:" + mobile + "   custNo:" + custNo + "    userId:" + userId);
@@ -242,29 +247,27 @@ public class FaceServiceImpl extends BaseService implements FaceService {
         String checkretFlag = (String) checkheadjson.get("retFlag");
         String checkretMsg = (String) checkheadjson.get("retMsg");
 
-        if ("00000".equals(checkretFlag)) {//
+        if ("00000".equals(checkretFlag)) {
+            Map map1 = new HashMap();
+            map1.put("custNo",custNo);
+            map1.put("applseq",applseq);
+            map1.put("channel",channel);
+            map1.put("channelNo",channelNo);
+            map1.put("token",token);
+            map1.put("callbackUrl",callbackUrl);
             //人脸识别成功
-            //判断是否已经设置过支付密码
             if ("33".equals(channelNo) && !"03".equals(providerNo)) {//是乔融且不是face++厂商
-                Map<String, Object> m = new HashMap<>();
-                m.put("faceFlag", "1");
-                return success(m);
+                Map m = qiaorongService.ordersubmit(map1);
+                return m;
             }
             if ("33".equals(channelNo) && "03".equals(providerNo)) {//是乔融且是face++厂商
                 if ("01".equals(status)) {//01同一人，返回成功   redis存储faceflag  Y
-                    cacheMap.put("faceflag", "Y");
-                    RedisUtils.setExpire(token, cacheMap);
-                    RedisUtils.expire(token, 24, TimeUnit.HOURS);
-                    Map<String, Object> m = new HashMap<>();
-                    m.put("faceFlag", "1");
-                    return success(m);
+                    Map m = qiaorongService.ordersubmit(map1);
+                    return m;
                 } else {//02不同人，若redis存储次数等于5次终止，不足5次可继续
                     Integer facecount = Convert.asInteger(cacheMap.get("facecount"));
                     if (facecount == null) {
                         facecount = 0;
-                    }
-                    if (facecount == 5) {
-                        return fail(ConstUtil.ERROR_CODE, "人脸识别，剩余次数为0，录单终止!");
                     }
                     facecount = facecount + 1;
                     cacheMap.put("faceflag", "N");
@@ -272,7 +275,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                     RedisUtils.setExpire(token, cacheMap);
                     RedisUtils.expire(token, 24, TimeUnit.HOURS);
                     Map<String, Object> m = new HashMap<>();
-                    if (facecount == 5) {//人脸次数达到上限录单终止
+                    if (facecount >= 5) {//人脸次数达到上限录单终止(按钮置灰  不可点击)
                         m.put("faceFlag", "4");
                     } else {//人脸次数未达到上限可继续做人脸
                         m.put("faceFlag", "3");
@@ -289,6 +292,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
                 return success(m);
             }
 
+            //判断是否已经设置过支付密码
             //进行支付密码校验
             return validateUserFlag(userId, token, channel, channelNo, cacheMap);
         }
@@ -314,6 +318,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
     }
 
     //上传手持身份证
+    @Override
     public Map<String, Object> uploadPersonPic(MultipartFile faceImg, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info("上传手持身份证**********************开始");
         if (faceImg.isEmpty()) {
@@ -398,6 +403,7 @@ public class FaceServiceImpl extends BaseService implements FaceService {
      * @param params
      * @return
      */
+    @Override
     public Map<String, Object> ifNeedDoFace(Map<String, Object> params) {
         logger.info("是否需要人脸识别*******************开始");
         //前端页面数据获取及非空判断

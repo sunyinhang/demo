@@ -41,6 +41,7 @@ public final class RestFeign {
             }
         }
 
+        @Override
         public Feign build() {
             boolean loadBalanced = this.getClient() instanceof LoadBalancerFeignClient;
             SynchronousMethodHandler.Factory methodHandlerFactory = new SynchronousMethodHandler.Factory(loadBalanced);

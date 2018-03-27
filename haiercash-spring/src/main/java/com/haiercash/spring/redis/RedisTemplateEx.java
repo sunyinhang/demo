@@ -33,6 +33,7 @@ public final class RedisTemplateEx extends RedisTemplate<String, String> {
         return this.properties;
     }
 
+    @Override
     protected RedisConnection preProcessConnection(RedisConnection connection, boolean existingConnection) {
         return new DefaultStringRedisConnection(connection);
     }

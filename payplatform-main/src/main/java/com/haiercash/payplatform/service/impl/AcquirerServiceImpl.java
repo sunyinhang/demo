@@ -155,6 +155,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
         }
     }
 
+    @Override
     public AppOrderGoods acquirerGoodsMap2OrderGood(Map<String, Object> goodMap, AppOrderGoods appOrderGoods) {
         goodMap.keySet().removeIf((key) -> AcquirerGoodsEnum.getOrderAttr(key) == null);
         goodMap.forEach((key, value) -> ReflactUtils.setProperty(appOrderGoods, AcquirerGoodsEnum.getOrderAttr(key),
@@ -512,6 +513,7 @@ public class AcquirerServiceImpl extends BaseService implements AcquirerService 
      * @param order 订单信息
      * @return Map
      */
+    @Override
     public Map<String, Object> cashLoan(AppOrder order, AppOrdernoTypgrpRelation relation) {
         Map<String, Object> acquirer;
         if (relation == null || StringUtils.isEmpty(relation.getApplSeq())) {

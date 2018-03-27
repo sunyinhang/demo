@@ -36,14 +36,17 @@ public abstract class GenericType<T> implements ParameterizedType {
         }
     }
 
+    @Override
     public Type[] getActualTypeArguments() {
         return this.actualTypeArguments;
     }
 
+    @Override
     public Class<?> getRawType() {
         return this.rawType;
     }
 
+    @Override
     public Type getOwnerType() {
         return this.ownerType;
     }

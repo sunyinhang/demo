@@ -94,20 +94,24 @@ public final class XmlConverter {
             this.element = element;
         }
 
+        @Override
         public boolean hasReturnField(Object name) {
             Element childE = DomUtils.getChildElement(this.element, (String) name);
             return childE != null;
         }
 
+        @Override
         public Object getPrimitiveObject(Object name) {
             return DomUtils.getElementValue(this.element, (String) name);
         }
 
+        @Override
         public Object getObject(Object name, Class<?> type) {
             Element childE = DomUtils.getChildElement(this.element, (String) name);
             return childE == null ? null : convert(childE, type);
         }
 
+        @Override
         public List<?> getListObjects(Object listName, Object itemName, Class<?> subType) {
             Element listE = DomUtils.getChildElement(this.element, (String) listName);
             if (listE == null)

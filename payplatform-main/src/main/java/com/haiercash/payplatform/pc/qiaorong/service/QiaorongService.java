@@ -45,4 +45,9 @@ public interface QiaorongService {
     CA签章
      */
     Map<String, Object> cacontract(Map<String, Object> map) throws Exception;
+
+    /*
+    订单提交
+     */
+    Map<String, Object> ordersubmit(Map<String, Object> map);
 }

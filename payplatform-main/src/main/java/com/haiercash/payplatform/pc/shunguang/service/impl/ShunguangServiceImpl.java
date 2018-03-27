@@ -533,6 +533,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //7.白条额度申请状态查询    Sg-10006    checkEdAppl
+    @Override
     public Map<String, Object> checkEdAppl(Map<String, Object> map) {
         logger.info("白条额度申请状态查询接口*******************开始");
         String channelNo = map.get("channelNo").toString();
@@ -698,6 +699,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //9 白条额度进行贷款支付结果主动查询接口
+    @Override
     public Map<String, Object> queryAppLoanAndGoods(Map<String, Object> map) {
         logger.info("白条额度进行贷款支付结果主动查询接口*******************开始");
         String channelNo = (String) map.get("channelNo");
@@ -792,6 +794,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //10.  白条支付实名认证同步接口    Sg-10009
+    @Override
     public Map<String, Object> queryAppLoanAndGoodsOne(Map<String, Object> map) {
         logger.info("白条支付实名认证同步接口************开始");
         String userId = (String) map.get("userId");//海尔集团用户ID
@@ -821,6 +824,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //11.  白条额度进行主动查询接口    Sg-10010
+    @Override
     public Map<String, Object> edcheck(Map<String, Object> map) {
         logger.info("白条额度进行主动查询接口*********************开始");
         String channelNo = map.get("channelNo").toString();
@@ -982,6 +986,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //额度测试入口
+    @Override
     public Map<String, Object> edApplytest(Map<String, Object> map) {
         String userId = map.get("userId").toString();
         //String phone = map.get("phone").toString();
@@ -1204,6 +1209,7 @@ public class ShunguangServiceImpl extends BaseService implements ShunguangServic
     }
 
     //顺逛退货消息推送
+    @Override
     public Map<String, Object> shunguangth(Map<String, Object> map) {
         logger.info("从收单获取退货通知信息为：" + map);
 

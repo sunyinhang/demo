@@ -37,6 +37,7 @@ public class CommonRepaymentPersonServiceImpl extends BaseService implements Com
     @Autowired
     private CrmService crmService;
 
+    @Override
     public Map<String, Object> getCommonRepaymentPerson(String applSeq) {
         String acqUrl = EurekaServer.ACQUIRER + "/api/appl/seletctApptInfo";
         Map<String, Object> paramMap = new HashMap<>();

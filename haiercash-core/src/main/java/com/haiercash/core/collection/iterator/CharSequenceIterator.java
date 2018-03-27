@@ -123,6 +123,7 @@ public final class CharSequenceIterator implements Iterator<Character> {
      *
      * @return true if there is a next element to return
      */
+    @Override
     public boolean hasNext() {
         return this.index < this.endIndex;
     }
@@ -134,6 +135,7 @@ public final class CharSequenceIterator implements Iterator<Character> {
      * @throws IndexOutOfBoundsException if all the elements in the charSequence
      *                                   have already been returned
      */
+    @Override
     public Character next() {
         return this.charSequence.charAt(this.index++);
     }
@@ -143,6 +145,7 @@ public final class CharSequenceIterator implements Iterator<Character> {
      *
      * @throws UnsupportedOperationException always
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() method is not supported");
     }
