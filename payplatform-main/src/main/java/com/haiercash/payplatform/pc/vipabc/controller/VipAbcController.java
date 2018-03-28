@@ -121,7 +121,7 @@ public class VipAbcController extends BaseController {
     }
 
     /**
-     * 订单保存
+     * 订单提交
      *
      * @param map
      * @return

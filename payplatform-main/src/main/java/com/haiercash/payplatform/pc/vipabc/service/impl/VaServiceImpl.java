@@ -6,39 +6,23 @@ import com.haiercash.core.lang.Base64Utils;
 import com.haiercash.core.lang.Environment;
 import com.haiercash.core.lang.StringUtils;
 import com.haiercash.payplatform.common.dao.VipAbcOrderDao;
-import com.haiercash.payplatform.config.StorageConfig;
 import com.haiercash.payplatform.pc.vipabc.service.VaService;
 import com.haiercash.payplatform.service.AppServerService;
 import com.haiercash.payplatform.utils.DesUtilvip;
 import com.haiercash.payplatform.utils.EncryptUtil;
 import com.haiercash.payplatform.utils.RSAUtils;
-import com.haiercash.spring.redis.RedisUtils;
-import com.haiercash.spring.rest.client.JsonClientUtils;
 import com.haiercash.spring.service.BaseService;
 import com.haiercash.spring.util.ConstUtil;
-import com.haiercash.spring.weixin.WeiXinUtils;
-import com.haiercash.spring.weixin.entity.WeiXinToken;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.haiercash.payplatform.service.impl.CustExtInfoServiceImpl.createDir;
 
 
 /**
@@ -51,8 +35,6 @@ public class VaServiceImpl extends BaseService implements VaService {
     private VipAbcOrderDao vipAbcOrderDao;
     @Autowired
     private AppServerService appServerService;
-    @Autowired
-    private StorageConfig storageConfig;
 
     @Override
     public Map<String, Object> queryAppLoanAndGood(String token, String channel, String channelNo, Map<String, Object> paramsMap) throws Exception {
@@ -154,251 +136,17 @@ public class VaServiceImpl extends BaseService implements VaService {
         String iv = productKey;
         String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKJH9SKW/ZNJjll0ZKTsxdsPB+r+EjDS8XP/d2EmgncrR8xVbckp9iksuHM0ckw5bk84P+5YH2mIf8cDRoBSJykCAwEAAQ==";
         //               String publicKey=DataParams.publicKey;
-        String sKey = key;
-        String desData = EncryptUtil.DesEncrypt(reqData, sKey, iv);
+        String desData = EncryptUtil.DesEncrypt(reqData, key, iv);
         //3.加密des的key
         password_ = Base64Utils.encode(RSAUtils.encryptByPublicKey((productKey + productKey).getBytes(), publicKey));
-        JSONObject reqjson = new JSONObject();
+        Map<String, Object> reqjson = new HashMap<>();
         reqjson.put("applyNo", StringUtils.remove(UUID.randomUUID().toString(), Environment.MinusChar));
-        reqjson.put("channelNo", "53");
+        reqjson.put("channelNo", channelNo);
         reqjson.put("tradeCode", "vipabc-10002");
         reqjson.put("data", desData);
         reqjson.put("key", password_);
         logger.info("vipabc主动查询接口返回的报文是：" + reqjson);
         return success(reqjson);
-
-    }
-
-    @Override
-    public Map<String, Object> weixinuploadOtherPerson(String token, String channel, String channelNo, Map<String, Object> map) throws IOException {
-        logger.info("VIPABC上传学生证开始");
-        String retFlag = null;
-        Map<String, Object> redisMap = null;
-        String message = null;
-        Map<String, Object> attachMap = new HashMap<String, Object>(); // 文件上传map(收款确认单)
-
-        String media_id = (String) map.get("media_id");
-        logger.info("vipabc上传学生证media_id参数为：" + media_id);
-        WeiXinToken wxToken = WeiXinUtils.getCachedToken();
-        String access_token = wxToken.getAccess_token();
-        logger.info("vipabc上传学生证access_token参数为：" + access_token);
-        String wxurl = "https://api.weixin.qq.com/cgi-bin/media/get";
-//            String wxurl=DataParams.wxurl;//微信地址
-        Map<String, Object> params = new HashMap<>();
-        params.put("access_token", access_token);
-        params.put("media_id", media_id);
-        logger.info("请求的下载VIPABC上传学生证的参数为：" + params);
-        byte[] img = JsonClientUtils.getForObject(wxurl, byte[].class, params);
-        logger.info("返回的结果为" + img);
-        InputStream in = new ByteArrayInputStream(img);
-        if (StringUtils.isEmpty(token)) {
-            logger.info("VIPABC,上传学生证,token为空！");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-        //
-        redisMap = RedisUtils.getExpireMap(token);
-        if (redisMap == null || redisMap.isEmpty()) {
-            logger.info("分期详情加载，redis缓存数据获取失败");
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
-        }
-        String custNo = redisMap.get("custNo").toString();
-        String applSeq = redisMap.get("applSeq").toString();
-        // 查询是否已有收款确认单，无则删除
-        Map<String, Object> paramYXMap = new HashMap<>();
-        paramYXMap.put("attachType", "DOC51");
-        paramYXMap.put("custNo", custNo);
-        paramYXMap.put("channel", channel);
-        paramYXMap.put("channelNo", channelNo);
-        Map<String, Object> result = appServerService.attachTypeSearchPerson(token, paramYXMap);
-        if (result == null || result.isEmpty()) {
-            logger.info("查询影像信息，接口返回为空");
-            return fail(ConstUtil.ERROR_CODE, "查询影像信息，接口返回为空");
-        }
-        String retflag = ((Map) result.get("head")).get("retFlag").toString();
-        if (!"00000".equals(retflag)) {
-            String msg = ((Map) result.get("head")).get("retMsg").toString();
-            logger.info(msg);
-            return fail(retflag, msg);
-        }
-        // 删除
-        List list = new ArrayList();
-        List<Map<String, Object>> listBody = ((List<Map<String, Object>>) result.get("body"));
-        // [{"attachType":"App01","applSeq":null,"count":1,"attachName":"本人手持身份证与本人面部合照照片","id":23960,"md5":"6807451f211355faa3d3ca05f20308e1"},{"attachType":"DOC014","applSeq":null,"count":19,"attachName":"Face++返回影像","id":23881,"md5":"68600f94a35501042cff32d4dd2dedae"},{"attachType":"DOC045","applSeq":null,"count":12,"attachName":"收款确认单","id":23600,"md5":"c882e40833e92508f5b647fea5c06cd2"},{"attachType":"DOC065","applSeq":null,"count":1,"attachName":"人脸照片","id":23903,"md5":"68600f94a35501042cff32d4dd2dedae"}]
-        for (int j = 0; j < listBody.size(); j++) {
-
-            String attachType = listBody.get(j).get("attachType").toString();
-            if ("DOC51".equals(attachType)) {
-                String picId = listBody.get(j).get("id").toString();
-                list.add(picId);
-            }
-        }
-        if (list.size() > 0) {
-            for (int j = 0; j < list.size(); j++) {
-                Integer id = Integer.parseInt(list.get(j).toString());
-                Map<String, Object> map1 = new HashMap<String, Object>();
-                map1.put("id", id);
-                map1.put("token", token);
-                map1.put("channel", channel);
-                map1.put("channelNo", channelNo);
-                Map<String, Object> deleteResult = appServerService.attachDelete(token, map1);
-                logger.info(deleteResult);
-            }
-        }
-
-        //
-        // 调用影像上传接口
-        // 获取共享盘个人影像文件路径
-        String path = "/testshare01/00/Data/haierData/";
-        //String appno = UUID.randomUUID().toString().replace("-", "");
-        String appno = StringUtils.remove(UUID.randomUUID().toString(), Environment.MinusChar);
-        String dir = storageConfig.getFacePath() + File.separator + custNo + File.separator + ConstUtil.ATTACHTYPE_DOC065 + File.separator;
-        createDir(dir);
-        final String filePath = dir + appno + ".jpg";
-        String md5ForUpload;
-        try (FileInputStream inputStream = new FileInputStream(filePath)) {
-            md5ForUpload = DigestUtils.md5Hex(inputStream);
-        }
-        attachMap.put("md5", md5ForUpload);
-        attachMap.put("filePath", filePath);
-        attachMap.put("applSeq", applSeq);
-        attachMap.put("attachType", "DOC51");// 文件类型
-        attachMap.put("attachName", "学生证");// 文件名称
-        attachMap.put("custNo", custNo);
-        attachMap.put("path", path);// //共享盘个人影像文件路径
-        // 应该是配置到统一文件中
-        attachMap.put("channel", channel);
-        attachMap.put("channelNo", channelNo);
-        attachMap.put("fileName", custNo);
-        logger.info("path:" + path + "           fileName:" + custNo);
-        Map<String, Object> attachresult = appServerService.attachUploadPersonByFilePath(token, attachMap);
-        Map<String, Object> jsonObject2 = (Map<String, Object>) attachresult.get("head");
-        retFlag = (String) jsonObject2.get("retFlag");
-        message = (String) jsonObject2.get("retMsg");
-        if (!"00000".equals(retFlag)) {// 文件上传成功返回 00000
-            // //成功后从这里调用face++接口
-            logger.info("vipabc,保存客户信息,调用app上传学生证失败！retMsg:" + message);
-            return fail(retFlag, message);
-        }
-        retFlag = "0000";
-        logger.info("VIPABC上传学生证结束");
-        return fail(retFlag, message);
-    }
-
-    @Override
-    public Map<String, Object> weixinuploadOtherPersonOther(String token, String channel, String channelNo, Map<String, Object> map) throws Exception {
-        logger.info("VIPABC上传学生证封面开始");
-        String retFlag = null;
-
-        String message = null;
-        Map<String, Object> attachMap = new HashMap<String, Object>(); // 文件上传map(收款确认单)
-        String media_id = (String) map.get("media_id");
-        logger.info("vipabc上传学生证封面media_id参数为：" + media_id);
-
-        WeiXinToken wxToken = WeiXinUtils.getCachedToken();
-        String access_token = wxToken.getAccess_token();
-        logger.info("vipabc上传学生证封面access_token参数为：" + access_token);
-
-        //           String wxurl=DataParams.wxurl;//微信地址
-        String wxurl = "https://api.weixin.qq.com/cgi-bin/media/get";
-        Map<String, Object> params = new HashMap<>();
-        params.put("access_token", access_token);
-        params.put("media_id", media_id);
-        logger.info("请求的下载VIPABC上传学生证封面参数为：" + params);
-        byte[] img = JsonClientUtils.getForObject(wxurl, byte[].class, params);
-        logger.info("返回的结果为" + img);
-        InputStream in = new ByteArrayInputStream(img);
-        if (StringUtils.isEmpty(token)) {
-            logger.info("VIPABC,上传学生证封面,token为空！");
-            return fail(ConstUtil.ERROR_CODE, "VIPABC,上传学生证封面,token为空！");
-        }
-
-        Map<String, Object> redisMap = RedisUtils.getExpireMap(token);
-        if (redisMap == null || redisMap.isEmpty()) {
-            logger.info("VIPABC,上传学生证封面,获取redisMap为空！");
-            return fail(ConstUtil.ERROR_CODE, "VIPABC,上传学生证封面,获取redisMap为空！");
-        }
-        String custNo = redisMap.get("custNo").toString();
-        String applSeq = redisMap.get("applSeq").toString();
-        // 查询是否已有收款确认单，无则删除
-        Map<String, Object> paramMap = new HashedMap();
-        paramMap.put("channel", channel);
-        paramMap.put("channelNo", channelNo);
-        paramMap.put("custNo", custNo);
-        paramMap.put("attachType", "DOC086");
-        Map<String, Object> result = appServerService.attachTypeSearchPerson(token, paramMap);
-        if (result == null || result.isEmpty()) {
-            logger.info("查询影像信息，接口返回为空");
-            return fail(ConstUtil.ERROR_CODE, "查询影像信息，接口返回为空");
-        }
-        String retflag = ((Map<String, Object>) result.get("head")).get("retFlag").toString();
-        if (!"00000".equals(retflag)) {
-            String msg = ((Map<String, Object>) result.get("head")).get("retFlag").toString();
-            logger.info(msg);
-            return fail(ConstUtil.ERROR_CODE, msg);
-        }
-        // 删除
-        List<String> list = new ArrayList();
-        List<Map<String, Object>> listMap = (List<Map<String, Object>>) result.get("body");
-        // [{"attachType":"App01","applSeq":null,"count":1,"attachName":"本人手持身份证与本人面部合照照片","id":23960,"md5":"6807451f211355faa3d3ca05f20308e1"},{"attachType":"DOC014","applSeq":null,"count":19,"attachName":"Face++返回影像","id":23881,"md5":"68600f94a35501042cff32d4dd2dedae"},{"attachType":"DOC045","applSeq":null,"count":12,"attachName":"收款确认单","id":23600,"md5":"c882e40833e92508f5b647fea5c06cd2"},{"attachType":"DOC065","applSeq":null,"count":1,"attachName":"人脸照片","id":23903,"md5":"68600f94a35501042cff32d4dd2dedae"}]
-        for (Map<String, Object> m : listMap) {
-            String attachType = m.get("attachType").toString();
-            if ("DOC086".equals(attachType)) {
-                String picId = m.get("id").toString();
-                list.add(picId);
-            }
-        }
-        if (list.size() > 0) {
-            for (int j = 0; j < list.size(); j++) {
-                Integer id = Integer.parseInt(list.get(j));
-                Map<String, Object> map1 = new HashMap<String, Object>();
-                map1.put("id", id);
-                map1.put("token", token);
-                map1.put("channel", channel);
-                map1.put("channelNo", channelNo);
-                Map<String, Object> deleteResult = appServerService.attachDelete(token, map1);
-                logger.info(deleteResult);
-            }
-        }
-
-        //
-        // 调用影像上传接口
-        // 获取共享盘个人影像文件路径
-        String appno = StringUtils.remove(UUID.randomUUID().toString(), Environment.MinusChar);
-        String dir = storageConfig.getFacePath() + File.separator + custNo + File.separator + ConstUtil.ATTACHTYPE_DOC065 + File.separator;
-        createDir(dir);
-        final String filePath = dir + appno + ".jpg";
-        String md5ForUpload;
-        try (FileInputStream inputStream = new FileInputStream(filePath)) {
-            md5ForUpload = DigestUtils.md5Hex(inputStream);
-        }
-        attachMap.put("md5", md5ForUpload);
-        attachMap.put("filePath", filePath);
-
-        String path = "/testshare01/00/Data/haierData/";
-        attachMap.put("applSeq", applSeq);
-        attachMap.put("attachType", "DOC086");// 文件类型
-        attachMap.put("attachName", "学生证封面");// 文件名称
-        attachMap.put("path", path);// //共享盘个人影像文件路径
-        // 应该是配置到统一文件中
-        attachMap.put("channel", channel);
-        attachMap.put("channelNo", channelNo);
-        attachMap.put("custNo", custNo);//
-        attachMap.put("token", token);
-        attachMap.put("fileName", custNo);
-        logger.info("path:" + path + "           fileName:" + custNo);
-        Map<String, Object> attachresult = appServerService.attachUploadPersonByFilePath(token, attachMap);
-        Map<String, Object> jsonObject2 = (Map<String, Object>) attachresult.get("head");
-        retFlag = (String) jsonObject2.get("retFlag");
-        message = (String) jsonObject2.get("retMsg");
-        if (!"00000".equals(retFlag)) {// 文件上传成功返回 00000
-            // //成功后从这里调用face++接口
-            logger.info("vipabc,保存客户信息,调用app上传学生证封面失败！retMsg:" + message);
-            return fail(retFlag, message);
-        }
-        retFlag = "0000";
-        logger.info("VIPABC上传学生证封面结束");
-        return fail(retFlag, message);
-
 
     }
 
@@ -505,8 +253,6 @@ public class VaServiceImpl extends BaseService implements VaService {
             retflag = retFlag;
             return fail(retflag, retmsg);
         }
-
-
     }
 
 }

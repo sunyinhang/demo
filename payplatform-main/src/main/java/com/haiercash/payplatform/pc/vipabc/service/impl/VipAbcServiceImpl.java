@@ -25,15 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -243,6 +235,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         logger.info("登录存储的userId:" + userId);
         //获取绑定手机号
         Map<String, Object> map = new HashMap<String, Object>();
+        map.put("token", token);
         map.put("userId", EncryptUtil.simpleEncrypt(userId));
         map.put("channel", channel);
         map.put("channelNo", channelNo);
@@ -302,7 +295,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             return fail(ConstUtil.ERROR_CODE, retMsg1);
         }
         Map body1 = (Map<String, Object>) haveOrder.get("body");
-        JSONArray orderArray1 = JSONArray.parseArray((String) body1.get("orders"));//未提交订单列表
+        JSONArray orderArray1 = JSONArray.parseArray(body1.get("orders").toString());//未提交订单列表
         //查询全部订单列表（已提交）
         Map reqs = new HashMap<String, Object>();
         reqs.put("channel", channel);
@@ -372,7 +365,6 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         logger.info("获取的orderFlags：" + orderFlags);
         String idCard = (String) redisMap.get("idCard");//身份证号
         String uuid = (String) params.get("uuid");
-        String applSeqth = (String) redisMap.get("applSeqth");
         Object object = RedisUtils.getExpireMap(uuid);
         if (StringUtils.isEmpty(object)) {
             logger.info("从redis中获取的数据为空" + object);
@@ -433,8 +425,9 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         }
         Map<String, Object> areaCodeMap = commonPageService.getAreaCode(province, city, district);
         logger.info("通过省市区获取的对应编码结果：" + areaCodeMap);
-        String provinceCode = (String) areaCodeMap.get("province");
-        String cityCode = (String) areaCodeMap.get("city");
+        Map<String, Object> bodyMap = (Map<String, Object>) areaCodeMap.get("body");
+        String provinceCode = (String) bodyMap.get("province");
+        String cityCode = (String) bodyMap.get("city");
         String userId = (String) redisMap.get("userId");
         //录单校验
         Map<String, Object> ordercheakmap = new HashMap<>();
@@ -457,7 +450,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         String retflag1 = (String) head.get("retFlag");
         String retMsg = (String) head.get("retMsg");
         if (!"00000".equals(retflag1)) {
-            return fail(ConstUtil.ERROR_CODE, ConstUtil.ERROR_MSG);
+            return fail(ConstUtil.ERROR_CODE, retMsg);
         }
         // 是否允许申请贷款
         Map<String, Object> queryordermap = new HashMap<>();
@@ -1408,7 +1401,7 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         Map fromObjectone = (Map) object;
         Map fromObject = (Map) (fromObjectone.get("appOrderGoods"));
         Map jsonObject = (Map) fromObjectone.get("externalmessage");//扩展信息
-        Map<String, Object> redisMap = (Map<String, Object>) RedisUtils.getExpireMap(token);
+        Map<String, Object> redisMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(redisMap)) {
             logger.info("VIPABC,校验短信验证码接口及订单提交接口,redisMap为空!");
             return fail(ConstUtil.ERROR_CODE, "从redis中获取的数据为空");
@@ -1618,17 +1611,16 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             logger.info("token为空");
             return fail(ConstUtil.ERROR_CODE, "token为");
         }
-        redisMap = (Map<String, Object>) RedisUtils.getExpireMap(token);
+        redisMap = RedisUtils.getExpireMap(token);
         if (StringUtils.isEmpty(redisMap)) {
             logger.info("分期申请加载，从token中获取的缓存数据获取失败！");
             return fail(ConstUtil.ERROR_CODE, "分期申请加载，从token中获取数据获取失败");
         }
-        Object object2 = RedisUtils.getExpireMap(uuid);
-        if (StringUtils.isEmpty(object2)) {
-            logger.info("redis中获取的数据为空" + object2.toString());
+        Map<String, Object> fromObject2 = RedisUtils.getExpireMap(uuid);
+        if (fromObject2 == null || fromObject2.isEmpty()) {
+            logger.info("redis中获取的数据为空");
             return fail(ConstUtil.ERROR_CODE, "分期申请加载，从uuid中获取数据获取失败");
         }
-        Map fromObject2 = (Map) object2;
         Map jsonObject2 = (Map) fromObject2.get("appOrderGoods");
         String model = (String) jsonObject2.get("model");// 商品名称
         applyAmt = (String) jsonObject2.get("payAmt");// 订单实付金额
@@ -1800,7 +1792,8 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             loanName = (String) jsonObject.get("loanName");// 贷款品种名称
             // 查询贷款品种详情
             HashMap<String, Object> objectObjectHashMap = new HashMap<>();
-            objectObjectHashMap.put("loanCode", loanCode);
+            //objectObjectHashMap.put("loanCode", loanCode);
+            objectObjectHashMap.put("typCde", loanCode);
             Map<String, Object> resultinfo = appServerService.pLoanTyp(token, objectObjectHashMap);
             if (StringUtils.isEmpty(resultinfo)) {
                 logger.info("查询贷款品种详情，返回信息为空");
@@ -1816,8 +1809,8 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             String loanMtdDesc = (String) map4.get("payMtdDesc");
             String tnrOpt = (String) map4.get("tnrOpt");
             typLvlCde = (String) map4.get("levelTwo");
-            double minAmt = Double.parseDouble((String) map4.get("minAmt"));// token
-            double maxAmt = Double.parseDouble((String) map4.get("maxAmt"));
+            double minAmt = Double.parseDouble(map4.get("minAmt").toString());// token
+            double maxAmt = Double.parseDouble(map4.get("maxAmt").toString());
             double apprvAmt = Double.parseDouble(applyAmt);
             if (apprvAmt < minAmt) {
                 return fail(ConstUtil.ERROR_CODE, "借款金额不可少于" + minAmt + "元");
@@ -1847,9 +1840,9 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         Map body = (Map) resultone.get("body");
         String repaymentTotalAmt = (String) body.get("repaymentTotalAmt");// 还款总额（UI
         // 展示）
-        String totalFees = (String) body.get("totalFees");// 总利息金额(UI 展示)
-        String totalNormInt = (String) body.get("totalNormInt");// 订单保存（totalNormInt）
-        String totalFeeAmt = (String) body.get("totalFeeAmt");// 订单保存总利息金额（totalAmt）
+        String totalFees = body.get("totalFees").toString();// 总利息金额(UI 展示)
+        String totalNormInt = body.get("totalNormInt").toString();// 订单保存（totalNormInt）
+        String totalFeeAmt = body.get("totalFeeAmt").toString();// 订单保存总利息金额（totalAmt）
         List array = (List) body.get("mx");
         map.put("payPlan", array);
         map.put("repaymentTotalAmt", repaymentTotalAmt);// 总额(UI展示)
@@ -1862,9 +1855,8 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         HashMap<String, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("jsonArray", jsonArray);
         objectObjectHashMap.put("info", map);
-        success(objectObjectHashMap);
         RedisUtils.set(token, redisMap, 30, TimeUnit.DAYS);
-        return success();
+        return success(objectObjectHashMap);
     }
 
     private List maptolist(Map<String, Object> map) {
@@ -1877,8 +1869,6 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
 
     public Map<String, Object> getToken(String channel, String channelNo, Map<String, Object> params) {
         Map<String, Object> redisMap = new HashMap<String, Object>();
-        String accesstoken = null;
-        String custNo = null;
         String userId = (String) params.get("mobile");//账号
         if (StringUtils.isEmpty(userId)) {
             logger.info("用户账号为空");
@@ -1913,7 +1903,6 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
             return fail(ConstUtil.ERROR_CODE, "获取token返回信息为空");
         }
         String token = (String) str.get("access_token");
-        //获取绑定手机号
         //获取绑定手机号
         Map<String, Object> mapone = new HashMap<String, Object>();
         mapone.put("userId", EncryptUtil.simpleEncrypt(userId));

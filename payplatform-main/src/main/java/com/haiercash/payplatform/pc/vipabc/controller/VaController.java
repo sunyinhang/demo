@@ -30,30 +30,6 @@ public class VaController extends BaseController {
     }
 
     /**
-     * 上传其他
-     *
-     * @param map
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/api/payment/vipabc/weixinuploadOtherPerson", method = RequestMethod.POST)
-    public Map<String, Object> weixinuploadOtherPerson(@RequestBody Map<String, Object> map) throws Exception {
-        return vaService.weixinuploadOtherPerson(super.getToken(), super.getChannel(), super.getChannelNo(), map);
-    }
-
-    /**
-     * 上传其他（学生证封面）
-     *
-     * @param map
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/api/payment/vipabc/weixinuploadOtherPersonOther", method = RequestMethod.POST)
-    public Map<String, Object> weixinuploadOtherPersonOther(@RequestBody Map<String, Object> map) throws Exception {
-        return vaService.weixinuploadOtherPersonOther(super.getToken(), super.getChannel(), super.getChannelNo(), map);
-    }
-
-    /**
      * 订单删除
      *
      * @param map
