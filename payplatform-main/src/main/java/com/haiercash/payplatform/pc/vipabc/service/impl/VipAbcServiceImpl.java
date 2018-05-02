@@ -1508,7 +1508,6 @@ public class VipAbcServiceImpl extends BaseService implements VipAbcService {
         HashMap<String, Object> hashMap = new HashMap<String, Object>();
         HashMap<String, Object> hashMapOne = new HashMap<String, Object>();
         HashMap<String, Object> hashMapTwo = new HashMap<String, Object>();
-        HashMap<String, Object> headerMapOne = new HashMap<String, Object>();
         logger.info("开始解析经维度");
         String longLatitude = "经度" + longitude + "维度" + latitude;
         logger.info("经维度解析前" + longLatitude);
